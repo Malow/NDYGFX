@@ -1,0 +1,41 @@
+﻿Build started 2012-11-21 17:32:36.
+     1>Project "C:\MaloW\Shared\NDYGFX\NDYGFX.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D DLL_EXPORT /D WIN32 /D _DEBUG /D _WINDOWS /D _USRDLL /D _WINDLL /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt Source\AnimatedMesh.cpp Source\CamRecording.cpp Source\Camera.cpp Source\DxManager.cpp Source\DxManagerDeferred.cpp Source\DxManagerForwardRendering.cpp Source\DxManagerInit.cpp Source\DxManagerPostProcess.cpp Source\DxManagerRender.cpp Source\FPSCamera.cpp Source\FXAA.cpp Source\GraphicsEngine.cpp Source\GraphicsEngineImp.cpp Source\Mesh.cpp Source\ParticleSystem.cpp Source\ParticleSystemsHandler.cpp Source\RTSCamera.cpp Source\SSAO.cpp Source\SkyBox.cpp Source\StaticMesh.cpp Source\Terrain.cpp
+         StaticMesh.cpp
+         Mesh.cpp
+     1>c:\malow\shared\ndygfx\source\mesh.cpp(4): error C2512: 'iMesh' : no appropriate default constructor available
+         GraphicsEngineImp.cpp
+     1>c:\malow\shared\ndygfx\include\graphicsengine.h(13): fatal error C1083: Cannot open include file: 'iStaticMesh.h': No such file or directory
+         GraphicsEngine.cpp
+     1>c:\malow\shared\ndygfx\include\graphicsengine.h(13): fatal error C1083: Cannot open include file: 'iStaticMesh.h': No such file or directory
+         Generating Code...
+         Compiling...
+         Terrain.cpp
+         SkyBox.cpp
+         SSAO.cpp
+         RTSCamera.cpp
+         ParticleSystemsHandler.cpp
+         ParticleSystem.cpp
+         FXAA.cpp
+         FPSCamera.cpp
+         DxManagerRender.cpp
+         DxManagerPostProcess.cpp
+         DxManagerInit.cpp
+         DxManagerForwardRendering.cpp
+         DxManagerDeferred.cpp
+         DxManager.cpp
+         Camera.cpp
+     1>c:\malow\shared\ndygfx\source\camera.cpp(134): error C2678: binary '-' : no operator found which takes a left-hand operand of type 'Vector3' (or there is no acceptable conversion)
+                 could be 'built-in C++ operator-(FLOAT, FLOAT)'
+                 or       'built-in C++ operator-(FLOAT, FLOAT)'
+                 c:\malow\shared\ndygfx\include\vector.h(110): or       'Vector3 Vector3::operator -(const Vector3 &) const'
+                 while trying to match the argument list '(Vector3, D3DXVECTOR3)'
+         CamRecording.cpp
+         AnimatedMesh.cpp
+         Generating Code...
+     1>Done Building Project "C:\MaloW\Shared\NDYGFX\NDYGFX.vcxproj" (Build target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:47.30
