@@ -12,6 +12,7 @@
 
 #include "iMesh.h"
 #include "iLight.h"
+#include "iImage.h"
 
 extern "C"
 {
@@ -29,6 +30,9 @@ extern "C"
 		virtual iLight* CreateLight(Vector3 pos) = 0;
 		virtual void DeleteLight(iLight* light) = 0;
 
+		virtual iImage* CreateImage(Vector2 pos, Vector2 dimensions, const char* texture) = 0;
+		virtual void DeleteImage(iImage* delImg) = 0;
+
 	};
 
 	
@@ -42,15 +46,9 @@ extern "C"
 	AnimatedMesh* CreateAnimatedMesh(string filename, D3DXVECTOR3 pos);
 	void DeleteAnimatedMesh(AnimatedMesh* mesh) { this->dx->DeleteAnimatedMesh(mesh); }
 
-	Light* CreateLight(D3DXVECTOR3 pos, bool UseShadowMap = true);
-	void DeleteLight(Light* light) { this->dx->DeleteLight(light); }
-
 	Terrain* CreateTerrain(D3DXVECTOR3 position, D3DXVECTOR3 dimension, std::string texture, string heightmap, int vertexSize = 256);
 
 	void CreateSkyBox(string texture);
-
-	Image* CreateImage(D3DXVECTOR2 position, D3DXVECTOR2 dimensions, string texture);
-	bool DeleteImage(Image* delImage);
 
 	Text* CreateText(string text, D3DXVECTOR2 position, float size, string fontTexturePath);
 	bool DeleteText(Text* delText);
@@ -76,9 +74,9 @@ extern "C"
 	WRAPPER:
 	StaticMesh*	-alex
 	AnimatedMesh* -alex
-	Light* -malow
+	Light* -malow	DONE
 	Terrain* -alex
-	Image* -malow
+	Image* -malow	DONE
 	Text* -malow
 	Camera* -malow
 	MaloW::KeyListener* -malow

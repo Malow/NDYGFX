@@ -88,11 +88,15 @@ public:
 	/*  Inherited from interface  */
 	virtual iMesh* CreateMesh(const char* filename, const Vector3& pos);
 
-
 	virtual iLight* CreateLight(Vector3 pos);
 	virtual void DeleteLight(iLight* light);
 
+	virtual iImage* CreateImage(Vector2 pos, Vector2 dimensions, const char* texture);
+	virtual void DeleteImage(iImage* delImg);
 
+
+
+	/*  Non-inherited functions */
 
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 

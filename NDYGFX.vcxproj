@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\GraphicsEngine.h" />
+    <ClInclude Include="Include\iImage.h" />
     <ClInclude Include="Include\iLight.h" />
     <ClInclude Include="Include\iMesh.h" />
     <ClInclude Include="Include\Vector.h" />

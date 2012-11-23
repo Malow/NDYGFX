@@ -13,3 +13,23 @@ Image::~Image()
 	if(this->texture)
 		this->texture->Release();
 }
+
+Vector2 Image::GetPosition() const
+{
+	return Vector2(this->position.x, this->position.y);
+}
+
+void Image::SetPosition( Vector2 pos )
+{
+	this->position = D3DXVECTOR2(pos.x, pos.y);
+}
+
+Vector2 Image::GetDimensions() const
+{
+	return Vector2(this->dimensions.x, this->dimensions.y);
+}
+
+void Image::SetDimensions( Vector2 dims )
+{
+	this->dimensions = D3DXVECTOR2(dims.x, dims.y);
+}
