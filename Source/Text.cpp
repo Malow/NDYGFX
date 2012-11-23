@@ -67,3 +67,8 @@ float Text::GetSize() const
 {
 	return this->size;
 }
+
+void Text::AppendText( const char* app )
+{
+	this->text += app;
+}

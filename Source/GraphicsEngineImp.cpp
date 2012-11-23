@@ -244,6 +244,11 @@ StaticMesh* GraphicsEngineImp::CreateStaticMesh(string filename, D3DXVECTOR3 pos
 	return mesh;
 }
 
+iMesh* GraphicsEngineImp::CreateStaticMesh( const char* filename, const Vector3& pos )
+{
+	return CreateStaticMesh( std::string(filename), D3DXVECTOR3(pos.x,pos.y,pos.z) );
+}
+
 AnimatedMesh* GraphicsEngineImp::CreateAnimatedMesh(string filename, D3DXVECTOR3 pos)
 {
 	AnimatedMesh* mesh = new AnimatedMesh(pos);
@@ -252,6 +257,11 @@ AnimatedMesh* GraphicsEngineImp::CreateAnimatedMesh(string filename, D3DXVECTOR3
 	this->PutEvent(re);
 
 	return mesh;
+}
+
+iAnimatedMesh* GraphicsEngineImp::CreateAnimatedMesh( const char* filename, const Vector3& pos )
+{
+	return CreateAnimatedMesh( std::string(filename), D3DXVECTOR3(pos.x,pos.y,pos.z) );
 }
 
 Light* GraphicsEngineImp::CreateLight(D3DXVECTOR3 pos, bool UseShadowMap)
