@@ -97,6 +97,8 @@ public:
 	virtual iText* CreateText(const char* text, Vector2 pos, float size, const char* fontTexturePath);
 	virtual void DeleteText(iText* deltxt);
 
+	virtual iCamera* GetCamera() const;
+
 	/*  Non-inherited functions */
 
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -147,7 +149,7 @@ public:
 	void StartRendering() { this->dx->StartRender = true; }
 
 	// Get's
-	Camera* GetCamera() const { return this->cam; } //{ return this->dx->GetCamera(); }
+	Camera* GetCam() const { return this->cam; } //{ return this->dx->GetCamera(); }
 	MaloW::KeyListener* GetKeyListener() const { return this->kl; }
 	HWND GetWindowHandle() const { return this->hWnd; }
 

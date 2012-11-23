@@ -25,7 +25,7 @@ FPSCamera::~FPSCamera()
 
 }
 
-void FPSCamera::updateSpecific(float delta)
+void FPSCamera::UpdateSpecific(float delta)
 {
 	POINT p;
 	if(GetCursorPos(&p))
@@ -65,23 +65,23 @@ void FPSCamera::updateSpecific(float delta)
 	}
 }
 
-void FPSCamera::moveForward(float diff)
+void FPSCamera::MoveForward(float diff)
 {
 	this->pos += this->forward * ((float)diff/100) * this->speed;
 }
 
-void FPSCamera::moveBackward(float diff)
+void FPSCamera::MoveBackward(float diff)
 {
 	this->pos -= this->forward * ((float)diff/100) * this->speed;
 }
 
-void FPSCamera::moveLeft(float diff)
+void FPSCamera::MoveLeft(float diff)
 {
 	this->pos.x -= sin(this->angleX) * ((float)diff/100) * this->speed;
 	this->pos.z += cos(this->angleX) * ((float)diff/100) * this->speed;
 }
 
-void FPSCamera::moveRight(float diff)
+void FPSCamera::MoveRight(float diff)
 {
 	this->pos.x += sin(this->angleX) * ((float)diff/100) * this->speed;
 	this->pos.z -= cos(this->angleX) * ((float)diff/100) * this->speed;

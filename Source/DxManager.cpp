@@ -460,7 +460,7 @@ void DxManager::CreateSkyBox(string texture)
 	if(this->skybox)
 		delete this->skybox;
 		
-	SkyBox* sb = new SkyBox(this->camera->getPosition(), 10, 10);
+	SkyBox* sb = new SkyBox(this->camera->GetPositionD3DX(), 10, 10);
 	MeshStrip* strip = sb->GetStrips()->get(0);
 
 	// Create the desc for the buffer
@@ -533,7 +533,7 @@ float DxManager::GetLavaHeightAt(float x, float z)
 	float timer = this->TimerAnimation * 0.001f;
 
 	float bias = sin(timer * 0.2f) * sin(x * 0.2f) * sin(z * 0.2f);
-	D3DXVECTOR3 temp = this->camera->getPosition() - D3DXVECTOR3(x, L, z);
+	D3DXVECTOR3 temp = this->camera->GetPositionD3DX() - D3DXVECTOR3(x, L, z);
 	bias *= 1.2f - (D3DXVec3Length(&temp) / 100.0f);
 
 	float lavaHeight = L + bias;

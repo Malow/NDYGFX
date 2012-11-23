@@ -14,6 +14,7 @@
 #include "iLight.h"
 #include "iImage.h"
 #include "iText.h"
+#include "iCamera.h"
 
 extern "C"
 {
@@ -36,6 +37,8 @@ extern "C"
 
 		virtual iText* CreateText(const char* text, Vector2 pos, float size, const char* fontTexturePath) = 0;
 		virtual void DeleteText(iText* deltxt) = 0;
+
+		virtual iCamera* GetCamera() const = 0;
 	};
 
 	
@@ -64,7 +67,7 @@ extern "C"
 	bool isRunning();
 	void StartRendering() { this->dx->StartRender = true; }
 
-	Camera* GetCamera() const { return this->cam; } //{ return this->dx->GetCamera(); }
+	
 	MaloW::KeyListener* GetKeyListener() const { return this->kl; }
 	HWND GetWindowHandle() const { return this->hWnd; }
 
@@ -79,7 +82,7 @@ extern "C"
 	Light* -malow	DONE
 	Terrain* -alex
 	Image* -malow	DONE
-	Text* -malow
+	Text* -malow	DONE
 	Camera* -malow
 	MaloW::KeyListener* -malow
 	GraphicsEngineParams		--- Done

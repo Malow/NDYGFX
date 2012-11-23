@@ -20,7 +20,7 @@ void DxManager::RenderDeferredGeometry()
 	float ClearColor2[4] = {0.5f, 0.71f, 1.0f, 1};
 	this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_GbufferRTs[0], ClearColor2);
 	
-	this->Shader_DeferredGeometry->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->getPosition(), 1));
+	this->Shader_DeferredGeometry->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetPositionD3DX(), 1));
 	
 	//Normal (visibile) geometry
 	for(int i = 0; i < this->objects.size(); i++)
@@ -86,7 +86,7 @@ void DxManager::RenderDeferredGeometry()
 
 
 	//Normal (visible) Animated meshes
-	this->Shader_DeferredAnimatedGeometry->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->getPosition(), 1));
+	this->Shader_DeferredAnimatedGeometry->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetPositionD3DX(), 1));
 	for(int i = 0; i < this->animations.size(); i++)
 	{
 		if(!this->animations[i]->IsUsingInvisibility())
@@ -180,7 +180,7 @@ void DxManager::RenderDeferredSkybox()
 	D3DXMATRIX world, wvp, view, proj;
 	view = this->camera->GetViewMatrix();
 	proj = this->camera->GetProjectionMatrix();
-	world = this->skybox->GetSkyboxWorldMatrix(this->camera->getPosition());
+	world = this->skybox->GetSkyboxWorldMatrix(this->camera->GetPositionD3DX());
 	wvp = world * view * proj;
 	
 	this->Shader_Skybox->SetMatrix("gWVP", wvp);
@@ -222,7 +222,7 @@ void DxManager::RenderDeferredPerPixel()
 	this->Shader_DeferredLightning->SetResource("Specular", this->Dx_GbufferSRVs[3]);
 	D3DXMATRIX vp = this->camera->GetViewMatrix() * this->camera->GetProjectionMatrix();
 	this->Shader_DeferredLightning->SetMatrix("CameraVP", vp);
-	this->Shader_DeferredLightning->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->getPosition(), 1));
+	this->Shader_DeferredLightning->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetPositionD3DX(), 1));
 	//stdafx.fx:
 	this->Shader_DeferredLightning->SetFloat("timerMillis", this->TimerAnimation);
 	this->Shader_DeferredLightning->SetInt("windowWidth", this->params.windowWidth);
@@ -406,7 +406,7 @@ void DxManager::RenderQuadDeferred()
 	this->Shader_DeferredQuad->SetFloat("CameraNear", 1.0f);
 	this->Shader_DeferredQuad->SetFloat("ScreenWidth", (float)this->params.windowWidth);
 	this->Shader_DeferredQuad->SetFloat("ScreenHeight", (float)this->params.windowHeight);
-	this->Shader_DeferredQuad->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->getPosition(), 1));
+	this->Shader_DeferredQuad->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetPositionD3DX(), 1));
 	
 	this->Shader_DeferredQuad->Apply(0);
 	

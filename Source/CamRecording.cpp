@@ -332,8 +332,8 @@ void CamRecording::Update(float deltaTime)
 
 		if(intervalTime >= 0 && intervalTime < intervalEpsilon) 
 		{
-			this->mCamPosSpline->AddControlPoint(this->gCamera->getPosition());
-			this->mCamAtSpline->AddControlPoint(this->gCamera->getPosition() + this->gCamera->getForward());
+			this->mCamPosSpline->AddControlPoint(this->gCamera->GetPositionD3DX());
+			this->mCamAtSpline->AddControlPoint(this->gCamera->GetPositionD3DX() + this->gCamera->GetForwardD3DX());
 			time += intervalEpsilon;
 		}
 	}
@@ -349,7 +349,7 @@ void CamRecording::Update(float deltaTime)
 			pos = this->mCamPosSpline->GetPoint(t) + this->mPathOffset;
 			at = this->mCamAtSpline->GetPoint(t) + this->mPathOffset;
 			
-			this->gCamera->setPosition(pos);
+			this->gCamera->SetPosition(pos);
 			this->gCamera->LookAt(at);
 		}
 		else
