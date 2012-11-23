@@ -4,8 +4,6 @@
 #include "Terrain.h"
 #include "GraphicsEngineParameters.h"
 #include "Mesh.h"
-//#include "..\..\Platform.h"
-//#include "..\..\Ball.h"
 #include "CursorControl.h"
 
 

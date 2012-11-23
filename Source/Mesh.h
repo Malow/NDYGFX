@@ -38,7 +38,7 @@ public:
 	
 	/*! Sets mesh's specialcolor. */
 	void SetSpecialColor(COLOR specialColor);
-	/*! Set ball to use invisibility effect or not. */
+	/*! Set mesh to use invisibility effect or not. */
 	void UseInvisibilityEffect(bool use);
 	/*! Sets the level of transparency. Range is [0,1]. */
 	//void SetTransparency(float transparency);

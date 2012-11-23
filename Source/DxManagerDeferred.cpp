@@ -317,9 +317,6 @@ void DxManager::RenderInvisibilityEffect()
 	this->Shader_InvisibilityEffect->SetInt("height", this->params.windowHeight); 
 	this->Shader_InvisibilityEffect->SetInt("blurSize", 5);
 
-	//this->Shader_InvisibilityEffect->SetBool("ballOwner", true); //**test**
-	//this->Shader_InvisibilityEffect->SetInt("teamColor", YELLOW_COLOR); //**test**
-
 	//Invisible(effect) geometry
 	D3DXMATRIX wvp;
 	for(int i = 0; i < this->objects.size(); i++)
@@ -340,7 +337,7 @@ void DxManager::RenderInvisibilityEffect()
 				//Set texture
 				if(ID3D11ShaderResourceView* texture = obj->GetTexture())
 				{
-					this->Shader_InvisibilityEffect->SetResource("ballTex", texture);
+					this->Shader_InvisibilityEffect->SetResource((char*)strips->get(u)->GetTexturePath().c_str(), texture);
 					this->Shader_InvisibilityEffect->SetBool("textured", true);
 				}
 				else
@@ -369,6 +366,8 @@ void DxManager::RenderInvisibilityEffect()
 					this->Dx_DeviceContext->DrawIndexed(inds->GetElementCount(), 0, 0);
 				else
 					this->Dx_DeviceContext->Draw(verts->GetElementCount(), 0);
+
+				this->Shader_InvisibilityEffect->SetResource((char*)strips->get(u)->GetTexturePath().c_str(), NULL);
 			}
 		}
 	}
@@ -380,7 +379,6 @@ void DxManager::RenderInvisibilityEffect()
 	SAFE_RELEASE(sceneSRV);
 
 	this->Shader_InvisibilityEffect->SetResource("sceneTex", NULL);
-	this->Shader_InvisibilityEffect->SetResource("ballTex", NULL);
 }
 
 void DxManager::RenderQuadDeferred()
