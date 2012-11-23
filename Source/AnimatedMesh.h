@@ -10,6 +10,7 @@
 #pragma once
 
 #include "Mesh.h"
+#include "iAnimatedMesh.h"
 
 class KeyFrame
 {
@@ -40,7 +41,7 @@ class KeyFrame
 };
 
 
-class AnimatedMesh : public Mesh
+class AnimatedMesh : public Mesh, public virtual iAnimatedMesh
 {
 	private:
 		unsigned int				mNrOfTimesLooped;
@@ -79,5 +80,4 @@ class AnimatedMesh : public Mesh
 
 		/*! Load the keyframes from file. Input is exptected to be "'filename'.ani". */
 		virtual void LoadFromFile(string file);
-
 };

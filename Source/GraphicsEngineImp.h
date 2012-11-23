@@ -106,6 +106,10 @@ public:
 	StaticMesh* CreateStaticMesh(string filename, D3DXVECTOR3 pos, Material* material);
 	StaticMesh* CreateStaticMesh(string filename, D3DXVECTOR3 pos);
 
+	// GraphicsEngine Implementation
+	virtual iMesh* CreateStaticMesh(const char* filename, const Vector3& pos);
+	virtual iAnimatedMesh* CreateAnimatedMesh(const char* filename, const Vector3& pos);
+
 	AnimatedMesh* CreateAnimatedMesh(string filename, D3DXVECTOR3 pos);
 	void DeleteAnimatedMesh(AnimatedMesh* mesh) { this->dx->DeleteAnimatedMesh(mesh); }
 

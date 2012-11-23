@@ -14,6 +14,7 @@
 #include "iLight.h"
 #include "iImage.h"
 #include "iText.h"
+#include "iAnimatedMesh.h"
 
 extern "C"
 {
@@ -36,9 +37,10 @@ extern "C"
 
 		virtual iText* CreateText(const char* text, Vector2 pos, float size, const char* fontTexturePath) = 0;
 		virtual void DeleteText(iText* deltxt) = 0;
-	};
 
-	
+		virtual iMesh* CreateStaticMesh(const char* filename, const Vector3& pos) = 0;
+		virtual iAnimatedMesh* CreateAnimatedMesh(const char* filename, const Vector3& pos) = 0;
+	};
 
 	/*
 	StaticMesh* CreateStaticMesh(string filename, D3DXVECTOR3 pos, MaterialType material);
