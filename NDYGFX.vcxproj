@@ -122,7 +122,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(SolutionDir)\Build\</OutDir>
-    <TargetName>$(ProjectName)D</TargetName>
+    <TargetName>$(ProjectName)</TargetName>
     <ExecutablePath>$(SolutionDir)\External\D3D\Utilities\bin\x86\;$(ExecutablePath)</ExecutablePath>
     <IncludePath>$(SolutionDir)\External\D3D\Include\;$(SolutionDir)\Include\;$(DXSDK_DIR)\Include\;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)\External\D3D\Lib\x86\;$(DXSDK_DIR)\Lib\x86\;$(LibraryPath)</LibraryPath>
