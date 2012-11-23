@@ -16,7 +16,7 @@ Mesh class that represents a 3d-object on the screen
 
 
 
-class Mesh : public iMesh
+class Mesh : public virtual iMesh
 {
 protected:
 	COLOR specialColor;

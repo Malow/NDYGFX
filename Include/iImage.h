@@ -13,8 +13,8 @@ extern "C"
 	class DECLDIR iImage
 	{	
 	public:
-		iImage();
-		virtual ~iImage();
+		iImage() {};
+		virtual ~iImage() {};
 
 		virtual Vector2 GetPosition() const = 0;
 		virtual void SetPosition(Vector2 pos) = 0;

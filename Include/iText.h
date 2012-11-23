@@ -13,8 +13,8 @@ extern "C"
 	class DECLDIR iText
 	{	
 	public:
-		iText();
-		virtual ~iText();
+		iText() {};
+		virtual ~iText() {};
 
 		virtual void SetText(const char* text) = 0;
 		virtual const char* GetText() const = 0;
