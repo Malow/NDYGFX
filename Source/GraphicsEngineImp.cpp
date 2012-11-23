@@ -274,10 +274,20 @@ Image* GraphicsEngineImp::CreateImage(D3DXVECTOR2 position, D3DXVECTOR2 dimensio
 	return img;
 }
 
+iImage* GraphicsEngineImp::CreateImage( Vector2 pos, Vector2 dimensions, const char* texture )
+{
+	return this->CreateImage(D3DXVECTOR2(pos.x, pos.y), D3DXVECTOR2(dimensions.x, dimensions.y), string(texture));
+}
+
 bool GraphicsEngineImp::DeleteImage(Image* delImage)
 {
 	this->dx->DeleteImage(delImage);
 	return true;
+}
+
+void GraphicsEngineImp::DeleteImage( iImage* delImg )
+{
+	this->DeleteImage(dynamic_cast<Image*>(delImg));
 }
 
 Text* GraphicsEngineImp::CreateText(string text, D3DXVECTOR2 position, float size, string fontTexturePath)
@@ -287,10 +297,20 @@ Text* GraphicsEngineImp::CreateText(string text, D3DXVECTOR2 position, float siz
 	return textobj;
 }
 
+iText* GraphicsEngineImp::CreateText( const char* text, Vector2 pos, float size, const char* fontTexturePath )
+{
+	return this->CreateText(string(text), D3DXVECTOR2(pos.x, pos.y), size, string(fontTexturePath));
+}
+
 bool GraphicsEngineImp::DeleteText(Text* delText)
 {
 	this->dx->DeleteText(delText);
 	return true;
+}
+
+void GraphicsEngineImp::DeleteText( iText* deltxt )
+{
+	this->DeleteText(dynamic_cast<Text*>(deltxt));
 }
 
 float GraphicsEngineImp::Update()
@@ -505,7 +525,7 @@ void GraphicsEngineImp::LoadingScreen(string BackgroundTexture, string ProgressB
 		
 		if(this->loading)
 			if(pb)
-				pb->SetDimensions(D3DXVECTOR2(dx * (TotalItems - ItemsToGo), y));
+				pb->SetDimensions(Vector2(dx * (TotalItems - ItemsToGo), y));
 	}
 
 	if(fade)
