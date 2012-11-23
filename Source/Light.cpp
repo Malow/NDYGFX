@@ -8,7 +8,7 @@ Light::Light()
 	this->UseShadowMap = false;
 	this->intensity = 10.0f;
 
-	this->SetLookAt(this->pos + D3DXVECTOR3(0,-1,0));
+	this->SetLookAt(Vector3(this->pos.x, this->pos.y, this->pos.z) + Vector3(0,-1,0));
 
 	this->shadowMap = NULL;
 	this->shadowMapDepthView = NULL;
@@ -22,7 +22,7 @@ Light::Light(D3DXVECTOR3 pos, LightType type)
 	this->UseShadowMap = false;
 	this->intensity = 10.0f;
 
-	this->SetLookAt(this->pos + D3DXVECTOR3(0,-1,0));
+	this->SetLookAt(Vector3(this->pos.x, this->pos.y, this->pos.z) + Vector3(0,-1,0));
 
 	this->shadowMap = NULL;
 	this->shadowMapDepthView = NULL;
@@ -112,10 +112,55 @@ D3DXMATRIX Light::GetViewProjMatrix()
 	return this->ViewProj; 
 }
 
-void Light::SetLookAt(D3DXVECTOR3 la)
+void Light::SetLookAt(Vector3 la)
 {
-	this->lookAt = la;
+	this->lookAt = D3DXVECTOR3(la.x, la.y, la.z);
 	Vector3 v(1.0f, 0.0f, 0.0f);
 	Vector3 cp = v.GetCrossProduct(Vector3(la.x, la.y, la.z));
 	this->up = D3DXVECTOR3(cp.x, cp.y, cp.z);
+}
+
+void Light::SetColor( Vector3 col )
+{
+	this->color = D3DXVECTOR3(col.x, col.y, col.z);
+}
+
+Vector3 Light::GetColor() const
+{
+	return Vector3(this->color.x, this->color.y, this->color.z);
+}
+
+void Light::SetPosition( Vector3 pos )
+{
+	this->pos = D3DXVECTOR3(pos.x, pos.y, pos.z);
+}
+
+Vector3 Light::GetPosition() const
+{
+	return Vector3(this->pos.x, pos.y, pos.z);
+}
+
+void Light::Move( Vector3 moveBy )
+{
+	this->pos += D3DXVECTOR3(moveBy.x, moveBy.y, moveBy.z);
+}
+
+void Light::SetUp( Vector3 up )
+{
+	this->up = D3DXVECTOR3(up.x, up.y, up.z);
+}
+
+void Light::SetIntensity( float intensity )
+{
+	this->intensity = intensity;
+}
+
+float Light::GetIntensity() const
+{
+	return this->intensity;
+}
+
+bool Light::IsUsingShadowMap() const
+{
+	return this->UseShadowMap;
 }

@@ -85,13 +85,21 @@ public:
 	GraphicsEngineImp(GraphicsEngineParams params, HINSTANCE hInstance, int nCmdShow);
 	virtual ~GraphicsEngineImp();
 
+	/*  Inherited from interface  */
+	virtual iMesh* CreateMesh(const char* filename, const Vector3& pos);
+
+
+	virtual iLight* CreateLight(Vector3 pos);
+	virtual void DeleteLight(iLight* light);
+
+
+
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 	/*! Creates a Mesh and starts rendering it every frame. Return is a pointer to the Mesh created. To stop rendering it call DeleteMesh on the engine with the Mesh as parameter. */
 	StaticMesh* CreateStaticMesh(string filename, D3DXVECTOR3 pos, MaterialType material);
 	StaticMesh* CreateStaticMesh(string filename, D3DXVECTOR3 pos, Material* material);
 	StaticMesh* CreateStaticMesh(string filename, D3DXVECTOR3 pos);
-	virtual iMesh* CreateMesh(const char* filename, const Vector3& pos);
 
 	AnimatedMesh* CreateAnimatedMesh(string filename, D3DXVECTOR3 pos);
 	void DeleteAnimatedMesh(AnimatedMesh* mesh) { this->dx->DeleteAnimatedMesh(mesh); }

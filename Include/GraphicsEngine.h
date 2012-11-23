@@ -11,6 +11,7 @@
 #endif
 
 #include "iMesh.h"
+#include "iLight.h"
 
 extern "C"
 {
@@ -23,6 +24,11 @@ extern "C"
 		static GraphicsEngine* eng;
 
 		virtual iMesh* CreateMesh(const char* filename, const Vector3& pos) = 0;
+
+
+		virtual iLight* CreateLight(Vector3 pos) = 0;
+		virtual void DeleteLight(iLight* light) = 0;
+
 	};
 
 	
@@ -68,14 +74,14 @@ extern "C"
 
 
 	WRAPPER:
-	StaticMesh*
-	AnimatedMesh*
-	Light*
-	Terrain*
-	Image*
-	Text*
-	Camera*
-	MaloW::KeyListener*
+	StaticMesh*	-alex
+	AnimatedMesh* -alex
+	Light* -malow
+	Terrain* -alex
+	Image* -malow
+	Text* -malow
+	Camera* -malow
+	MaloW::KeyListener* -malow
 	GraphicsEngineParams		--- Done
 	*/
 

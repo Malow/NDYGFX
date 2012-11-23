@@ -516,5 +516,15 @@ void GraphicsEngineImp::LoadingScreen(string BackgroundTexture, string ProgressB
 
 iMesh* GraphicsEngineImp::CreateMesh( const char* filename, const Vector3& pos )
 {
-	return CreateStaticMesh(filename,D3DXVECTOR3(pos.x,pos.y,pos.z))
+	return CreateStaticMesh(filename,D3DXVECTOR3(pos.x,pos.y,pos.z));
+}
+
+iLight* GraphicsEngineImp::CreateLight( Vector3 pos )
+{
+	return this->CreateLight(D3DXVECTOR3(pos.x, pos.y, pos.z));
+}
+
+void GraphicsEngineImp::DeleteLight( iLight* light )
+{
+	this->DeleteLight(dynamic_cast<Light*>(light));
 }

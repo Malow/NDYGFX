@@ -127,6 +127,9 @@
     <ClInclude Include="Include\iMesh.h">
       <Filter>Source Files\Wrapper</Filter>
     </ClInclude>
+    <ClInclude Include="Include\iLight.h">
+      <Filter>Source Files\Wrapper</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\AnimatedMesh.cpp">
