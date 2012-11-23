@@ -9,12 +9,12 @@ public:
 	FPSCamera(HWND g_hWnd, GraphicsEngineParams params);
 	virtual ~FPSCamera();
 
-	virtual void updateSpecific(float delta);
+	virtual void UpdateSpecific(float delta);
 
-	virtual void moveForward(float diff);
-	virtual void moveBackward(float diff);
-	virtual void moveLeft(float diff);
-	virtual void moveRight(float diff);
+	virtual void MoveForward(float diff);
+	virtual void MoveBackward(float diff);
+	virtual void MoveLeft(float diff);
+	virtual void MoveRight(float diff);
 };
 
 

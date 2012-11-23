@@ -35,87 +35,56 @@ D3DXMATRIX Camera::GetProjectionMatrix()
 	return this->projection; 
 }
 
-D3DXVECTOR3 Camera::getPosition()
+Vector3 Camera::GetPosition()
 {
-	return this->pos;
+	return Vector3(this->pos.x, this->pos.y, this->pos.z);
 }
 
-float Camera::getPosX()
+void Camera::SetPosition(Vector3 pos)
 {
-	return this->pos.x;
+	this->pos = D3DXVECTOR3(pos.x, pos.y, pos.z);
 }
 
-float Camera::getPosY()
+Vector3 Camera::GetForward()
 {
-	return this->pos.y;
+	return Vector3(this->forward.x, this->forward.y, this->forward.z);
 }
 
-float Camera::getPosZ()
+void Camera::SetForward(Vector3 forward)
 {
-	return this->pos.z;
-}
-
-void Camera::setPosition(D3DXVECTOR3 pos)
-{
-	this->pos = pos;
-}
-
-void Camera::setPosX(float x)
-{
-	this->pos.x = x;
-}
-
-void Camera::setPosY(float y)
-{
-	this->pos.y = y;
-}
-
-void Camera::setPosZ(float z)
-{
-	this->pos.z = z;
-}
-
-
-D3DXVECTOR3 Camera::getForward()
-{
-	return this->forward;
-}
-
-void Camera::setForward(D3DXVECTOR3 forward)
-{
-	this->forward = forward;
+	this->forward = D3DXVECTOR3(forward.x, forward.y, forward.z);
 	this->forward = this->NormalizeVector(this->forward);
 }
 
-void Camera::LookAt(D3DXVECTOR3 target)
+void Camera::LookAt(Vector3 target)
 {
-	this->forward = target - this->pos;
+	this->forward = D3DXVECTOR3(target.x, target.y, target.z) - this->pos;
 	this->forward = this->NormalizeVector(this->forward);
 
 	this->angleX = -atan2(this->forward.x*0 - 1*this->forward.z, this->forward.x * 1 + this->forward.z * 0);
 	this->angleY = asin(this->forward.y);
 }
 
-D3DXVECTOR3 Camera::getUpVector()
+Vector3 Camera::GetUpVector()
 {
-	return this->up;
+	return Vector3(this->up.x, this->up.y, this->up.z);
 }
 
-void Camera::setUpVector(D3DXVECTOR3 up)
+void Camera::SetUpVector(Vector3 up)
 {
-	this->up = up;
+	this->up = D3DXVECTOR3(up.x, up.y, up.z);
 }
 
-void Camera::moveToTerrain()
+void Camera::MoveToTerrain()
 {
 	if(this->terrain)
 		this->pos.y = this->terrain->getYPositionAt(this->pos.x, this->pos.z) + this->DistanceFromTarget;
 }
 
-void Camera::move(D3DXVECTOR3 moveBy)
+void Camera::Move(Vector3 moveBy)
 {
-	this->pos += moveBy;
-	this->moveToTerrain();
+	this->pos += D3DXVECTOR3(moveBy.x, moveBy.y, moveBy.z);
+	this->MoveToTerrain();
 }
 
 D3DXVECTOR3 Camera::NormalizeVector(D3DXVECTOR3 vec)
@@ -132,16 +101,16 @@ void Camera::MoveToFollowPosition()
 	if(this->followTarget)
 	{
 		Vector3 vec = this->followTarget->GetPosition() - Vector3(0, -15, this->DistanceFromTarget);
-		this->pos = D3DXVECTOR3(vec.x,vec.y,vec.z);
+		this->pos = D3DXVECTOR3(vec.x, vec.y, vec.z);
 	}
 }
 
-void Camera::update(float delta)
+void Camera::Update(float delta)
 {
 	if(GetForegroundWindow() == this->g_hWnd)
-		updateSpecific(delta);
+		UpdateSpecific(delta);
 	
-	this->moveToTerrain();
+	this->MoveToTerrain();
 	this->MoveToFollowPosition();
 	if(this->forceBoundries)
 	{
@@ -162,14 +131,19 @@ void Camera::update(float delta)
 	}
 }
 
-void Camera::SetBoundries(D3DXVECTOR3 minBoundries, D3DXVECTOR3 maxBoundries)
+void Camera::SetBoundries(Vector3 minBoundries, Vector3 maxBoundries)
 {
-	this->minBoundries = minBoundries;
-	this->maxBoundries = maxBoundries;
+	this->minBoundries = D3DXVECTOR3(minBoundries.x, minBoundries.y, minBoundries.z);
+	this->maxBoundries = D3DXVECTOR3(maxBoundries.x, maxBoundries.y, maxBoundries.z);
 	this->forceBoundries = true;
 }
 
 void Camera::DisableBoundries()
 {
 	this->forceBoundries = false;
+}
+
+void Camera::FollowMesh( iMesh* target )
+{
+	this->followTarget = dynamic_cast<Mesh*>(target);
 }

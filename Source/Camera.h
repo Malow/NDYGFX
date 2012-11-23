@@ -5,9 +5,10 @@
 #include "GraphicsEngineParameters.h"
 #include "Mesh.h"
 #include "CursorControl.h"
+#include "iCamera.h"
 
 
-class Camera
+class Camera : public iCamera
 {
 protected:
 	D3DXMATRIX view;
@@ -24,7 +25,7 @@ protected:
 	float angleX;
 	float angleY;
 
-	void moveToTerrain();
+	void MoveToTerrain();
 	void MoveToFollowPosition();
 
 	float speed;
@@ -43,55 +44,50 @@ public:
 	Camera(HWND g_hWnd, GraphicsEngineParams params);
 	virtual ~Camera();
 
+
+	/* Inherited from iCamera */
+	virtual Vector3 GetPosition();
+	virtual void SetPosition(Vector3 pos);
+	virtual void Move(Vector3 moveBy);
+
+	virtual void MoveForward(float diff) = 0;
+	virtual void MoveBackward(float diff) = 0;
+	virtual void MoveLeft(float diff) = 0;
+	virtual void MoveRight(float diff) = 0;
+
+	virtual Vector3 GetForward();
+	virtual void SetForward(Vector3 forward);
+	virtual void LookAt(Vector3 target);
+	virtual Vector3 GetUpVector();
+	virtual void SetUpVector(Vector3 up);
+
+	virtual void Update(float delta);
+
+	virtual void SetSpeed(float speed) { this->speed = speed; }
+	virtual float GetSpeed() const { return this->speed; }
+	virtual void SetSensitivity(float sens) { this->sensitivity = sens; }
+	virtual float GetSensitivity() const { return this->sensitivity; }
+
+	virtual void SetBoundries(Vector3 minBoundries, Vector3 maxBoundries);
+	virtual void DisableBoundries();
+	
+	//virtual void WalkOnTerrain(iTerrain* terrain) { this->terrain = terrain; }
+	virtual void StopWalkingOnTerrain() { this->terrain = NULL; }
+	virtual void FollowMesh(iMesh* target);
+	virtual void StopFollowingMesh() { this->followTarget = NULL; }
+	virtual void SetDistanceFromTarget(float distance) { this->DistanceFromTarget = distance; }
+	virtual float GetDistanceFromTarget() const { return this->DistanceFromTarget; }
+
+	/* Not inherited */
 	D3DXMATRIX GetViewMatrix();
 	D3DXMATRIX GetProjectionMatrix();
 
-	D3DXVECTOR3 getPosition();
-	float getPosX();
-	float getPosY();
-	float getPosZ();
+	D3DXVECTOR3 GetPositionD3DX() const { return this->pos; }
+	D3DXVECTOR3 GetForwardD3DX() const { return this->forward; }
+	void SetPosition(D3DXVECTOR3 pos) { this->pos = pos; }
+	void LookAt(D3DXVECTOR3 at) { this->LookAt(Vector3(pos.x, pos.y, pos.z)); }
 
-
-	void setPosition(D3DXVECTOR3 pos);
-	void setPosX(float x);
-	void setPosY(float y);
-	void setPosZ(float z);
-
-	D3DXVECTOR3 getForward();
-	void setForward(D3DXVECTOR3 forward);
-	void LookAt(D3DXVECTOR3 target);
-
-	virtual void update(float delta);
-	virtual void updateSpecific(float delta) = 0;
-
-	D3DXVECTOR3 getUpVector();
-	void setUpVector(D3DXVECTOR3 up);
-
-
-	// Movement related
-	void move(D3DXVECTOR3 moveBy);
-
-	virtual void moveForward(float diff) = 0;
-	virtual void moveBackward(float diff) = 0;
-	virtual void moveLeft(float diff) = 0;
-	virtual void moveRight(float diff) = 0;
-
-	void SetSpeed(float speed) { this->speed = speed; }
-	float GetSpeed() const { return this->speed; }
-	void SetSensitivity(float sens) { this->sensitivity = sens; }
-	float GetSensitivity() const { return this->sensitivity; }
-
-	void SetBoundries(D3DXVECTOR3 minBoundries, D3DXVECTOR3 maxBoundries);
-	void DisableBoundries();
-
-	// Terrain/Mesh interaction
-	void WalkOnTerrain(Terrain* terrain) { this->terrain = terrain; }
-	void StopWalkingOnTerrain() { this->terrain = NULL; }
-	void FollowMesh(Mesh* target) { this->followTarget = target; }
-	void StopFollowingMesh() { this->followTarget = NULL; }
-	void SetDistanceFromTarget(float distance) { this->DistanceFromTarget = distance; }
-	float GetDistanceFromTarget() const { return this->DistanceFromTarget; }
-
+	virtual void UpdateSpecific(float delta) = 0;
 };
 
 #endif
