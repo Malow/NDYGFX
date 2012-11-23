@@ -16,7 +16,7 @@ RTSCamera::~RTSCamera()
 	
 }
 
-void RTSCamera::updateSpecific(float delta)
+void RTSCamera::UpdateSpecific(float delta)
 {
 	POINT p;
 	if(GetCursorPos(&p))
@@ -59,22 +59,22 @@ void RTSCamera::updateSpecific(float delta)
 	}
 }
 
-void RTSCamera::moveForward(float diff)
+void RTSCamera::MoveForward(float diff)
 {
 	this->pos.z += ((float)diff/100) * this->speed;
 }
 
-void RTSCamera::moveBackward(float diff)
+void RTSCamera::MoveBackward(float diff)
 {
 	this->pos.z -= ((float)diff/100) * this->speed;
 }
 
-void RTSCamera::moveLeft(float diff)
+void RTSCamera::MoveLeft(float diff)
 {
 	this->pos.x -= ((float)diff/100) * this->speed;
 }
 
-void RTSCamera::moveRight(float diff)
+void RTSCamera::MoveRight(float diff)
 {
 	this->pos.x += ((float)diff/100) * this->speed;
 }

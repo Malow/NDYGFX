@@ -352,9 +352,9 @@ float GraphicsEngineImp::Update()
 	this->dx->Update(diff);
 
 	std::string txt = "FPS: " + MaloW::convertNrToString((float)this->fpsLast) + " - "; 
-	txt += "Camera Pos: " + MaloW::convertNrToString(this->dx->GetCamera()->getPosition().x) + " " + 
-		MaloW::convertNrToString(this->dx->GetCamera()->getPosition().y) + " " + 
-		MaloW::convertNrToString(this->dx->GetCamera()->getPosition().z) + "    -    Triangle Count: " + MaloW::convertNrToString((float)this->dx->GetTriangleCount());
+	txt += "Camera Pos: " + MaloW::convertNrToString(this->dx->GetCamera()->GetPosition().x) + " " + 
+		MaloW::convertNrToString(this->dx->GetCamera()->GetPosition().y) + " " + 
+		MaloW::convertNrToString(this->dx->GetCamera()->GetPosition().z) + "    -    Triangle Count: " + MaloW::convertNrToString((float)this->dx->GetTriangleCount());
 
 	SetWindowText(this->hWnd, txt.c_str());
 
@@ -557,4 +557,9 @@ iLight* GraphicsEngineImp::CreateLight( Vector3 pos )
 void GraphicsEngineImp::DeleteLight( iLight* light )
 {
 	this->DeleteLight(dynamic_cast<Light*>(light));
+}
+
+iCamera* GraphicsEngineImp::GetCamera() const
+{
+	return this->GetCam();
 }

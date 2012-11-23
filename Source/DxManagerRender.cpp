@@ -6,7 +6,7 @@ HRESULT DxManager::Update(float deltaTime)
 {
 	// update subsystems
 	//ps.update(deltaTime);
-	this->camera->update(deltaTime);				// Moved to Life below since deltaTime isnt needed
+	this->camera->Update(deltaTime);				// Moved to Life below since deltaTime isnt needed
 
 	return S_OK;
 }
