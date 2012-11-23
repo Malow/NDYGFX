@@ -1,6 +1,8 @@
 #include "Text.h"
 
-Text::Text(std::string text, D3DXVECTOR2 position, float size)
+using namespace std;
+
+Text::Text(string text, D3DXVECTOR2 position, float size)
 {
 	this->text = text;
 	this->ToUpper();
@@ -34,4 +36,34 @@ Text::~Text()
 
 	if(this->font)
 		delete this->font;
+}
+
+void Text::SetText( const char* text )
+{
+	this->text = string(text);
+}
+
+const char* Text::GetText() const
+{
+	return this->text.c_str();
+}
+
+void Text::SetPosition( Vector2 pos )
+{
+	this->position = D3DXVECTOR2(pos.x, pos.y);
+}
+
+Vector2 Text::GetPosition() const
+{
+	return Vector2(this->position.x, this->position.y);
+}
+
+void Text::SetSize( float size )
+{
+	this->size = size;
+}
+
+float Text::GetSize() const
+{
+	return this->size;
 }

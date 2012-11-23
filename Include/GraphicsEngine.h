@@ -13,6 +13,7 @@
 #include "iMesh.h"
 #include "iLight.h"
 #include "iImage.h"
+#include "iText.h"
 
 extern "C"
 {
@@ -33,6 +34,8 @@ extern "C"
 		virtual iImage* CreateImage(Vector2 pos, Vector2 dimensions, const char* texture) = 0;
 		virtual void DeleteImage(iImage* delImg) = 0;
 
+		virtual iText* CreateText(const char* text, Vector2 pos, float size, const char* fontTexturePath) = 0;
+		virtual void DeleteText(iText* deltxt) = 0;
 	};
 
 	
@@ -50,8 +53,7 @@ extern "C"
 
 	void CreateSkyBox(string texture);
 
-	Text* CreateText(string text, D3DXVECTOR2 position, float size, string fontTexturePath);
-	bool DeleteText(Text* delText);
+
 
 	GraphicsEngineParams GetEngineParameters() const { return this->parameters; }
 

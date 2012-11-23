@@ -2,6 +2,7 @@
 
 #include <string>
 #include "DirectX.h"
+#include "iText.h"
 
 struct Font
 {
@@ -19,7 +20,7 @@ struct Font
 	}
 };
 
-class Text
+class Text : public iText
 {
 private:
 	std::string text;
@@ -33,16 +34,16 @@ public:
 	Text(std::string text, D3DXVECTOR2 position, float size);
 	virtual ~Text();
 	
-	inline void SetText(std::string newText) { this->text = newText; this->ToUpper(); }
-	inline const std::string& GetText() const { return this->text; }
-	inline void AppendText(std::string app) { this->text += app; this->ToUpper(); }
-	void DeleteFromEnd(unsigned int CharsToDel);
-	inline void SetPosition(D3DXVECTOR2 pos) { this->position = pos; }
-	inline D3DXVECTOR2 GetPosition() const { return this->position; }
-	inline void SetSize(float size) { this->size = size; }
-	inline float GetSize() const { return this->size; }
-	inline void SetFont(Font* newFont) { this->font = newFont; }
-	inline Font* GetFont() const { return this->font; }
+	virtual void SetText(const char* text);
+	virtual const char* GetText() const;
+	virtual void AppendText(const char* app);
+	virtual void DeleteFromEnd(unsigned int CharsToDel);
+	virtual void SetPosition(Vector2 pos);
+	virtual Vector2 GetPosition() const;
+	virtual void SetSize(float size);
+	virtual float GetSize() const;
+	void SetFont(Font* newFont) { this->font = newFont; }
+	Font* GetFont() const { return this->font; }
 	
 };
 
