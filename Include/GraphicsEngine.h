@@ -15,6 +15,7 @@
 #include "iImage.h"
 #include "iText.h"
 #include "iAnimatedMesh.h"
+#include "iCamera.h"
 
 extern "C"
 {
@@ -40,6 +41,8 @@ extern "C"
 
 		virtual iMesh* CreateStaticMesh(const char* filename, const Vector3& pos) = 0;
 		virtual iAnimatedMesh* CreateAnimatedMesh(const char* filename, const Vector3& pos) = 0;
+
+		virtual iCamera* GetCamera() const = 0;
 
 		virtual float Update() = 0;
 	};
@@ -68,7 +71,6 @@ extern "C"
 	bool isRunning();
 	void StartRendering() { this->dx->StartRender = true; }
 
-	Camera* GetCamera() const { return this->cam; } //{ return this->dx->GetCamera(); }
 	MaloW::KeyListener* GetKeyListener() const { return this->kl; }
 	HWND GetWindowHandle() const { return this->hWnd; }
 
@@ -78,12 +80,12 @@ extern "C"
 
 
 	WRAPPER:
-	StaticMesh*	-alex DONE
-	AnimatedMesh* -alex DONE
+	StaticMesh*	-alex
+	AnimatedMesh* -alex
 	Light* -malow	DONE
 	Terrain* -alex
 	Image* -malow	DONE
-	Text* -malow
+	Text* -malow	DONE
 	Camera* -malow
 	MaloW::KeyListener* -malow
 	GraphicsEngineParams		--- Done
