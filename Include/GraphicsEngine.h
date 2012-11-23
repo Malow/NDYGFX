@@ -40,6 +40,8 @@ extern "C"
 
 		virtual iMesh* CreateStaticMesh(const char* filename, const Vector3& pos) = 0;
 		virtual iAnimatedMesh* CreateAnimatedMesh(const char* filename, const Vector3& pos) = 0;
+
+		virtual float Update() = 0;
 	};
 
 	/*
@@ -76,8 +78,8 @@ extern "C"
 
 
 	WRAPPER:
-	StaticMesh*	-alex
-	AnimatedMesh* -alex
+	StaticMesh*	-alex DONE
+	AnimatedMesh* -alex DONE
 	Light* -malow	DONE
 	Terrain* -alex
 	Image* -malow	DONE

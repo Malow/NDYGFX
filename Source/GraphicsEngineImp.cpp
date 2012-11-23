@@ -13,7 +13,7 @@ int GraphicsEngineParams::windowHeight = 768;
 bool GraphicsEngineParams::Maximized = true;
 int GraphicsEngineParams::ShadowMapSettings = 0;
 int GraphicsEngineParams::FXAAQuality = 0;
-CameraType GraphicsEngineParams::CamType = FPS;
+CameraType GraphicsEngineParams::CamType = RTS;
 
 GraphicsEngineImp::GraphicsEngineImp(GraphicsEngineParams params, HINSTANCE hInstance, int nCmdShow) :
 	GraphicsEngine()

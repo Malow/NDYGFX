@@ -111,8 +111,6 @@ void SSAO::Init(ID3D11Device* device, ID3D11DeviceContext* deviceContext)
 	// view saves a reference.
 	if ( tex ) delete tex, tex=0;
 
-
-
 	//**old**
 	//TextureManager texMgr = TextureManager();
 	//texMgr.Init(device, deviceContext);
