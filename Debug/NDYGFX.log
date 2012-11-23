@@ -1,0 +1,82 @@
+﻿Build started 2012-11-23 10:16:54.
+     1>Project "C:\Users\Administrator\Desktop\NotDeadYet\NDYGFX\NDYGFX.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D DLL_EXPORT /D WIN32 /D _DEBUG /D _WINDOWS /D _USRDLL /D _WINDLL /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt Source\Camera.cpp Source\DxManager.cpp Source\GraphicsEngine.cpp Source\GraphicsEngineImp.cpp
+         GraphicsEngineImp.cpp
+     1>c:\users\administrator\desktop\notdeadyet\ndygfx\source\graphicsengineimp.cpp(224): error C2259: 'StaticMesh' : cannot instantiate abstract class
+                 due to following members:
+                 'void iMesh::SetPosition(const Vector3 &)' : is abstract
+                 c:\users\administrator\desktop\notdeadyet\ndygfx\include\imesh.h(35) : see declaration of 'iMesh::SetPosition'
+                 'void iMesh::SetQuaternion(const Vector4 &)' : is abstract
+                 c:\users\administrator\desktop\notdeadyet\ndygfx\include\imesh.h(36) : see declaration of 'iMesh::SetQuaternion'
+                 'void iMesh::MoveBy(const Vector3 &)' : is abstract
+                 c:\users\administrator\desktop\notdeadyet\ndygfx\include\imesh.h(37) : see declaration of 'iMesh::MoveBy'
+                 'void iMesh::Rotate(const Vector4 &)' : is abstract
+                 c:\users\administrator\desktop\notdeadyet\ndygfx\include\imesh.h(39) : see declaration of 'iMesh::Rotate'
+                 'void iMesh::Rotate(const Vector3 &)' : is abstract
+                 c:\users\administrator\desktop\notdeadyet\ndygfx\include\imesh.h(38) : see declaration of 'iMesh::Rotate'
+                 'void iMesh::RotateAxis(const Vector3 &,float)' : is abstract
+                 c:\users\administrator\desktop\notdeadyet\ndygfx\include\imesh.h(40) : see declaration of 'iMesh::RotateAxis'
+                 'void iMesh::Scale(const Vector3 &)' : is abstract
+                 c:\users\administrator\desktop\notdeadyet\ndygfx\include\imesh.h(41) : see declaration of 'iMesh::Scale'
+     1>c:\users\administrator\desktop\notdeadyet\ndygfx\source\graphicsengineimp.cpp(240): error C2259: 'StaticMesh' : cannot instantiate abstract class
+                 due to following members:
+                 'void iMesh::SetPosition(const Vector3 &)' : is abstract
+                 c:\users\administrator\desktop\notdeadyet\ndygfx\include\imesh.h(35) : see declaration of 'iMesh::SetPosition'
+                 'void iMesh::SetQuaternion(const Vector4 &)' : is abstract
+                 c:\users\administrator\desktop\notdeadyet\ndygfx\include\imesh.h(36) : see declaration of 'iMesh::SetQuaternion'
+                 'void iMesh::MoveBy(const Vector3 &)' : is abstract
+                 c:\users\administrator\desktop\notdeadyet\ndygfx\include\imesh.h(37) : see declaration of 'iMesh::MoveBy'
+                 'void iMesh::Rotate(const Vector4 &)' : is abstract
+                 c:\users\administrator\desktop\notdeadyet\ndygfx\include\imesh.h(39) : see declaration of 'iMesh::Rotate'
+                 'void iMesh::Rotate(const Vector3 &)' : is abstract
+                 c:\users\administrator\desktop\notdeadyet\ndygfx\include\imesh.h(38) : see declaration of 'iMesh::Rotate'
+                 'void iMesh::RotateAxis(const Vector3 &,float)' : is abstract
+                 c:\users\administrator\desktop\notdeadyet\ndygfx\include\imesh.h(40) : see declaration of 'iMesh::RotateAxis'
+                 'void iMesh::Scale(const Vector3 &)' : is abstract
+                 c:\users\administrator\desktop\notdeadyet\ndygfx\include\imesh.h(41) : see declaration of 'iMesh::Scale'
+     1>c:\users\administrator\desktop\notdeadyet\ndygfx\source\graphicsengineimp.cpp(250): error C2259: 'AnimatedMesh' : cannot instantiate abstract class
+                 due to following members:
+                 'void iMesh::SetPosition(const Vector3 &)' : is abstract
+                 c:\users\administrator\desktop\notdeadyet\ndygfx\include\imesh.h(35) : see declaration of 'iMesh::SetPosition'
+                 'void iMesh::SetQuaternion(const Vector4 &)' : is abstract
+                 c:\users\administrator\desktop\notdeadyet\ndygfx\include\imesh.h(36) : see declaration of 'iMesh::SetQuaternion'
+                 'void iMesh::MoveBy(const Vector3 &)' : is abstract
+                 c:\users\administrator\desktop\notdeadyet\ndygfx\include\imesh.h(37) : see declaration of 'iMesh::MoveBy'
+                 'void iMesh::Rotate(const Vector4 &)' : is abstract
+                 c:\users\administrator\desktop\notdeadyet\ndygfx\include\imesh.h(39) : see declaration of 'iMesh::Rotate'
+                 'void iMesh::Rotate(const Vector3 &)' : is abstract
+                 c:\users\administrator\desktop\notdeadyet\ndygfx\include\imesh.h(38) : see declaration of 'iMesh::Rotate'
+                 'void iMesh::RotateAxis(const Vector3 &,float)' : is abstract
+                 c:\users\administrator\desktop\notdeadyet\ndygfx\include\imesh.h(40) : see declaration of 'iMesh::RotateAxis'
+                 'void iMesh::Scale(const Vector3 &)' : is abstract
+                 c:\users\administrator\desktop\notdeadyet\ndygfx\include\imesh.h(41) : see declaration of 'iMesh::Scale'
+     1>c:\users\administrator\desktop\notdeadyet\ndygfx\source\graphicsengineimp.cpp(265): error C2259: 'Terrain' : cannot instantiate abstract class
+                 due to following members:
+                 'void iMesh::SetPosition(const Vector3 &)' : is abstract
+                 c:\users\administrator\desktop\notdeadyet\ndygfx\include\imesh.h(35) : see declaration of 'iMesh::SetPosition'
+                 'void iMesh::SetQuaternion(const Vector4 &)' : is abstract
+                 c:\users\administrator\desktop\notdeadyet\ndygfx\include\imesh.h(36) : see declaration of 'iMesh::SetQuaternion'
+                 'void iMesh::MoveBy(const Vector3 &)' : is abstract
+                 c:\users\administrator\desktop\notdeadyet\ndygfx\include\imesh.h(37) : see declaration of 'iMesh::MoveBy'
+                 'void iMesh::Rotate(const Vector4 &)' : is abstract
+                 c:\users\administrator\desktop\notdeadyet\ndygfx\include\imesh.h(39) : see declaration of 'iMesh::Rotate'
+                 'void iMesh::Rotate(const Vector3 &)' : is abstract
+                 c:\users\administrator\desktop\notdeadyet\ndygfx\include\imesh.h(38) : see declaration of 'iMesh::Rotate'
+                 'void iMesh::RotateAxis(const Vector3 &,float)' : is abstract
+                 c:\users\administrator\desktop\notdeadyet\ndygfx\include\imesh.h(40) : see declaration of 'iMesh::RotateAxis'
+                 'void iMesh::Scale(const Vector3 &)' : is abstract
+                 c:\users\administrator\desktop\notdeadyet\ndygfx\include\imesh.h(41) : see declaration of 'iMesh::Scale'
+     1>c:\users\administrator\desktop\notdeadyet\ndygfx\source\graphicsengineimp.cpp(521): error C2143: syntax error : missing ';' before '}'
+         GraphicsEngine.cpp
+     1>c:\users\administrator\desktop\notdeadyet\ndygfx\source\graphicsengine.cpp : fatal error C1033: cannot open program database 'c:\users\administrator\desktop\notdeadyet\ndygfx\debug\vc110.pdb'
+         DxManager.cpp
+     1>c:\users\administrator\desktop\notdeadyet\ndygfx\source\dxmanager.cpp : fatal error C1033: cannot open program database 'c:\users\administrator\desktop\notdeadyet\ndygfx\debug\vc110.idb'
+         Camera.cpp
+     1>c:\users\administrator\desktop\notdeadyet\ndygfx\source\camera.cpp : fatal error C1033: cannot open program database 'c:\users\administrator\desktop\notdeadyet\ndygfx\debug\vc110.pdb'
+         Generating Code...
+     1>Done Building Project "C:\Users\Administrator\Desktop\NotDeadYet\NDYGFX\NDYGFX.vcxproj" (Build target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:02.96
