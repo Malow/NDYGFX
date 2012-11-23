@@ -1,6 +1,6 @@
 #include "Mesh.h"	
 
-Mesh::Mesh(D3DXVECTOR3 pos) : iMesh(Vector3(pos.x,pos.y,pos.z))
+Mesh::Mesh(D3DXVECTOR3 pos)
 {
 	this->specialColor = NULL_COLOR;
 	this->usingInvisibilityEffect = false;
@@ -113,26 +113,16 @@ void Mesh::UseInvisibilityEffect(bool use)
 {
 	this->usingInvisibilityEffect = use;
 }
-/*
-void Mesh::SetTransparency(float transparency)
-{
-	if(transparency < 0.0f)
-	{
-		this->transparency = 0.0f;
-	}
-	else if(transparency > 1.0f)
-	{
-		this->transparency = 1.0f;
-	}
-	else
-	{
-		this->transparency = transparency;
-	}
-}*/
+
 void Mesh::SetPosition(D3DXVECTOR3 pos)
 { 
 	this->pos = pos;
 	this->RecreateWorldMatrix();
+}
+
+void Mesh::SetPosition( const Vector3& pos )
+{
+	this->SetPosition( D3DXVECTOR3(pos.x,pos.y,pos.z) );
 }
 
 void Mesh::SetQuaternion(D3DXQUATERNION quat)
@@ -141,10 +131,20 @@ void Mesh::SetQuaternion(D3DXQUATERNION quat)
 	this->RecreateWorldMatrix();
 }
 
+void Mesh::SetQuaternion( const Vector4& quat )
+{
+	this->SetQuaternion( D3DXQUATERNION(quat.x,quat.y,quat.z,quat.w) );
+}
+
 void Mesh::MoveBy(D3DXVECTOR3 moveby)
 { 
 	this->pos += moveby; 
 	this->RecreateWorldMatrix();
+}
+
+void Mesh::MoveBy( const Vector3& moveby )
+{
+	this->MoveBy( D3DXVECTOR3(moveby.x,moveby.y,moveby.z) );
 }
 
 void Mesh::Rotate(D3DXVECTOR3 radians)
@@ -155,10 +155,20 @@ void Mesh::Rotate(D3DXVECTOR3 radians)
 	this->RecreateWorldMatrix();
 }
 
+void Mesh::Rotate( const Vector3& radians )
+{
+	this->Rotate( D3DXVECTOR3(radians.x,radians.y,radians.z) );
+}
+
 void Mesh::Rotate(D3DXQUATERNION quat)
 {
 	D3DXQuaternionMultiply(&this->rotQuat, &this->rotQuat, &quat);
 	this->RecreateWorldMatrix();
+}
+
+void Mesh::Rotate( const Vector4& quat )
+{
+	this->Rotate( D3DXQUATERNION(quat.x,quat.y,quat.z,quat.w) );
 }
 
 void Mesh::RotateAxis(D3DXVECTOR3 around, float angle)
@@ -170,12 +180,22 @@ void Mesh::RotateAxis(D3DXVECTOR3 around, float angle)
 	this->RecreateWorldMatrix();
 }
 
+void Mesh::RotateAxis( const Vector3& around, float angle )
+{
+	this->RotateAxis( D3DXVECTOR3(around.x,around.y,around.z), angle );
+}
+
 void Mesh::Scale(D3DXVECTOR3 scale)
 {
 	this->scale.x *= scale.x;
 	this->scale.y *= scale.y;
 	this->scale.z *= scale.z;
 	this->RecreateWorldMatrix();
+}
+
+void Mesh::Scale( const Vector3& scale )
+{
+	this->Scale( D3DXVECTOR3(scale.x,scale.y,scale.z) );
 }
 
 void Mesh::Scale(float scale)

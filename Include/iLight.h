@@ -13,8 +13,8 @@ extern "C"
 	class DECLDIR iLight
 	{	
 	public:
-		iLight();
-		virtual ~iLight();
+		iLight() {};
+		virtual ~iLight() {};
 
 		virtual void SetColor(Vector3 col) = 0;
 		virtual Vector3 GetColor() const = 0;
