@@ -50,8 +50,6 @@ public:
 	float GetIntensity() const;
 	bool IsUsingShadowMap() const;
 
-
-
 	/* Not accessible from outside */
 	HRESULT InitShadowMap(ID3D11Device* g_Device, int quality);
 	D3DXMATRIX GetViewProjMatrix();

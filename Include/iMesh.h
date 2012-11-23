@@ -26,12 +26,13 @@ extern "C"
 	class DECLDIR iMesh
 	{	
 	public:
-		iMesh(Vector3 pos);
-		virtual ~iMesh();
+		iMesh() {};
+		virtual ~iMesh() {};
 
+		// Special Color
 		virtual void SetSpecialColor(COLOR specialColor) = 0;
-		/*! Sets the level of transparency. Range is [0,1]. */
-		//void SetTransparency(float transparency);
+		virtual COLOR GetSpecialColor() const = 0;
+
 		virtual void SetPosition(const Vector3& pos) = 0;
 		virtual void SetQuaternion(const Vector4& quat) = 0;
 		virtual void MoveBy(const Vector3& moveby) = 0;
@@ -40,7 +41,6 @@ extern "C"
 		virtual void RotateAxis(const Vector3& around, float angle) = 0;
 		virtual void Scale(const Vector3& scale) = 0;
 		virtual void Scale(float scale) = 0;
-
 		virtual Vector3 GetPosition() const = 0;
 		virtual Vector3 GetRotation() const = 0;
 		virtual Vector3 GetScaling() const = 0;

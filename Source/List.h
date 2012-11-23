@@ -159,7 +159,7 @@ namespace MaloW
 	template <typename T>
 	T& List<T>::elementAt(int pos) const
 	{
-		T data;
+		T* data;
 		if(pos > this->nrOfNodes)
 			pos = this->nrOfNodes;
 		if(pos < 1)
@@ -170,9 +170,9 @@ namespace MaloW
 		{
 			for(int i = 0; i < pos-1; i++)
 				e = e->next;
-			data = e->data;
+			data = &e->data;
 		}
-		return data;
+		return *data;
 	}
 
 	template <typename T>

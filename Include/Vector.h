@@ -3,7 +3,8 @@
 
 #include <math.h>
 
-// Edit 16:36 by Alexivan - Removed DX dependencies
+// Edit 2012-11-18 by Alexivan - Removed DX dependencies
+// Edit 2012-11-23 by Alexivan - Added DX Conversions
 
 class Vector2
 {
@@ -162,6 +163,9 @@ public:
 	{
 		return Vector3(1.0f/this->x, 1.0f/this->y, 1.0f/this->z);
 	}
+#ifdef D3DVECTOR_DEFINED
+	operator D3DXVECTOR3 () const { return D3DXVECTOR3(x,y,z); }
+#endif
 };
 
 
@@ -174,6 +178,10 @@ public:
 	{
 
 	}
+
+#ifdef D3DVECTOR_DEFINED
+	operator D3DXVECTOR4 () const { return D3DXVECTOR4(x,y,z,w); }
+#endif
 };
 
 
