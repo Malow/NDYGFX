@@ -131,7 +131,8 @@ void Camera::MoveToFollowPosition()
 {
 	if(this->followTarget)
 	{
-		this->pos = this->followTarget->GetPosition() - D3DXVECTOR3(0, -15, this->DistanceFromTarget);
+		Vector3 vec = this->followTarget->GetPosition() - Vector3(0, -15, this->DistanceFromTarget);
+		this->pos = D3DXVECTOR3(vec.x,vec.y,vec.z);
 	}
 }
 
