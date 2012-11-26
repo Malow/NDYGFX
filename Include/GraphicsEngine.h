@@ -29,8 +29,6 @@ extern "C"
 		GraphicsEngine() { };
 		virtual ~GraphicsEngine() { };
 
-		static GraphicsEngine* eng;
-
 		virtual iMesh* CreateMesh(const char* filename, const Vector3& pos) = 0;
 
 
@@ -76,24 +74,8 @@ extern "C"
 	// To do:
 	void LoadingScreen(string BackgroundTexture = "", string ProgressBarTexture = "", float FadeBlackInInTime = 0.0f, float FadeBlackInOutTime = 0.0f, float FadeBlackOutInTime = 0.0f, float FadeBlackOutOutTime = 0.0f);
 	HWND GetWindowHandle() const { return this->hWnd; }
-
-
-	EXTRAS:
-	Allow creation with HWND
-
-	WRAPPER:		ALL DONE
-	StaticMesh*	-alex - DONE
-	AnimatedMesh* -alex - DONE
-	Light* -malow	DONE
-	Terrain* -alex - DONE
-	Image* -malow	DONE
-	Text* -malow	DONE
-	Camera* -malow	DONE
-	MaloW::KeyListener* -malow	- DONE
-	GraphicsEngineParams		--- DONE
 	*/
 
 	DECLDIR GraphicsEngine* CreateGraphicsEngineInWindow(unsigned int hWnd, const char* configFile);
 	DECLDIR GraphicsEngine* CreateGraphicsEngine(unsigned int hInstance, const char* configFile);
-	DECLDIR GraphicsEngine* GetGraphicsEngine();
 }
