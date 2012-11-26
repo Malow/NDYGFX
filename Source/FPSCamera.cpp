@@ -57,17 +57,19 @@ void FPSCamera::UpdateSpecific(float delta)
 			//calc new up
 			//crossproduct between y-axis & forward vector
 			Vector3 yAxis = Vector3(0, 1, 0);
-			Vector3 tmpForward = Vector3();
+			Vector3 tmpForward = Vector3();//already normalized
 			tmpForward.x = this->forward.x;
 			tmpForward.y = this->forward.y; 
-			tmpForward.z = this->forward.z;
+			tmpForward.z = this->forward.z; 
 			Vector3 rightVec = yAxis.GetCrossProduct(tmpForward);
+			rightVec.normalize();
 			//crossproduct between forward & right vector 
 			Vector3 tmpUp = Vector3();
 			tmpUp = tmpForward.GetCrossProduct(rightVec);
 			this->up.x = tmpUp.x;
 			this->up.y = tmpUp.y;
 			this->up.z = tmpUp.z;
+			this->up = this->NormalizeVector(this->up);
 
 			POINT np;
 			np.x = this->params.windowWidth/2;
