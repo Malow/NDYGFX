@@ -17,6 +17,7 @@
     <ClInclude Include="Include\iImage.h" />
     <ClInclude Include="Include\iLight.h" />
     <ClInclude Include="Include\iMesh.h" />
+    <ClInclude Include="Include\iTerrain.h" />
     <ClInclude Include="Include\iText.h" />
     <ClInclude Include="Include\Vector.h" />
     <ClInclude Include="Source\AnimatedMesh.h" />
@@ -130,11 +131,12 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>
       </AdditionalIncludeDirectories>
       <PreprocessorDefinitions>DLL_EXPORT;WIN32;_DEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <DisableSpecificWarnings>4250;</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

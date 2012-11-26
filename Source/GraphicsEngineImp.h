@@ -110,10 +110,10 @@ public:
 	// GraphicsEngine Implementation
 	virtual iMesh* CreateStaticMesh(const char* filename, const Vector3& pos);
 	virtual iAnimatedMesh* CreateAnimatedMesh(const char* filename, const Vector3& pos);
+	virtual iTerrain* CreateTerrain(const Vector3& pos, const Vector3& dimensions, const char* texture, const char* heightMap, unsigned int vertexSize = 256);
 
 	AnimatedMesh* CreateAnimatedMesh(string filename, D3DXVECTOR3 pos);
 	void DeleteAnimatedMesh(AnimatedMesh* mesh) { this->dx->DeleteAnimatedMesh(mesh); }
-
 
 	Light* CreateLight(D3DXVECTOR3 pos, bool UseShadowMap = true);
 	void DeleteLight(Light* light) { this->dx->DeleteLight(light); }

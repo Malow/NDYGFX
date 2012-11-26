@@ -19,7 +19,7 @@ void Text::ToUpper()
 {
 	for(unsigned int i = 0; i < this->text.size(); i++)
 	{
-		this->text[i] = toupper(this->text[i]);
+		this->text[i] = (char)toupper(this->text[i]);
 	}
 }
 

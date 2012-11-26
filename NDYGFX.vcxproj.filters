@@ -142,6 +142,9 @@
     <ClInclude Include="Include\iCamera.h">
       <Filter>Source Files\Wrapper</Filter>
     </ClInclude>
+    <ClInclude Include="Include\iTerrain.h">
+      <Filter>Source Files\Wrapper</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\AnimatedMesh.cpp">

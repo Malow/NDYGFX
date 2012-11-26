@@ -277,6 +277,12 @@ Terrain* GraphicsEngineImp::CreateTerrain(D3DXVECTOR3 position, D3DXVECTOR3 dime
 	return terrain;
 }
 
+iTerrain* GraphicsEngineImp::CreateTerrain( const Vector3& pos, const Vector3& dimensions, const char* texture, const char* heightMap, unsigned int vertexSize /*= 256*/ )
+{
+	return CreateTerrain( D3DXVECTOR3(pos.x,pos.y,pos.z), D3DXVECTOR3(dimensions.x,dimensions.y,dimensions.z), std::string(texture), std::string(heightMap), vertexSize );
+}
+
+
 Image* GraphicsEngineImp::CreateImage(D3DXVECTOR2 position, D3DXVECTOR2 dimensions, string texture)
 {
 	Image* img = new Image(position, dimensions);
