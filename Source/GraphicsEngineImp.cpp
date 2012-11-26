@@ -47,6 +47,39 @@ GraphicsEngineImp::GraphicsEngineImp(GraphicsEngineParams params, HINSTANCE hIns
 	this->Start();
 }
 
+GraphicsEngineImp::GraphicsEngineImp(GraphicsEngineParams params, HWND hWnd, int nCmdShow) :
+	GraphicsEngine()
+{
+	this->parameters = params;
+	this->cam = NULL;
+	this->dx = NULL;
+	this->hInstance = NULL;
+	this->hWnd = NULL;
+
+	this->keepRunning = true;
+	this->loading = false;
+
+	LARGE_INTEGER li;
+	if(!QueryPerformanceFrequency(&li))
+		MaloW::Debug("QueryPerformanceFrequency Failed!, High resolution performance counter not available?");
+
+	this->PCFreq = float(li.QuadPart)/1000.0f;
+	QueryPerformanceCounter(&li);
+	this->prevTimeStamp = li.QuadPart;
+
+
+
+	this->prevFrameCount = 0;
+	this->fpsLast = 0;
+	this->fpsTimer = 0.0f;
+
+	this->hWnd = hWnd;
+	this->kl = new KeyListener(this->hWnd);
+	this->InitObjects();
+
+	this->Start();
+}
+
 GraphicsEngineImp::~GraphicsEngineImp()
 {
 	// Close self thread.
