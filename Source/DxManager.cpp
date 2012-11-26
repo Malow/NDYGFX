@@ -28,6 +28,7 @@ DxManager::DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam)
 	}
 
 	this->Shader_DeferredGeometry = NULL;
+	this->Shader_DeferredGeometryBlendMap = NULL;
 	this->Shader_DeferredLightning = NULL;
 	this->Shader_InvisibilityEffect = NULL;
 
@@ -48,6 +49,7 @@ DxManager::DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam)
 	this->TriangleCount = 0;
 
 	this->camera = cam;
+	this->terrain = NULL;
 	if(FAILED(this->Init()))
 		MaloW::Debug("Failed to init DxManager");
 
@@ -79,6 +81,9 @@ DxManager::~DxManager()
 
 	if(this->Shader_DeferredGeometry)
 		delete this->Shader_DeferredGeometry;
+
+	if(this->Shader_DeferredGeometryBlendMap)
+		delete this->Shader_DeferredGeometryBlendMap;
 
 	if(this->Shader_DeferredLightning)
 		delete this->Shader_DeferredLightning;
@@ -139,6 +144,8 @@ DxManager::~DxManager()
 	while(0 < this->images.size())
 		delete this->images.getAndRemove(0);
 
+	if(this->terrain) delete this->terrain; this->terrain = NULL;
+
 	while(0 < this->objects.size())
 		delete this->objects.getAndRemove(0);
 
@@ -152,6 +159,10 @@ DxManager::~DxManager()
 		delete this->texts.getAndRemove(0);
 }
 
+void DxManager::CreateTerrain(Terrain* terrain)
+{
+	//**TODO:implement**
+}
 void DxManager::CreateStaticMesh(StaticMesh* mesh)
 {
 	MaloW::Array<MeshStrip*>* strips = mesh->GetStrips();
