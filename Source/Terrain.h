@@ -3,27 +3,24 @@
 
 #include "Vertex.h"
 #include "StaticMesh.h"
+#include "iTerrain.h"
 #include <Vector.h>
 
-
-class Terrain : public StaticMesh
+class Terrain : public virtual StaticMesh, public virtual iTerrain
 {
 private:
 	int SIZE;
 	D3DXVECTOR3 dimensions;
 
 public:
-	//static const int SIZE = 256;
 
 	Terrain(D3DXVECTOR3 pos, D3DXVECTOR3 dimension, string texture, string heightmap, int vertexSize);
 	virtual ~Terrain();
 
-	bool LoadAndApplyHeightMap(string fileName);
-
-	void filter(int smootheness);
-	void calculateNormals();
-
-	float getYPositionAt(float x, float z);
+	virtual bool LoadAndApplyHeightMap(const char* fileName);
+	virtual void filter(unsigned int smootheness);
+	virtual void calculateNormals();
+	virtual float getYPositionAt(float x, float z);
 };
 
 #endif

@@ -85,7 +85,7 @@ public:
 	D3DXVECTOR3 GetPositionD3DX() const { return this->pos; }
 	D3DXVECTOR3 GetForwardD3DX() const { return this->forward; }
 	void SetPosition(D3DXVECTOR3 pos) { this->pos = pos; }
-	void LookAt(D3DXVECTOR3 at) { this->LookAt(Vector3(pos.x, pos.y, pos.z)); }
+	void LookAt(D3DXVECTOR3 at) { this->LookAt(Vector3(at.x, at.y, at.z)); }
 
 	virtual void UpdateSpecific(float delta) = 0;
 };

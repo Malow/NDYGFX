@@ -67,7 +67,7 @@ Terrain::Terrain(D3DXVECTOR3 pos, D3DXVECTOR3 dimension, string texture, string 
 
 	this->strips->add(strip);
 
-	this->LoadAndApplyHeightMap(heightmap);
+	this->LoadAndApplyHeightMap(heightmap.c_str());
 	this->filter(1);
 	this->calculateNormals();
 }
@@ -76,28 +76,25 @@ Terrain::~Terrain()
 {
 }
 
-bool Terrain::LoadAndApplyHeightMap(string fileName)
+bool Terrain::LoadAndApplyHeightMap(const char* fileName)
 {
-	if(fileName != "")
+	std::ifstream fin;
+	fin.open(fileName, ios_base::binary);
+	if(!fin)
 	{
-		std::ifstream fin;
-		fin.open(fileName.c_str(), ios_base::binary);
-		if(!fin)
-		{
-			MaloW::Debug("Heightmap for terrain could not be found");
-			return false;
-		}
+		MaloW::Debug("Heightmap for terrain could not be found");
+		return false;
+	}
 
-		std::vector<unsigned char> vertexHeights(this->SIZE*this->SIZE);
+	std::vector<unsigned char> vertexHeights(this->SIZE*this->SIZE);
 
-		fin.read((char *)&vertexHeights[0], (streamsize)vertexHeights.size());
-		fin.close();
+	fin.read((char *)&vertexHeights[0], (streamsize)vertexHeights.size());
+	fin.close();
 
-		Vertex* verts = this->strips->get(0)->getVerts();
-		for(int i = 0; i < (int)vertexHeights.size(); i++)
-		{
-			verts[i].pos.y *= (float)vertexHeights[i]/10;
-		}
+	Vertex* verts = this->strips->get(0)->getVerts();
+	for(int i = 0; i < (int)vertexHeights.size(); i++)
+	{
+		verts[i].pos.y *= (float)vertexHeights[i]/10;
 	}
 	return true;
 }
@@ -156,9 +153,9 @@ float Terrain::getYPositionAt(float x, float z)
 		return 10.0f;
 }
 
-void Terrain::filter(int smootheness)
+void Terrain::filter(unsigned int smootheness)
 {
-	for(int smoothe = 0; smoothe < smootheness; smoothe++)
+	for(unsigned int smoothe = 0; smoothe < smootheness; smoothe++)
 	{
 		Vertex** grid = new Vertex*[this->SIZE];
 		for(int i = 0; i < this->SIZE; i++)

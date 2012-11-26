@@ -16,7 +16,9 @@
 #include "iText.h"
 #include "iAnimatedMesh.h"
 #include "iCamera.h"
+#include "iTerrain.h"
 #include "iKeyListener.h"
+#include "iTerrain.h"
 
 extern "C"
 {
@@ -42,6 +44,7 @@ extern "C"
 
 		virtual iMesh* CreateStaticMesh(const char* filename, const Vector3& pos) = 0;
 		virtual iAnimatedMesh* CreateAnimatedMesh(const char* filename, const Vector3& pos) = 0;
+		virtual iTerrain* CreateTerrain(const Vector3& pos, const Vector3& dimensions, const char* texture, const char* heightMap, unsigned int vertexSize = 256) = 0;
 
 		virtual iCamera* GetCamera() const = 0;
 
@@ -74,7 +77,6 @@ extern "C"
 	bool isRunning();
 	void StartRendering() { this->dx->StartRender = true; }
 
-	
 	HWND GetWindowHandle() const { return this->hWnd; }
 
 
@@ -84,10 +86,10 @@ extern "C"
 	Allow creation with HWND
 
 	WRAPPER:
-	StaticMesh*	-alex
-	AnimatedMesh* -alex
+	StaticMesh*	-alex - DONE
+	AnimatedMesh* -alex - DONE
 	Light* -malow	DONE
-	Terrain* -alex	
+	Terrain* -alex - DONE
 	Image* -malow	DONE
 	Text* -malow	DONE
 	Camera* -malow	DONE
