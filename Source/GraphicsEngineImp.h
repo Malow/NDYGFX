@@ -100,6 +100,8 @@ public:
 	virtual iCamera* GetCamera() const;
 	virtual iKeyListener* GetKeyListener() const;
 
+	virtual float Update();
+
 
 	/*  Non-inherited functions */
 
@@ -141,8 +143,6 @@ public:
 
 	GraphicsEngineParams GetEngineParameters() const { return this->parameters; }
 
-	/*! Updates the Camera and takes care of all key-inputs and returns diff in milliseconds (47.0f as return = 47 ms, IE. NOT SECONDS) */
-	float Update();
 
 	/*! 
 	Takes control of the thread and renders a loading-screen with a progress bar. Returns once all objects that have been sent to load is loaded.

@@ -374,7 +374,7 @@ float GraphicsEngineImp::Update()
 
 	SetWindowText(this->hWnd, txt.c_str());
 
-	return diff;
+	return diff * 0.001f;	// Return in seconds
 }
 
 bool GraphicsEngineImp::isRunning()

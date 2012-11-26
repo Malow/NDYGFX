@@ -50,6 +50,7 @@ extern "C"
 
 		virtual iKeyListener* GetKeyListener() const = 0;
 
+		/*! Updates the Camera and takes care of all key-inputs and returns diff in seconds (ie. 0.000065f seconds) */
 		virtual float Update() = 0;
 	};
 
