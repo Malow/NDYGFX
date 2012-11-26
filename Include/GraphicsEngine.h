@@ -16,6 +16,7 @@
 #include "iText.h"
 #include "iAnimatedMesh.h"
 #include "iCamera.h"
+#include "iKeyListener.h"
 
 extern "C"
 {
@@ -44,6 +45,8 @@ extern "C"
 
 		virtual iCamera* GetCamera() const = 0;
 
+		virtual iKeyListener* GetKeyListener() const = 0;
+
 		virtual float Update() = 0;
 	};
 
@@ -71,24 +74,25 @@ extern "C"
 	bool isRunning();
 	void StartRendering() { this->dx->StartRender = true; }
 
-	MaloW::KeyListener* GetKeyListener() const { return this->kl; }
+	
 	HWND GetWindowHandle() const { return this->hWnd; }
 
 
 	EXTRAS:
 	SetParamater - To allow change of parameters after creation
 
+	Allow creation with HWND
 
 	WRAPPER:
 	StaticMesh*	-alex
 	AnimatedMesh* -alex
 	Light* -malow	DONE
-	Terrain* -alex
+	Terrain* -alex	
 	Image* -malow	DONE
 	Text* -malow	DONE
-	Camera* -malow
-	MaloW::KeyListener* -malow
-	GraphicsEngineParams		--- Done
+	Camera* -malow	DONE
+	MaloW::KeyListener* -malow	- DONE
+	GraphicsEngineParams		--- Half-done
 	*/
 
 	DECLDIR GraphicsEngine* CreateGraphicsEngineInWindow(unsigned int hWnd, const char* configFile);

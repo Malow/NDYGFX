@@ -142,6 +142,9 @@
     <ClInclude Include="Include\iCamera.h">
       <Filter>Source Files\Wrapper</Filter>
     </ClInclude>
+    <ClInclude Include="Source\KeyListener.h">
+      <Filter>Source Files\Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\AnimatedMesh.cpp">
@@ -252,5 +255,10 @@
     <ClCompile Include="Source\GraphicsEngine.cpp">
       <Filter>Source Files\Wrapper</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Include\iKeyListener.h">
+      <Filter>Source Files\Wrapper</Filter>
+    </Text>
   </ItemGroup>
 </Project>

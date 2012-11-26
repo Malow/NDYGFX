@@ -33,6 +33,7 @@
     <ClInclude Include="Source\GraphicsEngineImp.h" />
     <ClInclude Include="Source\GraphicsEngineParameters.h" />
     <ClInclude Include="Source\Image.h" />
+    <ClInclude Include="Source\KeyListener.h" />
     <ClInclude Include="Source\Light.h" />
     <ClInclude Include="Source\MaloWFileDebug.h" />
     <ClInclude Include="Source\Material.h" />
@@ -92,6 +93,9 @@
     <ClCompile Include="Source\Text.cpp" />
     <ClCompile Include="Source\TextureManager.cpp" />
     <ClCompile Include="Source\TRDCamera.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Include\iKeyListener.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{16B85208-D199-49A6-838A-8CDB50034E11}</ProjectGuid>

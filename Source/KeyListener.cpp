@@ -50,7 +50,7 @@ bool KeyListener::HasBeenPressedSinceLast(char key)
 	return retval;
 }*/
 
-D3DXVECTOR2 KeyListener::GetMousePosition() const
+Vector2 KeyListener::GetMousePosition() const
 {
 	D3DXVECTOR2 mp;
 	POINT p;
@@ -62,10 +62,10 @@ D3DXVECTOR2 KeyListener::GetMousePosition() const
 			mp.y = (float)p.y;
 		}
 	}
-	return mp;
+	return Vector2(mp.x, mp.y);
 }
 
-void KeyListener::SetMousePosition(D3DXVECTOR2 mousePos)
+void KeyListener::SetMousePosition(Vector2 mousePos)
 {
 	POINT np;
 	np.x = (long)mousePos.x;

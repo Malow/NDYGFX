@@ -4,6 +4,7 @@
 #include <windows.h>
 #include "DirectX.h"
 #include "Process.h"
+#include "iKeyListener.h"
 
 /*
 This class can either be set a notifier to which it will send keypresses / releases as events.
@@ -13,64 +14,63 @@ virtual void KeyReleased(char key) { };
 In that case it needs to be set as the keylistener in the MaloWEngineParams
 */
 
-namespace MaloW
+
+class KeyPressedEvent : public MaloW::ProcessEvent
 {
-	class KeyPressedEvent : public MaloW::ProcessEvent
-	{
-	private:
-		WPARAM key;
-		bool pressed;
+private:
+	WPARAM key;
+	bool pressed;
 
-	public:
-		KeyPressedEvent(WPARAM key, bool pressed) { this->key = key; this->pressed = pressed; }
-		virtual ~KeyPressedEvent() { }
-		WPARAM GetKey() const { return this->key; }
-		bool GetPressed() const { return this->pressed; }
-	};
+public:
+	KeyPressedEvent(WPARAM key, bool pressed) { this->key = key; this->pressed = pressed; }
+	virtual ~KeyPressedEvent() { }
+	WPARAM GetKey() const { return this->key; }
+	bool GetPressed() const { return this->pressed; }
+};
 
-	class MouseClickEvent : public MaloW::ProcessEvent
-	{
-	private:
-		int button;
-		bool pressed;
+class MouseClickEvent : public MaloW::ProcessEvent
+{
+private:
+	int button;
+	bool pressed;
 
-	public:
-		MouseClickEvent(int button, bool pressed) { this->button = button; this->pressed = pressed; }
-		virtual ~MouseClickEvent() {}
-		int GetButton() const { return this->button; }
-		bool GetPressed() const { return this->pressed; }
-	};
+public:
+	MouseClickEvent(int button, bool pressed) { this->button = button; this->pressed = pressed; }
+	virtual ~MouseClickEvent() {}
+	int GetButton() const { return this->button; }
+	bool GetPressed() const { return this->pressed; }
+};
 
 	
 
-	class KeyListener
-	{
-	private:
-		bool keys[256];
-		bool mouse[50]; // Support 50 buttons
-		MaloW::Process* notifier;
-		HWND hwnd;
+class KeyListener : public iKeyListener
+{
+private:
+	bool keys[256];
+	bool mouse[50]; // Support 50 buttons
+	MaloW::Process* notifier;
+	HWND hwnd;
 
-	public:
-		KeyListener(HWND handle, MaloW::Process* notifier = NULL);
-		virtual ~KeyListener() { }
+public:
+	KeyListener(HWND handle, MaloW::Process* notifier = NULL);
+	virtual ~KeyListener() { }
 
-		void KeyDown(WPARAM param);
-		void KeyUp(WPARAM param);
+	virtual void KeyDown(WPARAM param);
+	virtual void KeyUp(WPARAM param);
 
-		void MouseDown(int button);
-		void MouseUp(int button);
+	virtual void MouseDown(int button);
+	virtual void MouseUp(int button);
 
-		bool IsPressed(char key);
-		bool IsClicked(int button);
-		//bool HasBeenPressedSinceLast(char NotYetImplemented) { }
+	virtual bool IsPressed(char key);
+	virtual bool IsClicked(int button);
+	//bool HasBeenPressedSinceLast(char NotYetImplemented) { }
 
-		/*! Returns the mouse-position relative to the window (excluding borders) */
-		D3DXVECTOR2 GetMousePosition() const;
+	/*! Returns the mouse-position relative to the window (excluding borders) */
+	virtual Vector2 GetMousePosition() const;
 
-		/*! Sets the mouse-position relative to the window (excluding borders) */
-		void SetMousePosition(D3DXVECTOR2 mousePos);
-	};
-}
+	/*! Sets the mouse-position relative to the window (excluding borders) */
+	virtual void SetMousePosition(Vector2 mousePos);
+};
+
 
 #endif

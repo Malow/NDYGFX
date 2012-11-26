@@ -41,6 +41,7 @@ GraphicsEngineImp::GraphicsEngineImp(GraphicsEngineParams params, HINSTANCE hIns
 	this->fpsLast = 0;
 	this->fpsTimer = 0.0f;
 	
+	this->kl = new KeyListener(this->hWnd);
 	this->InitWindow(hInstance, nCmdShow);
 
 	this->Start();
@@ -64,12 +65,23 @@ GraphicsEngineImp::~GraphicsEngineImp()
 
 LRESULT CALLBACK GraphicsEngineImp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	MaloW::KeyListener* kl = NULL;
+	KeyListener* kl = NULL;
 
 	//TODO: Input
 	//if(GraphicsEngineImp* ge = GetGraphicsEngine())
 		//kl = ge->GetKeyListener();
 
+
+	if(message == WM_CREATE)
+	{
+		kl = ((GraphicsEngineImp*)((LPCREATESTRUCT)lParam)->lpCreateParams)->GetKeyList();
+		SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)kl);
+	}
+	else
+	{
+		kl = (KeyListener*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
+	}
+	
 	PAINTSTRUCT ps;
 	HDC hdc;
 
@@ -100,12 +112,12 @@ LRESULT CALLBACK GraphicsEngineImp::WndProc(HWND hWnd, UINT message, WPARAM wPar
 		case WM_KEYUP:
 			if(kl)
 				kl->KeyUp(wParam);
-
+			/*
 		case WM_PAINT:
 			hdc = BeginPaint(hWnd, &ps);
 			EndPaint(hWnd, &ps);
 			break;
-
+			*/
 		case WM_DESTROY:
 			PostQuitMessage(0);
 			break;
@@ -174,14 +186,13 @@ HRESULT GraphicsEngineImp::InitWindow(HINSTANCE hInstance, int nCmdShow)
 	RECT rc = { 0, 0, this->parameters.windowWidth, this->parameters.windowHeight };
 	if(this->parameters.Maximized)
 	{
-		
 		AdjustWindowRectEx(&rc, WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_POPUP | WS_VISIBLE, FALSE, WS_EX_APPWINDOW | WS_EX_WINDOWEDGE);
-		this->hWnd = CreateWindowEx(WS_EX_APPWINDOW | WS_EX_WINDOWEDGE, "GraphicsEngine", "GraphicsEngine - Direct3D 11.0", WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_POPUP | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, NULL, NULL, this->hInstance, NULL);
+		this->hWnd = CreateWindowEx(WS_EX_APPWINDOW | WS_EX_WINDOWEDGE, "GraphicsEngine", "GraphicsEngine - Direct3D 11.0", WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_POPUP | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, NULL, NULL, this->hInstance, this);
 	}
 	else
 	{
 		AdjustWindowRect( &rc, WS_OVERLAPPEDWINDOW, FALSE );
-		this->hWnd = CreateWindow("GraphicsEngine", "GraphicsEngine - Direct3D 11.0", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, NULL, NULL, this->hInstance, NULL);
+		this->hWnd = CreateWindow("GraphicsEngine", "GraphicsEngine - Direct3D 11.0", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, NULL, NULL, this->hInstance, this);
 	}
 	if(!this->hWnd)
 		return E_FAIL;
@@ -198,7 +209,6 @@ HRESULT GraphicsEngineImp::InitWindow(HINSTANCE hInstance, int nCmdShow)
 void GraphicsEngineImp::InitObjects()
 {
 	this->dx = new DxManager(this->hWnd, this->parameters, this->cam);
-	this->kl = new MaloW::KeyListener(this->hWnd);
 
 	if(this->parameters.CamType == FPS)
 	{
@@ -562,4 +572,9 @@ void GraphicsEngineImp::DeleteLight( iLight* light )
 iCamera* GraphicsEngineImp::GetCamera() const
 {
 	return this->GetCam();
+}
+
+iKeyListener* GraphicsEngineImp::GetKeyListener() const
+{
+	return this->GetKeyList();
 }

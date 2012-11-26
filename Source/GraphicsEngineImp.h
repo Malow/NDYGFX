@@ -61,7 +61,7 @@ private:
 	DxManager* dx;
 	HINSTANCE hInstance;
 	HWND hWnd;
-	MaloW::KeyListener* kl;
+	KeyListener* kl;
 	Camera* cam;
 
 	int fpsLast;
@@ -98,6 +98,9 @@ public:
 	virtual void DeleteText(iText* deltxt);
 
 	virtual iCamera* GetCamera() const;
+	virtual iKeyListener* GetKeyListener() const;
+
+
 	/*  Non-inherited functions */
 
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -153,7 +156,7 @@ public:
 
 	// Get's
 	Camera* GetCam() const { return this->cam; } //{ return this->dx->GetCamera(); }
-	MaloW::KeyListener* GetKeyListener() const { return this->kl; }
+	KeyListener* GetKeyList() const { return this->kl; }
 	HWND GetWindowHandle() const { return this->hWnd; }
 
 	void CreateSmokeEffect() { this->dx->CreateSmokeEffect(); }
