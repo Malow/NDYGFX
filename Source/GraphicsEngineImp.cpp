@@ -35,8 +35,6 @@ GraphicsEngineImp::GraphicsEngineImp(GraphicsEngineParams params, HINSTANCE hIns
 	QueryPerformanceCounter(&li);
 	this->prevTimeStamp = li.QuadPart;
 
-
-
 	this->prevFrameCount = 0;
 	this->fpsLast = 0;
 	this->fpsTimer = 0.0f;
@@ -66,11 +64,6 @@ GraphicsEngineImp::~GraphicsEngineImp()
 LRESULT CALLBACK GraphicsEngineImp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	KeyListener* kl = NULL;
-
-	//TODO: Input
-	//if(GraphicsEngineImp* ge = GetGraphicsEngine())
-		//kl = ge->GetKeyListener();
-
 
 	if(message == WM_CREATE)
 	{
