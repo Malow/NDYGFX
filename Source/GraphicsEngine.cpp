@@ -6,7 +6,7 @@ DECLDIR GraphicsEngine* CreateGraphicsEngineInWindow(unsigned int hWnd, const ch
 {
 	GraphicsEngineParams GEP;
 	GEP.LoadFromFile(configFile);
-	GraphicsEngine* eng = new GraphicsEngineImp(GEP, 0, 1);	/// TO DO CHANGE THIS SO THAT IT WORKS WITH C#
+	GraphicsEngine* eng = new GraphicsEngineImp(GEP, (HWND)hWnd, 1);	/// TO DO CHANGE THIS SO THAT IT WORKS WITH C#
 	return eng;
 }
 
