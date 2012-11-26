@@ -65,7 +65,7 @@ Vector2 KeyListener::GetMousePosition() const
 	return Vector2(mp.x, mp.y);
 }
 
-void KeyListener::SetMousePosition(Vector2 mousePos)
+void KeyListener::SetMousePosition(const Vector2& mousePos)
 {
 	POINT np;
 	np.x = (long)mousePos.x;

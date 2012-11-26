@@ -1,42 +1,41 @@
-#include <windows.h>
-#include <GraphicsEngine.h>
-
-#ifdef _DEBUG
-#pragma comment(lib, "NDYGFXD.lib")
-#else
-#pragma comment(lib, "NDYGFX.lib")
-#endif
-
+#include "Graphics.h"
 
 
 int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nShowCmd )
 {
-	GraphicsEngine* gfx = CreateGraphicsEngine((unsigned int)hInstance, "config.cfg");
-	//gfx->CreateSkyBox("Media/skymap.dds");	// Reduces FPS from 130 to 40
+	if ( !GraphicsInit(hInstance) )
+		throw("Failed Creating Graphics Engine!");
 
-	gfx->CreateTerrain(Vector3(0, 0, 0), Vector3(100, 1, 100), "Media/TerrainTexture.png", "Media/TerrainHeightmap.raw");
+	GetGraphics()->CreateSkyBox("Media/skymap.dds");	// Reduces FPS from 130 to 40
+	iTerrain* t = GetGraphics()->CreateTerrain(Vector3(0, 0, 0), Vector3(100, 1, 100), "Media/TerrainTexture.png", "Media/TerrainHeightmap.raw");
+	
+	iLight* i = GetGraphics()->CreateLight( Vector3(0.0f, t->getYPositionAt(0.0f,0.0f)+10.0f, 0.0f) );
+	i->SetIntensity(1000.0f);
 
-	gfx->StartRendering();	// To force the engine to render a black image before it has loaded stuff to not get a clear-color rendered before skybox is in etc.
+	GetGraphics()->StartRendering();	// To force the engine to render a black image before it has loaded stuff to not get a clear-color rendered before skybox is in etc.
+	
 	bool go = true;
-	while(go)	// Returns true as long as ESC hasnt been pressed, if it's pressed the game engine will shut down itself (to be changed)
+	while(GetGraphics()->IsRunning() && go)
 	{
-		Sleep(1);
-		float diff = gfx->Update();	// Updates camera etc, does NOT render the frame, another process is doing that, so diff should be very low.
+		Sleep(10);
 
-		if(gfx->GetKeyListener()->IsPressed('W'))
-			gfx->GetCamera()->MoveForward(diff);
-		if(gfx->GetKeyListener()->IsPressed('A'))
-			gfx->GetCamera()->MoveLeft(diff);
-		if(gfx->GetKeyListener()->IsPressed('S'))	
-			gfx->GetCamera()->MoveBackward(diff);
-		if(gfx->GetKeyListener()->IsPressed('D'))	
-			gfx->GetCamera()->MoveRight(diff);
+		// Updates camera etc, does NOT render the frame, another process is doing that, so diff should be very low.
+		float diff = GetGraphics()->Update();	
 
-		if(gfx->GetKeyListener()->IsPressed(VK_ESCAPE))
+		if(GetGraphics()->GetKeyListener()->IsPressed('W'))
+			GetGraphics()->GetCamera()->MoveForward(diff);
+		if(GetGraphics()->GetKeyListener()->IsPressed('A'))
+			GetGraphics()->GetCamera()->MoveLeft(diff);
+		if(GetGraphics()->GetKeyListener()->IsPressed('S'))	
+			GetGraphics()->GetCamera()->MoveBackward(diff);
+		if(GetGraphics()->GetKeyListener()->IsPressed('D'))	
+			GetGraphics()->GetCamera()->MoveRight(diff);
+
+		if(GetGraphics()->GetKeyListener()->IsPressed(VK_ESCAPE))
 			go = false;
 	}
 	
-	delete gfx;
+	FreeGraphics();
 
 	return 0;
 }

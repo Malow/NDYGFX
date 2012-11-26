@@ -38,6 +38,9 @@ void FPSCamera::UpdateSpecific(float delta)
 			this->angleX += diffX * (this->sensitivity * 0.001f);
 			this->angleY += diffY * (this->sensitivity * 0.001f);
 			
+			fmod(angleX, 2 * PI);
+			fmod(angleY, 2 * PI);
+
 			if(angleY > PI/2)
 				angleY = PI/2;
 			if(angleY < -PI/2)
@@ -47,12 +50,12 @@ void FPSCamera::UpdateSpecific(float delta)
 				angleX -= 2*PI;
 			if(angleX < 0)
 				angleX += 2 * PI;
-			
+
 			this->forward.x = cos(angleX);
-			this->forward.z = sin(angleX);
 			this->forward.y = sin(angleY);
-			
-			this->forward = this->NormalizeVector(this->forward);
+			this->forward.z = sin(angleX);
+
+			//this->forward = this->NormalizeVector(this->forward);
 			
 			//calc new up
 			//crossproduct between y-axis & forward vector

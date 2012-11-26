@@ -393,15 +393,6 @@ HRESULT DxManager::Init()
 			MaloW::Debug("Failed to initiate Gbuffer SRV");
 	}
 
-	// Lava texture
-	D3DX11_IMAGE_LOAD_INFO loadInfo;
-	ZeroMemory(&loadInfo, sizeof(D3DX11_IMAGE_LOAD_INFO));
-	loadInfo.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	loadInfo.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	if(FAILED(D3DX11CreateShaderResourceViewFromFile(this->Dx_Device, "Media/LavaTexture.png", &loadInfo, NULL, &this->LavaTexture, NULL)))
-		MaloW::Debug("Failed to load texture Media/LavaTexture.png");
-	this->LavaWavesOuterRadius = 100.0f;
-
 	// Skybox shader
 	D3D11_INPUT_ELEMENT_DESC SkyboxTextureDesc[] = {
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },

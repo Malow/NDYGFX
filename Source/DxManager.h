@@ -154,7 +154,6 @@ private:
 	MaloW::Array<Image*> images;
 	MaloW::Array<Text*> texts;
 
-	ID3D11ShaderResourceView* LavaTexture;
 	float LavaWavesOuterRadius;
 	SkyBox* skybox;
 	Shader* Shader_Skybox;
@@ -250,9 +249,6 @@ public:
 
 	void SetCamera(Camera* cam) { this->camera = cam; }
 	Camera* GetCamera() const { return this->camera; }
-
-	void SetLavaWavesOuterRadius(float outerRadius) { this->LavaWavesOuterRadius = outerRadius; }
-	float GetLavaHeightAt(float x, float z);
 
 	int GetTriangleCount() { return this->TriangleCount; }
 };

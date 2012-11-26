@@ -69,7 +69,7 @@ public:
 	virtual Vector2 GetMousePosition() const;
 
 	/*! Sets the mouse-position relative to the window (excluding borders) */
-	virtual void SetMousePosition(Vector2 mousePos);
+	virtual void SetMousePosition(const Vector2& mousePos);
 };
 
 

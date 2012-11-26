@@ -38,7 +38,6 @@ DxManager::DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam)
 	this->Dx_DeferredTexture = NULL;
 	this->Dx_DeferredQuadRT = NULL;
 	this->Dx_DeferredSRV = NULL;
-	this->LavaTexture = NULL;
 	this->skybox = NULL;
 	this->Shader_Skybox = NULL;
 
@@ -101,9 +100,6 @@ DxManager::~DxManager()
 		this->Dx_DeferredQuadRT->Release();
 	if(this->Dx_DeferredSRV)
 		this->Dx_DeferredSRV->Release();
-
-	if(this->LavaTexture)
-		this->LavaTexture->Release();
 
 	if ( this->skybox ) delete this->skybox, this->skybox=0;
 
@@ -515,27 +511,4 @@ void DxManager::CreateSkyBox(string texture)
 	strip->SetRenderObject(ro);
 
 	this->skybox = sb;
-}
-
-float DxManager::GetLavaHeightAt(float x, float z) 
-{ 
-	float L = 10.0f;
-	float H = 10.0f;
-
-	D3DXVECTOR2 xzVec = D3DXVECTOR2(x, z);
-	float len = D3DXVec2Length(&xzVec); //length of xz-vector from origin to pixel in world space
-	float scale = this->LavaWavesOuterRadius / H; //outer radius of which to start decreasing the wave height, scale is used to scale the result between 0 and H.
-	if(len < this->LavaWavesOuterRadius)
-	{	
-		H -= (this->LavaWavesOuterRadius - len) / scale;
-	}
-
-	float timer = this->TimerAnimation * 0.001f;
-
-	float bias = sin(timer * 0.2f) * sin(x * 0.2f) * sin(z * 0.2f);
-	D3DXVECTOR3 temp = this->camera->GetPositionD3DX() - D3DXVECTOR3(x, L, z);
-	bias *= 1.2f - (D3DXVec3Length(&temp) / 100.0f);
-
-	float lavaHeight = L + bias;
-	return lavaHeight;
 }

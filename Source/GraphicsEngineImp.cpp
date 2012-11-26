@@ -99,51 +99,66 @@ LRESULT CALLBACK GraphicsEngineImp::WndProc(HWND hWnd, UINT message, WPARAM wPar
 	switch (message) 
 	{
 		case WM_KEYDOWN:
-			if(kl)
-				kl->KeyDown(wParam);
-			switch(wParam)
-			{
-				case VK_ESCAPE:
-					//PostQuitMessage(0);
-					break;
-			}
+			if (kl) kl->KeyDown(wParam);
 			break;
 		
 		case WM_KEYUP:
-			if(kl)
-				kl->KeyUp(wParam);
-			/*
-		case WM_PAINT:
-			hdc = BeginPaint(hWnd, &ps);
-			EndPaint(hWnd, &ps);
+			if (kl) kl->KeyUp(wParam);
 			break;
-			*/
+
 		case WM_DESTROY:
 			PostQuitMessage(0);
 			break;
 
-		// Mouse
+		// Left Mouse Pressed
 		case WM_LBUTTONDOWN:
-			if(kl)
-				kl->MouseDown(1);
-			break;
-		case WM_LBUTTONUP:
-			if(kl)
-				kl->MouseUp(1);
+			if (kl) kl->MouseDown(1);
 			break;
 
-		case WM_RBUTTONDOWN:
-			if(kl)
-				kl->MouseDown(2);
+		case WM_LBUTTONUP:
+			if (kl) kl->MouseUp(1);
 			break;
+
+		// Right Mouse Pressed
+		case WM_RBUTTONDOWN:
+			if (kl) kl->MouseDown(2);
+			break;
+
 		case WM_RBUTTONUP:
-			if(kl)
-				kl->MouseUp(2);
+			if (kl) kl->MouseUp(2);
+			break;
+
+		// TODO: Handle File Drops
+		case WM_DROPFILES:
+			break;
+
+		// TODO: Handle Resize
+		case WM_SIZE:
+			{
+				if ( wParam == SIZE_MAXHIDE )
+				{
+
+				}
+				else if ( wParam == SIZE_MAXIMIZED )
+				{
+
+				}
+				else if ( wParam == SIZE_MAXSHOW )
+				{
+
+				}
+				else if ( wParam == SIZE_MINIMIZED )
+				{
+
+				}
+				else if ( wParam == SIZE_RESTORED )
+				{
+
+				}
+			}
 			break;
 
 			/*
-		case WM_SIZING:
-			break;
 		case WM_MOVING:
 			break;
 		case WM_ENTERSIZEMOVE:
@@ -152,7 +167,6 @@ LRESULT CALLBACK GraphicsEngineImp::WndProc(HWND hWnd, UINT message, WPARAM wPar
 			break;
 			*/
 				
-
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);
 	}
@@ -168,7 +182,7 @@ HRESULT GraphicsEngineImp::InitWindow(HINSTANCE hInstance, int nCmdShow)
 	wcex.cbSize = sizeof(WNDCLASSEX);
 	wcex.style          = 0;//CS_HREDRAW | CS_VREDRAW;
 	wcex.lpfnWndProc    = this->WndProc;
-	wcex.cbClsExtra     = 0;	
+	wcex.cbClsExtra     = 0;
 	wcex.cbWndExtra     = 0;
 	wcex.hInstance      = this->hInstance;
 	wcex.hIcon          = LoadIcon(hInstance, "GameIcon.ico");
@@ -200,6 +214,7 @@ HRESULT GraphicsEngineImp::InitWindow(HINSTANCE hInstance, int nCmdShow)
 
 	ShowWindow(this->hWnd, nCmdShow);
 	MoveWindow(this->hWnd, 0, 0, rc.right - rc.left, rc.bottom - rc.top, false);
+	DragAcceptFiles(hWnd,true);
 
 	this->InitObjects();
 
@@ -346,6 +361,7 @@ float GraphicsEngineImp::Update()
 	{
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
+
 		if(msg.message == WM_QUIT)
 			this->keepRunning = false;
 	}
@@ -374,7 +390,7 @@ float GraphicsEngineImp::Update()
 
 	SetWindowText(this->hWnd, txt.c_str());
 
-	return diff * 0.001f;	// Return in seconds
+	return diff;	// Return in seconds
 }
 
 bool GraphicsEngineImp::IsRunning()

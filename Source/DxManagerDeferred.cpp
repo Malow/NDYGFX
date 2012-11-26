@@ -231,15 +231,10 @@ void DxManager::RenderDeferredPerPixel()
 	//ssao.fx:
 	this->ssao->PreRender(this->Shader_DeferredLightning, this->params, this->camera);
 
-	//lava.fx:
-	this->Shader_DeferredLightning->SetResource("LavaTexture", this->LavaTexture);
-	this->Shader_DeferredLightning->SetFloat("outerRadius", this->LavaWavesOuterRadius); 
-
 	this->Shader_DeferredLightning->Apply(0);
-
 	
 	this->Dx_DeviceContext->Draw(1, 0);
-	
+
 	
 	// Unbind resources:
 	this->Shader_DeferredLightning->SetResource("Texture", NULL);

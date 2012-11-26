@@ -28,8 +28,8 @@ extern "C"
 		iKeyListener() {};
 		virtual ~iKeyListener() {};
 
-		virtual void KeyDown(WPARAM param) = 0;
-		virtual void KeyUp(WPARAM param) = 0;
+		virtual void KeyDown(unsigned int param) = 0;
+		virtual void KeyUp(unsigned int param) = 0;
 
 		virtual void MouseDown(int button) = 0;
 		virtual void MouseUp(int button) = 0;
@@ -41,7 +41,7 @@ extern "C"
 		virtual Vector2 GetMousePosition() const = 0;
 
 		/*! Sets the mouse-position relative to the window (excluding borders) */
-		virtual void SetMousePosition(Vector2 mousePos) = 0;
+		virtual void SetMousePosition(const Vector2& mousePos) = 0;
 
 	};
 }
