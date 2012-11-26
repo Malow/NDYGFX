@@ -377,7 +377,7 @@ float GraphicsEngineImp::Update()
 	return diff * 0.001f;	// Return in seconds
 }
 
-bool GraphicsEngineImp::isRunning()
+bool GraphicsEngineImp::IsRunning()
 {
 	return this->keepRunning;
 }
@@ -423,14 +423,13 @@ void GraphicsEngineImp::Life()
 	}
 }
 
-void GraphicsEngineImp::CreateSkyBox(string texture)
+void GraphicsEngineImp::CreateSkyBox(const char* texture)
 {
-	this->dx->CreateSkyBox(texture);
+	this->dx->CreateSkyBox(string(texture));
 }
 
 void GraphicsEngineImp::LoadingScreen(string BackgroundTexture, string ProgressBarTexture, float FadeBlackInInTime, float FadeBlackInOutTime, float FadeBlackOutInTime, float FadeBlackOutOutTime)
 {
-	
 	this->Update();
 
 	Image* bg = NULL;
@@ -583,4 +582,9 @@ iCamera* GraphicsEngineImp::GetCamera() const
 iKeyListener* GraphicsEngineImp::GetKeyListener() const
 {
 	return this->GetKeyList();
+}
+
+iGraphicsEngineParams* GraphicsEngineImp::GetEngineParameters() const
+{
+	return &this->GetEngineParams();
 }

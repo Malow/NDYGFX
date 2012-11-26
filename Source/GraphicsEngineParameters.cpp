@@ -2,7 +2,7 @@
 #include "MaloWFileDebug.h"
 
 
-void GraphicsEngineParams::LoadFromeFile(const char* file)
+void GraphicsEngineParams::LoadFromFile(const char* file)
 {
 	std::ifstream in;
 	in.open(file);

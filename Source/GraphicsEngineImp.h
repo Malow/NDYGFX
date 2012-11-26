@@ -87,6 +87,9 @@ public:
 
 	/*  Inherited from interface  */
 	virtual iMesh* CreateMesh(const char* filename, const Vector3& pos);
+	virtual iMesh* CreateStaticMesh(const char* filename, const Vector3& pos);
+	virtual iAnimatedMesh* CreateAnimatedMesh(const char* filename, const Vector3& pos);
+	virtual iTerrain* CreateTerrain(const Vector3& pos, const Vector3& dimensions, const char* texture, const char* heightMap, unsigned int vertexSize = 256);
 
 	virtual iLight* CreateLight(Vector3 pos);
 	virtual void DeleteLight(iLight* light);
@@ -102,6 +105,14 @@ public:
 
 	virtual float Update();
 
+	virtual bool IsRunning();
+
+	virtual iGraphicsEngineParams* GetEngineParameters() const;
+
+	virtual void CreateSkyBox(const char* texture);
+
+	virtual void StartRendering() { this->dx->StartRender = true; }
+
 
 	/*  Non-inherited functions */
 
@@ -112,10 +123,6 @@ public:
 	StaticMesh* CreateStaticMesh(string filename, D3DXVECTOR3 pos, Material* material);
 	StaticMesh* CreateStaticMesh(string filename, D3DXVECTOR3 pos);
 
-	// GraphicsEngine Implementation
-	virtual iMesh* CreateStaticMesh(const char* filename, const Vector3& pos);
-	virtual iAnimatedMesh* CreateAnimatedMesh(const char* filename, const Vector3& pos);
-	virtual iTerrain* CreateTerrain(const Vector3& pos, const Vector3& dimensions, const char* texture, const char* heightMap, unsigned int vertexSize = 256);
 
 	AnimatedMesh* CreateAnimatedMesh(string filename, D3DXVECTOR3 pos);
 	void DeleteAnimatedMesh(AnimatedMesh* mesh) { this->dx->DeleteAnimatedMesh(mesh); }
@@ -123,8 +130,6 @@ public:
 	Light* CreateLight(D3DXVECTOR3 pos, bool UseShadowMap = true);
 	void DeleteLight(Light* light) { this->dx->DeleteLight(light); }
 	Terrain* CreateTerrain(D3DXVECTOR3 position, D3DXVECTOR3 dimension, std::string texture, string heightmap, int vertexSize = 256);
-
-	void CreateSkyBox(string texture);
 
 	/*! Stops rendering the Mesh and internally deletes it and the pointer will become NULL. Return depends on if the Mesh was sucessfully removed. */
 	void DeleteStaticMesh(StaticMesh* mesh) { this->dx->DeleteStaticMesh(mesh); }
@@ -141,7 +146,7 @@ public:
 
 
 
-	GraphicsEngineParams GetEngineParameters() const { return this->parameters; }
+	GraphicsEngineParams GetEngineParams() const { return this->parameters; }
 
 
 	/*! 
@@ -150,9 +155,6 @@ public:
 	created and being rendered in the background. */
 	void LoadingScreen(string BackgroundTexture = "", string ProgressBarTexture = "", float FadeBlackInInTime = 0.0f, float FadeBlackInOutTime = 0.0f, float FadeBlackOutInTime = 0.0f, float FadeBlackOutOutTime = 0.0f);
 
-
-	bool isRunning();
-	void StartRendering() { this->dx->StartRender = true; }
 
 	// Get's
 	Camera* GetCam() const { return this->cam; } //{ return this->dx->GetCamera(); }

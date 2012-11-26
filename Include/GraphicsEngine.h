@@ -19,6 +19,7 @@
 #include "iTerrain.h"
 #include "iKeyListener.h"
 #include "iTerrain.h"
+#include "iGraphicsEngineParams.h"
 
 extern "C"
 {
@@ -52,41 +53,35 @@ extern "C"
 
 		/*! Updates the Camera and takes care of all key-inputs and returns diff in seconds (ie. 0.000065f seconds) */
 		virtual float Update() = 0;
+
+		virtual bool IsRunning() = 0;
+
+		virtual iGraphicsEngineParams* GetEngineParameters() const = 0;
+
+		virtual void CreateSkyBox(const char* texture) = 0;
+
+		virtual void StartRendering() = 0;
 	};
 
 	/*
+	// Maybe ToDo in future:
 	StaticMesh* CreateStaticMesh(string filename, D3DXVECTOR3 pos, MaterialType material);
 	StaticMesh* CreateStaticMesh(string filename, D3DXVECTOR3 pos, Material* material);
 	StaticMesh* CreateStaticMesh(string filename, D3DXVECTOR3 pos);
 	void DeleteStaticMesh(StaticMesh* mesh) { this->dx->DeleteStaticMesh(mesh); }
-
 	AnimatedMesh* CreateAnimatedMesh(string filename, D3DXVECTOR3 pos);
 	void DeleteAnimatedMesh(AnimatedMesh* mesh) { this->dx->DeleteAnimatedMesh(mesh); }
 
-	Terrain* CreateTerrain(D3DXVECTOR3 position, D3DXVECTOR3 dimension, std::string texture, string heightmap, int vertexSize = 256);
 
-	void CreateSkyBox(string texture);
-
-
-
-	GraphicsEngineParams GetEngineParameters() const { return this->parameters; }
-
-	float Update();
-
+	// To do:
 	void LoadingScreen(string BackgroundTexture = "", string ProgressBarTexture = "", float FadeBlackInInTime = 0.0f, float FadeBlackInOutTime = 0.0f, float FadeBlackOutInTime = 0.0f, float FadeBlackOutOutTime = 0.0f);
-
-	bool isRunning();
-	void StartRendering() { this->dx->StartRender = true; }
-
 	HWND GetWindowHandle() const { return this->hWnd; }
 
 
 	EXTRAS:
-	SetParamater - To allow change of parameters after creation
-
 	Allow creation with HWND
 
-	WRAPPER:
+	WRAPPER:		ALL DONE
 	StaticMesh*	-alex - DONE
 	AnimatedMesh* -alex - DONE
 	Light* -malow	DONE
@@ -95,7 +90,7 @@ extern "C"
 	Text* -malow	DONE
 	Camera* -malow	DONE
 	MaloW::KeyListener* -malow	- DONE
-	GraphicsEngineParams		--- Half-done
+	GraphicsEngineParams		--- DONE
 	*/
 
 	DECLDIR GraphicsEngine* CreateGraphicsEngineInWindow(unsigned int hWnd, const char* configFile);

@@ -148,6 +148,9 @@
     <ClInclude Include="Source\KeyListener.h">
       <Filter>Source Files\Engine</Filter>
     </ClInclude>
+    <ClInclude Include="Include\iGraphicsEngineParams.h">
+      <Filter>Source Files\Wrapper</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\AnimatedMesh.cpp">

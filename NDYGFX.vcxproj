@@ -14,6 +14,7 @@
     <ClInclude Include="Include\GraphicsEngine.h" />
     <ClInclude Include="Include\iAnimatedMesh.h" />
     <ClInclude Include="Include\iCamera.h" />
+    <ClInclude Include="Include\iGraphicsEngineParams.h" />
     <ClInclude Include="Include\iImage.h" />
     <ClInclude Include="Include\iLight.h" />
     <ClInclude Include="Include\iMesh.h" />
