@@ -76,6 +76,8 @@ private:
 	HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow);
 	void InitObjects();
 
+	
+
 
 	float PCFreq;
 	__int64 prevTimeStamp;
@@ -86,8 +88,11 @@ public:
 	GraphicsEngineImp(GraphicsEngineParams params, HWND hWnd, int nCmdShow);
 	virtual ~GraphicsEngineImp();
 
+	static string specialString; // Used for Special stuff such as saving DropFiles path
+
 	/*  Inherited from interface  */
 	virtual iMesh* CreateMesh(const char* filename, const Vector3& pos);
+	virtual void DeleteMesh(iMesh* delMesh);
 	virtual iMesh* CreateStaticMesh(const char* filename, const Vector3& pos);
 	virtual iAnimatedMesh* CreateAnimatedMesh(const char* filename, const Vector3& pos);
 	virtual iTerrain* CreateTerrain(const Vector3& pos, const Vector3& dimensions, const char* texture, const char* heightMap, unsigned int vertexSize = 256);
@@ -114,7 +119,9 @@ public:
 
 	virtual void StartRendering() { this->dx->StartRender = true; }
 
+	virtual const char* GetSpecialString();
 
+	virtual void SetFPSMax(float maxFPS) { this->dx->SetFPSMAX(maxFPS); }
 	/*  Non-inherited functions */
 
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);

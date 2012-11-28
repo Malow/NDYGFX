@@ -505,6 +505,9 @@ void DxManager::RenderText()
 
 HRESULT DxManager::Render()
 {
+	if(this->RendererSleep > 0)
+		Sleep(this->RendererSleep);
+
 	// Timer
 	LARGE_INTEGER li;
 	QueryPerformanceCounter(&li);

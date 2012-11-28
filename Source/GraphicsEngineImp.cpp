@@ -15,6 +15,8 @@ int GraphicsEngineParams::ShadowMapSettings = 0;
 int GraphicsEngineParams::FXAAQuality = 0;
 CameraType GraphicsEngineParams::CamType = FPS;
 
+string GraphicsEngineImp::specialString = "";
+
 GraphicsEngineImp::GraphicsEngineImp(GraphicsEngineParams params, HINSTANCE hInstance, int nCmdShow) :
 	GraphicsEngine()
 {
@@ -34,8 +36,6 @@ GraphicsEngineImp::GraphicsEngineImp(GraphicsEngineParams params, HINSTANCE hIns
 	this->PCFreq = float(li.QuadPart)/1000.0f;
 	QueryPerformanceCounter(&li);
 	this->prevTimeStamp = li.QuadPart;
-
-
 
 	this->prevFrameCount = 0;
 	this->fpsLast = 0;
@@ -67,7 +67,6 @@ GraphicsEngineImp::GraphicsEngineImp(GraphicsEngineParams params, HWND hWnd, int
 	this->PCFreq = float(li.QuadPart)/1000.0f;
 	QueryPerformanceCounter(&li);
 	this->prevTimeStamp = li.QuadPart;
-
 
 
 	this->prevFrameCount = 0;
@@ -164,6 +163,21 @@ LRESULT CALLBACK GraphicsEngineImp::WndProc(HWND hWnd, UINT message, WPARAM wPar
 
 		// TODO: Handle File Drops
 		case WM_DROPFILES:
+			{
+			HDROP drop = (HDROP)wParam;
+			int nrOfFiles = DragQueryFile(drop, 0xFFFFFFFF, NULL, NULL);
+			if(nrOfFiles != 1)
+				MaloW::Debug("Multiple files not supported, you tried to drop " + MaloW::convertNrToString(nrOfFiles) + " files.");
+
+			TCHAR lpszFile[MAX_PATH] = {0};
+			lpszFile[0] = '\0';
+			if(DragQueryFile(drop, 0, lpszFile, MAX_PATH))
+			{
+				GraphicsEngineImp::specialString = string(lpszFile);
+			}
+			else
+				MaloW::Debug("Failed to load a droppped file.");
+			}
 			break;
 
 		// TODO: Handle Resize
@@ -637,4 +651,14 @@ iKeyListener* GraphicsEngineImp::GetKeyListener() const
 iGraphicsEngineParams* GraphicsEngineImp::GetEngineParameters() const
 {
 	return &this->GetEngineParams();
+}
+
+void GraphicsEngineImp::DeleteMesh( iMesh* delMesh )
+{
+	this->DeleteStaticMesh(dynamic_cast<StaticMesh*>(delMesh));
+}
+
+const char* GraphicsEngineImp::GetSpecialString()
+{
+	return this->specialString.c_str();
 }

@@ -199,6 +199,7 @@ private:
 	__int64 prevTimeStamp;
 
 	float TimerAnimation;
+	float RendererSleep;
 
 	void RenderForward();
 	//void RenderDeferredGeometryBlendMap(); //ev. TODO
@@ -255,6 +256,7 @@ public:
 	Camera* GetCamera() const { return this->camera; }
 
 	int GetTriangleCount() { return this->TriangleCount; }
+	void SetFPSMAX( float maxFPS );
 };
 
 #endif
