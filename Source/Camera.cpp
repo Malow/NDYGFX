@@ -15,6 +15,8 @@ Camera::Camera(HWND g_hWnd, GraphicsEngineParams params)
 	this->speed = 1.0f;
 	this->sensitivity = 1.0f;
 
+	this->updateCamera = true;
+
 	D3DXMatrixPerspectiveFovLH(&this->projection, (float)D3DX_PI * 0.45f, this->params.windowWidth / (float)this->params.windowHeight, 1.0f, 200.0f);
 }
 
@@ -107,27 +109,30 @@ void Camera::MoveToFollowPosition()
 
 void Camera::Update(float delta)
 {
-	if(GetForegroundWindow() == this->g_hWnd)
-		UpdateSpecific(delta);
-	
-	this->MoveToTerrain();
-	this->MoveToFollowPosition();
-	if(this->forceBoundries)
+	if(this->updateCamera)
 	{
-		if(this->pos.x < this->minBoundries.x)
-			this->pos.x = this->minBoundries.x;
-		else if(this->pos.x > this->maxBoundries.x)
-			this->pos.x = this->maxBoundries.x;
+		if(GetForegroundWindow() == this->g_hWnd)
+			UpdateSpecific(delta);
 
-		if(this->pos.y < this->minBoundries.y)
-			this->pos.y = this->minBoundries.y;
-		else if(this->pos.y > this->maxBoundries.y)
-			this->pos.y = this->maxBoundries.y;
+		this->MoveToTerrain();
+		this->MoveToFollowPosition();
+		if(this->forceBoundries)
+		{
+			if(this->pos.x < this->minBoundries.x)
+				this->pos.x = this->minBoundries.x;
+			else if(this->pos.x > this->maxBoundries.x)
+				this->pos.x = this->maxBoundries.x;
 
-		if(this->pos.z < this->minBoundries.z)
-			this->pos.z = this->minBoundries.z;
-		else if(this->pos.z > this->maxBoundries.z)
-			this->pos.z = this->maxBoundries.z;
+			if(this->pos.y < this->minBoundries.y)
+				this->pos.y = this->minBoundries.y;
+			else if(this->pos.y > this->maxBoundries.y)
+				this->pos.y = this->maxBoundries.y;
+
+			if(this->pos.z < this->minBoundries.z)
+				this->pos.z = this->minBoundries.z;
+			else if(this->pos.z > this->maxBoundries.z)
+				this->pos.z = this->maxBoundries.z;
+		}
 	}
 }
 

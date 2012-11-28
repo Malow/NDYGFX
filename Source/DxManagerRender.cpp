@@ -516,7 +516,9 @@ HRESULT DxManager::Render()
 	this->RenderShadowMap();
 
 	//this->RenderForward();
-	
+
+	this->RenderDeferredTerrain();
+
 	this->RenderDeferredGeometry();
 
 	this->RenderDeferredSkybox();

@@ -148,6 +148,7 @@ private:
 	long framecount;
 	GraphicsEngineParams params;
 	Camera* camera;
+	Terrain* terrain;
 	MaloW::Array<StaticMesh*> objects;
 	MaloW::Array<AnimatedMesh*> animations;
 
@@ -174,6 +175,7 @@ private:
 	ID3D11RenderTargetView* Dx_GbufferRTs[NrOfRenderTargets];
 	ID3D11ShaderResourceView* Dx_GbufferSRVs[NrOfRenderTargets];
 	Shader* Shader_DeferredGeometry;
+	Shader* Shader_DeferredGeometryBlendMap;
 	Shader* Shader_DeferredLightning;
 	Shader* Shader_InvisibilityEffect;
 
@@ -199,6 +201,8 @@ private:
 	float TimerAnimation;
 
 	void RenderForward();
+	//void RenderDeferredGeometryBlendMap(); //ev. TODO
+	void RenderDeferredTerrain();
 	void RenderDeferredGeometry();
 	void RenderDeferredPerPixel();
 	void RenderInvisibilityEffect();
@@ -230,7 +234,7 @@ public:
 	HRESULT Update(float deltaTime);
 
 	void CreateSmokeEffect();
-
+	void CreateTerrain(Terrain* terrain); //**TODO**
 	void CreateStaticMesh(StaticMesh* mesh);
 	void CreateAnimatedMesh(AnimatedMesh* mesh);
 	Object3D* createParticleObject(ParticleMesh* mesh);

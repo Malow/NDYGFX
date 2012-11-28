@@ -11,6 +11,9 @@
     <Filter Include="Source Files\Wrapper">
       <UniqueIdentifier>{d6808485-311e-48ce-896b-43162fb77dc8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Engine\Shaders">
+      <UniqueIdentifier>{a1c313c8-7463-4790-8fb3-8499cdabb027}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\AnimatedMesh.h">
@@ -266,5 +269,13 @@
     <Text Include="Include\iKeyListener.h">
       <Filter>Source Files\Wrapper</Filter>
     </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="WorkingDir\Shaders\DebugNormals.fx">
+      <Filter>Source Files\Engine\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="WorkingDir\Shaders\DeferredGeometryBlendMap.fx">
+      <Filter>Source Files\Engine\Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

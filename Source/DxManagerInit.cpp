@@ -219,7 +219,7 @@ HRESULT DxManager::Init()
 	}
 
 	
-	// Deferred Rendering Geo pass
+	// Deferred Rendering Geometry pass
 	D3D11_INPUT_ELEMENT_DESC DeferredGeometryDesc[] = {
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
@@ -233,6 +233,19 @@ HRESULT DxManager::Init()
 		return E_FAIL;
 	}
 
+	// Deferred Rendering Geometry blend map pass
+	D3D11_INPUT_ELEMENT_DESC DeferredGeometryBlendMapDesc[] = {
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
+	};
+	this->Shader_DeferredGeometryBlendMap = new Shader();
+	if(FAILED(this->Shader_DeferredGeometryBlendMap->Init(Dx_Device, Dx_DeviceContext, "Shaders/DeferredGeometryBlendMap.fx", DeferredGeometryBlendMapDesc, 4)))	// + on last if added above
+	{
+		MaloW::Debug("Failed to open DeferredGeometry.fx");
+		return E_FAIL;
+	}
 
 	// Deferred Rendering Geo pass for animated
 	D3D11_INPUT_ELEMENT_DESC DeferredGeometryDescAni[] = 

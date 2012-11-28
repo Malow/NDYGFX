@@ -37,6 +37,8 @@ protected:
 	D3DXVECTOR3 minBoundries;
 	D3DXVECTOR3 maxBoundries;
 	bool forceBoundries;
+
+	bool updateCamera;
 	
 	D3DXVECTOR3 NormalizeVector(D3DXVECTOR3 vec);
 
@@ -88,6 +90,8 @@ public:
 	void LookAt(D3DXVECTOR3 at) { this->LookAt(Vector3(at.x, at.y, at.z)); }
 
 	virtual void UpdateSpecific(float delta) = 0;
+
+	virtual void SetUpdateCamera(bool update) { this->updateCamera = update; }
 };
 
 #endif

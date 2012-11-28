@@ -99,6 +99,18 @@
   <ItemGroup>
     <Text Include="Include\iKeyListener.h" />
   </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="WorkingDir\Shaders\DebugNormals.fx">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">BasicTech</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="WorkingDir\Shaders\DeferredGeometryBlendMap.fx">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">DeferredGeometryBlendMapTech</EntryPointName>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+    </FxCompile>
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{16B85208-D199-49A6-838A-8CDB50034E11}</ProjectGuid>
     <RootNamespace>NDYGFX</RootNamespace>

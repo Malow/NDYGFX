@@ -5,6 +5,7 @@
 #include "DirectX.h"
 #include "Process.h"
 #include "iKeyListener.h"
+#include "CursorControl.h"
 
 /*
 This class can either be set a notifier to which it will send keypresses / releases as events.
@@ -70,6 +71,10 @@ public:
 
 	/*! Sets the mouse-position relative to the window (excluding borders) */
 	virtual void SetMousePosition(const Vector2& mousePos);
+
+	virtual void SetCursorVisibility(bool visi);
+
+	void SetHWND(HWND hWnd) { this->hwnd = hWnd; }
 };
 
 

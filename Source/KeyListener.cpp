@@ -103,3 +103,9 @@ bool KeyListener::IsClicked(int button)
 {
 	return this->mouse[button];
 }
+
+void KeyListener::SetCursorVisibility( bool visi )
+{
+	CursorControl cc;
+	cc.SetVisibility(visi);
+}

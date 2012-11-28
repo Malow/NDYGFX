@@ -1,6 +1,37 @@
 #include "DxManager.h"
 
 
+void DxManager::RenderDeferredTerrain()
+{
+	//**TODO:implement**
+
+	//Matrices
+	/*D3DXMATRIX world, view, proj, wvp, worldInverseTranspose;
+	view = this->camera->GetViewMatrix();
+	proj = this->camera->GetProjectionMatrix();
+
+	//Clear and set render target/depth
+	this->Dx_DeviceContext->OMSetRenderTargets(this->NrOfRenderTargets, this->Dx_GbufferRTs, this->Dx_DepthStencilView);
+	this->Dx_DeviceContext->RSSetViewports(1, &this->Dx_Viewport);
+
+	this->Dx_DeviceContext->ClearDepthStencilView(this->Dx_DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+
+	//Set texture RT
+	float clearColor1[4] = {0.5f, 0.71f, 1.0f, 1};
+	this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_GbufferRTs[0], clearColor1);
+	//Clear rest of the RTs
+	float clearColor2[4] = {-1.0f, -1.0f, -1.0f, -1.0f};
+	for(int i = 1; i < this->NrOfRenderTargets; i++)
+		this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_GbufferRTs[i], clearColor2);
+
+	//Set constant buffers
+	//Per frame
+	this->Shader_DeferredGeometry->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetPositionD3DX(), 1));
+	*/
+	
+
+}
+
 void DxManager::RenderDeferredGeometry()
 {
 	//Matrixes

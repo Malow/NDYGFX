@@ -31,6 +31,32 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 		if(GetGraphics()->GetKeyListener()->IsPressed('D'))	
 			GetGraphics()->GetCamera()->MoveRight(diff);
 
+		if(GetGraphics()->GetKeyListener()->IsPressed('Z'))	
+		{
+			GetGraphics()->GetKeyListener()->SetMousePosition(Vector2(
+				GetGraphics()->GetEngineParameters()->windowWidth / 2, 
+				GetGraphics()->GetEngineParameters()->windowHeight / 2));
+			GetGraphics()->GetCamera()->SetUpdateCamera(false);
+			GetGraphics()->GetKeyListener()->SetCursorVisibility(true);
+
+		}
+		if(GetGraphics()->GetKeyListener()->IsPressed('X'))	
+		{
+			GetGraphics()->GetKeyListener()->SetMousePosition(Vector2(
+				GetGraphics()->GetEngineParameters()->windowWidth / 2, 
+				GetGraphics()->GetEngineParameters()->windowHeight / 2));
+			GetGraphics()->GetCamera()->SetUpdateCamera(true);
+			GetGraphics()->GetKeyListener()->SetCursorVisibility(false);
+
+		}
+		if (GetGraphics()->GetKeyListener()->IsPressed('C'))
+		{
+			GetGraphics()->GetKeyListener()->SetMousePosition(Vector2(
+				GetGraphics()->GetEngineParameters()->windowWidth / 2, 
+				GetGraphics()->GetEngineParameters()->windowHeight / 2));
+		}
+
+
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_ESCAPE))
 			go = false;
 	}

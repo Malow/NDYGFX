@@ -49,5 +49,7 @@ extern "C"
 		virtual void StopFollowingMesh() = 0;
 		virtual void SetDistanceFromTarget(float distance) = 0;
 		virtual float GetDistanceFromTarget() const = 0;
+		
+		virtual void SetUpdateCamera(bool update) = 0;
 	};
 }

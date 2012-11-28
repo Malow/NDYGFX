@@ -41,6 +41,7 @@ GraphicsEngineImp::GraphicsEngineImp(GraphicsEngineParams params, HINSTANCE hIns
 	
 	this->kl = new KeyListener(this->hWnd);
 	this->InitWindow(hInstance, nCmdShow);
+	kl->SetHWND(this->hWnd); // Because of keylistener being created before the window
 
 	this->Start();
 }

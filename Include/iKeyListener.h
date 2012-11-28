@@ -43,5 +43,7 @@ extern "C"
 		/*! Sets the mouse-position relative to the window (excluding borders) */
 		virtual void SetMousePosition(const Vector2& mousePos) = 0;
 
+		virtual void SetCursorVisibility(bool visi) = 0;
+
 	};
 }
