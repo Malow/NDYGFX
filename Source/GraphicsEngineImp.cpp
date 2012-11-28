@@ -45,7 +45,7 @@ GraphicsEngineImp::GraphicsEngineImp(GraphicsEngineParams params, HINSTANCE hIns
 	this->Start();
 }
 
-GraphicsEngineImp::GraphicsEngineImp(GraphicsEngineParams params, HWND hWnd, int nCmdShow) :
+GraphicsEngineImp::GraphicsEngineImp(GraphicsEngineParams params, HWND hWnd) :
 	GraphicsEngine()
 {
 	this->parameters = params;
@@ -64,8 +64,6 @@ GraphicsEngineImp::GraphicsEngineImp(GraphicsEngineParams params, HWND hWnd, int
 	this->PCFreq = float(li.QuadPart)/1000.0f;
 	QueryPerformanceCounter(&li);
 	this->prevTimeStamp = li.QuadPart;
-
-
 
 	this->prevFrameCount = 0;
 	this->fpsLast = 0;

@@ -83,7 +83,7 @@ private:
 
 public:
 	GraphicsEngineImp(GraphicsEngineParams params, HINSTANCE hInstance, int nCmdShow);
-	GraphicsEngineImp(GraphicsEngineParams params, HWND hWnd, int nCmdShow);
+	GraphicsEngineImp(GraphicsEngineParams params, HWND hWnd);
 	virtual ~GraphicsEngineImp();
 
 	/*  Inherited from interface  */
