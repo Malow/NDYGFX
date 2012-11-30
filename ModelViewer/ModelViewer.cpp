@@ -143,6 +143,12 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 			toggleDelCache = true;
 
 
+		if(GetGraphics()->GetKeyListener()->IsPressed(VK_ADD))
+			GetGraphics()->GetCamera()->SetSpeed(GetGraphics()->GetCamera()->GetSpeed() + diff * 0.01f);
+		if(GetGraphics()->GetKeyListener()->IsPressed(VK_SUBTRACT))
+			GetGraphics()->GetCamera()->SetSpeed(GetGraphics()->GetCamera()->GetSpeed() - diff * 0.01f);
+
+
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_ESCAPE))
 			go = false;
 	}
