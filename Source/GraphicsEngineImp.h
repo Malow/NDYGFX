@@ -88,7 +88,7 @@ public:
 	GraphicsEngineImp(GraphicsEngineParams params, HWND hWnd);
 	virtual ~GraphicsEngineImp();
 
-	static string specialString; // Used for Special stuff such as saving DropFiles path
+	string specialString; // Used for Special stuff such as saving DropFiles path
 
 	/*  Inherited from interface  */
 	virtual iMesh* CreateMesh(const char* filename, const Vector3& pos);

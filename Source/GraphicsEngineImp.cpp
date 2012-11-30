@@ -15,7 +15,6 @@ int GraphicsEngineParams::ShadowMapSettings = 0;
 int GraphicsEngineParams::FXAAQuality = 0;
 CameraType GraphicsEngineParams::CamType = FPS;
 
-string GraphicsEngineImp::specialString = "";
 
 GraphicsEngineImp::GraphicsEngineImp(GraphicsEngineParams params, HINSTANCE hInstance, int nCmdShow) :
 	GraphicsEngine()
@@ -43,7 +42,7 @@ GraphicsEngineImp::GraphicsEngineImp(GraphicsEngineParams params, HINSTANCE hIns
 	
 	this->kl = new KeyListener(this->hWnd);
 	this->InitWindow(hInstance, nCmdShow);
-	kl->SetHWND(this->hWnd); // Because of keylistener being created before the window
+	kl->SetHWND(this->hWnd); // Because of key listener being created before the window
 
 	this->Start();
 }
@@ -93,50 +92,31 @@ GraphicsEngineImp::~GraphicsEngineImp()
 	if ( this->dx ) delete dx, dx=0;
 	if ( this->kl ) delete kl, kl=0;
 
-	//DestroyWindow(this->hWnd);
+	// DestroyWindow(this->hWnd); // Why is this commented out, Alex
 }
 
 LRESULT CALLBACK GraphicsEngineImp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	KeyListener* kl = NULL;
-
-	//TODO: Input
-	//if(GraphicsEngineImp* ge = GetGraphicsEngine())
-		//kl = ge->GetKeyListener();
-
+	GraphicsEngineImp* gfx = NULL;
 
 	if(message == WM_CREATE)
 	{
-		kl = ((GraphicsEngineImp*)((LPCREATESTRUCT)lParam)->lpCreateParams)->GetKeyList();
-		SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)kl);
+		gfx = (GraphicsEngineImp*)((LPCREATESTRUCT)lParam)->lpCreateParams;
+		SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)gfx);
 	}
 	else
 	{
-		kl = (KeyListener*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
+		gfx = (GraphicsEngineImp*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
 	}
-	
-	PAINTSTRUCT ps;
-	HDC hdc;
-
-	
-	/*
-	if((int)message == 534)
-		return 0;
-	if((int)message == 70)
-		return 0;
-	if((int)message == 71)
-		return 0;
-	MaloW::Debug(message);
-	*/
 
 	switch (message) 
 	{
 		case WM_KEYDOWN:
-			if (kl) kl->KeyDown(wParam);
+			if (gfx) gfx->GetKeyList()->KeyDown(wParam);
 			break;
 		
 		case WM_KEYUP:
-			if (kl) kl->KeyUp(wParam);
+			if (gfx) gfx->GetKeyList()->KeyUp(wParam);
 			break;
 
 		case WM_DESTROY:
@@ -145,20 +125,20 @@ LRESULT CALLBACK GraphicsEngineImp::WndProc(HWND hWnd, UINT message, WPARAM wPar
 
 		// Left Mouse Pressed
 		case WM_LBUTTONDOWN:
-			if (kl) kl->MouseDown(1);
+			if (gfx) gfx->GetKeyList()->MouseDown(1);
 			break;
 
 		case WM_LBUTTONUP:
-			if (kl) kl->MouseUp(1);
+			if (gfx) gfx->GetKeyList()->MouseUp(1);
 			break;
 
 		// Right Mouse Pressed
 		case WM_RBUTTONDOWN:
-			if (kl) kl->MouseDown(2);
+			if (gfx) gfx->GetKeyList()->MouseDown(2);
 			break;
 
 		case WM_RBUTTONUP:
-			if (kl) kl->MouseUp(2);
+			if (gfx) gfx->GetKeyList()->MouseUp(2);
 			break;
 
 		// TODO: Handle File Drops
@@ -173,7 +153,7 @@ LRESULT CALLBACK GraphicsEngineImp::WndProc(HWND hWnd, UINT message, WPARAM wPar
 			lpszFile[0] = '\0';
 			if(DragQueryFile(drop, 0, lpszFile, MAX_PATH))
 			{
-				GraphicsEngineImp::specialString = string(lpszFile);
+				gfx->specialString = string(lpszFile);
 			}
 			else
 				MaloW::Debug("Failed to load a droppped file.");

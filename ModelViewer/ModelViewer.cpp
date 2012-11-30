@@ -36,6 +36,7 @@ void deleteCache()
 		false,
 		0,
 		"" };
+
 	int ret = SHFileOperation(&file_op);
 	free(tempdir);
 }
@@ -103,8 +104,8 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 				GetGraphics()->GetEngineParameters()->windowHeight / 2));
 			GetGraphics()->GetCamera()->SetUpdateCamera(false);
 			GetGraphics()->GetKeyListener()->SetCursorVisibility(true);
-
 		}
+
 		if(GetGraphics()->GetKeyListener()->IsPressed('X'))	
 		{
 			GetGraphics()->GetKeyListener()->SetMousePosition(Vector2(
@@ -112,9 +113,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 				GetGraphics()->GetEngineParameters()->windowHeight / 2));
 			GetGraphics()->GetCamera()->SetUpdateCamera(true);
 			GetGraphics()->GetKeyListener()->SetCursorVisibility(false);
-
 		}
-
 
 		if(GetGraphics()->GetKeyListener()->IsPressed('C'))
 		{
