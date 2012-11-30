@@ -17,7 +17,7 @@ Camera::Camera(HWND g_hWnd, GraphicsEngineParams params)
 
 	this->updateCamera = true;
 
-	D3DXMatrixPerspectiveFovLH(&this->projection, (float)D3DX_PI * 0.45f, this->params.windowWidth / (float)this->params.windowHeight, 1.0f, 200.0f);
+	D3DXMatrixPerspectiveFovLH(&this->projection, (float)D3DX_PI * 0.45f, this->params.windowWidth / (float)this->params.windowHeight, 0.01f, 200.0f);
 }
 
 Camera::~Camera()
