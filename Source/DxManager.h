@@ -148,7 +148,7 @@ private:
 	long framecount;
 	GraphicsEngineParams params;
 	Camera* camera;
-	Terrain* terrain;
+	MaloW::Array<Terrain*> terrains; //terrain = sector data
 	MaloW::Array<StaticMesh*> objects;
 	MaloW::Array<AnimatedMesh*> animations;
 
@@ -202,8 +202,7 @@ private:
 	float RendererSleep;
 
 	void RenderForward();
-	//void RenderDeferredGeometryBlendMap(); //ev. TODO
-	void RenderDeferredTerrain();
+	void RenderTerrain(); 
 	void RenderDeferredGeometry();
 	void RenderDeferredPerPixel();
 	void RenderInvisibilityEffect();
@@ -235,8 +234,8 @@ public:
 	HRESULT Update(float deltaTime);
 
 	void CreateSmokeEffect();
-	void CreateTerrain(Terrain* terrain); //**TODO**
 	void CreateStaticMesh(StaticMesh* mesh);
+	void CreateTerrain(Terrain* terrain); //static mesh with blendmap and some extra variables
 	void CreateAnimatedMesh(AnimatedMesh* mesh);
 	Object3D* createParticleObject(ParticleMesh* mesh);
 	Light* CreateLight(D3DXVECTOR3 pos, bool UseShadowMap);

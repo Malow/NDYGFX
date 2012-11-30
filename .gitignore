@@ -7,3 +7,5 @@
 /WorkingDir/MaloWDebug.txt
 /WorkingDir/ModelViewer.vcxproj.user
 /ModelViewer/Release
+/*.psess
+/*.vsp

@@ -80,7 +80,7 @@ void Camera::SetUpVector(Vector3 up)
 void Camera::MoveToTerrain()
 {
 	if(this->terrain)
-		this->pos.y = this->terrain->getYPositionAt(this->pos.x, this->pos.z) + this->DistanceFromTarget;
+		this->pos.y = this->terrain->GetYPositionAt(this->pos.x, this->pos.z) + this->DistanceFromTarget;
 }
 
 void Camera::Move(Vector3 moveBy)

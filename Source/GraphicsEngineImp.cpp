@@ -322,17 +322,12 @@ Light* GraphicsEngineImp::CreateLight(D3DXVECTOR3 pos, bool UseShadowMap)
 	return this->dx->CreateLight(pos, UseShadowMap);
 }
 
-Terrain* GraphicsEngineImp::CreateTerrain(D3DXVECTOR3 position, D3DXVECTOR3 dimension, std::string texture, string heightmap, int vertexSize)
+iTerrain* GraphicsEngineImp::CreateTerrain(const Vector3& pos, const Vector3& scale, const unsigned int& size)
 {
-	Terrain* terrain = new Terrain(position, dimension, texture, heightmap, vertexSize);
-	this->dx->CreateStaticMesh(terrain);
+	Terrain* terrain = new Terrain(D3DXVECTOR3(pos.x, pos.y, pos.z), D3DXVECTOR3(scale.x, scale.y, scale.z), size);
+	this->dx->CreateTerrain(terrain);
 
 	return terrain;
-}
-
-iTerrain* GraphicsEngineImp::CreateTerrain( const Vector3& pos, const Vector3& dimensions, const char* texture, const char* heightMap, unsigned int vertexSize /*= 256*/ )
-{
-	return CreateTerrain( D3DXVECTOR3(pos.x,pos.y,pos.z), D3DXVECTOR3(dimensions.x,dimensions.y,dimensions.z), std::string(texture), std::string(heightMap), vertexSize );
 }
 
 

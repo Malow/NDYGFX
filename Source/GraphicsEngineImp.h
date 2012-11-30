@@ -95,8 +95,8 @@ public:
 	virtual void DeleteMesh(iMesh* delMesh);
 	virtual iMesh* CreateStaticMesh(const char* filename, const Vector3& pos);
 	virtual iAnimatedMesh* CreateAnimatedMesh(const char* filename, const Vector3& pos);
-	virtual iTerrain* CreateTerrain(const Vector3& pos, const Vector3& dimensions, const char* texture, const char* heightMap, unsigned int vertexSize = 256);
-
+	virtual iTerrain* CreateTerrain(const Vector3& pos, const Vector3& scale, const unsigned int& size);
+	
 	virtual iLight* CreateLight(Vector3 pos);
 	virtual void DeleteLight(iLight* light);
 

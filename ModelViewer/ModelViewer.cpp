@@ -48,7 +48,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 
 	MaloW::ClearDebug();
 	GetGraphics()->CreateSkyBox("Media/skymap.dds");	// Reduces FPS from 130 to 40
-	iTerrain* t = GetGraphics()->CreateTerrain(Vector3(0, 0, 0), Vector3(100, 1, 100), "Media/TerrainTexture.png", "Media/TerrainHeightmap.raw");
+	//iTerrain* t = GetGraphics()->CreateTerrain(Vector3(0, 0, 0), Vector3(100, 1, 100), "Media/TerrainTexture.png", "Media/TerrainHeightmap.raw");
 	GetGraphics()->GetCamera()->SetPosition(Vector3(50, 30, 50));
 	GetGraphics()->GetCamera()->LookAt(Vector3(0, 0, 0));
 	iLight* i = GetGraphics()->CreateLight( Vector3(15.0f, 75.0f, 15.0f) );

@@ -520,7 +520,7 @@ HRESULT DxManager::Render()
 
 	//this->RenderForward();
 
-	this->RenderDeferredTerrain();
+	this->RenderTerrain();
 
 	this->RenderDeferredGeometry();
 
