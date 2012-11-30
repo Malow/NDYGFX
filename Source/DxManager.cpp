@@ -47,6 +47,7 @@ DxManager::DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam)
 
 	this->framecount = 0;
 	this->TriangleCount = 0;
+	this->RendererSleep = 0;
 
 	this->camera = cam;
 	this->terrain = NULL;
@@ -522,4 +523,9 @@ void DxManager::CreateSkyBox(string texture)
 	strip->SetRenderObject(ro);
 
 	this->skybox = sb;
+}
+
+void DxManager::SetFPSMAX( float maxFPS )
+{
+	this->RendererSleep = 1000.0f / maxFPS;
 }

@@ -18,5 +18,11 @@
     <ClInclude Include="Graphics.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="MaloWFileDebug.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MaloW.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
