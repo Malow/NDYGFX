@@ -144,9 +144,9 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 
 
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_ADD))
-			GetGraphics()->GetCamera()->SetSpeed(GetGraphics()->GetCamera()->GetSpeed() + diff * 0.01f);
+			GetGraphics()->GetCamera()->SetSpeed(GetGraphics()->GetCamera()->GetSpeed() * (1.0f + diff * 0.01f));
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_SUBTRACT))
-			GetGraphics()->GetCamera()->SetSpeed(GetGraphics()->GetCamera()->GetSpeed() - diff * 0.01f);
+			GetGraphics()->GetCamera()->SetSpeed(GetGraphics()->GetCamera()->GetSpeed() * (1.0f - diff * 0.01f));
 
 
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_ESCAPE))
