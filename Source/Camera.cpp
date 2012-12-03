@@ -16,6 +16,7 @@ Camera::Camera(HWND g_hWnd, GraphicsEngineParams params)
 	this->sensitivity = 1.0f;
 
 	this->updateCamera = true;
+	this->activeWindowDisabling = true;
 
 	D3DXMatrixPerspectiveFovLH(&this->projection, (float)D3DX_PI * 0.45f, this->params.windowWidth / (float)this->params.windowHeight, 0.01f, 200.0f);
 }
@@ -111,8 +112,15 @@ void Camera::Update(float delta)
 {
 	if(this->updateCamera)
 	{
-		if(GetForegroundWindow() == this->g_hWnd)
+		if(activeWindowDisabling)
+		{
+			if(GetForegroundWindow() == this->g_hWnd)
+				UpdateSpecific(delta);
+		}
+		else
+		{
 			UpdateSpecific(delta);
+		}
 
 		this->MoveToTerrain();
 		this->MoveToFollowPosition();

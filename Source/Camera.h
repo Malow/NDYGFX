@@ -39,6 +39,7 @@ protected:
 	bool forceBoundries;
 
 	bool updateCamera;
+	bool activeWindowDisabling;
 	
 	D3DXVECTOR3 NormalizeVector(D3DXVECTOR3 vec);
 
@@ -80,6 +81,7 @@ public:
 	virtual void SetDistanceFromTarget(float distance) { this->DistanceFromTarget = distance; }
 	virtual float GetDistanceFromTarget() const { return this->DistanceFromTarget; }
 
+	virtual void SetActiveWindowDisabling(bool dis) { this->activeWindowDisabling = dis; }
 	/* Not inherited */
 	D3DXMATRIX GetViewMatrix();
 	D3DXMATRIX GetProjectionMatrix();

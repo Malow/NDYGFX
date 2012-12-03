@@ -61,7 +61,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 	model->Scale(1.0f / 20.0f);
 
 	GetGraphics()->StartRendering();	// To force the engine to render a black image before it has loaded stuff to not get a clear-color rendered before skybox is in etc.
-	
+
 	string lastSpecString = "";
 	bool showscale = false;
 	bool toggleScale = true;
