@@ -122,6 +122,9 @@ public:
 	virtual const char* GetSpecialString();
 
 	virtual void SetFPSMax(float maxFPS) { this->dx->SetFPSMAX(maxFPS); }
+
+	virtual void SetSunLightProperties(Vector3 direction, Vector3 lightColor = Vector3(1.0f, 1.0f, 1.0f), float intensity = 1.0f);
+
 	/*  Non-inherited functions */
 
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);

@@ -238,7 +238,15 @@ void DxManager::RenderParticles()
 
 void DxManager::RenderShadowMap()
 {
+	// Set sun-settings
+	this->Shader_DeferredLightning->SetBool("UseSun", this->useSun);
+	this->Shader_DeferredLightning->SetStructMemberAsFloat4("sun", "Direction", D3DXVECTOR4(this->sun.direction, 0.0f));
+	this->Shader_DeferredLightning->SetStructMemberAsFloat4("sun", "LightColor", D3DXVECTOR4(this->sun.lightColor, 0.0f));
+	this->Shader_DeferredLightning->SetStructMemberAsFloat("sun", "LightIntensity", this->sun.intensity);
+	Shader_ShadowMap->Apply(0);		// Dont know why the fuck this has to be here, but it does, otherwise textures wont be sent when rendering objects
+
 	// Generate and send shadowmaps to the main-shader
+	
 	for (int l = 0; l < this->lights.size(); l++)
 	{
 		Dx_DeviceContext->OMSetRenderTargets(0, 0, this->lights[l]->GetShadowMapDSV());
@@ -252,6 +260,7 @@ void DxManager::RenderShadowMap()
 				MaloW::Array<MeshStrip*>* strips = this->objects[i]->GetStrips();
 				D3DXMATRIX wvp = this->objects[i]->GetWorldMatrix() * this->lights[l]->GetViewProjMatrix();
 				this->Shader_ShadowMap->SetMatrix("LightWVP", wvp);
+				
 				for(int u = 0; u < strips->size(); u++)
 				{
 					Object3D* obj = strips->get(u)->GetRenderObject();
@@ -267,15 +276,17 @@ void DxManager::RenderShadowMap()
 
 					Shader_ShadowMap->Apply(0);
 
+					
 					// draw
 					if(inds)
 						Dx_DeviceContext->DrawIndexed(inds->GetElementCount(), 0, 0);
 					else
 						Dx_DeviceContext->Draw(verts->GetElementCount(), 0);
 				}
+				
 			}
 		}
-
+		
 		//animated meshes
 		for(int i = 0; i < this->animations.size(); i++)
 		{
@@ -315,16 +326,17 @@ void DxManager::RenderShadowMap()
 				}
 			}
 		}
+		
 		D3DXMATRIX vp = this->lights[l]->GetViewProjMatrix();
-
-		/*
+		
+		
 		// Forward
-		this->Shader_ForwardRendering->SetResourceAtIndex(l, "ShadowMap", this->lights[l]->GetShadowMapSRV());
-		this->Shader_ForwardRendering->SetStructMemberAtIndexAsMatrix(l, "lights", "LightViewProj", vp);
-		this->Shader_ForwardRendering->SetStructMemberAtIndexAsFloat4(l, "lights", "LightPosition", D3DXVECTOR4(this->lights[l]->GetPosition(), 1));
-		this->Shader_ForwardRendering->SetStructMemberAtIndexAsFloat4(l, "lights", "LightColor", D3DXVECTOR4(this->lights[l]->GetColor(), 1));
-		this->Shader_ForwardRendering->SetStructMemberAtIndexAsFloat(l, "lights", "LightIntensity", this->lights[l]->GetIntensity());
-		*/
+		//this->Shader_ForwardRendering->SetResourceAtIndex(l, "ShadowMap", this->lights[l]->GetShadowMapSRV());
+		//this->Shader_ForwardRendering->SetStructMemberAtIndexAsMatrix(l, "lights", "LightViewProj", vp);
+		//this->Shader_ForwardRendering->SetStructMemberAtIndexAsFloat4(l, "lights", "LightPosition", D3DXVECTOR4(this->lights[l]->GetPosition(), 1));
+		//this->Shader_ForwardRendering->SetStructMemberAtIndexAsFloat4(l, "lights", "LightColor", D3DXVECTOR4(this->lights[l]->GetColor(), 1));
+		//this->Shader_ForwardRendering->SetStructMemberAtIndexAsFloat(l, "lights", "LightIntensity", this->lights[l]->GetIntensity());
+		
 
 		// For deferred:
 		this->Shader_DeferredLightning->SetResourceAtIndex(l, "ShadowMap", this->lights[l]->GetShadowMapSRV());
@@ -333,14 +345,14 @@ void DxManager::RenderShadowMap()
 		this->Shader_DeferredLightning->SetStructMemberAtIndexAsFloat4(l, "lights", "LightColor", D3DXVECTOR4(this->lights[l]->GetColor(), 1));
 		this->Shader_DeferredLightning->SetStructMemberAtIndexAsFloat(l, "lights", "LightIntensity", this->lights[l]->GetIntensity());
 		
-		/*
+		
 		// For deferred quad:
-		this->Shader_DeferredQuad->SetResourceAtIndex(l, "ShadowMap", this->lights[l]->GetShadowMapSRV());
-		this->Shader_DeferredQuad->SetStructMemberAtIndexAsMatrix(l, "lights", "LightViewProj", vp);
-		this->Shader_DeferredQuad->SetStructMemberAtIndexAsFloat4(l, "lights", "LightPosition", D3DXVECTOR4(this->lights[l]->GetPosition(), 1));
-		this->Shader_DeferredQuad->SetStructMemberAtIndexAsFloat4(l, "lights", "LightColor", D3DXVECTOR4(this->lights[l]->GetColor(), 1));
-		this->Shader_DeferredQuad->SetStructMemberAtIndexAsFloat(l, "lights", "LightIntensity", this->lights[l]->GetIntensity());
-		*/
+		//this->Shader_DeferredQuad->SetResourceAtIndex(l, "ShadowMap", this->lights[l]->GetShadowMapSRV());
+		//this->Shader_DeferredQuad->SetStructMemberAtIndexAsMatrix(l, "lights", "LightViewProj", vp);
+		//this->Shader_DeferredQuad->SetStructMemberAtIndexAsFloat4(l, "lights", "LightPosition", D3DXVECTOR4(this->lights[l]->GetPosition(), 1));
+		//this->Shader_DeferredQuad->SetStructMemberAtIndexAsFloat4(l, "lights", "LightColor", D3DXVECTOR4(this->lights[l]->GetColor(), 1));
+		//this->Shader_DeferredQuad->SetStructMemberAtIndexAsFloat(l, "lights", "LightIntensity", this->lights[l]->GetIntensity());
+		
 	}
 	
 	float PCF_SIZE = (float)this->params.ShadowMapSettings + 1;

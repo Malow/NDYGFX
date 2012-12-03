@@ -51,9 +51,10 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 	//iTerrain* t = GetGraphics()->CreateTerrain(Vector3(0, 0, 0), Vector3(100, 1, 100), "Media/TerrainTexture.png", "Media/TerrainHeightmap.raw");
 	GetGraphics()->GetCamera()->SetPosition(Vector3(50, 30, 50));
 	GetGraphics()->GetCamera()->LookAt(Vector3(0, 0, 0));
-	iLight* i = GetGraphics()->CreateLight( Vector3(15.0f, 75.0f, 15.0f) );
-	i->SetIntensity(1000.0f);
-	
+	//iLight* i = GetGraphics()->CreateLight( Vector3(15.0f, 75.0f, 15.0f) );
+	//i->SetIntensity(1000.1f);
+	GetGraphics()->SetSunLightProperties(Vector3(1, -1, 1));
+
 	iMesh* scaleHuman = GetGraphics()->CreateMesh("Media/scale.obj", Vector3(30, -100, 30));
 	iMesh* model = GetGraphics()->CreateMesh("Media/bth.obj", Vector3(15, 20, 20));
 	scaleHuman->Scale(1.0f / 20.0f);
@@ -151,6 +152,20 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_ESCAPE))
 			go = false;
+
+
+
+
+
+		////////////////// MaloW Testing
+		if(GetGraphics()->GetKeyListener()->IsPressed(VK_UP))
+			GetGraphics()->SetSunLightProperties(Vector3(1, -1, 1));
+		if(GetGraphics()->GetKeyListener()->IsPressed(VK_DOWN))
+			GetGraphics()->SetSunLightProperties(Vector3(-1, -1, -1));
+		if(GetGraphics()->GetKeyListener()->IsPressed(VK_LEFT))
+			GetGraphics()->SetSunLightProperties(Vector3(-1, -1, 1));
+		if(GetGraphics()->GetKeyListener()->IsPressed(VK_RIGHT))
+			GetGraphics()->SetSunLightProperties(Vector3(1, -1, -1));
 	}
 	
 	FreeGraphics();

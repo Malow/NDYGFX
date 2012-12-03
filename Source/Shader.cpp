@@ -165,6 +165,11 @@ void Shader::SetStructMemberAsFloat4(char* structVariable, char* memberVariable,
 	m_pEffect->GetVariableByName(structVariable)->GetMemberByName(memberVariable)->AsVector()->SetFloatVector((float*)&value);
 }
 
+void Shader::SetStructMemberAsFloat(char* structVariable, char* memberVariable, float value)
+{
+	m_pEffect->GetVariableByName(structVariable)->GetMemberByName(memberVariable)->AsScalar()->SetFloat(value);
+}
+
 void Shader::SetStructMemberAtIndexAsFloat4(int index, char* structVariable, char* memberVariable, D3DXVECTOR4 value)
 {
 	m_pEffect->GetVariableByName(structVariable)->GetElement(index)->GetMemberByName(memberVariable)->AsVector()->SetFloatVector((float*)&value);

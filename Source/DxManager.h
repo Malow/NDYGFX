@@ -161,6 +161,8 @@ private:
 
 	// Lightning
 	MaloW::Array<Light*> lights;
+	SunLight sun;
+	bool useSun;
 	
 	// Shadow map:
 	Shader* Shader_ShadowMap;
@@ -256,6 +258,7 @@ public:
 
 	int GetTriangleCount() { return this->TriangleCount; }
 	void SetFPSMAX( float maxFPS );
+	void SetSunLightProperties(Vector3 direction, Vector3 lightColor, float intensity);
 };
 
 #endif
