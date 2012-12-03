@@ -23,38 +23,14 @@ void RTSCamera::UpdateSpecific(float delta)
 	{
 		if(ScreenToClient(this->g_hWnd, &p))
 		{
-			/*
-			float diffX = (this->params.windowWidth/2) - p.x;
-			float diffY = (this->params.windowHeight/2) - p.y;
-
-			
-			this->angleX += diffX * (this->sensitivity * 0.001f);
-			this->angleY += diffY * (this->sensitivity * 0.001f);
-
-			if(angleY > PI/2)
-				angleY = PI/2;
-			if(angleY < -PI/2)
-				angleY = -PI/2;
-
-			this->forward.x = cos(angleX);
-			this->forward.z = sin(angleX);
-			this->forward.y = sin(angleY);
-
-			
-			float length = sqrt(pow(this->forward.x, 2) + pow(this->forward.y, 2) + pow(this->forward.z, 2));
-			this->forward.x /= length;
-			this->forward.y /= length;
-			this->forward.z /= length;
-			
-			
-			POINT np;
-			np.x = this->params.windowWidth/2;
-			np.y = this->params.windowHeight/2;
-			if(ClientToScreen(this->g_hWnd, &np))
-			{
-				SetCursorPos(np.x, np.y);
-			}
-			*/
+			if(p.x < 50)
+				this->MoveLeft(delta);
+			if(p.x > this->params.windowWidth - 50)
+				this->MoveRight(delta);
+			if(p.y < 50)
+				this->MoveForward(delta);
+			if(p.y > this->params.windowHeight - 50)
+				this->MoveBackward(delta);
 		}
 	}
 }
