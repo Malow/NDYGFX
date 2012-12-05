@@ -93,9 +93,9 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 			path = path.substr(0, path.size() - string("ModelViewer.exe").size());
 
 			string loadModel = specString.substr(path.size() , specString.size());
-			//GetGraphics()->DeleteMesh(model);
-			//model = GetGraphics()->CreateMesh(loadModel.c_str(), Vector3(15, 20, 20));
-			//model->Scale(1.0f / 20.0f);
+			GetGraphics()->DeleteMesh(model);
+			model = GetGraphics()->CreateMesh(loadModel.c_str(), Vector3(15, 20, 20));
+			model->Scale(1.0f / 20.0f);
 			lastSpecString = specString;
 		}
 
