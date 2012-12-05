@@ -80,7 +80,7 @@ class Terrain : public iTerrain
 
 		//iTerrain interface functions
 		virtual float GetYPositionAt(float x, float z); 
-		virtual bool SetHeightMap(unsigned int size, float* data); //size^2 = size of array
+		virtual bool SetHeightMap(float* data); 
 		virtual bool SetTextures(const char* fileName1 = NULL, const char* fileName2 = NULL, const char* fileName3 = NULL);
 		virtual bool SetBlendMap(unsigned int size, float* data);
 

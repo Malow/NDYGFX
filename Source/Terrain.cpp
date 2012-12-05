@@ -232,18 +232,10 @@ void Terrain::RecreateWorldMatrix()
 }
 
 //iTerrain interface functions
-bool Terrain::SetHeightMap(unsigned int size, float* data)
+bool Terrain::SetHeightMap(float* data)
 {
-	//check if size has changed, create new mesh if it has
-	if(this->zSize != size)
-	{
-		this->zSize = size;
-		this->CreateMesh();
-	}
-
-	//Apply height map data
-	//Update/set vertices
-	int totSize = size * size;
+	//Update/set y-values of vertices
+	int totSize = this->zSize * this->zSize;
 	for(int i = 0; i < totSize; i++)
 	{
 		this->zVertices[i].pos.y = data[i];

@@ -230,7 +230,6 @@ void DxManager::RenderDeferredGeometry()
 			else
 			{
 				this->Shader_DeferredGeometryBlendMap->SetBool("textured", false);
-				MaloW::Debug("WARNING: terrain is missing 1 or more textures");
 			}
 
 			//Set lighting from material
@@ -281,10 +280,6 @@ void DxManager::RenderDeferredGeometry()
 		this->Shader_DeferredGeometryBlendMap->SetResource("tex2", NULL);
 		this->Shader_DeferredGeometryBlendMap->SetResource("tex3", NULL);
 		this->Shader_DeferredGeometryBlendMap->Apply(0);
-	}
-	else
-	{
-		MaloW::Debug("WARNING: No terrain to be drawn");
 	}
 
 
