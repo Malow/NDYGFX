@@ -49,8 +49,10 @@ DxManager::DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam)
 	this->TriangleCount = 0;
 	this->RendererSleep = 0;
 
+	this->useSun = false;
+
 	this->camera = cam;
-	this->terrain = NULL;
+
 	if(FAILED(this->Init()))
 		MaloW::Debug("Failed to init DxManager");
 
@@ -145,7 +147,8 @@ DxManager::~DxManager()
 	while(0 < this->images.size())
 		delete this->images.getAndRemove(0);
 
-	if(this->terrain) delete this->terrain; this->terrain = NULL;
+	while(0 < this-> terrains.size())
+		delete this-> terrains.getAndRemove(0);
 
 	while(0 < this->objects.size())
 		delete this->objects.getAndRemove(0);
@@ -158,11 +161,6 @@ DxManager::~DxManager()
 
 	while(0 < this->texts.size())
 		delete this->texts.getAndRemove(0);
-}
-
-void DxManager::CreateTerrain(Terrain* terrain)
-{
-	//**TODO:implement**
 }
 void DxManager::CreateStaticMesh(StaticMesh* mesh)
 {
@@ -221,6 +219,11 @@ void DxManager::CreateStaticMesh(StaticMesh* mesh)
 	
 	MeshEvent* re = new MeshEvent("Add Mesh", mesh, NULL);
 	this->PutEvent(re);
+}
+
+void DxManager::CreateTerrain(Terrain* terrain)
+{
+	//TODO: impl.
 }
 
 void DxManager::CreateAnimatedMesh(AnimatedMesh* mesh)
@@ -528,4 +531,12 @@ void DxManager::CreateSkyBox(string texture)
 void DxManager::SetFPSMAX( float maxFPS )
 {
 	this->RendererSleep = 1000.0f / maxFPS;
+}
+
+void DxManager::SetSunLightProperties( Vector3 direction, Vector3 lightColor, float intensity )
+{
+	this->sun.direction = direction;
+	this->sun.lightColor = lightColor;
+	this->sun.intensity = intensity;
+	this->useSun = true;
 }

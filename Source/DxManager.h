@@ -148,7 +148,7 @@ private:
 	long framecount;
 	GraphicsEngineParams params;
 	Camera* camera;
-	Terrain* terrain;
+	MaloW::Array<Terrain*> terrains; //terrain = sector data
 	MaloW::Array<StaticMesh*> objects;
 	MaloW::Array<AnimatedMesh*> animations;
 
@@ -161,6 +161,8 @@ private:
 
 	// Lightning
 	MaloW::Array<Light*> lights;
+	SunLight sun;
+	bool useSun;
 	
 	// Shadow map:
 	Shader* Shader_ShadowMap;
@@ -202,8 +204,7 @@ private:
 	float RendererSleep;
 
 	void RenderForward();
-	//void RenderDeferredGeometryBlendMap(); //ev. TODO
-	void RenderDeferredTerrain();
+	void RenderTerrain(); 
 	void RenderDeferredGeometry();
 	void RenderDeferredPerPixel();
 	void RenderInvisibilityEffect();
@@ -235,8 +236,8 @@ public:
 	HRESULT Update(float deltaTime);
 
 	void CreateSmokeEffect();
-	void CreateTerrain(Terrain* terrain); //**TODO**
 	void CreateStaticMesh(StaticMesh* mesh);
+	void CreateTerrain(Terrain* terrain); //static mesh with blendmap and some extra variables
 	void CreateAnimatedMesh(AnimatedMesh* mesh);
 	Object3D* createParticleObject(ParticleMesh* mesh);
 	Light* CreateLight(D3DXVECTOR3 pos, bool UseShadowMap);
@@ -257,6 +258,7 @@ public:
 
 	int GetTriangleCount() { return this->TriangleCount; }
 	void SetFPSMAX( float maxFPS );
+	void SetSunLightProperties(Vector3 direction, Vector3 lightColor, float intensity);
 };
 
 #endif

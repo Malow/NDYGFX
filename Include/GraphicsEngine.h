@@ -43,7 +43,7 @@ extern "C"
 
 		virtual iMesh* CreateStaticMesh(const char* filename, const Vector3& pos) = 0;
 		virtual iAnimatedMesh* CreateAnimatedMesh(const char* filename, const Vector3& pos) = 0;
-		virtual iTerrain* CreateTerrain(const Vector3& pos, const Vector3& dimensions, const char* texture, const char* heightMap, unsigned int vertexSize = 256) = 0;
+		virtual iTerrain* CreateTerrain(const Vector3& pos, const Vector3& scale, const unsigned int& size) = 0;
 
 		virtual iCamera* GetCamera() const = 0;
 
@@ -63,6 +63,8 @@ extern "C"
 		virtual const char* GetSpecialString() = 0;
 
 		virtual void SetFPSMax(float maxFPS) = 0;
+
+		virtual void SetSunLightProperties(Vector3 direction, Vector3 lightColor = Vector3(1.0f, 1.0f, 1.0f), float intensity = 1.0f) = 0;
 	};
 
 	/*

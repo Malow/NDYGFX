@@ -1,12 +1,16 @@
 #include "DxManager.h"
 
 
-void DxManager::RenderDeferredTerrain()
+void DxManager::RenderTerrain()
 {
-	//**TODO:implement**
+	//terrain->
+	//fetch texture names
+	//if not loaded; load
 
+	//**TODO:implement**
+	/*
 	//Matrices
-	/*D3DXMATRIX world, view, proj, wvp, worldInverseTranspose;
+	D3DXMATRIX world, view, proj, wvp, worldInverseTranspose;
 	view = this->camera->GetViewMatrix();
 	proj = this->camera->GetProjectionMatrix();
 
@@ -26,15 +30,15 @@ void DxManager::RenderDeferredTerrain()
 
 	//Set constant buffers
 	//Per frame
-	this->Shader_DeferredGeometry->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetPositionD3DX(), 1));
-	*/
+	this->Shader_DeferredGeometryBlendMap->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetPositionD3DX(), 1));
 	
+	*/
 
 }
 
 void DxManager::RenderDeferredGeometry()
 {
-	//Matrixes
+	//Matrices
 	D3DXMATRIX world, view, proj, wvp, worldInverseTranspose;
 	view = this->camera->GetViewMatrix();
 	proj = this->camera->GetProjectionMatrix();
@@ -44,6 +48,7 @@ void DxManager::RenderDeferredGeometry()
 	this->Dx_DeviceContext->RSSetViewports(1, &this->Dx_Viewport);
 
 	this->Dx_DeviceContext->ClearDepthStencilView(this->Dx_DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+	
 	//float ClearColor[4] = {0.5f, 0.71f, 1.0f, 1};
 	float ClearColor[4] = {-1.0f, -1.0f, -1.0f, -1.0f};
 	for(int i = 0; i < this->NrOfRenderTargets; i++)
@@ -53,7 +58,7 @@ void DxManager::RenderDeferredGeometry()
 	
 	this->Shader_DeferredGeometry->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetPositionD3DX(), 1));
 	
-	//Normal (visibile) geometry
+	//Normal (visible) geometry
 	for(int i = 0; i < this->objects.size(); i++)
 	{
 		if(!this->objects[i]->IsUsingInvisibility())
@@ -63,7 +68,7 @@ void DxManager::RenderDeferredGeometry()
 			// Per object
 			this->Shader_DeferredGeometry->SetInt("specialColor", this->objects[i]->GetSpecialColor());
 
-			// Set matrixes
+			// Set matrices
 			world = this->objects[i]->GetWorldMatrix();
 			wvp = world * view * proj;
 			D3DXMatrixInverse(&worldInverseTranspose, NULL, &world);

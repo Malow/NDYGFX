@@ -95,8 +95,8 @@ public:
 	virtual void DeleteMesh(iMesh* delMesh);
 	virtual iMesh* CreateStaticMesh(const char* filename, const Vector3& pos);
 	virtual iAnimatedMesh* CreateAnimatedMesh(const char* filename, const Vector3& pos);
-	virtual iTerrain* CreateTerrain(const Vector3& pos, const Vector3& dimensions, const char* texture, const char* heightMap, unsigned int vertexSize = 256);
-
+	virtual iTerrain* CreateTerrain(const Vector3& pos, const Vector3& scale, const unsigned int& size);
+	
 	virtual iLight* CreateLight(Vector3 pos);
 	virtual void DeleteLight(iLight* light);
 
@@ -122,6 +122,9 @@ public:
 	virtual const char* GetSpecialString();
 
 	virtual void SetFPSMax(float maxFPS) { this->dx->SetFPSMAX(maxFPS); }
+
+	virtual void SetSunLightProperties(Vector3 direction, Vector3 lightColor = Vector3(1.0f, 1.0f, 1.0f), float intensity = 1.0f);
+
 	/*  Non-inherited functions */
 
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);

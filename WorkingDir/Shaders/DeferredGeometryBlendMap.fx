@@ -8,9 +8,11 @@
 //-----------------------------------------------------------------------------------------
 //	Global variables (non-numeric values cannot be added to a constantbuffer.)
 //-----------------------------------------------------------------------------------------
-Texture2D tex1;
-Texture2D tex2;
-Texture2D tex3;
+//Textures used to make the blend map
+Texture2D tex1; //R-channel, ex: grass
+Texture2D tex2; //G-channel, ex: dirt
+Texture2D tex3; //B-channel, ex: leaves
+//Texture2D tex4; //**ev. A-channel, extra, ex: blood, footprints**
 
 //-----------------------------------------------------------------------------------------
 // Constant buffers
@@ -40,10 +42,10 @@ cbuffer PerStrip
 //-----------------------------------------------------------------------------------------
 struct VSIn
 {
-	float4 pos		: POSITION;
+	float4 pos		: POSITION; //3 används**
 	float2 tex		: TEXCOORD;
 	float3 norm		: NORMAL;
-	float4 color	: COLOR;
+	float4 color	: COLOR; //3 anv'nds**
 };
 
 struct PSSceneIn

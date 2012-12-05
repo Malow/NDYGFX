@@ -205,10 +205,23 @@ float4 PSScene(PSSceneIn input) : SV_Target
 		diffuseLighting = saturate(diffuseLighting / NrOfLights);
 		specLighting = saturate(specLighting / NrOfLights);
 	}
+	
+	
+	// Sun
+	if(UseSun)
+	{
+		// Diff light
+		diffuseLighting += saturate(dot(NormsAndDepth.xyz, -sun.Direction)) * sun.LightIntensity;
+		// Spec Light
+		float3 h = normalize(normalize(CameraPosition.xyz - WorldPos.xyz) - sun.Direction);
+		specLighting += pow(saturate(dot(h, NormsAndDepth.xyz)), SpecularPower) * sun.LightIntensity;
+		diffuseLighting = saturate(diffuseLighting);
+		specLighting = saturate(specLighting);
+	}
 
 	//float4 finalColor = float4((AmbientLight.xyz * DiffuseColor.xyz + DiffuseColor.xyz * diffuseLighting + SpecularColor.xyz * specLighting), DiffuseColor.w);
 	float4 finalColor = float4((AmbientLight.xyz * DiffuseColor + DiffuseColor * diffuseLighting + SpecularColor.xyz * specLighting), 1.0f);
-
+	//finalColor.xyz = DiffuseColor;
 	
 
 

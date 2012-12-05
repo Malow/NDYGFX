@@ -45,6 +45,7 @@ public:
 
 	void SetFloat3(char* variable, D3DXVECTOR3 value);
 	void SetFloatVectorArray(char* variable, D3DXVECTOR3* values, unsigned int nrOfElements);
+	void SetStructMemberAsFloat(char* structVariable, char* memberVariable, float value);
 };
 
 #endif

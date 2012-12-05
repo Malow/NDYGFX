@@ -9,6 +9,19 @@ enum LightType
 	POINT_LIGHT = 0,
 };
 
+struct SunLight
+{
+	SunLight() 
+	{ 
+		this->direction = D3DXVECTOR3(0, -1, 0);
+		this->lightColor = D3DXVECTOR3(1, 1, 1);
+		this->intensity = 1.0f;
+	}
+	D3DXVECTOR3 direction;
+	D3DXVECTOR3 lightColor;
+	float intensity;
+};
+
 class Light : public iLight
 {
 private:

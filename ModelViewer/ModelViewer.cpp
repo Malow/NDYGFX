@@ -48,19 +48,20 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 
 	MaloW::ClearDebug();
 	GetGraphics()->CreateSkyBox("Media/skymap.dds");	// Reduces FPS from 130 to 40
-	iTerrain* t = GetGraphics()->CreateTerrain(Vector3(0, 0, 0), Vector3(100, 1, 100), "Media/TerrainTexture.png", "Media/TerrainHeightmap.raw");
+	//iTerrain* t = GetGraphics()->CreateTerrain(Vector3(0, 0, 0), Vector3(100, 1, 100), "Media/TerrainTexture.png", "Media/TerrainHeightmap.raw");
 	GetGraphics()->GetCamera()->SetPosition(Vector3(50, 30, 50));
 	GetGraphics()->GetCamera()->LookAt(Vector3(0, 0, 0));
-	iLight* i = GetGraphics()->CreateLight( Vector3(15.0f, 75.0f, 15.0f) );
-	i->SetIntensity(1000.0f);
-	
+	//iLight* i = GetGraphics()->CreateLight( Vector3(15.0f, 75.0f, 15.0f) );
+	//i->SetIntensity(1000.1f);
+	GetGraphics()->SetSunLightProperties(Vector3(1, -1, 1));
+
 	iMesh* scaleHuman = GetGraphics()->CreateMesh("Media/scale.obj", Vector3(30, -100, 30));
 	iMesh* model = GetGraphics()->CreateMesh("Media/bth.obj", Vector3(15, 20, 20));
 	scaleHuman->Scale(1.0f / 20.0f);
 	model->Scale(1.0f / 20.0f);
 
 	GetGraphics()->StartRendering();	// To force the engine to render a black image before it has loaded stuff to not get a clear-color rendered before skybox is in etc.
-	
+
 	string lastSpecString = "";
 	bool showscale = false;
 	bool toggleScale = true;
@@ -144,13 +145,27 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 
 
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_ADD))
-			GetGraphics()->GetCamera()->SetSpeed(GetGraphics()->GetCamera()->GetSpeed() + diff * 0.01f);
+			GetGraphics()->GetCamera()->SetSpeed(GetGraphics()->GetCamera()->GetSpeed() * (1.0f + diff * 0.01f));
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_SUBTRACT))
-			GetGraphics()->GetCamera()->SetSpeed(GetGraphics()->GetCamera()->GetSpeed() - diff * 0.01f);
+			GetGraphics()->GetCamera()->SetSpeed(GetGraphics()->GetCamera()->GetSpeed() * (1.0f - diff * 0.01f));
 
 
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_ESCAPE))
 			go = false;
+
+
+
+
+
+		////////////////// MaloW Testing
+		if(GetGraphics()->GetKeyListener()->IsPressed(VK_UP))
+			GetGraphics()->SetSunLightProperties(Vector3(1, -1, 1));
+		if(GetGraphics()->GetKeyListener()->IsPressed(VK_DOWN))
+			GetGraphics()->SetSunLightProperties(Vector3(-1, -1, -1));
+		if(GetGraphics()->GetKeyListener()->IsPressed(VK_LEFT))
+			GetGraphics()->SetSunLightProperties(Vector3(-1, -1, 1));
+		if(GetGraphics()->GetKeyListener()->IsPressed(VK_RIGHT))
+			GetGraphics()->SetSunLightProperties(Vector3(1, -1, -1));
 	}
 	
 	FreeGraphics();
