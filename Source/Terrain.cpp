@@ -6,6 +6,8 @@ void Terrain::CreateMesh()
 {
 	//Create vertices
 	int tilingFactor = 1; //**ändra senare**
+
+	this->zNrOfVertices = this->zSize * this->zSize;
 	this->zVertices = new Vertex[this->zSize * this->zSize];
 
 	for(int i = 0; i < this->zSize; i++)
@@ -20,7 +22,7 @@ void Terrain::CreateMesh()
 						D3DXVECTOR3(0, 0, 0));
 		}
 	}
-	this->zNrOfVertices = this->zSize * this->zSize;
+
 
 	//Create indices
 	this->zNrOfIndices = (this->zSize - 1) * 2 * (this->zSize - 1) * 3;
@@ -111,11 +113,15 @@ Terrain::Terrain(D3DXVECTOR3 pos, D3DXVECTOR3 scale, unsigned int size)
 	D3DXMatrixIdentity(&this->zWorldMatrix);
 	this->RecreateWorldMatrix();
 
-	this->zTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	this->zNrOfVertices = 0;
 	this->zVertices = NULL;
 	this->zVertexBuffer = NULL;
+	this->zNrOfIndices = 0;
+	this->zIndices = NULL;
 	this->zIndexBuffer = NULL;
+
 	this->zMaterial = new Material(MaterialType::LAMBERT);
+	this->zTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
 	this->zTex1 = "";
 	this->zTex2 = "";
