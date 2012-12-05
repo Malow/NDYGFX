@@ -51,8 +51,8 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 	//iTerrain* t = GetGraphics()->CreateTerrain(Vector3(0, 0, 0), Vector3(100, 1, 100), "Media/TerrainTexture.png", "Media/TerrainHeightmap.raw");
 	GetGraphics()->GetCamera()->SetPosition(Vector3(50, 30, 50));
 	GetGraphics()->GetCamera()->LookAt(Vector3(0, 0, 0));
-	//iLight* i = GetGraphics()->CreateLight( Vector3(15.0f, 75.0f, 15.0f) );
-	//i->SetIntensity(1000.1f);
+	iLight* i = GetGraphics()->CreateLight(GetGraphics()->GetCamera()->GetPosition());
+	i->SetIntensity(0.001f);
 	GetGraphics()->SetSunLightProperties(Vector3(1, -1, 1));
 	iTerrain* iT = GetGraphics()->CreateTerrain(Vector3(0, 0, 0), Vector3(10, 10, 10), 2);
 
@@ -68,7 +68,9 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 	bool showscale = false;
 	bool toggleScale = true;
 	bool toggleDelCache = true;
+	bool toggleLight = true;
 	bool go = true;
+	float tempInt = 10.0f;
 	while(GetGraphics()->IsRunning() && go)
 	{
 		Sleep(10);
@@ -90,6 +92,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 
 		// Updates camera etc, does NOT render the frame, another process is doing that, so diff should be very low.
 		float diff = GetGraphics()->Update();	
+		i->SetPosition(GetGraphics()->GetCamera()->GetPosition());
 
 		if(GetGraphics()->GetKeyListener()->IsPressed('W'))
 			GetGraphics()->GetCamera()->MoveForward(diff);
@@ -156,10 +159,35 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 			go = false;
 
 
+		if(GetGraphics()->GetKeyListener()->IsPressed('1'))
+		{
+			if(toggleLight)
+			{
+				if(i->GetIntensity() < 0.01f)
+				{
+					i->SetIntensity(tempInt);
+				}
+				else
+				{
+					tempInt = i->GetIntensity();
+					i->SetIntensity(0.001f);
+				}
+				toggleLight = false;
+			}
+		}
+		else
+			toggleLight = true;
 
+		if(GetGraphics()->GetKeyListener()->IsPressed('T'))
+		{
+			i->SetIntensity(i->GetIntensity() * (1.0f + diff * 0.002f));
+		}
+		if(GetGraphics()->GetKeyListener()->IsPressed('Y'))
+		{
+			i->SetIntensity(i->GetIntensity() * (1.0f - diff * 0.002f));
+		}
 
-
-		////////////////// MaloW Testing
+		
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_UP))
 			GetGraphics()->SetSunLightProperties(Vector3(1, -1, 1));
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_DOWN))
