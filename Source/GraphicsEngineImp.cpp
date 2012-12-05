@@ -637,3 +637,8 @@ const char* GraphicsEngineImp::GetSpecialString()
 {
 	return this->specialString.c_str();
 }
+
+void GraphicsEngineImp::SetSunLightProperties( Vector3 direction, Vector3 lightColor /*= Vector3(1.0f, 1.0f, 1.0f)*/, float intensity /*= 1.0f*/ )
+{
+	this->dx->SetSunLightProperties(direction, lightColor, intensity);
+}

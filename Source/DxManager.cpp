@@ -49,6 +49,8 @@ DxManager::DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam)
 	this->TriangleCount = 0;
 	this->RendererSleep = 0;
 
+	this->useSun = false;
+
 	this->camera = cam;
 
 	if(FAILED(this->Init()))
@@ -575,4 +577,12 @@ void DxManager::CreateSkyBox(string texture)
 void DxManager::SetFPSMAX( float maxFPS )
 {
 	this->RendererSleep = 1000.0f / maxFPS;
+}
+
+void DxManager::SetSunLightProperties( Vector3 direction, Vector3 lightColor, float intensity )
+{
+	this->sun.direction = direction;
+	this->sun.lightColor = lightColor;
+	this->sun.intensity = intensity;
+	this->useSun = true;
 }

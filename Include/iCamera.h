@@ -51,5 +51,7 @@ extern "C"
 		virtual float GetDistanceFromTarget() const = 0;
 		
 		virtual void SetUpdateCamera(bool update) = 0;
+
+		virtual void SetActiveWindowDisabling(bool dis) = 0;
 	};
 }

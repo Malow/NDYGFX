@@ -32,6 +32,13 @@ struct Light
 	matrix LightViewProj;
 };
 
+struct SunLight
+{
+	float4 Direction;
+	float4 LightColor;
+	float LightIntensity;
+};
+
 
 //------------------------------------------------------------------------------------------------------
 //	Constant buffers
@@ -43,6 +50,9 @@ cbuffer EveryFrame
 	
 	float NrOfLights;
 	Light lights[10];
+	
+	bool UseSun;
+	SunLight sun;
 	//float SMAP_DX;
 	//float PCF_SIZE;
 	//float PCF_SIZE_SQUARED;
