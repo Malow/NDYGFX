@@ -64,6 +64,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 	fileNames[1] = NULL;
 	fileNames[2] = NULL;
 	iT->SetTextures(fileNames);
+	delete[] fileNames;
 
 	iMesh* scaleHuman = GetGraphics()->CreateMesh("Media/scale.obj", Vector3(30, -300, 30));
 	iMesh* model = GetGraphics()->CreateMesh("Media/bth.obj", Vector3(15, 20, 20));

@@ -275,43 +275,6 @@ void Terrain::SetTextures(const char** fileNames)
 			}
 		}
 	}
-
-/*
-	for(int i = 0; i < 3; i++)
-	{
-
-
-	else if(fileName1)
-	{
-		this->zTextures[0] = new Texture(fileName1);
-	}
-
-	if(this->zTextures[1] && fileName2 != NULL)
-	{
-		if(this->zTextures[1]->FileName  == string(fileName2))
-		{
-			this->zTextures[1]->FileName = fileName2;
-			this->zTextures[1]->HasChanged = true;
-		}
-	}
-	else if(fileName2)
-	{
-		this->zTextures[1] = new Texture(fileName2);
-	}
-
-	if(this->zTextures[2] && fileName2 != NULL)
-	{
-		if(this->zTextures[2]->FileName == string(fileName3))
-		{
-			this->zTextures[2]->FileName  = fileName3;
-			this->zTextures[2]->HasChanged = true;
-		}
-	}
-	else if(fileName3)
-	{
-		this->zTextures[2] = new Texture(fileName3);
-	}
-	*/
 }
 
 bool Terrain::SetBlendMap(unsigned int size, float* data)
