@@ -3,16 +3,16 @@
 //	Written by Markus Tillman for project "Not dead yet" at Blekinga Tekniska Högskola.
 //	//**TODO:implement**
 //--------------------------------------------------------------------------------------
-#include "stdafx.fx"
+//#include "stdafx.fx"
 
 //-----------------------------------------------------------------------------------------
 //	Global variables (non-numeric values cannot be added to a constantbuffer.)
 //-----------------------------------------------------------------------------------------
 //Textures used to make the blend map
-Texture2D tex1; //R-channel, ex: grass
-Texture2D tex2; //G-channel, ex: dirt
-Texture2D tex3; //B-channel, ex: leaves
-//Texture2D tex4; //**ev. A-channel, extra, ex: blood, footprints**
+Texture2D tex1; //ex: grass
+Texture2D tex2; //ex: dirt
+Texture2D tex3; //ex: leaves
+//Texture2D tex4; //**extra, ex: blood, footprints**
 
 //-----------------------------------------------------------------------------------------
 // Constant buffers
@@ -26,9 +26,7 @@ cbuffer PerObject
 	matrix	WVP;
 	matrix	worldMatrix;
 	matrix	worldMatrixInverseTranspose;
-};
-cbuffer PerStrip
-{
+
 	bool	textured;
 	
 	float	specularPower;
@@ -66,6 +64,27 @@ struct PSOut
 	float4 Specular			: SV_TARGET3;	//Specular XYZ, specular power W
 };
 
+
+//-----------------------------------------------------------------------------------------
+// **states tmp**
+//-----------------------------------------------------------------------------------------
+RasterizerState NoCulling
+{
+	CullMode = None;
+};
+SamplerState LinearWrapSampler
+{
+	Filter = MIN_MAG_MIP_LINEAR; 
+	AddressU = Wrap;
+	AddressV = Wrap;
+};
+DepthStencilState EnableDepth
+{
+    DepthEnable = TRUE;
+    DepthWriteMask = ALL;
+    DepthFunc = LESS_EQUAL;
+};
+
 //-----------------------------------------------------------------------------------------
 // VertexShader: VSScene
 //-----------------------------------------------------------------------------------------
@@ -89,7 +108,6 @@ PSSceneIn VSScene(VSIn input)
 //-----------------------------------------------------------------------------------------
 PSOut PSScene(PSSceneIn input) : SV_Target
 {	
-	
 	PSOut output = (PSOut)0; //**
 
 	//Texture RT
@@ -131,6 +149,6 @@ technique11 DeferredGeometryBlendMapTech
 	    
 
 		SetDepthStencilState( EnableDepth, 0 );
-	    SetRasterizerState( BackCulling );
+	    SetRasterizerState( NoCulling );
     }  
 }

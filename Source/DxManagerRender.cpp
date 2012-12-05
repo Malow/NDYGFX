@@ -11,6 +11,27 @@ HRESULT DxManager::Update(float deltaTime)
 	return S_OK;
 }
 
+void DxManager::HandleTerrainEvent(TerrainEvent* me)
+{
+	string msg = me->getMessage();
+	if(msg == "Add Terrain")
+	{
+		this->terrains.add(me->GetTerrain());
+	}
+	else if(msg == "Delete Terrain")
+	{
+		Terrain* terrain = me->GetTerrain();
+		for(int i = 0; i < this->terrains.size(); i++)
+		{
+			if(this->terrains[i] == terrain)
+			{
+				delete this->terrains.getAndRemove(i);
+				terrain = NULL;
+			}
+		}
+	}
+}
+
 void DxManager::HandleMeshEvent(MeshEvent* me)
 {
 	string msg = me->getMessage();
@@ -143,6 +164,12 @@ void DxManager::Life()
 			if(dynamic_cast<RendererEvent*>(ev) != NULL)
 			{
 				string msg = ((RendererEvent*)ev)->getMessage();
+
+				//TerrainEvent
+				if(dynamic_cast<TerrainEvent*>(ev) != NULL)
+				{
+					this->HandleTerrainEvent((TerrainEvent*)ev);
+				}
 
 				// MeshEvent
 				if(dynamic_cast<MeshEvent*>(ev) != NULL)

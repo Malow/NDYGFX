@@ -118,6 +118,10 @@ RasterizerState BackCulling
 {
 	CullMode = Back;
 };
+RasterizerState FrontCulling
+{
+	CullMode = Front;
+};
 
 //------------------------------------------------------------------------------------------------------
 //	DepthStencilStates

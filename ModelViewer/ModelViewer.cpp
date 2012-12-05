@@ -54,11 +54,13 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 	//iLight* i = GetGraphics()->CreateLight( Vector3(15.0f, 75.0f, 15.0f) );
 	//i->SetIntensity(1000.1f);
 	GetGraphics()->SetSunLightProperties(Vector3(1, -1, 1));
+	iTerrain* iT = GetGraphics()->CreateTerrain(Vector3(0, 0, 0), Vector3(10, 10, 10), 2);
 
-	iMesh* scaleHuman = GetGraphics()->CreateMesh("Media/scale.obj", Vector3(30, -100, 30));
+
+	iMesh* scaleHuman = GetGraphics()->CreateMesh("Media/scale.obj", Vector3(30, -300, 30));
 	iMesh* model = GetGraphics()->CreateMesh("Media/bth.obj", Vector3(15, 20, 20));
 	scaleHuman->Scale(1.0f / 20.0f);
-	model->Scale(1.0f / 20.0f);
+	model->Scale(1.0f * 0.05f);
 
 	GetGraphics()->StartRendering();	// To force the engine to render a black image before it has loaded stuff to not get a clear-color rendered before skybox is in etc.
 
@@ -80,9 +82,9 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 			path = path.substr(0, path.size() - string("ModelViewer.exe").size());
 
 			string loadModel = specString.substr(path.size() , specString.size());
-			GetGraphics()->DeleteMesh(model);
-			model = GetGraphics()->CreateMesh(loadModel.c_str(), Vector3(15, 20, 20));
-			model->Scale(1.0f / 20.0f);
+			//GetGraphics()->DeleteMesh(model);
+			//model = GetGraphics()->CreateMesh(loadModel.c_str(), Vector3(15, 20, 20));
+			//model->Scale(1.0f / 20.0f);
 			lastSpecString = specString;
 		}
 

@@ -162,6 +162,50 @@ DxManager::~DxManager()
 	while(0 < this->texts.size())
 		delete this->texts.getAndRemove(0);
 }
+
+void DxManager::CreateTerrain(Terrain* terrain)
+{
+	//**todo: set data**
+	//call set terrain textures
+
+	//Create vertex buffer
+	BUFFER_INIT_DESC vertexBufferDesc;
+	vertexBufferDesc.ElementSize = sizeof(Vertex);
+	vertexBufferDesc.InitData = terrain->GetVertices(); //**
+	vertexBufferDesc.NumElements = terrain->GetNrOfVertices();
+	vertexBufferDesc.Type = VERTEX_BUFFER;
+	vertexBufferDesc.Usage = BUFFER_DEFAULT;
+
+	Buffer* vertexBuffer = new Buffer();
+	if(FAILED(vertexBuffer->Init(Dx_Device, Dx_DeviceContext, vertexBufferDesc)))
+		MaloW::Debug("ERROR: Could not create vertex buffer. REASON: CreateTerrain(Terrain* terrain)");
+	terrain->SetVertexBuffer(vertexBuffer);
+
+	//Create index buffer
+	Buffer* indexBuffer = NULL;
+	if(terrain->GetIndices()) //Check if indices are used
+	{
+		BUFFER_INIT_DESC vertexBufferDesc;
+		vertexBufferDesc.ElementSize = sizeof(int);
+		vertexBufferDesc.InitData = terrain->GetIndices();
+		vertexBufferDesc.NumElements = terrain->GetNrOfIndices();
+		vertexBufferDesc.Type = INDEX_BUFFER;
+		vertexBufferDesc.Usage = BUFFER_DEFAULT;
+
+		indexBuffer = new Buffer();
+		if(FAILED(indexBuffer->Init(Dx_Device, Dx_DeviceContext, vertexBufferDesc)))
+			MaloW::Debug("ERROR: Could not create index buffer. REASON: CreateTerrain(Terrain* terrain)");
+		terrain->SetIndexBuffer(indexBuffer);
+	}
+
+	//**TODO: create textures: done after terrain has been created.**
+	
+
+	//Create & put this event
+	TerrainEvent* re = new TerrainEvent("Add Terrain", terrain);
+	this->PutEvent(re);
+}
+
 void DxManager::CreateStaticMesh(StaticMesh* mesh)
 {
 	MaloW::Array<MeshStrip*>* strips = mesh->GetStrips();
@@ -221,10 +265,6 @@ void DxManager::CreateStaticMesh(StaticMesh* mesh)
 	this->PutEvent(re);
 }
 
-void DxManager::CreateTerrain(Terrain* terrain)
-{
-	//TODO: impl.
-}
 
 void DxManager::CreateAnimatedMesh(AnimatedMesh* mesh)
 {
@@ -336,6 +376,12 @@ Object3D* DxManager::createParticleObject(ParticleMesh* mesh)
 void DxManager::CreateSmokeEffect()
 {
 	RendererEvent* re = new RendererEvent("Create SmokeEffect");
+	this->PutEvent(re);
+}
+
+void DxManager::DeleteTerrain(Terrain* terrain)
+{
+	TerrainEvent* re = new TerrainEvent("Delete Terrain", terrain);
 	this->PutEvent(re);
 }
 
