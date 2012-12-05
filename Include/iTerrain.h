@@ -15,7 +15,6 @@ extern "C"
 	{	
 		protected:
 			iTerrain() {}
-			iTerrain(Vector3 pos, Vector3 scale) {}
 
 		public:
 			//Returns the Y-position on the terrain at x,z.

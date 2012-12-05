@@ -3,21 +3,18 @@
 
 void DxManager::RenderTerrain()
 {
+	
 	//terrain->
 	//fetch texture names
 	//if not loaded; load
 
 	//**TODO:implement**
-	/*
-	//Matrices
-	D3DXMATRIX world, view, proj, wvp, worldInverseTranspose;
-	view = this->camera->GetViewMatrix();
-	proj = this->camera->GetProjectionMatrix();
-
+	
+	
+/*
 	//Clear and set render target/depth
 	this->Dx_DeviceContext->OMSetRenderTargets(this->NrOfRenderTargets, this->Dx_GbufferRTs, this->Dx_DepthStencilView);
 	this->Dx_DeviceContext->RSSetViewports(1, &this->Dx_Viewport);
-
 	this->Dx_DeviceContext->ClearDepthStencilView(this->Dx_DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
 	//Set texture RT
@@ -28,11 +25,8 @@ void DxManager::RenderTerrain()
 	for(int i = 1; i < this->NrOfRenderTargets; i++)
 		this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_GbufferRTs[i], clearColor2);
 
-	//Set constant buffers
-	//Per frame
-	this->Shader_DeferredGeometryBlendMap->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetPositionD3DX(), 1));
-	
 	*/
+
 
 }
 
@@ -119,7 +113,9 @@ void DxManager::RenderDeferredGeometry()
 			this->invisibleGeometry = true;
 		}
 	}
-
+	//Unbind resources static geometry:
+	this->Shader_DeferredGeometry->SetResource("tex2D", NULL);
+	this->Shader_DeferredGeometry->Apply(0);
 
 	//Normal (visible) Animated meshes
 	this->Shader_DeferredAnimatedGeometry->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetPositionD3DX(), 1));
@@ -191,13 +187,107 @@ void DxManager::RenderDeferredGeometry()
 			this->invisibleGeometry = true;
 		}
 	}
+	//Unbind resources animated geometry:
 	this->Shader_DeferredAnimatedGeometry->SetResource("tex2D", NULL);
 	this->Shader_DeferredAnimatedGeometry->Apply(0);
 	
 
-	// Unbind resources:
-	this->Shader_DeferredGeometry->SetResource("tex2D", NULL);
-	this->Shader_DeferredGeometry->Apply(0);
+
+	//Terrain **högst upp** **kolla Normal geometry & kolla att variabelnamnen i .fx-filen stämmer**
+	if(this->terrains.size() != 0)
+	{
+		//Camera Matrices
+		D3DXMATRIX world, view, proj, wvp, worldInverseTranspose;
+		view = this->camera->GetViewMatrix();
+		proj = this->camera->GetProjectionMatrix();
+
+		//Per frame
+		this->Shader_DeferredGeometryBlendMap->SetFloat4("cameraPosition", D3DXVECTOR4(this->camera->GetPositionD3DX(), 1));
+
+		//Per object (terrain)
+		for(int i = 0; i < this->terrains.size(); i++)
+		{
+			//Set topology
+			this->Dx_DeviceContext->IASetPrimitiveTopology(this->terrains.get(i)->GetTopology());
+
+			//Calculate matrices & set them
+			world = this->terrains.get(i)->GetWorldMatrix();
+			wvp = world * view * proj;
+			D3DXMatrixInverse(&worldInverseTranspose, NULL, &world);
+			D3DXMatrixTranspose(&worldInverseTranspose, &worldInverseTranspose); //Used for calculating right normal
+			this->Shader_DeferredGeometryBlendMap->SetMatrix("WVP", wvp);
+			this->Shader_DeferredGeometryBlendMap->SetMatrix("worldMatrix", world);
+			this->Shader_DeferredGeometryBlendMap->SetMatrix("worldMatrixInverseTranspose", worldInverseTranspose);
+
+			//Textures
+			if(ID3D11ShaderResourceView* srv1 = this->terrains.get(i)->GetSRV1()) //Check if there's any textures loaded **2 & 3?**
+			{
+				this->Shader_DeferredGeometryBlendMap->SetBool("textured", true);
+				this->Shader_DeferredGeometryBlendMap->SetResource("tex1", srv1);
+				this->Shader_DeferredGeometryBlendMap->SetResource("tex2", this->terrains.get(i)->GetSRV2());
+				this->Shader_DeferredGeometryBlendMap->SetResource("tex3", this->terrains.get(i)->GetSRV3());
+			}
+			else
+			{
+				this->Shader_DeferredGeometryBlendMap->SetBool("textured", false);
+				MaloW::Debug("WARNING: terrain is missing 1 or more textures");
+			}
+
+			//Set lighting from material
+			this->Shader_DeferredGeometryBlendMap->SetFloat("specularPower", this->terrains.get(i)->GetMaterial()->SpecularPower);
+			this->Shader_DeferredGeometryBlendMap->SetFloat4("specularColor", D3DXVECTOR4(this->terrains.get(i)->GetMaterial()->SpecularColor, 1));
+			this->Shader_DeferredGeometryBlendMap->SetFloat4("diffuseColor", D3DXVECTOR4(this->terrains.get(i)->GetMaterial()->DiffuseColor, 1));
+			this->Shader_DeferredGeometryBlendMap->SetFloat4("ambientLight", D3DXVECTOR4(this->terrains.get(i)->GetMaterial()->AmbientColor, 1));
+
+			//Apply vertices & indices & shader
+			Buffer* vertices = this->terrains.get(i)->GetVertexBuffer();
+			if(vertices) 
+			{
+				if(FAILED(vertices->Apply()))
+				{
+					MaloW::Debug("ERROR: Could not apply vertices for terrain.");
+				}
+			}
+			else
+			{
+				MaloW::Debug("ERROR: Could not apply vertices for terrain.");
+			}
+			Buffer* indices = this->terrains.get(i)->GetIndexBuffer();
+			if(indices) 
+			{
+				if(FAILED(indices->Apply()))
+				{
+					MaloW::Debug("ERROR: Could not apply indices for terrain.");
+				}
+			}
+			else
+			{
+				MaloW::Debug("ERROR: Could not apply indices for terrain.");
+			}
+			if(FAILED(this->Shader_DeferredGeometryBlendMap->Apply(0)))
+			{
+				MaloW::Debug("ERROR: Could not apply shader for terrain.");
+			}
+
+			//Draw
+			if(indices)
+				this->Dx_DeviceContext->DrawIndexed(indices->GetElementCount(), 0, 0);
+			else
+				this->Dx_DeviceContext->Draw(vertices->GetElementCount(), 0);
+		}
+
+		//Unbind terrain resources
+		this->Shader_DeferredGeometryBlendMap->SetResource("tex1", NULL);
+		this->Shader_DeferredGeometryBlendMap->SetResource("tex2", NULL);
+		this->Shader_DeferredGeometryBlendMap->SetResource("tex3", NULL);
+		this->Shader_DeferredGeometryBlendMap->Apply(0);
+	}
+	else
+	{
+		MaloW::Debug("WARNING: No terrain to be drawn");
+	}
+
+
 }
 
 

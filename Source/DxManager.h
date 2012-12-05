@@ -39,6 +39,27 @@ public:
 	string getMessage() { return this->message; }
 };
 
+class TerrainEvent : public RendererEvent
+{
+private:
+	Terrain* terrain;
+
+public:
+	TerrainEvent(string message, Terrain* terrain) : RendererEvent(message)
+	{
+		this->terrain = terrain;
+	}
+	virtual ~TerrainEvent() 
+	{
+		if(this->deleteSelf && this->message.substr(0, 6) != "Delete")
+		{
+			if(this->terrain) delete this->terrain; this->terrain = NULL;
+		}
+	}
+
+	Terrain* GetTerrain() { this->deleteSelf = false; return this->terrain; }
+};
+
 
 class MeshEvent : public RendererEvent
 {
@@ -161,13 +182,13 @@ private:
 
 	// Lightning
 	MaloW::Array<Light*> lights;
-	
+
 	// Shadow map:
 	Shader* Shader_ShadowMap;
 	Shader* Shader_BillBoard;
 	Shader* Shader_Text;
 	Shader* Shader_ShadowMapAnimated;
-	
+
 	// Deferred Rendering
 	// Gbuffer:
 	static const int NrOfRenderTargets = 4;
@@ -187,7 +208,7 @@ private:
 
 	Shader* Shader_DeferredAnimatedGeometry;
 
-	
+
 	SSAO* ssao;
 	FXAA* fxaa;
 	Shader* Shader_Fxaa;
@@ -214,17 +235,18 @@ private:
 	void RenderDeferredSkybox();
 	void RenderAntiAliasing();
 	void RenderText();
-	
+
 	HRESULT Init();
 
 	int TriangleCount;
-	
+
 
 public:
 	bool StartRender;
 	DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam);
 	virtual ~DxManager();
 
+	void HandleTerrainEvent(TerrainEvent* me);
 	void HandleMeshEvent(MeshEvent* me);
 	void HandleLightEvent(LightEvent* le);
 	void HandleImageEvent(ImageEvent* ie);
@@ -234,8 +256,8 @@ public:
 	HRESULT Update(float deltaTime);
 
 	void CreateSmokeEffect();
+	void CreateTerrain(Terrain* terrain); 
 	void CreateStaticMesh(StaticMesh* mesh);
-	void CreateTerrain(Terrain* terrain); //static mesh with blendmap and some extra variables
 	void CreateAnimatedMesh(AnimatedMesh* mesh);
 	Object3D* createParticleObject(ParticleMesh* mesh);
 	Light* CreateLight(D3DXVECTOR3 pos, bool UseShadowMap);
@@ -245,6 +267,7 @@ public:
 
 	long GetFrameCount() const { return this->framecount; }
 
+	void DeleteTerrain(Terrain* terrain);
 	void DeleteStaticMesh(StaticMesh* mesh);
 	void DeleteAnimatedMesh(AnimatedMesh* mesh);
 	void DeleteLight(Light* light);
