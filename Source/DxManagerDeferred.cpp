@@ -219,7 +219,51 @@ void DxManager::RenderDeferredGeometry()
 			this->Shader_DeferredGeometryBlendMap->SetMatrix("worldMatrix", world);
 			this->Shader_DeferredGeometryBlendMap->SetMatrix("worldMatrixInverseTranspose", worldInverseTranspose);
 
-			//Textures
+			//Set Textures
+			//Check if texture(name/path) have changed, create new shader resource view if it has
+			bool hasTexture = false;
+			for(int j = 0; j < 3; j++)
+			{
+				Texture* texPtr = this->terrains.get(i)->GetTexturePointer(j);
+				if(texPtr)
+				{
+					if(texPtr->HasChanged)
+					{
+						//Release old shader resource view
+						if(texPtr->SRV) texPtr->SRV->Release();
+						
+						//Create new 
+						D3DX11_IMAGE_LOAD_INFO loadInfo;
+						ZeroMemory(&loadInfo, sizeof(D3DX11_IMAGE_LOAD_INFO));
+						loadInfo.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+						loadInfo.Format = DXGI_FORMAT_BC1_UNORM;
+						if(FAILED(D3DX11CreateShaderResourceViewFromFile(	this->Dx_Device, 
+																			texPtr->FileName.c_str(),
+																			&loadInfo, 
+																			NULL, 
+																			&texPtr->SRV,
+																			NULL)))
+						{
+							MaloW::Debug("WARNING: Failed to load texture " + texPtr->FileName);
+						}
+						texPtr->HasChanged = false;
+					}
+
+					string shaderTexName = "tex";
+					shaderTexName += MaloW::convertNrToString(i + 1);
+					this->Shader_DeferredGeometryBlendMap->SetResource(shaderTexName.c_str(), texPtr->SRV);
+					hasTexture = true;
+				}
+			}
+			if(hasTexture) 
+			{
+				this->Shader_DeferredGeometryBlendMap->SetBool("textured", true);
+			}
+			else
+			{
+				this->Shader_DeferredGeometryBlendMap->SetBool("textured", false);
+			}
+			/*
 			if(ID3D11ShaderResourceView* srv1 = this->terrains.get(i)->GetSRV1()) //Check if there's any textures loaded **2 & 3?**
 			{
 				this->Shader_DeferredGeometryBlendMap->SetBool("textured", true);
@@ -230,7 +274,7 @@ void DxManager::RenderDeferredGeometry()
 			else
 			{
 				this->Shader_DeferredGeometryBlendMap->SetBool("textured", false);
-			}
+			}*/
 
 			//Set lighting from material
 			this->Shader_DeferredGeometryBlendMap->SetFloat("specularPower", this->terrains.get(i)->GetMaterial()->SpecularPower);
@@ -239,7 +283,7 @@ void DxManager::RenderDeferredGeometry()
 			this->Shader_DeferredGeometryBlendMap->SetFloat4("ambientLight", D3DXVECTOR4(this->terrains.get(i)->GetMaterial()->AmbientColor, 1));
 
 			//Apply vertices & indices & shader
-			Buffer* vertices = this->terrains.get(i)->GetVertexBuffer();
+			Buffer* vertices = this->terrains.get(i)->GetVertexBufferPointer();
 			if(vertices) 
 			{
 				if(FAILED(vertices->Apply()))
@@ -249,9 +293,9 @@ void DxManager::RenderDeferredGeometry()
 			}
 			else
 			{
-				MaloW::Debug("ERROR: Could not apply vertices for terrain.");
+				MaloW::Debug("ERROR: Could not apply vertices for terrain. REASON: vertex buffer has not been created.");
 			}
-			Buffer* indices = this->terrains.get(i)->GetIndexBuffer();
+			Buffer* indices = this->terrains.get(i)->GetIndexBufferPointer();
 			if(indices) 
 			{
 				if(FAILED(indices->Apply()))
@@ -261,7 +305,7 @@ void DxManager::RenderDeferredGeometry()
 			}
 			else
 			{
-				MaloW::Debug("ERROR: Could not apply indices for terrain.");
+				MaloW::Debug("ERROR: Could not apply indices for terrain.  REASON: index buffer has not been created");
 			}
 			if(FAILED(this->Shader_DeferredGeometryBlendMap->Apply(0)))
 			{

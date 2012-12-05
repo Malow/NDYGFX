@@ -128,7 +128,7 @@ void Shader::SetFloat4(char* variable, D3DXVECTOR4 value)
 	m_pEffect->GetVariableByName(variable)->AsVector()->SetFloatVector((float*)&value);
 }
 
-void Shader::SetResource(char* variable, ID3D11ShaderResourceView* value)
+void Shader::SetResource(const char* variable, ID3D11ShaderResourceView* value)
 {
 	m_pEffect->GetVariableByName(variable)->AsShaderResource()->SetResource(value);
 }

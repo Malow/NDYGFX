@@ -19,10 +19,13 @@ extern "C"
 		public:
 			//Returns the Y-position on the terrain at x,z.
 			virtual float GetYPositionAt(float x, float z) = 0; 
-			//Data = pointer to 1D array of floats (3 sequential floats in array represent a vector).
-			virtual bool SetHeightMap(float* data) = 0;
+
+			//Sets the scale for the terrain.
+			virtual void SetScale(Vector3& scale) = 0;
+			//Data = array of floats containing y-values for each vertex. Range [0,1].
+			virtual void SetHeightMap(float* data) = 0;
 			//Set 0-3 textures to blend.
-			virtual bool SetTextures(const char* fileName1 = 0, const char* fileName2 = 0, const char* fileName3 = 0) = 0;
+			virtual void SetTextures(const char** fileNames) = 0;
 			//Width & height = dimension of blend map in texels, data = pointer of 1D array of floats (3 sequential floats in the array represent the R,B&G-channels).
 			virtual bool SetBlendMap(unsigned int size, float* data) = 0;
 

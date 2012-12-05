@@ -45,6 +45,10 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 {
 	if ( !GraphicsInit(hInstance) )
 		throw("Failed Creating Graphics Engine!");
+	
+#if defined(DEBUG) || defined(_DEBUG)
+	_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+#endif
 
 	MaloW::ClearDebug();
 	GetGraphics()->CreateSkyBox("Media/skymap.dds");	// Reduces FPS from 130 to 40
@@ -55,7 +59,11 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 	i->SetIntensity(0.001f);
 	GetGraphics()->SetSunLightProperties(Vector3(1, -1, 1));
 	iTerrain* iT = GetGraphics()->CreateTerrain(Vector3(0, 0, 0), Vector3(10, 10, 10), 2);
-
+	const char** fileNames = new const char*[3];
+	fileNames[0] = "Media/TerrainTexture.png";
+	fileNames[1] = NULL;
+	fileNames[2] = NULL;
+	iT->SetTextures(fileNames);
 
 	iMesh* scaleHuman = GetGraphics()->CreateMesh("Media/scale.obj", Vector3(30, -300, 30));
 	iMesh* model = GetGraphics()->CreateMesh("Media/bth.obj", Vector3(15, 20, 20));

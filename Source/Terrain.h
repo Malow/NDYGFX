@@ -8,8 +8,23 @@
 #include "Buffer.h"
 #include "Material.h"
 
+
+struct Texture
+{
+	bool						HasChanged;
+	string						FileName;
+	ID3D11ShaderResourceView*	SRV;
+
+	Texture() {HasChanged = true; FileName = ""; SRV = NULL; }
+	Texture(string fileName) {HasChanged = true; FileName = fileName; SRV = NULL; }
+	virtual ~Texture() { if(SRV) SRV->Release(); SRV = NULL; }
+};
+
 class Terrain : public iTerrain
 {
+	private:
+		
+
 	private:
 		int							zSize; //size of mesh (width & height)
 
@@ -27,12 +42,9 @@ class Terrain : public iTerrain
 		Material*					zMaterial;
 		D3D_PRIMITIVE_TOPOLOGY		zTopology;
 		
-		string						zTex1;
-		string						zTex2;
-		string						zTex3;
-		ID3D11ShaderResourceView*	zSRV1;
-		ID3D11ShaderResourceView*	zSRV2;
-		ID3D11ShaderResourceView*	zSRV3;
+		Texture**					zTextures;
+		
+		
 
 	private:
 		void CreateMesh();
@@ -51,37 +63,40 @@ class Terrain : public iTerrain
 		D3DXMATRIX GetWorldMatrix() const { return this->zWorldMatrix; }
 
 		int GetNrOfVertices() const { return this->zNrOfVertices; }
-		Vertex* GetVertices() { return this->zVertices; }
-		Buffer* GetVertexBuffer() { return this->zVertexBuffer; }
+		Vertex* GetVerticesPointer() { return this->zVertices; }
+		Buffer* GetVertexBufferPointer() { return this->zVertexBuffer; }
 		int GetNrOfIndices() const { return this->zNrOfIndices; }
-		int* GetIndices() { return this->zIndices; }
-		Buffer* GetIndexBuffer() { return this->zIndexBuffer; }
+		int* GetIndicesPointer() { return this->zIndices; }
+		Buffer* GetIndexBufferPointer() { return this->zIndexBuffer; }
 
 		Material* GetMaterial() const { return this->zMaterial; }
 		D3D_PRIMITIVE_TOPOLOGY GetTopology() const { return this->zTopology; }
 
-		string GetTexture1() { return zTex1; } //**temp**
-		string GetTexture2() { return zTex2; }//**temp**
-		string GetTexture3() { return zTex3; }//**temp**
-		ID3D11ShaderResourceView* GetSRV1() { return zSRV1; }//**temp**
-		ID3D11ShaderResourceView* GetSRV2() { return zSRV2; }//**temp**
-		ID3D11ShaderResourceView* GetSRV3() { return zSRV3; }//**temp**
+		Texture* GetTexturePointer(unsigned int index) { return this->zTextures[index]; }
 
 		//Set
+		void SetScale(D3DXVECTOR3 scale) { this->zScale = scale; }
 		void SetVertexBuffer(Buffer* vertexBuffer);
 		void SetIndexBuffer(Buffer* indexBuffer);
 		//void SetSRV1**
 
-		// Is used internally when needed, but can be used from the outside for debugging.
+		//Other
+		//Is used internally when needed, but can be used from the outside for debugging.
 		void RecreateWorldMatrix();
 		
 		//bool LoadTexture();
 		//bool LoadTextures()
 
+
+
 		//iTerrain interface functions
+		//Get
 		virtual float GetYPositionAt(float x, float z); 
-		virtual bool SetHeightMap(float* data); 
-		virtual bool SetTextures(const char* fileName1 = NULL, const char* fileName2 = NULL, const char* fileName3 = NULL);
+
+		//Set
+		virtual void SetScale(Vector3& scale);
+		virtual void SetHeightMap(float* data); 
+		virtual void SetTextures(const char** fileNames);
 		virtual bool SetBlendMap(unsigned int size, float* data);
 
 

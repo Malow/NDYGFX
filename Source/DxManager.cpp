@@ -171,7 +171,7 @@ void DxManager::CreateTerrain(Terrain* terrain)
 	//Create vertex buffer
 	BUFFER_INIT_DESC vertexBufferDesc;
 	vertexBufferDesc.ElementSize = sizeof(Vertex);
-	vertexBufferDesc.InitData = terrain->GetVertices(); //**
+	vertexBufferDesc.InitData = terrain->GetVerticesPointer(); //**
 	vertexBufferDesc.NumElements = terrain->GetNrOfVertices();
 	vertexBufferDesc.Type = VERTEX_BUFFER;
 	vertexBufferDesc.Usage = BUFFER_DEFAULT;
@@ -183,11 +183,11 @@ void DxManager::CreateTerrain(Terrain* terrain)
 
 	//Create index buffer
 	Buffer* indexBuffer = NULL;
-	if(terrain->GetIndices()) //Check if indices are used
+	if(terrain->GetIndicesPointer()) //Check if indices are used
 	{
 		BUFFER_INIT_DESC vertexBufferDesc;
 		vertexBufferDesc.ElementSize = sizeof(int);
-		vertexBufferDesc.InitData = terrain->GetIndices();
+		vertexBufferDesc.InitData = terrain->GetIndicesPointer();
 		vertexBufferDesc.NumElements = terrain->GetNrOfIndices();
 		vertexBufferDesc.Type = INDEX_BUFFER;
 		vertexBufferDesc.Usage = BUFFER_DEFAULT;

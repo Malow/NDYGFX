@@ -94,12 +94,10 @@ Terrain::Terrain()
 	this->zMaterial = new Material(MaterialType::LAMBERT);
 	this->zTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
-	this->zTex1 = "";
-	this->zTex2 = "";
-	this->zTex3 = "";
-	this->zSRV1 = NULL;
-	this->zSRV2 = NULL;
-	this->zSRV3 = NULL;
+	this->zTextures = new Texture*[3];
+	this->zTextures[0] = NULL;
+	this->zTextures[1] = NULL;
+	this->zTextures[2] = NULL;
 	
 }
 
@@ -123,12 +121,10 @@ Terrain::Terrain(D3DXVECTOR3 pos, D3DXVECTOR3 scale, unsigned int size)
 	this->zMaterial = new Material(MaterialType::LAMBERT);
 	this->zTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
-	this->zTex1 = "";
-	this->zTex2 = "";
-	this->zTex3 = "";
-	this->zSRV1 = NULL;
-	this->zSRV2 = NULL;
-	this->zSRV3 = NULL;
+	this->zTextures = new Texture*[3];
+	this->zTextures[0] = NULL;
+	this->zTextures[1] = NULL;
+	this->zTextures[2] = NULL;
 
 	this->CreateMesh();
 }
@@ -142,9 +138,15 @@ Terrain::~Terrain()
 
 	if(this->zMaterial) delete this->zMaterial; this->zMaterial = NULL;
 
-	if(this->zSRV1) this->zSRV1->Release();
-	if(this->zSRV2) this->zSRV2->Release();
-	if(this->zSRV3) this->zSRV3->Release();
+	if(this->zTextures)
+	{
+		if(this->zTextures[0]) delete this->zTextures[0]; this->zTextures[0] = NULL;
+		if(this->zTextures[1]) delete this->zTextures[1]; this->zTextures[1] = NULL;
+		if(this->zTextures[2]) delete this->zTextures[2]; this->zTextures[2] = NULL;
+
+		delete[] this->zTextures;
+		this->zTextures = NULL;
+	}
 }
 
 
@@ -161,6 +163,22 @@ void Terrain::SetIndexBuffer(Buffer* indexBuffer)
 	if(this->zIndexBuffer) delete this->zIndexBuffer;
 	this->zIndexBuffer = indexBuffer;
 }
+
+//Other
+void Terrain::RecreateWorldMatrix()
+{
+	D3DXMATRIX translate;
+	D3DXMatrixTranslation(&translate, this->zPos.x, this->zPos.y, this->zPos.z);
+
+	D3DXMATRIX scaling;
+	D3DXMatrixScaling(&scaling, this->zScale.x, this->zScale.y, this->zScale.z);
+
+	D3DXMATRIX world = scaling * translate;
+
+	this->zWorldMatrix = world;
+}
+
+
 
 //iTerrain interface functions
 float Terrain::GetYPositionAt(float x, float z)
@@ -216,23 +234,15 @@ float Terrain::GetYPositionAt(float x, float z)
 }
 
 //Set
-
-//Other
-void Terrain::RecreateWorldMatrix()
+void Terrain::SetScale(Vector3& scale)
 {
-	D3DXMATRIX translate;
-	D3DXMatrixTranslation(&translate, this->zPos.x, this->zPos.y, this->zPos.z);
-
-	D3DXMATRIX scaling;
-	D3DXMatrixScaling(&scaling, this->zScale.x, this->zScale.y, this->zScale.z);
-
-	D3DXMATRIX world = scaling * translate;
-
-	this->zWorldMatrix = world;
+	this->zScale.x = scale.x;
+	this->zScale.y = scale.y;
+	this->zScale.z = scale.z;
+	this->RecreateWorldMatrix();
 }
 
-//iTerrain interface functions
-bool Terrain::SetHeightMap(float* data)
+void Terrain::SetHeightMap(float* data)
 {
 	//Update/set y-values of vertices
 	int totSize = this->zSize * this->zSize;
@@ -241,21 +251,67 @@ bool Terrain::SetHeightMap(float* data)
 		this->zVertices[i].pos.y = data[i];
 	}
 
-	//calculate new normals
+	//Calculate new normals
 	this->CalculateNormals();
-
-
-	return true;
 }
 
-bool Terrain::SetTextures(const char* fileName1, const char* fileName2, const char* fileName3)
+void Terrain::SetTextures(const char** fileNames)
 {
-	this->zTex1 = fileName1;
-	this->zTex2 = fileName2;
-	this->zTex3 = fileName3;
-	//**TODO: reload textures**
+	if(fileNames)
+	{
+		for(int i = 0; i < 3; i++)
+		{
+			if(this->zTextures[i])
+			{
+				if(this->zTextures[i]->FileName == string(fileNames[i]))
+				{
+					this->zTextures[i]->FileName  = fileNames[i];
+					this->zTextures[i]->HasChanged = true;
+				}
+			}
+			else if(fileNames[i])
+			{
+				this->zTextures[i] = new Texture(fileNames[i]);
+			}
+		}
+	}
 
-	return true;
+/*
+	for(int i = 0; i < 3; i++)
+	{
+
+
+	else if(fileName1)
+	{
+		this->zTextures[0] = new Texture(fileName1);
+	}
+
+	if(this->zTextures[1] && fileName2 != NULL)
+	{
+		if(this->zTextures[1]->FileName  == string(fileName2))
+		{
+			this->zTextures[1]->FileName = fileName2;
+			this->zTextures[1]->HasChanged = true;
+		}
+	}
+	else if(fileName2)
+	{
+		this->zTextures[1] = new Texture(fileName2);
+	}
+
+	if(this->zTextures[2] && fileName2 != NULL)
+	{
+		if(this->zTextures[2]->FileName == string(fileName3))
+		{
+			this->zTextures[2]->FileName  = fileName3;
+			this->zTextures[2]->HasChanged = true;
+		}
+	}
+	else if(fileName3)
+	{
+		this->zTextures[2] = new Texture(fileName3);
+	}
+	*/
 }
 
 bool Terrain::SetBlendMap(unsigned int size, float* data)
