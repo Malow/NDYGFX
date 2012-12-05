@@ -116,8 +116,7 @@ PSOut PSScene(PSSceneIn input) : SV_Target
 	{
 		textureColor.xyz = tex1.Sample(LinearWrapSampler, input.tex).xyz; 
 	}
-	//float4 finalColor = (textureColor + input.color) * diffuseColor;
-	float4 finalColor = float4(1, 0, 0, 5);
+	float4 finalColor = (textureColor + input.color) * diffuseColor;
 	output.Texture = finalColor;
 
 	//NormalAndDepth RT

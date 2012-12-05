@@ -5,9 +5,8 @@
 void Terrain::CreateMesh()
 {
 	//Create vertices
-	this->zVertices = new Vertex[this->zSize * this->zSize];
-
 	int tilingFactor = 1; //**ändra senare**
+	this->zVertices = new Vertex[this->zSize * this->zSize];
 
 	for(int i = 0; i < this->zSize; i++)
 	{
@@ -21,21 +20,6 @@ void Terrain::CreateMesh()
 						D3DXVECTOR3(0, 0, 0));
 		}
 	}
-
-	/*debug */
-	/*Vertex test1 = this->zVertices[0];
-	Vertex test2 = this->zVertices[1];
-	Vertex test3 = this->zVertices[2];
-	Vertex test4 = this->zVertices[3];
-	Vertex test5 = this->zVertices[4];
-	Vertex test6 = this->zVertices[5];
-	Vertex test7 = this->zVertices[6];
-	Vertex test8 = this->zVertices[7];
-	Vertex test9 = this->zVertices[8];
-	*/
-	//D3DXVECTOR3(((float)i / (this->zSize - 1)), 1, ((float)u / (this->zSize - 1))), 
-	//D3DXVECTOR2((float)i / ((this->zSize - 1) / tilingFactor), (float)u / ((this->zSize - 1) / tilingFactor)), 
-
 	this->zNrOfVertices = this->zSize * this->zSize;
 
 	//Create indices
@@ -62,13 +46,6 @@ void Terrain::CreateMesh()
 			offset++;
 		}
 	}
-
-	int test1 = this->zIndices[0];
-	int test2 = this->zIndices[1];
-	int test3 = this->zIndices[2];
-	int test4 = this->zIndices[3];
-	int test5 = this->zIndices[4];
-	int test6 = this->zIndices[5];
 }
 
 //**
