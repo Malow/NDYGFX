@@ -1,6 +1,7 @@
 #include "Graphics.h"
 #include "MaloWFileDebug.h"
 
+#define TEST //<----------------------- kommentera ut vid behov **********************
 
 void ReplaceSlashes(string& str, char replace, char with)
 {
@@ -58,13 +59,32 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 	iLight* i = GetGraphics()->CreateLight(GetGraphics()->GetCamera()->GetPosition());
 	i->SetIntensity(0.001f);
 	GetGraphics()->SetSunLightProperties(Vector3(1, -1, 1));
+	
+//*************************************	     PRE TEST       **********************
+#ifdef TEST
 	iTerrain* iT = GetGraphics()->CreateTerrain(Vector3(0, 0, 0), Vector3(10, 10, 10), 2);
 	const char** fileNames = new const char*[3];
 	fileNames[0] = "Media/TerrainTexture.png";
-	fileNames[1] = NULL;
-	fileNames[2] = NULL;
+	fileNames[1] = "Media/TerrainTexture.png";
+	fileNames[2] = "Media/TerrainTexture.png";
 	iT->SetTextures(fileNames);
-	delete[] fileNames;
+	float* testData = new float[16]; 
+	for(int i = 0; i < 16; i++)
+	{
+		//if(i % 4 == 0)
+		{
+			//testData[i] = 1.0f;
+		}
+	//	else
+		{
+			testData[i] = 1.0f;
+		}
+	}
+	iT->SetBlendMap(16, testData);
+#endif
+//*************************************	    END OF PRE TEST       **********************
+
+	
 
 	iMesh* scaleHuman = GetGraphics()->CreateMesh("Media/scale.obj", Vector3(30, -300, 30));
 	iMesh* model = GetGraphics()->CreateMesh("Media/bth.obj", Vector3(15, 20, 20));
@@ -101,6 +121,12 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 
 		// Updates camera etc, does NOT render the frame, another process is doing that, so diff should be very low.
 		float diff = GetGraphics()->Update();	
+		
+//*************************************	     RUN TESTS       **********************
+#ifdef TEST
+#endif
+//*************************************	    END OF RUN TESTS       **********************
+
 		i->SetPosition(GetGraphics()->GetCamera()->GetPosition());
 
 		if(GetGraphics()->GetKeyListener()->IsPressed('W'))
@@ -209,5 +235,11 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 	
 	FreeGraphics();
 
+	//*************************************	     POST TEST       **********************
+#ifdef TEST
+	delete[] fileNames;
+	//delete[] testData;
+#endif
+	//*************************************	   END OF POST TEST       **********************
 	return 0;
 }

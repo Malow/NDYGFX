@@ -19,6 +19,18 @@ struct Texture
 	Texture(string fileName) {HasChanged = true; FileName = fileName; SRV = NULL; }
 	virtual ~Texture() { if(SRV) SRV->Release(); SRV = NULL; }
 };
+struct BlendMap
+{
+	bool						HasChanged;
+	unsigned int				Size;
+	float*						Data;
+	ID3D11ShaderResourceView*	SRV;
+	
+	BlendMap() {HasChanged = true; Size = 0; Data = NULL;  SRV = NULL; }
+	BlendMap(unsigned int size, float* data) {HasChanged = true; Size = size; Data = data; SRV = NULL; }
+	virtual ~BlendMap() { if(Data) delete Data; Data = NULL; if(SRV) SRV->Release(); SRV = NULL; }
+
+};
 
 class Terrain : public iTerrain
 {
@@ -43,7 +55,7 @@ class Terrain : public iTerrain
 		D3D_PRIMITIVE_TOPOLOGY		zTopology;
 		
 		Texture**					zTextures;
-		
+		BlendMap*					zBlendMap;
 		
 
 	private:
@@ -63,16 +75,17 @@ class Terrain : public iTerrain
 		D3DXMATRIX GetWorldMatrix() const { return this->zWorldMatrix; }
 
 		int GetNrOfVertices() const { return this->zNrOfVertices; }
-		Vertex* GetVerticesPointer() { return this->zVertices; }
-		Buffer* GetVertexBufferPointer() { return this->zVertexBuffer; }
+		Vertex* GetVerticesPointer() const { return this->zVertices; }
+		Buffer* GetVertexBufferPointer() const { return this->zVertexBuffer; }
 		int GetNrOfIndices() const { return this->zNrOfIndices; }
-		int* GetIndicesPointer() { return this->zIndices; }
-		Buffer* GetIndexBufferPointer() { return this->zIndexBuffer; }
+		int* GetIndicesPointer() const { return this->zIndices; }
+		Buffer* GetIndexBufferPointer() const { return this->zIndexBuffer; }
 
 		Material* GetMaterial() const { return this->zMaterial; }
 		D3D_PRIMITIVE_TOPOLOGY GetTopology() const { return this->zTopology; }
 
 		Texture* GetTexturePointer(unsigned int index) { return this->zTextures[index]; }
+		BlendMap* GetBlendMapPointer() { return this->zBlendMap; }
 
 		//Set
 		void SetScale(D3DXVECTOR3 scale) { this->zScale = scale; }
@@ -97,7 +110,7 @@ class Terrain : public iTerrain
 		virtual void SetScale(Vector3& scale);
 		virtual void SetHeightMap(float* data); 
 		virtual void SetTextures(const char** fileNames);
-		virtual bool SetBlendMap(unsigned int size, float* data);
+		virtual void SetBlendMap(unsigned int size, float* data);
 
 
 
