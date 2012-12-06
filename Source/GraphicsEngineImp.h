@@ -17,6 +17,7 @@ Singleton.
 #include "TRDCamera.h"
 #include "Image.h"
 #include "CamRecording.h"
+#include "PhysicsEngine.h"
 
 // Class for communication between processes for loading meshes
 class LoadMeshEvent : public MaloW::ProcessEvent
@@ -63,6 +64,7 @@ private:
 	HWND hWnd;
 	KeyListener* kl;
 	Camera* cam;
+	PhysicsEngine* physx;
 
 	int fpsLast;
 	int prevFrameCount;
@@ -124,6 +126,8 @@ public:
 	virtual void SetFPSMax(float maxFPS) { this->dx->SetFPSMAX(maxFPS); }
 
 	virtual void SetSunLightProperties(Vector3 direction, Vector3 lightColor = Vector3(1.0f, 1.0f, 1.0f), float intensity = 1.0f);
+
+	virtual iPhysicsEngine* GetPhysicsEngine() const;
 
 	/*  Non-inherited functions */
 

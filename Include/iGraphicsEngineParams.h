@@ -27,5 +27,7 @@ extern "C"
 		static int ShadowMapSettings;
 		static int FXAAQuality;
 		static CameraType CamType;
+
+		virtual void SaveToFile(const char* file) = 0;
 	};
 }
