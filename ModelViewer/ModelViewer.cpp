@@ -53,8 +53,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 
 	MaloW::ClearDebug();
 	GetGraphics()->CreateSkyBox("Media/skymap.dds");	// Reduces FPS from 130 to 40
-	//iTerrain* t = GetGraphics()->CreateTerrain(Vector3(0, 0, 0), Vector3(100, 1, 100), "Media/TerrainTexture.png", "Media/TerrainHeightmap.raw");
-	GetGraphics()->GetCamera()->SetPosition(Vector3(50, 30, 50));
+	GetGraphics()->GetCamera()->SetPosition(Vector3(25, 25, 20));
 	GetGraphics()->GetCamera()->LookAt(Vector3(0, 0, 0));
 	iLight* i = GetGraphics()->CreateLight(GetGraphics()->GetCamera()->GetPosition());
 	i->SetIntensity(0.001f);
@@ -62,7 +61,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 	
 //*************************************	     PRE TEST       **********************
 #ifdef TEST
-	iTerrain* iT = GetGraphics()->CreateTerrain(Vector3(0, 0, 0), Vector3(10, 10, 10), 2);
+	iTerrain* iT = GetGraphics()->CreateTerrain(Vector3(10, 0, 10), Vector3(10, 10, 10), 2);
 	const char** fileNames = new const char*[3];
 	fileNames[0] = "Media/TerrainTexture.png";
 	fileNames[1] = "Media/TerrainTexture.png";
@@ -81,6 +80,8 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 		}
 	}
 	iT->SetBlendMap(16, testData);
+	iMesh* ball = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(0, -100, 0));
+	ball->Scale(0.1f);
 #endif
 //*************************************	    END OF PRE TEST       **********************
 
@@ -124,6 +125,16 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 		
 //*************************************	     RUN TESTS       **********************
 #ifdef TEST
+		CollisionData cd = GetGraphics()->GetPhysicsEngine()->GetCollisionRayMesh(
+			GetGraphics()->GetCamera()->GetPosition(), GetGraphics()->GetCamera()->GetForward(), model);
+		if(cd.collision)
+		{
+			ball->SetPosition(cd.position);
+		}
+		else
+		{
+			ball->SetPosition(Vector3(0, -100, 0));
+		}
 #endif
 //*************************************	    END OF RUN TESTS       **********************
 

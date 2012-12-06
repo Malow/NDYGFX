@@ -48,6 +48,7 @@ void PhysicsEngine::DoCollisionRayVsMesh(Vector3 rayOrigin, Vector3 rayDirection
 		Mesh* mesh, CollisionData& cd)
 {
 	MaloW::Array<MeshStrip*>* strips = mesh->GetStrips();
+	int nrOfStrips = strips->size();
 	for(int i = 0; i < strips->size(); i++)
 	{
 		this->DoCollisionRayVsTriangles(rayOrigin, rayDirection, 
@@ -59,36 +60,75 @@ void PhysicsEngine::DoCollisionRayVsMesh(Vector3 rayOrigin, Vector3 rayDirection
 void PhysicsEngine::DoCollisionRayVsTriangles(Vector3 rayOrigin, Vector3 rayDirection, 
 		Vertex* vertices, int nrOfVertices, int* indices, int nrOfIndices, D3DXMATRIX worldMat, CollisionData& cd)
 {
-	for(int i = 0; i < nrOfIndices; i += 3)
+	if(!indices)
 	{
-		CollisionData tempCD;
-
-		Vertex vert0 = vertices[indices[i]];
-		Vertex vert1 = vertices[indices[i + 1]];
-		Vertex vert2 = vertices[indices[i + 2]];
-
-		// D3DX STUFF
-		
-		D3DXVECTOR4 pos0;
-		D3DXVec3Transform(&pos0, &vert0.pos, &worldMat);
-		D3DXVECTOR4 pos1;
-		D3DXVec3Transform(&pos1, &vert1.pos, &worldMat);
-		D3DXVECTOR4 pos2;
-		D3DXVec3Transform(&pos2, &vert2.pos, &worldMat);
-
-		Vector3 v0 = Vector3(pos0.x, pos0.y, pos0.z);
-		Vector3 v1 = Vector3(pos1.x, pos1.y, pos1.z);
-		Vector3 v2 = Vector3(pos2.x, pos2.y, pos2.z);
-
-		// END OF D3DX STUFF
-
-		if(this->DoCollisionTestRayVsTriangle(rayOrigin, rayDirection, v0, v1, v2, tempCD))
+		for(int i = 0; i < nrOfVertices; i += 3)
 		{
-			if(tempCD.distance < cd.distance)
+			CollisionData tempCD;
+
+			Vertex vert0 = vertices[i];
+			Vertex vert1 = vertices[i + 1];
+			Vertex vert2 = vertices[i + 2];
+
+			// D3DX STUFF
+
+			D3DXVECTOR4 pos0;
+			D3DXVec3Transform(&pos0, &vert0.pos, &worldMat);
+			D3DXVECTOR4 pos1;
+			D3DXVec3Transform(&pos1, &vert1.pos, &worldMat);
+			D3DXVECTOR4 pos2;
+			D3DXVec3Transform(&pos2, &vert2.pos, &worldMat);
+
+			Vector3 v0 = Vector3(pos0.x, pos0.y, pos0.z);
+			Vector3 v1 = Vector3(pos1.x, pos1.y, pos1.z);
+			Vector3 v2 = Vector3(pos2.x, pos2.y, pos2.z);
+
+			// END OF D3DX STUFF
+
+			if(this->DoCollisionTestRayVsTriangle(rayOrigin, rayDirection, v0, v1, v2, tempCD))
 			{
-				cd.distance = tempCD.distance;
-				cd.position = tempCD.position;
-				cd.collision = true;
+				if(tempCD.distance < cd.distance)
+				{
+					cd.distance = tempCD.distance;
+					cd.position = tempCD.position;
+					cd.collision = true;
+				}
+			}
+		}
+	}
+	else
+	{
+		for(int i = 0; i < nrOfIndices; i += 3)
+		{
+			CollisionData tempCD;
+
+			Vertex vert0 = vertices[indices[i]];
+			Vertex vert1 = vertices[indices[i + 1]];
+			Vertex vert2 = vertices[indices[i + 2]];
+
+			// D3DX STUFF
+
+			D3DXVECTOR4 pos0;
+			D3DXVec3Transform(&pos0, &vert0.pos, &worldMat);
+			D3DXVECTOR4 pos1;
+			D3DXVec3Transform(&pos1, &vert1.pos, &worldMat);
+			D3DXVECTOR4 pos2;
+			D3DXVec3Transform(&pos2, &vert2.pos, &worldMat);
+
+			Vector3 v0 = Vector3(pos0.x, pos0.y, pos0.z);
+			Vector3 v1 = Vector3(pos1.x, pos1.y, pos1.z);
+			Vector3 v2 = Vector3(pos2.x, pos2.y, pos2.z);
+
+			// END OF D3DX STUFF
+
+			if(this->DoCollisionTestRayVsTriangle(rayOrigin, rayDirection, v0, v1, v2, tempCD))
+			{
+				if(tempCD.distance < cd.distance)
+				{
+					cd.distance = tempCD.distance;
+					cd.position = tempCD.position;
+					cd.collision = true;
+				}
 			}
 		}
 	}
@@ -124,9 +164,7 @@ bool PhysicsEngine::DoCollisionTestRayVsTriangle(Vector3 rayOrigin, Vector3 rayD
 	Vector3 collPos;
 	float w = 1 - (u + v);
 
-	collPos.x = (u * v0.x + v * v1.x + w * v2.x);
-	collPos.y = (u * v0.y + v * v1.y + w * v2.y);
-	collPos.z = (u * v0.z + v * v1.z + w * v2.z);
+	collPos = (v0 * w) + (v1 * u) + (v2 * v);
 			
 	tempCD.collision = true;
 	tempCD.position = collPos;
