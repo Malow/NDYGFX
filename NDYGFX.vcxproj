@@ -18,6 +18,7 @@
     <ClInclude Include="Include\iImage.h" />
     <ClInclude Include="Include\iLight.h" />
     <ClInclude Include="Include\iMesh.h" />
+    <ClInclude Include="Include\iPhysicsEngine.h" />
     <ClInclude Include="Include\iTerrain.h" />
     <ClInclude Include="Include\iText.h" />
     <ClInclude Include="Include\Vector.h" />
@@ -46,6 +47,7 @@
     <ClInclude Include="Source\ParticleShader.h" />
     <ClInclude Include="Source\ParticleSystem.h" />
     <ClInclude Include="Source\ParticleSystemHandler.h" />
+    <ClInclude Include="Source\PhysicsEngine.h" />
     <ClInclude Include="Source\Random.h" />
     <ClInclude Include="Source\RTSCamera.h" />
     <ClInclude Include="Source\Shader.h" />
@@ -84,6 +86,7 @@
     <ClCompile Include="Source\ParticleShader.cpp" />
     <ClCompile Include="Source\ParticleSystem.cpp" />
     <ClCompile Include="Source\ParticleSystemsHandler.cpp" />
+    <ClCompile Include="Source\PhysicsEngine.cpp" />
     <ClCompile Include="Source\Process.cpp" />
     <ClCompile Include="Source\RTSCamera.cpp" />
     <ClCompile Include="Source\Shader.cpp" />

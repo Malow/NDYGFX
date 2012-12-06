@@ -154,6 +154,12 @@
     <ClInclude Include="Include\iGraphicsEngineParams.h">
       <Filter>Source Files\Wrapper</Filter>
     </ClInclude>
+    <ClInclude Include="Include\iPhysicsEngine.h">
+      <Filter>Source Files\Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\PhysicsEngine.h">
+      <Filter>Source Files\Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\AnimatedMesh.cpp">
@@ -263,6 +269,9 @@
     </ClCompile>
     <ClCompile Include="Source\GraphicsEngine.cpp">
       <Filter>Source Files\Wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\PhysicsEngine.cpp">
+      <Filter>Source Files\Engine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -40,6 +40,7 @@ GraphicsEngineImp::GraphicsEngineImp(GraphicsEngineParams params, HINSTANCE hIns
 	this->fpsLast = 0;
 	this->fpsTimer = 0.0f;
 	
+	this->physx = new PhysicsEngine();
 	this->kl = new KeyListener(this->hWnd);
 	this->InitWindow(hInstance, nCmdShow);
 	kl->SetHWND(this->hWnd); // Because of key listener being created before the window
@@ -72,6 +73,7 @@ GraphicsEngineImp::GraphicsEngineImp(GraphicsEngineParams params, HWND hWnd) :
 	this->fpsLast = 0;
 	this->fpsTimer = 0.0f;
 
+	this->physx = new PhysicsEngine();
 	this->hWnd = hWnd;
 	this->kl = new KeyListener(this->hWnd);
 	this->InitObjects();
@@ -91,6 +93,11 @@ GraphicsEngineImp::~GraphicsEngineImp()
 	
 	if ( this->dx ) delete dx, dx=0;
 	if ( this->kl ) delete kl, kl=0;
+	if(this->physx)
+	{
+		delete this->physx;
+		this->physx = NULL;
+	}
 
 	// DestroyWindow(this->hWnd); // Why is this commented out, Alex
 }
@@ -641,4 +648,9 @@ const char* GraphicsEngineImp::GetSpecialString()
 void GraphicsEngineImp::SetSunLightProperties( Vector3 direction, Vector3 lightColor /*= Vector3(1.0f, 1.0f, 1.0f)*/, float intensity /*= 1.0f*/ )
 {
 	this->dx->SetSunLightProperties(direction, lightColor, intensity);
+}
+
+iPhysicsEngine* GraphicsEngineImp::GetPhysicsEngine() const
+{
+	return this->physx;
 }
