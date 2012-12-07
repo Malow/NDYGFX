@@ -1,34 +1,6 @@
 #include "DxManager.h"
 
 
-void DxManager::RenderTerrain()
-{
-	
-	//terrain->
-	//fetch texture names
-	//if not loaded; load
-
-	//**TODO:implement**
-	
-	
-/*
-	//Clear and set render target/depth
-	this->Dx_DeviceContext->OMSetRenderTargets(this->NrOfRenderTargets, this->Dx_GbufferRTs, this->Dx_DepthStencilView);
-	this->Dx_DeviceContext->RSSetViewports(1, &this->Dx_Viewport);
-	this->Dx_DeviceContext->ClearDepthStencilView(this->Dx_DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
-
-	//Set texture RT
-	float clearColor1[4] = {0.5f, 0.71f, 1.0f, 1};
-	this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_GbufferRTs[0], clearColor1);
-	//Clear rest of the RTs
-	float clearColor2[4] = {-1.0f, -1.0f, -1.0f, -1.0f};
-	for(int i = 1; i < this->NrOfRenderTargets; i++)
-		this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_GbufferRTs[i], clearColor2);
-
-	*/
-
-
-}
 
 void DxManager::RenderDeferredGeometry()
 {
@@ -169,7 +141,7 @@ void DxManager::RenderDeferredGeometry()
 					texDesc.Height = widthOrHeight;
 					texDesc.MipLevels = 1;
 					texDesc.ArraySize = 1;
-					texDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; //DXGI_FORMAT_R16G16B16A16_FLOAT; //; //DXGI_FORMAT_BC1_UNORM; //;//; //**tillman
+					texDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT; 
 					texDesc.SampleDesc.Count = 1;
 					texDesc.SampleDesc.Quality = 0;
 					texDesc.Usage = D3D11_USAGE_IMMUTABLE;

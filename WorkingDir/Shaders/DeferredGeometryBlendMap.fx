@@ -121,10 +121,10 @@ PSOut PSScene(PSSceneIn input) : SV_Target
 	if(textured) 
 	{
 		//finalColor = tex3.Sample(LinearWrapSampler, input.tex).xyz * diffuseColor; //debug
-		finalColor = blendMap.Sample(LinearWrapSampler, input.tex).rgb; //Debug
+		//finalColor = blendMap.Sample(LinearWrapSampler, input.tex).rgb; //Debug
 		
 		//Sample textures
-		/*tex1Color = tex1.Sample(LinearWrapSampler, input.tex).rgb; 
+		tex1Color = tex1.Sample(LinearWrapSampler, input.tex).rgb; 
 		tex2Color = tex2.Sample(LinearWrapSampler, input.tex).rgb;
 		tex3Color = tex3.Sample(LinearWrapSampler, input.tex).rgb;
 		blendMapColor = blendMap.Sample(LinearWrapSampler, input.tex).rgb;
@@ -139,7 +139,7 @@ PSOut PSScene(PSSceneIn input) : SV_Target
 
 		//Blendmapped color
 		finalColor = (tex1Color + tex2Color + tex3Color) * diffuseColor.rgb;
-		*/
+		
 	}
 	else
 	{
