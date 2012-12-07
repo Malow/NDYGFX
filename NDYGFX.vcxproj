@@ -31,6 +31,7 @@
     <ClInclude Include="Source\DirectX.h" />
     <ClInclude Include="Source\DxManager.h" />
     <ClInclude Include="Source\DxManagerDebugging.h" />
+    <ClInclude Include="Source\DxManagerEvents.h" />
     <ClInclude Include="Source\FPSCamera.h" />
     <ClInclude Include="Source\FXAA.h" />
     <ClInclude Include="Source\GraphicsEngineImp.h" />

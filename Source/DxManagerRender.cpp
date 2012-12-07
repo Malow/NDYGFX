@@ -164,33 +164,38 @@ void DxManager::Life()
 			if(dynamic_cast<RendererEvent*>(ev) != NULL)
 			{
 				string msg = ((RendererEvent*)ev)->getMessage();
+				
+				if(dynamic_cast<ResizeEvent*>(ev) != NULL)
+				{
+					this->ResizeRenderer((ResizeEvent*)ev);
+				}
 
 				//TerrainEvent
-				if(dynamic_cast<TerrainEvent*>(ev) != NULL)
+				else if(dynamic_cast<TerrainEvent*>(ev) != NULL)
 				{
 					this->HandleTerrainEvent((TerrainEvent*)ev);
 				}
 
 				// MeshEvent
-				if(dynamic_cast<MeshEvent*>(ev) != NULL)
+				else if(dynamic_cast<MeshEvent*>(ev) != NULL)
 				{
 					this->HandleMeshEvent((MeshEvent*)ev);
 				}
 
 				// LightEvent
-				if(dynamic_cast<LightEvent*>(ev) != NULL)
+				else if(dynamic_cast<LightEvent*>(ev) != NULL)
 				{
 					this->HandleLightEvent((LightEvent*)ev);
 				}
 
 				// ImageEvent
-				if(dynamic_cast<ImageEvent*>(ev) != NULL)
+				else if(dynamic_cast<ImageEvent*>(ev) != NULL)
 				{
 					this->HandleImageEvent((ImageEvent*)ev);
 				}
 
 				// TextEvent
-				if(dynamic_cast<TextEvent*>(ev) != NULL)
+				else if(dynamic_cast<TextEvent*>(ev) != NULL)
 				{
 					this->HandleTextEvent((TextEvent*)ev);
 				}

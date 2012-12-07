@@ -14,6 +14,10 @@ bool GraphicsEngineParams::Maximized = true;
 int GraphicsEngineParams::ShadowMapSettings = 0;
 int GraphicsEngineParams::FXAAQuality = 0;
 CameraType GraphicsEngineParams::CamType = FPS;
+float GraphicsEngineParams::FOV = 0.45f;
+float GraphicsEngineParams::NearClip = 0.01f;
+float GraphicsEngineParams::FarClip = 200.0f;
+int GraphicsEngineParams::RefreshRate = 60;
 
 
 GraphicsEngineImp::GraphicsEngineImp(GraphicsEngineParams params, HINSTANCE hInstance, int nCmdShow) :
@@ -39,7 +43,8 @@ GraphicsEngineImp::GraphicsEngineImp(GraphicsEngineParams params, HINSTANCE hIns
 	this->prevFrameCount = 0;
 	this->fpsLast = 0;
 	this->fpsTimer = 0.0f;
-	
+	this->isManagingMyOwnWindow = true;
+
 	this->kl = new KeyListener(this->hWnd);
 	this->InitWindow(hInstance, nCmdShow);
 	kl->SetHWND(this->hWnd); // Because of key listener being created before the window
@@ -71,6 +76,7 @@ GraphicsEngineImp::GraphicsEngineImp(GraphicsEngineParams params, HWND hWnd) :
 	this->prevFrameCount = 0;
 	this->fpsLast = 0;
 	this->fpsTimer = 0.0f;
+	this->isManagingMyOwnWindow = false;
 
 	this->hWnd = hWnd;
 	this->kl = new KeyListener(this->hWnd);
@@ -675,4 +681,12 @@ iCamera* GraphicsEngineImp::ChangeCamera( CameraType newCamType )
 void GraphicsEngineImp::SetSceneAmbientLight( Vector3 ambientLight )
 {
 	this->dx->SetSceneAmbientLight(D3DXVECTOR3(ambientLight.x, ambientLight.y, ambientLight.z));
+}
+
+void GraphicsEngineImp::ResizeGraphicsEngine( float width, float height )
+{
+	if(this->isManagingMyOwnWindow)
+		SetWindowPos(this->hWnd, 0 , 0 , 0, width, height, SWP_NOMOVE|SWP_NOZORDER|SWP_NOACTIVATE);
+
+	this->dx->ResizeEngine(width, height);
 }

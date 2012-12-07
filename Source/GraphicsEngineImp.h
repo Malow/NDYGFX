@@ -78,7 +78,7 @@ private:
 	HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow);
 	void InitObjects();
 
-	
+	bool isManagingMyOwnWindow;
 
 
 	float PCFreq;
@@ -132,6 +132,8 @@ public:
 	virtual iCamera* ChangeCamera(CameraType newCamType);
 
 	virtual void SetSceneAmbientLight(Vector3 ambientLight);
+
+	virtual void ResizeGraphicsEngine(float width, float height);
 	/*  Non-inherited functions */
 
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
