@@ -6,7 +6,7 @@ HRESULT DxManager::Update(float deltaTime)
 {
 	// update subsystems
 	//ps.update(deltaTime);
-	this->camera->Update(deltaTime);				// Moved to Life below since deltaTime isnt needed
+	//this->camera->Update(deltaTime);				// Moved to Life below to counter update spasms due to thread-collision
 
 	return S_OK;
 }
@@ -199,7 +199,8 @@ void DxManager::Life()
 
 			delete ev;
 		}
-
+		this->camera->Update(this->TimerAnimation - this->LastCamUpdate);
+		this->LastCamUpdate = this->TimerAnimation;
 		this->Render();
 		this->framecount++;
 	}

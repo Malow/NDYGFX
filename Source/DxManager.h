@@ -222,6 +222,7 @@ private:
 	__int64 prevTimeStamp;
 
 	float TimerAnimation;
+	float LastCamUpdate;
 	float RendererSleep;
 
 	void RenderForward();

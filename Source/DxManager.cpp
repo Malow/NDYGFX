@@ -48,6 +48,7 @@ DxManager::DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam)
 	this->framecount = 0;
 	this->TriangleCount = 0;
 	this->RendererSleep = 0;
+	this->LastCamUpdate = 0;
 
 	this->useSun = false;
 
