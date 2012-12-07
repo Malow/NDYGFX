@@ -248,13 +248,9 @@ Vector3 Mesh::GetPosition() const
 	return Vector3(this->pos.x, this->pos.y, this->pos.z);
 }
 
-Vector3 Mesh::GetRotation() const
+Vector4 Mesh::GetRotationQuaternion() const
 {
-	D3DXVECTOR3 rotxyz;
-	float angle = 0.0f;
-	D3DXQuaternionToAxisAngle(&this->rotQuat, &rotxyz, &angle);	// Return rotation around an axis by angle
-	// convert rotxyz to actual xyz rotations, DOESNT WORK YET!
-	return Vector3(rotxyz.x, rotxyz.y, rotxyz.z);
+	return Vector4(this->rotQuat.x, this->rotQuat.y, this->rotQuat.z, this->rotQuat.w);
 }
 
 Vector3 Mesh::GetScaling() const
