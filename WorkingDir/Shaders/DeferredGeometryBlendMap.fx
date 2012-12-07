@@ -109,25 +109,20 @@ PSSceneIn VSScene(VSIn input)
 //-----------------------------------------------------------------------------------------
 PSOut PSScene(PSSceneIn input) : SV_Target
 {	
-	PSOut output = (PSOut)0; //**
+	PSOut output = (PSOut)0; 
 
 	//Texture RT
-	float3 tex1Color = float3(0.0f, 0.0f, 0.0f);
-	float3 tex2Color = float3(0.0f, 0.0f, 0.0f);
-	float3 tex3Color = float3(0.0f, 0.0f, 0.0f);
-	float3 blendMapColor = float3(0.0f, 0.0f, 0.0f);
 	float3 finalColor = float3(0.0f, 0.0f, 0.0f);
-
 	if(textured) 
 	{
 		//finalColor = tex3.Sample(LinearWrapSampler, input.tex).xyz * diffuseColor; //debug
 		//finalColor = blendMap.Sample(LinearWrapSampler, input.tex).rgb; //Debug
 		
 		//Sample textures
-		tex1Color = tex1.Sample(LinearWrapSampler, input.tex).rgb; 
-		tex2Color = tex2.Sample(LinearWrapSampler, input.tex).rgb;
-		tex3Color = tex3.Sample(LinearWrapSampler, input.tex).rgb;
-		blendMapColor = blendMap.Sample(LinearWrapSampler, input.tex).rgb;
+		float3 tex1Color  = tex1.Sample(LinearWrapSampler, input.tex).rgb; 
+		float3 tex2Color = tex2.Sample(LinearWrapSampler, input.tex).rgb;
+		float3 tex3Color = tex3.Sample(LinearWrapSampler, input.tex).rgb;
+		float3 blendMapColor = blendMap.Sample(LinearWrapSampler, input.tex).rgb;
 
 		//Inverse of all blend weights to scale final color to be in range [0,1]
 		float inverseTotal = 1.0f / (blendMapColor.r + blendMapColor.g + blendMapColor.b);
@@ -139,7 +134,6 @@ PSOut PSScene(PSSceneIn input) : SV_Target
 
 		//Blendmapped color
 		finalColor = (tex1Color + tex2Color + tex3Color) * diffuseColor.rgb;
-		
 	}
 	else
 	{
