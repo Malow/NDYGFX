@@ -68,6 +68,8 @@ extern "C"
 		virtual void SetSunLightProperties(Vector3 direction, Vector3 lightColor = Vector3(1.0f, 1.0f, 1.0f), float intensity = 1.0f) = 0;
 
 		virtual iPhysicsEngine* GetPhysicsEngine() const = 0;
+
+		virtual iCamera* ChangeCamera(CameraType newCamType) = 0;
 	};
 
 	/*

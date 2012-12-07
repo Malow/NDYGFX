@@ -129,6 +129,8 @@ public:
 
 	virtual iPhysicsEngine* GetPhysicsEngine() const;
 
+	virtual iCamera* ChangeCamera(CameraType newCamType);
+
 	/*  Non-inherited functions */
 
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);

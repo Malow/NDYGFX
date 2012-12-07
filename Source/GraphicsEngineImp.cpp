@@ -40,7 +40,6 @@ GraphicsEngineImp::GraphicsEngineImp(GraphicsEngineParams params, HINSTANCE hIns
 	this->fpsLast = 0;
 	this->fpsTimer = 0.0f;
 	
-	this->physx = new PhysicsEngine();
 	this->kl = new KeyListener(this->hWnd);
 	this->InitWindow(hInstance, nCmdShow);
 	kl->SetHWND(this->hWnd); // Because of key listener being created before the window
@@ -73,7 +72,6 @@ GraphicsEngineImp::GraphicsEngineImp(GraphicsEngineParams params, HWND hWnd) :
 	this->fpsLast = 0;
 	this->fpsTimer = 0.0f;
 
-	this->physx = new PhysicsEngine();
 	this->hWnd = hWnd;
 	this->kl = new KeyListener(this->hWnd);
 	this->InitObjects();
@@ -259,6 +257,7 @@ HRESULT GraphicsEngineImp::InitWindow(HINSTANCE hInstance, int nCmdShow)
 void GraphicsEngineImp::InitObjects()
 {
 	this->dx = new DxManager(this->hWnd, this->parameters, this->cam);
+	this->physx = new PhysicsEngine();
 
 	if(this->parameters.CamType == FPS)
 	{
@@ -653,4 +652,22 @@ void GraphicsEngineImp::SetSunLightProperties( Vector3 direction, Vector3 lightC
 iPhysicsEngine* GraphicsEngineImp::GetPhysicsEngine() const
 {
 	return this->physx;
+}
+
+iCamera* GraphicsEngineImp::ChangeCamera( CameraType newCamType )
+{
+	Camera* oldcam = this->cam;
+	if(newCamType == FPS)
+	{
+		this->cam = new FPSCamera(this->hWnd, this->parameters);
+	}
+	else if(newCamType == RTS)
+	{
+		this->cam = new RTSCamera(this->hWnd, this->parameters);
+	}
+	this->cam->SetPosition(oldcam->GetPosition() - this->cam->GetForward() * 5);
+	this->dx->SetCamera(this->cam);
+	this->parameters.CamType = newCamType;
+	delete oldcam;
+	return this->cam;	
 }
