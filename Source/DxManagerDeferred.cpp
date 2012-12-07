@@ -150,14 +150,8 @@ void DxManager::RenderDeferredGeometry()
 					texDesc.MiscFlags = 0;
 
 					D3D11_SUBRESOURCE_DATA initData = {0};
-					initData.SysMemPitch = widthOrHeight * sizeof(float) * 4; //tex<float4> RGBA per texel** //**//bmPtr->Size * sizeof(float);
+					initData.SysMemPitch = widthOrHeight * sizeof(float) * 4;
 					initData.pSysMem = bmPtr->Data; 
-
-					//Texture2D<float>
-					//Texture2D<float3> rndVectorsTex;
-					//initData.SysMemPitch = 256 * sizeof(D3DXVECTOR3);
-
-					//D3DXVECTOR3 color[256*256];
 
 					ID3D11Texture2D* tex = NULL;
 					if(FAILED(this->Dx_Device->CreateTexture2D(&texDesc, &initData, &tex)))
