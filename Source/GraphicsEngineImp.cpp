@@ -690,3 +690,9 @@ void GraphicsEngineImp::ResizeGraphicsEngine( float width, float height )
 
 	this->dx->ResizeEngine(width, height);
 }
+
+Vector3 GraphicsEngineImp::GetSceneAmbientLight() const
+{
+	D3DXVECTOR3 amb = this->dx->GetSceneAmbientLight();
+	return Vector3(amb.x, amb.y, amb.z);
+}
