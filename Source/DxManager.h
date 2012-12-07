@@ -108,7 +108,6 @@ private:
 	void RenderAntiAliasing();
 	void RenderText();
 
-	HRESULT ReInit();
 	void ResizeRenderer(ResizeEvent* ev);
 
 	HRESULT Init();
@@ -156,6 +155,7 @@ public:
 	void SetFPSMAX( float maxFPS );
 	void SetSunLightProperties(Vector3 direction, Vector3 lightColor, float intensity);
 	void SetSceneAmbientLight(D3DXVECTOR3 amb) { this->sceneAmbientLight = amb; }
+	D3DXVECTOR3 GetSceneAmbientLight() const { return this->sceneAmbientLight; }
 	void ResizeEngine(float width, float height);
 };
 

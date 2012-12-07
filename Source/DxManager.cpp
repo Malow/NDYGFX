@@ -597,42 +597,129 @@ void DxManager::ResizeRenderer(ResizeEvent* ev)
 
 
 
-
-	/*
-	if ( this->ssao ) delete this->ssao, this->ssao=0;
-	if ( this->fxaa ) delete this->fxaa, this->fxaa=0;
-	if ( this->Shader_Fxaa ) delete this->Shader_Fxaa, this->Shader_Fxaa=0;
-	*/
-	/*
-	if(this->Dx_DeviceContext)
-		this->Dx_DeviceContext->Release();
-	if(this->Dx_DepthStencilView)
-		this->Dx_DepthStencilView->Release();
-	if(this->Dx_DepthStencil)
-		this->Dx_DepthStencil->Release();
-	if(this->Dx_RenderTargetView)
-		this->Dx_RenderTargetView->Release();
 	if(this->Dx_SwapChain)
-		this->Dx_SwapChain->Release();
-	if(this->Dx_Device)
-		this->Dx_Device->Release();
-
-	for(int i = 0; i < NrOfRenderTargets; i++)
 	{
-		if(this->Dx_GbufferTextures[i])
-			this->Dx_GbufferTextures[i]->Release();
-		if(this->Dx_GbufferRTs[i])
-			this->Dx_GbufferRTs[i]->Release();
-		if(this->Dx_GbufferSRVs[i])
-			this->Dx_GbufferSRVs[i]->Release();
-	}
+		this->Dx_DeviceContext->OMSetRenderTargets(0, 0, 0);
+
+		// Release all outstanding references to the swap chain's buffers.
+		if(this->Dx_RenderTargetView)
+			this->Dx_RenderTargetView->Release();
+
+		// Preserve the existing buffer count and format.
+		// Automatically choose the width and height to match the client rect for HWNDs.
+		if(!this->Dx_SwapChain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, 0))
+			MaloW::Debug("Failed to call ResizeRenderer on DxManager");
+
+	
+		// Get buffer and create a render-target-view.
+		ID3D11Texture2D* pBuffer;
+		if(!this->Dx_SwapChain->GetBuffer(0, __uuidof( ID3D11Texture2D), (void**) &pBuffer))
+			MaloW::Debug("Failed to call ResizeRenderer on DxManager");
+		
+
+		if(!this->Dx_Device->CreateRenderTargetView(pBuffer, NULL, &this->Dx_RenderTargetView))
+			MaloW::Debug("Failed to call ResizeRenderer on DxManager");
+		
+		pBuffer->Release();
 
 
-	*/
+		if(this->Dx_DepthStencilView)
+			this->Dx_DepthStencilView->Release();
+		if(this->Dx_DepthStencil)
+			this->Dx_DepthStencil->Release();
 
-	if(!this->ReInit())
-	{
-		MaloW::Debug("Failed to call ReInit on DxManager");
+		// Create depth stencil texture
+		D3D11_TEXTURE2D_DESC descDepth;
+		descDepth.Width = width;
+		descDepth.Height = height;
+		descDepth.MipLevels = 1;
+		descDepth.ArraySize = 1;
+		descDepth.Format = DXGI_FORMAT_D32_FLOAT;
+		descDepth.SampleDesc.Count = 1;
+		descDepth.SampleDesc.Quality = 0;
+		descDepth.Usage = D3D11_USAGE_DEFAULT;
+		descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+		descDepth.CPUAccessFlags = 0;
+		descDepth.MiscFlags = 0;
+		if(!Dx_Device->CreateTexture2D( &descDepth, NULL, &Dx_DepthStencil ))
+			MaloW::Debug("Failed to call ResizeRenderer on DxManager");
+			
+
+		// Create the depth stencil view
+		D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
+		ZeroMemory(&descDSV, sizeof(descDSV));
+		descDSV.Format = descDepth.Format;
+		descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+		descDSV.Texture2D.MipSlice = 0;
+		if(!Dx_Device->CreateDepthStencilView(Dx_DepthStencil, &descDSV, &Dx_DepthStencilView))
+			MaloW::Debug("Failed to call ResizeRenderer on DxManager");
+
+
+		this->Dx_DeviceContext->OMSetRenderTargets(1, &this->Dx_RenderTargetView, Dx_DepthStencilView);
+
+		// Set up the viewport.
+		Dx_Viewport.Width = width;
+		Dx_Viewport.Height = height;
+		Dx_Viewport.MinDepth = 0.0f;
+		Dx_Viewport.MaxDepth = 1.0f;
+		Dx_Viewport.TopLeftX = 0;
+		Dx_Viewport.TopLeftY = 0;
+		this->Dx_DeviceContext->RSSetViewports( 1, &Dx_Viewport );
+
+
+		// MRT's
+		for(int i = 0; i < NrOfRenderTargets; i++)
+		{
+			if(this->Dx_GbufferTextures[i])
+				this->Dx_GbufferTextures[i]->Release();
+			if(this->Dx_GbufferRTs[i])
+				this->Dx_GbufferRTs[i]->Release();
+			if(this->Dx_GbufferSRVs[i])
+				this->Dx_GbufferSRVs[i]->Release();
+		}
+
+		for(int i = 0; i < this->NrOfRenderTargets; i++)
+		{
+			D3D11_TEXTURE2D_DESC GBufferTextureDesc;
+			ZeroMemory(&GBufferTextureDesc, sizeof(GBufferTextureDesc));
+			GBufferTextureDesc.Width = width;
+			GBufferTextureDesc.Height = height;	
+			GBufferTextureDesc.MipLevels = 1;
+			GBufferTextureDesc.ArraySize = 1;
+			GBufferTextureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+			GBufferTextureDesc.SampleDesc.Count = 1;
+			GBufferTextureDesc.SampleDesc.Quality = 0;
+			GBufferTextureDesc.Usage = D3D11_USAGE_DEFAULT;
+			GBufferTextureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+			GBufferTextureDesc.CPUAccessFlags = 0;
+			GBufferTextureDesc.MiscFlags = 0;
+
+			if(FAILED(this->Dx_Device->CreateTexture2D(&GBufferTextureDesc, NULL, &this->Dx_GbufferTextures[i])))
+				MaloW::Debug("Failed to initiate GbufferTexture");
+
+
+			D3D11_RENDER_TARGET_VIEW_DESC DescRT;
+			ZeroMemory(&DescRT, sizeof(DescRT));
+			DescRT.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+			DescRT.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+			DescRT.Texture2DArray.ArraySize = 1;
+			DescRT.Texture2DArray.MipSlice = 0;
+
+			//if(FAILED(this->Dx_Device->CreateRenderTargetView(this->Dx_GbufferTextures[i], NULL, &this->Dx_GbufferRTs[i])))
+			if(FAILED(this->Dx_Device->CreateRenderTargetView(this->Dx_GbufferTextures[i], &DescRT, &this->Dx_GbufferRTs[i])))
+				MaloW::Debug("Failed to initiate Gbuffer RT");
+
+
+			D3D11_SHADER_RESOURCE_VIEW_DESC srDesc;
+			ZeroMemory(&srDesc, sizeof(srDesc));
+			srDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+			srDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+			srDesc.Texture2D.MostDetailedMip = 0;
+			srDesc.Texture2D.MipLevels = 1;
+
+			if(FAILED(this->Dx_Device->CreateShaderResourceView(this->Dx_GbufferTextures[i], &srDesc, &this->Dx_GbufferSRVs[i])))
+				MaloW::Debug("Failed to initiate Gbuffer SRV");
+		}
 	}
 }
 

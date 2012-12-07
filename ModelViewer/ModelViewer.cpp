@@ -59,6 +59,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 	iLight* i = GetGraphics()->CreateLight(GetGraphics()->GetCamera()->GetPosition());
 	i->SetIntensity(0.001f);
 	GetGraphics()->SetSunLightProperties(Vector3(1, -1, 1));
+	GetGraphics()->SetSceneAmbientLight(Vector3(0.4f, 0.4f, 0.4f));
 	
 //*************************************	     PRE TEST       **********************
 #ifdef TEST
@@ -272,6 +273,16 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 		if(GetGraphics()->GetKeyListener()->IsPressed('Y'))
 		{
 			i->SetIntensity(i->GetIntensity() * (1.0f - diff * 0.002f));
+		}
+
+
+		if(GetGraphics()->GetKeyListener()->IsPressed('B'))
+		{
+			GetGraphics()->SetSceneAmbientLight(GetGraphics()->GetSceneAmbientLight() * (1.0f + diff * 0.002f));
+		}
+		if(GetGraphics()->GetKeyListener()->IsPressed('N'))
+		{
+			GetGraphics()->SetSceneAmbientLight(GetGraphics()->GetSceneAmbientLight() * (1.0f - diff * 0.002f));
 		}
 
 		

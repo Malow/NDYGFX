@@ -10,7 +10,7 @@ bool CursorControl::visable = true;
 
 int GraphicsEngineParams::windowWidth = 1024;
 int GraphicsEngineParams::windowHeight = 768;
-bool GraphicsEngineParams::Maximized = true;
+bool GraphicsEngineParams::Maximized = false;
 int GraphicsEngineParams::ShadowMapSettings = 0;
 int GraphicsEngineParams::FXAAQuality = 0;
 CameraType GraphicsEngineParams::CamType = FPS;
@@ -164,7 +164,8 @@ LRESULT CALLBACK GraphicsEngineImp::WndProc(HWND hWnd, UINT message, WPARAM wPar
 			lpszFile[0] = '\0';
 			if(DragQueryFile(drop, 0, lpszFile, MAX_PATH))
 			{
-				gfx->specialString = string(lpszFile);
+				if(gfx)
+					gfx->specialString = string(lpszFile);
 			}
 			else
 				MaloW::Debug("Failed to load a droppped file.");
@@ -174,6 +175,16 @@ LRESULT CALLBACK GraphicsEngineImp::WndProc(HWND hWnd, UINT message, WPARAM wPar
 		// TODO: Handle Resize
 		case WM_SIZE:
 			{
+				/* ::: CRASHESm WHY!?!
+				RECT rc;
+				GetClientRect(hWnd, &rc);
+				int screenWidth = rc.right - rc.left;;
+				int screenHeight = rc.bottom - rc.top;
+				
+				if(gfx)
+					gfx->ResizeGraphicsEngine(screenWidth, screenHeight);
+					*/
+					
 				if ( wParam == SIZE_MAXHIDE )
 				{
 
@@ -689,4 +700,10 @@ void GraphicsEngineImp::ResizeGraphicsEngine( float width, float height )
 		SetWindowPos(this->hWnd, 0 , 0 , 0, width, height, SWP_NOMOVE|SWP_NOZORDER|SWP_NOACTIVATE);
 
 	this->dx->ResizeEngine(width, height);
+}
+
+Vector3 GraphicsEngineImp::GetSceneAmbientLight() const
+{
+	D3DXVECTOR3 amb = this->dx->GetSceneAmbientLight();
+	return Vector3(amb.x, amb.y, amb.z);
 }

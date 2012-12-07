@@ -15,6 +15,8 @@ public:
 	virtual void MoveBackward(float diff);
 	virtual void MoveLeft(float diff);
 	virtual void MoveRight(float diff);
+
+	virtual CameraType GetCameraType() const { return FPS; }
 };
 
 

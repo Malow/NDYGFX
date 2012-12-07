@@ -132,6 +132,7 @@ public:
 	virtual iCamera* ChangeCamera(CameraType newCamType);
 
 	virtual void SetSceneAmbientLight(Vector3 ambientLight);
+	virtual Vector3 GetSceneAmbientLight() const;
 
 	virtual void ResizeGraphicsEngine(float width, float height);
 	/*  Non-inherited functions */
