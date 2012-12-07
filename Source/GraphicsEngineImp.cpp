@@ -10,7 +10,7 @@ bool CursorControl::visable = true;
 
 int GraphicsEngineParams::windowWidth = 1024;
 int GraphicsEngineParams::windowHeight = 768;
-bool GraphicsEngineParams::Maximized = true;
+bool GraphicsEngineParams::Maximized = false;
 int GraphicsEngineParams::ShadowMapSettings = 0;
 int GraphicsEngineParams::FXAAQuality = 0;
 CameraType GraphicsEngineParams::CamType = FPS;
