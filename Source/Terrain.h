@@ -44,6 +44,7 @@ class Terrain : public iTerrain
 		D3DXVECTOR3					zScale;
 		D3DXMATRIX					zWorldMatrix;
 
+		bool						zHeightMapHasChanged;
 		int							zNrOfVertices;
 		Vertex*						zVertices;	
 		Buffer*						zVertexBuffer;
@@ -70,10 +71,12 @@ class Terrain : public iTerrain
 		virtual ~Terrain();
 
 		//Get
+		int GetSize() const { return this->zSize; }
 		D3DXVECTOR3 GetPosition() const { return this->zPos; } 
 		D3DXVECTOR3 GetScale() const { return this->zScale; }
 		D3DXMATRIX GetWorldMatrix() const { return this->zWorldMatrix; }
 
+		bool HasHeightMapChanged() const { return this->zHeightMapHasChanged; }
 		int GetNrOfVertices() const { return this->zNrOfVertices; }
 		Vertex* GetVerticesPointer() const { return this->zVertices; }
 		Buffer* GetVertexBufferPointer() const { return this->zVertexBuffer; }
@@ -89,8 +92,9 @@ class Terrain : public iTerrain
 
 		//Set
 		void SetScale(D3DXVECTOR3 scale) { this->zScale = scale; }
-		void SetVertexBuffer(Buffer* vertexBuffer);
-		void SetIndexBuffer(Buffer* indexBuffer);
+		void HeightMapHasChanged(bool has) { this->zHeightMapHasChanged = has; }
+		void SetVertexBuffer(Buffer* vertexBuffer) { this->zVertexBuffer = vertexBuffer; }
+		void SetIndexBuffer(Buffer* indexBuffer) { this->zIndexBuffer = indexBuffer; }
 		//void SetSRV1**
 
 		//Other

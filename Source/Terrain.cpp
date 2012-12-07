@@ -83,6 +83,7 @@ Terrain::Terrain()
 	D3DXMatrixIdentity(&this->zWorldMatrix);
 	this->RecreateWorldMatrix();
 
+	this->zHeightMapHasChanged = false;
 	this->zNrOfVertices = 0;
 	this->zVertices = NULL;
 	this->zVertexBuffer = NULL;
@@ -111,6 +112,7 @@ Terrain::Terrain(D3DXVECTOR3 pos, D3DXVECTOR3 scale, unsigned int size)
 	D3DXMatrixIdentity(&this->zWorldMatrix);
 	this->RecreateWorldMatrix();
 
+	this->zHeightMapHasChanged = false;
 	this->zNrOfVertices = 0;
 	this->zVertices = NULL;
 	this->zVertexBuffer = NULL;
@@ -155,16 +157,6 @@ Terrain::~Terrain()
 //Get
 
 //Set
-void Terrain::SetVertexBuffer(Buffer* vertexBuffer)
-{
-	if(this->zVertexBuffer) delete this->zVertexBuffer;
-	this->zVertexBuffer = vertexBuffer;
-}
-void Terrain::SetIndexBuffer(Buffer* indexBuffer)
-{
-	if(this->zIndexBuffer) delete this->zIndexBuffer;
-	this->zIndexBuffer = indexBuffer;
-}
 
 //Other
 void Terrain::RecreateWorldMatrix()
@@ -252,9 +244,11 @@ void Terrain::SetHeightMap(float* data)
 	{
 		this->zVertices[i].pos.y = data[i];
 	}
-
+	
 	//Calculate new normals
 	this->CalculateNormals();
+
+	this->zHeightMapHasChanged = true;
 }
 
 void Terrain::SetTextures(const char** fileNames)
