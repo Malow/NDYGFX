@@ -182,6 +182,7 @@ private:
 
 	// Lightning
 	MaloW::Array<Light*> lights;
+	D3DXVECTOR3 sceneAmbientLight;
 	SunLight sun;
 	bool useSun;
 
@@ -283,6 +284,7 @@ public:
 	int GetTriangleCount() { return this->TriangleCount; }
 	void SetFPSMAX( float maxFPS );
 	void SetSunLightProperties(Vector3 direction, Vector3 lightColor, float intensity);
+	void SetSceneAmbientLight(D3DXVECTOR3 amb) { this->sceneAmbientLight = amb; }
 };
 
 #endif

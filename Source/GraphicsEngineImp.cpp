@@ -671,3 +671,8 @@ iCamera* GraphicsEngineImp::ChangeCamera( CameraType newCamType )
 	delete oldcam;
 	return this->cam;	
 }
+
+void GraphicsEngineImp::SetSceneAmbientLight( Vector3 ambientLight )
+{
+	this->dx->SetSceneAmbientLight(D3DXVECTOR3(ambientLight.x, ambientLight.y, ambientLight.z));
+}

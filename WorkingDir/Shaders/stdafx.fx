@@ -50,6 +50,7 @@ cbuffer EveryFrame
 	
 	float NrOfLights;
 	Light lights[10];
+	float4 SceneAmbientLight;
 	
 	bool UseSun;
 	SunLight sun;

@@ -420,6 +420,7 @@ void DxManager::RenderDeferredPerPixel()
 	this->Shader_DeferredLightning->SetFloat("timerMillis", this->TimerAnimation);
 	this->Shader_DeferredLightning->SetInt("windowWidth", this->params.windowWidth);
 	this->Shader_DeferredLightning->SetInt("windowHeight", this->params.windowHeight);
+	this->Shader_DeferredLightning->SetFloat4("SceneAmbientLight", D3DXVECTOR4(this->sceneAmbientLight, 1.0f));
 		
 	//ssao.fx:
 	this->ssao->PreRender(this->Shader_DeferredLightning, this->params, this->camera);

@@ -131,6 +131,7 @@ public:
 
 	virtual iCamera* ChangeCamera(CameraType newCamType);
 
+	virtual void SetSceneAmbientLight(Vector3 ambientLight);
 	/*  Non-inherited functions */
 
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);

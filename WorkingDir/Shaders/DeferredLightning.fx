@@ -124,7 +124,7 @@ float4 PSScene(PSSceneIn input) : SV_Target
 	
 	float4 WorldPos = Position.Sample(linearSampler, input.tex);
 
-	float4 AmbientLight = float4(0.2f, 0.2f, 0.2f, 1.0f);
+	float4 AmbientLight = SceneAmbientLight;
 
 	float SpecularPower = Specular.Sample(linearSampler, input.tex).w;
 	float4 SpecularColor = float4(Specular.Sample(linearSampler, input.tex).xyz, 1.0f);

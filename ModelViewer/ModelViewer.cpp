@@ -138,6 +138,9 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 
 		if(GetGraphics()->GetKeyListener()->IsPressed('H'))
 			GetGraphics()->ChangeCamera(RTS);
+
+		if(GetGraphics()->GetKeyListener()->IsPressed('J'))
+			GetGraphics()->SetSceneAmbientLight(Vector3(1.0f, 0.0f, 0.0f));
 #endif
 //*************************************	    END OF RUN TESTS       **********************
 

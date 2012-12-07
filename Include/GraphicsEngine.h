@@ -70,6 +70,8 @@ extern "C"
 		virtual iPhysicsEngine* GetPhysicsEngine() const = 0;
 
 		virtual iCamera* ChangeCamera(CameraType newCamType) = 0;
+
+		virtual void SetSceneAmbientLight(Vector3 ambientLight) = 0;
 	};
 
 	/*

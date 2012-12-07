@@ -51,6 +51,7 @@ DxManager::DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam)
 	this->LastCamUpdate = 0;
 
 	this->useSun = false;
+	this->sceneAmbientLight = D3DXVECTOR3(0.2f, 0.2f, 0.2f);
 
 	this->camera = cam;
 
