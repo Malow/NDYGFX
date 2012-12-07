@@ -12,7 +12,7 @@
 Texture2D tex1; //R-channel in blendmap. ex: grass
 Texture2D tex2; //G-channel in blendmap. ex: dirt
 Texture2D tex3; //B-channel in blendmap. ex: leaves
-Texture2D blendMap;
+Texture2D<float4> blendMap;
 //Texture2D tex4; //**extra, ex: blood, footprints**
 
 //-----------------------------------------------------------------------------------------
@@ -121,10 +121,10 @@ PSOut PSScene(PSSceneIn input) : SV_Target
 	if(textured) 
 	{
 		//finalColor = tex3.Sample(LinearWrapSampler, input.tex).xyz * diffuseColor; //debug
-		finalColor = blendMap.Sample(LinearWrapSampler, input.tex).rgb; //Debug
+		//finalColor = blendMap.Sample(LinearWrapSampler, input.tex).rgb; //Debug
 		
 		//Sample textures
-		/*tex1Color = tex1.Sample(LinearWrapSampler, input.tex).rgb; 
+		tex1Color = tex1.Sample(LinearWrapSampler, input.tex).rgb; 
 		tex2Color = tex2.Sample(LinearWrapSampler, input.tex).rgb;
 		tex3Color = tex3.Sample(LinearWrapSampler, input.tex).rgb;
 		blendMapColor = blendMap.Sample(LinearWrapSampler, input.tex).rgb;
@@ -139,7 +139,7 @@ PSOut PSScene(PSSceneIn input) : SV_Target
 
 		//Blendmapped color
 		finalColor = (tex1Color + tex2Color + tex3Color) * diffuseColor.rgb;
-		*/
+		
 	}
 	else
 	{

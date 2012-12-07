@@ -565,8 +565,6 @@ HRESULT DxManager::Render()
 
 	//this->RenderForward();
 
-	this->RenderTerrain();
-
 	this->RenderDeferredGeometry();
 
 	this->RenderDeferredSkybox();

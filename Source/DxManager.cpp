@@ -169,19 +169,16 @@ DxManager::~DxManager()
 
 void DxManager::CreateTerrain(Terrain* terrain)
 {
-	//**todo: set data**
-	//call set terrain textures
-
 	//Create vertex buffer
 	BUFFER_INIT_DESC vertexBufferDesc;
 	vertexBufferDesc.ElementSize = sizeof(Vertex);
-	vertexBufferDesc.InitData = terrain->GetVerticesPointer(); //**
+	vertexBufferDesc.InitData = terrain->GetVerticesPointer(); 
 	vertexBufferDesc.NumElements = terrain->GetNrOfVertices();
 	vertexBufferDesc.Type = VERTEX_BUFFER;
-	vertexBufferDesc.Usage = BUFFER_DEFAULT;
+	vertexBufferDesc.Usage = BUFFER_DEFAULT; //BUFFER_CPU_WRITE***
 
 	Buffer* vertexBuffer = new Buffer();
-	if(FAILED(vertexBuffer->Init(Dx_Device, Dx_DeviceContext, vertexBufferDesc)))
+	if(FAILED(vertexBuffer->Init(this->Dx_Device, this->Dx_DeviceContext, vertexBufferDesc)))
 		MaloW::Debug("ERROR: Could not create vertex buffer. REASON: CreateTerrain(Terrain* terrain)");
 	terrain->SetVertexBuffer(vertexBuffer);
 
@@ -189,21 +186,18 @@ void DxManager::CreateTerrain(Terrain* terrain)
 	Buffer* indexBuffer = NULL;
 	if(terrain->GetIndicesPointer()) //Check if indices are used
 	{
-		BUFFER_INIT_DESC vertexBufferDesc;
-		vertexBufferDesc.ElementSize = sizeof(int);
-		vertexBufferDesc.InitData = terrain->GetIndicesPointer();
-		vertexBufferDesc.NumElements = terrain->GetNrOfIndices();
-		vertexBufferDesc.Type = INDEX_BUFFER;
-		vertexBufferDesc.Usage = BUFFER_DEFAULT;
+		BUFFER_INIT_DESC indexBufferDesc;
+		indexBufferDesc.ElementSize = sizeof(int);
+		indexBufferDesc.InitData = terrain->GetIndicesPointer();
+		indexBufferDesc.NumElements = terrain->GetNrOfIndices();
+		indexBufferDesc.Type = INDEX_BUFFER;
+		indexBufferDesc.Usage = BUFFER_DEFAULT;
 
 		indexBuffer = new Buffer();
-		if(FAILED(indexBuffer->Init(Dx_Device, Dx_DeviceContext, vertexBufferDesc)))
+		if(FAILED(indexBuffer->Init(this->Dx_Device, this->Dx_DeviceContext, indexBufferDesc)))
 			MaloW::Debug("ERROR: Could not create index buffer. REASON: CreateTerrain(Terrain* terrain)");
 		terrain->SetIndexBuffer(indexBuffer);
 	}
-
-	//**TODO: create textures: done after terrain has been created.**
-	
 
 	//Create & put this event
 	TerrainEvent* re = new TerrainEvent("Add Terrain", terrain);

@@ -62,25 +62,39 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 	
 //*************************************	     PRE TEST       **********************
 #ifdef TEST
-	iTerrain* iT = GetGraphics()->CreateTerrain(Vector3(10, 0, 10), Vector3(10, 10, 10), 2);
+	int vertSize = 2;
+	iTerrain* iT = GetGraphics()->CreateTerrain(Vector3(0, 0, 0), Vector3(10, 10, 10), vertSize);
+	
+
+	float* hmData = new float[vertSize * vertSize];
+	//for(int i = 0; i < vertSize; i++)
+	{
+		hmData[0] = 0.5f;
+		hmData[1] = 0.0f;
+		hmData[2] = 0.0f;
+		hmData[3] = 0.0f;
+	}
+	iT->SetHeightMap(hmData);
 	const char** fileNames = new const char*[3];
 	fileNames[0] = "Media/TerrainTexture.png";
 	fileNames[1] = "Media/TerrainTexture.png";
 	fileNames[2] = "Media/TerrainTexture.png";
 	iT->SetTextures(fileNames);
-	float* testData = new float[16]; 
-	for(int i = 0; i < 16; i++)
+	
+	int size = 2048*2048*4;
+	float* testData = new float[size]; 
+	for(int i = 0; i < size; i++)
 	{
-		//if(i % 4 == 0)
+		if(i % 4 == 0)
 		{
-			//testData[i] = 1.0f;
+			testData[i] = 1.0f; //R
 		}
-	//	else
+		else
 		{
-			testData[i] = 1.0f;
+			testData[i] = 0.0f; //G,B,A
 		}
 	}
-	iT->SetBlendMap(16, testData);
+	iT->SetBlendMap(size, testData);
 	iMesh* ball = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(0, -100, 0));
 	ball->Scale(0.1f);
 #endif
@@ -263,6 +277,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 
 	//*************************************	     POST TEST       **********************
 #ifdef TEST
+	delete[] hmData;
 	delete[] fileNames;
 	//delete[] testData;
 #endif

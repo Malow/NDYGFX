@@ -26,7 +26,7 @@ extern "C"
 			virtual void SetHeightMap(float* data) = 0;
 			//Set 0-3 textures to blend.
 			virtual void SetTextures(const char** fileNames) = 0;
-			//Size(width) = dimension of blend map in texels, data = pointer of 1D array of floats (4 sequential floats in the array represent the R,B,G,A-channels). Range [0,1].
+			//Size(width or height) = dimension of blend map in texels, data = pointer of 1D array of floats (4 sequential floats in the array represent the R,B,G,A-channels). Range [0,1].
 			virtual void SetBlendMap(unsigned int size, float* data) = 0;
 
 

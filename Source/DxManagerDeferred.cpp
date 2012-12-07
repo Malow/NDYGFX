@@ -1,34 +1,6 @@
 #include "DxManager.h"
 
 
-void DxManager::RenderTerrain()
-{
-	
-	//terrain->
-	//fetch texture names
-	//if not loaded; load
-
-	//**TODO:implement**
-	
-	
-/*
-	//Clear and set render target/depth
-	this->Dx_DeviceContext->OMSetRenderTargets(this->NrOfRenderTargets, this->Dx_GbufferRTs, this->Dx_DepthStencilView);
-	this->Dx_DeviceContext->RSSetViewports(1, &this->Dx_Viewport);
-	this->Dx_DeviceContext->ClearDepthStencilView(this->Dx_DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
-
-	//Set texture RT
-	float clearColor1[4] = {0.5f, 0.71f, 1.0f, 1};
-	this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_GbufferRTs[0], clearColor1);
-	//Clear rest of the RTs
-	float clearColor2[4] = {-1.0f, -1.0f, -1.0f, -1.0f};
-	for(int i = 1; i < this->NrOfRenderTargets; i++)
-		this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_GbufferRTs[i], clearColor2);
-
-	*/
-
-
-}
 
 void DxManager::RenderDeferredGeometry()
 {
@@ -57,11 +29,13 @@ void DxManager::RenderDeferredGeometry()
 	//Per object 
 	for(int i = 0; i < this->terrains.size(); i++)
 	{
+		Terrain* terrPtr = this->terrains.get(i);
+
 		//Set topology
-		this->Dx_DeviceContext->IASetPrimitiveTopology(this->terrains.get(i)->GetTopology());
+		this->Dx_DeviceContext->IASetPrimitiveTopology(terrPtr->GetTopology());
 
 		//Calculate matrices & set them
-		world = this->terrains.get(i)->GetWorldMatrix();
+		world = terrPtr->GetWorldMatrix();
 		wvp = world * view * proj;
 		D3DXMatrixInverse(&worldInverseTranspose, NULL, &world);
 		D3DXMatrixTranspose(&worldInverseTranspose, &worldInverseTranspose); //Used for calculating right normal
@@ -69,12 +43,52 @@ void DxManager::RenderDeferredGeometry()
 		this->Shader_DeferredGeometryBlendMap->SetMatrix("worldMatrix", world);
 		this->Shader_DeferredGeometryBlendMap->SetMatrix("worldMatrixInverseTranspose", worldInverseTranspose);
 
+		//Update vertex buffer if y-value for vertices (height map) have changed
+		if(terrPtr->HasHeightMapChanged())
+		{
+			//**OPT(OBS! Ev. only for editor): should be replaced with an update function ** TILLMAN
+				//this->Dx_DeviceContext->UpdateSubresource()
+			/*int srcRP = sizeof(float) * terrPtr->GetSize();
+			int srcDP = srcRP * terrPtr->GetSize(); 
+			this->Dx_DeviceContext->UpdateSubresource(
+				terrPtr->GetVertexBufferPointer()->GetBufferPointer(),
+				D3D10CalcSubresource(0, 0, 1),
+				NULL,
+				terrPtr->GetVerticesPointer(),
+				srcRP,
+				srcDP);
+			*/
+			//Save pointer to buffer
+			Buffer* oldBuffer = terrPtr->GetVertexBufferPointer();
+
+			//Create new vertex buffer
+			BUFFER_INIT_DESC vertexBufferDesc;
+			vertexBufferDesc.ElementSize = sizeof(Vertex);
+			vertexBufferDesc.InitData = terrPtr->GetVerticesPointer(); 
+			vertexBufferDesc.NumElements = terrPtr->GetNrOfVertices();
+			vertexBufferDesc.Type = VERTEX_BUFFER;
+			vertexBufferDesc.Usage = BUFFER_DEFAULT;
+
+			Buffer* newBuffer = new Buffer();
+			if(FAILED(newBuffer->Init(this->Dx_Device, this->Dx_DeviceContext, vertexBufferDesc)))
+				MaloW::Debug("ERROR: Could not create new vertex buffer for terrain.");
+			//Set it
+			terrPtr->SetVertexBuffer(newBuffer);
+			//Delete old buffer
+			if(oldBuffer) delete oldBuffer;
+
+			//Set that the height map shall not be changed anymore.
+			terrPtr->HeightMapHasChanged(false);
+		}
+
+
+
 		//Set Textures
 		//Check if texture(name/path) have changed, create new shader resource view if it has
 		bool hasTexture = false;
 		for(int j = 0; j < 3; j++)
 		{
-			Texture* texPtr = this->terrains.get(i)->GetTexturePointer(j);
+			Texture* texPtr = terrPtr->GetTexturePointer(j);
 			if(texPtr)
 			{
 				if(texPtr->HasChanged)
@@ -102,7 +116,7 @@ void DxManager::RenderDeferredGeometry()
 				}
 
 				string shaderTexName = "tex";
-				shaderTexName += MaloW::convertNrToString(j + 1);
+				shaderTexName += MaloW::convertNrToString((float)(j + 1));
 				this->Shader_DeferredGeometryBlendMap->SetResource(shaderTexName.c_str(), texPtr->SRV);
 				hasTexture = true;
 			}
@@ -111,8 +125,8 @@ void DxManager::RenderDeferredGeometry()
 		{
 			this->Shader_DeferredGeometryBlendMap->SetBool("textured", true);
 
-			//Do the same for the blend map if theres textures to blend
-			BlendMap* bmPtr = this->terrains.get(i)->GetBlendMapPointer();
+			//Do the same for the blend map (if textures are used)
+			BlendMap* bmPtr = terrPtr->GetBlendMapPointer();
 			if(bmPtr)
 			{
 				if(bmPtr->HasChanged)
@@ -121,13 +135,13 @@ void DxManager::RenderDeferredGeometry()
 					if(bmPtr->SRV) bmPtr->SRV->Release();
 
 					//Create texture
-					int widthAndHeight = (int)sqrt(bmPtr->Size * 0.25f); //**avrundnings fel TILLMAN
+					int widthOrHeight = (int)sqrt(bmPtr->Size * 0.25f); //**ev. avrundnings fel TILLMAN
 					D3D11_TEXTURE2D_DESC texDesc;
-					texDesc.Width = widthAndHeight;
-					texDesc.Height = widthAndHeight;
+					texDesc.Width = widthOrHeight;
+					texDesc.Height = widthOrHeight;
 					texDesc.MipLevels = 1;
 					texDesc.ArraySize = 1;
-					texDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT; //DXGI_FORMAT_R8G8B8A8_UNORM; //; //DXGI_FORMAT_BC1_UNORM; //;//; //**tillman
+					texDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT; 
 					texDesc.SampleDesc.Count = 1;
 					texDesc.SampleDesc.Quality = 0;
 					texDesc.Usage = D3D11_USAGE_IMMUTABLE;
@@ -136,8 +150,14 @@ void DxManager::RenderDeferredGeometry()
 					texDesc.MiscFlags = 0;
 
 					D3D11_SUBRESOURCE_DATA initData = {0};
-					initData.SysMemPitch = bmPtr->Size * sizeof(float);
+					initData.SysMemPitch = widthOrHeight * sizeof(float) * 4; //tex<float4> RGBA per texel** //**//bmPtr->Size * sizeof(float);
 					initData.pSysMem = bmPtr->Data; 
+
+					//Texture2D<float>
+					//Texture2D<float3> rndVectorsTex;
+					//initData.SysMemPitch = 256 * sizeof(D3DXVECTOR3);
+
+					//D3DXVECTOR3 color[256*256];
 
 					ID3D11Texture2D* tex = NULL;
 					if(FAILED(this->Dx_Device->CreateTexture2D(&texDesc, &initData, &tex)))
@@ -163,13 +183,13 @@ void DxManager::RenderDeferredGeometry()
 		}
 
 		//Set lighting from material
-		this->Shader_DeferredGeometryBlendMap->SetFloat("specularPower", this->terrains.get(i)->GetMaterial()->SpecularPower);
-		this->Shader_DeferredGeometryBlendMap->SetFloat4("specularColor", D3DXVECTOR4(this->terrains.get(i)->GetMaterial()->SpecularColor, 1));
-		this->Shader_DeferredGeometryBlendMap->SetFloat4("diffuseColor", D3DXVECTOR4(this->terrains.get(i)->GetMaterial()->DiffuseColor, 1));
-		this->Shader_DeferredGeometryBlendMap->SetFloat4("ambientLight", D3DXVECTOR4(this->terrains.get(i)->GetMaterial()->AmbientColor, 1));
+		this->Shader_DeferredGeometryBlendMap->SetFloat("specularPower", terrPtr->GetMaterial()->SpecularPower);
+		this->Shader_DeferredGeometryBlendMap->SetFloat4("specularColor", D3DXVECTOR4(terrPtr->GetMaterial()->SpecularColor, 1));
+		this->Shader_DeferredGeometryBlendMap->SetFloat4("diffuseColor", D3DXVECTOR4(terrPtr->GetMaterial()->DiffuseColor, 1));
+		this->Shader_DeferredGeometryBlendMap->SetFloat4("ambientLight", D3DXVECTOR4(terrPtr->GetMaterial()->AmbientColor, 1));
 
 		//Apply vertices & indices & shader
-		Buffer* vertices = this->terrains.get(i)->GetVertexBufferPointer();
+		Buffer* vertices = terrPtr->GetVertexBufferPointer();
 		if(vertices) 
 		{
 			if(FAILED(vertices->Apply()))
@@ -181,7 +201,7 @@ void DxManager::RenderDeferredGeometry()
 		{
 			MaloW::Debug("ERROR: Could not apply vertices for terrain. REASON: vertex buffer has not been created.");
 		}
-		Buffer* indices = this->terrains.get(i)->GetIndexBufferPointer();
+		Buffer* indices = terrPtr->GetIndexBufferPointer();
 		if(indices) 
 		{
 			if(FAILED(indices->Apply()))

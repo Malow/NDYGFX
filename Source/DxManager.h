@@ -96,7 +96,6 @@ private:
 	float RendererSleep;
 
 	void RenderForward();
-	void RenderTerrain(); 
 	void RenderDeferredGeometry();
 	void RenderDeferredPerPixel();
 	void RenderInvisibilityEffect();
