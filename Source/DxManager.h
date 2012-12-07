@@ -108,7 +108,6 @@ private:
 	void RenderAntiAliasing();
 	void RenderText();
 
-	HRESULT ReInit();
 	void ResizeRenderer(ResizeEvent* ev);
 
 	HRESULT Init();

@@ -1,7 +1,7 @@
 #include "Graphics.h"
 #include "MaloWFileDebug.h"
 
-//#define TEST //<----------------------- kommentera ut vid behov **********************
+#define TEST //<----------------------- kommentera ut vid behov **********************
 
 void ReplaceSlashes(string& str, char replace, char with)
 {

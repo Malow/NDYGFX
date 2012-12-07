@@ -95,6 +95,7 @@ public:
 	virtual void UpdateSpecific(float delta) = 0;
 
 	virtual void SetUpdateCamera(bool update) { this->updateCamera = update; }
+	virtual CameraType GetCameraType() const = 0;
 };
 
 #endif

@@ -62,6 +62,8 @@ cbuffer EveryFrame
 
 	uint windowWidth;
 	uint windowHeight;
+	float NearClip;
+	float FarClip;
 };
 
 //------------------------------------------------------------------------------------------------------

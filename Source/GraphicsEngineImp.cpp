@@ -164,7 +164,8 @@ LRESULT CALLBACK GraphicsEngineImp::WndProc(HWND hWnd, UINT message, WPARAM wPar
 			lpszFile[0] = '\0';
 			if(DragQueryFile(drop, 0, lpszFile, MAX_PATH))
 			{
-				gfx->specialString = string(lpszFile);
+				if(gfx)
+					gfx->specialString = string(lpszFile);
 			}
 			else
 				MaloW::Debug("Failed to load a droppped file.");
@@ -174,6 +175,16 @@ LRESULT CALLBACK GraphicsEngineImp::WndProc(HWND hWnd, UINT message, WPARAM wPar
 		// TODO: Handle Resize
 		case WM_SIZE:
 			{
+				/* ::: CRASHESm WHY!?!
+				RECT rc;
+				GetClientRect(hWnd, &rc);
+				int screenWidth = rc.right - rc.left;;
+				int screenHeight = rc.bottom - rc.top;
+				
+				if(gfx)
+					gfx->ResizeGraphicsEngine(screenWidth, screenHeight);
+					*/
+					
 				if ( wParam == SIZE_MAXHIDE )
 				{
 

@@ -26,6 +26,7 @@ void DxManager::RenderDeferredGeometry()
 
 	//Terrain
 	this->Shader_DeferredGeometryBlendMap->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetPositionD3DX(), 1));
+
 	//Per object 
 	for(int i = 0; i < this->terrains.size(); i++)
 	{
@@ -230,6 +231,9 @@ void DxManager::RenderDeferredGeometry()
 
 	//Normal (visible) geometry
 	this->Shader_DeferredGeometry->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetPositionD3DX(), 1));
+	this->Shader_DeferredGeometry->SetFloat("NearClip", this->params.NearClip);
+	this->Shader_DeferredGeometry->SetFloat("FarClip", this->params.FarClip);
+
 	for(int i = 0; i < this->objects.size(); i++)
 	{
 		if(!this->objects[i]->IsUsingInvisibility())
@@ -298,6 +302,7 @@ void DxManager::RenderDeferredGeometry()
 
 	//Normal (visible) Animated meshes
 	this->Shader_DeferredAnimatedGeometry->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetPositionD3DX(), 1));
+
 	for(int i = 0; i < this->animations.size(); i++)
 	{
 		if(!this->animations[i]->IsUsingInvisibility())
@@ -605,8 +610,8 @@ void DxManager::RenderQuadDeferred()
 	this->Shader_DeferredQuad->SetMatrix("CameraVP", vp);
 	this->Shader_DeferredQuad->SetMatrix("CameraView", v);
 	this->Shader_DeferredQuad->SetMatrix("CameraProj", p);
-	this->Shader_DeferredQuad->SetFloat("CameraFar", 200.0f);
-	this->Shader_DeferredQuad->SetFloat("CameraNear", 0.01f);
+	this->Shader_DeferredQuad->SetFloat("CameraFar", this->params.FarClip);
+	this->Shader_DeferredQuad->SetFloat("CameraNear", this->params.NearClip);
 	this->Shader_DeferredQuad->SetFloat("ScreenWidth", (float)this->params.windowWidth);
 	this->Shader_DeferredQuad->SetFloat("ScreenHeight", (float)this->params.windowHeight);
 	this->Shader_DeferredQuad->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetPositionD3DX(), 1));
