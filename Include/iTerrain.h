@@ -22,7 +22,7 @@ extern "C"
 
 			//Sets the scale for the terrain.
 			virtual void SetScale(Vector3& scale) = 0;
-			//Data = array of floats containing y-values for each vertex. Range [0,1].
+			//Data = array of floats containing y-values for each vertex.
 			virtual void SetHeightMap(float* data) = 0;
 			//Set 0-3 textures to blend.
 			virtual void SetTextures(const char** fileNames) = 0;

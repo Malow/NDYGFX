@@ -60,28 +60,34 @@ void PhysicsEngine::DoCollisionRayVsMesh(Vector3 rayOrigin, Vector3 rayDirection
 void PhysicsEngine::DoCollisionRayVsTriangles(Vector3 rayOrigin, Vector3 rayDirection, 
 		Vertex* vertices, int nrOfVertices, int* indices, int nrOfIndices, D3DXMATRIX worldMat, CollisionData& cd)
 {
-	if(!indices)
+	CollisionData tempCD;
+	Vertex vert0;
+	Vertex vert1;
+	Vertex vert2;
+	D3DXVECTOR4 pos0;
+	D3DXVECTOR4 pos1;
+	D3DXVECTOR4 pos2;
+	Vector3 v0;
+	Vector3 v1;
+	Vector3 v2;
+
+	if(!indices) //**tillman optimera, kolla i slutprodukten vad som används mest**
 	{
 		for(int i = 0; i < nrOfVertices; i += 3)
 		{
-			CollisionData tempCD;
-
-			Vertex vert0 = vertices[i];
-			Vertex vert1 = vertices[i + 1];
-			Vertex vert2 = vertices[i + 2];
+			vert0 = vertices[i];
+			vert1 = vertices[i + 1];
+			vert2 = vertices[i + 2];
 
 			// D3DX STUFF
 
-			D3DXVECTOR4 pos0;
 			D3DXVec3Transform(&pos0, &vert0.pos, &worldMat);
-			D3DXVECTOR4 pos1;
 			D3DXVec3Transform(&pos1, &vert1.pos, &worldMat);
-			D3DXVECTOR4 pos2;
 			D3DXVec3Transform(&pos2, &vert2.pos, &worldMat);
 
-			Vector3 v0 = Vector3(pos0.x, pos0.y, pos0.z);
-			Vector3 v1 = Vector3(pos1.x, pos1.y, pos1.z);
-			Vector3 v2 = Vector3(pos2.x, pos2.y, pos2.z);
+			v0 = Vector3(pos0.x, pos0.y, pos0.z);
+			v1 = Vector3(pos1.x, pos1.y, pos1.z);
+			v2 = Vector3(pos2.x, pos2.y, pos2.z);
 
 			// END OF D3DX STUFF
 
@@ -100,24 +106,19 @@ void PhysicsEngine::DoCollisionRayVsTriangles(Vector3 rayOrigin, Vector3 rayDire
 	{
 		for(int i = 0; i < nrOfIndices; i += 3)
 		{
-			CollisionData tempCD;
-
-			Vertex vert0 = vertices[indices[i]];
-			Vertex vert1 = vertices[indices[i + 1]];
-			Vertex vert2 = vertices[indices[i + 2]];
+			vert0 = vertices[indices[i]];
+			vert1 = vertices[indices[i + 1]];
+			vert2 = vertices[indices[i + 2]];
 
 			// D3DX STUFF
 
-			D3DXVECTOR4 pos0;
 			D3DXVec3Transform(&pos0, &vert0.pos, &worldMat);
-			D3DXVECTOR4 pos1;
 			D3DXVec3Transform(&pos1, &vert1.pos, &worldMat);
-			D3DXVECTOR4 pos2;
 			D3DXVec3Transform(&pos2, &vert2.pos, &worldMat);
 
-			Vector3 v0 = Vector3(pos0.x, pos0.y, pos0.z);
-			Vector3 v1 = Vector3(pos1.x, pos1.y, pos1.z);
-			Vector3 v2 = Vector3(pos2.x, pos2.y, pos2.z);
+			v0 = Vector3(pos0.x, pos0.y, pos0.z);
+			v1 = Vector3(pos1.x, pos1.y, pos1.z);
+			v2 = Vector3(pos2.x, pos2.y, pos2.z);
 
 			// END OF D3DX STUFF
 
@@ -146,7 +147,7 @@ bool PhysicsEngine::DoCollisionTestRayVsTriangle(Vector3 rayOrigin, Vector3 rayD
 	if(a > -eps && a < eps)
 		return false;
 	
-	float f = 1 / a;
+	float f = 1.0f / a;
 	Vector3 s = rayOrigin - v0;
 	float u = f * (s.GetDotProduct(q));
 

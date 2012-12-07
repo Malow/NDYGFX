@@ -72,7 +72,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 		hmData[0] = 0.5f;
 		hmData[1] = 0.0f;
 		hmData[2] = 0.0f;
-		hmData[3] = 0.0f;
+		hmData[3] = -0.5f;
 	}
 	iT->SetHeightMap(hmData);
 	const char** fileNames = new const char*[3];
@@ -91,7 +91,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 		}
 		else if(i % 4 == 1)
 		{
-			testData[i] = 1.0f; //G 
+			testData[i] = 1.0f; //G
 		}
 		else if(i % 4 == 2)
 		{
@@ -150,6 +150,10 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 #ifdef TEST
 		CollisionData cd = GetGraphics()->GetPhysicsEngine()->GetCollisionRayMesh(
 			GetGraphics()->GetCamera()->GetPosition(), GetGraphics()->GetCamera()->GetForward(), model);
+
+		diff = GetGraphics()->Update();	
+		MaloW::Debug(MaloW::convertNrToString(diff) + ",");
+
 		if(cd.collision)
 		{
 			ball->SetPosition(cd.position);
@@ -174,7 +178,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 			}
 #endif
 //*************************************	    END OF RUN TESTS       **********************
-
+	
 		i->SetPosition(GetGraphics()->GetCamera()->GetPosition());
 
 		if(GetGraphics()->GetKeyListener()->IsPressed('W'))
