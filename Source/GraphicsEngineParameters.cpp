@@ -25,7 +25,16 @@ void GraphicsEngineParams::LoadFromFile(const char* file)
 	this->ShadowMapSettings = atoi(line.c_str());
 	getline(in, line);
 	this->FXAAQuality = atoi(line.c_str());
-
+	getline(in, line);
+	this->CamType = (CameraType)atoi(line.c_str());
+	getline(in, line);
+	this->FOV = atof(line.c_str());
+	getline(in, line);
+	this->NearClip = atof(line.c_str());
+	getline(in, line);
+	this->FarClip = atof(line.c_str());
+	getline(in, line);
+	this->RefreshRate = atoi(line.c_str());
 
 	in.close();
 }
@@ -45,11 +54,16 @@ void GraphicsEngineParams::SaveToFile(const char* file)
 	out << this->Maximized << std::endl;
 	out << this->ShadowMapSettings << std::endl;
 	out << this->FXAAQuality << std::endl;
+	out << this->CamType << std::endl;
+	out << this->FOV << std::endl;
+	out << this->NearClip << std::endl;
+	out << this->FarClip << std::endl;
+	out << this->RefreshRate << std::endl;
 
 	out.close();
 }
 
-
+/*
 void GraphicsEngineParams::SaveToFile(const char* file, int winWidth, int winHeight, int winMax, int shadowMapQual, int FXAAQual )
 {
 	std::ofstream out;
@@ -68,3 +82,4 @@ void GraphicsEngineParams::SaveToFile(const char* file, int winWidth, int winHei
 
 	out.close();
 }
+*/

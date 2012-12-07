@@ -44,6 +44,8 @@ void deleteCache()
 
 int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nShowCmd )
 {
+	MaloW::ClearDebug();
+
 	if ( !GraphicsInit(hInstance) )
 		throw("Failed Creating Graphics Engine!");
 	
@@ -51,7 +53,6 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 	_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
-	MaloW::ClearDebug();
 	GetGraphics()->CreateSkyBox("Media/skymap.dds");	// Reduces FPS from 130 to 40
 	GetGraphics()->GetCamera()->SetPosition(Vector3(25, 25, 20));
 	GetGraphics()->GetCamera()->LookAt(Vector3(0, 0, 0));
@@ -163,6 +164,14 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 
 		if(GetGraphics()->GetKeyListener()->IsPressed('J'))
 			GetGraphics()->SetSceneAmbientLight(Vector3(1.0f, 0.0f, 0.0f));
+
+		static bool asd = true;
+		if(GetGraphics()->GetKeyListener()->IsPressed('K'))
+			if(asd)
+			{
+				GetGraphics()->ResizeGraphicsEngine(500, 500);
+				asd = false;
+			}
 #endif
 //*************************************	    END OF RUN TESTS       **********************
 

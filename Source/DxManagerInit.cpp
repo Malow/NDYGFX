@@ -21,6 +21,9 @@ HRESULT DxManager::Init()
 	int screenWidth = rc.right - rc.left;;
 	int screenHeight = rc.bottom - rc.top;
 
+	MaloW::Debug("Initing Engine with width: " + MaloW::convertNrToString(screenWidth) +
+		" and height: " + MaloW::convertNrToString(screenHeight));
+
 	UINT createDeviceFlags = 0;
 #ifdef _DEBUG
 	createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
@@ -41,7 +44,7 @@ HRESULT DxManager::Init()
 	sd.BufferDesc.Width = screenWidth;
 	sd.BufferDesc.Height = screenHeight;
 	sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	sd.BufferDesc.RefreshRate.Numerator = 60;
+	sd.BufferDesc.RefreshRate.Numerator = this->params.RefreshRate;
 	sd.BufferDesc.RefreshRate.Denominator = 1;
 	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	sd.OutputWindow = hWnd;
@@ -312,52 +315,48 @@ HRESULT DxManager::Init()
 		return E_FAIL;
 	}
 
-		D3D11_TEXTURE2D_DESC DeferredQuadTextureDesc;
-		ZeroMemory(&DeferredQuadTextureDesc, sizeof(DeferredQuadTextureDesc));
-		DeferredQuadTextureDesc.Width = screenWidth;
-		DeferredQuadTextureDesc.Height = screenHeight;	
-		DeferredQuadTextureDesc.MipLevels = 1;
-		DeferredQuadTextureDesc.ArraySize = 1;
-		DeferredQuadTextureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-		DeferredQuadTextureDesc.SampleDesc.Count = 1;
-		DeferredQuadTextureDesc.SampleDesc.Quality = 0;
-		DeferredQuadTextureDesc.Usage = D3D11_USAGE_DEFAULT;
-		DeferredQuadTextureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-		DeferredQuadTextureDesc.CPUAccessFlags = 0;
-		DeferredQuadTextureDesc.MiscFlags = 0;
+
+
+	/*
+	D3D11_TEXTURE2D_DESC DeferredQuadTextureDesc;
+	ZeroMemory(&DeferredQuadTextureDesc, sizeof(DeferredQuadTextureDesc));
+	DeferredQuadTextureDesc.Width = screenWidth;
+	DeferredQuadTextureDesc.Height = screenHeight;	
+	DeferredQuadTextureDesc.MipLevels = 1;
+	DeferredQuadTextureDesc.ArraySize = 1;
+	DeferredQuadTextureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	DeferredQuadTextureDesc.SampleDesc.Count = 1;
+	DeferredQuadTextureDesc.SampleDesc.Quality = 0;
+	DeferredQuadTextureDesc.Usage = D3D11_USAGE_DEFAULT;
+	DeferredQuadTextureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+	DeferredQuadTextureDesc.CPUAccessFlags = 0;
+	DeferredQuadTextureDesc.MiscFlags = 0;
 	
-		if(FAILED(this->Dx_Device->CreateTexture2D(&DeferredQuadTextureDesc, NULL, &this->Dx_DeferredTexture)))
-			MaloW::Debug("Failed to initiate DeferredQuadTexture");
+	if(FAILED(this->Dx_Device->CreateTexture2D(&DeferredQuadTextureDesc, NULL, &this->Dx_DeferredTexture)))
+		MaloW::Debug("Failed to initiate DeferredQuadTexture");
 
 
-		D3D11_RENDER_TARGET_VIEW_DESC DescQuadRT;
-		ZeroMemory(&DescQuadRT, sizeof(DescQuadRT));
-		DescQuadRT.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-		DescQuadRT.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
-		DescQuadRT.Texture2DArray.ArraySize = 1;
-		DescQuadRT.Texture2DArray.MipSlice = 0;
+	D3D11_RENDER_TARGET_VIEW_DESC DescQuadRT;
+	ZeroMemory(&DescQuadRT, sizeof(DescQuadRT));
+	DescQuadRT.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	DescQuadRT.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+	DescQuadRT.Texture2DArray.ArraySize = 1;
+	DescQuadRT.Texture2DArray.MipSlice = 0;
 
-		if(FAILED(this->Dx_Device->CreateRenderTargetView(this->Dx_DeferredTexture, NULL, &this->Dx_DeferredQuadRT)))
-			MaloW::Debug("Failed to initiate Deferred Quad RT");
-
-
-		D3D11_SHADER_RESOURCE_VIEW_DESC srQuadDesc;
-		ZeroMemory(&srQuadDesc, sizeof(srQuadDesc));
-		srQuadDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-		srQuadDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-		srQuadDesc.Texture2D.MostDetailedMip = 0;
-		srQuadDesc.Texture2D.MipLevels = 1;
-
-		if(FAILED(this->Dx_Device->CreateShaderResourceView(this->Dx_DeferredTexture, &srQuadDesc, &this->Dx_DeferredSRV)))
-			MaloW::Debug("Failed to initiate Deferred Quad SRV");
+	if(FAILED(this->Dx_Device->CreateRenderTargetView(this->Dx_DeferredTexture, NULL, &this->Dx_DeferredQuadRT)))
+		MaloW::Debug("Failed to initiate Deferred Quad RT");
 
 
+	D3D11_SHADER_RESOURCE_VIEW_DESC srQuadDesc;
+	ZeroMemory(&srQuadDesc, sizeof(srQuadDesc));
+	srQuadDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	srQuadDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	srQuadDesc.Texture2D.MostDetailedMip = 0;
+	srQuadDesc.Texture2D.MipLevels = 1;
 
-
-
-
-
-
+	if(FAILED(this->Dx_Device->CreateShaderResourceView(this->Dx_DeferredTexture, &srQuadDesc, &this->Dx_DeferredSRV)))
+		MaloW::Debug("Failed to initiate Deferred Quad SRV");
+	*/
 
 
 
@@ -442,5 +441,191 @@ HRESULT DxManager::Init()
 
 	this->invisibleGeometry = false;
 
+	return S_OK;
+}
+
+HRESULT DxManager::ReInit()
+{
+	HRESULT hr = S_OK;;
+
+	RECT rc;
+	GetClientRect(hWnd, &rc);
+	int screenWidth = rc.right - rc.left;;
+	int screenHeight = rc.bottom - rc.top;
+
+	UINT createDeviceFlags = 0;
+#ifdef _DEBUG
+	createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
+#endif
+
+	D3D_DRIVER_TYPE driverType;
+
+	D3D_DRIVER_TYPE driverTypes[] = 
+	{
+		D3D_DRIVER_TYPE_HARDWARE,
+		D3D_DRIVER_TYPE_REFERENCE,
+	};
+	UINT numDriverTypes = sizeof(driverTypes) / sizeof(driverTypes[0]);
+
+	DXGI_SWAP_CHAIN_DESC sd;
+	ZeroMemory( &sd, sizeof(sd) );
+	sd.BufferCount = 1;
+	sd.BufferDesc.Width = screenWidth;
+	sd.BufferDesc.Height = screenHeight;
+	sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	sd.BufferDesc.RefreshRate.Numerator = this->params.RefreshRate;
+	sd.BufferDesc.RefreshRate.Denominator = 1;
+	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	sd.OutputWindow = hWnd;
+	sd.SampleDesc.Count = 1;
+	sd.SampleDesc.Quality = 0;
+	sd.Windowed = TRUE;
+
+	D3D_FEATURE_LEVEL featureLevelsToTry[] = {
+		D3D_FEATURE_LEVEL_11_0,
+		D3D_FEATURE_LEVEL_10_1,
+		D3D_FEATURE_LEVEL_10_0
+	};
+	D3D_FEATURE_LEVEL initiatedFeatureLevel;
+
+	for( UINT driverTypeIndex = 0; driverTypeIndex < numDriverTypes; driverTypeIndex++ )
+	{
+		driverType = driverTypes[driverTypeIndex];
+		hr = D3D11CreateDeviceAndSwapChain(
+			NULL,
+			driverType,
+			NULL,
+			createDeviceFlags,
+			featureLevelsToTry,
+			ARRAYSIZE(featureLevelsToTry),
+			D3D11_SDK_VERSION,
+			&sd,
+			&Dx_SwapChain,
+			&Dx_Device,
+			&initiatedFeatureLevel,
+			&Dx_DeviceContext);
+
+		if( SUCCEEDED( hr ) )
+		{
+			char title[256];
+			sprintf_s(
+				title,
+				sizeof(title),
+				"MaloWEngine - Direct3D 11.0 | Direct3D 11.0 device initiated with Direct3D %s feature level",
+				FeatureLevelToString(initiatedFeatureLevel)
+			);
+			SetWindowText(hWnd, title);
+
+			break;
+		}
+	}
+	if( FAILED(hr) )
+		return hr;
+	
+	// Create a render target view
+	ID3D11Texture2D* pBackBuffer;
+	hr = Dx_SwapChain->GetBuffer( 0, __uuidof( ID3D11Texture2D ), (LPVOID*)&pBackBuffer );
+	if( FAILED(hr) )
+		return hr;
+
+	hr = Dx_Device->CreateRenderTargetView( pBackBuffer, NULL, &Dx_RenderTargetView );
+	pBackBuffer->Release();
+	if( FAILED(hr) )
+		return hr;
+
+
+	// Create depth stencil texture
+	D3D11_TEXTURE2D_DESC descDepth;
+	descDepth.Width = screenWidth;
+	descDepth.Height = screenHeight;
+	descDepth.MipLevels = 1;
+	descDepth.ArraySize = 1;
+	descDepth.Format = DXGI_FORMAT_D32_FLOAT;
+	descDepth.SampleDesc.Count = 1;
+	descDepth.SampleDesc.Quality = 0;
+	descDepth.Usage = D3D11_USAGE_DEFAULT;
+	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	descDepth.CPUAccessFlags = 0;
+	descDepth.MiscFlags = 0;
+	hr = Dx_Device->CreateTexture2D( &descDepth, NULL, &Dx_DepthStencil );
+	if( FAILED(hr) )
+		return hr;
+
+	// Create the depth stencil view
+	D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
+	ZeroMemory(&descDSV, sizeof(descDSV));
+	descDSV.Format = descDepth.Format;
+	descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+	descDSV.Texture2D.MipSlice = 0;
+	hr = Dx_Device->CreateDepthStencilView(Dx_DepthStencil, &descDSV, &Dx_DepthStencilView);
+	if( FAILED(hr) )
+		return hr;
+
+
+	Dx_DeviceContext->OMSetRenderTargets(1, &Dx_RenderTargetView, Dx_DepthStencilView);
+
+	// Setup the Dx_Viewport
+	Dx_Viewport.Width = (float)screenWidth;
+	Dx_Viewport.Height = (float)screenHeight;
+	Dx_Viewport.MinDepth = 0.0f;
+	Dx_Viewport.MaxDepth = 1.0f;
+	Dx_Viewport.TopLeftX = 0;
+	Dx_Viewport.TopLeftY = 0;
+	Dx_DeviceContext->RSSetViewports(1, &Dx_Viewport);
+	
+
+	for(int i = 0; i < this->NrOfRenderTargets; i++)
+	{
+		D3D11_TEXTURE2D_DESC GBufferTextureDesc;
+		ZeroMemory(&GBufferTextureDesc, sizeof(GBufferTextureDesc));
+		GBufferTextureDesc.Width = screenWidth;
+		GBufferTextureDesc.Height = screenHeight;	
+		GBufferTextureDesc.MipLevels = 1;
+		GBufferTextureDesc.ArraySize = 1;
+		GBufferTextureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		GBufferTextureDesc.SampleDesc.Count = 1;
+		GBufferTextureDesc.SampleDesc.Quality = 0;
+		GBufferTextureDesc.Usage = D3D11_USAGE_DEFAULT;
+		GBufferTextureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+		GBufferTextureDesc.CPUAccessFlags = 0;
+		GBufferTextureDesc.MiscFlags = 0;
+	
+		if(FAILED(this->Dx_Device->CreateTexture2D(&GBufferTextureDesc, NULL, &this->Dx_GbufferTextures[i])))
+			MaloW::Debug("Failed to initiate GbufferTexture");
+
+
+		D3D11_RENDER_TARGET_VIEW_DESC DescRT;
+		ZeroMemory(&DescRT, sizeof(DescRT));
+		DescRT.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		DescRT.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+		DescRT.Texture2DArray.ArraySize = 1;
+		DescRT.Texture2DArray.MipSlice = 0;
+
+		//if(FAILED(this->Dx_Device->CreateRenderTargetView(this->Dx_GbufferTextures[i], NULL, &this->Dx_GbufferRTs[i])))
+		if(FAILED(this->Dx_Device->CreateRenderTargetView(this->Dx_GbufferTextures[i], &DescRT, &this->Dx_GbufferRTs[i])))
+			MaloW::Debug("Failed to initiate Gbuffer RT");
+
+
+		D3D11_SHADER_RESOURCE_VIEW_DESC srDesc;
+		ZeroMemory(&srDesc, sizeof(srDesc));
+		srDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		srDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		srDesc.Texture2D.MostDetailedMip = 0;
+		srDesc.Texture2D.MipLevels = 1;
+
+		if(FAILED(this->Dx_Device->CreateShaderResourceView(this->Dx_GbufferTextures[i], &srDesc, &this->Dx_GbufferSRVs[i])))
+			MaloW::Debug("Failed to initiate Gbuffer SRV");
+	}
+
+	/*
+	this->ssao = new SSAO(8, 1.0f, 0.0f);
+	//this->ssao->Init(this->Dx_Device, this->Dx_DeviceContext);
+	this->fxaa = new FXAA();
+	this->fxaa->Init(this->Dx_Device, this->Dx_DeviceContext, this->Dx_SwapChain);
+	this->Shader_Fxaa = new Shader();
+	this->Shader_Fxaa->Init(this->Dx_Device, this->Dx_DeviceContext, "Shaders/FXAA.fx", NULL, 0);
+
+	this->invisibleGeometry = false;
+	*/
 	return S_OK;
 }

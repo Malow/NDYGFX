@@ -104,12 +104,14 @@ DxManager::~DxManager()
 	if(this->Shader_DeferredAnimatedGeometry)
 		delete this->Shader_DeferredAnimatedGeometry;
 
+	/*
 	if(this->Dx_DeferredTexture)
 		this->Dx_DeferredTexture->Release();
 	if(this->Dx_DeferredQuadRT)
 		this->Dx_DeferredQuadRT->Release();
 	if(this->Dx_DeferredSRV)
 		this->Dx_DeferredSRV->Release();
+	*/
 
 	if ( this->skybox ) delete this->skybox, this->skybox=0;
 
@@ -581,4 +583,61 @@ void DxManager::SetSunLightProperties( Vector3 direction, Vector3 lightColor, fl
 	this->sun.lightColor = lightColor;
 	this->sun.intensity = intensity;
 	this->useSun = true;
+}
+
+void DxManager::ResizeRenderer(ResizeEvent* ev)
+{
+	float width = ev->GetWidth();
+	float height = ev->GetHeight();
+
+	this->params.windowWidth = width;
+	this->params.windowHeight = height;
+
+	this->camera->RecreateProjectionMatrix();
+
+
+
+
+	/*
+	if ( this->ssao ) delete this->ssao, this->ssao=0;
+	if ( this->fxaa ) delete this->fxaa, this->fxaa=0;
+	if ( this->Shader_Fxaa ) delete this->Shader_Fxaa, this->Shader_Fxaa=0;
+	*/
+	/*
+	if(this->Dx_DeviceContext)
+		this->Dx_DeviceContext->Release();
+	if(this->Dx_DepthStencilView)
+		this->Dx_DepthStencilView->Release();
+	if(this->Dx_DepthStencil)
+		this->Dx_DepthStencil->Release();
+	if(this->Dx_RenderTargetView)
+		this->Dx_RenderTargetView->Release();
+	if(this->Dx_SwapChain)
+		this->Dx_SwapChain->Release();
+	if(this->Dx_Device)
+		this->Dx_Device->Release();
+
+	for(int i = 0; i < NrOfRenderTargets; i++)
+	{
+		if(this->Dx_GbufferTextures[i])
+			this->Dx_GbufferTextures[i]->Release();
+		if(this->Dx_GbufferRTs[i])
+			this->Dx_GbufferRTs[i]->Release();
+		if(this->Dx_GbufferSRVs[i])
+			this->Dx_GbufferSRVs[i]->Release();
+	}
+
+
+	*/
+
+	if(!this->ReInit())
+	{
+		MaloW::Debug("Failed to call ReInit on DxManager");
+	}
+}
+
+void DxManager::ResizeEngine(float width, float height)
+{
+	ResizeEvent* te = new ResizeEvent("Resize", width, height);
+	this->PutEvent(te);
 }

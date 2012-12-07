@@ -72,6 +72,8 @@ extern "C"
 		virtual iCamera* ChangeCamera(CameraType newCamType) = 0;
 
 		virtual void SetSceneAmbientLight(Vector3 ambientLight) = 0;
+
+		virtual void ResizeGraphicsEngine(float width, float height) = 0;
 	};
 
 	/*
