@@ -175,16 +175,19 @@ LRESULT CALLBACK GraphicsEngineImp::WndProc(HWND hWnd, UINT message, WPARAM wPar
 		// TODO: Handle Resize
 		case WM_SIZE:
 			{
-				/* ::: CRASHESm WHY!?!
+				/*
 				RECT rc;
 				GetClientRect(hWnd, &rc);
 				int screenWidth = rc.right - rc.left;;
 				int screenHeight = rc.bottom - rc.top;
-				
 				if(gfx)
+				{
+					bool manage = gfx->GetManagingWindow();
+					gfx->SetManagingWindow(false);
 					gfx->ResizeGraphicsEngine(screenWidth, screenHeight);
+					gfx->SetManagingWindow(manage);
+				}
 					*/
-					
 				if ( wParam == SIZE_MAXHIDE )
 				{
 
