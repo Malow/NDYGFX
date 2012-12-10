@@ -82,6 +82,8 @@ public:
 	virtual float GetDistanceFromTarget() const { return this->DistanceFromTarget; }
 
 	virtual void SetActiveWindowDisabling(bool dis) { this->activeWindowDisabling = dis; }
+	virtual void SetUpdateCamera(bool update) { this->updateCamera = update; }
+
 	/* Not inherited */
 	D3DXMATRIX GetViewMatrix();
 	D3DXMATRIX GetProjectionMatrix();
@@ -94,7 +96,7 @@ public:
 
 	virtual void UpdateSpecific(float delta) = 0;
 
-	virtual void SetUpdateCamera(bool update) { this->updateCamera = update; }
+	bool GetActiveWindowDisabling() const { return this->activeWindowDisabling; }
 	virtual CameraType GetCameraType() const = 0;
 };
 
