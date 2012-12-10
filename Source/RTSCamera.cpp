@@ -37,20 +37,36 @@ void RTSCamera::UpdateSpecific(float delta)
 
 void RTSCamera::MoveForward(float diff)
 {
-	this->pos.z += ((float)diff/100) * this->speed;
+	Vector3 newF = Vector3(this->forward.x, 0, this->forward.z);
+	newF.normalize();
+
+	newF = newF * ((float)diff/100) * this->speed;
+	this->pos += D3DXVECTOR3(newF.x, newF.y, newF.z);
+
+	//this->pos.z += ((float)diff/100) * this->speed;
 }
 
 void RTSCamera::MoveBackward(float diff)
 {
-	this->pos.z -= ((float)diff/100) * this->speed;
+	Vector3 newF = Vector3(this->forward.x, 0, this->forward.z);
+	newF.normalize();
+
+	newF = newF * ((float)diff/100) * this->speed;
+	this->pos -= D3DXVECTOR3(newF.x, newF.y, newF.z);
+
+	//this->pos.z -= ((float)diff/100) * this->speed;
 }
 
 void RTSCamera::MoveLeft(float diff)
 {
-	this->pos.x -= ((float)diff/100) * this->speed;
+	this->pos.x -= sin(this->angleX) * ((float)diff/100) * this->speed;
+	this->pos.z += cos(this->angleX) * ((float)diff/100) * this->speed;
+	//this->pos.x -= ((float)diff/100) * this->speed;
 }
 
 void RTSCamera::MoveRight(float diff)
 {
-	this->pos.x += ((float)diff/100) * this->speed;
+	this->pos.x += sin(this->angleX) * ((float)diff/100) * this->speed;
+	this->pos.z -= cos(this->angleX) * ((float)diff/100) * this->speed;
+	//this->pos.x += ((float)diff/100) * this->speed;
 }
