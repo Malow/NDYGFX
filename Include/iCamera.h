@@ -55,6 +55,8 @@ extern "C"
 
 		virtual void SetActiveWindowDisabling(bool dis) = 0;
 
+		virtual Vector3 Get3DPickingRay() = 0;
+
 		virtual CameraType GetCameraType() const = 0;
 	};
 }

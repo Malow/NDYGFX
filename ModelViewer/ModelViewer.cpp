@@ -155,8 +155,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 //*************************************	     RUN TESTS       **********************
 #ifdef TEST
 		CollisionData cd = GetGraphics()->GetPhysicsEngine()->GetCollisionRayMesh(
-			GetGraphics()->GetCamera()->GetPosition(), GetGraphics()->GetCamera()->GetForward(), model);
-
+			GetGraphics()->GetCamera()->GetPosition(), GetGraphics()->GetCamera()->Get3DPickingRay(), model);
 		if(cd.collision)
 		{
 			ball->SetPosition(Vector3(cd.posx, cd.posy, cd.posz));
