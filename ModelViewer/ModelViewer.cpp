@@ -157,7 +157,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 
 		if(cd.collision)
 		{
-			ball->SetPosition(cd.position);
+			ball->SetPosition(Vector3(cd.posx, cd.posy, cd.posz));
 		}
 		else
 		{

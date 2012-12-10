@@ -20,7 +20,7 @@ private:
 	void DoCollisionMeshVsMesh(Mesh* m1, Mesh* m2, CollisionData& cd);
 	void DoCollisionTrianglesVsTriangles(Vertex* vert1, int nrOfVerts1, int* inds1, int nrOfInds1, D3DXMATRIX worldMat1,
 		Vertex* vert2, int nrOfVerts2, int* inds2, int nrOfInds2, D3DXMATRIX worldMat2, CollisionData& cd);
-	bool DoCollisionTriangleVsTriangle(Vector3 v01, Vector3 v02, Vector3 v03, Vector3 v10, Vector3 v11, Vector3 v12,
+	bool DoCollisionTriangleVsTriangle(Vector3 v00, Vector3 v01, Vector3 v02, Vector3 v10, Vector3 v11, Vector3 v12,
 		CollisionData& tempCD);
 	
 public:
