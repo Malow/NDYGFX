@@ -95,6 +95,7 @@ private:
 	float LastCamUpdate;
 	float RendererSleep;
 
+	void PreRender(); //stdafx.fx
 	void RenderForward();
 	void RenderDeferredGeometry();
 	void RenderDeferredPerPixel();

@@ -15,6 +15,7 @@ extern "C"
 	{	
 		protected:
 			iTerrain() {}
+			virtual ~iTerrain() {}
 
 		public:
 			//Returns the Y-position on the terrain at x,z.
