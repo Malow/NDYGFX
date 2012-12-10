@@ -27,9 +27,8 @@ cbuffer PerObject
 	bool	textured;
 	
 	float	specularPower;
-	float4	specularColor;
-	float4	diffuseColor;
-	float4	ambientLight;
+	float3	specularColor;
+	float3	diffuseColor;
 };
 
 //-----------------------------------------------------------------------------------------
@@ -37,7 +36,7 @@ cbuffer PerObject
 //-----------------------------------------------------------------------------------------
 struct VSIn
 {
-	float4 pos		: POSITION; //3 används**
+	float4 pos		: POSITION; //3 används**tillman
 	float2 tex		: TEXCOORD;
 	float3 norm		: NORMAL;
 	float4 color	: COLOR; //3 anv'nds**
@@ -128,7 +127,7 @@ PSOut PSScene(PSSceneIn input) : SV_Target
 	output.Position = input.posW;
 	
 	//Specular RT
-	output.Specular = specularColor;
+	output.Specular.xyz = specularColor;
 	output.Specular.w = specularPower;
 
 	return output;

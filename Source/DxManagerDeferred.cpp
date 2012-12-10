@@ -212,9 +212,8 @@ void DxManager::RenderDeferredGeometry()
 
 		//Set lighting from material
 		this->Shader_DeferredGeometryBlendMap->SetFloat("specularPower", terrPtr->GetMaterial()->SpecularPower);
-		this->Shader_DeferredGeometryBlendMap->SetFloat4("specularColor", D3DXVECTOR4(terrPtr->GetMaterial()->SpecularColor, 1));
-		this->Shader_DeferredGeometryBlendMap->SetFloat4("diffuseColor", D3DXVECTOR4(terrPtr->GetMaterial()->DiffuseColor, 1));
-		this->Shader_DeferredGeometryBlendMap->SetFloat4("ambientLight", D3DXVECTOR4(terrPtr->GetMaterial()->AmbientColor, 1));
+		this->Shader_DeferredGeometryBlendMap->SetFloat3("specularColor", terrPtr->GetMaterial()->SpecularColor);
+		this->Shader_DeferredGeometryBlendMap->SetFloat3("diffuseColor", terrPtr->GetMaterial()->DiffuseColor);
 
 		//Apply vertices & indices & shader
 		Buffer* vertices = terrPtr->GetVertexBufferPointer();
