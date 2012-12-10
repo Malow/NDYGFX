@@ -14,8 +14,14 @@ private:
 		Mesh* mesh, CollisionData& cd);
 	void DoCollisionRayVsTriangles(Vector3 rayOrigin, Vector3 rayDirection, 
 		Vertex* vertices, int nrOfVertices, int* indices, int nrOfIndices, D3DXMATRIX worldMat, CollisionData& cd);
-	bool DoCollisionTestRayVsTriangle(Vector3 rayOrigin, Vector3 rayDirection, 
+	bool DoCollisionRayVsTriangle(Vector3 rayOrigin, Vector3 rayDirection, 
 		Vector3 v0, Vector3 v1, Vector3 v2, CollisionData& tempCD);
+
+	void DoCollisionMeshVsMesh(Mesh* m1, Mesh* m2, CollisionData& cd);
+	void DoCollisionTrianglesVsTriangles(Vertex* vert1, int nrOfVerts1, int* inds1, int nrOfInds1, D3DXMATRIX worldMat1,
+		Vertex* vert2, int nrOfVerts2, int* inds2, int nrOfInds2, D3DXMATRIX worldMat2, CollisionData& cd);
+	bool DoCollisionTriangleVsTriangle(Vector3 v01, Vector3 v02, Vector3 v03, Vector3 v10, Vector3 v11, Vector3 v12,
+		CollisionData& tempCD);
 	
 public:
 	PhysicsEngine();
@@ -23,5 +29,12 @@ public:
 
 	virtual CollisionData GetCollisionRayMesh(Vector3 rayOrigin, Vector3 rayDirection, iMesh* imesh);
 	virtual CollisionData GetCollisionRayTerrain(Vector3 rayOrigin, Vector3 rayDirection, iTerrain* iTerr);
+	virtual CollisionData GetCollisionMeshMesh(iMesh* mesh1, iMesh* mesh2);
+	virtual CollisionData GetCollisionMeshTerrain(iMesh* mesh, iTerrain* terr);
 
+	// Overloaded
+	virtual CollisionData GetCollision(Vector3 rayOrigin, Vector3 rayDirection, iMesh* mesh);
+	virtual CollisionData GetCollision(Vector3 rayOrigin, Vector3 rayDirection, iTerrain* iTerr);
+	virtual CollisionData GetCollision(iMesh* mesh1, iMesh* mesh2);
+	virtual CollisionData GetCollision(iMesh* mesh, iTerrain* terr);
 };

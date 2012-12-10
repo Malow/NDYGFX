@@ -33,5 +33,13 @@ extern "C"
 
 		virtual CollisionData GetCollisionRayMesh(Vector3 rayOrigin, Vector3 rayDirection, iMesh* imesh) = 0;
 		virtual CollisionData GetCollisionRayTerrain(Vector3 rayOrigin, Vector3 rayDirection, iTerrain* iterr) = 0;
+		virtual CollisionData GetCollisionMeshMesh(iMesh* mesh1, iMesh* mesh2) = 0;
+		virtual CollisionData GetCollisionMeshTerrain(iMesh* mesh, iTerrain* terr) = 0;
+
+		// Overloaded
+		virtual CollisionData GetCollision(Vector3 rayOrigin, Vector3 rayDirection, iMesh* mesh) = 0;
+		virtual CollisionData GetCollision(Vector3 rayOrigin, Vector3 rayDirection, iTerrain* iTerr) = 0;
+		virtual CollisionData GetCollision(iMesh* mesh1, iMesh* mesh2) = 0;
+		virtual CollisionData GetCollision(iMesh* mesh, iTerrain* terr) = 0;
 	};
 }

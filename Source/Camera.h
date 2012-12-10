@@ -97,6 +97,7 @@ public:
 	virtual void UpdateSpecific(float delta) = 0;
 
 	bool GetActiveWindowDisabling() const { return this->activeWindowDisabling; }
+	bool GetUpdatingCamera() const { return this->updateCamera; }
 	virtual CameraType GetCameraType() const = 0;
 };
 
