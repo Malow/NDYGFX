@@ -44,7 +44,9 @@ extern "C"
 
 		virtual iMesh* CreateStaticMesh(const char* filename, const Vector3& pos) = 0;
 		virtual iAnimatedMesh* CreateAnimatedMesh(const char* filename, const Vector3& pos) = 0;
+
 		virtual iTerrain* CreateTerrain(const Vector3& pos, const Vector3& scale, const unsigned int& size) = 0;
+		virtual void DeleteTerrain( iTerrain*& terrain ) = 0;
 
 		virtual iCamera* GetCamera() const = 0;
 

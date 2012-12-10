@@ -5,20 +5,21 @@
 
 void ReplaceSlashes(string& str, char replace, char with)
 {
-	for(int i = 0; i < str.size(); i++)
+	for(unsigned int i = 0; i < str.size(); i++)
 	{
 		if(str.at(i) == replace)
 			str.at(i) = with;
 	}
 }
 
+// TODO: does not work
 void deleteCache()
 {
 	TCHAR szPath[MAX_PATH] = {0};
 	GetModuleFileName(NULL, szPath, MAX_PATH);
 	string path = string(szPath);
 	path = path.substr(0, path.size() - string("ModelViewer.exe").size());
-	path += "\Media\\Cache";
+	path += "Media\\Cache";
 	MaloW::Debug(path);
 
 	int len = strlen(path.c_str()) + 2; // required to set 2 nulls at end of argument to SHFileOperation.
@@ -38,7 +39,8 @@ void deleteCache()
 		0,
 		"" };
 
-	int ret = SHFileOperation(&file_op);
+	SHFileOperation(&file_op);
+
 	free(tempdir);
 }
 
@@ -47,7 +49,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 	MaloW::ClearDebug();
 
 	if ( !GraphicsInit(hInstance) )
-		throw("Failed Creating Graphics Engine!");
+		MaloW::Debug("Failed Creating Graphics Engine!");
 	
 #if defined(DEBUG) || defined(_DEBUG)
 	_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
@@ -67,7 +69,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 	iTerrain* iT = GetGraphics()->CreateTerrain(Vector3(0, 0, 0), Vector3(10, 10, 10), vertSize);
 	
 
-	float* hmData = new float[vertSize * vertSize];
+	float hmData[4];
 	//for(int i = 0; i < vertSize; i++)
 	{
 		hmData[0] = 0.5f;
@@ -76,7 +78,8 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 		hmData[3] = -0.5f;
 	}
 	iT->SetHeightMap(hmData);
-	const char** fileNames = new const char*[3];
+
+	const char* fileNames[3];
 	fileNames[0] = "Media/TerrainTexture.png";
 	fileNames[1] = "Media/BallTexture.png";
 	fileNames[2] = "Media/TerrainTexture.png";
@@ -256,8 +259,8 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 		if(GetGraphics()->GetKeyListener()->IsPressed('X'))	
 		{
 			GetGraphics()->GetKeyListener()->SetMousePosition(Vector2(
-				GetGraphics()->GetEngineParameters()->windowWidth / 2, 
-				GetGraphics()->GetEngineParameters()->windowHeight / 2));
+				GetGraphics()->GetEngineParameters()->windowWidth / 2.0f, 
+				GetGraphics()->GetEngineParameters()->windowHeight / 2.0f));
 			GetGraphics()->GetCamera()->SetUpdateCamera(true);
 			GetGraphics()->GetKeyListener()->SetCursorVisibility(false);
 		}
@@ -353,8 +356,6 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 
 	//*************************************	     POST TEST       **********************
 #ifdef TEST
-	delete[] hmData;
-	delete[] fileNames;
 	//delete[] testData;
 #endif
 	//*************************************	   END OF POST TEST       **********************

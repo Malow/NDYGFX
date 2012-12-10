@@ -97,8 +97,10 @@ public:
 	virtual void DeleteMesh(iMesh* delMesh);
 	virtual iMesh* CreateStaticMesh(const char* filename, const Vector3& pos);
 	virtual iAnimatedMesh* CreateAnimatedMesh(const char* filename, const Vector3& pos);
-	virtual iTerrain* CreateTerrain(const Vector3& pos, const Vector3& scale, const unsigned int& size);
 	
+	virtual iTerrain* CreateTerrain(const Vector3& pos, const Vector3& scale, const unsigned int& size);
+	virtual void DeleteTerrain( iTerrain*& terrain );
+
 	virtual iLight* CreateLight(Vector3 pos);
 	virtual void DeleteLight(iLight* light);
 
@@ -166,6 +168,8 @@ public:
 	bool DeleteText(Text* delText);
 
 
+	void SetManagingWindow(bool manage) { this->isManagingMyOwnWindow = manage; }
+	bool GetManagingWindow() const { return this->isManagingMyOwnWindow; }
 
 	GraphicsEngineParams GetEngineParams() const { return this->parameters; }
 
