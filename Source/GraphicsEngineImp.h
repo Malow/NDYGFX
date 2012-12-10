@@ -168,6 +168,8 @@ public:
 	bool DeleteText(Text* delText);
 
 
+	void SetManagingWindow(bool manage) { this->isManagingMyOwnWindow = manage; }
+	bool GetManagingWindow() const { return this->isManagingMyOwnWindow; }
 
 	GraphicsEngineParams GetEngineParams() const { return this->parameters; }
 

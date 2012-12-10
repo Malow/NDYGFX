@@ -2,6 +2,8 @@
 
 void DxManager::PreRender()
 {
+	//This function sets variables used by most shaders, such as camera position for instance.
+
 	//if(this->Shader_ForwardRendering)
 	{
 
@@ -9,41 +11,31 @@ void DxManager::PreRender()
 	//else
 	{
 		//Shader_DeferredLightning is always used, and is therefore used here.
-		/*	matrix CameraVP;
-			float4 CameraPosition;
+		
+		/*
 
-			float NrOfLights;
-			Light lights[10];
-			float4 SceneAmbientLight;
+		D3DXMATRIX vp = this->camera->GetViewMatrix() * this->camera->GetProjectionMatrix();
+		
+		this->Shader_DeferredLightning->SetMatrix("CameraVP", vp);
+		this->Shader_DeferredLightning->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetPositionD3DX(), 1));
+		
 
-			bool UseSun;
-			SunLight sun;
-			//float SMAP_DX;
-			//float PCF_SIZE;
-			//float PCF_SIZE_SQUARED;
-
-			float timerMillis;
-
-			uint windowWidth;
-			uint windowHeight;
-			float NearClip;
-			float FarClip;
-		};*/
-
-	///	this->Shader_DeferredLightning->SetMatrix("CameraVP")
-
+		this->Shader_DeferredLightning->SetFloat("NrOfLights", (float)this->lights.size()); //**tillman**
 		this->Shader_DeferredLightning->SetFloat4("SceneAmbientLight", D3DXVECTOR4(this->sceneAmbientLight, 1.0f));
+		
 		//use sun
 		//sunlight
+		
 		if(this->animations.size()) this->Shader_DeferredLightning->SetFloat("timerMillis", this->TimerAnimation);
 		this->Shader_DeferredLightning->SetInt("windowWidth", this->params.windowWidth);
 		this->Shader_DeferredLightning->SetInt("windowHeight", this->params.windowHeight);
 		//float NearClip;
-		//float FarClip;
+		//float FarClip;*/
 	}
 		
 	
 }
+
 
 void DxManager::RenderDeferredGeometry()
 {
@@ -68,7 +60,7 @@ void DxManager::RenderDeferredGeometry()
 	
 
 	//Terrain
-	//this->Shader_DeferredGeometryBlendMap->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetPositionD3DX(), 1));
+	this->Shader_DeferredGeometryBlendMap->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetPositionD3DX(), 1));
 
 	//Per object 
 	for(int i = 0; i < this->terrains.size(); i++)
@@ -476,7 +468,12 @@ void DxManager::RenderDeferredPerPixel()
 	D3DXMATRIX vp = this->camera->GetViewMatrix() * this->camera->GetProjectionMatrix();
 	this->Shader_DeferredLightning->SetMatrix("CameraVP", vp);
 	this->Shader_DeferredLightning->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetPositionD3DX(), 1));
-	
+	//stdafx.fx:
+	this->Shader_DeferredLightning->SetFloat("timerMillis", this->TimerAnimation);
+	this->Shader_DeferredLightning->SetInt("windowWidth", this->params.windowWidth);
+	this->Shader_DeferredLightning->SetInt("windowHeight", this->params.windowHeight);
+	this->Shader_DeferredLightning->SetFloat4("SceneAmbientLight", D3DXVECTOR4(this->sceneAmbientLight, 1.0f));
+		
 	//ssao.fx:
 	this->ssao->PreRender(this->Shader_DeferredLightning, this->params, this->camera);
 

@@ -273,119 +273,128 @@ void DxManager::RenderShadowMap()
 {
 	// Set sun-settings
 	this->Shader_DeferredLightning->SetBool("UseSun", this->useSun);
-	this->Shader_DeferredLightning->SetStructMemberAsFloat4("sun", "Direction", D3DXVECTOR4(this->sun.direction, 0.0f));
-	this->Shader_DeferredLightning->SetStructMemberAsFloat4("sun", "LightColor", D3DXVECTOR4(this->sun.lightColor, 0.0f));
-	this->Shader_DeferredLightning->SetStructMemberAsFloat("sun", "LightIntensity", this->sun.intensity);
-	Shader_ShadowMap->Apply(0);		// Dont know why the fuck this has to be here, but it does, otherwise textures wont be sent when rendering objects
+	if(this->useSun) //**tillman**
+	{
+		this->Shader_DeferredLightning->SetStructMemberAsFloat4("sun", "Direction", D3DXVECTOR4(this->sun.direction, 0.0f));
+		this->Shader_DeferredLightning->SetStructMemberAsFloat4("sun", "LightColor", D3DXVECTOR4(this->sun.lightColor, 0.0f));
+		this->Shader_DeferredLightning->SetStructMemberAsFloat("sun", "LightIntensity", this->sun.intensity);
+		Shader_ShadowMap->Apply(0);		// Dont know why the fuck this has to be here, but it does, otherwise textures wont be sent when rendering objects
+	}
 
 	// Generate and send shadowmaps to the main-shader
-	
-	for (int l = 0; l < this->lights.size(); l++)
+	if(!this->lights.size())
 	{
-		Dx_DeviceContext->OMSetRenderTargets(0, 0, this->lights[l]->GetShadowMapDSV());
-		D3D11_VIEWPORT wp = this->lights[l]->GetShadowMapViewPort();
-		Dx_DeviceContext->RSSetViewports(1, &wp);
-		Dx_DeviceContext->ClearDepthStencilView(this->lights[l]->GetShadowMapDSV(), D3D11_CLEAR_DEPTH, 1.0f, 0);
-		for(int i = 0; i < this->objects.size(); i++)
+
+
+	
+		for (int l = 0; l < this->lights.size(); l++)
 		{
-			if(!this->objects[i]->IsUsingInvisibility())
+			Dx_DeviceContext->OMSetRenderTargets(0, 0, this->lights[l]->GetShadowMapDSV());
+			D3D11_VIEWPORT wp = this->lights[l]->GetShadowMapViewPort();
+			Dx_DeviceContext->RSSetViewports(1, &wp);
+			Dx_DeviceContext->ClearDepthStencilView(this->lights[l]->GetShadowMapDSV(), D3D11_CLEAR_DEPTH, 1.0f, 0);
+			for(int i = 0; i < this->objects.size(); i++)
 			{
-				MaloW::Array<MeshStrip*>* strips = this->objects[i]->GetStrips();
-				D3DXMATRIX wvp = this->objects[i]->GetWorldMatrix() * this->lights[l]->GetViewProjMatrix();
-				this->Shader_ShadowMap->SetMatrix("LightWVP", wvp);
-				
-				for(int u = 0; u < strips->size(); u++)
+				if(!this->objects[i]->IsUsingInvisibility())
 				{
-					Object3D* obj = strips->get(u)->GetRenderObject();
-					Dx_DeviceContext->IASetPrimitiveTopology(obj->GetTopology());
-					Buffer* verts = obj->GetVertBuff();
-					if(verts)
-						verts->Apply();
-					Shader_ShadowMap->SetBool("textured", false);
+					MaloW::Array<MeshStrip*>* strips = this->objects[i]->GetStrips();
+					D3DXMATRIX wvp = this->objects[i]->GetWorldMatrix() * this->lights[l]->GetViewProjMatrix();
+					this->Shader_ShadowMap->SetMatrix("LightWVP", wvp);
+				
+					for(int u = 0; u < strips->size(); u++)
+					{
+						Object3D* obj = strips->get(u)->GetRenderObject();
+						Dx_DeviceContext->IASetPrimitiveTopology(obj->GetTopology());
+						Buffer* verts = obj->GetVertBuff();
+						if(verts)
+							verts->Apply();
+						Shader_ShadowMap->SetBool("textured", false);
 
-					Buffer* inds = obj->GetIndsBuff();
-					if(inds)
-						inds->Apply();
+						Buffer* inds = obj->GetIndsBuff();
+						if(inds)
+							inds->Apply();
 
-					Shader_ShadowMap->Apply(0);
+						Shader_ShadowMap->Apply(0);
 
 					
-					// draw
-					if(inds)
-						Dx_DeviceContext->DrawIndexed(inds->GetElementCount(), 0, 0);
-					else
-						Dx_DeviceContext->Draw(verts->GetElementCount(), 0);
-				}
+						// draw
+						if(inds)
+							Dx_DeviceContext->DrawIndexed(inds->GetElementCount(), 0, 0);
+						else
+							Dx_DeviceContext->Draw(verts->GetElementCount(), 0);
+					}
 				
-			}
-		}
-		
-		//animated meshes
-		for(int i = 0; i < this->animations.size(); i++)
-		{
-			if(!this->animations[i]->IsUsingInvisibility())
-			{
-				KeyFrame* one = NULL;
-				KeyFrame* two = NULL;
-				float t = 0.0f;
-				this->animations[i]->SetCurrentTime(this->TimerAnimation);
-				this->animations[i]->GetCurrentKeyFrames(&one, &two, t);
-				MaloW::Array<MeshStrip*>* stripsOne = one->strips;
-				MaloW::Array<MeshStrip*>* stripsTwo = two->strips;
-
-				//set shader data (per object)
-				D3DXMATRIX wvp = this->animations[i]->GetWorldMatrix() * this->lights[l]->GetViewProjMatrix();
-				this->Shader_ShadowMapAnimated->SetMatrix("LightWVP", wvp);
-				this->Shader_ShadowMapAnimated->SetFloat("t", t);
-
-				for(int u = 0; u < stripsOne->size(); u++) 
-				{
-					Object3D* objOne = stripsOne->get(u)->GetRenderObject();
-					Object3D* objTwo = stripsTwo->get(u)->GetRenderObject();
-
-					this->Dx_DeviceContext->IASetPrimitiveTopology(objOne->GetTopology()); 
-
-					Buffer* vertsOne = objOne->GetVertBuff();
-					Buffer* vertsTwo = objTwo->GetVertBuff();
-
-					ID3D11Buffer* vertexBuffers [] = {vertsOne->GetBufferPointer(), vertsTwo->GetBufferPointer()};
-					UINT strides [] = {sizeof(Vertex), sizeof(Vertex)};
-					UINT offsets [] = {0, 0};
-
-					this->Dx_DeviceContext->IASetVertexBuffers(0, 2, vertexBuffers, strides, offsets);
-
-					Shader_ShadowMapAnimated->Apply(0);
-					this->Dx_DeviceContext->Draw(vertsOne->GetElementCount(), 0);
 				}
 			}
-		}
 		
-		D3DXMATRIX vp = this->lights[l]->GetViewProjMatrix();
+			//animated meshes
+			for(int i = 0; i < this->animations.size(); i++)
+			{
+				if(!this->animations[i]->IsUsingInvisibility())
+				{
+					KeyFrame* one = NULL;
+					KeyFrame* two = NULL;
+					float t = 0.0f;
+					this->animations[i]->SetCurrentTime(this->TimerAnimation);
+					this->animations[i]->GetCurrentKeyFrames(&one, &two, t);
+					MaloW::Array<MeshStrip*>* stripsOne = one->strips;
+					MaloW::Array<MeshStrip*>* stripsTwo = two->strips;
+
+					//set shader data (per object)
+					D3DXMATRIX wvp = this->animations[i]->GetWorldMatrix() * this->lights[l]->GetViewProjMatrix();
+					this->Shader_ShadowMapAnimated->SetMatrix("LightWVP", wvp);
+					this->Shader_ShadowMapAnimated->SetFloat("t", t);
+
+					for(int u = 0; u < stripsOne->size(); u++) 
+					{
+						Object3D* objOne = stripsOne->get(u)->GetRenderObject();
+						Object3D* objTwo = stripsTwo->get(u)->GetRenderObject();
+
+						this->Dx_DeviceContext->IASetPrimitiveTopology(objOne->GetTopology()); 
+
+						Buffer* vertsOne = objOne->GetVertBuff();
+						Buffer* vertsTwo = objTwo->GetVertBuff();
+
+						ID3D11Buffer* vertexBuffers [] = {vertsOne->GetBufferPointer(), vertsTwo->GetBufferPointer()};
+						UINT strides [] = {sizeof(Vertex), sizeof(Vertex)};
+						UINT offsets [] = {0, 0};
+
+						this->Dx_DeviceContext->IASetVertexBuffers(0, 2, vertexBuffers, strides, offsets);
+
+						Shader_ShadowMapAnimated->Apply(0);
+						this->Dx_DeviceContext->Draw(vertsOne->GetElementCount(), 0);
+					}
+				}
+			}
+		
+			D3DXMATRIX lvp = this->lights[l]->GetViewProjMatrix();
 		
 		
-		// Forward
-		//this->Shader_ForwardRendering->SetResourceAtIndex(l, "ShadowMap", this->lights[l]->GetShadowMapSRV());
-		//this->Shader_ForwardRendering->SetStructMemberAtIndexAsMatrix(l, "lights", "LightViewProj", vp);
-		//this->Shader_ForwardRendering->SetStructMemberAtIndexAsFloat4(l, "lights", "LightPosition", D3DXVECTOR4(this->lights[l]->GetPosition(), 1));
-		//this->Shader_ForwardRendering->SetStructMemberAtIndexAsFloat4(l, "lights", "LightColor", D3DXVECTOR4(this->lights[l]->GetColor(), 1));
-		//this->Shader_ForwardRendering->SetStructMemberAtIndexAsFloat(l, "lights", "LightIntensity", this->lights[l]->GetIntensity());
+			// Forward
+			//this->Shader_ForwardRendering->SetResourceAtIndex(l, "ShadowMap", this->lights[l]->GetShadowMapSRV());
+			//this->Shader_ForwardRendering->SetStructMemberAtIndexAsMatrix(l, "lights", "LightViewProj", lvp);
+			//this->Shader_ForwardRendering->SetStructMemberAtIndexAsFloat4(l, "lights", "LightPosition", D3DXVECTOR4(this->lights[l]->GetPosition(), 1));
+			//this->Shader_ForwardRendering->SetStructMemberAtIndexAsFloat4(l, "lights", "LightColor", D3DXVECTOR4(this->lights[l]->GetColor(), 1));
+			//this->Shader_ForwardRendering->SetStructMemberAtIndexAsFloat(l, "lights", "LightIntensity", this->lights[l]->GetIntensity());
 		
 
-		// For deferred:
-		this->Shader_DeferredLightning->SetResourceAtIndex(l, "ShadowMap", this->lights[l]->GetShadowMapSRV());
-		this->Shader_DeferredLightning->SetStructMemberAtIndexAsMatrix(l, "lights", "LightViewProj", vp);
-		this->Shader_DeferredLightning->SetStructMemberAtIndexAsFloat4(l, "lights", "LightPosition", D3DXVECTOR4(this->lights[l]->GetPosition(), 1));
-		this->Shader_DeferredLightning->SetStructMemberAtIndexAsFloat4(l, "lights", "LightColor", D3DXVECTOR4(this->lights[l]->GetColor(), 1));
-		this->Shader_DeferredLightning->SetStructMemberAtIndexAsFloat(l, "lights", "LightIntensity", this->lights[l]->GetIntensity());
+			// For deferred:
+			this->Shader_DeferredLightning->SetResourceAtIndex(l, "ShadowMap", this->lights[l]->GetShadowMapSRV());
+			//**tillman**
+			this->Shader_DeferredLightning->SetStructMemberAtIndexAsMatrix(l, "lights", "LightViewProj", lvp);
+			this->Shader_DeferredLightning->SetStructMemberAtIndexAsFloat4(l, "lights", "LightPosition", D3DXVECTOR4(this->lights[l]->GetPosition(), 1));
+			this->Shader_DeferredLightning->SetStructMemberAtIndexAsFloat4(l, "lights", "LightColor", D3DXVECTOR4(this->lights[l]->GetColor(), 1));
+			this->Shader_DeferredLightning->SetStructMemberAtIndexAsFloat(l, "lights", "LightIntensity", this->lights[l]->GetIntensity());
 		
 		
-		// For deferred quad:
-		//this->Shader_DeferredQuad->SetResourceAtIndex(l, "ShadowMap", this->lights[l]->GetShadowMapSRV());
-		//this->Shader_DeferredQuad->SetStructMemberAtIndexAsMatrix(l, "lights", "LightViewProj", vp);
-		//this->Shader_DeferredQuad->SetStructMemberAtIndexAsFloat4(l, "lights", "LightPosition", D3DXVECTOR4(this->lights[l]->GetPosition(), 1));
-		//this->Shader_DeferredQuad->SetStructMemberAtIndexAsFloat4(l, "lights", "LightColor", D3DXVECTOR4(this->lights[l]->GetColor(), 1));
-		//this->Shader_DeferredQuad->SetStructMemberAtIndexAsFloat(l, "lights", "LightIntensity", this->lights[l]->GetIntensity());
+			// For deferred quad:
+			//this->Shader_DeferredQuad->SetResourceAtIndex(l, "ShadowMap", this->lights[l]->GetShadowMapSRV());
+			//this->Shader_DeferredQuad->SetStructMemberAtIndexAsMatrix(l, "lights", "LightViewProj", lvp);
+			//this->Shader_DeferredQuad->SetStructMemberAtIndexAsFloat4(l, "lights", "LightPosition", D3DXVECTOR4(this->lights[l]->GetPosition(), 1));
+			//this->Shader_DeferredQuad->SetStructMemberAtIndexAsFloat4(l, "lights", "LightColor", D3DXVECTOR4(this->lights[l]->GetColor(), 1));
+			//this->Shader_DeferredQuad->SetStructMemberAtIndexAsFloat(l, "lights", "LightIntensity", this->lights[l]->GetIntensity());
 		
+		}
 	}
 	
 	float PCF_SIZE = (float)this->params.ShadowMapSettings + 1;
@@ -401,11 +410,10 @@ void DxManager::RenderShadowMap()
 
 	
 	// Deferred:
+	this->Shader_DeferredLightning->SetFloat("SMAP_DX", 1.0f / (256 * pow(2.0f, this->params.ShadowMapSettings/2)));
 	this->Shader_DeferredLightning->SetFloat("PCF_SIZE", PCF_SIZE);
 	this->Shader_DeferredLightning->SetFloat("PCF_SIZE_SQUARED", PCF_SQUARED);
-	this->Shader_DeferredLightning->SetFloat("SMAP_DX", 1.0f / (256 * pow(2.0f, this->params.ShadowMapSettings/2)));
 	//this->Shader_DeferredLightning->SetFloat("SMAP_DX", 1.0f / 256.0f);
-	this->Shader_DeferredLightning->SetFloat("NrOfLights", (float)this->lights.size());
 	
 	
 	/*
@@ -560,6 +568,8 @@ HRESULT DxManager::Render()
 	this->prevTimeStamp = li.QuadPart;
 
 	this->TimerAnimation += diff;// / 1000.0f;
+
+	this->PreRender();
 
 	this->RenderShadowMap();
 

@@ -113,7 +113,7 @@ void PhysicsEngine::DoCollisionMeshVsMesh( Mesh* m1, Mesh* m2, CollisionData& cd
 	{
 		for(int u = 0; u < strips2->size(); u++)
 		{
-			this->DoCollisionTrianglesVsTriangles(strips1->get(i)->getVerts(), strips1->get(i)->getNrOfVerts(),
+			this->DoCollisionTrianglesVsTriangles(m1->GetPosition(), strips1->get(i)->getVerts(), strips1->get(i)->getNrOfVerts(),
 				strips1->get(i)->getIndicies(), strips1->get(i)->getNrOfIndicies(), m1->GetWorldMatrix(), 
 				strips2->get(u)->getVerts(), strips2->get(u)->getNrOfVerts(), strips2->get(u)->getIndicies(),
 				strips2->get(u)->getNrOfIndicies(), m2->GetWorldMatrix(), cd);
@@ -243,7 +243,7 @@ bool PhysicsEngine::DoCollisionRayVsTriangle(Vector3 rayOrigin, Vector3 rayDirec
 	return true;
 }
 
-void PhysicsEngine::DoCollisionTrianglesVsTriangles(Vertex* vert1, int nrOfVerts1, int* inds1, int nrOfInds1, 
+void PhysicsEngine::DoCollisionTrianglesVsTriangles(Vector3 m1Pos, Vertex* vert1, int nrOfVerts1, int* inds1, int nrOfInds1, 
 	D3DXMATRIX worldMat1, Vertex* vert2, int nrOfVerts2, int* inds2, int nrOfInds2, 
 	D3DXMATRIX worldMat2, CollisionData& cd )
 {
@@ -298,6 +298,7 @@ void PhysicsEngine::DoCollisionTrianglesVsTriangles(Vertex* vert1, int nrOfVerts
 
 					if(this->DoCollisionTriangleVsTriangle(v00, v01, v02, v10, v11, v12, tempCD))
 					{
+						tempCD.distance = (m1Pos - Vector3(cd.posx, cd.posy, cd.posz)).GetLength();
 						if(tempCD.distance < cd.distance)
 						{
 							cd.distance = tempCD.distance;
@@ -766,7 +767,12 @@ bool PhysicsEngine::DoCollisionTriangleVsTriangle(Vector3 v00, Vector3 v01, Vect
 		return false;
 
 
+
 	tempCD.collision = true;
+	//// ALL BELOW NEEDS TO BE ADDED, not sure if above code has that data somewhere or if additional
+	//// calculations are needed to get it. posx, y, z should be the position of collision between
+	//// the triangles, and distance should be the distance between Mesh1 (left parameter in above function)
+	//// and the intersection point, so distance can't be calculated here is done above.
 	tempCD.distance = 0.0f;
 	tempCD.posx = 0.0f;
 	tempCD.posy = 0.0f;
