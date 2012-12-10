@@ -5,6 +5,7 @@
 //--------------------------------------------------------------------------------------
 
 // Marcus Löwegren
+#include "stdafx.fx"
 
 // For textures
 Texture2D tex2D;
@@ -36,11 +37,6 @@ cbuffer EveryMesh
 {
 	uint specialColor;
 }
-
-cbuffer EveryFrame
-{
-	float4 CameraPosition;
-};
 
 struct VSIn
 {
@@ -75,24 +71,7 @@ RTs:
 3: Position XYZ, W unused
 4: Specular XYZ, W Specular Power
 
-
 */
-
-//-----------------------------------------------------------------------------------------
-// State Structures
-//-----------------------------------------------------------------------------------------
-RasterizerState Culling
-{
-	CullMode = Back;
-};
-
-DepthStencilState EnableDepth
-{
-    DepthEnable = TRUE;
-    DepthWriteMask = ALL;
-    DepthFunc = LESS_EQUAL;
-};
-
 
 //-----------------------------------------------------------------------------------------
 // VertexShader: VSScene
@@ -132,7 +111,7 @@ PSout PSScene(PSSceneIn input) : SV_Target
 	output.Texture = finalColor;
 	output.NormalAndDepth = float4(input.norm.xyz, input.Pos.z / input.Pos.w);		// pos.z / pos.w should work?
 
-	float depth = length(CameraPosition.xyz - input.WorldPos.xyz) / 200.0f;		// Haxfix
+	float depth = length(CameraPosition.xyz - input.WorldPos.xyz) / FarClip;		// Haxfix
 	output.NormalAndDepth.w = depth;
 
 	output.Position = input.WorldPos;
@@ -157,6 +136,6 @@ technique11 BasicTech
 	    
 
 		SetDepthStencilState( EnableDepth, 0 );
-	    SetRasterizerState( Culling );
+	    SetRasterizerState( BackCulling );
     }  
 }

@@ -63,7 +63,7 @@ public:
 	virtual void Scale(const Vector3& scale);
 	virtual void Scale(float scale);
 	virtual Vector3 GetPosition() const;
-	virtual Vector3 GetRotation() const;
+	virtual Vector4 GetRotationQuaternion() const;
 	virtual Vector3 GetScaling() const;
 
 	

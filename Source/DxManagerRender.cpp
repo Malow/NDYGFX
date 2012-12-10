@@ -6,7 +6,7 @@ HRESULT DxManager::Update(float deltaTime)
 {
 	// update subsystems
 	//ps.update(deltaTime);
-	this->camera->Update(deltaTime);				// Moved to Life below since deltaTime isnt needed
+	//this->camera->Update(deltaTime);				// Moved to Life below to counter update spasms due to thread-collision
 
 	return S_OK;
 }
@@ -164,33 +164,38 @@ void DxManager::Life()
 			if(dynamic_cast<RendererEvent*>(ev) != NULL)
 			{
 				string msg = ((RendererEvent*)ev)->getMessage();
+				
+				if(dynamic_cast<ResizeEvent*>(ev) != NULL)
+				{
+					this->ResizeRenderer((ResizeEvent*)ev);
+				}
 
 				//TerrainEvent
-				if(dynamic_cast<TerrainEvent*>(ev) != NULL)
+				else if(dynamic_cast<TerrainEvent*>(ev) != NULL)
 				{
 					this->HandleTerrainEvent((TerrainEvent*)ev);
 				}
 
 				// MeshEvent
-				if(dynamic_cast<MeshEvent*>(ev) != NULL)
+				else if(dynamic_cast<MeshEvent*>(ev) != NULL)
 				{
 					this->HandleMeshEvent((MeshEvent*)ev);
 				}
 
 				// LightEvent
-				if(dynamic_cast<LightEvent*>(ev) != NULL)
+				else if(dynamic_cast<LightEvent*>(ev) != NULL)
 				{
 					this->HandleLightEvent((LightEvent*)ev);
 				}
 
 				// ImageEvent
-				if(dynamic_cast<ImageEvent*>(ev) != NULL)
+				else if(dynamic_cast<ImageEvent*>(ev) != NULL)
 				{
 					this->HandleImageEvent((ImageEvent*)ev);
 				}
 
 				// TextEvent
-				if(dynamic_cast<TextEvent*>(ev) != NULL)
+				else if(dynamic_cast<TextEvent*>(ev) != NULL)
 				{
 					this->HandleTextEvent((TextEvent*)ev);
 				}
@@ -199,7 +204,8 @@ void DxManager::Life()
 
 			delete ev;
 		}
-
+		this->camera->Update(this->TimerAnimation - this->LastCamUpdate);
+		this->LastCamUpdate = this->TimerAnimation;
 		this->Render();
 		this->framecount++;
 	}
@@ -558,8 +564,6 @@ HRESULT DxManager::Render()
 	this->RenderShadowMap();
 
 	//this->RenderForward();
-
-	this->RenderTerrain();
 
 	this->RenderDeferredGeometry();
 

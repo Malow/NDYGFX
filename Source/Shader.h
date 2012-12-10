@@ -30,7 +30,7 @@ public:
 	void SetBool(char* variable, bool value);
 	void SetRawData(char* variable, void* data, size_t size);
 
-	void SetResource(char* variable, ID3D11ShaderResourceView* value);
+	void SetResource(const char* variable, ID3D11ShaderResourceView* value);
 	void SetUnorderedAccessView(char* variable, ID3D11UnorderedAccessView* value);
 
 

@@ -1,6 +1,7 @@
 #include "Graphics.h"
 #include "MaloWFileDebug.h"
 
+#define TEST //<----------------------- kommentera ut vid behov **********************
 
 void ReplaceSlashes(string& str, char replace, char with)
 {
@@ -43,19 +44,72 @@ void deleteCache()
 
 int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nShowCmd )
 {
+	MaloW::ClearDebug();
+
 	if ( !GraphicsInit(hInstance) )
 		throw("Failed Creating Graphics Engine!");
+	
+#if defined(DEBUG) || defined(_DEBUG)
+	_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+#endif
 
-	MaloW::ClearDebug();
 	GetGraphics()->CreateSkyBox("Media/skymap.dds");	// Reduces FPS from 130 to 40
-	//iTerrain* t = GetGraphics()->CreateTerrain(Vector3(0, 0, 0), Vector3(100, 1, 100), "Media/TerrainTexture.png", "Media/TerrainHeightmap.raw");
-	GetGraphics()->GetCamera()->SetPosition(Vector3(50, 30, 50));
+	GetGraphics()->GetCamera()->SetPosition(Vector3(25, 25, 20));
 	GetGraphics()->GetCamera()->LookAt(Vector3(0, 0, 0));
-	//iLight* i = GetGraphics()->CreateLight( Vector3(15.0f, 75.0f, 15.0f) );
-	//i->SetIntensity(1000.1f);
+	iLight* i = GetGraphics()->CreateLight(GetGraphics()->GetCamera()->GetPosition());
+	i->SetIntensity(0.001f);
 	GetGraphics()->SetSunLightProperties(Vector3(1, -1, 1));
-	iTerrain* iT = GetGraphics()->CreateTerrain(Vector3(0, 0, 0), Vector3(10, 10, 10), 2);
+	GetGraphics()->SetSceneAmbientLight(Vector3(0.4f, 0.4f, 0.4f));
+	
+//*************************************	     PRE TEST       **********************
+#ifdef TEST
+	int vertSize = 2;
+	iTerrain* iT = GetGraphics()->CreateTerrain(Vector3(0, 0, 0), Vector3(10, 10, 10), vertSize);
+	
 
+	float* hmData = new float[vertSize * vertSize];
+	//for(int i = 0; i < vertSize; i++)
+	{
+		hmData[0] = 0.5f;
+		hmData[1] = 0.0f;
+		hmData[2] = 0.0f;
+		hmData[3] = -0.5f;
+	}
+	iT->SetHeightMap(hmData);
+	const char** fileNames = new const char*[3];
+	fileNames[0] = "Media/TerrainTexture.png";
+	fileNames[1] = "Media/BallTexture.png";
+	fileNames[2] = "Media/TerrainTexture.png";
+	iT->SetTextures(fileNames);
+	
+	int size = 2048*2048*4;
+	float* testData = new float[size]; 
+	for(int i = 0; i < size; i++)
+	{
+		if(i % 4 == 0)
+		{
+			testData[i] = 1.0f; //R
+		}
+		else if(i % 4 == 1)
+		{
+			testData[i] = 1.0f; //G
+		}
+		else if(i % 4 == 2)
+		{
+			testData[i] = 0.0f; //B
+		}
+		else if(i % 4 == 3)
+		{
+			testData[i] = 0.0f; //A
+		}
+	}
+	iT->SetBlendMap(size, testData);
+	iMesh* ball = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(0, -100, 0));
+	ball->Scale(0.1f);
+#endif
+//*************************************	    END OF PRE TEST       **********************
+
+	
 
 	iMesh* scaleHuman = GetGraphics()->CreateMesh("Media/scale.obj", Vector3(30, -300, 30));
 	iMesh* model = GetGraphics()->CreateMesh("Media/bth.obj", Vector3(15, 20, 20));
@@ -68,7 +122,9 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 	bool showscale = false;
 	bool toggleScale = true;
 	bool toggleDelCache = true;
+	bool toggleLight = true;
 	bool go = true;
+	float tempInt = 10.0f;
 	while(GetGraphics()->IsRunning() && go)
 	{
 		Sleep(10);
@@ -82,14 +138,49 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 			path = path.substr(0, path.size() - string("ModelViewer.exe").size());
 
 			string loadModel = specString.substr(path.size() , specString.size());
-			//GetGraphics()->DeleteMesh(model);
-			//model = GetGraphics()->CreateMesh(loadModel.c_str(), Vector3(15, 20, 20));
-			//model->Scale(1.0f / 20.0f);
+			GetGraphics()->DeleteMesh(model);
+			model = GetGraphics()->CreateMesh(loadModel.c_str(), Vector3(15, 20, 20));
+			model->Scale(1.0f / 20.0f);
 			lastSpecString = specString;
 		}
 
 		// Updates camera etc, does NOT render the frame, another process is doing that, so diff should be very low.
 		float diff = GetGraphics()->Update();	
+		
+//*************************************	     RUN TESTS       **********************
+#ifdef TEST
+		CollisionData cd = GetGraphics()->GetPhysicsEngine()->GetCollisionRayMesh(
+			GetGraphics()->GetCamera()->GetPosition(), GetGraphics()->GetCamera()->GetForward(), model);
+
+		diff = GetGraphics()->Update();	
+		MaloW::Debug(MaloW::convertNrToString(diff) + ",");
+
+		if(cd.collision)
+		{
+			ball->SetPosition(cd.position);
+		}
+		else
+		{
+			ball->SetPosition(Vector3(0, -100, 0));
+		}
+
+		if(GetGraphics()->GetKeyListener()->IsPressed('H'))
+			GetGraphics()->ChangeCamera(RTS);
+
+		if(GetGraphics()->GetKeyListener()->IsPressed('J'))
+			GetGraphics()->SetSceneAmbientLight(Vector3(1.0f, 0.0f, 0.0f));
+
+		static bool asd = true;
+		if(GetGraphics()->GetKeyListener()->IsPressed('K'))
+			if(asd)
+			{
+				GetGraphics()->ResizeGraphicsEngine(500, 500);
+				asd = false;
+			}
+#endif
+//*************************************	    END OF RUN TESTS       **********************
+	
+		i->SetPosition(GetGraphics()->GetCamera()->GetPosition());
 
 		if(GetGraphics()->GetKeyListener()->IsPressed('W'))
 			GetGraphics()->GetCamera()->MoveForward(diff);
@@ -156,10 +247,45 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 			go = false;
 
 
+		if(GetGraphics()->GetKeyListener()->IsPressed('1'))
+		{
+			if(toggleLight)
+			{
+				if(i->GetIntensity() < 0.01f)
+				{
+					i->SetIntensity(tempInt);
+				}
+				else
+				{
+					tempInt = i->GetIntensity();
+					i->SetIntensity(0.001f);
+				}
+				toggleLight = false;
+			}
+		}
+		else
+			toggleLight = true;
+
+		if(GetGraphics()->GetKeyListener()->IsPressed('T'))
+		{
+			i->SetIntensity(i->GetIntensity() * (1.0f + diff * 0.002f));
+		}
+		if(GetGraphics()->GetKeyListener()->IsPressed('Y'))
+		{
+			i->SetIntensity(i->GetIntensity() * (1.0f - diff * 0.002f));
+		}
 
 
+		if(GetGraphics()->GetKeyListener()->IsPressed('B'))
+		{
+			GetGraphics()->SetSceneAmbientLight(GetGraphics()->GetSceneAmbientLight() * (1.0f + diff * 0.002f));
+		}
+		if(GetGraphics()->GetKeyListener()->IsPressed('N'))
+		{
+			GetGraphics()->SetSceneAmbientLight(GetGraphics()->GetSceneAmbientLight() * (1.0f - diff * 0.002f));
+		}
 
-		////////////////// MaloW Testing
+		
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_UP))
 			GetGraphics()->SetSunLightProperties(Vector3(1, -1, 1));
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_DOWN))
@@ -172,5 +298,12 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 	
 	FreeGraphics();
 
+	//*************************************	     POST TEST       **********************
+#ifdef TEST
+	delete[] hmData;
+	delete[] fileNames;
+	//delete[] testData;
+#endif
+	//*************************************	   END OF POST TEST       **********************
 	return 0;
 }

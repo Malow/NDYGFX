@@ -6,6 +6,8 @@ void Terrain::CreateMesh()
 {
 	//Create vertices
 	int tilingFactor = 1; //**ändra senare**
+
+	this->zNrOfVertices = this->zSize * this->zSize;
 	this->zVertices = new Vertex[this->zSize * this->zSize];
 
 	for(int i = 0; i < this->zSize; i++)
@@ -20,7 +22,7 @@ void Terrain::CreateMesh()
 						D3DXVECTOR3(0, 0, 0));
 		}
 	}
-	this->zNrOfVertices = this->zSize * this->zSize;
+
 
 	//Create indices
 	this->zNrOfIndices = (this->zSize - 1) * 2 * (this->zSize - 1) * 3;
@@ -64,10 +66,9 @@ void Terrain::CalculateNormals()
 			{
 				D3DXVECTOR3 v1 = this->zVertices[e].pos - this->zVertices[a].pos;
 				D3DXVECTOR3 v2 = this->zVertices[b].pos - this->zVertices[d].pos;
-				D3DXVECTOR3 v;
-				D3DXVec3Cross(&v, &D3DXVECTOR3(v1.x, v1.y, v1.z), &D3DXVECTOR3(v2.x, v2.y, v2.z));
-				//Vector3 v = Vector3(v1.x, v1.y, v1.z).GetCrossProduct(Vector3(v2.x, v2.y, v2.z)); //old
-				this->zVertices[q * this->zSize + u].normal = D3DXVECTOR3(v.x, v.y, v.z);
+				D3DXVECTOR3 norm;
+				D3DXVec3Cross(&norm, &v1, &v2);
+				this->zVertices[q * this->zSize + u].normal = norm;
 			}
 		}
 	}
@@ -82,6 +83,7 @@ Terrain::Terrain()
 	D3DXMatrixIdentity(&this->zWorldMatrix);
 	this->RecreateWorldMatrix();
 
+	this->zHeightMapHasChanged = false;
 	this->zNrOfVertices = 0;
 	this->zVertices = NULL;
 	this->zVertexBuffer = NULL;
@@ -92,12 +94,11 @@ Terrain::Terrain()
 	this->zMaterial = new Material(MaterialType::LAMBERT);
 	this->zTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
-	this->zTex1 = "";
-	this->zTex2 = "";
-	this->zTex3 = "";
-	this->zSRV1 = NULL;
-	this->zSRV2 = NULL;
-	this->zSRV3 = NULL;
+	this->zTextures = new Texture*[3];
+	this->zTextures[0] = NULL;
+	this->zTextures[1] = NULL;
+	this->zTextures[2] = NULL;
+	this->zBlendMap = new BlendMap();
 	
 }
 
@@ -111,18 +112,22 @@ Terrain::Terrain(D3DXVECTOR3 pos, D3DXVECTOR3 scale, unsigned int size)
 	D3DXMatrixIdentity(&this->zWorldMatrix);
 	this->RecreateWorldMatrix();
 
-	this->zTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	this->zHeightMapHasChanged = false;
+	this->zNrOfVertices = 0;
 	this->zVertices = NULL;
 	this->zVertexBuffer = NULL;
+	this->zNrOfIndices = 0;
+	this->zIndices = NULL;
 	this->zIndexBuffer = NULL;
-	this->zMaterial = new Material(MaterialType::LAMBERT);
 
-	this->zTex1 = "";
-	this->zTex2 = "";
-	this->zTex3 = "";
-	this->zSRV1 = NULL;
-	this->zSRV2 = NULL;
-	this->zSRV3 = NULL;
+	this->zMaterial = new Material(MaterialType::LAMBERT);
+	this->zTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+
+	this->zTextures = new Texture*[3];
+	this->zTextures[0] = NULL;
+	this->zTextures[1] = NULL;
+	this->zTextures[2] = NULL;
+	this->zBlendMap = new BlendMap();
 
 	this->CreateMesh();
 }
@@ -136,25 +141,38 @@ Terrain::~Terrain()
 
 	if(this->zMaterial) delete this->zMaterial; this->zMaterial = NULL;
 
-	if(this->zSRV1) this->zSRV1->Release();
-	if(this->zSRV2) this->zSRV2->Release();
-	if(this->zSRV3) this->zSRV3->Release();
+	if(this->zTextures)
+	{
+		if(this->zTextures[0]) delete this->zTextures[0]; this->zTextures[0] = NULL;
+		if(this->zTextures[1]) delete this->zTextures[1]; this->zTextures[1] = NULL;
+		if(this->zTextures[2]) delete this->zTextures[2]; this->zTextures[2] = NULL;
+
+		delete[] this->zTextures;
+		this->zTextures = NULL;
+	}
+	if(this->zBlendMap) delete this->zBlendMap; this->zBlendMap = NULL;
 }
 
 
 //Get
 
 //Set
-void Terrain::SetVertexBuffer(Buffer* vertexBuffer)
+
+//Other
+void Terrain::RecreateWorldMatrix()
 {
-	if(this->zVertexBuffer) delete this->zVertexBuffer;
-	this->zVertexBuffer = vertexBuffer;
+	D3DXMATRIX translate;
+	D3DXMatrixTranslation(&translate, this->zPos.x, this->zPos.y, this->zPos.z);
+
+	D3DXMATRIX scaling;
+	D3DXMatrixScaling(&scaling, this->zScale.x, this->zScale.y, this->zScale.z);
+
+	D3DXMATRIX world = scaling * translate;
+
+	this->zWorldMatrix = world;
 }
-void Terrain::SetIndexBuffer(Buffer* indexBuffer)
-{
-	if(this->zIndexBuffer) delete this->zIndexBuffer;
-	this->zIndexBuffer = indexBuffer;
-}
+
+
 
 //iTerrain interface functions
 float Terrain::GetYPositionAt(float x, float z)
@@ -168,7 +186,7 @@ float Terrain::GetYPositionAt(float x, float z)
 	//ez /= this->dimensions.z;
 
 
-	if(ex <= 1.0f && ez <= 1.0f && ex > 0.0f && ez > 0.0f)
+	if(ex <= 1.0f && ez <= 1.0f && ex > 0.0f && ez > 0.0f) //**tillman opt
 	{
 		ex *= this->zSize;
 		ez *= this->zSize;
@@ -210,369 +228,54 @@ float Terrain::GetYPositionAt(float x, float z)
 }
 
 //Set
-
-//Other
-void Terrain::RecreateWorldMatrix()
+void Terrain::SetScale(Vector3& scale)
 {
-	D3DXMATRIX translate;
-	D3DXMatrixTranslation(&translate, this->zPos.x, this->zPos.y, this->zPos.z);
-
-	D3DXMATRIX scaling;
-	D3DXMatrixScaling(&scaling, this->zScale.x, this->zScale.y, this->zScale.z);
-
-	D3DXMATRIX world = scaling * translate;
-
-	this->zWorldMatrix = world;
+	this->zScale.x = scale.x;
+	this->zScale.y = scale.y;
+	this->zScale.z = scale.z;
+	this->RecreateWorldMatrix();
 }
 
-//iTerrain interface functions
-bool Terrain::SetHeightMap(unsigned int size, float* data)
+void Terrain::SetHeightMap(float* data)
 {
-	//check if size has changed, create new mesh if it has
-	if(this->zSize != size)
-	{
-		this->zSize = size;
-		this->CreateMesh();
-	}
-
-	//Apply height map data
-	//Update/set vertices
-	int totSize = size * size;
+	//Update/set y-values of vertices
+	int totSize = this->zSize * this->zSize;
 	for(int i = 0; i < totSize; i++)
 	{
 		this->zVertices[i].pos.y = data[i];
 	}
-
-	//calculate new normals
+	
+	//Calculate new normals
 	this->CalculateNormals();
 
-
-	return true;
+	this->zHeightMapHasChanged = true;
 }
 
-bool Terrain::SetTextures(const char* fileName1, const char* fileName2, const char* fileName3)
+void Terrain::SetTextures(const char** fileNames)
 {
-	this->zTex1 = fileName1;
-	this->zTex2 = fileName2;
-	this->zTex3 = fileName3;
-	//**TODO: reload textures**
-
-	return true;
-}
-
-bool Terrain::SetBlendMap(unsigned int size, float* data)
-{
-	return true;
-}
-
-
-
-
-
-
-
-
-
-
-
-/*
-
-void Terrain::SetPosition(D3DXVECTOR3 pos)
-{ 
-	this->zPos = pos;
-	this->RecreateWorldMatrix();
-}
-
-void Terrain::SetQuaternion(D3DXQUATERNION quat)
-{
-	this->zRotQuat = quat;
-	this->RecreateWorldMatrix();
-}
-
-
-void Terrain::MoveBy(D3DXVECTOR3 moveby)
-{ 
-	this->pos += moveby; 
-	this->RecreateWorldMatrix();
-}
-
-void Terrain::MoveBy( const Vector3& moveby )
-{
-	this->MoveBy( D3DXVECTOR3(moveby.x,moveby.y,moveby.z) );
-}
-
-void Terrain::Rotate(D3DXVECTOR3 radians)
-{
-	D3DXQUATERNION quaternion;
-	D3DXQuaternionRotationYawPitchRoll(&quaternion, radians.y, radians.x, radians.z);
-	D3DXQuaternionMultiply(&this->rotQuat, &this->rotQuat, &quaternion);
-	this->RecreateWorldMatrix();
-}
-
-void Terrain::Rotate( const Vector3& radians )
-{
-	this->Rotate( D3DXVECTOR3(radians.x,radians.y,radians.z) );
-}
-
-void Terrain::Rotate(D3DXQUATERNION quat)
-{
-	D3DXQuaternionMultiply(&this->rotQuat, &this->rotQuat, &quat);
-	this->RecreateWorldMatrix();
-}
-
-void Terrain::Rotate( const Vector4& quat )
-{
-	this->Rotate( D3DXQUATERNION(quat.x,quat.y,quat.z,quat.w) );
-}
-
-void Terrain::RotateAxis(D3DXVECTOR3 around, float angle)
-{
-	D3DXQUATERNION quaternion = D3DXQUATERNION(0, 0, 0, 1);
-	D3DXQuaternionRotationAxis(&quaternion, &around, angle);
-	
-	D3DXQuaternionMultiply(&this->rotQuat, &this->rotQuat, &quaternion);
-	this->RecreateWorldMatrix();
-}
-
-void Terrain::RotateAxis( const Vector3& around, float angle )
-{
-	this->RotateAxis( D3DXVECTOR3(around.x,around.y,around.z), angle );
-}
-
-void Terrain::Scale(D3DXVECTOR3 scale)
-{
-	this->scale.x *= scale.x;
-	this->scale.y *= scale.y;
-	this->scale.z *= scale.z;
-	this->RecreateWorldMatrix();
-}
-
-void Terrain::Scale( const Vector3& scale )
-{
-	this->Scale( D3DXVECTOR3(scale.x,scale.y,scale.z) );
-}
-
-void Terrain::Scale(float scale)
-{
-	this->scale.x *= scale;
-	this->scale.y *= scale;
-	this->scale.z *= scale;
-	this->RecreateWorldMatrix();
-}
-
-void Terrain::RecreateWorldMatrix()
-{
-	D3DXMATRIX translate;
-	D3DXMatrixTranslation(&translate, this->pos.x, this->pos.y, this->pos.z);
-
-	D3DXMATRIX scaling;
-	D3DXMatrixScaling(&scaling, this->scale.x, this->scale.y, this->scale.z);
-
-	
-	// Euler
-	//D3DXMATRIX x, y, z;
-	//D3DXMatrixRotationX(&x, this->rot.x);
-	//D3DXMatrixRotationY(&y, this->rot.y);
-	//D3DXMatrixRotationZ(&z, this->rot.z);
-
-	//D3DXMATRIX world = scaling*x*y*z*translate;
-	
-
-	// Quaternions
-	D3DXMATRIX QuatMat;
-	D3DXMatrixRotationQuaternion(&QuatMat, &this->rotQuat); 
-
-	D3DXMATRIX world = scaling*QuatMat*translate;
-
-
-
-
-	this->worldMatrix = world;
-}
-
-void Terrain::ResetRotationAndScale()
-{
-	this->rotQuat = D3DXQUATERNION(0, 0, 0, 1);
-	this->scale = D3DXVECTOR3(1, 1, 1);
-	this->RecreateWorldMatrix();
-}
-
-
-*/
-
-
-
-
-
-
-/* //iTerrain interface functions
-void Terrain::SetPosition( const Vector3& pos )
-{
-	this->SetPosition( D3DXVECTOR3(pos.x,pos.y,pos.z) );
-}
-
-void Terrain::SetQuaternion( const Vector4& quat )
-{
-	this->SetQuaternion( D3DXQUATERNION(quat.x,quat.y,quat.z,quat.w) );
-}
-
-Vector3 Terrain::GetPosition() const
-{
-	return Vector3(this->pos.x, this->pos.y, this->pos.z);
-}
-
-Vector3 Terrain::GetRotation() const
-{
-	D3DXVECTOR3 rotxyz;
-	float angle = 0.0f;
-	D3DXQuaternionToAxisAngle(&this->rotQuat, &rotxyz, &angle);	// Return rotation around an axis by angle
-	// convert rotxyz to actual xyz rotations, DOESNT WORK YET!
-	return Vector3(rotxyz.x, rotxyz.y, rotxyz.z);
-}
-
-Vector3 Terrain::GetScaling() const
-{
-	return Vector3(this->scale.x, this->scale.y, this->scale.z);
-}
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-bool Terrain::LoadAndApplyHeightMap(const char* fileName)
-{
-	std::ifstream fin;
-	fin.open(fileName, ios_base::binary);
-	if(!fin)
+	if(fileNames)
 	{
-		MaloW::Debug("Height map for terrain could not be found");
-		return false;
-	}
-
-	std::vector<unsigned char> vertexHeights(this->SIZE*this->SIZE);
-
-	fin.read((char *)&vertexHeights[0], (streamsize)vertexHeights.size());
-	fin.close();
-
-	Vertex* verts = this->strips->get(0)->getVerts();
-	for(int i = 0; i < (int)vertexHeights.size(); i++)
-	{
-		verts[i].pos.y *= (float)vertexHeights[i]/10;
-	}
-	return true;
-}
-
-void Terrain::filter(unsigned int smootheness)
-{
-	for(unsigned int smoothe = 0; smoothe < smootheness; smoothe++)
-	{
-		Vertex** grid = new Vertex*[this->SIZE];
-		for(int i = 0; i < this->SIZE; i++)
-			grid[i] = new Vertex[this->SIZE];
-
-		Vertex* verts = this->strips->get(0)->getVerts();
-
-		for(int i = 0; i < this->SIZE; i++)
-			for(int u = 0; u < this->SIZE; u++)
-				grid[i][u] = verts[i * this->SIZE + u];
-
-
-		for(int q = 0; q < this->SIZE; q++)
+		for(int i = 0; i < 3; i++)
 		{
-			for(int u = 0; u < this->SIZE; u++)
+			if(this->zTextures[i])
 			{
-				int a = (q-1)*this->SIZE + u-1;
-				int b = (q-1)*this->SIZE + u;
-				int c = (q-1)*this->SIZE + u+1;
-				int d = q*this->SIZE + u-1;
-				int e = q*this->SIZE + u;		// Urself
-				int f = q*this->SIZE + u+1;
-				int g = (q+1)*this->SIZE + u-1;
-				int h = (q+1)*this->SIZE + u;
-				int i = (q+1)*this->SIZE + u+1;
-				if(q == 0 && u == 0)
+				if(this->zTextures[i]->FileName == string(fileNames[i]))
 				{
-					grid[q][u].pos.y = (verts[e].pos.y + verts[f].pos.y + verts[h].pos.y + verts[i].pos.y) / 4;
-				}
-				else if(q == 0 && u == this->SIZE-1)
-				{
-					grid[q][u].pos.y = (verts[d].pos.y + verts[e].pos.y + verts[g].pos.y + verts[h].pos.y) / 4;
-				}
-				else if(q == this->SIZE-1 && u == 0)
-				{
-					grid[q][u].pos.y = (verts[b].pos.y + verts[c].pos.y + verts[e].pos.y + verts[f].pos.y) / 4;
-				}
-				else if(q == this->SIZE-1 && u == this->SIZE-1)
-				{
-					grid[q][u].pos.y = (verts[a].pos.y + verts[b].pos.y + verts[d].pos.y + verts[e].pos.y) / 4;
-				}
-				else if(q == 0)
-				{
-					grid[q][u].pos.y = (verts[d].pos.y + verts[e].pos.y + verts[f].pos.y + verts[g].pos.y + verts[h].pos.y + verts[i].pos.y) / 6;
-				}
-				else if(q == this->SIZE-1)
-				{
-					grid[q][u].pos.y = (verts[a].pos.y + verts[b].pos.y + verts[c].pos.y + verts[d].pos.y + verts[e].pos.y + verts[f].pos.y) / 6;
-				}
-				else if(u == 0)
-				{
-					grid[q][u].pos.y = (verts[b].pos.y + verts[c].pos.y + verts[e].pos.y + verts[f].pos.y + verts[i].pos.y + verts[h].pos.y) / 6;
-				}
-				else if(u == this->SIZE-1)
-				{
-					grid[q][u].pos.y = (verts[a].pos.y + verts[b].pos.y + verts[d].pos.y + verts[e].pos.y + verts[g].pos.y + verts[h].pos.y) / 6;
-				}
-				else
-				{
-					grid[q][u].pos.y = (verts[a].pos.y + verts[b].pos.y + verts[c].pos.y + verts[d].pos.y + verts[e].pos.y + verts[f].pos.y
-						+ verts[g].pos.y + verts[h].pos.y + verts[i].pos.y ) / 9;
+					this->zTextures[i]->FileName  = fileNames[i];
+					this->zTextures[i]->HasChanged = true;
 				}
 			}
+			else if(fileNames[i])
+			{
+				this->zTextures[i] = new Texture(fileNames[i]);
+			}
 		}
-
-		for(int i = 0; i < this->SIZE; i++)
-			for(int u = 0; u < this->SIZE; u++)
-				verts[i * this->SIZE + u] = grid[i][u];
-	
-		for(int i = 0; i < this->SIZE; i++)
-			delete [] grid[i];
-
-		delete grid;
 	}
 }
-*/
+
+void Terrain::SetBlendMap(unsigned int size, float* data)
+{
+	this->zBlendMap->Size = size;
+	this->zBlendMap->Data = data;
+	this->zBlendMap->HasChanged = true;
+}

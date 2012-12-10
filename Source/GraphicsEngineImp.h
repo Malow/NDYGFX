@@ -17,6 +17,7 @@ Singleton.
 #include "TRDCamera.h"
 #include "Image.h"
 #include "CamRecording.h"
+#include "PhysicsEngine.h"
 
 // Class for communication between processes for loading meshes
 class LoadMeshEvent : public MaloW::ProcessEvent
@@ -63,6 +64,7 @@ private:
 	HWND hWnd;
 	KeyListener* kl;
 	Camera* cam;
+	PhysicsEngine* physx;
 
 	int fpsLast;
 	int prevFrameCount;
@@ -76,7 +78,7 @@ private:
 	HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow);
 	void InitObjects();
 
-	
+	bool isManagingMyOwnWindow;
 
 
 	float PCFreq;
@@ -125,6 +127,14 @@ public:
 
 	virtual void SetSunLightProperties(Vector3 direction, Vector3 lightColor = Vector3(1.0f, 1.0f, 1.0f), float intensity = 1.0f);
 
+	virtual iPhysicsEngine* GetPhysicsEngine() const;
+
+	virtual iCamera* ChangeCamera(CameraType newCamType);
+
+	virtual void SetSceneAmbientLight(Vector3 ambientLight);
+	virtual Vector3 GetSceneAmbientLight() const;
+
+	virtual void ResizeGraphicsEngine(float width, float height);
 	/*  Non-inherited functions */
 
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);

@@ -10,7 +10,7 @@ enum CameraType
 {
 	FPS = 0,
 	RTS = 1,
-	TRD = 2,
+	TRD = 2
 };
 
 extern "C"
@@ -27,5 +27,11 @@ extern "C"
 		static int ShadowMapSettings;
 		static int FXAAQuality;
 		static CameraType CamType;
+		static float FOV;
+		static float NearClip;
+		static float FarClip;
+		static int RefreshRate;
+
+		virtual void SaveToFile(const char* file) = 0;
 	};
 }

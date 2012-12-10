@@ -85,6 +85,7 @@ public:
 	/* Not inherited */
 	D3DXMATRIX GetViewMatrix();
 	D3DXMATRIX GetProjectionMatrix();
+	void RecreateProjectionMatrix();
 
 	D3DXVECTOR3 GetPositionD3DX() const { return this->pos; }
 	D3DXVECTOR3 GetForwardD3DX() const { return this->forward; }
@@ -94,6 +95,7 @@ public:
 	virtual void UpdateSpecific(float delta) = 0;
 
 	virtual void SetUpdateCamera(bool update) { this->updateCamera = update; }
+	virtual CameraType GetCameraType() const = 0;
 };
 
 #endif

@@ -21,6 +21,9 @@ HRESULT DxManager::Init()
 	int screenWidth = rc.right - rc.left;;
 	int screenHeight = rc.bottom - rc.top;
 
+	MaloW::Debug("Initing Engine with width: " + MaloW::convertNrToString(screenWidth) +
+		" and height: " + MaloW::convertNrToString(screenHeight));
+
 	UINT createDeviceFlags = 0;
 #ifdef _DEBUG
 	createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
@@ -41,7 +44,7 @@ HRESULT DxManager::Init()
 	sd.BufferDesc.Width = screenWidth;
 	sd.BufferDesc.Height = screenHeight;
 	sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	sd.BufferDesc.RefreshRate.Numerator = 60;
+	sd.BufferDesc.RefreshRate.Numerator = this->params.RefreshRate;
 	sd.BufferDesc.RefreshRate.Denominator = 1;
 	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	sd.OutputWindow = hWnd;
@@ -312,52 +315,48 @@ HRESULT DxManager::Init()
 		return E_FAIL;
 	}
 
-		D3D11_TEXTURE2D_DESC DeferredQuadTextureDesc;
-		ZeroMemory(&DeferredQuadTextureDesc, sizeof(DeferredQuadTextureDesc));
-		DeferredQuadTextureDesc.Width = screenWidth;
-		DeferredQuadTextureDesc.Height = screenHeight;	
-		DeferredQuadTextureDesc.MipLevels = 1;
-		DeferredQuadTextureDesc.ArraySize = 1;
-		DeferredQuadTextureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-		DeferredQuadTextureDesc.SampleDesc.Count = 1;
-		DeferredQuadTextureDesc.SampleDesc.Quality = 0;
-		DeferredQuadTextureDesc.Usage = D3D11_USAGE_DEFAULT;
-		DeferredQuadTextureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-		DeferredQuadTextureDesc.CPUAccessFlags = 0;
-		DeferredQuadTextureDesc.MiscFlags = 0;
+
+
+	/*
+	D3D11_TEXTURE2D_DESC DeferredQuadTextureDesc;
+	ZeroMemory(&DeferredQuadTextureDesc, sizeof(DeferredQuadTextureDesc));
+	DeferredQuadTextureDesc.Width = screenWidth;
+	DeferredQuadTextureDesc.Height = screenHeight;	
+	DeferredQuadTextureDesc.MipLevels = 1;
+	DeferredQuadTextureDesc.ArraySize = 1;
+	DeferredQuadTextureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	DeferredQuadTextureDesc.SampleDesc.Count = 1;
+	DeferredQuadTextureDesc.SampleDesc.Quality = 0;
+	DeferredQuadTextureDesc.Usage = D3D11_USAGE_DEFAULT;
+	DeferredQuadTextureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+	DeferredQuadTextureDesc.CPUAccessFlags = 0;
+	DeferredQuadTextureDesc.MiscFlags = 0;
 	
-		if(FAILED(this->Dx_Device->CreateTexture2D(&DeferredQuadTextureDesc, NULL, &this->Dx_DeferredTexture)))
-			MaloW::Debug("Failed to initiate DeferredQuadTexture");
+	if(FAILED(this->Dx_Device->CreateTexture2D(&DeferredQuadTextureDesc, NULL, &this->Dx_DeferredTexture)))
+		MaloW::Debug("Failed to initiate DeferredQuadTexture");
 
 
-		D3D11_RENDER_TARGET_VIEW_DESC DescQuadRT;
-		ZeroMemory(&DescQuadRT, sizeof(DescQuadRT));
-		DescQuadRT.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-		DescQuadRT.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
-		DescQuadRT.Texture2DArray.ArraySize = 1;
-		DescQuadRT.Texture2DArray.MipSlice = 0;
+	D3D11_RENDER_TARGET_VIEW_DESC DescQuadRT;
+	ZeroMemory(&DescQuadRT, sizeof(DescQuadRT));
+	DescQuadRT.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	DescQuadRT.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+	DescQuadRT.Texture2DArray.ArraySize = 1;
+	DescQuadRT.Texture2DArray.MipSlice = 0;
 
-		if(FAILED(this->Dx_Device->CreateRenderTargetView(this->Dx_DeferredTexture, NULL, &this->Dx_DeferredQuadRT)))
-			MaloW::Debug("Failed to initiate Deferred Quad RT");
-
-
-		D3D11_SHADER_RESOURCE_VIEW_DESC srQuadDesc;
-		ZeroMemory(&srQuadDesc, sizeof(srQuadDesc));
-		srQuadDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-		srQuadDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-		srQuadDesc.Texture2D.MostDetailedMip = 0;
-		srQuadDesc.Texture2D.MipLevels = 1;
-
-		if(FAILED(this->Dx_Device->CreateShaderResourceView(this->Dx_DeferredTexture, &srQuadDesc, &this->Dx_DeferredSRV)))
-			MaloW::Debug("Failed to initiate Deferred Quad SRV");
+	if(FAILED(this->Dx_Device->CreateRenderTargetView(this->Dx_DeferredTexture, NULL, &this->Dx_DeferredQuadRT)))
+		MaloW::Debug("Failed to initiate Deferred Quad RT");
 
 
+	D3D11_SHADER_RESOURCE_VIEW_DESC srQuadDesc;
+	ZeroMemory(&srQuadDesc, sizeof(srQuadDesc));
+	srQuadDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	srQuadDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	srQuadDesc.Texture2D.MostDetailedMip = 0;
+	srQuadDesc.Texture2D.MipLevels = 1;
 
-
-
-
-
-
+	if(FAILED(this->Dx_Device->CreateShaderResourceView(this->Dx_DeferredTexture, &srQuadDesc, &this->Dx_DeferredSRV)))
+		MaloW::Debug("Failed to initiate Deferred Quad SRV");
+	*/
 
 
 

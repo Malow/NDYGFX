@@ -10,10 +10,14 @@ bool CursorControl::visable = true;
 
 int GraphicsEngineParams::windowWidth = 1024;
 int GraphicsEngineParams::windowHeight = 768;
-bool GraphicsEngineParams::Maximized = true;
+bool GraphicsEngineParams::Maximized = false;
 int GraphicsEngineParams::ShadowMapSettings = 0;
 int GraphicsEngineParams::FXAAQuality = 0;
 CameraType GraphicsEngineParams::CamType = FPS;
+float GraphicsEngineParams::FOV = 0.45f;
+float GraphicsEngineParams::NearClip = 0.01f;
+float GraphicsEngineParams::FarClip = 200.0f;
+int GraphicsEngineParams::RefreshRate = 60;
 
 
 GraphicsEngineImp::GraphicsEngineImp(GraphicsEngineParams params, HINSTANCE hInstance, int nCmdShow) :
@@ -39,7 +43,8 @@ GraphicsEngineImp::GraphicsEngineImp(GraphicsEngineParams params, HINSTANCE hIns
 	this->prevFrameCount = 0;
 	this->fpsLast = 0;
 	this->fpsTimer = 0.0f;
-	
+	this->isManagingMyOwnWindow = true;
+
 	this->kl = new KeyListener(this->hWnd);
 	this->InitWindow(hInstance, nCmdShow);
 	kl->SetHWND(this->hWnd); // Because of key listener being created before the window
@@ -71,6 +76,7 @@ GraphicsEngineImp::GraphicsEngineImp(GraphicsEngineParams params, HWND hWnd) :
 	this->prevFrameCount = 0;
 	this->fpsLast = 0;
 	this->fpsTimer = 0.0f;
+	this->isManagingMyOwnWindow = false;
 
 	this->hWnd = hWnd;
 	this->kl = new KeyListener(this->hWnd);
@@ -91,6 +97,11 @@ GraphicsEngineImp::~GraphicsEngineImp()
 	
 	if ( this->dx ) delete dx, dx=0;
 	if ( this->kl ) delete kl, kl=0;
+	if(this->physx)
+	{
+		delete this->physx;
+		this->physx = NULL;
+	}
 
 	// DestroyWindow(this->hWnd); // Why is this commented out, Alex
 }
@@ -153,7 +164,8 @@ LRESULT CALLBACK GraphicsEngineImp::WndProc(HWND hWnd, UINT message, WPARAM wPar
 			lpszFile[0] = '\0';
 			if(DragQueryFile(drop, 0, lpszFile, MAX_PATH))
 			{
-				gfx->specialString = string(lpszFile);
+				if(gfx)
+					gfx->specialString = string(lpszFile);
 			}
 			else
 				MaloW::Debug("Failed to load a droppped file.");
@@ -163,6 +175,16 @@ LRESULT CALLBACK GraphicsEngineImp::WndProc(HWND hWnd, UINT message, WPARAM wPar
 		// TODO: Handle Resize
 		case WM_SIZE:
 			{
+				/* ::: CRASHESm WHY!?!
+				RECT rc;
+				GetClientRect(hWnd, &rc);
+				int screenWidth = rc.right - rc.left;;
+				int screenHeight = rc.bottom - rc.top;
+				
+				if(gfx)
+					gfx->ResizeGraphicsEngine(screenWidth, screenHeight);
+					*/
+					
 				if ( wParam == SIZE_MAXHIDE )
 				{
 
@@ -252,6 +274,7 @@ HRESULT GraphicsEngineImp::InitWindow(HINSTANCE hInstance, int nCmdShow)
 void GraphicsEngineImp::InitObjects()
 {
 	this->dx = new DxManager(this->hWnd, this->parameters, this->cam);
+	this->physx = new PhysicsEngine();
 
 	if(this->parameters.CamType == FPS)
 	{
@@ -641,4 +664,46 @@ const char* GraphicsEngineImp::GetSpecialString()
 void GraphicsEngineImp::SetSunLightProperties( Vector3 direction, Vector3 lightColor /*= Vector3(1.0f, 1.0f, 1.0f)*/, float intensity /*= 1.0f*/ )
 {
 	this->dx->SetSunLightProperties(direction, lightColor, intensity);
+}
+
+iPhysicsEngine* GraphicsEngineImp::GetPhysicsEngine() const
+{
+	return this->physx;
+}
+
+iCamera* GraphicsEngineImp::ChangeCamera( CameraType newCamType )
+{
+	Camera* oldcam = this->cam;
+	if(newCamType == FPS)
+	{
+		this->cam = new FPSCamera(this->hWnd, this->parameters);
+	}
+	else if(newCamType == RTS)
+	{
+		this->cam = new RTSCamera(this->hWnd, this->parameters);
+	}
+	this->cam->SetPosition(oldcam->GetPosition() - this->cam->GetForward() * 5);
+	this->dx->SetCamera(this->cam);
+	this->parameters.CamType = newCamType;
+	delete oldcam;
+	return this->cam;	
+}
+
+void GraphicsEngineImp::SetSceneAmbientLight( Vector3 ambientLight )
+{
+	this->dx->SetSceneAmbientLight(D3DXVECTOR3(ambientLight.x, ambientLight.y, ambientLight.z));
+}
+
+void GraphicsEngineImp::ResizeGraphicsEngine( float width, float height )
+{
+	if(this->isManagingMyOwnWindow)
+		SetWindowPos(this->hWnd, 0 , 0 , 0, width, height, SWP_NOMOVE|SWP_NOZORDER|SWP_NOACTIVATE);
+
+	this->dx->ResizeEngine(width, height);
+}
+
+Vector3 GraphicsEngineImp::GetSceneAmbientLight() const
+{
+	D3DXVECTOR3 amb = this->dx->GetSceneAmbientLight();
+	return Vector3(amb.x, amb.y, amb.z);
 }

@@ -12,8 +12,8 @@ public:
 	virtual ~GraphicsEngineParams() {}
 
 	void LoadFromFile(const char* file);
-	void SaveToFile(const char* file);
-	void SaveToFile(const char* file, int winWidth, int winHeight, int winMax, int shadowMapQual, int FXAAQual );
+	virtual void SaveToFile(const char* file);
+	//void SaveToFile(const char* file, int winWidth, int winHeight, int winMax, int shadowMapQual, int FXAAQual);
 };
 
 #endif
