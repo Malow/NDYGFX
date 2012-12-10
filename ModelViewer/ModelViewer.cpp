@@ -96,7 +96,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 		}
 		else if(i % 4 == 2)
 		{
-			testData[i] = 0.0f; //B
+			testData[i] = 1.0f; //B
 		}
 		else if(i % 4 == 3)
 		{
