@@ -709,3 +709,9 @@ Vector3 GraphicsEngineImp::GetSceneAmbientLight() const
 	D3DXVECTOR3 amb = this->dx->GetSceneAmbientLight();
 	return Vector3(amb.x, amb.y, amb.z);
 }
+
+void GraphicsEngineImp::DeleteTerrain( iTerrain*& terrain )
+{
+	this->dx->DeleteTerrain(dynamic_cast<Terrain*>(terrain));
+	terrain = 0;
+}
