@@ -106,6 +106,11 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 	iT->SetBlendMap(size, testData);
 	iMesh* ball = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(0, -100, 0));
 	ball->Scale(0.1f);
+	iMesh* secModel = GetGraphics()->CreateMesh("Media/bth.obj", Vector3(10, 20, 10));
+	secModel->Scale(1.0f * 0.05f);
+
+	float templol = 0.0f;
+	
 #endif
 //*************************************	    END OF PRE TEST       **********************
 
@@ -152,9 +157,6 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 		CollisionData cd = GetGraphics()->GetPhysicsEngine()->GetCollisionRayMesh(
 			GetGraphics()->GetCamera()->GetPosition(), GetGraphics()->GetCamera()->GetForward(), model);
 
-		diff = GetGraphics()->Update();	
-		MaloW::Debug(MaloW::convertNrToString(diff) + ",");
-
 		if(cd.collision)
 		{
 			ball->SetPosition(Vector3(cd.posx, cd.posy, cd.posz));
@@ -164,22 +166,74 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 			ball->SetPosition(Vector3(0, -100, 0));
 		}
 
+		static bool fesd = true;
 		if(GetGraphics()->GetKeyListener()->IsPressed('H'))
-			GetGraphics()->ChangeCamera(RTS);
+		{
+			if(fesd)
+			{
+				if(GetGraphics()->GetCamera()->GetCameraType() == RTS)
+				{
+					Vector3 fw = GetGraphics()->GetCamera()->GetForward();
+					GetGraphics()->ChangeCamera(FPS);
+					GetGraphics()->GetCamera()->SetForward(fw);
+				}
+				else
+				{
+					Vector3 fw = GetGraphics()->GetCamera()->GetForward();
+					GetGraphics()->ChangeCamera(RTS);
+					GetGraphics()->GetCamera()->SetForward(fw);
+				}
+				fesd = false;
+			}			
+		}
+		else
+			fesd = true;
 
 		if(GetGraphics()->GetKeyListener()->IsPressed('J'))
 			GetGraphics()->SetSceneAmbientLight(Vector3(1.0f, 0.0f, 0.0f));
 
 		static bool asd = true;
 		if(GetGraphics()->GetKeyListener()->IsPressed('K'))
+		{
 			if(asd)
 			{
 				GetGraphics()->ResizeGraphicsEngine(500, 500);
 				asd = false;
 			}
+		}
+
+
+		if(GetGraphics()->GetKeyListener()->IsPressed(VK_UP))
+			secModel->MoveBy(Vector3(1, 0, 0) * diff * 0.01f);
+		if(GetGraphics()->GetKeyListener()->IsPressed(VK_DOWN))
+			secModel->MoveBy(Vector3(-1, 0, 0) * diff * 0.01f);
+		if(GetGraphics()->GetKeyListener()->IsPressed(VK_LEFT))
+			secModel->MoveBy(Vector3(0, 0, 1) * diff * 0.01f);
+		if(GetGraphics()->GetKeyListener()->IsPressed(VK_RIGHT))
+			secModel->MoveBy(Vector3(0, 0, -1) * diff * 0.01f);
+
+
+		/*
+		templol += diff;
+		if(templol > 100000.0f)
+		{
+			CollisionData secCD = GetGraphics()->GetPhysicsEngine()->GetCollisionMeshMesh(model, secModel);
+			if(secCD.collision)
+			{
+				secModel->SetSpecialColor(RED_COLOR);
+				MaloW::Debug("Collision! :D");
+			}
+			else
+			{
+				MaloW::Debug("No collision... :(");
+				secModel->SetSpecialColor(WHITE_COLOR);
+			}
+			templol = 0.0f;
+		}
+		
+		*/
 #endif
 //*************************************	    END OF RUN TESTS       **********************
-	
 		i->SetPosition(GetGraphics()->GetCamera()->GetPosition());
 
 		if(GetGraphics()->GetKeyListener()->IsPressed('W'))

@@ -70,7 +70,7 @@ CollisionData PhysicsEngine::GetCollisionMeshMesh(iMesh* mesh1, iMesh* mesh2)
 	{
 		if(Mesh* m2 = dynamic_cast<Mesh*>(mesh2))
 		{
-
+			this->DoCollisionMeshVsMesh(m1, m2, cd);
 		}
 		else
 			MaloW::Debug("Failed to cast iMesh* mesh2 to Mesh in PhysicsEngine.cpp");
@@ -84,7 +84,7 @@ CollisionData PhysicsEngine::GetCollisionMeshMesh(iMesh* mesh1, iMesh* mesh2)
 CollisionData PhysicsEngine::GetCollisionMeshTerrain( iMesh* mesh, iTerrain* terr )
 {
 	CollisionData cd;
-
+	// NYI
 	return cd;
 }
 
@@ -372,147 +372,405 @@ void PhysicsEngine::DoCollisionTrianglesVsTriangles(Vertex* vert1, int nrOfVerts
 	}
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Stolen and re-worked a bit from:
+// http://fileadmin.cs.lth.se/cs/Personal/Tomas_Akenine-Moller/code/opttritri.txt
+
+
+#define USE_EPSILON_TEST
+#define EPSILON 0.000001f
+
+#define EDGE_EDGE_TEST(V0,U0,U1)                      \
+	Bx=U0[i0]-U1[i0];                                   \
+	By=U0[i1]-U1[i1];                                   \
+	Cx=V0[i0]-U0[i0];                                   \
+	Cy=V0[i1]-U0[i1];                                   \
+	f=Ay*Bx-Ax*By;                                      \
+	d=By*Cx-Bx*Cy;                                      \
+	if((f>0 && d>=0 && d<=f) || (f<0 && d<=0 && d>=f))  \
+  {                                                   \
+  e=Ax*Cy-Ay*Cx;                                    \
+  if(f>0)                                           \
+	{                                                 \
+	if(e>=0 && e<=f) return 1;                      \
+}                                                 \
+	else                                              \
+	{                                                 \
+	if(e<=0 && e>=f) return 1;                      \
+}                                                 \
+}
+
+#define EDGE_AGAINST_TRI_EDGES(V0,V1,U0,U1,U2) \
+{                                              \
+	float Ax,Ay,Bx,By,Cx,Cy,e,d,f;               \
+	Ax=V1[i0]-V0[i0];                            \
+	Ay=V1[i1]-V0[i1];                            \
+	/* test edge U0,U1 against V0,V1 */          \
+	EDGE_EDGE_TEST(V0,U0,U1);                    \
+	/* test edge U1,U2 against V0,V1 */          \
+	EDGE_EDGE_TEST(V0,U1,U2);                    \
+	/* test edge U2,U1 against V0,V1 */          \
+	EDGE_EDGE_TEST(V0,U2,U0);                    \
+}
+
+#define POINT_IN_TRI(V0,U0,U1,U2)           \
+{                                           \
+	float a,b,c,d0,d1,d2;                     \
+	/* is T1 completly inside T2? */          \
+	/* check if V0 is inside tri(U0,U1,U2) */ \
+	a=U1[i1]-U0[i1];                          \
+	b=-(U1[i0]-U0[i0]);                       \
+	c=-a*U0[i0]-b*U0[i1];                     \
+	d0=a*V0[i0]+b*V0[i1]+c;                   \
+	\
+	a=U2[i1]-U1[i1];                          \
+	b=-(U2[i0]-U1[i0]);                       \
+	c=-a*U1[i0]-b*U1[i1];                     \
+	d1=a*V0[i0]+b*V0[i1]+c;                   \
+	\
+	a=U0[i1]-U2[i1];                          \
+	b=-(U0[i0]-U2[i0]);                       \
+	c=-a*U2[i0]-b*U2[i1];                     \
+	d2=a*V0[i0]+b*V0[i1]+c;                   \
+	if(d0*d1>0.0)                             \
+  {                                         \
+  if(d0*d2>0.0) return 1;                 \
+}                                         \
+}
+
+int coplanar_tri_tri(float N[3],float V0[3],float V1[3],float V2[3],
+					 float U0[3],float U1[3],float U2[3])
+{
+	float A[3];
+	short i0,i1;
+	/* first project onto an axis-aligned plane, that maximizes the area */
+	/* of the triangles, compute indices: i0,i1. */
+	A[0]=fabs(N[0]);
+	A[1]=fabs(N[1]);
+	A[2]=fabs(N[2]);
+	if(A[0]>A[1])
+	{
+		if(A[0]>A[2])
+		{
+			i0=1;      /* A[0] is greatest */
+			i1=2;
+		}
+		else
+		{
+			i0=0;      /* A[2] is greatest */
+			i1=1;
+		}
+	}
+	else   /* A[0]<=A[1] */
+	{
+		if(A[2]>A[1])
+		{
+			i0=0;      /* A[2] is greatest */
+			i1=1;
+		}
+		else
+		{
+			i0=0;      /* A[1] is greatest */
+			i1=2;
+		}
+	}
+
+	/* test all edges of triangle 1 against the edges of triangle 2 */
+	EDGE_AGAINST_TRI_EDGES(V0,V1,U0,U1,U2);
+	EDGE_AGAINST_TRI_EDGES(V1,V2,U0,U1,U2);
+	EDGE_AGAINST_TRI_EDGES(V2,V0,U0,U1,U2);
+
+	/* finally, test if tri1 is totally contained in tri2 or vice versa */
+	POINT_IN_TRI(V0,U0,U1,U2);
+	POINT_IN_TRI(U0,V0,V1,V2);
+
+	return 0;
+}
+
+bool NEWCOMPUTE_INTERVALS(float& VV0, float& VV1, float& VV2, float& D0, float& D1, float& D2, float& D0D1,
+						   float& D0D2, float& A, float& B, float& C, float& X0, float& X1)
+{ 
+	if(D0D1>0.0f) 
+	{ 
+		A=VV2; B=(VV0-VV2)*D2; C=(VV1-VV2)*D2; X0=D2-D0; X1=D2-D1; 
+	}
+	else if(D0D2>0.0f)
+	{ 
+		A=VV1; B=(VV0-VV1)*D1; C=(VV2-VV1)*D1; X0=D1-D0; X1=D1-D2; 
+	} 
+	else if(D1*D2>0.0f || D0!=0.0f) 
+	{ 
+		A=VV0; B=(VV1-VV0)*D0; C=(VV2-VV0)*D0; X0=D0-D1; X1=D0-D2; 
+	} 
+	else if(D1!=0.0f) 
+	{ 
+		A=VV1; B=(VV0-VV1)*D1; C=(VV2-VV1)*D1; X0=D1-D0; X1=D1-D2; 
+	} 
+	else if(D2!=0.0f) 
+	{ 
+		A=VV2; B=(VV0-VV2)*D2; C=(VV1-VV2)*D2; X0=D2-D0; X1=D2-D1; 
+	} 
+	else 
+	{ 
+		return true;
+	} 
+	return false;
+}
+
 bool PhysicsEngine::DoCollisionTriangleVsTriangle(Vector3 v00, Vector3 v01, Vector3 v02, 
 	Vector3 v10, Vector3 v11, Vector3 v12, CollisionData& tempCD)
 {
-
-
-
-
-
-	Vector3 e1;
-	Vector3 e2;
-	Vector3 n1;
-	e1 = v01 - v00;
-	e2 = v02 - v00;
-	n1 = e1.GetCrossProduct(e2);
+	Vector3 e1 = v01 - v00;
+	Vector3 e2 = v02 - v00;
+	Vector3 n1 = e1.GetCrossProduct(e2);
 	float d1 = -n1.GetDotProduct(v00);
 
-	//float du0 = 
+	float du0 = n1.GetDotProduct(v10) + d1;
+	float du1 = n1.GetDotProduct(v11) + d1;
+	float du2 = n1.GetDotProduct(v12) + d1;
 
-
-
-
-
-
-		/*
-
-
-
-	float N2[3],d2;
-	float du0,du1,du2,dv0,dv1,dv2;
-	float D[3];
-	float isect1[2], isect2[2];
-	float du0du1,du0du2,dv0dv1,dv0dv2;
-	short index;
-	float vp0,vp1,vp2;
-	float up0,up1,up2;
-	float bb,cc,max;
-
-	// put U0,U1,U2 into plane equation 1 to compute signed distances to the plane
-	du0=DOT(N1,U0)+d1;
-	du1=DOT(N1,U1)+d1;
-	du2=DOT(N1,U2)+d1;
-
-	// coplanarity robustness check 
-#if USE_EPSILON_TEST==TRUE
-	if(FABS(du0)<EPSILON) du0=0.0;
-	if(FABS(du1)<EPSILON) du1=0.0;
-	if(FABS(du2)<EPSILON) du2=0.0;
+#ifdef USE_EPSILON_TEST
+	if(fabs(du0) < EPSILON) du0 = 0.0f;
+	if(fabs(du1) < EPSILON) du1 = 0.0f;
+	if(fabs(du2) < EPSILON) du2 = 0.0f;
 #endif
-	du0du1=du0*du1;
-	du0du2=du0*du2;
+		
+	float du0du1 = du0 * du1;
+	float du0du2 = du0 * du2;
 
-	if(du0du1>0.0f && du0du2>0.0f) // same sign on all of them + not equal 0 ? 
-		return 0;                    // no intersection occurs 
+	if(du0du1 > 0.0f && du0du2 > 0.0f)
+		return false;
 
-	// compute plane of triangle (U0,U1,U2) 
-	SUB(E1,U1,U0);
-	SUB(E2,U2,U0);
-	CROSS(N2,E1,E2);
-	d2=-DOT(N2,U0);
-	// plane equation 2: N2.X+d2=0
+	e1 = v11 - v10;
+	e2 = v12 - v10;
+	Vector3 n2 = e1.GetCrossProduct(e2);
+	float d2 = -n2.GetDotProduct(v10);
 
-	// put V0,V1,V2 into plane equation 2 
-	dv0=DOT(N2,V0)+d2;
-	dv1=DOT(N2,V1)+d2;
-	dv2=DOT(N2,V2)+d2;
+	float dv0 = n2.GetDotProduct(v00) + d2;
+	float dv1 = n2.GetDotProduct(v01) + d2;
+	float dv2 = n2.GetDotProduct(v02) + d2;
 
-#if USE_EPSILON_TEST==TRUE
-	if(FABS(dv0)<EPSILON) dv0=0.0;
-	if(FABS(dv1)<EPSILON) dv1=0.0;
-	if(FABS(dv2)<EPSILON) dv2=0.0;
+#ifdef USE_EPSILON_TEST
+	if(fabs(dv0) < EPSILON) dv0 = 0.0f;
+	if(fabs(dv1) < EPSILON) dv1 = 0.0f;
+	if(fabs(dv2) < EPSILON) dv2 = 0.0f;
 #endif
 
-	dv0dv1=dv0*dv1;
-	dv0dv2=dv0*dv2;
+	float dv0dv1 = dv0 * dv1;
+	float dv0dv2 = dv0 * dv2;
 
-	if(dv0dv1>0.0f && dv0dv2>0.0f) // same sign on all of them + not equal 0 ? 
-		return 0;                    // no intersection occurs 
+	if(dv0dv1 > 0.0f && dv0dv2 > 0.0f)
+		return false;
 
-	// compute direction of intersection line 
-	CROSS(D,N1,N2);
+	Vector3 d = n1.GetCrossProduct(n2);
 
-	// compute and index to the largest component of D 
-	max=(float)FABS(D[0]);
-	index=0;
-	bb=(float)FABS(D[1]);
-	cc=(float)FABS(D[2]);
-	if(bb>max) max=bb,index=1;
-	if(cc>max) max=cc,index=2;
+	float max = fabs(d.x);
+	int index = 0;
+	float bb = fabs(d.y);
+	float cc = fabs(d.z);
+	if(bb > max)
+	{
+		max = bb;
+		index = 1;
+	}
+	if(cc > max)
+	{
+		max = cc;
+		index = 2;
+	}
 
-	// this is the simplified projection onto L
-	vp0=V0[index];
-	vp1=V1[index];
-	vp2=V2[index];
+	float vp0 = 0.0f;
+	float vp1 = 0.0f;
+	float vp2 = 0.0f;
+	float up0 = 0.0f;
+	float up1 = 0.0f;
+	float up2 = 0.0f;
 
-	up0=U0[index];
-	up1=U1[index];
-	up2=U2[index];
+	if(index == 0)
+	{
+		vp0 = v00.x;
+		vp1 = v01.x;
+		vp2 = v02.x;
 
-	// compute interval for triangle 1 
-	float a,b,c,x0,x1;
-	NEWCOMPUTE_INTERVALS(vp0,vp1,vp2,dv0,dv1,dv2,dv0dv1,dv0dv2,a,b,c,x0,x1);
+		up0 = v10.x;
+		up1 = v11.x;
+		up2 = v12.x;
+	}
+	else if(index == 1)
+	{
+		vp0 = v00.y;
+		vp1 = v01.y;
+		vp2 = v02.y;
 
-	// compute interval for triangle 2 
-	float d,e,f,y0,y1;
-	NEWCOMPUTE_INTERVALS(up0,up1,up2,du0,du1,du2,du0du1,du0du2,d,e,f,y0,y1);
+		up0 = v10.y;
+		up1 = v11.y;
+		up2 = v12.y;
+	}
+	else
+	{
+		vp0 = v00.z;
+		vp1 = v01.z;
+		vp2 = v02.z;
 
-	float xx,yy,xxyy,tmp;
-	xx=x0*x1;
-	yy=y0*y1;
-	xxyy=xx*yy;
-
-	tmp=a*xxyy;
-	isect1[0]=tmp+b*x1*yy;
-	isect1[1]=tmp+c*x0*yy;
-
-	tmp=d*xxyy;
-	isect2[0]=tmp+e*xx*y1;
-	isect2[1]=tmp+f*xx*y0;
-
-	SORT(isect1[0],isect1[1]);
-	SORT(isect2[0],isect2[1]);
-
-	if(isect1[1]<isect2[0] || isect2[1]<isect1[0]) return 0;
-	return 1;
-
-
-	*/
-
-
-
-
-
-
-
+		up0 = v10.z;
+		up1 = v11.z;
+		up2 = v12.z;
+	}
 
 
+	float a = 0.0f;
+	float b = 0.0f;
+	float c= 0.0f;
+	float x0 = 0.0f;
+	float x1 = 0.0f;
+
+	if(NEWCOMPUTE_INTERVALS(vp0,vp1,vp2,dv0,dv1,dv2,dv0dv1,dv0dv2,a,b,c,x0,x1))
+	{
+		float N1[3];
+		N1[0] = n1.x;
+		N1[1] = n1.y;
+		N1[2] = n1.z;
+
+		float V00[3];
+		V00[0] = v00.x;
+		V00[1] = v00.y;
+		V00[2] = v00.z;
+
+		float V01[3];
+		V01[0] = v01.x;
+		V01[1] = v01.y;
+		V01[2] = v01.z;
+
+		float V02[3];
+		V02[0] = v02.x;
+		V02[1] = v02.y;
+		V02[2] = v02.z;
+
+		float V10[3];
+		V10[0] = v10.x;
+		V10[1] = v10.y;
+		V10[2] = v10.z;
+
+		float V11[3];
+		V11[0] = v11.x;
+		V11[1] = v11.y;
+		V11[2] = v11.z;
+
+		float V12[3];
+		V12[0] = v12.x;
+		V12[1] = v12.y;
+		V12[2] = v12.z;
+
+		return coplanar_tri_tri(N1, V00, V01, V02, V10, V11, V12);
+	}
+
+	float dsec = 0.0f;
+	float e = 0.0f;
+	float f = 0.0f;
+	float y0 = 0.0f;
+	float y1 = 0.0f;
+
+	if(NEWCOMPUTE_INTERVALS(up0,up1,up2,du0,du1,du2,du0du1,du0du2,dsec,e,f,y0,y1))
+	{
+		float N1[3];
+		N1[0] = n1.x;
+		N1[1] = n1.y;
+		N1[2] = n1.z;
+
+		float V00[3];
+		V00[0] = v00.x;
+		V00[1] = v00.y;
+		V00[2] = v00.z;
+
+		float V01[3];
+		V01[0] = v01.x;
+		V01[1] = v01.y;
+		V01[2] = v01.z;
+
+		float V02[3];
+		V02[0] = v02.x;
+		V02[1] = v02.y;
+		V02[2] = v02.z;
+
+		float V10[3];
+		V10[0] = v10.x;
+		V10[1] = v10.y;
+		V10[2] = v10.z;
+
+		float V11[3];
+		V11[0] = v11.x;
+		V11[1] = v11.y;
+		V11[2] = v11.z;
+
+		float V12[3];
+		V12[0] = v12.x;
+		V12[1] = v12.y;
+		V12[2] = v12.z;
+
+		return coplanar_tri_tri(N1, V00, V01, V02, V10, V11, V12);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////
+
+	float isect1[2];
+	float isect2[2];	
+
+	float xx;
+	float yy;
+	float xxyy;
+	float tmp;
+
+	xx = x0 * x1;
+	yy = y0 * y1;
+	xxyy = xx * yy;
+
+	tmp = a * xxyy;
+	isect1[0] = tmp + b * x1 * yy;
+	isect1[1] = tmp + c * x0 * yy;
+
+	tmp = dsec * xxyy;
+	isect2[0] = tmp + e * xx * y1;
+	isect2[1] = tmp + f * xx * y0;
+
+    
+	if(isect1[0] > isect1[1])
+	{
+		float c; 
+		c = isect1[0];     
+		isect1[0] = isect1[1];     
+		isect1[1] = c;     
+	}
+
+	if(isect2[0] > isect2[1])    
+	{          
+		float c; 
+		c = isect2[0];     
+		isect2[0] = isect2[1];     
+		isect2[1] = c;     
+	}
+
+	if(isect1[1] < isect2[0] || isect2[1] < isect1[0]) 
+		return false;
 
 
-
-
-
+	tempCD.collision = true;
+	tempCD.distance = 0.0f;
+	tempCD.posx = 0.0f;
+	tempCD.posy = 0.0f;
+	tempCD.posz = 0.0f;
 
 	return true;
 }
