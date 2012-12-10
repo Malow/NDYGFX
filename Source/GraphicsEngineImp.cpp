@@ -683,6 +683,8 @@ iCamera* GraphicsEngineImp::ChangeCamera( CameraType newCamType )
 		this->cam = new RTSCamera(this->hWnd, this->parameters);
 	}
 	this->cam->SetPosition(oldcam->GetPosition() - this->cam->GetForward() * 5);
+	this->cam->SetActiveWindowDisabling(oldcam->GetActiveWindowDisabling());
+	this->cam->SetUpdateCamera(oldcam->GetUpdatingCamera());
 	this->dx->SetCamera(this->cam);
 	this->parameters.CamType = newCamType;
 	delete oldcam;
