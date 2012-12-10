@@ -22,7 +22,6 @@
     <ClInclude Include="Include\iTerrain.h" />
     <ClInclude Include="Include\iText.h" />
     <ClInclude Include="Include\Vector.h" />
-    <ClInclude Include="resource.h" />
     <ClInclude Include="Source\AnimatedMesh.h" />
     <ClInclude Include="Source\Array.h" />
     <ClInclude Include="Source\Buffer.h" />
@@ -132,9 +131,6 @@
       <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </HeaderFileOutput>
     </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="NDYGFX.rc" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{16B85208-D199-49A6-838A-8CDB50034E11}</ProjectGuid>

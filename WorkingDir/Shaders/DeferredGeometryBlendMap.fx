@@ -3,7 +3,7 @@
 //	Written by Markus Tillman for project "Not dead yet" at Blekinga Tekniska Högskola.
 //	//**TODO:implement**
 //--------------------------------------------------------------------------------------
-//#include "stdafx.fx"
+#include "stdafx.fx"
 
 //-----------------------------------------------------------------------------------------
 //	Global variables (non-numeric values cannot be added to a constantbuffer.)
@@ -18,10 +18,6 @@ Texture2D<float4> blendMap;
 //-----------------------------------------------------------------------------------------
 // Constant buffers
 //-----------------------------------------------------------------------------------------
-cbuffer PerFrame
-{
-	float4 cameraPosition;
-};
 cbuffer PerObject
 {
 	matrix	WVP;
@@ -66,25 +62,6 @@ struct PSOut
 };
 
 
-//-----------------------------------------------------------------------------------------
-// **states tmp**
-//-----------------------------------------------------------------------------------------
-RasterizerState BackCulling
-{
-	CullMode = Back;
-};
-SamplerState LinearWrapSampler
-{
-	Filter = MIN_MAG_MIP_LINEAR; 
-	AddressU = Wrap;
-	AddressV = Wrap;
-};
-DepthStencilState EnableDepth
-{
-    DepthEnable = TRUE;
-    DepthWriteMask = ALL;
-    DepthFunc = LESS_EQUAL;
-};
 
 //-----------------------------------------------------------------------------------------
 // VertexShader: VSScene
@@ -144,7 +121,7 @@ PSOut PSScene(PSSceneIn input) : SV_Target
 
 	//NormalAndDepth RT
 	output.NormalAndDepth = float4(input.norm.xyz, input.pos.z / input.pos.w);	
-	float depth = length(cameraPosition.xyz - input.posW.xyz) / 200.0f;		// Haxfix
+	float depth = length(CameraPosition.xyz - input.posW.xyz) / 200.0f;		// Haxfix
 	output.NormalAndDepth.w = depth;
 
 	//Position RT
