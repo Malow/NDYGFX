@@ -6,7 +6,8 @@
 #include "Mesh.h"
 #include "CursorControl.h"
 #include "iCamera.h"
-
+#include "MaloW.h"
+#include "MaloWFileDebug.h"
 
 class Camera : public iCamera
 {
@@ -83,6 +84,8 @@ public:
 
 	virtual void SetActiveWindowDisabling(bool dis) { this->activeWindowDisabling = dis; }
 	virtual void SetUpdateCamera(bool update) { this->updateCamera = update; }
+
+	virtual Vector3 Get3DPickingRay();
 
 	/* Not inherited */
 	D3DXMATRIX GetViewMatrix();

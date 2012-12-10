@@ -168,3 +168,44 @@ void Camera::RecreateProjectionMatrix()
 {
 	D3DXMatrixPerspectiveFovLH(&this->projection, (float)D3DX_PI * this->params.FOV, this->params.windowWidth / (float)this->params.windowHeight, this->params.NearClip, this->params.FarClip);
 }
+
+Vector3 Camera::Get3DPickingRay()
+{
+	Vector3 v;
+	POINT p;
+	if(GetCursorPos(&p))
+	{
+		if(ScreenToClient(this->g_hWnd, &p))
+		{
+			v.x = (((2.0f * p.x) / this->params.windowWidth) - 1) / this->GetProjectionMatrix()._11;
+			v.y = -(((2.0f * p.y) / this->params.windowHeight) - 1) / this->GetProjectionMatrix()._22;
+			v.z =  1.0f;
+
+
+			D3DXMATRIX m;
+			D3DXVECTOR3 rayOrigin,rayDir;
+
+			D3DXMatrixInverse(&m, NULL, &this->GetViewMatrix());
+
+			// Transform the screen space pick ray into 3D space
+			rayDir.x = v.x * m._11 + v.y * m._21 + v.z * m._31;
+			rayDir.y = v.x * m._12 + v.y * m._22 + v.z * m._32;
+			rayDir.z = v.x * m._13 + v.y * m._23 + v.z * m._33;
+			rayOrigin.x = m._41;
+			rayOrigin.y = m._42;
+			rayOrigin.z = m._43;
+
+			rayDir = this->NormalizeVector(rayDir);
+
+			v.x = rayDir.x;
+			v.y = rayDir.y;
+			v.z = rayDir.z;
+		}
+		else
+			MaloW::Debug("Get3DPickingRay failed.");
+	}
+	else
+		MaloW::Debug("Get3DPickingRay failed.");
+
+	return v;
+}
