@@ -55,6 +55,9 @@ Vector3 Camera::GetForward()
 
 void Camera::SetForward(Vector3 forward)
 {
+	this->angleX = -atan2(forward.x * 0 - 1 * forward.z, forward.x * 1 + forward.z * 0);
+	this->angleY = asin(forward.y);
+
 	this->forward = D3DXVECTOR3(forward.x, forward.y, forward.z);
 	this->forward = this->NormalizeVector(this->forward);
 }
