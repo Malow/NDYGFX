@@ -1,7 +1,6 @@
 #include "DxManager.h"
 
 
-
 void DxManager::RenderDeferredGeometry()
 {
 	//Matrices
@@ -81,8 +80,6 @@ void DxManager::RenderDeferredGeometry()
 			//Set that the height map shall not be changed anymore.
 			terrPtr->HeightMapHasChanged(false);
 		}
-
-
 
 		//Set Textures
 		//Check if texture(name/path) have changed, create new shader resource view if it has

@@ -163,6 +163,7 @@
     <ClInclude Include="Source\DxManagerEvents.h">
       <Filter>Source Files\Engine</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\AnimatedMesh.cpp">
@@ -289,5 +290,11 @@
     <FxCompile Include="WorkingDir\Shaders\DeferredGeometryBlendMap.fx">
       <Filter>Source Files\Engine\Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="WorkingDir\Shaders\DeferredGeometry.fx">
+      <Filter>Source Files\Engine\Shaders</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="NDYGFX.rc" />
   </ItemGroup>
 </Project>
