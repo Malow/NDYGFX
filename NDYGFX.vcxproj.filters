@@ -163,6 +163,9 @@
     <ClInclude Include="Source\DxManagerEvents.h">
       <Filter>Source Files\Engine</Filter>
     </ClInclude>
+    <ClInclude Include="Source\CascadedShadowMap.h">
+      <Filter>Source Files\Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\AnimatedMesh.cpp">
@@ -274,6 +277,9 @@
       <Filter>Source Files\Wrapper</Filter>
     </ClCompile>
     <ClCompile Include="Source\PhysicsEngine.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CascadedShadowMap.cpp">
       <Filter>Source Files\Engine</Filter>
     </ClCompile>
   </ItemGroup>
