@@ -140,6 +140,7 @@ public:
 	void CreateImage(Image* image, string texture);
 	void CreateText(Text* text, string font);
 	void CreateSkyBox(string texture);
+	void SetTerrainTarget(float& targetRadius, Vector2& targetPos, Vector3& targetColor);
 
 	long GetFrameCount() const { return this->framecount; }
 

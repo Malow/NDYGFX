@@ -14,16 +14,16 @@ void DxManager::PreRender()
 	this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_GbufferRTs[3], ClearColor2);
 
 
-
-	//if(this->Shader_ForwardRendering)
+	/*
+	if(this->Shader_ForwardRendering)
 	{
 
 	}
-	//else
+	else
 	{
-		//Shader_DeferredLightning is always used, and is therefore used here.
+		Shader_DeferredLightning is always used, and is therefore used here.
 		
-		/*
+		
 
 		D3DXMATRIX vp = this->camera->GetViewMatrix() * this->camera->GetProjectionMatrix();
 		
@@ -41,8 +41,8 @@ void DxManager::PreRender()
 		this->Shader_DeferredLightning->SetInt("windowWidth", this->params.windowWidth);
 		this->Shader_DeferredLightning->SetInt("windowHeight", this->params.windowHeight);
 		//float NearClip;
-		//float FarClip;*/
-	}
+		//float FarClip;
+	}*/
 		
 	
 }

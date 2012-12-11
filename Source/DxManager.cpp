@@ -572,6 +572,11 @@ void DxManager::CreateSkyBox(string texture)
 	this->skybox = sb;
 }
 
+void DxManager::SetTerrainTarget(float& targetRadius, Vector2& targetPos, Vector3& targetColor)
+{
+
+}
+
 void DxManager::SetFPSMAX( float maxFPS )
 {
 	this->RendererSleep = 1000.0f / maxFPS;

@@ -1,6 +1,7 @@
 
 #include "stdafx.fx"
 #include "SSAO.fx"
+#include "PPHighlightArea.fx"
 
 // Marcus Löwegren
 
@@ -274,7 +275,12 @@ float4 PSScene(PSSceneIn input) : SV_Target
 	}
 
 	
-	//finalColor = SSAO(input.tex, NormalAndDepth, Position);
+	//finalColor = SSAO(input.tex, NormalAndDepth, Position); //**tillman opt(position tex)**
+	//finalColor = Test(Position);
+	finalColor.xyz = HighlightArea(WorldPos.xz, finalColor.rgb); //Position is in world space
+	finalColor.w = 1.0f;
+
+	
 
 	return saturate(finalColor);
 }
