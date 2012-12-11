@@ -121,7 +121,7 @@ public:
 
 	virtual void CreateSkyBox(const char* texture);
 
-	virtual void SetTerrainTarget(float& targetRadius, Vector2& targetPos, Vector3& targetColor) const;
+	virtual void SetSpecialCircle(float& innerRadius, float& outerRadius, Vector2& targetPos) const;
 
 	virtual void StartRendering() { this->dx->StartRender = true; }
 

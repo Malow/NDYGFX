@@ -17,14 +17,14 @@ struct SKYMAP_VS_OUTPUT
 	float4 Pos : SV_POSITION;
 	float3 texCoord : TEXCOORD; //(pos)
 };
-
-struct PSout
+/*
+struct PSOut
 {
 	float4 Texture : SV_TARGET0;
 	float4 NormalAndDepth : SV_TARGET1;
 	float4 Position : SV_TARGET2;
 	float4 Specular : SV_TARGET3;
-};
+};*/
 
 RasterizerState RastDesc
 {
@@ -56,9 +56,19 @@ SKYMAP_VS_OUTPUT SKYMAP_VS(VSIn input)
 
 	return output;
 }
+//PSOut SKYMAP_PS(SKYMAP_VS_OUTPUT input) : SV_Target
 float4 SKYMAP_PS(SKYMAP_VS_OUTPUT input) : SV_Target
 {
 	return SkyMap.Sample(linearSampler, input.texCoord);
+
+	/*PSOut output = (PSOut)0;
+
+	output.Texture = SkyMap.Sample(linearSampler, input.texCoord);
+	output.NormalAndDepth = float4(0,0,0,-1);
+	output.Position = float4(0,0,0,0);
+	output.Specular = float4(0,0,0,0);
+
+	return output;*/
 }
 
 technique11 BasicTech

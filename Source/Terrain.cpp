@@ -17,7 +17,7 @@ void Terrain::CreateMesh()
 			//local pos range [-0.5, 0.5f] * scale
 			this->zVertices[i * this->zSize + u] = 
 				Vertex(	D3DXVECTOR3((float)i / (this->zSize - 1) - 0.5f, 0.0f, (float)u / (this->zSize - 1) - 0.5f), 
-						D3DXVECTOR2((float)i / ((this->zSize - 1) / tilingFactor), (float)u / ((this->zSize - 1) / tilingFactor)), 
+						D3DXVECTOR2(-(float)i / ((this->zSize - 1) / tilingFactor), -(float)u / ((this->zSize - 1) / tilingFactor)), 
 						D3DXVECTOR3(0, 1, 0),
 						D3DXVECTOR3(0, 0, 0));
 		}

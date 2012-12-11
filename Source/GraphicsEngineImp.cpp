@@ -493,9 +493,9 @@ void GraphicsEngineImp::CreateSkyBox(const char* texture)
 	this->dx->CreateSkyBox(string(texture));
 }
 
-void GraphicsEngineImp::SetTerrainTarget(float& targetRadius, Vector2& targetPos, Vector3& targetColor) const
+void GraphicsEngineImp::SetSpecialCircle(float& innerRadius, float& outerRadius, Vector2& targetPos) const
 {
-	this->dx->SetTerrainTarget(targetRadius, targetPos, targetColor);
+	this->dx->SetSpecialCircle(innerRadius, outerRadius, targetPos);
 }
 
 void GraphicsEngineImp::LoadingScreen(string BackgroundTexture, string ProgressBarTexture, float FadeBlackInInTime, float FadeBlackInOutTime, float FadeBlackOutInTime, float FadeBlackOutOutTime)

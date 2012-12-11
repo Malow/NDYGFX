@@ -26,7 +26,7 @@ struct BlendMap
 	float*						Data;
 	ID3D11ShaderResourceView*	SRV;
 	
-	BlendMap() {HasChanged = true; Size = 0; Data = NULL;  SRV = NULL; }
+	BlendMap() {HasChanged = false; Size = 0; Data = NULL;  SRV = NULL; }
 	BlendMap(unsigned int size, float* data) {HasChanged = true; Size = size; Data = data; SRV = NULL; }
 	virtual ~BlendMap() { Data = NULL; if(SRV) SRV->Release(); SRV = NULL; }
 

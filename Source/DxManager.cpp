@@ -57,6 +57,8 @@ DxManager::DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam)
 
 	this->camera = cam;
 
+	this->specialCircleParams = D3DXVECTOR4(0.0f, 0.0f, 0.0f, 0.0f);
+
 	if(FAILED(this->Init()))
 		MaloW::Debug("Failed to init DxManager");
 
@@ -579,9 +581,12 @@ void DxManager::CreateSkyBox(string texture)
 	this->skybox = sb;
 }
 
-void DxManager::SetTerrainTarget(float& targetRadius, Vector2& targetPos, Vector3& targetColor)
+void DxManager::SetSpecialCircle(float& innerRadius, float& outerRadius, Vector2& targetPos)
 {
-
+	this->specialCircleParams.x = innerRadius;
+	this->specialCircleParams.y = outerRadius;
+	this->specialCircleParams.z = targetPos.x; //x
+	this->specialCircleParams.w = targetPos.y; //z
 }
 
 void DxManager::SetFPSMAX( float maxFPS )

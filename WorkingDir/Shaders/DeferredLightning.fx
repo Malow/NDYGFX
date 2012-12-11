@@ -326,11 +326,16 @@ float4 PSScene(PSSceneIn input) : SV_Target
 		}
 	}
 
+
+		
+	//if(finalColor.a >= 0.00001f && finalColor.a <= 0.9999f) //**tillman - haxlösning?**
+	//{
+		//finalColor = SSAO(input.tex, NormalAndDepth, Position); //**tillman opt(position tex)**
 	
-	//finalColor = SSAO(input.tex, NormalAndDepth, Position); //**tillman opt(position tex)**
-	//finalColor = Test(Position);
-	finalColor.xyz = HighlightArea(WorldPos.xz, finalColor.rgb); //Position is in world space
-	finalColor.w = 1.0f;
+	finalColor.rgb = HighlightArea(WorldPos.xz, finalColor.rgb); //Position is in world space
+	finalColor.a = 1.0f;
+		
+	//}
 
 	
 

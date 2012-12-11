@@ -419,11 +419,15 @@ void DxManager::RenderDeferredGeometry()
 }
 
 
-void DxManager::RenderSkybox()
+void DxManager::RenderDeferredSkybox()
 {
 	if(!this->skybox)
 		return;
-		
+	
+
+	//this->Dx_DeviceContext->OMSetRenderTargets(1, NULL, this->Dx_DepthStencilView); //**tillman - MaloW**
+
+
 		// Set matrixes
 	D3DXMATRIX world, wvp, view, proj;
 	view = this->camera->GetViewMatrix();
@@ -471,10 +475,12 @@ void DxManager::RenderDeferredPerPixel()
 	this->Shader_DeferredLightning->SetMatrix("CameraVP", vp);
 	this->Shader_DeferredLightning->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetPositionD3DX(), 1));
 	//stdafx.fx:
+	this->Shader_DeferredLightning->SetFloat("NrOfLights", (float)this->lights.size()); //**tillman**
+	this->Shader_DeferredLightning->SetFloat4("SceneAmbientLight", D3DXVECTOR4(this->sceneAmbientLight, 1.0f));
+
 	this->Shader_DeferredLightning->SetFloat("timerMillis", this->TimerAnimation);
 	this->Shader_DeferredLightning->SetInt("windowWidth", this->params.windowWidth);
 	this->Shader_DeferredLightning->SetInt("windowHeight", this->params.windowHeight);
-	this->Shader_DeferredLightning->SetFloat4("SceneAmbientLight", D3DXVECTOR4(this->sceneAmbientLight, 1.0f));
 		
 	//ssao.fx:
 	this->ssao->PreRender(this->Shader_DeferredLightning, this->params, this->camera);
