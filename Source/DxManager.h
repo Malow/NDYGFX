@@ -38,6 +38,9 @@ private:
 	long framecount;
 	GraphicsEngineParams params;
 	Camera* camera;
+	/*Used for rendering 2 circles on geometry at a given xz-coordinate in world space
+	x = inner radius, y = outer radius, z&w = position in the xz-plane.*/
+	D3DXVECTOR4 specialCircleParams; 
 	MaloW::Array<Terrain*> terrains; //terrain = sector data
 	MaloW::Array<StaticMesh*> objects;
 	MaloW::Array<AnimatedMesh*> animations;
@@ -106,7 +109,7 @@ private:
 	void RenderImages();
 	void RenderQuadDeferred();
 	void RenderDeferredTexture();
-	void RenderSkybox();
+	void RenderDeferredSkybox();
 	void RenderAntiAliasing();
 	void RenderText();
 
@@ -140,7 +143,7 @@ public:
 	void CreateImage(Image* image, string texture);
 	void CreateText(Text* text, string font);
 	void CreateSkyBox(string texture);
-	void SetTerrainTarget(float& targetRadius, Vector2& targetPos, Vector3& targetColor);
+	void SetSpecialCircle(float& innerRadius, float& outerRadius, Vector2& targetPos);
 
 	long GetFrameCount() const { return this->framecount; }
 

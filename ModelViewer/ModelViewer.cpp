@@ -68,7 +68,9 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 	int vertSize = 2;
 	iTerrain* iT = GetGraphics()->CreateTerrain(Vector3(0, 0, 0), Vector3(10, 10, 10), vertSize);
 	
-
+	float inner = 1.0f;
+	float outer = inner * 2;
+	GetGraphics()->SetSpecialCircle(inner, outer, Vector2(0, 0));
 	float hmData[4];
 	//for(int i = 0; i < vertSize; i++)
 	{
@@ -356,7 +358,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 
 	//*************************************	     POST TEST       **********************
 #ifdef TEST
-	//delete[] testData;
+	delete[] testData;
 #endif
 	//*************************************	   END OF POST TEST       **********************
 	return 0;

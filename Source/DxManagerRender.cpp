@@ -280,6 +280,12 @@ void DxManager::RenderShadowMap()
 		this->Shader_DeferredLightning->SetStructMemberAsFloat("sun", "LightIntensity", this->sun.intensity);
 		Shader_ShadowMap->Apply(0);		// Dont know why the fuck this has to be here, but it does, otherwise textures wont be sent when rendering objects
 	}
+	// If special circle is used
+	if(this->specialCircleParams.y && terrains.size() > 0) //if outer radius > 0, then send/set data
+	{
+		this->Shader_DeferredLightning->SetResource("previewTex", this->terrains.get(0)->GetTexturePointer(0)->SRV);
+		this->Shader_DeferredLightning->SetFloat4("data", this->specialCircleParams);
+	}
 
 	// Generate and send shadowmaps to the main-shader
 	if(!this->lights.size())
@@ -414,7 +420,7 @@ void DxManager::RenderShadowMap()
 	this->Shader_DeferredLightning->SetFloat("PCF_SIZE", PCF_SIZE);
 	this->Shader_DeferredLightning->SetFloat("PCF_SIZE_SQUARED", PCF_SQUARED);
 	//this->Shader_DeferredLightning->SetFloat("SMAP_DX", 1.0f / 256.0f);
-	
+	this->Shader_DeferredLightning->SetFloat("NrOfLights", (float)this->lights.size()); //**tillman**
 	
 	/*
 	// for deferred quad:
@@ -571,7 +577,6 @@ HRESULT DxManager::Render()
 
 	this->PreRender();
 
-	this->RenderSkybox();
 
 	this->RenderShadowMap();
 
@@ -591,13 +596,16 @@ HRESULT DxManager::Render()
 	
 	//this->RenderQuadDeferred();
 	//this->RenderDeferredTexture();
+
 	this->RenderDeferredPerPixel();
 	
 	if(this->invisibleGeometry)
 		this->RenderInvisibilityEffect(); 
+	
+	this->RenderDeferredSkybox();
 
 	this->RenderParticles();
-	
+
 	this->RenderImages();
 
 	this->RenderText();

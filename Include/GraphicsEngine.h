@@ -61,7 +61,7 @@ extern "C"
 
 		virtual void CreateSkyBox(const char* texture) = 0;
 
-		virtual void SetTerrainTarget(float& targetRadius, Vector2& targetPos, Vector3& targetColor) const = 0;
+		virtual void SetSpecialCircle(float& innerRadius, float& outerRadius, Vector2& targetPos) const = 0;
 
 		virtual void StartRendering() = 0;
 
