@@ -18,6 +18,7 @@ SamplerState linearSampler
 };
 
 Texture2D ShadowMap[10];
+Texture2D CascadedShadowMap[10];
 SamplerState shadowMapSampler
 {
 	Filter = MIN_MAG_MIP_POINT;
@@ -212,10 +213,61 @@ float4 PSScene(PSSceneIn input) : SV_Target
 	if(UseSun)
 	{
 		// Diff light
-		diffuseLighting += saturate(dot(NormsAndDepth.xyz, -sun.Direction)) * sun.LightIntensity;
+		float diffLight = saturate(dot(NormsAndDepth.xyz, -sun.Direction)) * sun.LightIntensity;
 		// Spec Light
 		float3 h = normalize(normalize(CameraPosition.xyz - WorldPos.xyz) - sun.Direction);
-		specLighting += pow(saturate(dot(h, NormsAndDepth.xyz)), SpecularPower) * sun.LightIntensity;
+		float specLight = pow(saturate(dot(h, NormsAndDepth.xyz)), SpecularPower) * sun.LightIntensity;
+
+		/*
+		float4 posLight = mul(WorldPos, cascades[i].viewProj);
+		posLight.xy /= posLight.w;
+		float2 smTex = float2(0.5f*posLight.x, -0.5f*posLight.y) + 0.5f;
+		
+		// Compute pixel depth for shadowing.
+		float depth = posLight.z / posLight.w;
+
+		float SHADOW_EPSILON = 0.00001f;			////////////// PUT THIS WHERE?
+
+
+		//float PCF_SIZE = 3.0f;								////// Not able to move this to cbuffer, why?
+
+		float cascademap = 0;
+		float distanceSun = length(CameraPosition.xyz - WorldPos.xyz);
+		if(distanceSun > CascadeLevels.y)
+			cascademap = 1;
+		if(distanceSun > CascadeLevels.z)
+			cascademap = 2;
+		// PCF
+		float shadow = 0.0f;
+		if(smTex.x < 0 || smTex.x > 1 || smTex.y < 0 || smTex.y > 1)
+			shadow = 1.0f;
+		else if(depth > 1.0f)
+			shadow = 1.0f;
+		else
+		{
+			for(float s = 0; s < PCF_SIZE; s++)
+			{
+				for(float q = 0; q < PCF_SIZE; q++)
+				{
+					if(cascademap == 0)
+						shadow += (CascadedShadowMap[0].SampleLevel(shadowMapSampler, smTex + float2(SMAP_DX * (s - PCF_SIZE/2) , SMAP_DX * (q - PCF_SIZE/2)), 0).r + SHADOW_EPSILON < depth) ? 0.0f : 1.0f;
+					if(cascademap == 1)
+						shadow += (CascadedShadowMap[1].SampleLevel(shadowMapSampler, smTex + float2(SMAP_DX * (s - PCF_SIZE/2) , SMAP_DX * (q - PCF_SIZE/2)), 0).r + SHADOW_EPSILON < depth) ? 0.0f : 1.0f;
+					if(cascademap == 2)
+						shadow += (CascadedShadowMap[2].SampleLevel(shadowMapSampler, smTex + float2(SMAP_DX * (s - PCF_SIZE/2) , SMAP_DX * (q - PCF_SIZE/2)), 0).r + SHADOW_EPSILON < depth) ? 0.0f : 1.0f;
+				}
+			}
+			shadow *= PCF_SIZE_SQUARED;
+		}
+
+		
+		
+		diffLight *= shadow;
+		specLight *= shadow;
+		*/
+		diffuseLighting += diffLight;
+		specLighting += specLight;
+
 		diffuseLighting = saturate(diffuseLighting);
 		specLighting = saturate(specLighting);
 	}

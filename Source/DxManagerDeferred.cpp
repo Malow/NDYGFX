@@ -5,6 +5,7 @@ void DxManager::PreRender()
 	//clear and set render target/depth
 	this->Dx_DeviceContext->OMSetRenderTargets(this->NrOfRenderTargets, this->Dx_GbufferRTs, this->Dx_DepthStencilView);
 	this->Dx_DeviceContext->ClearDepthStencilView(this->Dx_DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+	this->Dx_DeviceContext->RSSetViewports(1, &this->Dx_Viewport);
 	//Clear render targets
 	float ClearColor1[4] = {0.5f, 0.71f, 1.0f, 1};
 	float ClearColor2[4] = {-1.0f, -1.0f, -1.0f, -1.0f};
@@ -50,6 +51,19 @@ void DxManager::PreRender()
 
 void DxManager::RenderDeferredGeometry()
 {
+	//clear and set render target/depth
+	this->Dx_DeviceContext->OMSetRenderTargets(this->NrOfRenderTargets, this->Dx_GbufferRTs, this->Dx_DepthStencilView);
+	this->Dx_DeviceContext->ClearDepthStencilView(this->Dx_DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+	this->Dx_DeviceContext->RSSetViewports(1, &this->Dx_Viewport);
+	//Clear render targets
+	float ClearColor1[4] = {0.5f, 0.71f, 1.0f, 1};
+	float ClearColor2[4] = {-1.0f, -1.0f, -1.0f, -1.0f};
+	this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_GbufferRTs[0], ClearColor1);
+	this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_GbufferRTs[1], ClearColor2);
+	this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_GbufferRTs[2], ClearColor2);
+	this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_GbufferRTs[3], ClearColor2);
+
+
 	//Matrices
 	D3DXMATRIX world, view, proj, wvp, worldInverseTranspose;
 	view = this->camera->GetViewMatrix();
@@ -480,6 +494,8 @@ void DxManager::RenderDeferredPerPixel()
 	{
 		this->Shader_DeferredLightning->SetResourceAtIndex(i, "ShadowMap", NULL);
 	}
+	for(int i = 0; i < this->csm->GetNrOfCascadeLevels(); i++)
+		this->Shader_DeferredLightning->SetResourceAtIndex(i, "CascadedShadowMap", NULL);
 
 	// Unbind SSAO
 	this->ssao->PostRender(this->Shader_DeferredLightning);
