@@ -407,13 +407,10 @@ HRESULT DxManager::Init()
 
 	// Skybox shader
 	D3D11_INPUT_ELEMENT_DESC SkyboxTextureDesc[] = {
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 	this->Shader_Skybox = new Shader();
-	if(FAILED(this->Shader_Skybox->Init(Dx_Device, Dx_DeviceContext, "Shaders/SkyBox.fx", SkyboxTextureDesc, 4)))	// + on last if added above
+	if(FAILED(this->Shader_Skybox->Init(Dx_Device, Dx_DeviceContext, "Shaders/SkyBox.fx", SkyboxTextureDesc, 1)))	// + on last if added above
 	{
 		MaloW::Debug("Failed to open SkyBox.fx");
 		return E_FAIL;

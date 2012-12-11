@@ -3,22 +3,19 @@
 cbuffer EveryFrame
 {
 	matrix gWVP;
-	matrix worldMatrix;
 }
 
+TextureCube SkyMap;
 
 struct VSIn
 {
 	float3 Pos : POSITION;
-	float2 Texcoord : TEXCOORD;
-	float3 Normal : NORMAL;
 };
 
 struct SKYMAP_VS_OUTPUT
 {
 	float4 Pos : SV_POSITION;
-	float4 WorldPos : POSITION;
-	float3 texCoord : TEXCOORD;
+	float3 texCoord : TEXCOORD; //(pos)
 };
 
 struct PSout
@@ -41,7 +38,6 @@ DepthStencilState EnableDepth
 	DepthFunc = LESS_EQUAL;
 };
 
-TextureCube SkyMap;
 
 SamplerState linearSampler 
 {
@@ -54,24 +50,15 @@ SKYMAP_VS_OUTPUT SKYMAP_VS(VSIn input)
 {
 	SKYMAP_VS_OUTPUT output = (SKYMAP_VS_OUTPUT)0;
 
-	//Set Pos to xyww instead of xyzw, so that z will always be 1 (furthest from camera)
-	output.Pos = mul(float4(input.Pos, 1.0f), gWVP).xyww; //<--- wtf 390fps -> 130fps
-	//output.Pos.z = output.Pos.w;
-	output.WorldPos = mul(float4(input.Pos, 1.0f), worldMatrix); //**tillman - onödig kod, gör inget
-	//output.WorldPos.xyzw = 0.0f;
+	//Set Pos to xyww instead of xyzw, so that z/w will always be 1 (furthest from camera)
+	output.Pos = mul(float4(input.Pos, 1.0f), gWVP).xyww; 
 	output.texCoord = input.Pos;
 
 	return output;
 }
-
-PSout SKYMAP_PS(SKYMAP_VS_OUTPUT input) : SV_Target
+float4 SKYMAP_PS(SKYMAP_VS_OUTPUT input) : SV_Target
 {
-	PSout output;
-	output.Texture = SkyMap.Sample(linearSampler, input.texCoord);
-	output.NormalAndDepth = float4(0, 0, 0, 1.5f);
-	output.Position = input.WorldPos;//**tillman - onödig kod, gör inget
-	output.Specular = float4(0, 0, 0, 1.0f);
-	return output;
+	return SkyMap.Sample(linearSampler, input.texCoord);
 }
 
 technique11 BasicTech

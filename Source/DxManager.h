@@ -95,6 +95,7 @@ private:
 	float LastCamUpdate;
 	float RendererSleep;
 
+	//This Clears the scene(rendertargets & viewports) and function sets variables used by most shaders, such as camera position for instance.
 	void PreRender(); //stdafx.fx
 	void RenderForward();
 	void RenderDeferredGeometry();
@@ -105,7 +106,7 @@ private:
 	void RenderImages();
 	void RenderQuadDeferred();
 	void RenderDeferredTexture();
-	void RenderDeferredSkybox();
+	void RenderSkybox();
 	void RenderAntiAliasing();
 	void RenderText();
 

@@ -571,13 +571,15 @@ HRESULT DxManager::Render()
 
 	this->PreRender();
 
+	this->RenderSkybox();
+
 	this->RenderShadowMap();
 
 	//this->RenderForward();
 
+
 	this->RenderDeferredGeometry();
 
-	this->RenderDeferredSkybox();
 	
 	// Debug: Render Normals
 	//MaloW::Array<StaticMesh*>* meshes = &this->objects;

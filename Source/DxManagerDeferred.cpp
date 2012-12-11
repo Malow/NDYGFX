@@ -2,7 +2,18 @@
 
 void DxManager::PreRender()
 {
-	//This function sets variables used by most shaders, such as camera position for instance.
+	//clear and set render target/depth
+	this->Dx_DeviceContext->OMSetRenderTargets(this->NrOfRenderTargets, this->Dx_GbufferRTs, this->Dx_DepthStencilView);
+	this->Dx_DeviceContext->ClearDepthStencilView(this->Dx_DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+	//Clear render targets
+	float ClearColor1[4] = {0.5f, 0.71f, 1.0f, 1};
+	float ClearColor2[4] = {-1.0f, -1.0f, -1.0f, -1.0f};
+	this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_GbufferRTs[0], ClearColor1);
+	this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_GbufferRTs[1], ClearColor2);
+	this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_GbufferRTs[2], ClearColor2);
+	this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_GbufferRTs[3], ClearColor2);
+
+
 
 	//if(this->Shader_ForwardRendering)
 	{
@@ -43,21 +54,6 @@ void DxManager::RenderDeferredGeometry()
 	D3DXMATRIX world, view, proj, wvp, worldInverseTranspose;
 	view = this->camera->GetViewMatrix();
 	proj = this->camera->GetProjectionMatrix();
-
-	//clear and set render target/depth
-	this->Dx_DeviceContext->OMSetRenderTargets(this->NrOfRenderTargets, this->Dx_GbufferRTs, this->Dx_DepthStencilView);
-	this->Dx_DeviceContext->RSSetViewports(1, &this->Dx_Viewport);
-
-	this->Dx_DeviceContext->ClearDepthStencilView(this->Dx_DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
-	
-	//float ClearColor[4] = {0.5f, 0.71f, 1.0f, 1};
-	float ClearColor[4] = {-1.0f, -1.0f, -1.0f, -1.0f};
-	for(int i = 0; i < this->NrOfRenderTargets; i++)
-		this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_GbufferRTs[i], ClearColor);
-	float ClearColor2[4] = {0.5f, 0.71f, 1.0f, 1};
-	this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_GbufferRTs[0], ClearColor2);
-	
-	
 
 	//Terrain
 	this->Shader_DeferredGeometryBlendMap->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetPositionD3DX(), 1));
@@ -409,16 +405,10 @@ void DxManager::RenderDeferredGeometry()
 }
 
 
-void DxManager::RenderDeferredSkybox()
+void DxManager::RenderSkybox()
 {
 	if(!this->skybox)
 		return;
-
-	//clear and set render target/depth
-	this->Dx_DeviceContext->OMSetRenderTargets(this->NrOfRenderTargets, this->Dx_GbufferRTs, this->Dx_DepthStencilView);
-	this->Dx_DeviceContext->RSSetViewports(1, &this->Dx_Viewport);
-	
-	
 		
 		// Set matrixes
 	D3DXMATRIX world, wvp, view, proj;
@@ -428,7 +418,6 @@ void DxManager::RenderDeferredSkybox()
 	wvp = world * view * proj;
 	
 	this->Shader_Skybox->SetMatrix("gWVP", wvp);
-	this->Shader_Skybox->SetMatrix("worldMatrix", world);
 
 	MeshStrip* strip = this->skybox->GetStrips()->get(0);
 
@@ -436,8 +425,8 @@ void DxManager::RenderDeferredSkybox()
 	this->Dx_DeviceContext->IASetPrimitiveTopology(obj->GetTopology());
 
 	obj->GetVertBuff()->Apply();
-	this->Shader_Skybox->SetResource("SkyMap", obj->GetTexture());
 	obj->GetIndsBuff()->Apply();
+	this->Shader_Skybox->SetResource("SkyMap", obj->GetTexture());
 	
 	this->Shader_Skybox->Apply(0);
 
