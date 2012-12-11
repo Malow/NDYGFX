@@ -19,7 +19,6 @@
 #include "StaticMesh.h"
 #include "AnimatedMesh.h"
 #include "DxManagerEvents.h"
-#include "CascadedShadowMap.h"
 
 class DxManager : public MaloW::Process
 {
@@ -61,8 +60,6 @@ private:
 	Shader* Shader_BillBoard;
 	Shader* Shader_Text;
 	Shader* Shader_ShadowMapAnimated;
-
-	CascadedShadowMap* csm;
 
 	// Deferred Rendering
 	// Gbuffer:
@@ -106,7 +103,6 @@ private:
 	void RenderInvisibilityEffect();
 	void RenderParticles();
 	void RenderShadowMap();
-	void RenderCascadedShadowMap();
 	void RenderImages();
 	void RenderQuadDeferred();
 	void RenderDeferredTexture();

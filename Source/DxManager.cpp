@@ -17,7 +17,6 @@ DxManager::DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam)
 	this->Shader_ShadowMap = NULL;
 	this->Shader_Text = NULL;
 	this->Shader_ShadowMapAnimated = NULL;
-	this->csm = NULL;
 
 	this->Shader_BillBoard = NULL;
 
@@ -125,11 +124,6 @@ DxManager::~DxManager()
 	if ( this->ssao ) delete this->ssao, this->ssao=0;
 	if ( this->fxaa ) delete this->fxaa, this->fxaa=0;
 	if ( this->Shader_Fxaa ) delete this->Shader_Fxaa, this->Shader_Fxaa=0;
-	if(this->csm)
-	{
-		delete this->csm;
-		this->csm = NULL;
-	}
 
 	if(this->Dx_DeviceContext)
 		this->Dx_DeviceContext->Release();
