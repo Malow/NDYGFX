@@ -54,6 +54,8 @@ cbuffer EveryFrame
 	
 	bool UseSun;//**tillman**
 	SunLight sun; //**tillman**
+	float NrOfCascades;
+	float4 CascadeLevels;
 
 	float timerMillis;
 

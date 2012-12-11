@@ -17,6 +17,7 @@ SamplerState linearSampler
 };
 
 Texture2D ShadowMap[10];
+Texture2D CascadedShadowMap[10];
 SamplerState shadowMapSampler
 {
 	Filter = MIN_MAG_MIP_POINT;
@@ -211,10 +212,22 @@ float4 PSScene(PSSceneIn input) : SV_Target
 	if(UseSun)
 	{
 		// Diff light
-		diffuseLighting += saturate(dot(NormsAndDepth.xyz, -sun.Direction)) * sun.LightIntensity;
+		float diffLight = saturate(dot(NormsAndDepth.xyz, -sun.Direction)) * sun.LightIntensity;
 		// Spec Light
 		float3 h = normalize(normalize(CameraPosition.xyz - WorldPos.xyz) - sun.Direction);
-		specLighting += pow(saturate(dot(h, NormsAndDepth.xyz)), SpecularPower) * sun.LightIntensity;
+		float specLight = pow(saturate(dot(h, NormsAndDepth.xyz)), SpecularPower) * sun.LightIntensity;
+
+
+		float shadow = 1.0f;
+
+		
+
+		diffLight *= shadow;
+		specLight *= shadow;
+
+		diffuseLighting += diffLight;
+		specLighting += specLight;
+
 		diffuseLighting = saturate(diffuseLighting);
 		specLighting = saturate(specLighting);
 	}
