@@ -10,14 +10,16 @@ void Terrain::CreateMesh()
 	this->zNrOfVertices = this->zSize * this->zSize;
 	this->zVertices = new Vertex[this->zSize * this->zSize];
 
-	for(int i = 0; i < this->zSize; i++)
+	//for(int i = 0; i < this->zSize; i++)
+	for(int i = this->zSize - 1; i >= 0; i--)
 	{
-		for(int u = 0; u < this->zSize; u++)
+		//for(int u = 0; u < this->zSize; u++)
+		for(int u = this->zSize - 1; u >= 0; u--)
 		{
 			//local pos range [-0.5, 0.5f] * scale
 			this->zVertices[i * this->zSize + u] = 
 				Vertex(	D3DXVECTOR3((float)i / (this->zSize - 1) - 0.5f, 0.0f, (float)u / (this->zSize - 1) - 0.5f), 
-						D3DXVECTOR2(-(float)i / ((this->zSize - 1) / tilingFactor), -(float)u / ((this->zSize - 1) / tilingFactor)), 
+						D3DXVECTOR2((float)i / ((this->zSize - 1) / tilingFactor), (float)u / ((this->zSize - 1) / tilingFactor)), 
 						D3DXVECTOR3(0, 1, 0),
 						D3DXVECTOR3(0, 0, 0));
 		}
