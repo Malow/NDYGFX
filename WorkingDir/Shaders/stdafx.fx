@@ -32,6 +32,11 @@ struct Light
 	matrix LightViewProj;
 };
 
+struct Cascade
+{
+	matrix viewProj;
+};
+
 struct SunLight
 {
 	float4 Direction;
@@ -54,6 +59,10 @@ cbuffer EveryFrame
 	
 	bool UseSun;//**tillman**
 	SunLight sun; //**tillman**
+
+	float NrOfCascades;
+	float4 CascadeLevels;
+	Cascade cascades[10];
 
 	float timerMillis;
 

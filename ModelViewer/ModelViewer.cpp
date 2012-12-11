@@ -66,7 +66,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 //*************************************	     PRE TEST       **********************
 #ifdef TEST
 	int vertSize = 2;
-	iTerrain* iT = GetGraphics()->CreateTerrain(Vector3(0, 0, 0), Vector3(10, 10, 10), vertSize);
+	iTerrain* iT = GetGraphics()->CreateTerrain(Vector3(0, 0, 0), Vector3(100, 100, 100), vertSize);
 	
 	float inner = 1.0f;
 	float outer = inner * 2;
@@ -74,10 +74,10 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 	float hmData[4];
 	//for(int i = 0; i < vertSize; i++)
 	{
-		hmData[0] = 0.5f;
+		hmData[0] = 0.0f;
 		hmData[1] = 0.0f;
 		hmData[2] = 0.0f;
-		hmData[3] = -0.5f;
+		hmData[3] = 0.0f;
 	}
 	iT->SetHeightMap(hmData);
 
@@ -111,7 +111,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 	iT->SetBlendMap(size, testData);
 	iMesh* ball = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(0, -100, 0));
 	ball->Scale(0.1f);
-	iMesh* secModel = GetGraphics()->CreateMesh("Media/bth.obj", Vector3(10, 20, 10));
+	iMesh* secModel = GetGraphics()->CreateMesh("Media/bth.obj", Vector3(10, 0, 10));
 	secModel->Scale(1.0f * 0.05f);
 
 	float templol = 0.0f;

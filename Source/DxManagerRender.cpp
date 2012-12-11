@@ -289,9 +289,6 @@ void DxManager::RenderShadowMap()
 	// Generate and send shadowmaps to the main-shader
 	if(!this->lights.size())
 	{
-
-
-	
 		for (int l = 0; l < this->lights.size(); l++)
 		{
 			Dx_DeviceContext->OMSetRenderTargets(0, 0, this->lights[l]->GetShadowMapDSV());
@@ -328,7 +325,6 @@ void DxManager::RenderShadowMap()
 						else
 							Dx_DeviceContext->Draw(verts->GetElementCount(), 0);
 					}
-				
 				}
 			}
 		
@@ -550,15 +546,77 @@ void DxManager::RenderText()
 		*/
 
 
-		
 		this->Shader_Text->Apply(0);
-
-
 
 		this->Dx_DeviceContext->Draw(1, 0);
 	}
 	this->Shader_Text->SetResource("tex2D", NULL);
 	this->Shader_Text->Apply(0);
+}
+
+void DxManager::RenderCascadedShadowMap()
+{
+	this->csm->PreRender(this->sun.direction, this->camera);
+	
+	for (int l = 0; l < this->csm->GetNrOfCascadeLevels(); l++)
+	{
+		Dx_DeviceContext->OMSetRenderTargets(0, 0, this->csm->GetShadowMapDSV(l));
+		D3D11_VIEWPORT wp = this->csm->GetShadowMapViewPort(l);
+		Dx_DeviceContext->RSSetViewports(1, &wp);
+		Dx_DeviceContext->ClearDepthStencilView(this->csm->GetShadowMapDSV(l), D3D11_CLEAR_DEPTH, 1.0f, 0);
+		
+		for(int i = 0; i < this->objects.size(); i++)
+		{
+			if(!this->objects[i]->IsUsingInvisibility())
+			{
+				MaloW::Array<MeshStrip*>* strips = this->objects[i]->GetStrips();
+				D3DXMATRIX wvp = this->objects[i]->GetWorldMatrix() * this->csm->GetViewProjMatrix(l);
+				this->Shader_ShadowMap->SetMatrix("LightWVP", wvp);
+
+				for(int u = 0; u < strips->size(); u++)
+				{
+					Object3D* obj = strips->get(u)->GetRenderObject();
+					Dx_DeviceContext->IASetPrimitiveTopology(obj->GetTopology());
+					Buffer* verts = obj->GetVertBuff();
+					if(verts)
+						verts->Apply();
+					Shader_ShadowMap->SetBool("textured", false);
+
+					Buffer* inds = obj->GetIndsBuff();
+					if(inds)
+						inds->Apply();
+
+					Shader_ShadowMap->Apply(0);
+
+
+					// draw
+					if(inds)
+						Dx_DeviceContext->DrawIndexed(inds->GetElementCount(), 0, 0);
+					else
+						Dx_DeviceContext->Draw(verts->GetElementCount(), 0);
+				}
+			}
+		}
+		
+		D3DXMATRIX lvp = this->csm->GetViewProjMatrix(l);
+
+		// For deferred:
+		this->Shader_DeferredLightning->SetResourceAtIndex(l, "CascadedShadowMap", this->csm->GetShadowMapSRV(l));
+		//**tillman**
+		this->Shader_DeferredLightning->SetStructMemberAtIndexAsMatrix(l, "cascades", "viewProj", lvp);
+	}
+	
+
+	float PCF_SIZE = (float)this->params.ShadowMapSettings + 1;
+	float PCF_SQUARED = 1 / (PCF_SIZE * PCF_SIZE);
+
+	this->Shader_DeferredLightning->SetFloat("SMAP_DX", 1.0f / (256 * pow(2.0f, this->params.ShadowMapSettings/2)));
+	this->Shader_DeferredLightning->SetFloat("PCF_SIZE", PCF_SIZE);
+	this->Shader_DeferredLightning->SetFloat("PCF_SIZE_SQUARED", PCF_SQUARED);
+	this->Shader_DeferredLightning->SetFloat("NrOfCascades", (float)this->csm->GetNrOfCascadeLevels());
+
+	this->Shader_DeferredLightning->SetFloat4("CascadeLevels", D3DXVECTOR4(this->csm->GetSplitDepth(0),
+			this->csm->GetSplitDepth(1), this->csm->GetSplitDepth(2), this->csm->GetSplitDepth(3)));
 }
 
 HRESULT DxManager::Render()
@@ -578,7 +636,8 @@ HRESULT DxManager::Render()
 
 
 	this->RenderShadowMap();
-
+	//this->RenderCascadedShadowMap();
+	
 	//this->RenderForward();
 
 
@@ -619,11 +678,12 @@ HRESULT DxManager::Render()
 		DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_BillBoard, this->Dx_GbufferSRVs[q], q); 
 	*/
 	
-	/*
+	
 	// Render shadowmap pictures:
-	for(int q = 0; q < this->lights.size(); q++)
-		DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_BillBoard, this->lights[q]->GetShadowMapSRV(), q); 
-	*/
+	//for(int q = 0; q < this->lights.size(); q++)
+		//DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_BillBoard, this->lights[q]->GetShadowMapSRV(), q); 
+	//for(int q = 0; q < this->csm->GetNrOfCascadeLevels(); q++)
+		//DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_BillBoard, this->csm->GetShadowMapSRV(q), q); 
 
 	this->RenderAntiAliasing();
 	

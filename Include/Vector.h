@@ -34,8 +34,55 @@ public:
 	void normalize()
 	{
 		float length = this->GetLength();
-		this->x /= length;
-		this->y /= length;
+		if(length > 0.0f)
+		{
+			this->x /= length;
+			this->y /= length;
+		}
+	}
+
+	float GetDotProduct(Vector2& compObj)
+	{
+		float dot = this->x * compObj.x;
+		dot += this->y * compObj.y;
+		return dot;
+	}
+
+
+	Vector2 operator+(const Vector2& v) const
+	{
+		return Vector2(this->x+v.x, this->y+v.y);
+	}
+	Vector2 operator-(const Vector2& v) const
+	{
+		return Vector2(this->x-v.x, this->y-v.y);
+	}
+	Vector2 operator*(const float& scalar) const
+	{
+		return Vector2(this->x*scalar, this->y*scalar);
+	}
+	Vector2 operator/(const float& scalar) const
+	{
+		return Vector2(this->x/scalar, this->y/scalar);
+	}
+	void operator+=(const Vector2& v)
+	{
+		x += v.x;
+		y += v.y;
+	}
+	void operator-=(const Vector2& v)
+	{
+		x -= v.x;
+		y -= v.y;
+	}
+	void operator*=(const float scalar)
+	{
+		x *= scalar;
+		y *= scalar;
+	}
+	float GetLengthSquared()
+	{
+		return this->GetDotProduct(*this);
 	}
 };
 
