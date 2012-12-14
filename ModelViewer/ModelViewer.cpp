@@ -169,7 +169,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 		{
 			ball->SetPosition(Vector3(0, -100, 0));
 		}
-
+		
 		static bool fesd = true;
 		if(GetGraphics()->GetKeyListener()->IsPressed('H'))
 		{
