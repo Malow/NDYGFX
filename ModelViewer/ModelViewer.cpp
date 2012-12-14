@@ -66,7 +66,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 //*************************************	     PRE TEST       **********************
 #ifdef TEST
 	int vertSize = 2;
-	iTerrain* iT = GetGraphics()->CreateTerrain(Vector3(0, 0, 0), Vector3(100, 100, 100), vertSize);
+	iTerrain* iT = GetGraphics()->CreateTerrain(Vector3(0, 0, 0), Vector3(100.0f, 0.0f, 100.0f), vertSize);
 	
 	float inner = 1.0f;
 	float outer = inner * 2;
@@ -76,7 +76,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 	{
 		hmData[0] = 0.0f;
 		hmData[1] = 0.0f;
-		hmData[2] = 0.0f;
+		hmData[2] = 2.0f;
 		hmData[3] = 0.0f;
 	}
 	iT->SetHeightMap(hmData);

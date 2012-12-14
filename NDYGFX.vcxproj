@@ -51,6 +51,7 @@
     <ClInclude Include="Source\ParticleSystemHandler.h" />
     <ClInclude Include="Source\PhysicsEngine.h" />
     <ClInclude Include="Source\Random.h" />
+    <ClInclude Include="Source\RefCounted.h" />
     <ClInclude Include="Source\RTSCamera.h" />
     <ClInclude Include="Source\Shader.h" />
     <ClInclude Include="Source\SkyBox.h" />

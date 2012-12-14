@@ -166,6 +166,9 @@
     <ClInclude Include="Source\CascadedShadowMap.h">
       <Filter>Source Files\Engine</Filter>
     </ClInclude>
+    <ClInclude Include="Source\RefCounted.h">
+      <Filter>Source Files\Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\AnimatedMesh.cpp">

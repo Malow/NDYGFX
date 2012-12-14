@@ -12,26 +12,20 @@ public:
 	float x;
 	float y;
 
-	Vector2()
+	Vector2(float x=0.0f, float y=0.0f) :
+		x(x),
+		y(y)
 	{
-		this->x = 0;
-		this->y = 0;
 	}
 
-	Vector2(float _x, float _y)
-	{
-		this->x = _x;
-		this->y = _y;
-	}
 
-	virtual ~Vector2() {}
-
-	float GetLength()
+	inline float GetLength() const
 	{
 		return sqrt(pow(this->x, 2) + pow(this->y, 2));
 	}
 
-	void normalize()
+
+	inline void normalize()
 	{
 		float length = this->GetLength();
 		if(length > 0.0f)
@@ -41,7 +35,8 @@ public:
 		}
 	}
 
-	float GetDotProduct(Vector2& compObj)
+
+	inline float GetDotProduct(const Vector2& compObj) const
 	{
 		float dot = this->x * compObj.x;
 		dot += this->y * compObj.y;
@@ -49,40 +44,66 @@ public:
 	}
 
 
-	Vector2 operator+(const Vector2& v) const
+	inline Vector2 operator+(const Vector2& v) const
 	{
 		return Vector2(this->x+v.x, this->y+v.y);
 	}
-	Vector2 operator-(const Vector2& v) const
+
+
+	inline Vector2 operator-(const Vector2& v) const
 	{
 		return Vector2(this->x-v.x, this->y-v.y);
 	}
-	Vector2 operator*(const float& scalar) const
+
+
+	inline Vector2 operator*(const float& scalar) const
 	{
 		return Vector2(this->x*scalar, this->y*scalar);
 	}
-	Vector2 operator/(const float& scalar) const
+
+
+	inline Vector2 operator/(const float& scalar) const
 	{
 		return Vector2(this->x/scalar, this->y/scalar);
 	}
-	void operator+=(const Vector2& v)
+
+
+	inline void operator+=(const Vector2& v)
 	{
 		x += v.x;
 		y += v.y;
 	}
-	void operator-=(const Vector2& v)
+
+
+	inline void operator-=(const Vector2& v)
 	{
 		x -= v.x;
 		y -= v.y;
 	}
-	void operator*=(const float scalar)
+
+
+	inline void operator*=(const float scalar)
 	{
 		x *= scalar;
 		y *= scalar;
 	}
-	float GetLengthSquared()
+
+
+	inline float GetLengthSquared() const
 	{
 		return this->GetDotProduct(*this);
+	}
+
+	
+	inline bool operator==( const Vector2& v ) const
+	{
+		return ( x == v.x && y == v.y );
+	}
+
+
+	inline bool operator!=( const Vector2& v ) const
+	{
+		return ( x != v.x || y != v.y );
 	}
 };
 
@@ -94,28 +115,30 @@ public:
 	float y;
 	float z;
 
-	Vector3()
+	Vector3(float x=0.0f, float y=0.0f, float z=0.0f) :
+		x(x),
+		y(y),
+		z(z)
 	{
-		this->x = 0;
-		this->y = 0;
-		this->z = 0;
 	}
 
-	Vector3(float _x, float _y, float _z)
+
+	Vector3( const Vector2& v, float z ) :
+		x(v.x),
+		y(v.y),
+		z(z)
 	{
-		this->x = _x;
-		this->y = _y;
-		this->z = _z;
+
 	}
 
-	virtual ~Vector3() {}
 
-	float GetLength()
+	inline float GetLength()
 	{
 		return sqrt(pow(this->x, 2) + pow(this->y, 2) + pow(this->z, 2));
 	}
 
-	void normalize()
+
+	inline void normalize()
 	{
 		float length = this->GetLength();
 			
@@ -127,7 +150,8 @@ public:
 		}
 	}
 
-	float GetDotProduct(Vector3& compObj)
+
+	inline float GetDotProduct(Vector3& compObj)
 	{
 		float dot = this->x * compObj.x;
 		dot += this->y * compObj.y;
@@ -135,7 +159,8 @@ public:
 		return dot;
 	}
 
-	Vector3 GetCrossProduct(Vector3 vec)
+
+	inline Vector3 GetCrossProduct(Vector3 vec)
 	{
 		Vector3 retVec;
 		retVec.x = this->y * vec.z - vec.y * this->z;
@@ -145,71 +170,108 @@ public:
 		return retVec;
 	}
 
-	float GetAngle(Vector3& compObj)
+
+	inline float GetAngle(Vector3& compObj)
 	{
 		return acos(this->GetDotProduct(compObj) / (this->GetLength() * compObj.GetLength()));
 	}
-	// new for physics
+
 		
-	Vector3 operator+(const Vector3& v) const
+	inline Vector3 operator+(const Vector3& v) const
     {
         return Vector3(this->x+v.x, this->y+v.y, this->z+v.z);
     }
-	Vector3 operator-(const Vector3& v) const
+
+
+	inline Vector3 operator-(const Vector3& v) const
 	{
 		return Vector3(this->x-v.x, this->y-v.y, this->z-v.z);
 	}
-	Vector3 operator*(const float& scalar) const
+
+
+	inline Vector3 operator*(const float& scalar) const
 	{
 		return Vector3(this->x*scalar, this->y*scalar, this->z*scalar);
 	}
-	Vector3 operator/(const float& scalar) const
+
+
+	inline Vector3 operator/(const float& scalar) const
 	{
 		return Vector3(this->x/scalar, this->y/scalar, this->z/scalar);
 	}
-	void operator+=(const Vector3& v)
+
+
+	inline void operator+=(const Vector3& v)
     {
         x += v.x;
         y += v.y;
         z += v.z;
     }
-	void operator-=(const Vector3& v)
+
+
+	inline void operator-=(const Vector3& v)
     {
         x -= v.x;
         y -= v.y;
         z -= v.z;
     }
-	void operator*=(const float scalar)
+
+
+	inline void operator*=(const float scalar)
     {
         x *= scalar;
         y *= scalar;
         z *= scalar;
     }
-	float GetLengthSquared()
+
+
+	inline float GetLengthSquared()
 	{
 		return this->GetDotProduct(*this);
 	}
-	Vector3 GetComponentMultiplication(const Vector3 & compVec)
+
+
+	inline Vector3 GetComponentMultiplication(const Vector3 & compVec)
 	{
 		return Vector3(this->x*compVec.x, this->y*compVec.y, this->z*compVec.z);
 	}
-	void RotateY(float angle)
+
+
+	inline void RotateY(float angle)
 	{
 		Vector3 vec = *this;
 		vec.x = cos(angle) * this->x + sin(angle) * this->z;
 		vec.z = -sin(angle) * this->x + cos(angle) * this->z;
 		*this = vec;
 	}
-	Vector3 GetRoteted(float angle)
+
+
+	inline Vector3 GetRoteted(float angle)
 	{
 		Vector3 vec = *this;
 		vec.RotateY(angle);
 		return vec;
 	}
-	Vector3 GetInverseComponents()
+
+
+	inline Vector3 GetInverseComponents()
 	{
 		return Vector3(1.0f/this->x, 1.0f/this->y, 1.0f/this->z);
 	}
+
+
+	inline bool operator==( const Vector3& v ) const
+	{
+		return ( x == v.x && y == v.y && z == v.z );
+	}
+
+
+	inline bool operator!=( const Vector3& v ) const
+	{
+		return ( x != v.x || y != v.y || z != v.z );
+	}
+
+
 #ifdef D3DVECTOR_DEFINED
 	operator D3DXVECTOR3 () const { return D3DXVECTOR3(x,y,z); }
 #endif
@@ -221,9 +283,32 @@ class Vector4
 public:
 	float x,y,z,w;
 
-	Vector4(float _x=0.0f, float _y=0.0f, float _z=0.0f, float _w=0.0f) : x(_x), y(_y), z(_z), w(_w)
+	Vector4(float x=0.0f, float y=0.0f, float z=0.0f, float w=0.0f) : 
+		x(x), 
+		y(y), 
+		z(z), 
+		w(w)
 	{
+	}
 
+	Vector4( const Vector3& v, float w=0.0f ) :
+		x(v.x),
+		y(v.y),
+		z(v.z),
+		w(w)
+	{
+	}
+
+
+	inline bool operator==( const Vector4& v ) const
+	{
+		return ( x == v.x && y == v.y && z == v.z && w == v.w );
+	}
+
+
+	inline bool operator!=( const Vector4& v ) const
+	{
+		return ( x != v.x || y != v.y || z != v.z || w != v.w );
 	}
 
 #ifdef D3DVECTOR_DEFINED
