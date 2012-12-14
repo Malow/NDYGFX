@@ -19,10 +19,6 @@ cbuffer EveryFramePPHA
 //------------------------------------------------------------------------------------------------------
 float3 HighlightArea(float2 pixelWorldPosition, float3 finalColor)
 {
-	float tinnerRadius = 1.0f;
-	float touterRadius = 2.0f;
-	float2 ttargetPos = float2(0,0);
-
 	//Transform to origo
 	float dist = length(dataPPHA.zw - pixelWorldPosition);
 	//Draw circles
