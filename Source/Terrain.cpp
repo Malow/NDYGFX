@@ -69,7 +69,7 @@ void Terrain::CalculateNormals()
 				D3DXVECTOR3 v1 = this->zVertices[e].pos - this->zVertices[a].pos;
 				D3DXVECTOR3 v2 = this->zVertices[b].pos - this->zVertices[d].pos;
 				D3DXVECTOR3 norm;
-				D3DXVec3Cross(&norm, &v1, &v2);
+				D3DXVec3Cross(&norm, &v2, &v1);
 				this->zVertices[q * this->zSize + u].normal = norm;
 			}
 		}
