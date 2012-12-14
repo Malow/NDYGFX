@@ -581,7 +581,7 @@ void DxManager::CreateSkyBox(string texture)
 	this->skybox = sb;
 }
 
-void DxManager::SetSpecialCircle(float& innerRadius, float& outerRadius, Vector2& targetPos)
+void DxManager::SetSpecialCircle(float innerRadius, float outerRadius, Vector2& targetPos)
 {
 	this->specialCircleParams.x = innerRadius;
 	this->specialCircleParams.y = outerRadius;

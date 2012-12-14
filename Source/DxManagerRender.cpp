@@ -281,7 +281,7 @@ void DxManager::RenderShadowMap()
 		Shader_ShadowMap->Apply(0);		// Dont know why the fuck this has to be here, but it does, otherwise textures wont be sent when rendering objects
 	}
 	// If special circle is used
-	if(this->specialCircleParams.y) //if outer radius > 0, then send/set data
+	if(this->specialCircleParams.x) //if inner radius > 0, then send/set data
 	{
 		this->Shader_DeferredLightning->SetFloat4("dataPPHA", this->specialCircleParams);
 	}

@@ -51,7 +51,8 @@
     <ClInclude Include="Source\ParticleSystemHandler.h" />
     <ClInclude Include="Source\PhysicsEngine.h" />
     <ClInclude Include="Source\Random.h" />
-    <ClInclude Include="Source\RefCounted.h" />
+    <ClInclude Include="Source\ReferenceCounted.h" />
+    <ClInclude Include="Source\ResourceManager.h" />
     <ClInclude Include="Source\RTSCamera.h" />
     <ClInclude Include="Source\Shader.h" />
     <ClInclude Include="Source\SkyBox.h" />
@@ -59,6 +60,7 @@
     <ClInclude Include="Source\StaticMesh.h" />
     <ClInclude Include="Source\Terrain.h" />
     <ClInclude Include="Source\Text.h" />
+    <ClInclude Include="Source\Texture.h" />
     <ClInclude Include="Source\TextureManager.h" />
     <ClInclude Include="Source\TRDCamera.h" />
     <ClInclude Include="Source\Vertex.h" />
@@ -92,6 +94,7 @@
     <ClCompile Include="Source\ParticleSystemsHandler.cpp" />
     <ClCompile Include="Source\PhysicsEngine.cpp" />
     <ClCompile Include="Source\Process.cpp" />
+    <ClCompile Include="Source\ResourceManager.cpp" />
     <ClCompile Include="Source\RTSCamera.cpp" />
     <ClCompile Include="Source\Shader.cpp" />
     <ClCompile Include="Source\SkyBox.cpp" />
@@ -100,6 +103,7 @@
     <ClCompile Include="Source\TCBSpline.cpp" />
     <ClCompile Include="Source\Terrain.cpp" />
     <ClCompile Include="Source\Text.cpp" />
+    <ClCompile Include="Source\Texture.cpp" />
     <ClCompile Include="Source\TextureManager.cpp" />
     <ClCompile Include="Source\TRDCamera.cpp" />
   </ItemGroup>

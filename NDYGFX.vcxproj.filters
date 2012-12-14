@@ -166,7 +166,10 @@
     <ClInclude Include="Source\CascadedShadowMap.h">
       <Filter>Source Files\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Source\RefCounted.h">
+    <ClInclude Include="Source\ResourceManager.h">
+      <Filter>Source Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ReferenceCounted.h">
       <Filter>Source Files\Engine</Filter>
     </ClInclude>
   </ItemGroup>
@@ -283,6 +286,9 @@
       <Filter>Source Files\Engine</Filter>
     </ClCompile>
     <ClCompile Include="Source\CascadedShadowMap.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ResourceManager.cpp">
       <Filter>Source Files\Engine</Filter>
     </ClCompile>
   </ItemGroup>

@@ -147,7 +147,7 @@ public:
 	void CreateImage(Image* image, string texture);
 	void CreateText(Text* text, string font);
 	void CreateSkyBox(string texture);
-	void SetSpecialCircle(float& innerRadius, float& outerRadius, Vector2& targetPos);
+	void SetSpecialCircle(float innerRadius, float outerRadius, Vector2& targetPos);
 
 	long GetFrameCount() const { return this->framecount; }
 

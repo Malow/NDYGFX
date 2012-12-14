@@ -1,8 +1,9 @@
-//--------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------
 //
-//	Written by Markus Tillman for project "Not dead yet" at Blekinga Tekniska Högskola.
-//	//**TODO:implement**
-//--------------------------------------------------------------------------------------
+//	Written by Markus Tillman for project "Not dead yet" at Blekinge Tekniska Högskola.
+//	
+//	This shader renders geometry (deferred with 4 GBuffers) with up to 4 textures(blendmap).
+//-----------------------------------------------------------------------------------------
 #include "stdafx.fx"
 
 //-----------------------------------------------------------------------------------------

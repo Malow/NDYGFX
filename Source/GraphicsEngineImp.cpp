@@ -493,7 +493,7 @@ void GraphicsEngineImp::CreateSkyBox(const char* texture)
 	this->dx->CreateSkyBox(string(texture));
 }
 
-void GraphicsEngineImp::SetSpecialCircle(float& innerRadius, float& outerRadius, Vector2& targetPos) const
+void GraphicsEngineImp::SetSpecialCircle(float innerRadius, float outerRadius, Vector2& targetPos) const
 {
 	this->dx->SetSpecialCircle(innerRadius, outerRadius, targetPos);
 }
