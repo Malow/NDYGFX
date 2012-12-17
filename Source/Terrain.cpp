@@ -177,16 +177,10 @@ void Terrain::RecreateWorldMatrix()
 
 
 //iTerrain interface functions
-float Terrain::GetYPositionAt(float x, float z)
+float Terrain::GetYPositionAt(float x, float z) const
 {
-	x -= this->zPos.x;
-	z -= this->zPos.z;
-
-	float ex = x;
-	//ex /= this->dimensions.x;
-	float ez = z;
-	//ez /= this->dimensions.z;
-
+	float ex = z / this->zScale.x; //**tillman - hackfix by swapping z & x **
+	float ez = x / this->zScale.z;
 
 	if(ex <= 1.0f && ez <= 1.0f && ex > 0.0f && ez > 0.0f) //**tillman opt
 	{
@@ -226,11 +220,13 @@ float Terrain::GetYPositionAt(float x, float z)
 		return posya*amem + posyb*bmem + posyc*cmem + posyd*dmem;
 	}
 	else
-		return 10.0f;
+	{
+		throw("out of bounds");
+	}
 }
 
 //Set
-void Terrain::SetScale(Vector3& scale)
+void Terrain::SetScale(const Vector3& scale)
 {
 	this->zScale.x = scale.x;
 	this->zScale.y = scale.y;
@@ -238,7 +234,7 @@ void Terrain::SetScale(Vector3& scale)
 	this->RecreateWorldMatrix();
 }
 
-void Terrain::SetHeightMap(float* data)
+void Terrain::SetHeightMap(float const* const data)
 {
 	//Update/set y-values of vertices
 	int totSize = this->zSize * this->zSize;
@@ -253,7 +249,7 @@ void Terrain::SetHeightMap(float* data)
 	this->zHeightMapHasChanged = true;
 }
 
-void Terrain::SetTextures(const char** fileNames)
+void Terrain::SetTextures(char const* const* const fileNames)
 {
 	if(fileNames)
 	{
@@ -269,9 +265,14 @@ void Terrain::SetTextures(const char** fileNames)
 	}
 }
 
-void Terrain::SetBlendMap(unsigned int size, float* data)
+void Terrain::SetBlendMap(unsigned int size, float const* const data)
 {
 	this->zBlendMap->Size = size;
 	this->zBlendMap->Data = data;
 	this->zBlendMap->HasChanged = true;
+}
+
+void Terrain::SetDiffuseColor(const Vector3& color )
+{
+	this->zMaterial->DiffuseColor = D3DXVECTOR3(color.x, color.y, color.z);
 }

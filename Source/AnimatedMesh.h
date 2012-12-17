@@ -79,5 +79,5 @@ class AnimatedMesh : public Mesh, public virtual iAnimatedMesh
 		void LoopSeamless(); 
 
 		/*! Load the keyframes from file. Input is exptected to be "'filename'.ani". */
-		virtual void LoadFromFile(string file);
+		virtual bool LoadFromFile(string file);
 };

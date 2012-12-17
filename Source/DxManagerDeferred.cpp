@@ -136,7 +136,7 @@ void DxManager::RenderDeferredGeometry()
 			shaderTexName += MaloW::convertNrToString((float)(j + 1));
 			this->Shader_DeferredGeometryBlendMap->SetResource(
 				shaderTexName.c_str(), 
-				this->resourceManager->CreateShaderResourceView(terrPtr->GetTextureFileName(j).c_str()));
+				this->resourceManager->CreateShaderResourceViewFromFile(terrPtr->GetTextureFileName(j).c_str()));
 
 			hasTexture = true;
 		}

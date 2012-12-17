@@ -19,7 +19,7 @@ struct BlendMap
 {
 	bool						HasChanged;
 	unsigned int				Size;
-	float*						Data;
+	float const*				Data; //values in data shall not be changed, only the pointer.
 	ID3D11ShaderResourceView*	SRV;
 	
 	BlendMap() {HasChanged = false; Size = 0; Data = NULL;  SRV = NULL; }
@@ -30,9 +30,6 @@ struct BlendMap
 
 class Terrain : public iTerrain
 {
-	private:
-		
-
 	private:
 		int							zSize; //size of mesh (width & height)
 
@@ -106,14 +103,14 @@ class Terrain : public iTerrain
 
 		//iTerrain interface functions
 		//Get
-		virtual float GetYPositionAt(float x, float z); 
+		virtual float GetYPositionAt(float x, float z) const throw(const char*); 
 
 		//Set
-		virtual void SetScale(Vector3& scale);
-		virtual void SetHeightMap(float* data); 
-		virtual void SetTextures(const char** fileNames);
-		virtual void SetBlendMap(unsigned int size, float* data);
-
+		virtual void SetScale(const Vector3& scale);
+		virtual void SetHeightMap(float const* const data); 
+		virtual void SetTextures(char const* const* const fileNames);
+		virtual void SetBlendMap(unsigned int size, float const* const data);
+		virtual void SetDiffuseColor(const Vector3& color);
 
 
 };

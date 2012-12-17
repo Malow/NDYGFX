@@ -67,17 +67,21 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 #ifdef TEST
 	int vertSize = 2;
 	iTerrain* iT = GetGraphics()->CreateTerrain(Vector3(0, 0, 0), Vector3(100.0f, 0.0f, 100.0f), vertSize);
-	
+	//iAnimatedMesh* iAM = GetGraphics()->CreateAnimatedMesh("Media/TestMedia/FlagBlue.ani", Vector3(0, 0, 0));
+	iImage* iM = GetGraphics()->CreateImage(Vector2(100, 100), Vector2(100, 100), "Media/BallTexture.png");
+	iText* iTe = GetGraphics()->CreateText("durp", Vector2(300, 100), 1.0f, "Media/TestMedia/1");
+
 	float inner = 1.0f;
 	float outer = inner * 2;
 	GetGraphics()->SetSpecialCircle(inner, outer, Vector2(0, 0));
-	float hmData[4];
-	//for(int i = 0; i < vertSize; i++)
+	float hmData[33 * 33];
+	for(int i = 0; i < vertSize * vertSize; i++)
 	{
-		hmData[0] = 0.0f;
+		/*hmData[0] = 0.0f;
 		hmData[1] = 0.0f;
 		hmData[2] = 2.0f;
-		hmData[3] = 0.0f;
+		hmData[3] = 0.0f;*/
+		hmData[i] = 0.0f;
 	}
 	iT->SetHeightMap(hmData);
 

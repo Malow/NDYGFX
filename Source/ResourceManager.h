@@ -33,6 +33,6 @@ public:
 	bool Init(ID3D11Device* device, ID3D11DeviceContext* deviceContext);
 
 	//ID3D11Texture2D* CreateTexture2D(const char* filePath);
-	ID3D11ShaderResourceView* CreateShaderResourceView(const char* filePath);
+	ID3D11ShaderResourceView* CreateShaderResourceViewFromFile(const char* filePath);
 
 };

@@ -475,8 +475,18 @@ void GraphicsEngineImp::Life()
 				}
 				else if(AnimatedMesh* mesh = ((LoadMeshEvent*)ev)->GetAnimatedMesh())
 				{
-					mesh->LoadFromFile(filename);
-					this->dx->CreateAnimatedMesh(mesh);
+					//Check if loading the animation from file was successful...
+					if(mesh->LoadFromFile(filename))
+					{
+						//...and if so, add it
+						this->dx->CreateAnimatedMesh(mesh); 
+					}
+					else
+					{
+						//If not, delete the mesh.
+						MaloW::Debug("Warning: Deleting animated mesh because of failure.");
+						delete mesh;
+					}
 				}
 			}
 

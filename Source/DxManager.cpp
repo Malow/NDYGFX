@@ -210,6 +210,8 @@ void DxManager::CreateTerrain(Terrain* terrain)
 		terrain->SetIndexBuffer(indexBuffer);
 	}
 
+	//Texture(s) are not set here since they are set afterwards.
+
 	//Create & put this event
 	TerrainEvent* re = new TerrainEvent("Add Terrain", terrain);
 	this->PutEvent(re);
@@ -256,13 +258,7 @@ void DxManager::CreateStaticMesh(StaticMesh* mesh)
 		ID3D11ShaderResourceView* texture = NULL;
 		if(strip->GetTexturePath() != "")
 		{
-			D3DX11_IMAGE_LOAD_INFO loadInfo;
-			ZeroMemory(&loadInfo, sizeof(D3DX11_IMAGE_LOAD_INFO));
-			loadInfo.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-			//loadInfo.Format = DXGI_FORMAT_BC1_UNORM;	// Has compression which causes bad quality
-			loadInfo.Format = DXGI_FORMAT_R8G8B8A8_UNORM;	
-			if(FAILED(D3DX11CreateShaderResourceViewFromFile(Dx_Device, strip->GetTexturePath().c_str(), &loadInfo, NULL, &texture, NULL)))
-				MaloW::Debug("Failed to load texture " + strip->GetTexturePath());
+			texture = this->resourceManager->CreateShaderResourceViewFromFile(strip->GetTexturePath().c_str());
 		}
 
 		Object3D* obj = new Object3D(verts, inds, texture, mesh->GetTopology()); 
@@ -282,7 +278,6 @@ void DxManager::CreateAnimatedMesh(AnimatedMesh* mesh)
 	
 	for(int j = 0; j < kfs->size(); j++)
 	{
-
 		MaloW::Array<MeshStrip*>* strips = kfs->get(j)->strips;
 
 		for(int i = 0; i < strips->size(); i++)
@@ -319,14 +314,14 @@ void DxManager::CreateAnimatedMesh(AnimatedMesh* mesh)
 					MaloW::Debug("CreateIndsBuffer Failed");
 			}
 
+			//**TODO: TILLMAN - resource manager**
 			ID3D11ShaderResourceView* texture = NULL;
 			if(strip->GetTexturePath() != "")
 			{
 				D3DX11_IMAGE_LOAD_INFO loadInfo;
 				ZeroMemory(&loadInfo, sizeof(D3DX11_IMAGE_LOAD_INFO));
 				loadInfo.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-				//loadInfo.Format = DXGI_FORMAT_BC1_UNORM;	// Has compression which causes bad quality
-				loadInfo.Format = DXGI_FORMAT_R8G8B8A8_UNORM;	
+				loadInfo.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 				if(FAILED(D3DX11CreateShaderResourceViewFromFile(Dx_Device, strip->GetTexturePath().c_str(), &loadInfo, NULL, &texture, NULL)))
 					MaloW::Debug("Failed to load texture " + strip->GetTexturePath());
 			}
@@ -363,6 +358,7 @@ Object3D* DxManager::createParticleObject(ParticleMesh* mesh)
 
 	Buffer* inds = NULL;
 
+	//**TODO: TILLMAN - resource manager**
 	ID3D11ShaderResourceView* texture = NULL;
 	if(mesh->GetTexturePath() != "")
 	{
@@ -434,16 +430,24 @@ Light* DxManager::CreateLight(D3DXVECTOR3 pos, bool UseShadowMap)
 
 void DxManager::CreateImage(Image* image, string texture)
 {
-	ID3D11ShaderResourceView* text = NULL;
+
+	//**TODO: TILLMAN - resource manager**
+	ID3D11ShaderResourceView* tex = NULL;
+	if(texture != "")
+	{
+		tex = this->resourceManager->CreateShaderResourceViewFromFile(texture.c_str());
+	}
+	/*
+	ID3D11ShaderResourceView* tex = NULL;
 
 	D3DX11_IMAGE_LOAD_INFO loadInfo;
 	ZeroMemory(&loadInfo, sizeof(D3DX11_IMAGE_LOAD_INFO));
 	loadInfo.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 	loadInfo.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	if(FAILED(D3DX11CreateShaderResourceViewFromFile(this->Dx_Device, texture.c_str(), &loadInfo, NULL, &text, NULL)))
+	if(FAILED(D3DX11CreateShaderResourceViewFromFile(this->Dx_Device, texture.c_str(), &loadInfo, NULL, &tex, NULL)))
 		MaloW::Debug("Failed to load texture " + texture);
-	
-	image->SetTexture(text);
+	*/
+	image->SetTexture(tex);
 	
 	ImageEvent* re = new ImageEvent("Add Image", image);
 	this->PutEvent(re);
@@ -463,17 +467,14 @@ void DxManager::DeleteText(Text* text)
 
 void DxManager::CreateText(Text* text, string font)
 {
-	ID3D11ShaderResourceView* texture = NULL;
+	ID3D11ShaderResourceView* tex = NULL;
+	if(font != "")
+	{
+		tex = this->resourceManager->CreateShaderResourceViewFromFile((font + ".png").c_str());
+	}
 
-	D3DX11_IMAGE_LOAD_INFO loadInfo;
-	ZeroMemory(&loadInfo, sizeof(D3DX11_IMAGE_LOAD_INFO));
-	loadInfo.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	loadInfo.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	if(FAILED(D3DX11CreateShaderResourceViewFromFile(this->Dx_Device, (font + ".png").c_str(), &loadInfo, NULL, &texture, NULL)))
-		MaloW::Debug("Failed to load texture " + font);
-	
 	Font* newFont = text->GetFont();
-	newFont->texture = texture;
+	newFont->texture = tex;
 
 	/* Font .txt structure:
 	char in int
@@ -561,6 +562,7 @@ void DxManager::CreateSkyBox(string texture)
 	D3DX11_IMAGE_LOAD_INFO loadSMInfo;
 	loadSMInfo.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
 
+	//**tillman resource manager**
 	ID3D11Texture2D* SMTexture = 0;
 	D3DX11CreateTextureFromFile(this->Dx_Device, texture.c_str(), 
 		&loadSMInfo, 0, (ID3D11Resource**)&SMTexture, 0);

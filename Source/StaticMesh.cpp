@@ -11,9 +11,9 @@ StaticMesh::~StaticMesh()
 
 }
 
-void StaticMesh::LoadFromFile(string file)
+bool StaticMesh::LoadFromFile(string file)
 {
-	Mesh::LoadFromFile(file);
+	return Mesh::LoadFromFile(file);
 }
 
 

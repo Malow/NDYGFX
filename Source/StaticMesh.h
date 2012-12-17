@@ -10,6 +10,6 @@ public:
 	StaticMesh(D3DXVECTOR3 pos);
 	virtual ~StaticMesh();
 
-	void LoadFromFile(string file);
+	bool LoadFromFile(string file);
 	virtual MaloW::Array<MeshStrip*>* GetStrips();
 };

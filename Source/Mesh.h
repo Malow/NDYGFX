@@ -76,7 +76,7 @@ public:
 	D3D_PRIMITIVE_TOPOLOGY GetTopology() const { return this->topology; }
 	
 	// Load Mesh From File
-	virtual void LoadFromFile(string file);
+	virtual bool LoadFromFile(string file);
 
 	// Get Strips
 	virtual MaloW::Array<MeshStrip*>* GetStrips() = 0;
@@ -202,7 +202,7 @@ public:
 	virtual Vector3 GetScaling() const;
 
 	// Load From File
-	virtual void LoadFromFile(string file);
+	virtual bool LoadFromFile(string file);
 
 	// Special Color
 	COLOR GetSpecialColor() const { return this->specialColor; }	

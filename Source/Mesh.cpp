@@ -26,82 +26,89 @@ Mesh::~Mesh()
 	}
 }
 
-void Mesh::LoadFromFile(string file)
+bool Mesh::LoadFromFile(string file)
 {
 	// if substr of the last 4 = .obj do this:    - else load other format / print error
 
 	ObjLoader oj;
 	ObjData* od = oj.LoadObjFile(file);
 
-	MaloW::Array<MaterialData>* mats = od->mats;
-	for(int q = 0; q < mats->size(); q++)
+	if(od)
 	{
-		bool hasFace = false;
-		MeshStrip* strip = new MeshStrip();
+		MaloW::Array<MaterialData>* mats = od->mats;
+		for(int q = 0; q < mats->size(); q++)
+		{
+			bool hasFace = false;
+			MeshStrip* strip = new MeshStrip();
 		
 
-		int nrOfVerts = 0;
+			int nrOfVerts = 0;
 		
-		Vertex* tempverts = new Vertex[od->faces->size()*3];
+			Vertex* tempverts = new Vertex[od->faces->size()*3];
 		
-		for(int i = 0;  i < od->faces->size(); i++)
-		{
-			if(od->faces->get(i).material == mats->get(q).name)
+			for(int i = 0;  i < od->faces->size(); i++)
 			{
-				int vertpos = od->faces->get(i).data[0][0] - 1;
-				int textcoord = od->faces->get(i).data[0][1] - 1;
-				int norm = od->faces->get(i).data[0][2] - 1;
-				tempverts[nrOfVerts] = Vertex(od->vertspos->get(vertpos), od->textcoords->get(textcoord), od->vertsnorms->get(norm));
-				nrOfVerts++;
+				if(od->faces->get(i).material == mats->get(q).name)
+				{
+					int vertpos = od->faces->get(i).data[0][0] - 1;
+					int textcoord = od->faces->get(i).data[0][1] - 1;
+					int norm = od->faces->get(i).data[0][2] - 1;
+					tempverts[nrOfVerts] = Vertex(od->vertspos->get(vertpos), od->textcoords->get(textcoord), od->vertsnorms->get(norm));
+					nrOfVerts++;
 
-				vertpos = od->faces->get(i).data[2][0] - 1;
-				textcoord = od->faces->get(i).data[2][1] - 1;
-				norm = od->faces->get(i).data[2][2] - 1;
-				tempverts[nrOfVerts] = Vertex(od->vertspos->get(vertpos), od->textcoords->get(textcoord), od->vertsnorms->get(norm));
-				nrOfVerts++;
+					vertpos = od->faces->get(i).data[2][0] - 1;
+					textcoord = od->faces->get(i).data[2][1] - 1;
+					norm = od->faces->get(i).data[2][2] - 1;
+					tempverts[nrOfVerts] = Vertex(od->vertspos->get(vertpos), od->textcoords->get(textcoord), od->vertsnorms->get(norm));
+					nrOfVerts++;
 
-				vertpos = od->faces->get(i).data[1][0] - 1;
-				textcoord = od->faces->get(i).data[1][1] - 1;
-				norm = od->faces->get(i).data[1][2] - 1;
-				tempverts[nrOfVerts] = Vertex(od->vertspos->get(vertpos), od->textcoords->get(textcoord), od->vertsnorms->get(norm));
-				nrOfVerts++;
+					vertpos = od->faces->get(i).data[1][0] - 1;
+					textcoord = od->faces->get(i).data[1][1] - 1;
+					norm = od->faces->get(i).data[1][2] - 1;
+					tempverts[nrOfVerts] = Vertex(od->vertspos->get(vertpos), od->textcoords->get(textcoord), od->vertsnorms->get(norm));
+					nrOfVerts++;
 
 
 
-				hasFace = true;
+					hasFace = true;
+				}
 			}
-		}
 
-		strip->setNrOfVerts(nrOfVerts);
-		Vertex* verts = new Vertex[nrOfVerts];
-		for(int z = 0; z < nrOfVerts; z++)
-		{
-			verts[z] = tempverts[z];
-		}
-		delete tempverts;
-		strip->SetVerts(verts);
+			strip->setNrOfVerts(nrOfVerts);
+			Vertex* verts = new Vertex[nrOfVerts];
+			for(int z = 0; z < nrOfVerts; z++)
+			{
+				verts[z] = tempverts[z];
+			}
+			delete tempverts;
+			strip->SetVerts(verts);
 			
-		strip->SetTexturePath(od->mats->get(q).texture);
+			strip->SetTexturePath(od->mats->get(q).texture);
 
-		Material* mat = new Material();
-		mat->AmbientColor = od->mats->get(q).ka;
-		if(mat->AmbientColor == D3DXVECTOR3(0.0f, 0.0f, 0.0f))				//////////// MaloW Fix, otherwise completely black with most objs
-			mat->AmbientColor += D3DXVECTOR3(0.2f, 0.2f, 0.2f);			//////////// MaloW Fix, otherwise completely black with most objs
+			Material* mat = new Material();
+			mat->AmbientColor = od->mats->get(q).ka;
+			if(mat->AmbientColor == D3DXVECTOR3(0.0f, 0.0f, 0.0f))				//////////// MaloW Fix, otherwise completely black with most objs
+				mat->AmbientColor += D3DXVECTOR3(0.2f, 0.2f, 0.2f);			//////////// MaloW Fix, otherwise completely black with most objs
 
-		mat->DiffuseColor = od->mats->get(q).kd;
-		if(mat->DiffuseColor == D3DXVECTOR3(0.0f, 0.0f, 0.0f))				//////////// MaloW Fix, otherwise completely black with most objs
-			mat->DiffuseColor += D3DXVECTOR3(0.6f, 0.6f, 0.6f);			//////////// MaloW Fix, otherwise completely black with most objs
+			mat->DiffuseColor = od->mats->get(q).kd;
+			if(mat->DiffuseColor == D3DXVECTOR3(0.0f, 0.0f, 0.0f))				//////////// MaloW Fix, otherwise completely black with most objs
+				mat->DiffuseColor += D3DXVECTOR3(0.6f, 0.6f, 0.6f);			//////////// MaloW Fix, otherwise completely black with most objs
 			
-		mat->SpecularColor = od->mats->get(q).ks;
-		strip->SetMaterial(mat);
+			mat->SpecularColor = od->mats->get(q).ks;
+			strip->SetMaterial(mat);
 
-		if(hasFace)
-			this->strips->add(strip);
-		else
-			delete strip;
+			if(hasFace)
+				this->strips->add(strip);
+			else
+				delete strip;
+		}
+		this->topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+		delete od;
+
+		return true;
 	}
-	this->topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-	delete od;
+
+	return false;
 }
 
 void Mesh::SetSpecialColor(COLOR specialColor)

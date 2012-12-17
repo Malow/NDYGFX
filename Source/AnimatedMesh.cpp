@@ -200,7 +200,7 @@ void AnimatedMesh::LoopSeamless()
 
 
 
-void AnimatedMesh::LoadFromFile(string file)
+bool AnimatedMesh::LoadFromFile(string file)
 {
 	// if substr of the last 4 = .obj do this:    - else load other format / print error
 	ObjLoader oj;
@@ -310,7 +310,12 @@ void AnimatedMesh::LoadFromFile(string file)
 			this->mKeyFrames->add(frame);
 			
 		}
+
+		return true;
 	}
 	else
+	{
 		MaloW::Debug("Failed to open AnimatedMesh: " + file);
+		return false;
+	}
 }

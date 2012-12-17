@@ -1,9 +1,8 @@
 #include "ResourceManager.h"
  
-ResourceManager::ResourceManager()
+ResourceManager::ResourceManager() : gDevice(NULL), gDeviceContext(NULL)
 {
-	this->gDevice = NULL;
-	this->gDeviceContext = NULL;
+	
 }
 
 ResourceManager::~ResourceManager()
@@ -35,7 +34,7 @@ ID3D11Texture2D* ResourceManager::CreateTexture2D(const char* filePath)
 
 }*/
 
-ID3D11ShaderResourceView* ResourceManager::CreateShaderResourceView( const char* filePath )
+ID3D11ShaderResourceView* ResourceManager::CreateShaderResourceViewFromFile( const char* filePath )
 {
 	auto tex = this->zTextures.find(filePath);
 	//If the shader resource view was not found in the array, create it.
@@ -59,6 +58,7 @@ ID3D11ShaderResourceView* ResourceManager::CreateShaderResourceView( const char*
 			string dbgStr = "WARNING: Failed to load texture: ";
 			dbgStr += filePath;
 			MaloW::Debug(dbgStr);
+			return NULL;
 		}
 		else
 		{

@@ -1,8 +1,8 @@
 #include "Texture.h"
 
-Texture::Texture()
+Texture::Texture() : zSRV(NULL)
 {
-	this->zSRV = NULL;
+	
 }
 
 Texture::~Texture()
