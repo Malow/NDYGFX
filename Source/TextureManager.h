@@ -1,3 +1,5 @@
+/* DEPRECATED BY RESOURECEMANAGER */
+
 //!-----------------------------------------------------
 //! Singleton class for creating and managing textures
 //!-----------------------------------------------------

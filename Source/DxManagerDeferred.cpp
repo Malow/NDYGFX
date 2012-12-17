@@ -130,41 +130,17 @@ void DxManager::RenderDeferredGeometry()
 		//Set Textures
 		//Check if texture(name/path) have changed, create new shader resource view if it has
 		bool hasTexture = false;
-		for(int j = 0; j < 3; j++)
+		for(int j = 0; j < terrPtr->GetNrOfTextures(); j++)
 		{
-			Texture* texPtr = terrPtr->GetTexturePointer(j);
-			if(texPtr)
-			{
-				if(texPtr->HasChanged)
-				{
-					//Release old shader resource view
-					if(texPtr->SRV) texPtr->SRV->Release();
+			string shaderTexName = "tex";
+			shaderTexName += MaloW::convertNrToString((float)(j + 1));
+			this->Shader_DeferredGeometryBlendMap->SetResource(
+				shaderTexName.c_str(), 
+				this->resourceManager->CreateShaderResourceView(terrPtr->GetTextureFileName(j).c_str()));
 
-					//Create new 
-					D3DX11_IMAGE_LOAD_INFO loadInfo;
-					ZeroMemory(&loadInfo, sizeof(D3DX11_IMAGE_LOAD_INFO));
-					loadInfo.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-					loadInfo.Format = DXGI_FORMAT_BC1_UNORM;
-					if(FAILED(D3DX11CreateShaderResourceViewFromFile(	
-						this->Dx_Device, 
-						texPtr->FileName.c_str(),
-						&loadInfo, 
-						NULL, 
-						&texPtr->SRV,
-						NULL)))
-					{
-						MaloW::Debug("WARNING: Failed to load texture " + texPtr->FileName);
-					}
-					//Set that the texture shall not be changed anymore.
-					texPtr->HasChanged = false;
-				}
-
-				string shaderTexName = "tex";
-				shaderTexName += MaloW::convertNrToString((float)(j + 1));
-				this->Shader_DeferredGeometryBlendMap->SetResource(shaderTexName.c_str(), texPtr->SRV);
-				hasTexture = true;
-			}
+			hasTexture = true;
 		}
+		//**TODO: TILLMAN: om tex 1-3 inte används, set de till tex 0, eller ladda in default**
 		if(hasTexture) 
 		{
 			this->Shader_DeferredGeometryBlendMap->SetBool("textured", true);

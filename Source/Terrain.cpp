@@ -96,10 +96,12 @@ Terrain::Terrain()
 	this->zMaterial = new Material(MaterialType::LAMBERT);
 	this->zTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
-	this->zTextures = new Texture*[3];
-	this->zTextures[0] = NULL;
-	this->zTextures[1] = NULL;
-	this->zTextures[2] = NULL;
+	this->zNrOfTextures = 4;
+	this->zTextureFileNames = new string[this->zNrOfTextures];
+	this->zTextureFileNames[0] = "";
+	this->zTextureFileNames[1] = "";
+	this->zTextureFileNames[2] = "";
+	this->zTextureFileNames[3] = "";
 	this->zBlendMap = new BlendMap();
 	
 }
@@ -125,10 +127,12 @@ Terrain::Terrain(D3DXVECTOR3 pos, D3DXVECTOR3 scale, unsigned int size)
 	this->zMaterial = new Material(MaterialType::LAMBERT);
 	this->zTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
-	this->zTextures = new Texture*[3];
-	this->zTextures[0] = NULL;
-	this->zTextures[1] = NULL;
-	this->zTextures[2] = NULL;
+	this->zNrOfTextures = 4;
+	this->zTextureFileNames = new string[this->zNrOfTextures];
+	this->zTextureFileNames[0] = "";
+	this->zTextureFileNames[1] = "";
+	this->zTextureFileNames[2] = "";
+	this->zTextureFileNames[3] = "";
 	this->zBlendMap = new BlendMap();
 
 	this->CreateMesh();
@@ -143,14 +147,10 @@ Terrain::~Terrain()
 
 	if(this->zMaterial) delete this->zMaterial; this->zMaterial = NULL;
 
-	if(this->zTextures)
+	if(this->zTextureFileNames)
 	{
-		if(this->zTextures[0]) delete this->zTextures[0]; this->zTextures[0] = NULL;
-		if(this->zTextures[1]) delete this->zTextures[1]; this->zTextures[1] = NULL;
-		if(this->zTextures[2]) delete this->zTextures[2]; this->zTextures[2] = NULL;
-
-		delete[] this->zTextures;
-		this->zTextures = NULL;
+		delete[] this->zTextureFileNames;
+		this->zTextureFileNames = NULL;
 	}
 	if(this->zBlendMap) delete this->zBlendMap; this->zBlendMap = NULL;
 }
@@ -257,19 +257,13 @@ void Terrain::SetTextures(const char** fileNames)
 {
 	if(fileNames)
 	{
-		for(int i = 0; i < 3; i++)
+		for(int i = 0; i < this->zNrOfTextures; i++)
 		{
-			if(this->zTextures[i])
+			//Check if texture file path has changed
+			if(this->zTextureFileNames[i] != string(fileNames[i]))
 			{
-				if(this->zTextures[i]->FileName == string(fileNames[i]))
-				{
-					this->zTextures[i]->FileName  = fileNames[i];
-					this->zTextures[i]->HasChanged = true;
-				}
-			}
-			else if(fileNames[i])
-			{
-				this->zTextures[i] = new Texture(fileNames[i]);
+				//Assign it to the new path if it has
+				this->zTextureFileNames[i] = string(fileNames[i]);
 			}
 		}
 	}

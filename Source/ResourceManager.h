@@ -4,36 +4,35 @@
 // 
 //	Manager for handling resources. Resources include (but are not limited to):
 //	Vertex buffers and textures.
+//	Requirements: DirectX device & device context.
 //--------------------------------------------------------------------------------------------------
+#include "DirectX.h"
 #include "Texture.h"
-#include "ReferenceCounted.h"
+#include <string>
+#include <map>
+
+#include "MaloW.h"
+#include "MaloWFileDebug.h"
+using namespace std;
+
+#include <vld.h>
 
 class ResourceManager 
 {
-public:
-	unsigned int zNrOfResources;
-	//unsi
+private:
+	ID3D11Device*			gDevice;
+	ID3D11DeviceContext*	gDeviceContext;
+
+private:
+	std::map<std::string, Texture*> zTextures;
+
 public:
 	ResourceManager();
-/*#include <map>
-#include <iostream>
-#include <string>
+	virtual ~ResourceManager();
 
-	typedef unsigned int texture;
+	bool Init(ID3D11Device* device, ID3D11DeviceContext* deviceContext);
 
-	int main()
-	{
-		std::map< std::string, texture > textures;
+	//ID3D11Texture2D* CreateTexture2D(const char* filePath);
+	ID3D11ShaderResourceView* CreateShaderResourceView(const char* filePath);
 
-		auto tex = textures.find("Hello.png");
-		if ( tex == textures.end() )
-		{
-			textures["Hello.png"] = 2;
-		}
-
-		std::cout << textures["Hello.png"] << std::endl;
-
-		return textures["Hello.png"];
-	}
-	*/
 };

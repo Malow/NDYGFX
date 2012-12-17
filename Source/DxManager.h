@@ -20,6 +20,7 @@
 #include "AnimatedMesh.h"
 #include "DxManagerEvents.h"
 #include "CascadedShadowMap.h"
+#include "ResourceManager.h"
 
 class DxManager : public MaloW::Process
 {
@@ -86,7 +87,7 @@ private:
 
 	Shader* Shader_DeferredAnimatedGeometry;
 
-
+	ResourceManager* resourceManager;
 	SSAO* ssao;
 	FXAA* fxaa;
 	Shader* Shader_Fxaa;

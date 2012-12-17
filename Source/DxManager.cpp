@@ -125,6 +125,8 @@ DxManager::~DxManager()
 	if(this->Shader_Text)
 		delete this->Shader_Text;
 
+	if(this->resourceManager) delete this->resourceManager; this->resourceManager = NULL;
+
 	if ( this->ssao ) delete this->ssao, this->ssao=0;
 	if ( this->fxaa ) delete this->fxaa, this->fxaa=0;
 	if ( this->Shader_Fxaa ) delete this->Shader_Fxaa, this->Shader_Fxaa=0;

@@ -15,16 +15,6 @@
 #include "Material.h"
 
 
-struct Texture
-{
-	bool						HasChanged;
-	string						FileName;
-	ID3D11ShaderResourceView*	SRV;
-
-	Texture() {HasChanged = true; FileName = ""; SRV = NULL; }
-	Texture(string fileName) {HasChanged = true; FileName = fileName; SRV = NULL; }
-	virtual ~Texture() { if(SRV) SRV->Release(); SRV = NULL; }
-};
 struct BlendMap
 {
 	bool						HasChanged;
@@ -61,7 +51,8 @@ class Terrain : public iTerrain
 		Material*					zMaterial;
 		D3D_PRIMITIVE_TOPOLOGY		zTopology;
 		
-		Texture**					zTextures;
+		int							zNrOfTextures;
+		string*						zTextureFileNames; 
 		BlendMap*					zBlendMap;
 		
 
@@ -93,7 +84,8 @@ class Terrain : public iTerrain
 		Material* GetMaterial() const { return this->zMaterial; }
 		D3D_PRIMITIVE_TOPOLOGY GetTopology() const { return this->zTopology; }
 
-		Texture* GetTexturePointer(unsigned int index) { return this->zTextures[index]; }
+		int GetNrOfTextures() const { return this->zNrOfTextures; }
+		string GetTextureFileName(unsigned int index) { return this->zTextureFileNames[index]; }
 		BlendMap* GetBlendMapPointer() { return this->zBlendMap; }
 
 		//Set

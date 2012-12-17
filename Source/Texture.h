@@ -3,6 +3,7 @@
 //	Written by Markus Tillman for project "Not dead yet" at Blekinge Tekniska Högskola.
 // 
 //	Texture-resource class. Used by the ResourceManager.
+//  Requirements: ReferenceCounted.h.
 //--------------------------------------------------------------------------------------------------
 
 #include "ReferenceCounted.h"
@@ -10,11 +11,15 @@
 
 class Texture : public ReferenceCounted
 {
+	private:
+		ID3D11ShaderResourceView* zSRV;
+
 	public:
-		//handle to dx tex.
-		ID3D11Texture2D
+		virtual ~Texture();
+
 	public:
 		Texture();
-
+		ID3D11ShaderResourceView* GetSRVPointer() const { return this->zSRV; }
+		void SetSRVPointer(ID3D11ShaderResourceView* pointer) { this->zSRV = pointer; }
 
 };

@@ -81,10 +81,11 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 	}
 	iT->SetHeightMap(hmData);
 
-	const char* fileNames[3];
+	const char* fileNames[4];
 	fileNames[0] = "Media/TerrainTexture.png";
 	fileNames[1] = "Media/BallTexture.png";
 	fileNames[2] = "Media/TerrainTexture.png";
+	fileNames[3] = "Media/TerrainTexture.png";
 	iT->SetTextures(fileNames);
 	
 	int size = 2048*2048*4;
@@ -359,6 +360,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 	//*************************************	     POST TEST       **********************
 #ifdef TEST
 	delete[] testData;
+	//delete[] fileNames;
 #endif
 	//*************************************	   END OF POST TEST       **********************
 	return 0;

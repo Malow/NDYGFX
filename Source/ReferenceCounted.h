@@ -3,7 +3,7 @@
 class ReferenceCounted
 {
 	unsigned int zRefCounter;
-private:
+protected:
 	virtual ~ReferenceCounted() {}
 
 public:
