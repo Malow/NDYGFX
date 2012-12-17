@@ -25,10 +25,11 @@ extern "C"
 {
 	class DECLDIR iMesh
 	{	
-	public:
-		iMesh() {};
+	protected:
 		virtual ~iMesh() {};
+		iMesh() {};
 
+	public:
 		// Special Color
 		virtual void SetSpecialColor(COLOR specialColor) = 0;
 		virtual COLOR GetSpecialColor() const = 0;

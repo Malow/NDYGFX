@@ -32,7 +32,6 @@ class Terrain : public iTerrain
 {
 	private:
 		int							zSize; //size of mesh (width & height)
-
 		D3DXVECTOR3					zPos;
 		D3DXVECTOR3					zScale;
 		D3DXMATRIX					zWorldMatrix;
@@ -47,7 +46,8 @@ class Terrain : public iTerrain
 
 		Material*					zMaterial;
 		D3D_PRIMITIVE_TOPOLOGY		zTopology;
-		
+
+		float						zTextureScale;
 		int							zNrOfTextures;
 		string*						zTextureFileNames; 
 		BlendMap*					zBlendMap;
@@ -81,6 +81,7 @@ class Terrain : public iTerrain
 		Material* GetMaterial() const { return this->zMaterial; }
 		D3D_PRIMITIVE_TOPOLOGY GetTopology() const { return this->zTopology; }
 
+		float GetTextureScale() const { return this->zTextureScale; }
 		int GetNrOfTextures() const { return this->zNrOfTextures; }
 		string GetTextureFileName(unsigned int index) { return this->zTextureFileNames[index]; }
 		BlendMap* GetBlendMapPointer() { return this->zBlendMap; }
@@ -90,7 +91,7 @@ class Terrain : public iTerrain
 		void HeightMapHasChanged(bool has) { this->zHeightMapHasChanged = has; }
 		void SetVertexBuffer(Buffer* vertexBuffer) { this->zVertexBuffer = vertexBuffer; }
 		void SetIndexBuffer(Buffer* indexBuffer) { this->zIndexBuffer = indexBuffer; }
-		//void SetSRV1**
+		
 
 		//Other
 		//Is used internally when needed, but can be used from the outside for debugging.
@@ -111,6 +112,7 @@ class Terrain : public iTerrain
 		virtual void SetTextures(char const* const* const fileNames);
 		virtual void SetBlendMap(unsigned int size, float const* const data);
 		virtual void SetDiffuseColor(const Vector3& color);
+		virtual void SetTextureScale(float textureScale);
 
 
 };

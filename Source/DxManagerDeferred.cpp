@@ -143,7 +143,10 @@ void DxManager::RenderDeferredGeometry()
 		//**TODO: TILLMAN: om tex 1-3 inte används, set de till tex 0, eller ladda in default**
 		if(hasTexture) 
 		{
+
+			//Set that textures shall be used and its scale
 			this->Shader_DeferredGeometryBlendMap->SetBool("textured", true);
+			this->Shader_DeferredGeometryBlendMap->SetFloat("texScale", terrPtr->GetTextureScale());
 
 			//Do the same for the blend map (if textures are used)
 			BlendMap* bmPtr = terrPtr->GetBlendMapPointer();

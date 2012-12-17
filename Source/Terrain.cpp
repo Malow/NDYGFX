@@ -5,7 +5,7 @@
 void Terrain::CreateMesh()
 {
 	//Create vertices
-	int tilingFactor = 1; //**ändra senare**
+	int tilingFactor = 1; //**tillman - ändra senare?**
 
 	this->zNrOfVertices = this->zSize * this->zSize;
 	this->zVertices = new Vertex[this->zSize * this->zSize];
@@ -96,6 +96,7 @@ Terrain::Terrain()
 	this->zMaterial = new Material(MaterialType::LAMBERT);
 	this->zTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
+	this->zTextureScale = 1.0f;
 	this->zNrOfTextures = 4;
 	this->zTextureFileNames = new string[this->zNrOfTextures];
 	this->zTextureFileNames[0] = "";
@@ -103,7 +104,6 @@ Terrain::Terrain()
 	this->zTextureFileNames[2] = "";
 	this->zTextureFileNames[3] = "";
 	this->zBlendMap = new BlendMap();
-	
 }
 
 
@@ -127,6 +127,7 @@ Terrain::Terrain(D3DXVECTOR3 pos, D3DXVECTOR3 scale, unsigned int size)
 	this->zMaterial = new Material(MaterialType::LAMBERT);
 	this->zTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
+	this->zTextureScale = 1.0f;
 	this->zNrOfTextures = 4;
 	this->zTextureFileNames = new string[this->zNrOfTextures];
 	this->zTextureFileNames[0] = "";
@@ -275,4 +276,9 @@ void Terrain::SetBlendMap(unsigned int size, float const* const data)
 void Terrain::SetDiffuseColor(const Vector3& color )
 {
 	this->zMaterial->DiffuseColor = D3DXVECTOR3(color.x, color.y, color.z);
+}
+
+void Terrain::SetTextureScale(float textureScale)
+{
+	this->zTextureScale = textureScale;
 }

@@ -97,11 +97,12 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 	iT->SetHeightMap(hmData);
 
 	const char* fileNames[4];
-	fileNames[0] = "Media/TerrainTexture.png";
+	fileNames[0] = "Media/BallTexture.png";
 	fileNames[1] = "Media/BallTexture.png";
-	fileNames[2] = "Media/TerrainTexture.png";
+	fileNames[2] = "Media/BallTexture.png";
 	fileNames[3] = "Media/TerrainTexture.png";
 	iT->SetTextures(fileNames);
+	iT->SetTextureScale(-4);
 	
 	int size = 2048*2048*4;
 	float* testData = new float[size]; 
@@ -121,7 +122,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 		}
 		else if(i % 4 == 3)
 		{
-			testData[i] = 0.0f; //A
+			testData[i] = 1.0f; //A
 		}
 	}
 	iT->SetBlendMap(size, testData);
