@@ -103,6 +103,16 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 	fileNames[3] = "Media/TerrainTexture.png";
 	iT->SetTextures(fileNames);
 	iT->SetTextureScale(-4);
+	float testF = 0.0f;
+	try
+	{
+		testF = iT->GetYPositionAt(0.5f, 0.5f);
+	}
+	catch(...)
+	{
+		float durpa  = 11.0f;
+	}
+	
 	
 	int size = 2048*2048*4;
 	float* testData = new float[size]; 

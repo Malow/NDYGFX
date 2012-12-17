@@ -180,10 +180,11 @@ void Terrain::RecreateWorldMatrix()
 //iTerrain interface functions
 float Terrain::GetYPositionAt(float x, float z) const
 {
-	float ex = z / this->zScale.x; //**tillman - hackfix by swapping z & x **
-	float ez = x / this->zScale.z;
+	float ex = z / this->zScale.z; //**tillman - hackfix by swapping z & x **
+	float ez = x / this->zScale.x;
 
-	if(ex <= 1.0f && ez <= 1.0f && ex > 0.0f && ez > 0.0f) //**tillman opt
+	//if(((ex && ex) <= 1.0f) && ((ex && ez) > 0.0f)) //**tillman opt
+	if(ex <= 1.0f && ez <= 1.0f && ex > 0.0f && ez > 0.0f) 
 	{
 		ex *= this->zSize;
 		ez *= this->zSize;
@@ -195,7 +196,7 @@ float Terrain::GetYPositionAt(float x, float z) const
 		int b = (i+1) * this->zSize + u;
 		int c = i * this->zSize + u+1;
 		int d = (i+1) * this->zSize + u+1;
-
+		
 		float posya = this->zVertices[i * this->zSize + u].pos.y;
 		float posyb = posya;
 		float posyc = posya;

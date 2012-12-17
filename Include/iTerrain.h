@@ -18,7 +18,7 @@ extern "C"
 			virtual ~iTerrain() {}
 
 		public:
-			//Returns the Y-position on the terrain at x,z.
+			//Returns the Y-position in local space on the terrain at x,z in local space.
 			virtual float GetYPositionAt(float x, float z) const throw(const char*) = 0; 
 
 			//Sets the scale for the terrain.
