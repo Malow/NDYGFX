@@ -5,12 +5,21 @@
 
 // Edit 2012-11-18 by Alexivan - Removed DX dependencies
 // Edit 2012-11-23 by Alexivan - Added DX Conversions
+// EDIT 2012-12-17 by Tillman - Added GetD3DXVECTORX and Union & []-operator overloading.
 
 class Vector2
 {
 public:
-	float x;
-	float y;
+	union
+	{
+		//the variable "values" and x and y share the same memory
+		float values[2];
+		struct
+		{
+			float x; //values[0]
+			float y; //values[1]
+		};
+	};
 
 	Vector2(float x=0.0f, float y=0.0f) :
 		x(x),
@@ -105,15 +114,48 @@ public:
 	{
 		return ( x != v.x || y != v.y );
 	}
+
+	inline float& operator[]( unsigned int i ) throw(const char*)
+	{
+		if(i > 1)
+		{
+			throw("index out of bounds");
+		}
+		return values[i];
+	}
+	inline const float& operator[]( unsigned int i ) const
+	{
+		if(i > 1)
+		{
+			throw("index out of bounds");
+		}
+		return values[i];
+	}
+
+
+#ifdef D3DVECTOR_DEFINED
+	operator D3DXVECTOR2 () const { return D3DXVECTOR2(x,y); }
+	inline D3DXVECTOR2 GetD3DXVECTOR2() const { return D3DXVECTOR2(x, y); }
+#endif
+
 };
 
 
 class Vector3
 {
 public:
-	float x;
-	float y;
-	float z;
+	union
+	{
+		//the variable "values" and x,y and z share the same memory
+		float values[3];
+		struct
+		{
+			float x; //values[0]
+			float y; //values[1]
+			float z; //values[2]
+		};
+	};
+	
 
 	Vector3(float x=0.0f, float y=0.0f, float z=0.0f) :
 		x(x),
@@ -262,26 +304,55 @@ public:
 
 	inline bool operator==( const Vector3& v ) const
 	{
-		return ( x == v.x && y == v.y && z == v.z );
+		return ( x == v.x && y == v.y && z == v.z ); //**tillman opt**
 	}
 
 
 	inline bool operator!=( const Vector3& v ) const
 	{
-		return ( x != v.x || y != v.y || z != v.z );
+		return ( x != v.x || y != v.y || z != v.z ); //**tillman opt**
 	}
 
+	inline float& operator[]( unsigned int i ) throw(const char*)
+	{
+		if(i > 2)
+		{
+			throw("index out of bounds");
+		}
+		return values[i];
+	}
+	inline const float& operator[]( unsigned int i ) const
+	{
+		if(i > 2)
+		{
+			throw("index out of bounds");
+		}
+		return values[i];
+	}
 
 #ifdef D3DVECTOR_DEFINED
 	operator D3DXVECTOR3 () const { return D3DXVECTOR3(x,y,z); }
+	inline D3DXVECTOR3 GetD3DXVECTOR3() const { return D3DXVECTOR3(x, y, z); }
 #endif
+
 };
 
 
 class Vector4
 {
 public:
-	float x,y,z,w;
+	union
+	{
+		//the variable "values" and x,y,z and w share the same memory
+		float values[4];
+		struct
+		{
+			float x; //values[0]
+			float y; //values[1]
+			float z; //values[2]
+			float w; //values[3]
+		};
+	};
 
 	Vector4(float x=0.0f, float y=0.0f, float z=0.0f, float w=0.0f) : 
 		x(x), 
@@ -311,8 +382,26 @@ public:
 		return ( x != v.x || y != v.y || z != v.z || w != v.w );
 	}
 
+	inline float& operator[]( unsigned int i ) throw(const char*)
+	{
+		if(i > 3)
+		{
+			throw("index out of bounds");
+		}
+		return values[i];
+	}
+	inline const float& operator[]( unsigned int i ) const
+	{
+		if(i > 3)
+		{
+			throw("index out of bounds");
+		}
+		return values[i];
+	}
+
 #ifdef D3DVECTOR_DEFINED
 	operator D3DXVECTOR4 () const { return D3DXVECTOR4(x,y,z,w); }
+	inline D3DXVECTOR4 GetD3DXVECTOR4() const { return D3DXVECTOR4(x, y, z, w); }
 #endif
 };
 

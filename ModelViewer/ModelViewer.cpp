@@ -1,7 +1,8 @@
+#define TEST //<----------------------- kommentera ut vid behov **********************
+
+
 #include "Graphics.h"
 #include "MaloWFileDebug.h"
-
-#define TEST //<----------------------- kommentera ut vid behov **********************
 
 void ReplaceSlashes(string& str, char replace, char with)
 {
@@ -70,6 +71,16 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 	//iAnimatedMesh* iAM = GetGraphics()->CreateAnimatedMesh("Media/TestMedia/FlagBlue.ani", Vector3(0, 0, 0));
 	iImage* iM = GetGraphics()->CreateImage(Vector2(100, 100), Vector2(100, 100), "Media/BallTexture.png");
 	iText* iTe = GetGraphics()->CreateText("durp", Vector2(300, 100), 1.0f, "Media/TestMedia/1");
+	
+	float test = 0.0f;
+	Vector2 dd = Vector2(0.1f, 0.2f);
+	test = dd[0];
+	Vector3 durp = Vector3(1.0f, 2.0f, 3.0f);
+	test = durp[2];
+	Vector4 hurp = Vector4(10.0f, 20.0f, 30.0f);
+	test = hurp[3];
+
+	//D3DXVECTOR2 ddd = dd.GetD3DXVECTOR2(); //**tillman / malow **
 
 	float inner = 1.0f;
 	float outer = inner * 2;
