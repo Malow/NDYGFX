@@ -55,8 +55,8 @@ void CascadedShadowMap::CalcShadowMappingSplitDepths()
 	float camFar  = this->params.FarClip;
 
 	this->shadowMappingSplitDepths[0] = camNear;
-	this->shadowMappingSplitDepths[1] = 10.0f;
-	this->shadowMappingSplitDepths[2] = 75.0f;
+	this->shadowMappingSplitDepths[1] = camFar * 0.1f;
+	this->shadowMappingSplitDepths[2] = camFar * 0.4f;
 	this->shadowMappingSplitDepths[SHADOW_MAP_CASCADE_COUNT] = camFar;
 	/*
 	float i_f = 1.0f;

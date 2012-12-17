@@ -259,7 +259,8 @@ void DxManager::CreateStaticMesh(StaticMesh* mesh)
 			D3DX11_IMAGE_LOAD_INFO loadInfo;
 			ZeroMemory(&loadInfo, sizeof(D3DX11_IMAGE_LOAD_INFO));
 			loadInfo.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-			loadInfo.Format = DXGI_FORMAT_BC1_UNORM;
+			//loadInfo.Format = DXGI_FORMAT_BC1_UNORM;	// Has compression which causes bad quality
+			loadInfo.Format = DXGI_FORMAT_R8G8B8A8_UNORM;	
 			if(FAILED(D3DX11CreateShaderResourceViewFromFile(Dx_Device, strip->GetTexturePath().c_str(), &loadInfo, NULL, &texture, NULL)))
 				MaloW::Debug("Failed to load texture " + strip->GetTexturePath());
 		}
@@ -324,7 +325,8 @@ void DxManager::CreateAnimatedMesh(AnimatedMesh* mesh)
 				D3DX11_IMAGE_LOAD_INFO loadInfo;
 				ZeroMemory(&loadInfo, sizeof(D3DX11_IMAGE_LOAD_INFO));
 				loadInfo.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-				loadInfo.Format = DXGI_FORMAT_BC1_UNORM;
+				//loadInfo.Format = DXGI_FORMAT_BC1_UNORM;	// Has compression which causes bad quality
+				loadInfo.Format = DXGI_FORMAT_R8G8B8A8_UNORM;	
 				if(FAILED(D3DX11CreateShaderResourceViewFromFile(Dx_Device, strip->GetTexturePath().c_str(), &loadInfo, NULL, &texture, NULL)))
 					MaloW::Debug("Failed to load texture " + strip->GetTexturePath());
 			}
