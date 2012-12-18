@@ -98,7 +98,12 @@ Terrain::Terrain()
 
 	this->zTextureScale = 1.0f;
 	this->zNrOfTextures = 4;
-	this->zTextureFileNames = new string[this->zNrOfTextures];
+	/*this->zTextures = new Texture*[this->zNrOfTextures];
+	this->zTextures[0] = NULL;
+	this->zTextures[1] = NULL;
+	this->zTextures[2] = NULL;
+	this->zTextures[3] = NULL;*/
+	this->zTextureFileNames = new string[this->zNrOfTextures];   //**tillman - tmp**
 	this->zTextureFileNames[0] = "";
 	this->zTextureFileNames[1] = "";
 	this->zTextureFileNames[2] = "";
@@ -129,7 +134,13 @@ Terrain::Terrain(D3DXVECTOR3 pos, D3DXVECTOR3 scale, unsigned int size)
 
 	this->zTextureScale = 1.0f;
 	this->zNrOfTextures = 4;
-	this->zTextureFileNames = new string[this->zNrOfTextures];
+	/*this->zTextures = new Texture*[this->zNrOfTextures];
+	this->zTextures[0] = NULL;
+	this->zTextures[1] = NULL;
+	this->zTextures[2] = NULL;
+	this->zTextures[3] = NULL;*/
+	
+	this->zTextureFileNames = new string[this->zNrOfTextures];   //**tillman - tmp**
 	this->zTextureFileNames[0] = "";
 	this->zTextureFileNames[1] = "";
 	this->zTextureFileNames[2] = "";
@@ -148,7 +159,18 @@ Terrain::~Terrain()
 
 	if(this->zMaterial) delete this->zMaterial; this->zMaterial = NULL;
 
-	if(this->zTextureFileNames)
+	/*if(this->zTextures)
+	{
+		//Decrease reference counter for every texture used
+		if(this->zTextures[0]) this->zTextures[0]->DecreaseReferenceCount();
+		if(this->zTextures[1]) this->zTextures[1]->DecreaseReferenceCount();
+		if(this->zTextures[2]) this->zTextures[2]->DecreaseReferenceCount();
+		if(this->zTextures[3]) this->zTextures[3]->DecreaseReferenceCount();
+
+		//Delete the array that held them.
+		delete [] this->zTextures;
+	}*/
+	if(this->zTextureFileNames)   //**tillman - tmp**
 	{
 		delete[] this->zTextureFileNames;
 		this->zTextureFileNames = NULL;
@@ -263,6 +285,7 @@ void Terrain::SetTextures(char const* const* const fileNames)
 				//Assign it to the new path if it has
 				this->zTextureFileNames[i] = string(fileNames[i]);
 			}
+			
 		}
 	}
 }

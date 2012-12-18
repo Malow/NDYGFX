@@ -13,6 +13,8 @@
 #include "Vertex.h"
 #include "Buffer.h"
 #include "Material.h"
+//#include "Texture.h"
+//#include "ResourceManager.h"
 
 
 struct BlendMap
@@ -49,7 +51,8 @@ class Terrain : public iTerrain
 
 		float						zTextureScale;
 		int							zNrOfTextures;
-		string*						zTextureFileNames; 
+		//Texture**					zTextures;
+		string*						zTextureFileNames;  //**tillman - tmp**
 		BlendMap*					zBlendMap;
 		
 

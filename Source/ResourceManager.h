@@ -6,6 +6,8 @@
 //	Vertex buffers and textures.
 //	Requirements: DirectX device & device context.
 //--------------------------------------------------------------------------------------------------
+#pragma once
+
 #include "DirectX.h"
 #include "Texture.h"
 #include <string>
@@ -19,20 +21,21 @@ using namespace std;
 
 class ResourceManager 
 {
-private:
-	ID3D11Device*			gDevice;
-	ID3D11DeviceContext*	gDeviceContext;
+	private:
+		ID3D11Device*			gDevice;
+		ID3D11DeviceContext*	gDeviceContext;
 
-private:
-	std::map<std::string, Texture*> zTextures;
+	private:
+		std::map<std::string, Texture*> zTextures;
 
-public:
-	ResourceManager();
-	virtual ~ResourceManager();
+	public:
+		ResourceManager();
+		virtual ~ResourceManager();
 
-	bool Init(ID3D11Device* device, ID3D11DeviceContext* deviceContext);
+		bool Init(ID3D11Device* device, ID3D11DeviceContext* deviceContext);
 
-	//ID3D11Texture2D* CreateTexture2D(const char* filePath);
-	ID3D11ShaderResourceView* CreateShaderResourceViewFromFile(const char* filePath);
+		//ID3D11Texture2D* CreateTexture2D(const char* filePath);
+		ID3D11ShaderResourceView* CreateShaderResourceViewFromFile(const char* filePath);
+		Texture* CreateTextureFromFile(const char* filePath);
 
 };
