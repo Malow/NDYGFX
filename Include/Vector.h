@@ -6,6 +6,11 @@
 // Edit 2012-11-18 by Alexivan - Removed DX dependencies
 // Edit 2012-11-23 by Alexivan - Added DX Conversions
 // EDIT 2012-12-17 by Tillman - Added GetD3DXVECTORX and Union & []-operator overloading.
+// EDIT 2012-12-18 by Alexivan - Warning Ignore for nameless struct in union
+
+#pragma warning ( push ) 
+#pragma warning ( disable : 4201 ) // nonstandard extension used : nameless struct/union
+#pragma warning ( disable : 4290 ) // C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
 
 class Vector2
 {
@@ -288,5 +293,6 @@ public:
 #endif
 };
 
+#pragma warning (pop)
 
 #endif

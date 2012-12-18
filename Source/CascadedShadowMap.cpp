@@ -1,6 +1,8 @@
 #include "CascadedShadowMap.h"
 
-#define lerp(t, a, b) (a + t * (b - a))
+// EDIT: Alexivan, Macro Safety for lerp
+
+#define lerp(t, a, b) ((a) + (t) * ((b) - (a)))
 
 CascadedShadowMap::CascadedShadowMap()
 {

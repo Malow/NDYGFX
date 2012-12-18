@@ -9,7 +9,7 @@
 #pragma once
 
 #include "ReferenceCounted.h"
-#include <d3dx11.h>
+#include "DirectX.h"
 
 class Texture : public ReferenceCounted
 {
