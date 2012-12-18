@@ -21,6 +21,7 @@
     <ClInclude Include="Include\iPhysicsEngine.h" />
     <ClInclude Include="Include\iTerrain.h" />
     <ClInclude Include="Include\iText.h" />
+    <ClInclude Include="Include\Matrix.h" />
     <ClInclude Include="Include\Vector.h" />
     <ClInclude Include="Source\AnimatedMesh.h" />
     <ClInclude Include="Source\Array.h" />
