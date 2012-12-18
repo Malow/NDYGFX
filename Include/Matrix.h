@@ -18,7 +18,7 @@ public:
 		this->value[2][2] = 1.0f;
 		this->value[3][3] = 1.0f;
 	}
-	virtual ~Matrix4();
+	virtual ~Matrix4() { }
 
 	Matrix4 operator*(const Matrix4& m)
 	{
