@@ -7,6 +7,7 @@
 // Edit 2012-11-23 by Alexivan - Added DX Conversions
 // EDIT 2012-12-17 by Tillman - Added GetD3DXVECTORX and Union & []-operator overloading.
 // EDIT 2012-12-18 by Alexivan - Warning Ignore for nameless struct in union
+// EDIT 2012-12-18 by Alexivan - GetLength function made constant
 
 #pragma warning ( push ) 
 #pragma warning ( disable : 4201 ) // nonstandard extension used : nameless struct/union
@@ -40,7 +41,7 @@ public:
 
 	virtual ~Vector2() {}
 
-	float GetLength()
+	float GetLength() const
 	{
 		return sqrt(pow(this->x, 2) + pow(this->y, 2));
 	}
@@ -103,7 +104,7 @@ public:
 
 	virtual ~Vector3() {}
 
-	float GetLength()
+	float GetLength() const
 	{
 		return sqrt(pow(this->x, 2) + pow(this->y, 2) + pow(this->z, 2));
 	}
@@ -248,7 +249,7 @@ public:
 
 	}
 
-	float GetLength()
+	float GetLength() const
 	{
 		return sqrt(pow(this->x, 2) + pow(this->y, 2) + pow(this->z, 2) + pow(this->w, 2));
 	}
