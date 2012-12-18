@@ -5,12 +5,21 @@
 
 // Edit 2012-11-18 by Alexivan - Removed DX dependencies
 // Edit 2012-11-23 by Alexivan - Added DX Conversions
+// EDIT 2012-12-17 by Tillman - Added GetD3DXVECTORX and Union & []-operator overloading.
 
 class Vector2
 {
 public:
-	float x;
-	float y;
+	union
+	{
+		//the variable "values" and x and y share the same memory
+		float values[2];
+		struct
+		{
+			float x; //values[0]
+			float y; //values[1]
+		};
+	};
 
 	Vector2()
 	{
@@ -37,15 +46,41 @@ public:
 		this->x /= length;
 		this->y /= length;
 	}
+
+	inline float& operator[]( unsigned int i ) throw(const char*)
+	{
+		if(i > 1)
+		{
+			throw("index out of bounds");
+		}
+		return values[i];
+	}
+	inline const float& operator[]( unsigned int i ) const
+	{
+		if(i > 1)
+		{
+			throw("index out of bounds");
+		}
+		return values[i];
+	}
+
 };
 
 
 class Vector3
 {
 public:
-	float x;
-	float y;
-	float z;
+	union
+	{
+		//the variable "values" and x,y and z share the same memory
+		float values[3];
+		struct
+		{
+			float x; //values[0]
+			float y; //values[1]
+			float z; //values[2]
+		};
+	};
 
 	Vector3()
 	{
@@ -163,6 +198,24 @@ public:
 	{
 		return Vector3(1.0f/this->x, 1.0f/this->y, 1.0f/this->z);
 	}
+
+	inline float& operator[]( unsigned int i ) throw(const char*)
+	{
+		if(i > 2)
+		{
+			throw("index out of bounds");
+		}
+		return values[i];
+	}
+	inline const float& operator[]( unsigned int i ) const
+	{
+		if(i > 2)
+		{
+			throw("index out of bounds");
+		}
+		return values[i];
+	}
+
 #ifdef D3DVECTOR_DEFINED
 	operator D3DXVECTOR3 () const { return D3DXVECTOR3(x,y,z); }
 #endif
@@ -172,7 +225,18 @@ public:
 class Vector4
 {
 public:
-	float x,y,z,w;
+	union
+	{
+		//the variable "values" and x,y,z and w share the same memory
+		float values[4];
+		struct
+		{
+			float x; //values[0]
+			float y; //values[1]
+			float z; //values[2]
+			float w; //values[3]
+		};
+	};
 
 	Vector4(float _x=0.0f, float _y=0.0f, float _z=0.0f, float _w=0.0f) : x(_x), y(_y), z(_z), w(_w)
 	{
@@ -200,6 +264,23 @@ public:
 			this->z /= length;
 			this->w /= length;
 		}
+	}
+
+	inline float& operator[]( unsigned int i ) throw(const char*)
+	{
+		if(i > 3)
+		{
+			throw("index out of bounds");
+		}
+		return values[i];
+	}
+	inline const float& operator[]( unsigned int i ) const
+	{
+		if(i > 3)
+		{
+			throw("index out of bounds");
+		}
+		return values[i];
 	}
 
 #ifdef D3DVECTOR_DEFINED

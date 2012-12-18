@@ -74,8 +74,11 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 	
 	float test = 0.0f;
 	Vector2 dd = Vector2(0.1f, 0.2f);
+	test = dd[0];
 	Vector3 durp = Vector3(1.0f, 2.0f, 3.0f);
-	Vector4 hurp = Vector4(10.0f, 20.0f, 30.0f);
+	test = durp[2];
+	Vector4 hurp = Vector4(10.0f, 20.0f, 30.0f, 40.0f);
+	test = hurp[3];
 
 	//D3DXVECTOR2 ddd = dd.GetD3DXVECTOR2(); //**tillman / malow **
 
