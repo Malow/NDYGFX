@@ -175,6 +175,9 @@
     <ClInclude Include="Source\Texture.h">
       <Filter>Source Files\Engine</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Matrix.h">
+      <Filter>Source Files\Wrapper</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\AnimatedMesh.cpp">
