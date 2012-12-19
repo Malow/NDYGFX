@@ -114,27 +114,16 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 	}
 	
 	
-	int size = 2048*2048*4;
-	float* testData = new float[size]; 
-	for(int i = 0; i < size; i++)
+	int size = 2048;
+	float* testData = new float[size*size*4]; 
+	for(int i = 0; i < size*size; i++)
 	{
-		if(i % 4 == 0)
-		{
-			testData[i] = 1.0f; //R
-		}
-		else if(i % 4 == 1)
-		{
-			testData[i] = 1.0f; //G
-		}
-		else if(i % 4 == 2)
-		{
-			testData[i] = 1.0f; //B
-		}
-		else if(i % 4 == 3)
-		{
-			testData[i] = 1.0f; //A
-		}
+		testData[ i * 4 + 0 ] = 1.0f;
+		testData[ i * 4 + 1 ] = 1.0f;
+		testData[ i * 4 + 2 ] = 1.0f;
+		testData[ i * 4 + 3 ] = 1.0f;
 	}
+
 	iT->SetBlendMap(size, testData);
 	iMesh* ball = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(0, -100, 0));
 	ball->Scale(0.1f);
