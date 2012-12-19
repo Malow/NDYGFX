@@ -4,23 +4,25 @@
 #include "DirectX.h"
 #include "Buffer.h"
 #include "Vertex.h"
+#include "Texture.h"
+#include "ResourceManager.h"
 
 class Object3D
 {
 private:
 	Buffer* verts;
 	Buffer* inds;
-	ID3D11ShaderResourceView* texture;
+	Texture* texture;
 	D3D_PRIMITIVE_TOPOLOGY topology;
 
 public:
-	Object3D(Buffer* verts, Buffer* inds, ID3D11ShaderResourceView* texture, D3D_PRIMITIVE_TOPOLOGY topology);
+	Object3D(Buffer* verts, Buffer* inds, Texture* texture, D3D_PRIMITIVE_TOPOLOGY topology);
 	virtual ~Object3D();
 
 	Buffer* GetVertBuff() { return this->verts; }
 	Buffer* GetIndsBuff() { return this->inds; }
 	D3D_PRIMITIVE_TOPOLOGY GetTopology() { return this->topology; }
-	ID3D11ShaderResourceView* GetTexture() { return this->texture; }
+	Texture* GetTexture() { return this->texture; }
 
 };
 

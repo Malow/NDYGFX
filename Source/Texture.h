@@ -20,7 +20,7 @@ class Texture : public ReferenceCounted
 		string						zFilePath;
 		ID3D11ShaderResourceView*	zSRV;
 
-	public: //public so that the resource manager can delete it in case it doesn't delete itself. **tillman - private, tillåta minnesläcka, dock fortsätta skriva ut varning**
+	private:
 		virtual ~Texture();
 
 	public:

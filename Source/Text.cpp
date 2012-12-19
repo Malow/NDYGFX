@@ -31,9 +31,7 @@ void Text::DeleteFromEnd(unsigned int CharsToDel)
 
 Text::~Text()
 {
-	if(this->font->texture)
-		this->font->texture->Release();
-
+	if(this->font->texture) GetResourceManager()->DeleteTexture(this->font->texture);
 	if(this->font)
 		delete this->font;
 }

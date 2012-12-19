@@ -103,12 +103,7 @@ Terrain::Terrain()
 	this->zTextures[1] = NULL;
 	this->zTextures[2] = NULL;
 	this->zTextures[3] = NULL;
-	this->zTextureFileNames = new string[this->zNrOfTextures];   //**tillman - tmp**
-	this->zTextureFileNames[0] = "";
-	this->zTextureFileNames[1] = "";
-	this->zTextureFileNames[2] = "";
-	this->zTextureFileNames[3] = "";
-	this->zBlendMap = new BlendMap();
+	this->zBlendMap = NULL;
 }
 
 
@@ -139,13 +134,7 @@ Terrain::Terrain(D3DXVECTOR3 pos, D3DXVECTOR3 scale, unsigned int size)
 	this->zTextures[1] = NULL;
 	this->zTextures[2] = NULL;
 	this->zTextures[3] = NULL;
-	
-	this->zTextureFileNames = new string[this->zNrOfTextures];   //**tillman - tmp**
-	this->zTextureFileNames[0] = "";
-	this->zTextureFileNames[1] = "";
-	this->zTextureFileNames[2] = "";
-	this->zTextureFileNames[3] = "";
-	this->zBlendMap = new BlendMap();
+	this->zBlendMap = NULL;
 
 	this->CreateMesh();
 }
@@ -170,11 +159,6 @@ Terrain::~Terrain()
 		//Delete the array that held them.
 		delete [] this->zTextures;
 		this->zTextures = NULL;
-	}
-	if(this->zTextureFileNames)   //**tillman - tmp**
-	{
-		delete[] this->zTextureFileNames;
-		this->zTextureFileNames = NULL;
 	}
 	if(this->zBlendMap) delete this->zBlendMap; this->zBlendMap = NULL;
 }
@@ -280,43 +264,29 @@ void Terrain::SetTextures(char const* const* const fileNames)
 	{
 		for(int i = 0; i < this->zNrOfTextures; i++)
 		{
-			//Check if texture file path has changed
-			if(this->zTextureFileNames[i] != string(fileNames[i]))
-			{
-				//Assign it to the new path if it has
-				this->zTextures[i] = GetResourceManager()->CreateTextureFromFile(fileNames[i]);
-				this->zTextureFileNames[i] = string(fileNames[i]); //**tillman tmp
-			}
-		}
-	}
-}/*
-void Terrain::SetTextures(char const* const* const fileNames)
-{
-	if(fileNames)
-	{
-		for(int i = 0; i < this->zNrOfTextures; i++)
-		{
 			//Check if any textures are loaded.
 			if(this->zTextures[i] == NULL)
 			{
 				this->zTextures[i] = GetResourceManager()->CreateTextureFromFile(fileNames[i]);
-				this->zTextureFileNames[i] = string(fileNames[i]); //**tillman tmp
 			}
-			//Else check if texture shall be replaced by another.
+			//Check if texture file path has changed
 			else if(this->zTextures[i]->GetName() != string(fileNames[i]))
 			{
-				//Create new texture
-				//**TODO - tillman**
-
+				//Decrease the reference
+				GetResourceManager()->DeleteTexture(this->zTextures[i]);
 				//Assign it to the new path if it has
-				this->zTextureFileNames[i] = string(fileNames[i]);  //**tillman tmp
+				this->zTextures[i] = GetResourceManager()->CreateTextureFromFile(fileNames[i]);
 			}
 		}
 	}
-}*/
+}
 
 void Terrain::SetBlendMap(unsigned int size, float const* const data)
 {
+	if(this->zBlendMap == NULL)
+	{
+		this->zBlendMap = new BlendMap();
+	}
 	this->zBlendMap->Size = size;
 	this->zBlendMap->Data = data;
 	this->zBlendMap->HasChanged = true;

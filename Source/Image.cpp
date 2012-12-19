@@ -10,9 +10,7 @@ Image::Image(D3DXVECTOR2 pos, D3DXVECTOR2 dim)
 
 Image::~Image()
 {
-	//**tillman - resource manager crash**
-	//if(this->texture)
-	//	this->texture->Release();
+	if(this->texture) GetResourceManager()->DeleteTexture(this->texture);
 }
 
 Vector2 Image::GetPosition() const

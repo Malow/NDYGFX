@@ -2,6 +2,7 @@
 
 #include "DirectX.h"
 #include "iImage.h"
+#include "ResourceManager.h"
 /*
 Image class that represents a 2d object on the screen
 
@@ -13,7 +14,7 @@ private:
 	D3DXVECTOR2 position;
 	D3DXVECTOR2 dimensions;
 	float opacity;
-	ID3D11ShaderResourceView* texture;
+	Texture* texture;
 
 
 public:
@@ -22,8 +23,8 @@ public:
 
 	virtual Vector2 GetPosition() const;
 	virtual void SetPosition(Vector2 pos);
-	ID3D11ShaderResourceView* GetTexture() const { return this->texture; }
-	void SetTexture(ID3D11ShaderResourceView* text) { this->texture = text; }
+	Texture* GetTexture() const { return this->texture; }
+	void SetTexture(Texture* text) { this->texture = text; }
 	virtual Vector2 GetDimensions() const;
 	virtual void SetDimensions(Vector2 dims);
 	virtual float GetOpacity() const { return this->opacity; }

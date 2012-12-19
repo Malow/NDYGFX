@@ -1,4 +1,9 @@
-
+//------------------------------------------------------------------------------------------------------
+//	Modified by Markus Tillman at Blekinga Tekniska Högskola for project "Not dead yet".
+//
+//	Rendering: Skybox.
+//	Renders a skybox using spheremapping.
+//------------------------------------------------------------------------------------------------------
 
 cbuffer EveryFrame
 {

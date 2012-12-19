@@ -453,7 +453,7 @@ void DxManager::RenderImages()
 		this->Shader_BillBoard->SetFloat("dimx", img->GetDimensions().x);
 		this->Shader_BillBoard->SetFloat("dimy", img->GetDimensions().y);
 		*/
-		this->Shader_BillBoard->SetResource("tex2D", img->GetTexture());
+		this->Shader_BillBoard->SetResource("tex2D", img->GetTexture()->GetSRVPointer());
 		this->Shader_BillBoard->Apply(0);
 		this->Dx_DeviceContext->Draw(1, 0);
 	}
@@ -494,7 +494,7 @@ void DxManager::RenderText()
 		}
 
 
-		this->Shader_Text->SetResource("tex2D", txt->GetFont()->texture);
+		this->Shader_Text->SetResource("tex2D", txt->GetFont()->texture->GetSRVPointer());
 
 
 		string drawText = txt->GetText();

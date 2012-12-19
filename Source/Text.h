@@ -3,10 +3,11 @@
 #include <string>
 #include "DirectX.h"
 #include "iText.h"
+#include "ResourceManager.h"
 
 struct Font
 {
-	ID3D11ShaderResourceView* texture;
+	Texture* texture;
 	int charTexCoords[256];
 	int charWidth[256];
 

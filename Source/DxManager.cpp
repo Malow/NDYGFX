@@ -255,10 +255,16 @@ void DxManager::CreateStaticMesh(StaticMesh* mesh)
 				MaloW::Debug("CreateIndsBuffer Failed");
 		}
 
-		ID3D11ShaderResourceView* texture = NULL;
+		//**TODO TILLMAN - Resourcemanager**
+		/*ID3D11ShaderResourceView* texture = NULL;
 		if(strip->GetTexturePath() != "")
 		{
 			texture = GetResourceManager()->CreateShaderResourceViewFromFile(strip->GetTexturePath().c_str());
+		}*/
+		Texture* texture = NULL;
+		if(strip->GetTexturePath() != "")
+		{
+			texture = GetResourceManager()->CreateTextureFromFile(strip->GetTexturePath().c_str());
 		}
 
 		Object3D* obj = new Object3D(verts, inds, texture, mesh->GetTopology()); 
@@ -315,7 +321,7 @@ void DxManager::CreateAnimatedMesh(AnimatedMesh* mesh)
 			}
 
 			//**TODO: TILLMAN - resource manager**
-			ID3D11ShaderResourceView* texture = NULL;
+			/*ID3D11ShaderResourceView* texture = NULL;
 			if(strip->GetTexturePath() != "")
 			{
 				D3DX11_IMAGE_LOAD_INFO loadInfo;
@@ -324,6 +330,11 @@ void DxManager::CreateAnimatedMesh(AnimatedMesh* mesh)
 				loadInfo.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 				if(FAILED(D3DX11CreateShaderResourceViewFromFile(Dx_Device, strip->GetTexturePath().c_str(), &loadInfo, NULL, &texture, NULL)))
 					MaloW::Debug("Failed to load texture " + strip->GetTexturePath());
+			}*/
+			Texture* texture = NULL;
+			if(strip->GetTexturePath() != "")
+			{
+				texture = GetResourceManager()->CreateTextureFromFile(strip->GetTexturePath().c_str());
 			}
 
 			Object3D* obj = new Object3D(verts, inds, texture, mesh->GetTopology()); 
@@ -359,7 +370,7 @@ Object3D* DxManager::createParticleObject(ParticleMesh* mesh)
 	Buffer* inds = NULL;
 
 	//**TODO: TILLMAN - resource manager**
-	ID3D11ShaderResourceView* texture = NULL;
+	/*ID3D11ShaderResourceView* texture = NULL;
 	if(mesh->GetTexturePath() != "")
 	{
 		D3DX11_IMAGE_LOAD_INFO loadInfo;
@@ -368,8 +379,12 @@ Object3D* DxManager::createParticleObject(ParticleMesh* mesh)
 		loadInfo.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 		if(FAILED(D3DX11CreateShaderResourceViewFromFile(Dx_Device, mesh->GetTexturePath().c_str(), &loadInfo, NULL, &texture, NULL)))
 			MaloW::Debug("Failed to load texture " + mesh->GetTexturePath());
+	}*/
+	Texture* texture = NULL;
+	if(mesh->GetTexturePath() != "")
+	{
+		texture = GetResourceManager()->CreateTextureFromFile(mesh->GetTexturePath().c_str());
 	}
-
 
 	Object3D* obj = new Object3D(verts, inds, texture, mesh->GetTopology());
 	mesh->RecreateWorldMatrix(); 
@@ -432,10 +447,10 @@ void DxManager::CreateImage(Image* image, string texture)
 {
 
 	//**TODO: TILLMAN - resource manager**
-	ID3D11ShaderResourceView* tex = NULL;
+	Texture* tex = NULL;
 	if(texture != "")
 	{
-		tex = GetResourceManager()->CreateShaderResourceViewFromFile(texture.c_str());
+		tex = GetResourceManager()->CreateTextureFromFile(texture.c_str());
 	}
 	/*
 	ID3D11ShaderResourceView* tex = NULL;
@@ -467,10 +482,10 @@ void DxManager::DeleteText(Text* text)
 
 void DxManager::CreateText(Text* text, string font)
 {
-	ID3D11ShaderResourceView* tex = NULL;
+	Texture* tex = NULL;
 	if(font != "")
 	{
-		tex = GetResourceManager()->CreateShaderResourceViewFromFile((font + ".png").c_str());
+		tex = GetResourceManager()->CreateTextureFromFile((font + ".png").c_str());
 	}
 
 	Font* newFont = text->GetFont();
@@ -558,11 +573,12 @@ void DxManager::CreateSkyBox(string texture)
 
 	if(FAILED(IndexBuffer->Init(this->Dx_Device, this->Dx_DeviceContext, indiceBufferDesc)))
 		MaloW::Debug("Failed to init skybox");
-
-	D3DX11_IMAGE_LOAD_INFO loadSMInfo;
+	
+	//**tillman resource manager**
+	/*D3DX11_IMAGE_LOAD_INFO loadSMInfo;
 	loadSMInfo.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
 
-	//**tillman resource manager**
+	
 	ID3D11Texture2D* SMTexture = 0;
 	D3DX11CreateTextureFromFile(this->Dx_Device, texture.c_str(), 
 		&loadSMInfo, 0, (ID3D11Resource**)&SMTexture, 0);
@@ -576,12 +592,20 @@ void DxManager::CreateSkyBox(string texture)
 	SMViewDesc.ViewDimension = D3D10_SRV_DIMENSION_TEXTURECUBE;
 	SMViewDesc.TextureCube.MipLevels = SMTextureDesc.MipLevels;
 	SMViewDesc.TextureCube.MostDetailedMip = 0;
+	//**TODO: TILLMAN - resourcemanager**
 	ID3D11ShaderResourceView* text;
 	this->Dx_Device->CreateShaderResourceView(SMTexture, &SMViewDesc, &text);
 
 	SMTexture->Release();
+	*/
+	//**TODO: TILLMAN - resourcemanager**
+	Texture* tex = NULL;
+	if(texture != "")
+	{
+		tex = GetResourceManager()->CreateCubeTexture(texture.c_str());
+	}
 
-	Object3D* ro = new Object3D(VertexBuffer, IndexBuffer, text, sb->GetTopology());
+	Object3D* ro = new Object3D(VertexBuffer, IndexBuffer, tex, sb->GetTopology());
 	strip->SetRenderObject(ro);
 
 	this->skybox = sb;

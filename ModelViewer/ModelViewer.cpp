@@ -67,10 +67,14 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 //*************************************	     PRE TEST       **********************
 #ifdef TEST
 	int vertSize = 2;
-	iTerrain* iT = GetGraphics()->CreateTerrain(Vector3(0, 0, 0), Vector3(100.0f, 0.0f, 100.0f), vertSize);
+	float testSize = 5.0f;
+	
+	iTerrain* iT = GetGraphics()->CreateTerrain(Vector3(0, 0, 0), Vector3(testSize, 0.0f, testSize), vertSize);
+	iTerrain* iT2 = GetGraphics()->CreateTerrain(Vector3(testSize, 0, 0), Vector3(testSize, 0.0f, testSize), vertSize);
+	
 	//iAnimatedMesh* iAM = GetGraphics()->CreateAnimatedMesh("Media/TestMedia/FlagBlue.ani", Vector3(0, 0, 0));
-	iImage* iM = GetGraphics()->CreateImage(Vector2(100, 100), Vector2(100, 100), "Media/BallTexture.png");
-	iText* iTe = GetGraphics()->CreateText("durp", Vector2(300, 100), 1.0f, "Media/TestMedia/1");
+	//iImage* iM = GetGraphics()->CreateImage(Vector2(100, 100), Vector2(100, 100), "Media/BallTexture.png");
+	//iText* iTe = GetGraphics()->CreateText("durp", Vector2(300, 100), 1.0f, "Media/TestMedia/1");
 	
 	float test = 0.0f;
 	Vector2 dd = Vector2(0.1f, 0.2f);
@@ -95,14 +99,15 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 		hmData[i] = 0.0f;
 	}
 	iT->SetHeightMap(hmData);
-
 	const char* fileNames[4];
 	fileNames[0] = "Media/BallTexture.png";
 	fileNames[1] = "Media/BallTexture.png";
 	fileNames[2] = "Media/BallTexture.png";
 	fileNames[3] = "Media/TerrainTexture.png";
 	iT->SetTextures(fileNames);
+	iT->SetHeightMap(hmData);
 	iT->SetTextureScale(-4);
+
 	float testF = 0.0f;
 	try
 	{
@@ -114,7 +119,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 	}
 	
 	
-	int size = 2048*2048*4;
+	int size = 512*512*4;
 	float* testData = new float[size]; 
 	for(int i = 0; i < size; i++)
 	{
@@ -136,6 +141,23 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 		}
 	}
 	iT->SetBlendMap(size, testData);
+
+
+	fileNames[0] = "Media/BallTexture.png";
+	fileNames[1] = "Media/TerrainTexture.png";
+	fileNames[2] = "Media/TerrainTexture.png";
+	fileNames[3] = "Media/TerrainTexture.png";
+	iT2->SetTextures(fileNames);
+	iT2->SetBlendMap(size, testData);
+
+	iTerrain** iTs = new iTerrain*[10];
+	for(int i = 0; i < 10; i++)
+	{
+		iTs[i] = GetGraphics()->CreateTerrain(Vector3((testSize * 2) + (i * testSize), 0, 0), Vector3(testSize, 0.0f, testSize), vertSize);
+		iTs[i]->SetTextures(fileNames);
+		iTs[i]->SetBlendMap(size, testData);
+	}
+
 	iMesh* ball = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(0, -100, 0));
 	ball->Scale(0.1f);
 	iMesh* secModel = GetGraphics()->CreateMesh("Media/bth.obj", Vector3(10, 0, 10));
