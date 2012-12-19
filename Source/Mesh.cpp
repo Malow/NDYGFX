@@ -275,9 +275,9 @@ void Mesh::SetScale( float scale )
 
 void Mesh::SetScale( Vector3 scale )
 {
-	this->scale.x *= scale.x;
-	this->scale.y *= scale.y;
-	this->scale.z *= scale.z;
+	this->scale.x = scale.x;
+	this->scale.y = scale.y;
+	this->scale.z = scale.z;
 	this->RecreateWorldMatrix();
 }
 
