@@ -8,6 +8,8 @@
 
 #include "Vector.h"
 
+#pragma warning ( push )
+#pragma warning ( disable : 4290 ) // C++ Exception Does Nothing
 
 extern "C"
 {
@@ -49,3 +51,5 @@ extern "C"
 			virtual void Scale(float scale) = 0;*/
 	};
 }
+
+#pragma warning ( pop )

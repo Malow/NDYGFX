@@ -33,7 +33,7 @@ struct BlendMap
 class Terrain : public iTerrain
 {
 	private:
-		int							zSize; //size of mesh (width & height)
+		unsigned int				zSize; //size of mesh (width & height)
 		D3DXVECTOR3					zPos;
 		D3DXVECTOR3					zScale;
 		D3DXMATRIX					zWorldMatrix;
