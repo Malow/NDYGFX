@@ -751,3 +751,8 @@ void DxManager::ResizeEngine(float width, float height)
 	ResizeEvent* te = new ResizeEvent("Resize", width, height);
 	this->PutEvent(te);
 }
+
+void DxManager::SetSunLightDisabled()
+{
+	this->useSun = false;
+}

@@ -733,3 +733,8 @@ void GraphicsEngineImp::DeleteTerrain( iTerrain*& terrain )
 	this->dx->DeleteTerrain(dynamic_cast<Terrain*>(terrain));
 	terrain = 0;
 }
+
+void GraphicsEngineImp::SetSunLightDisabled()
+{
+	this->dx->SetSunLightDisabled();
+}

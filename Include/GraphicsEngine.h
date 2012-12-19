@@ -71,6 +71,7 @@ extern "C"
 		virtual void SetFPSMax(float maxFPS) = 0;
 
 		virtual void SetSunLightProperties(Vector3 direction, Vector3 lightColor = Vector3(1.0f, 1.0f, 1.0f), float intensity = 1.0f) = 0;
+		virtual void SetSunLightDisabled() = 0;
 
 		virtual iPhysicsEngine* GetPhysicsEngine() const = 0;
 
