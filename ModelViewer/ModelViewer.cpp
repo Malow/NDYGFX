@@ -327,6 +327,10 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_SUBTRACT))
 			GetGraphics()->GetCamera()->SetSpeed(GetGraphics()->GetCamera()->GetSpeed() * (1.0f - diff * 0.01f));
 
+		if(GetGraphics()->GetKeyListener()->IsPressed(VK_SPACE))
+			GetGraphics()->GetCamera()->MoveUp(diff);
+		if(GetGraphics()->GetKeyListener()->IsPressed(VK_CONTROL))
+			GetGraphics()->GetCamera()->MoveDown(diff);
 
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_ESCAPE))
 			go = false;

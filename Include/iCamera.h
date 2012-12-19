@@ -27,6 +27,8 @@ extern "C"
 		virtual void MoveBackward(float diff) = 0;
 		virtual void MoveLeft(float diff) = 0;
 		virtual void MoveRight(float diff) = 0;
+		virtual void MoveUp(float diff) = 0;
+		virtual void MoveDown(float diff) = 0;
 
 		virtual Vector3 GetForward() = 0;
 		virtual void SetForward(Vector3 forward) = 0;
