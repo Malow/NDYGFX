@@ -55,7 +55,9 @@ public:
 
 	inline bool operator<( const Vector2& v ) const
 	{
-		return ( x < v.x || y < v.y );
+		if ( x >= v.x ) return false;
+		if ( y >= v.y ) return false;
+		return true;
 	}
 
 	inline Vector2 operator-( const Vector2& v ) const
@@ -232,7 +234,10 @@ public:
 
 	inline bool operator<( const Vector3& v ) const
 	{
-		return ( x < v.x || y < v.y || z < v.z );
+		if ( x >= v.x ) return false;
+		if ( y >= v.y ) return false;
+		if ( z >= v.z ) return false;
+		return true;
 	}
 
 	inline float& operator[]( unsigned int i ) throw(const char*)
@@ -305,7 +310,11 @@ public:
 
 	inline bool operator<( const Vector4& v ) const
 	{
-		return ( x < v.x || y < v.y || z < v.z || w < v.w );
+		if ( x >= v.x ) return false;
+		if ( y >= v.y ) return false;
+		if ( z >= v.z ) return false;
+		if ( w >= v.w ) return false;
+		return true;
 	}
 
 	inline float& operator[]( unsigned int i ) throw(const char*)
