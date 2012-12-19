@@ -1,7 +1,7 @@
 #pragma once
 
 #include <GraphicsEngine.h>
-#include <windows.h>
+#include "Windows.h"
 
 #ifdef _DEBUG
 #pragma comment(lib, "NDYGFXD.lib")

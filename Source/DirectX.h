@@ -1,21 +1,9 @@
 #pragma once
 
-// Ignore Windows Warnings
-#pragma warning( disable : 4005 )
+// EDIT: 2012-12-18, Added Warning Ignore
 
-// Safe Release
-template<typename T>
-inline void SAFE_RELEASE( T& a )
-{
-	if ( a ) a->Release(), a = 0;
-}
-
-// Safe Delete
-template<typename T>
-inline void SAFE_DELETE( T& a )
-{
-	if ( a ) delete a; a = 0;
-}
+#pragma warning ( push ) // Ignore macro redefinition warnings
+#pragma warning ( disable : 4005 )
 
 // DirectX
 #include <D3D11.h>
@@ -43,3 +31,20 @@ inline void SAFE_DELETE( T& a )
 	#pragma comment(lib, "Effects11.lib")
 	#pragma comment(lib, "d3dx10.lib")
 #endif
+
+#pragma warning ( pop )
+
+
+// Safe Release
+template<typename T>
+inline void SAFE_RELEASE( T& a )
+{
+	if ( a ) a->Release(), a = 0;
+}
+
+// Safe Delete
+template<typename T>
+inline void SAFE_DELETE( T& a )
+{
+	if ( a ) delete a; a = 0;
+}

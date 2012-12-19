@@ -6,6 +6,12 @@
 // Edit 2012-11-18 by Alexivan - Removed DX dependencies
 // Edit 2012-11-23 by Alexivan - Added DX Conversions
 // EDIT 2012-12-17 by Tillman - Added GetD3DXVECTORX and Union & []-operator overloading.
+// EDIT 2012-12-18 by Alexivan - Warning Ignore for nameless struct in union
+// EDIT 2012-12-18 by Alexivan - GetLength function made constant
+
+#pragma warning ( push ) 
+#pragma warning ( disable : 4201 ) // nonstandard extension used : nameless struct/union
+#pragma warning ( disable : 4290 ) // C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
 
 class Vector2
 {
@@ -35,7 +41,7 @@ public:
 
 	virtual ~Vector2() {}
 
-	float GetLength()
+	float GetLength() const
 	{
 		return sqrt(pow(this->x, 2) + pow(this->y, 2));
 	}
@@ -45,6 +51,16 @@ public:
 		float length = this->GetLength();
 		this->x /= length;
 		this->y /= length;
+	}
+
+	inline Vector2 operator-( const Vector2& v ) const
+	{
+		return Vector2( x - v.x, y - v.y );
+	}
+
+	inline Vector2 operator+( const Vector2& v ) const
+	{
+		return Vector2( x + v.x, y + v.y );
 	}
 
 	inline float& operator[]( unsigned int i ) throw(const char*)
@@ -98,12 +114,12 @@ public:
 
 	virtual ~Vector3() {}
 
-	float GetLength()
+	inline float GetLength() const
 	{
 		return sqrt(pow(this->x, 2) + pow(this->y, 2) + pow(this->z, 2));
 	}
 
-	void normalize()
+	inline void normalize()
 	{
 		float length = this->GetLength();
 			
@@ -115,7 +131,7 @@ public:
 		}
 	}
 
-	float GetDotProduct(Vector3& compObj)
+	inline float GetDotProduct(Vector3& compObj)
 	{
 		float dot = this->x * compObj.x;
 		dot += this->y * compObj.y;
@@ -123,7 +139,7 @@ public:
 		return dot;
 	}
 
-	Vector3 GetCrossProduct(Vector3 vec)
+	inline Vector3 GetCrossProduct(Vector3 vec)
 	{
 		Vector3 retVec;
 		retVec.x = this->y * vec.z - vec.y * this->z;
@@ -133,68 +149,68 @@ public:
 		return retVec;
 	}
 
-	float GetAngle(Vector3& compObj)
+	inline float GetAngle(Vector3& compObj)
 	{
 		return acos(this->GetDotProduct(compObj) / (this->GetLength() * compObj.GetLength()));
 	}
 	// new for physics
 		
-	Vector3 operator+(const Vector3& v) const
+	inline Vector3 operator+(const Vector3& v) const
     {
         return Vector3(this->x+v.x, this->y+v.y, this->z+v.z);
     }
-	Vector3 operator-(const Vector3& v) const
+	inline Vector3 operator-(const Vector3& v) const
 	{
 		return Vector3(this->x-v.x, this->y-v.y, this->z-v.z);
 	}
-	Vector3 operator*(const float& scalar) const
+	inline Vector3 operator*(const float& scalar) const
 	{
 		return Vector3(this->x*scalar, this->y*scalar, this->z*scalar);
 	}
-	Vector3 operator/(const float& scalar) const
+	inline Vector3 operator/(const float& scalar) const
 	{
 		return Vector3(this->x/scalar, this->y/scalar, this->z/scalar);
 	}
-	void operator+=(const Vector3& v)
+	inline void operator+=(const Vector3& v)
     {
         x += v.x;
         y += v.y;
         z += v.z;
     }
-	void operator-=(const Vector3& v)
+	inline void operator-=(const Vector3& v)
     {
         x -= v.x;
         y -= v.y;
         z -= v.z;
     }
-	void operator*=(const float scalar)
+	inline void operator*=(const float scalar)
     {
         x *= scalar;
         y *= scalar;
         z *= scalar;
     }
-	float GetLengthSquared()
+	inline float GetLengthSquared()
 	{
 		return this->GetDotProduct(*this);
 	}
-	Vector3 GetComponentMultiplication(const Vector3 & compVec)
+	inline Vector3 GetComponentMultiplication(const Vector3 & compVec)
 	{
 		return Vector3(this->x*compVec.x, this->y*compVec.y, this->z*compVec.z);
 	}
-	void RotateY(float angle)
+	inline void RotateY(float angle)
 	{
 		Vector3 vec = *this;
 		vec.x = cos(angle) * this->x + sin(angle) * this->z;
 		vec.z = -sin(angle) * this->x + cos(angle) * this->z;
 		*this = vec;
 	}
-	Vector3 GetRoteted(float angle)
+	inline Vector3 GetRoteted(float angle)
 	{
 		Vector3 vec = *this;
 		vec.RotateY(angle);
 		return vec;
 	}
-	Vector3 GetInverseComponents()
+	inline Vector3 GetInverseComponents()
 	{
 		return Vector3(1.0f/this->x, 1.0f/this->y, 1.0f/this->z);
 	}
@@ -243,17 +259,17 @@ public:
 
 	}
 
-	float GetLength()
+	inline float GetLength() const
 	{
 		return sqrt(pow(this->x, 2) + pow(this->y, 2) + pow(this->z, 2) + pow(this->w, 2));
 	}
 
-	Vector4 operator+(const Vector4& v) const
+	inline Vector4 operator+(const Vector4& v) const
 	{
 		return Vector4(this->x+v.x, this->y+v.y, this->z+v.z, this->w+v.w);
 	}
 
-	void normalize()
+	inline void normalize()
 	{
 		float length = this->GetLength();
 
@@ -288,5 +304,6 @@ public:
 #endif
 };
 
+#pragma warning (pop)
 
 #endif

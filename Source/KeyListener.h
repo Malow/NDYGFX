@@ -1,7 +1,6 @@
 #ifndef KEYLISTENER_H
 #define KEYLISTENER_H
 
-#include <windows.h>
 #include "DirectX.h"
 #include "Process.h"
 #include "iKeyListener.h"

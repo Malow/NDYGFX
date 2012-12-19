@@ -18,28 +18,28 @@ public:
 		this->value[2][2] = 1.0f;
 		this->value[3][3] = 1.0f;
 	}
-	virtual ~Matrix4();
+	virtual ~Matrix4() { }
 
-	Matrix4 operator*(const Matrix4& m) const
+	Matrix4 operator*(const Matrix4& m)
 	{
 		Matrix4 ret;
 		for(int i = 0; i < 4; i++)
 		{
 			for(int u = 0; u < 4; u++)
 			{
-				ret.value[i * 4 + u] = this->value[i * 4] * m.value[u] + this->value[i * 4 + 1] * m.value[u+4] + 
-					this->value[i * 4 + 2] * m.value[u + 8] + this->value[i * 4 + 3] * m.value[u + 12];
+				ret.value[i][u] = this->value[i][0] * m.value[0][u] + this->value[i][1] * m.value[1][u] + 
+					this->value[i][2] * m.value[2][u] + this->value[i][3] * m.value[3][u];
 			}
 		}
 		return ret;
 	}
 
-	Vector3 operator*(const Vector3& vec) const
+	Vector3 operator*(const Vector3& vec)
 	{
 		Vector3 ret;
-		ret.x = this->value[0] * vec.x + this->value[1] * vec.y + this->value[2] * vec.z + this->value[3];
-		ret.y = this->value[4] * vec.x + this->value[5] * vec.y + this->value[6] * vec.z + this->value[7];
-		ret.z = this->value[8] * vec.x + this->value[9] * vec.y + this->value[10] * vec.z + this->value[11];
+		ret.x = this->value[0][0] * vec.x + this->value[0][1] * vec.y + this->value[0][2] * vec.z + this->value[0][3];
+		ret.y = this->value[1][0] * vec.x + this->value[1][1] * vec.y + this->value[1][2] * vec.z + this->value[1][3];
+		ret.z = this->value[2][0] * vec.x + this->value[2][1] * vec.y + this->value[2][2] * vec.z + this->value[2][3];
 		return ret;
 	}
 
