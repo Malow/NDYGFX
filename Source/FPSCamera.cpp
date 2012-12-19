@@ -71,7 +71,7 @@ void FPSCamera::UpdateSpecific(float delta)
 			tmpForward.y = this->forward.y; 
 			tmpForward.z = this->forward.z; 
 			Vector3 rightVec = yAxis.GetCrossProduct(tmpForward);
-			rightVec.normalize();
+			rightVec.Normalize();
 			//crossproduct between forward & right vector 
 			Vector3 tmpUp = Vector3();
 			tmpUp = tmpForward.GetCrossProduct(rightVec);
@@ -111,4 +111,14 @@ void FPSCamera::MoveRight(float diff)
 {
 	this->pos.x += sin(this->angleX) * ((float)diff/100) * this->speed;
 	this->pos.z -= cos(this->angleX) * ((float)diff/100) * this->speed;
+}
+
+void FPSCamera::MoveUp( float diff )
+{
+	this->pos.y += ((float)diff/100.0f) * this->speed;
+}
+
+void FPSCamera::MoveDown( float diff )
+{
+	this->pos.y -= ((float)diff/100.0f) * this->speed;
 }

@@ -157,7 +157,7 @@ void DxManager::RenderDeferredGeometry()
 					if(bmPtr->SRV) bmPtr->SRV->Release();
 
 					//Create texture
-					int widthOrHeight = (int)sqrt(bmPtr->Size * 0.25f); //**ev. avrundnings fel TILLMAN
+					int widthOrHeight = bmPtr->Size;
 					D3D11_TEXTURE2D_DESC texDesc;
 					texDesc.Width = widthOrHeight;
 					texDesc.Height = widthOrHeight;

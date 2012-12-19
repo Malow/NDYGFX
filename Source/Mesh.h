@@ -62,6 +62,9 @@ public:
 	virtual void Rotate(const Vector3& radians);
 	virtual void Scale(const Vector3& scale);
 	virtual void Scale(float scale);
+	virtual void SetScale(float scale);
+	virtual void SetScale(Vector3 scale);
+	virtual void SetScale(D3DXVECTOR3 scale);
 	virtual Vector3 GetPosition() const;
 	virtual Vector4 GetRotationQuaternion() const;
 	virtual Vector3 GetScaling() const;

@@ -8,6 +8,8 @@
 // EDIT 2012-12-17 by Tillman - Added GetD3DXVECTORX and Union & []-operator overloading.
 // EDIT 2012-12-18 by Alexivan - Warning Ignore for nameless struct in union
 // EDIT 2012-12-18 by Alexivan - GetLength function made constant
+// EDIT 2012-12-19 by Alexivan - Added Less Than Comparison, Removed Destructors
+// EDIT 2012-12-19 by Alexivan - Removed Destructors, Fixed GetRotated, Normalize with big N, Made some functions constant
 
 #pragma warning ( push ) 
 #pragma warning ( disable : 4201 ) // nonstandard extension used : nameless struct/union
@@ -39,18 +41,25 @@ public:
 		this->y = _y;
 	}
 
-	virtual ~Vector2() {}
-
 	float GetLength() const
 	{
 		return sqrt(pow(this->x, 2) + pow(this->y, 2));
 	}
 
-	void normalize()
+	void Normalize()
 	{
 		float length = this->GetLength();
 		this->x /= length;
 		this->y /= length;
+	}
+
+	inline bool operator<( const Vector2& v ) const
+	{
+		if ( x < v.x ) return true;
+		if ( v.x < x ) return false;
+		if ( y < v.y ) return true;
+		if ( v.y < y ) return false;
+		return false;
 	}
 
 	inline Vector2 operator-( const Vector2& v ) const
@@ -71,6 +80,7 @@ public:
 		}
 		return values[i];
 	}
+
 	inline const float& operator[]( unsigned int i ) const
 	{
 		if(i > 1)
@@ -112,14 +122,12 @@ public:
 		this->z = _z;
 	}
 
-	virtual ~Vector3() {}
-
 	inline float GetLength() const
 	{
 		return sqrt(pow(this->x, 2) + pow(this->y, 2) + pow(this->z, 2));
 	}
 
-	inline void normalize()
+	inline void Normalize()
 	{
 		float length = this->GetLength();
 			
@@ -131,7 +139,7 @@ public:
 		}
 	}
 
-	inline float GetDotProduct(Vector3& compObj)
+	inline float GetDotProduct(Vector3& compObj) const
 	{
 		float dot = this->x * compObj.x;
 		dot += this->y * compObj.y;
@@ -139,7 +147,7 @@ public:
 		return dot;
 	}
 
-	inline Vector3 GetCrossProduct(Vector3 vec)
+	inline Vector3 GetCrossProduct(Vector3 vec) const
 	{
 		Vector3 retVec;
 		retVec.x = this->y * vec.z - vec.y * this->z;
@@ -159,44 +167,53 @@ public:
     {
         return Vector3(this->x+v.x, this->y+v.y, this->z+v.z);
     }
+
 	inline Vector3 operator-(const Vector3& v) const
 	{
 		return Vector3(this->x-v.x, this->y-v.y, this->z-v.z);
 	}
+
 	inline Vector3 operator*(const float& scalar) const
 	{
 		return Vector3(this->x*scalar, this->y*scalar, this->z*scalar);
 	}
+
 	inline Vector3 operator/(const float& scalar) const
 	{
 		return Vector3(this->x/scalar, this->y/scalar, this->z/scalar);
 	}
+
 	inline void operator+=(const Vector3& v)
     {
         x += v.x;
         y += v.y;
         z += v.z;
     }
+
 	inline void operator-=(const Vector3& v)
     {
         x -= v.x;
         y -= v.y;
         z -= v.z;
     }
+
 	inline void operator*=(const float scalar)
     {
         x *= scalar;
         y *= scalar;
         z *= scalar;
     }
+
 	inline float GetLengthSquared()
 	{
 		return this->GetDotProduct(*this);
 	}
+
 	inline Vector3 GetComponentMultiplication(const Vector3 & compVec)
 	{
 		return Vector3(this->x*compVec.x, this->y*compVec.y, this->z*compVec.z);
 	}
+
 	inline void RotateY(float angle)
 	{
 		Vector3 vec = *this;
@@ -204,15 +221,28 @@ public:
 		vec.z = -sin(angle) * this->x + cos(angle) * this->z;
 		*this = vec;
 	}
-	inline Vector3 GetRoteted(float angle)
+
+	inline Vector3 GetRotated(float angle) const
 	{
 		Vector3 vec = *this;
 		vec.RotateY(angle);
 		return vec;
 	}
-	inline Vector3 GetInverseComponents()
+
+	inline Vector3 GetInverseComponents() const
 	{
 		return Vector3(1.0f/this->x, 1.0f/this->y, 1.0f/this->z);
+	}
+
+	inline bool operator<( const Vector3& v ) const
+	{
+		if ( x < v.x ) return true;
+		if ( v.x < x ) return false;
+		if ( y < v.y ) return true;
+		if ( v.y < y ) return false;
+		if ( z < v.z ) return true;
+		if ( v.z < z ) return false;
+		return false;
 	}
 
 	inline float& operator[]( unsigned int i ) throw(const char*)
@@ -223,6 +253,7 @@ public:
 		}
 		return values[i];
 	}
+
 	inline const float& operator[]( unsigned int i ) const
 	{
 		if(i > 2)
@@ -269,7 +300,7 @@ public:
 		return Vector4(this->x+v.x, this->y+v.y, this->z+v.z, this->w+v.w);
 	}
 
-	inline void normalize()
+	inline void Normalize()
 	{
 		float length = this->GetLength();
 
@@ -282,6 +313,19 @@ public:
 		}
 	}
 
+	inline bool operator<( const Vector4& v ) const
+	{
+		if ( x < v.x ) return true;
+		if ( v.x < x ) return false;
+		if ( y < v.y ) return true;
+		if ( v.y < y ) return false;
+		if ( z < v.z ) return true;
+		if ( v.z < z ) return false;
+		if ( w < v.w ) return true;
+		if ( v.w < w ) return false;
+		return false;
+	}
+
 	inline float& operator[]( unsigned int i ) throw(const char*)
 	{
 		if(i > 3)
@@ -290,6 +334,7 @@ public:
 		}
 		return values[i];
 	}
+
 	inline const float& operator[]( unsigned int i ) const
 	{
 		if(i > 3)

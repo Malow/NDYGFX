@@ -10,18 +10,16 @@ void Terrain::CreateMesh()
 	this->zNrOfVertices = this->zSize * this->zSize;
 	this->zVertices = new Vertex[this->zSize * this->zSize];
 
-	for(int i = 0; i < this->zSize; i++)
-	//for(int i = this->zSize - 1; i >= 0; i--)
+	for(unsigned int i = 0; i < this->zSize; i++)
 	{
-		//for(int u = 0; u < this->zSize; u++)
-		for(int u = this->zSize - 1; u >= 0; u--)
+		for(unsigned int u = 0; u < this->zSize; u++)
 		{
 			//local pos range [-0.5, 0.5f] * scale
 			this->zVertices[i * this->zSize + u] =
 				Vertex(	D3DXVECTOR3((float)u / (this->zSize - 1) - 0.5f, 0.0f, (float)i / (this->zSize - 1) - 0.5f), 
-						D3DXVECTOR2((float)i / ((this->zSize - 1) / tilingFactor), (float)u / ((this->zSize - 1) / tilingFactor)), 
-						D3DXVECTOR3(0, 1, 0),
-						D3DXVECTOR3(0, 0, 0));
+						D3DXVECTOR2((float)u / ((this->zSize - 1) / tilingFactor),(float)i / ((this->zSize - 1) / tilingFactor)), 
+						D3DXVECTOR3(0.0f, 1.0f, 0.0f),
+						D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 		}
 	}
 
@@ -31,9 +29,9 @@ void Terrain::CreateMesh()
 	this->zIndices = new int[this->zNrOfIndices];
 	
 	int offset = 0; 
-	for(int i = 0; i < this->zSize-1; i++)
+	for(unsigned int i = 0; i < this->zSize-1; i++)
 	{
-		for(int u = 0; u < this->zSize-1; u++)
+		for(unsigned int u = 0; u < this->zSize-1; u++)
 		{
 			this->zIndices[offset] = i * this->zSize + u;
 			offset++;
@@ -55,25 +53,97 @@ void Terrain::CreateMesh()
 //**
 void Terrain::CalculateNormals()
 {
-	for(int q = 0; q < this->zSize; q++)
+	for(unsigned int x = 1; x < this->zSize-1; ++x)
 	{
-		for(int u = 0; u < this->zSize; u++)
+		for(unsigned int z = 1; z < this->zSize-1; ++z)
 		{
-			int a = (q-1) * this->zSize + u;
-			int b = q * this->zSize + u-1;
-			int d = q * this->zSize + u+1;
-			int e = (q+1) * this->zSize + u;
+			unsigned int a = (x-1) * this->zSize + z;
+			unsigned int b = x * this->zSize + z-1;
+			unsigned int d = x * this->zSize + z+1;
+			unsigned int e = (x+1) * this->zSize + z;
 
-			if(q != 0 && u != 0 && u != this->zSize-1 && q != this->zSize-1) //**tillman optimera**
-			{
-				D3DXVECTOR3 v1 = this->zVertices[e].pos - this->zVertices[a].pos;
-				D3DXVECTOR3 v2 = this->zVertices[b].pos - this->zVertices[d].pos;
-				D3DXVECTOR3 norm;
-				D3DXVec3Cross(&norm, &v2, &v1);
-				this->zVertices[q * this->zSize + u].normal = norm;
-			}
+			D3DXVECTOR3 v1 = this->zVertices[e].pos - this->zVertices[a].pos;
+			D3DXVECTOR3 v2 = this->zVertices[b].pos - this->zVertices[d].pos;
+			D3DXVECTOR3 norm;
+			D3DXVec3Cross(&norm, &v2, &v1);
+			D3DXVec3Normalize(&norm,&norm);
+			this->zVertices[x * this->zSize + z].normal = norm;
 		}
 	}
+
+	// Top Normals
+	for( unsigned int x = 1; x < this->zSize-1; ++x )
+	{
+		unsigned int a = x;
+		unsigned int b = this->zSize + x - 1;
+		unsigned int d = this->zSize + x + 1;
+
+		D3DXVECTOR3 v1 = this->zVertices[b].pos - this->zVertices[a].pos;
+		D3DXVECTOR3 v2 = this->zVertices[d].pos - this->zVertices[a].pos;
+
+		D3DXVECTOR3 norm;
+		D3DXVec3Cross(&norm, &v1, &v2);
+		D3DXVec3Normalize(&norm,&norm);
+
+		this->zVertices[a].normal = norm;
+	}
+
+	// Bottom Normals
+	for( unsigned int x = 1; x < this->zSize-1; ++x )
+	{
+		unsigned int a = (this->zSize-1) * this->zSize + x;
+		unsigned int b = (this->zSize-2) * this->zSize + x - 1;
+		unsigned int d = (this->zSize-2) * this->zSize + x + 1;
+
+		D3DXVECTOR3 v1 = this->zVertices[b].pos - this->zVertices[a].pos;
+		D3DXVECTOR3 v2 = this->zVertices[d].pos - this->zVertices[a].pos;
+
+		D3DXVECTOR3 norm;
+		D3DXVec3Cross(&norm, &v2, &v1);
+		D3DXVec3Normalize(&norm,&norm);
+
+		this->zVertices[a].normal = norm;
+	}
+
+	// Left Normals
+	for( unsigned int z = 1; z < this->zSize-1; ++z )
+	{
+		unsigned int a = this->zSize * z;
+		unsigned int b = this->zSize * (z - 1) + 1;
+		unsigned int d = this->zSize * (z + 1) + 1;
+
+		D3DXVECTOR3 v1 = this->zVertices[b].pos - this->zVertices[a].pos;
+		D3DXVECTOR3 v2 = this->zVertices[d].pos - this->zVertices[a].pos;
+
+		D3DXVECTOR3 norm;
+		D3DXVec3Cross(&norm, &v2, &v1);
+		D3DXVec3Normalize(&norm,&norm);
+
+		this->zVertices[a].normal = norm;
+	}
+
+	// Right Normals
+	for( unsigned int z = 1; z < this->zSize-1; ++z )
+	{
+		unsigned int a = this->zSize * z + this->zSize - 1;
+		unsigned int b = this->zSize * (z - 1) + this->zSize - 2;
+		unsigned int d = this->zSize * (z + 1) + this->zSize - 2;
+
+		D3DXVECTOR3 v1 = this->zVertices[b].pos - this->zVertices[a].pos;
+		D3DXVECTOR3 v2 = this->zVertices[d].pos - this->zVertices[a].pos;
+
+		D3DXVECTOR3 norm;
+		D3DXVec3Cross(&norm, &v1, &v2);
+		D3DXVec3Normalize(&norm,&norm);
+
+		this->zVertices[a].normal = norm;
+	}
+
+	// TODO: Corners
+	this->zVertices[0].normal = D3DXVECTOR3(0.0f,1.0f,0.0f);
+	this->zVertices[zSize-1].normal = D3DXVECTOR3(0.0f,1.0f,0.0f);
+	this->zVertices[zSize*(zSize-1)].normal = D3DXVECTOR3(0.0f,1.0f,0.0f);
+	this->zVertices[zSize*zSize-1].normal = D3DXVECTOR3(0.0f,1.0f,0.0f);
 }
 
 
@@ -164,11 +234,6 @@ Terrain::~Terrain()
 }
 
 
-//Get
-
-//Set
-
-//Other
 void Terrain::RecreateWorldMatrix()
 {
 	D3DXMATRIX translate;
@@ -209,16 +274,16 @@ float Terrain::GetYPositionAt(float x, float z) const
 		float posyc = posya;
 		float posyd = posya;
 
-		if(a < this->zSize * this->zSize)
+		if(a < (float)(this->zSize * this->zSize))
 			posya = this->zVertices[a].pos.y;
 
-		if(b < this->zSize * this->zSize)
+		if(b < (float)(this->zSize * this->zSize))
 			posyb = this->zVertices[b].pos.y;
 
-		if(c < this->zSize * this->zSize)
+		if(c < (float)(this->zSize * this->zSize))
 			posyc = this->zVertices[c].pos.y;
 
-		if(d < this->zSize * this->zSize)
+		if(d < (float)(this->zSize * this->zSize))
 			posyd = this->zVertices[d].pos.y;
 
 		float amem = ((1.0f - ((float)ex - i)) * (1.0f - ((float)ez - u)));
@@ -246,8 +311,7 @@ void Terrain::SetScale(const Vector3& scale)
 void Terrain::SetHeightMap(float const* const data)
 {
 	//Update/set y-values of vertices
-	int totSize = this->zSize * this->zSize;
-	for(int i = 0; i < totSize; i++)
+	for(unsigned int i = 0; i < this->zSize * this->zSize; i++)
 	{
 		this->zVertices[i].pos.y = data[i];
 	}

@@ -38,7 +38,7 @@ void RTSCamera::UpdateSpecific(float delta)
 void RTSCamera::MoveForward(float diff)
 {
 	Vector3 newF = Vector3(this->forward.x, 0, this->forward.z);
-	newF.normalize();
+	newF.Normalize();
 
 	newF = newF * ((float)diff/100) * this->speed;
 	this->pos += D3DXVECTOR3(newF.x, newF.y, newF.z);
@@ -49,7 +49,7 @@ void RTSCamera::MoveForward(float diff)
 void RTSCamera::MoveBackward(float diff)
 {
 	Vector3 newF = Vector3(this->forward.x, 0, this->forward.z);
-	newF.normalize();
+	newF.Normalize();
 
 	newF = newF * ((float)diff/100) * this->speed;
 	this->pos -= D3DXVECTOR3(newF.x, newF.y, newF.z);
@@ -69,4 +69,14 @@ void RTSCamera::MoveRight(float diff)
 	this->pos.x += sin(this->angleX) * ((float)diff/100) * this->speed;
 	this->pos.z -= cos(this->angleX) * ((float)diff/100) * this->speed;
 	//this->pos.x += ((float)diff/100) * this->speed;
+}
+
+void RTSCamera::MoveUp( float diff )
+{
+	this->pos -= this->forward * ((float)diff/100) * this->speed;
+}
+
+void RTSCamera::MoveDown( float diff )
+{
+	this->pos += this->forward * ((float)diff/100) * this->speed;
 }

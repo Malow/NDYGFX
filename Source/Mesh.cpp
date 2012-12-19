@@ -264,3 +264,24 @@ Vector3 Mesh::GetScaling() const
 {
 	return Vector3(this->scale.x, this->scale.y, this->scale.z);
 }
+
+void Mesh::SetScale( float scale )
+{
+	this->scale.x = scale;
+	this->scale.y = scale;
+	this->scale.z = scale;
+	this->RecreateWorldMatrix();
+}
+
+void Mesh::SetScale( Vector3 scale )
+{
+	this->scale.x = scale.x;
+	this->scale.y = scale.y;
+	this->scale.z = scale.z;
+	this->RecreateWorldMatrix();
+}
+
+void Mesh::SetScale(D3DXVECTOR3 scale)
+{
+	this->SetScale(Vector3(scale.x, scale.y, scale.z));
+}
