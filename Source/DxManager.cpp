@@ -125,8 +125,6 @@ DxManager::~DxManager()
 	if(this->Shader_Text)
 		delete this->Shader_Text;
 
-	if(this->resourceManager) delete this->resourceManager; this->resourceManager = NULL;
-
 	if ( this->ssao ) delete this->ssao, this->ssao=0;
 	if ( this->fxaa ) delete this->fxaa, this->fxaa=0;
 	if ( this->Shader_Fxaa ) delete this->Shader_Fxaa, this->Shader_Fxaa=0;
@@ -176,6 +174,8 @@ DxManager::~DxManager()
 
 	while(0 < this->texts.size())
 		delete this->texts.getAndRemove(0);
+
+	FreeResourceManager();
 }
 
 void DxManager::CreateTerrain(Terrain* terrain)
@@ -258,7 +258,7 @@ void DxManager::CreateStaticMesh(StaticMesh* mesh)
 		ID3D11ShaderResourceView* texture = NULL;
 		if(strip->GetTexturePath() != "")
 		{
-			texture = this->resourceManager->CreateShaderResourceViewFromFile(strip->GetTexturePath().c_str());
+			texture = GetResourceManager()->CreateShaderResourceViewFromFile(strip->GetTexturePath().c_str());
 		}
 
 		Object3D* obj = new Object3D(verts, inds, texture, mesh->GetTopology()); 
@@ -435,7 +435,7 @@ void DxManager::CreateImage(Image* image, string texture)
 	ID3D11ShaderResourceView* tex = NULL;
 	if(texture != "")
 	{
-		tex = this->resourceManager->CreateShaderResourceViewFromFile(texture.c_str());
+		tex = GetResourceManager()->CreateShaderResourceViewFromFile(texture.c_str());
 	}
 	/*
 	ID3D11ShaderResourceView* tex = NULL;
@@ -470,7 +470,7 @@ void DxManager::CreateText(Text* text, string font)
 	ID3D11ShaderResourceView* tex = NULL;
 	if(font != "")
 	{
-		tex = this->resourceManager->CreateShaderResourceViewFromFile((font + ".png").c_str());
+		tex = GetResourceManager()->CreateShaderResourceViewFromFile((font + ".png").c_str());
 	}
 
 	Font* newFont = text->GetFont();

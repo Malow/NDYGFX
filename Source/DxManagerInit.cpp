@@ -431,8 +431,9 @@ HRESULT DxManager::Init()
 
 
 	//Have to created in here because of threading** TILLMAN/MALOW**
-	this->resourceManager = new ResourceManager();
-	this->resourceManager->Init(this->Dx_Device, this->Dx_DeviceContext); 
+	//this->resourceManager = new ResourceManager();
+	//this->resourceManager->Init(this->Dx_Device, this->Dx_DeviceContext); 
+	ResourceManagerInit(this->Dx_Device, this->Dx_DeviceContext);
 	this->ssao = new SSAO(8, 1.0f, 0.0f);
 	//this->ssao->Init(this->Dx_Device, this->Dx_DeviceContext);
 	this->fxaa = new FXAA();

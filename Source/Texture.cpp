@@ -1,10 +1,14 @@
 #include "Texture.h"
 
-Texture::Texture() : zSRV(NULL)
+Texture::Texture() : zFilePath(""), zSRV(NULL)
 {
 	
 }
-Texture::Texture(ID3D11ShaderResourceView* SRV) : zSRV(SRV)
+Texture::Texture(ID3D11ShaderResourceView* SRV) : zFilePath(""), zSRV(SRV)
+{
+
+}
+Texture::Texture(string filePath, ID3D11ShaderResourceView* SRV) : zFilePath(filePath), zSRV(SRV)
 {
 
 }

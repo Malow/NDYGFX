@@ -11,4 +11,5 @@ public:
 	
 	inline void IncreaseReferenceCount() { zRefCounter++; }
 	inline void DecreaseReferenceCount() { zRefCounter--; if ( !zRefCounter ) delete this; }
+	inline unsigned int GetReferenceCount() { return this->zRefCounter; }
 };
