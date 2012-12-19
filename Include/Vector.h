@@ -56,7 +56,9 @@ public:
 	inline bool operator<( const Vector2& v ) const
 	{
 		if ( x < v.x ) return true;
+		if ( v.x < x ) return false;
 		if ( y < v.y ) return true;
+		if ( v.y < y ) return false;
 		return false;
 	}
 
@@ -235,8 +237,11 @@ public:
 	inline bool operator<( const Vector3& v ) const
 	{
 		if ( x < v.x ) return true;
+		if ( v.x < x ) return false;
 		if ( y < v.y ) return true;
+		if ( v.y < y ) return false;
 		if ( z < v.z ) return true;
+		if ( v.z < z ) return false;
 		return false;
 	}
 
@@ -311,9 +316,13 @@ public:
 	inline bool operator<( const Vector4& v ) const
 	{
 		if ( x < v.x ) return true;
+		if ( v.x < x ) return false;
 		if ( y < v.y ) return true;
+		if ( v.y < y ) return false;
 		if ( z < v.z ) return true;
+		if ( v.z < z ) return false;
 		if ( w < v.w ) return true;
+		if ( v.w < w ) return false;
 		return false;
 	}
 
