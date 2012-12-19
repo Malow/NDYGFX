@@ -132,11 +132,13 @@ void DxManager::RenderDeferredGeometry()
 		bool hasTexture = false;
 		for(int j = 0; j < terrPtr->GetNrOfTextures(); j++)
 		{
-			
-			string shaderTexName = "tex";
-			shaderTexName += MaloW::convertNrToString((float)(j + 1));
-			this->Shader_DeferredGeometryBlendMap->SetResource(shaderTexName.c_str(), terrPtr->GetTexture(j)->GetSRVPointer());
-			hasTexture = true;
+			if ( terrPtr->GetTexture(j) )
+			{
+				string shaderTexName = "tex";
+				shaderTexName += MaloW::convertNrToString((float)(j + 1));
+				this->Shader_DeferredGeometryBlendMap->SetResource(shaderTexName.c_str(), terrPtr->GetTexture(j)->GetSRVPointer());
+				hasTexture = true;
+			}
 		}
 		//**TODO: TILLMAN: om tex 1-3 inte används, set de till tex 0, eller ladda in default**
 		if(hasTexture) 
