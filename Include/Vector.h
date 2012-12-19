@@ -8,6 +8,7 @@
 // EDIT 2012-12-17 by Tillman - Added GetD3DXVECTORX and Union & []-operator overloading.
 // EDIT 2012-12-18 by Alexivan - Warning Ignore for nameless struct in union
 // EDIT 2012-12-18 by Alexivan - GetLength function made constant
+// EDIT 2012-12-19 by Alexivan - Added Less Than Comparison, Removed Destructors
 
 #pragma warning ( push ) 
 #pragma warning ( disable : 4201 ) // nonstandard extension used : nameless struct/union
@@ -51,6 +52,11 @@ public:
 		float length = this->GetLength();
 		this->x /= length;
 		this->y /= length;
+	}
+
+	inline bool operator<( const Vector2& v ) const
+	{
+		return ( x < v.x || y < v.y );
 	}
 
 	inline Vector2 operator-( const Vector2& v ) const
@@ -112,8 +118,6 @@ public:
 		this->z = _z;
 	}
 
-	virtual ~Vector3() {}
-
 	inline float GetLength() const
 	{
 		return sqrt(pow(this->x, 2) + pow(this->y, 2) + pow(this->z, 2));
@@ -159,44 +163,53 @@ public:
     {
         return Vector3(this->x+v.x, this->y+v.y, this->z+v.z);
     }
+
 	inline Vector3 operator-(const Vector3& v) const
 	{
 		return Vector3(this->x-v.x, this->y-v.y, this->z-v.z);
 	}
+
 	inline Vector3 operator*(const float& scalar) const
 	{
 		return Vector3(this->x*scalar, this->y*scalar, this->z*scalar);
 	}
+
 	inline Vector3 operator/(const float& scalar) const
 	{
 		return Vector3(this->x/scalar, this->y/scalar, this->z/scalar);
 	}
+
 	inline void operator+=(const Vector3& v)
     {
         x += v.x;
         y += v.y;
         z += v.z;
     }
+
 	inline void operator-=(const Vector3& v)
     {
         x -= v.x;
         y -= v.y;
         z -= v.z;
     }
+
 	inline void operator*=(const float scalar)
     {
         x *= scalar;
         y *= scalar;
         z *= scalar;
     }
+
 	inline float GetLengthSquared()
 	{
 		return this->GetDotProduct(*this);
 	}
+
 	inline Vector3 GetComponentMultiplication(const Vector3 & compVec)
 	{
 		return Vector3(this->x*compVec.x, this->y*compVec.y, this->z*compVec.z);
 	}
+
 	inline void RotateY(float angle)
 	{
 		Vector3 vec = *this;
@@ -204,15 +217,22 @@ public:
 		vec.z = -sin(angle) * this->x + cos(angle) * this->z;
 		*this = vec;
 	}
+
 	inline Vector3 GetRoteted(float angle)
 	{
 		Vector3 vec = *this;
 		vec.RotateY(angle);
 		return vec;
 	}
+
 	inline Vector3 GetInverseComponents()
 	{
 		return Vector3(1.0f/this->x, 1.0f/this->y, 1.0f/this->z);
+	}
+
+	inline bool operator<( const Vector3& v ) const
+	{
+		return ( x < v.x || y < v.y || z < v.z );
 	}
 
 	inline float& operator[]( unsigned int i ) throw(const char*)
@@ -280,6 +300,11 @@ public:
 			this->z /= length;
 			this->w /= length;
 		}
+	}
+
+	inline bool operator<( const Vector4& v ) const
+	{
+		return ( x < v.x || y < v.y || z < v.z || w < v.w );
 	}
 
 	inline float& operator[]( unsigned int i ) throw(const char*)
