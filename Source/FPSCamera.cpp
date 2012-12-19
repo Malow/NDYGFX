@@ -112,3 +112,13 @@ void FPSCamera::MoveRight(float diff)
 	this->pos.x += sin(this->angleX) * ((float)diff/100) * this->speed;
 	this->pos.z -= cos(this->angleX) * ((float)diff/100) * this->speed;
 }
+
+void FPSCamera::MoveUp( float diff )
+{
+	this->pos.y += ((float)diff/100.0f) * this->speed;
+}
+
+void FPSCamera::MoveDown( float diff )
+{
+	this->pos.y -= ((float)diff/100.0f) * this->speed;
+}

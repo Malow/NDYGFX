@@ -70,3 +70,13 @@ void RTSCamera::MoveRight(float diff)
 	this->pos.z -= cos(this->angleX) * ((float)diff/100) * this->speed;
 	//this->pos.x += ((float)diff/100) * this->speed;
 }
+
+void RTSCamera::MoveUp( float diff )
+{
+	this->pos -= this->forward * ((float)diff/100) * this->speed;
+}
+
+void RTSCamera::MoveDown( float diff )
+{
+	this->pos += this->forward * ((float)diff/100) * this->speed;
+}
