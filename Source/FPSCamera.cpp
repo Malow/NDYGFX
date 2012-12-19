@@ -71,7 +71,7 @@ void FPSCamera::UpdateSpecific(float delta)
 			tmpForward.y = this->forward.y; 
 			tmpForward.z = this->forward.z; 
 			Vector3 rightVec = yAxis.GetCrossProduct(tmpForward);
-			rightVec.normalize();
+			rightVec.Normalize();
 			//crossproduct between forward & right vector 
 			Vector3 tmpUp = Vector3();
 			tmpUp = tmpForward.GetCrossProduct(rightVec);

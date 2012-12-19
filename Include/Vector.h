@@ -9,6 +9,7 @@
 // EDIT 2012-12-18 by Alexivan - Warning Ignore for nameless struct in union
 // EDIT 2012-12-18 by Alexivan - GetLength function made constant
 // EDIT 2012-12-19 by Alexivan - Added Less Than Comparison, Removed Destructors
+// EDIT 2012-12-19 by Alexivan - Removed Destructors, Fixed GetRotated, Normalize with big N, Made some functions constant
 
 #pragma warning ( push ) 
 #pragma warning ( disable : 4201 ) // nonstandard extension used : nameless struct/union
@@ -40,14 +41,12 @@ public:
 		this->y = _y;
 	}
 
-	virtual ~Vector2() {}
-
 	float GetLength() const
 	{
 		return sqrt(pow(this->x, 2) + pow(this->y, 2));
 	}
 
-	void normalize()
+	void Normalize()
 	{
 		float length = this->GetLength();
 		this->x /= length;
@@ -77,6 +76,7 @@ public:
 		}
 		return values[i];
 	}
+
 	inline const float& operator[]( unsigned int i ) const
 	{
 		if(i > 1)
@@ -123,7 +123,7 @@ public:
 		return sqrt(pow(this->x, 2) + pow(this->y, 2) + pow(this->z, 2));
 	}
 
-	inline void normalize()
+	inline void Normalize()
 	{
 		float length = this->GetLength();
 			
@@ -135,7 +135,7 @@ public:
 		}
 	}
 
-	inline float GetDotProduct(Vector3& compObj)
+	inline float GetDotProduct(Vector3& compObj) const
 	{
 		float dot = this->x * compObj.x;
 		dot += this->y * compObj.y;
@@ -143,7 +143,7 @@ public:
 		return dot;
 	}
 
-	inline Vector3 GetCrossProduct(Vector3 vec)
+	inline Vector3 GetCrossProduct(Vector3 vec) const
 	{
 		Vector3 retVec;
 		retVec.x = this->y * vec.z - vec.y * this->z;
@@ -218,14 +218,14 @@ public:
 		*this = vec;
 	}
 
-	inline Vector3 GetRoteted(float angle)
+	inline Vector3 GetRotated(float angle) const
 	{
 		Vector3 vec = *this;
 		vec.RotateY(angle);
 		return vec;
 	}
 
-	inline Vector3 GetInverseComponents()
+	inline Vector3 GetInverseComponents() const
 	{
 		return Vector3(1.0f/this->x, 1.0f/this->y, 1.0f/this->z);
 	}
@@ -243,6 +243,7 @@ public:
 		}
 		return values[i];
 	}
+
 	inline const float& operator[]( unsigned int i ) const
 	{
 		if(i > 2)
@@ -289,7 +290,7 @@ public:
 		return Vector4(this->x+v.x, this->y+v.y, this->z+v.z, this->w+v.w);
 	}
 
-	inline void normalize()
+	inline void Normalize()
 	{
 		float length = this->GetLength();
 
@@ -315,6 +316,7 @@ public:
 		}
 		return values[i];
 	}
+
 	inline const float& operator[]( unsigned int i ) const
 	{
 		if(i > 3)
