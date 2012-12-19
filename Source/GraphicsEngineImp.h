@@ -130,6 +130,7 @@ public:
 	virtual void SetFPSMax(float maxFPS) { this->dx->SetFPSMAX(maxFPS); }
 
 	virtual void SetSunLightProperties(Vector3 direction, Vector3 lightColor = Vector3(1.0f, 1.0f, 1.0f), float intensity = 1.0f);
+	virtual void SetSunLightDisabled();
 
 	virtual iPhysicsEngine* GetPhysicsEngine() const;
 
