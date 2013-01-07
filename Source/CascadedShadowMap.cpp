@@ -31,9 +31,95 @@ CascadedShadowMap::~CascadedShadowMap()
 void CascadedShadowMap::CalcShadowMapMatrices(D3DXVECTOR3 sunLight, Camera* cam, int i)
 {
 	//calculate points for the frustum slice
-	Vector3 farCenter = cam->GetPosition() + cam->GetForward() * this->shadowMappingSplitDepths[i + 1];
+	Vector3 camPos = cam->GetPosition();
+	Vector3 camForward = cam->GetForward();
+	Vector3 camRight = cam->GetRightVector();
+	Vector3 camUp = cam->GetUpVector();
+	float aspectRatio = this->params.windowWidth / this->params.windowHeight;
+	float tmp = 2 * tan(this->params.FOV * 0.5f);
 
-	//float ftl = fc + (up * Hfar/2) - (right * Wfar/2)
+	//Far plane
+	float halfFarHeight = tmp * this->params.FarClip * 0.5f;
+	float halfFarWidth = halfFarHeight * aspectRatio;
+	//Far points
+	Vector3 farCenter = camPos + camForward * this->shadowMappingSplitDepths[i + 1]; //far plane of slice
+	Vector3 farTopLeft = farCenter + (camUp * halfFarHeight) - (camRight * halfFarWidth);
+	Vector3	farTopRight = farCenter + (camUp * halfFarHeight) + (camRight * halfFarWidth);
+	Vector3	farBottomLeft = farCenter - (camUp * halfFarHeight) - (camRight * halfFarWidth);
+	Vector3	farBottomRight = farCenter - (camUp * halfFarHeight) + (camRight * halfFarWidth);
+
+	//Near plane	
+	float halfNearHeight = tmp * this->params.NearClip * 0.5f;
+	float halfNearWidth = halfNearHeight * aspectRatio;
+	//Near points
+	Vector3	nearCenter = camPos + camForward * this->shadowMappingSplitDepths[i]; //near plane of slice
+	Vector3	nearTopLeft = nearCenter + (camUp * halfNearHeight) - (camRight * halfNearWidth);
+	Vector3	nearTopRight = nearCenter + (camUp * halfNearHeight) + (camRight * halfNearWidth);
+	Vector3	nearBottomLeft = nearCenter - (camUp * halfNearHeight) - (camRight * halfNearWidth);
+	Vector3	nearBottomRight = nearCenter - (camUp * halfNearHeight) + (camRight * halfNearWidth);
+
+	//Transform points into light’s homogeneous space.
+	D3DXMATRIX lightViewMatrix; //M
+	D3DXMatrixLookAtLH(&lightViewMatrix, &D3DXVECTOR3(0.0f, 0.0f, 0.0f), &sunLight, &D3DXVECTOR3(0, 1, 0)); //**
+	D3DXMATRIX lightProjMatrix; //P
+	D3DXMatrixIdentity(&lightProjMatrix);
+	//Far
+	D3DXVECTOR4 farTopLeftH = D3DXVECTOR4(farTopLeft.x, farTopLeft.y, farTopLeft.z, 1.0f);
+	D3DXVECTOR4 farTopRightH = D3DXVECTOR4(farTopRight.x, farTopRight.y, farTopRight.z, 1.0f);
+	D3DXVECTOR4	farBottomLeftH = D3DXVECTOR4(farBottomLeft.x, farBottomLeft.y, farBottomLeft.z, 1.0f);
+	D3DXVECTOR4	farBottomRightH = D3DXVECTOR4(farBottomRight.x, farBottomRight.y, farBottomRight.z, 1.0f);
+	//Near
+	D3DXVECTOR4	nearTopLeftH = D3DXVECTOR4(nearTopLeft.x, nearTopLeft.y, nearTopLeft.z, 1.0f);
+	D3DXVECTOR4	nearTopRightH = D3DXVECTOR4(nearTopRight.x, nearTopRight.y, nearTopRight.z, 1.0f);
+	D3DXVECTOR4	nearBottomLeftH = D3DXVECTOR4(nearBottomLeft.x, nearBottomLeft.y, nearBottomLeft.z, 1.0f);
+	D3DXVECTOR4	nearBottomRightH = D3DXVECTOR4(nearBottomRight.x, nearBottomRight.y, nearBottomRight.z, 1.0f);
+	D3DXMATRIX lightViewProjMatrix = lightProjMatrix * lightViewMatrix;
+	//Far
+	D3DXVec4Transform(&farTopLeftH, &farTopLeftH, &lightViewProjMatrix);
+	D3DXVec4Transform(&farTopRightH, &farTopRightH, &lightViewProjMatrix);
+	D3DXVec4Transform(&farBottomLeftH, &farBottomLeftH, &lightViewProjMatrix);
+	D3DXVec4Transform(&farBottomRightH, &farBottomRightH, &lightViewProjMatrix);
+	//Near
+	D3DXVec4Transform(&nearTopLeftH, &nearTopLeftH, &lightViewProjMatrix);
+	D3DXVec4Transform(&nearTopRightH, &nearTopRightH, &lightViewProjMatrix);
+	D3DXVec4Transform(&nearBottomLeftH, &nearBottomLeftH, &lightViewProjMatrix);
+	D3DXVec4Transform(&nearBottomRightH, &nearBottomRightH, &lightViewProjMatrix);
+
+	//Calculate crop matrix
+	//Find min & max values in each dimension
+	float minX = min(farTopLeftH.x, min(farTopRightH.x, min(farBottomLeftH.x, min(farBottomRightH.x, 
+		min(nearTopLeftH.x, min(nearTopRightH.x, min(nearBottomLeftH.x, nearBottomRightH.x)))))));
+	float maxX = max(farTopLeftH.x, max(farTopRightH.x, max(farBottomLeftH.x, max(farBottomRightH.x, 
+		max(nearTopLeftH.x, max(nearTopRightH.x, max(nearBottomLeftH.x, nearBottomRightH.x)))))));
+	float minY = min(farTopLeftH.y, min(farTopRightH.y, min(farBottomLeftH.y, min(farBottomRightH.y, 
+		min(nearTopLeftH.y, min(nearTopRightH.y, min(nearBottomLeftH.y, nearBottomRightH.y)))))));
+	float maxY = max(farTopLeftH.y, max(farTopRightH.y, max(farBottomLeftH.y, max(farBottomRightH.y, 
+		max(nearTopLeftH.y, max(nearTopRightH.y, max(nearBottomLeftH.y, nearBottomRightH.y)))))));
+	float minZ = min(farTopLeftH.z, min(farTopRightH.z, min(farBottomLeftH.z, min(farBottomRightH.z, 
+		min(nearTopLeftH.z, min(nearTopRightH.z, min(nearBottomLeftH.z, nearBottomRightH.z)))))));
+	float maxZ = max(farTopLeftH.z, max(farTopRightH.z, max(farBottomLeftH.z, max(farBottomRightH.z, 
+		max(nearTopLeftH.z, max(nearTopRightH.z, max(nearBottomLeftH.z, nearBottomRightH.z)))))));
+	
+	//Determine scale
+	float scaleX = 2 / maxX - minX;
+	float scaleY = 2 / maxY - minY;
+	//Determine offset
+	float offsetX = -0.5f * (maxX + minX) * scaleX;
+	float offsetY = -0.5f * (maxY + minY) * scaleY;
+
+	//Create cropmatrix and projection matrix
+	D3DXMATRIX cropMatrix, lightProjMatrix2; //lightProjMatrix2 (Pz)
+	D3DXMatrixIdentity(&cropMatrix);
+	cropMatrix._11 = scaleX;
+	cropMatrix._22 = scaleY;
+	cropMatrix._41 = offsetX;
+	cropMatrix._42 = offsetY;
+	//D3DXMatrixOrthoLH(&lightProjMatrix2, width, height, minZ, maxZ); //**width? height?
+
+	//Lastly, modify the projection matrix (P=CPz)
+	lightProjMatrix = cropMatrix * lightProjMatrix2;
+
+	//Tillman TODO: rendera punkterna så för att se att de stämmer
 
 	D3DXMATRIX View;
 	D3DXMatrixLookAtLH(&View, &(cam->GetPositionD3DX() - sunLight), &sunLight, &D3DXVECTOR3(0, 1, 0));

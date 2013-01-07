@@ -66,6 +66,7 @@ public:
 	virtual void LookAt(Vector3 target);
 	virtual Vector3 GetUpVector();
 	virtual void SetUpVector(Vector3 up);
+	virtual Vector3 GetRightVector();
 
 	virtual void Update(float delta);
 

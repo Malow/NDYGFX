@@ -80,6 +80,14 @@ void Camera::SetUpVector(Vector3 up)
 {
 	this->up = D3DXVECTOR3(up.x, up.y, up.z);
 }
+Vector3 Camera::GetRightVector()
+{
+	D3DXVECTOR3 tmp;
+	D3DXVec3Cross(&tmp, &forward, &up);
+
+	return Vector3(tmp.x, tmp.y, tmp.z);
+}
+
 
 void Camera::MoveToTerrain()
 {
@@ -209,3 +217,4 @@ Vector3 Camera::Get3DPickingRay()
 
 	return v;
 }
+

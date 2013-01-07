@@ -5,11 +5,12 @@
 
 // Edit 2012-11-18 by Alexivan - Removed DX dependencies
 // Edit 2012-11-23 by Alexivan - Added DX Conversions
-// EDIT 2012-12-17 by Tillman - Added GetD3DXVECTORX and Union & []-operator overloading.
+// EDIT 2012-12-17 by Tillman  - Added GetD3DXVECTORX and Union & []-operator overloading.
 // EDIT 2012-12-18 by Alexivan - Warning Ignore for nameless struct in union
 // EDIT 2012-12-18 by Alexivan - GetLength function made constant
 // EDIT 2012-12-19 by Alexivan - Added Less Than Comparison, Removed Destructors
 // EDIT 2012-12-19 by Alexivan - Removed Destructors, Fixed GetRotated, Normalize with big N, Made some functions constant
+// EDIT 2013-01-07 by Tillman  - Optimized Constructors.
 
 #pragma warning ( push ) 
 #pragma warning ( disable : 4201 ) // nonstandard extension used : nameless struct/union
@@ -29,7 +30,7 @@ public:
 		};
 	};
 
-	Vector2(float _x, float _y) : x(_x), y(_y)
+	Vector2(float _x = 0.0f, float _y = 0.0f) : x(_x), y(_y)
 	{
 		
 	}
