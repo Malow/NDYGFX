@@ -448,10 +448,8 @@ void DxManager::CreateImage(Image* image, string texture)
 
 	//**TODO: TILLMAN - resource manager**
 	Texture* tex = NULL;
-	if(texture != "")
-	{
-		tex = GetResourceManager()->CreateTextureFromFile(texture.c_str());
-	}
+	tex = GetResourceManager()->CreateTextureFromFile(texture.c_str());
+
 	/*
 	ID3D11ShaderResourceView* tex = NULL;
 
@@ -637,8 +635,8 @@ void DxManager::ResizeRenderer(ResizeEvent* ev)
 	float width = ev->GetWidth();
 	float height = ev->GetHeight();
 
-	this->params.windowWidth = width;
-	this->params.windowHeight = height;
+	this->params.windowWidth = (int)width;
+	this->params.windowHeight = (int)height;
 
 	this->camera->RecreateProjectionMatrix();
 
@@ -677,8 +675,8 @@ void DxManager::ResizeRenderer(ResizeEvent* ev)
 
 		// Create depth stencil texture
 		D3D11_TEXTURE2D_DESC descDepth;
-		descDepth.Width = width;
-		descDepth.Height = height;
+		descDepth.Width = (UINT)width;
+		descDepth.Height = (UINT)height;
 		descDepth.MipLevels = 1;
 		descDepth.ArraySize = 1;
 		descDepth.Format = DXGI_FORMAT_D32_FLOAT;

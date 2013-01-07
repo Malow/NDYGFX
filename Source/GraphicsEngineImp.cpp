@@ -435,7 +435,7 @@ float GraphicsEngineImp::Update()
 	std::string txt = "FPS: " + MaloW::convertNrToString((float)this->fpsLast) + " - "; 
 	txt += "Camera Pos: " + MaloW::convertNrToString(this->dx->GetCamera()->GetPosition().x) + " " + 
 		MaloW::convertNrToString(this->dx->GetCamera()->GetPosition().y) + " " + 
-		MaloW::convertNrToString(this->dx->GetCamera()->GetPosition().z) + "    -    Triangle Count: " + MaloW::convertNrToString((float)this->dx->GetTriangleCount());
+		MaloW::convertNrToString(this->dx->GetCamera()->GetPosition().z) + "    -    Mesh Count: " + MaloW::convertNrToString((float)this->dx->GetMeshCount());
 
 	SetWindowText(this->hWnd, txt.c_str());
 

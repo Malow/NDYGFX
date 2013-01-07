@@ -17,7 +17,9 @@
 #include "MaloWFileDebug.h"
 using namespace std;
 
+#ifdef _DEBUG
 #include <vld.h>
+#endif // _DEBUG
 
 class ResourceManager 
 {
@@ -44,5 +46,5 @@ class ResourceManager
 };
 
 bool ResourceManagerInit(ID3D11Device* device, ID3D11DeviceContext* deviceContext);
-ResourceManager* GetResourceManager() throw(const char*);
+ResourceManager* GetResourceManager() throw(...);
 bool FreeResourceManager();

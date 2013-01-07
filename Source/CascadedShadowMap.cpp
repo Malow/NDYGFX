@@ -42,7 +42,7 @@ void CascadedShadowMap::CalcShadowMapMatrices(D3DXVECTOR3 sunLight, Camera* cam,
 	float fFarPlane = this->shadowMappingSplitDepths[i + 1];
 
 	D3DXMATRIX Proj;
-	float size = pow(5, (i + 1));
+	float size = pow(5.0f, (i + 1.0f));
 	D3DXMatrixOrthoLH(&Proj, size, size, fNearPlane, fFarPlane);
 	//D3DXMatrixOrthoOffCenterLH(&Proj, -size, size, -size, size,	0.001f, fFarPlane);
 	this->viewProj[i] = View * Proj;

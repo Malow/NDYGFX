@@ -107,7 +107,7 @@ class Terrain : public iTerrain
 
 		//iTerrain interface functions
 		//Get
-		virtual float GetYPositionAt(float x, float z) const throw(const char*); 
+		virtual float GetYPositionAt(float x, float z) const throw(...); 
 
 		//Set
 		virtual void SetScale(const Vector3& scale);
