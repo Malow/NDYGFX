@@ -52,7 +52,6 @@ class Terrain : public iTerrain
 		float						zTextureScale;
 		int							zNrOfTextures;
 		Texture**					zTextures;
-		string*						zTextureFileNames;  //**tillman - tmp**
 		BlendMap*					zBlendMap;
 		
 

@@ -29,6 +29,7 @@ cbuffer PerObject
 
 	//Texture
 	bool	textured;
+	bool	blendMapped;
 	float	texScale;
 
 	//Material
@@ -100,25 +101,35 @@ PSOut PSScene(PSSceneIn input) : SV_Target
 		//finalColor = tex3.Sample(LinearWrapSampler, input.tex).xyz * diffuseColor; //debug
 		//finalColor = blendMap.Sample(LinearWrapSampler, input.tex).rgb; //Debug
 		
-		//Sample textures
+		//Sample R,G,B,A textures
 		float2 texCoord = input.tex * texScale;
 		float3 tex1Color = tex1.Sample(LinearWrapSampler, texCoord).rgb; //**tillman opti, FORMAT = RGB och inte A**
 		float3 tex2Color = tex2.Sample(LinearWrapSampler, texCoord).rgb; //**tillman opti, FORMAT = RGB och inte A**
 		float3 tex3Color = tex3.Sample(LinearWrapSampler, texCoord).rgb; //**tillman opti, FORMAT = RGB och inte A**
 		float3 tex4Color = tex4.Sample(LinearWrapSampler, texCoord).rgb; //**tillman opti, FORMAT = RGB och inte A**
-		float4 blendMapColor = normalize(blendMap.Sample(LinearWrapSampler, input.tex)); //normalize
+		
+		if(blendMapped)
+		{
+			//Sample blend map texture
+			float4 blendMapColor = normalize(blendMap.Sample(LinearWrapSampler, input.tex)); //normalize
+		
+			//Inverse of all blend weights to scale final color to be in range [0,1]
+			float inverseTotal = 1.0f / (blendMapColor.r + blendMapColor.g + blendMapColor.b + blendMapColor.a);
 
-		//Inverse of all blend weights to scale final color to be in range [0,1]
-		float inverseTotal = 1.0f / (blendMapColor.r + blendMapColor.g + blendMapColor.b + blendMapColor.a);
+			//Scale color for each texture by the weight in the blendmap and scale to [0,1]
+			tex1Color *= blendMapColor.r * inverseTotal;
+			tex2Color *= blendMapColor.g * inverseTotal;
+			tex3Color *= blendMapColor.b * inverseTotal;
+			tex4Color *= blendMapColor.a * inverseTotal;
 
-		//Scale color for each texture by the weight in the blendmap and scale to [0,1]
-		tex1Color *= blendMapColor.r * inverseTotal;
-		tex2Color *= blendMapColor.g * inverseTotal;
-		tex3Color *= blendMapColor.b * inverseTotal;
-		tex4Color *= blendMapColor.a * inverseTotal;
-
-		//Blendmapped color (normalize it)
-		finalColor = (tex1Color + tex2Color + tex3Color + tex4Color) * diffuseColor.rgb;
+			//Blendmapped color (normalize it)
+			finalColor = (tex1Color + tex2Color + tex3Color + tex4Color) * diffuseColor;
+		}
+		else
+		{
+			//Saturated color
+			finalColor = saturate((tex1Color + tex2Color + tex3Color + tex4Color) * diffuseColor);
+		}
 	}
 	else
 	{

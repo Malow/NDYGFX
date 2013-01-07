@@ -132,25 +132,24 @@ void DxManager::RenderDeferredGeometry()
 		bool hasTexture = false;
 		for(int j = 0; j < terrPtr->GetNrOfTextures(); j++)
 		{
-			if ( terrPtr->GetTexture(j) )
+			string shaderTexName = "tex";
+			shaderTexName += MaloW::convertNrToString((float)(j + 1));
+			if(terrPtr->GetTexture(j) != NULL)
 			{
-				string shaderTexName = "tex";
-				shaderTexName += MaloW::convertNrToString((float)(j + 1));
 				this->Shader_DeferredGeometryBlendMap->SetResource(shaderTexName.c_str(), terrPtr->GetTexture(j)->GetSRVPointer());
 				hasTexture = true;
+			}
+			else
+			{
+				this->Shader_DeferredGeometryBlendMap->SetResource(shaderTexName.c_str(), NULL);
 			}
 		}
 		//**TODO: TILLMAN: om tex 1-3 inte används, set de till tex 0, eller ladda in default**
 		if(hasTexture) 
 		{
-
-			//Set that textures shall be used and its scale
-			this->Shader_DeferredGeometryBlendMap->SetBool("textured", true);
-			this->Shader_DeferredGeometryBlendMap->SetFloat("texScale", terrPtr->GetTextureScale());
-
-			//Do the same for the blend map (if textures are used)
+			//Check if blend map is used
 			BlendMap* bmPtr = terrPtr->GetBlendMapPointer();
-			if(bmPtr)
+			if(bmPtr != NULL)
 			{
 				if(bmPtr->HasChanged)
 				{
@@ -190,12 +189,23 @@ void DxManager::RenderDeferredGeometry()
 					bmPtr->HasChanged = false;
 				}
 
-				//Set shader resource view
+				//Set blend map variables
+				this->Shader_DeferredGeometryBlendMap->SetBool("blendMapped", true);
 				this->Shader_DeferredGeometryBlendMap->SetResource("blendMap", bmPtr->SRV);
 			}
+			else
+			{
+				//Set blend map  variables
+				this->Shader_DeferredGeometryBlendMap->SetBool("blendMapped", false);
+			}
+
+			//Set that textures shall be used and its scale
+			this->Shader_DeferredGeometryBlendMap->SetBool("textured", true);
+			this->Shader_DeferredGeometryBlendMap->SetFloat("texScale", terrPtr->GetTextureScale());
 		}
 		else
 		{
+			//Set texture variable
 			this->Shader_DeferredGeometryBlendMap->SetBool("textured", false);
 		}
 
@@ -289,14 +299,18 @@ void DxManager::RenderDeferredGeometry()
 				if(verts)
 					verts->Apply();
 
-				if(ID3D11ShaderResourceView* texture = obj->GetTexture())
+				if(obj->GetTexture() != NULL)
 				{
-					this->Shader_DeferredGeometry->SetBool("textured", true);
-					this->Shader_DeferredGeometry->SetResource("tex2D", texture);
+					if(ID3D11ShaderResourceView* texture = obj->GetTexture()->GetSRVPointer())
+					{
+						this->Shader_DeferredGeometry->SetBool("textured", true);
+						this->Shader_DeferredGeometry->SetResource("tex2D", texture);
+					}
+					else
+					{
+						this->Shader_DeferredGeometry->SetBool("textured", false);
+					}
 				}
-				else
-					this->Shader_DeferredGeometry->SetBool("textured", false);
-
 				Buffer* inds = obj->GetIndsBuff();
 				if(inds)
 					inds->Apply();
@@ -372,7 +386,7 @@ void DxManager::RenderDeferredGeometry()
 
 				this->Dx_DeviceContext->IASetVertexBuffers(0, 2, vertexBuffers, strides, offsets);
 
-				if(ID3D11ShaderResourceView* texture = objOne->GetTexture())
+				if(ID3D11ShaderResourceView* texture = objOne->GetTexture()->GetSRVPointer())
 				{
 					this->Shader_DeferredAnimatedGeometry->SetBool("textured", true);
 					this->Shader_DeferredAnimatedGeometry->SetResource("tex2D", texture);
@@ -423,7 +437,10 @@ void DxManager::RenderDeferredSkybox()
 
 	obj->GetVertBuff()->Apply();
 	obj->GetIndsBuff()->Apply();
-	this->Shader_Skybox->SetResource("SkyMap", obj->GetTexture());
+	if(obj->GetTexture() != NULL)
+	{
+		this->Shader_Skybox->SetResource("SkyMap", obj->GetTexture()->GetSRVPointer());
+	}
 	
 	this->Shader_Skybox->Apply(0);
 
@@ -565,7 +582,7 @@ void DxManager::RenderInvisibilityEffect()
 				Object3D* obj = strips->get(u)->GetRenderObject();
 
 				//Set texture
-				if(ID3D11ShaderResourceView* texture = obj->GetTexture())
+				if(ID3D11ShaderResourceView* texture = obj->GetTexture()->GetSRVPointer())
 				{
 					this->Shader_InvisibilityEffect->SetResource((char*)strips->get(u)->GetTexturePath().c_str(), texture);
 					this->Shader_InvisibilityEffect->SetBool("textured", true);

@@ -1,6 +1,6 @@
 #include "Object3D.h"
 
-Object3D::Object3D(Buffer* verts, Buffer* inds, ID3D11ShaderResourceView* texture, D3D_PRIMITIVE_TOPOLOGY topology)
+Object3D::Object3D(Buffer* verts, Buffer* inds, Texture* texture, D3D_PRIMITIVE_TOPOLOGY topology)
 {
 	this->verts = verts;
 	this->inds = inds;
@@ -10,8 +10,7 @@ Object3D::Object3D(Buffer* verts, Buffer* inds, ID3D11ShaderResourceView* textur
 
 Object3D::~Object3D()
 {
-	if(this->texture)
-		this->texture->Release();
+	if(this->texture) GetResourceManager()->DeleteTexture(this->texture);
 	if(this->verts)
 		delete this->verts;
 	if(this->inds)

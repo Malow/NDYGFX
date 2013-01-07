@@ -38,9 +38,10 @@ class ResourceManager
 
 		//ID3D11Texture2D* CreateTexture2D(const char* filePath);
 		//DEPRECATED**
-		ID3D11ShaderResourceView* CreateShaderResourceViewFromFile(const char* filePath);
+		//ID3D11ShaderResourceView* CreateShaderResourceViewFromFile(const char* filePath);
 		Texture* CreateTextureFromFile(const char* filePath);
-		//Deletes the texture sent. The pointer it automatically set to NULL.
+		Texture* CreateCubeTexture(const char* filePath);
+		//Deletes the texture sent. The pointer is automatically set to NULL.
 		void DeleteTexture(Texture* &texture);
 };
 
