@@ -448,10 +448,8 @@ void DxManager::CreateImage(Image* image, string texture)
 
 	//**TODO: TILLMAN - resource manager**
 	Texture* tex = NULL;
-	if(texture != "")
-	{
-		tex = GetResourceManager()->CreateTextureFromFile(texture.c_str());
-	}
+	tex = GetResourceManager()->CreateTextureFromFile(texture.c_str());
+
 	/*
 	ID3D11ShaderResourceView* tex = NULL;
 
