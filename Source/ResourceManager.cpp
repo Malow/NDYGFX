@@ -168,7 +168,7 @@ bool ResourceManagerInit(ID3D11Device* device, ID3D11DeviceContext* deviceContex
 	return resourceManager->Init(device, deviceContext);
 }
 
-ResourceManager* GetResourceManager() throw(const char*)
+ResourceManager* GetResourceManager() throw(...)
 {
 	if(!resourceManager)
 	{

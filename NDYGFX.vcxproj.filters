@@ -310,9 +310,6 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="WorkingDir\Shaders\DebugNormals.fx">
-      <Filter>Source Files\Engine\Shaders</Filter>
-    </FxCompile>
     <FxCompile Include="WorkingDir\Shaders\DeferredGeometryBlendMap.fx">
       <Filter>Source Files\Engine\Shaders</Filter>
     </FxCompile>

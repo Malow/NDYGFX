@@ -52,7 +52,7 @@
     <IntDir>$(SolutionDir)$(Configuration)\</IntDir>
     <TargetExt>R.exe</TargetExt>
     <IncludePath>$(SolutionDir)/Include/;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)/Build/Debug/;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)/Build/Release/;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

@@ -613,8 +613,8 @@ void DxManager::ResizeRenderer(ResizeEvent* ev)
 	float width = ev->GetWidth();
 	float height = ev->GetHeight();
 
-	this->params.windowWidth = width;
-	this->params.windowHeight = height;
+	this->params.windowWidth = (int)width;
+	this->params.windowHeight = (int)height;
 
 	this->camera->RecreateProjectionMatrix();
 
@@ -653,8 +653,8 @@ void DxManager::ResizeRenderer(ResizeEvent* ev)
 
 		// Create depth stencil texture
 		D3D11_TEXTURE2D_DESC descDepth;
-		descDepth.Width = width;
-		descDepth.Height = height;
+		descDepth.Width = (UINT)width;
+		descDepth.Height = (UINT)height;
 		descDepth.MipLevels = 1;
 		descDepth.ArraySize = 1;
 		descDepth.Format = DXGI_FORMAT_D32_FLOAT;

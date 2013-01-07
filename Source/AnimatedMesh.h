@@ -12,6 +12,10 @@
 #include "Mesh.h"
 #include "iAnimatedMesh.h"
 
+
+#pragma warning ( push )
+#pragma warning ( disable : 4250 )
+
 class KeyFrame
 {
 	public:
@@ -81,3 +85,5 @@ class AnimatedMesh : public Mesh, public virtual iAnimatedMesh
 		/*! Load the keyframes from file. Input is exptected to be "'filename'.ani". */
 		virtual bool LoadFromFile(string file);
 };
+
+#pragma warning ( pop )
