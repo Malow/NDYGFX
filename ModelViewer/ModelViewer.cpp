@@ -6,21 +6,21 @@
 
 void ReplaceSlashes(string& str, char replace, char with)
 {
-	for(unsigned int i = 0; i < str.size(); i++)
+	for(int i = 0; i < str.size(); i++)
 	{
 		if(str.at(i) == replace)
 			str.at(i) = with;
 	}
 }
 
-// TODO: does not work
+// Does work, not when running through visual studio tho since it fucks up the path that GetModuleFileName gives.
 void deleteCache()
 {
 	TCHAR szPath[MAX_PATH] = {0};
 	GetModuleFileName(NULL, szPath, MAX_PATH);
 	string path = string(szPath);
 	path = path.substr(0, path.size() - string("ModelViewer.exe").size());
-	path += "Media\\Cache";
+	path += "\Media\\Cache";
 	MaloW::Debug(path);
 
 	int len = strlen(path.c_str()) + 2; // required to set 2 nulls at end of argument to SHFileOperation.
@@ -40,8 +40,7 @@ void deleteCache()
 		0,
 		"" };
 
-	SHFileOperation(&file_op);
-
+	int ret = SHFileOperation(&file_op);
 	free(tempdir);
 }
 
@@ -139,14 +138,25 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 	iT2->SetTextures(fileNames);
 	iT2->SetBlendMap(size, testData);
 
-	iTerrain** iTs = new iTerrain*[10];
-	for(int i = 0; i < 10; i++)
+	int nrOfterrs = 10;
+	iTerrain** iTs = new iTerrain*[nrOfterrs];
+	for(int i = 0; i < nrOfterrs; i++)
 	{
 		iTs[i] = GetGraphics()->CreateTerrain(Vector3((testSize * 2) + (i * testSize), 0, 0), Vector3(testSize, 0.0f, testSize), vertSize);
 		iTs[i]->SetTextures(fileNames);
 		iTs[i]->SetBlendMap(size, testData);
 	}
-
+	/*
+	// test fps
+	for(int i = 0; i < 50; i++)
+		iMesh* ball = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(0, 10 + i * 3, 0));
+	for(int i = 0; i < 50; i++)
+		iMesh* ball = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(10, 10 + i * 3, 0));
+	for(int i = 0; i < 50; i++)
+		iMesh* ball = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(10, 10 + i * 3, 10));
+	for(int i = 0; i < 50; i++)
+		iMesh* ball = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(0, 10 + i * 3, 10));
+	*/
 	iMesh* ball = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(0, -100, 0));
 	ball->Scale(0.1f);
 	iMesh* secModel = GetGraphics()->CreateMesh("Media/bth.obj", Vector3(10, 0, 10));
