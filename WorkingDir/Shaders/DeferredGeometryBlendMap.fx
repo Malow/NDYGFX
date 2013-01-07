@@ -10,10 +10,10 @@
 //	Global variables (non-numeric values cannot be added to a constantbuffer.)
 //-----------------------------------------------------------------------------------------
 //Textures used to make the blend map
-Texture2D tex1; //R-channel in blendmap. ex: grass
-Texture2D tex2; //G-channel in blendmap. ex: dirt
-Texture2D tex3; //B-channel in blendmap. ex: leaves
-Texture2D tex4; //A-channel in blendmap. ex: footprints?**TILLMAN**
+Texture2D tex0; //R-channel in blendmap. ex: grass
+Texture2D tex1; //G-channel in blendmap. ex: dirt
+Texture2D tex2; //B-channel in blendmap. ex: leaves
+Texture2D tex3; //A-channel in blendmap. ex: footprints?**TILLMAN**
 Texture2D<float4> blendMap;
 //Texture2D tex4; //**extra, ex: blood, footprints**
 
@@ -103,10 +103,10 @@ PSOut PSScene(PSSceneIn input) : SV_Target
 		
 		//Sample R,G,B,A textures
 		float2 texCoord = input.tex * texScale;
-		float3 tex1Color = tex1.Sample(LinearWrapSampler, texCoord).rgb; //**tillman opti, FORMAT = RGB och inte A**
-		float3 tex2Color = tex2.Sample(LinearWrapSampler, texCoord).rgb; //**tillman opti, FORMAT = RGB och inte A**
-		float3 tex3Color = tex3.Sample(LinearWrapSampler, texCoord).rgb; //**tillman opti, FORMAT = RGB och inte A**
-		float3 tex4Color = tex4.Sample(LinearWrapSampler, texCoord).rgb; //**tillman opti, FORMAT = RGB och inte A**
+		float3 tex1Color = tex0.Sample(LinearWrapSampler, texCoord).rgb; //**tillman opti, FORMAT = RGB och inte A**
+		float3 tex2Color = tex1.Sample(LinearWrapSampler, texCoord).rgb; //**tillman opti, FORMAT = RGB och inte A**
+		float3 tex3Color = tex2.Sample(LinearWrapSampler, texCoord).rgb; //**tillman opti, FORMAT = RGB och inte A**
+		float3 tex4Color = tex3.Sample(LinearWrapSampler, texCoord).rgb; //**tillman opti, FORMAT = RGB och inte A**
 		
 		if(blendMapped)
 		{
