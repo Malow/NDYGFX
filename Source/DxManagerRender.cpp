@@ -636,7 +636,7 @@ HRESULT DxManager::Render()
 
 
 	this->RenderShadowMap();
-	//this->RenderCascadedShadowMap();
+	this->RenderCascadedShadowMap();
 	
 	//this->RenderForward();
 
@@ -682,8 +682,8 @@ HRESULT DxManager::Render()
 	// Render shadowmap pictures:
 	//for(int q = 0; q < this->lights.size(); q++)
 		//DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_BillBoard, this->lights[q]->GetShadowMapSRV(), q); 
-	//for(int q = 0; q < this->csm->GetNrOfCascadeLevels(); q++)
-		//DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_BillBoard, this->csm->GetShadowMapSRV(q), q); 
+	for(int q = 0; q < this->csm->GetNrOfCascadeLevels(); q++)
+		DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_BillBoard, this->csm->GetShadowMapSRV(q), q); 
 
 	this->RenderAntiAliasing();
 	

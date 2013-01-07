@@ -73,7 +73,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 	iTerrain* iT2 = GetGraphics()->CreateTerrain(Vector3(testSize, 0, 0), Vector3(testSize, 0.0f, testSize), vertSize);
 	
 	//iAnimatedMesh* iAM = GetGraphics()->CreateAnimatedMesh("Media/TestMedia/FlagBlue.ani", Vector3(0, 0, 0));
-	//iImage* iM = GetGraphics()->CreateImage(Vector2(100, 100), Vector2(100, 100), "Media/BallTexture.png");
+	iImage* iM = GetGraphics()->CreateImage(Vector2(100, 100), Vector2(100, 100), "Media/BallTexture.png");
 	//iText* iTe = GetGraphics()->CreateText("durp", Vector2(300, 100), 1.0f, "Media/TestMedia/1");
 	
 	float test = 0.0f;
@@ -139,8 +139,9 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 	iT2->SetTextures(fileNames);
 	iT2->SetBlendMap(size, testData);
 
-	iTerrain** iTs = new iTerrain*[10];
-	for(int i = 0; i < 10; i++)
+	int klerp = 25;
+	iTerrain** iTs = new iTerrain*[klerp];
+	for(int i = 0; i < klerp; i++)
 	{
 		iTs[i] = GetGraphics()->CreateTerrain(Vector3((testSize * 2) + (i * testSize), 0, 0), Vector3(testSize, 0.0f, testSize), vertSize);
 		iTs[i]->SetTextures(fileNames);

@@ -130,9 +130,29 @@ void DxManager::RenderDeferredGeometry()
 		//Set Textures
 		//Check if texture(name/path) have changed, create new shader resource view if it has
 		bool hasTexture = false;
-		for(int j = 0; j < terrPtr->GetNrOfTextures(); j++)
+		if(terrPtr->GetTexture(0) != NULL)
 		{
-			string shaderTexName = "tex";
+			this->Shader_DeferredGeometryBlendMap->SetResource("tex0", terrPtr->GetTexture(0)->GetSRVPointer());
+			hasTexture = true;
+		}
+		if(terrPtr->GetTexture(1) != NULL)
+		{
+			this->Shader_DeferredGeometryBlendMap->SetResource("tex1", terrPtr->GetTexture(1)->GetSRVPointer());
+			hasTexture = true;
+		}
+		if(terrPtr->GetTexture(2) != NULL)
+		{
+			this->Shader_DeferredGeometryBlendMap->SetResource("tex2", terrPtr->GetTexture(2)->GetSRVPointer());
+			hasTexture = true;
+		}
+		if(terrPtr->GetTexture(3) != NULL)
+		{
+			this->Shader_DeferredGeometryBlendMap->SetResource("tex3", terrPtr->GetTexture(3)->GetSRVPointer());
+			hasTexture = true;
+		}
+
+		/*for(int j = 0; j < terrPtr->GetNrOfTextures(); j++)
+		{
 			shaderTexName += MaloW::convertNrToString((float)(j + 1));
 			if(terrPtr->GetTexture(j) != NULL)
 			{
@@ -143,7 +163,8 @@ void DxManager::RenderDeferredGeometry()
 			{
 				this->Shader_DeferredGeometryBlendMap->SetResource(shaderTexName.c_str(), NULL);
 			}
-		}
+		}*/
+
 		//**TODO: TILLMAN: om tex 1-3 inte används, set de till tex 0, eller ladda in default**
 		if(hasTexture) 
 		{

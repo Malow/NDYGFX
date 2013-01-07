@@ -319,5 +319,8 @@
     <FxCompile Include="WorkingDir\Shaders\DeferredGeometry.fx">
       <Filter>Source Files\Engine\Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="WorkingDir\Shaders\ShadowMap.fx">
+      <Filter>Source Files\Engine\Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

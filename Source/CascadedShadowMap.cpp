@@ -30,6 +30,11 @@ CascadedShadowMap::~CascadedShadowMap()
 
 void CascadedShadowMap::CalcShadowMapMatrices(D3DXVECTOR3 sunLight, Camera* cam, int i)
 {
+	//calculate points for the frustum slice
+	Vector3 farCenter = cam->GetPosition() + cam->GetForward() * this->shadowMappingSplitDepths[i + 1];
+
+	//float ftl = fc + (up * Hfar/2) - (right * Wfar/2)
+
 	D3DXMATRIX View;
 	D3DXMatrixLookAtLH(&View, &(cam->GetPositionD3DX() - sunLight), &sunLight, &D3DXVECTOR3(0, 1, 0));
 
@@ -38,7 +43,8 @@ void CascadedShadowMap::CalcShadowMapMatrices(D3DXVECTOR3 sunLight, Camera* cam,
 
 	D3DXMATRIX Proj;
 	float size = pow(5, (i + 1));
-	D3DXMatrixOrthoOffCenterLH(&Proj, -size, size, -size, size,	0.001f, fFarPlane);
+	D3DXMatrixOrthoLH(&Proj, size, size, fNearPlane, fFarPlane);
+	//D3DXMatrixOrthoOffCenterLH(&Proj, -size, size, -size, size,	0.001f, fFarPlane);
 	this->viewProj[i] = View * Proj;
 
 	/*
@@ -60,6 +66,7 @@ void CascadedShadowMap::CalcShadowMappingSplitDepths()
 	this->shadowMappingSplitDepths[1] = camFar * 0.1f;
 	this->shadowMappingSplitDepths[2] = camFar * 0.4f;
 	this->shadowMappingSplitDepths[SHADOW_MAP_CASCADE_COUNT] = camFar;
+
 	/*
 	float i_f = 1.0f;
 	float cascadeCount = (float)SHADOW_MAP_CASCADE_COUNT;

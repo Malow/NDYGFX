@@ -140,6 +140,11 @@
       <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </HeaderFileOutput>
     </FxCompile>
+    <FxCompile Include="WorkingDir\Shaders\ShadowMap.fx">
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">RenderShadowMap</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+    </FxCompile>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{16B85208-D199-49A6-838A-8CDB50034E11}</ProjectGuid>
