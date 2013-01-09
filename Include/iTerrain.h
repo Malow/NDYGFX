@@ -35,7 +35,8 @@ extern "C"
 			virtual void SetDiffuseColor(const Vector3& color) = 0;
 			//Set the number of times a texture shall repeat over a surface.
 			virtual void SetTextureScale(float textureScale = 1.0f) = 0; //**tillman - default value**
-
+			// Get Position Of Terrain
+			virtual Vector3 GetPosition() const = 0;
 
 			/*virtual Vector3 GetPosition() const = 0;
 			virtual Vector3 GetRotation() const = 0;

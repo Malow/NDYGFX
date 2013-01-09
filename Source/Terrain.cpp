@@ -365,3 +365,9 @@ void Terrain::SetTextureScale(float textureScale)
 {
 	this->zTextureScale = textureScale;
 }
+
+
+Vector3 Terrain::GetPosition() const
+{
+	return Vector3(zPos.x,zPos.y,zPos.z);
+}
