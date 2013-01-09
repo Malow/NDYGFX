@@ -135,16 +135,13 @@ void DxManager::HandleTextEvent(TextEvent* te)
 
 void DxManager::Life()
 {
-	//Black starting
+	//Engine Start Splash screen.
 	Image* img = new Image(D3DXVECTOR2(0.0f, 0.0f), D3DXVECTOR2((float)this->params.windowWidth, (float)this->params.windowHeight));
-	this->CreateImage(img, "Media/LoadingScreen/FadeTexture.png");
-	MaloW::ProcessEvent* ev = this->PeekEvent();
-	if(dynamic_cast<ImageEvent*>(ev) != NULL)
-	{
-		this->HandleImageEvent((ImageEvent*)ev);
-	}
+	Texture* tex = NULL;
+	tex = GetResourceManager()->CreateTextureFromFile("Media/LoadingScreen/StartingSplash.png");
+	img->SetTexture(tex);
+	this->images.add(img);
 
-	delete ev;
 	while(!this->StartRender)
 	{
 		this->Render();
@@ -163,6 +160,7 @@ void DxManager::Life()
 			{
 				string msg = ((RendererEvent*)ev)->getMessage();
 				
+				// ResizeEvent
 				if(dynamic_cast<ResizeEvent*>(ev) != NULL)
 				{
 					this->ResizeRenderer((ResizeEvent*)ev);
@@ -197,9 +195,7 @@ void DxManager::Life()
 				{
 					this->HandleTextEvent((TextEvent*)ev);
 				}
-
 			}
-
 			delete ev;
 		}
 		this->camera->Update(this->TimerAnimation - this->LastCamUpdate);
