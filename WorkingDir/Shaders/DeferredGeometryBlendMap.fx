@@ -81,7 +81,7 @@ PSSceneIn VSScene(VSIn input)
 	output.pos = mul(float4(input.pos, 1.0f), WVP);
 	output.posW = mul(float4(input.pos, 1.0f), worldMatrix);
 	output.tex = input.tex;
-	output.norm = normalize(mul(input.norm, (float3x3)worldMatrixInverseTranspose));
+	output.norm = -normalize(mul(input.norm, (float3x3)worldMatrixInverseTranspose)); //**OBS! invert because of how normals are generated**
 	output.color = input.color;
 
 	return output;

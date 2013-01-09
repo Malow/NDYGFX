@@ -138,7 +138,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 	iT2->SetTextures(fileNames);
 	iT2->SetBlendMap(size, testData);
 
-	int klerp = 25;
+	int klerp = 10;
 	iTerrain** iTs = new iTerrain*[klerp];
 	for(int i = 0; i < klerp; i++)
 	{
@@ -163,7 +163,8 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 	secModel->Scale(1.0f * 0.05f);
 
 	float templol = 0.0f;
-	
+
+	GetGraphics()->SetSunLightProperties(Vector3(0, -1, 0));
 #endif
 //*************************************	    END OF PRE TEST       **********************
 
