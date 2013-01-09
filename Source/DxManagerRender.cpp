@@ -638,14 +638,6 @@ HRESULT DxManager::Render()
 	this->RenderDeferredGeometry();
 
 	
-	// Debug: Render Normals
-	//MaloW::Array<StaticMesh*>* meshes = &this->objects;
-	//DrawNormals(meshes, this->Dx_Device, this->Dx_DeviceContext, this->camera->GetViewMatrix() * this->camera->GetProjectionMatrix());
-	// Debug: Render Wireframe
-	//MaloW::Array<StaticMesh*>* meshes = &this->objects;
-	//DrawWireFrame(meshes, this->Dx_Device, this->Dx_DeviceContext, this->camera->GetViewMatrix() * this->camera->GetProjectionMatrix());
-	
-	
 	//this->RenderQuadDeferred();
 	//this->RenderDeferredTexture();
 
@@ -662,9 +654,18 @@ HRESULT DxManager::Render()
 
 	this->RenderText();
 
+	this->RenderAntiAliasing();
 
 	// Debugging:
-	
+	// Debug: Render Normals
+	//MaloW::Array<StaticMesh*>* meshes = &this->objects;
+	//DrawNormals(meshes, this->Dx_Device, this->Dx_DeviceContext, this->camera->GetViewMatrix() * this->camera->GetProjectionMatrix());
+	//MaloW::Array<Terrain*>* terrains = &this->terrains;
+	//DrawNormals(terrains, this->Dx_Device, this->Dx_DeviceContext, this->camera->GetViewMatrix() * this->camera->GetProjectionMatrix());
+	// Debug: Render Wireframe
+	//MaloW::Array<StaticMesh*>* meshes = &this->objects;
+	//DrawWireFrame(meshes, this->Dx_Device, this->Dx_DeviceContext, this->camera->GetViewMatrix() * this->camera->GetProjectionMatrix());
+
 	/*
 	// Render RTs pictures
 	this->Dx_DeviceContext->ClearDepthStencilView(this->Dx_DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);	
@@ -679,7 +680,7 @@ HRESULT DxManager::Render()
 	//for(int q = 0; q < this->csm->GetNrOfCascadeLevels(); q++)
 		//DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_BillBoard, this->csm->GetShadowMapSRV(q), q); 
 
-	this->RenderAntiAliasing();
+	
 	
 	if(FAILED(Dx_SwapChain->Present( 0, 0 )))
 		return E_FAIL;

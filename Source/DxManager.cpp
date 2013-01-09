@@ -659,17 +659,17 @@ void DxManager::ResizeRenderer(ResizeEvent* ev)
 		// Preserve the existing buffer count and format.
 		// Automatically choose the width and height to match the client rect for HWNDs.
 		if(!this->Dx_SwapChain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, 0))
-			MaloW::Debug("Failed to call ResizeRenderer on DxManager");
+			MaloW::Debug("Failed to call ResizeRenderer on DxManager: ResizeBuffers");
 
 	
 		// Get buffer and create a render-target-view.
 		ID3D11Texture2D* pBuffer;
 		if(!this->Dx_SwapChain->GetBuffer(0, __uuidof( ID3D11Texture2D), (void**) &pBuffer))
-			MaloW::Debug("Failed to call ResizeRenderer on DxManager");
+			MaloW::Debug("Failed to call ResizeRenderer on DxManager: GetBuffer");
 		
 
 		if(!this->Dx_Device->CreateRenderTargetView(pBuffer, NULL, &this->Dx_RenderTargetView))
-			MaloW::Debug("Failed to call ResizeRenderer on DxManager");
+			MaloW::Debug("Failed to call ResizeRenderer on DxManager: CreateRenderTargetView");
 		
 		pBuffer->Release();
 
@@ -693,7 +693,7 @@ void DxManager::ResizeRenderer(ResizeEvent* ev)
 		descDepth.CPUAccessFlags = 0;
 		descDepth.MiscFlags = 0;
 		if(!Dx_Device->CreateTexture2D( &descDepth, NULL, &Dx_DepthStencil ))
-			MaloW::Debug("Failed to call ResizeRenderer on DxManager");
+			MaloW::Debug("Failed to call ResizeRenderer on DxManager: CreateTexture2D");
 			
 
 		// Create the depth stencil view
@@ -703,7 +703,7 @@ void DxManager::ResizeRenderer(ResizeEvent* ev)
 		descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 		descDSV.Texture2D.MipSlice = 0;
 		if(!Dx_Device->CreateDepthStencilView(Dx_DepthStencil, &descDSV, &Dx_DepthStencilView))
-			MaloW::Debug("Failed to call ResizeRenderer on DxManager");
+			MaloW::Debug("Failed to call ResizeRenderer on DxManager: CreateDepthStencilView");
 
 
 		this->Dx_DeviceContext->OMSetRenderTargets(1, &this->Dx_RenderTargetView, Dx_DepthStencilView);
@@ -746,7 +746,7 @@ void DxManager::ResizeRenderer(ResizeEvent* ev)
 			GBufferTextureDesc.MiscFlags = 0;
 
 			if(FAILED(this->Dx_Device->CreateTexture2D(&GBufferTextureDesc, NULL, &this->Dx_GbufferTextures[i])))
-				MaloW::Debug("Failed to initiate GbufferTexture");
+				MaloW::Debug("Failed to call ResizeRenderer on DxManager: Failed to initiate GbufferTexture");
 
 
 			D3D11_RENDER_TARGET_VIEW_DESC DescRT;
@@ -758,7 +758,7 @@ void DxManager::ResizeRenderer(ResizeEvent* ev)
 
 			//if(FAILED(this->Dx_Device->CreateRenderTargetView(this->Dx_GbufferTextures[i], NULL, &this->Dx_GbufferRTs[i])))
 			if(FAILED(this->Dx_Device->CreateRenderTargetView(this->Dx_GbufferTextures[i], &DescRT, &this->Dx_GbufferRTs[i])))
-				MaloW::Debug("Failed to initiate Gbuffer RT");
+				MaloW::Debug("Failed to call ResizeRenderer on DxManager: Failed to initiate Gbuffer RT");
 
 
 			D3D11_SHADER_RESOURCE_VIEW_DESC srDesc;
@@ -769,7 +769,7 @@ void DxManager::ResizeRenderer(ResizeEvent* ev)
 			srDesc.Texture2D.MipLevels = 1;
 
 			if(FAILED(this->Dx_Device->CreateShaderResourceView(this->Dx_GbufferTextures[i], &srDesc, &this->Dx_GbufferSRVs[i])))
-				MaloW::Debug("Failed to initiate Gbuffer SRV");
+				MaloW::Debug("Failed to call ResizeRenderer on DxManager: Failed to initiate Gbuffer SRV");
 		}
 	}
 }
