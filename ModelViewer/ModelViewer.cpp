@@ -410,7 +410,6 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	}
 	
 	FreeGraphics();
-
 	//*************************************	     POST TEST       **********************
 #ifdef TEST
 	delete[] testData;

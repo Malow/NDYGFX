@@ -175,6 +175,12 @@ DxManager::~DxManager()
 	while(0 < this->texts.size())
 		delete this->texts.getAndRemove(0);
 
+	// Empty event queue 
+	while(MaloW::ProcessEvent* ev = this->PeekEvent())
+	{
+		delete ev;
+	}
+
 	FreeResourceManager();
 }
 
