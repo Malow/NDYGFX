@@ -192,4 +192,6 @@ public:
 	void CreateSmokeEffect() { this->dx->CreateSmokeEffect(); }
 
 	virtual void Life();
+
+	virtual void DebugDummyFunction(Vector3* arr);
 };

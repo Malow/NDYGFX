@@ -738,3 +738,46 @@ void GraphicsEngineImp::SetSunLightDisabled()
 {
 	this->dx->SetSunLightDisabled();
 }
+
+
+void GraphicsEngineImp::DebugDummyFunction(Vector3* arr)
+{
+	//Transform the points from world space to light’s homogeneous space.
+
+	//View matrix
+	D3DXVECTOR3 lookAt = D3DXVECTOR3(0, 0, 0);
+	D3DXVECTOR3 pos = D3DXVECTOR3(-15, 25, 0);
+	D3DXVECTOR3 posToLookAt = lookAt - pos; //Pos --> lookAt
+	D3DXVECTOR3 dir;
+	D3DXVECTOR3 up = D3DXVECTOR3(0, 1, 0);
+	D3DXVec3Normalize(&dir, &posToLookAt); 
+	lookAt = pos + dir;
+
+	D3DXMATRIX lightViewMatrix;
+	D3DXMatrixLookAtLH(&lightViewMatrix, &pos, &lookAt, &up); 
+
+
+
+	//**tillman todo: find min max xyz, create orthographics projection.
+
+
+	//Projection matrix
+	//D3DXMatrixOrthoLH(&lightProjMatrix, )
+	//Matrix.CreateOrthographicOffCenter(min.X, max.X, min.Y, max.Y, minZ, maxZ)
+
+
+	//Combine matrices
+	D3DXMATRIX lightViewProjMatrix = lightViewMatrix; //* lightProjMatrix;
+
+	for(int i = 0; i < 30; i++)
+	{
+		D3DXVECTOR4 vertex = D3DXVECTOR4(arr[i].x, arr[i].y, arr[i].z, 1.0f);
+		
+		
+		D3DXVec4Transform(&vertex, &vertex, &lightViewProjMatrix);
+			
+		arr[i].x = vertex.x;
+		arr[i].y = vertex.y;
+		arr[i].z = vertex.z;
+	}
+}

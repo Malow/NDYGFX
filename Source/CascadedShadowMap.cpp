@@ -30,16 +30,29 @@ CascadedShadowMap::~CascadedShadowMap()
 
 void CascadedShadowMap::CalcShadowMapMatrices(D3DXVECTOR3 sunLight, Camera* cam, int i)
 {
-	//calculate points for the frustum slice
+	//calculate points (in world space) for the frustum slice
 	Vector3 camPos = cam->GetPosition();
 	Vector3 camForward = cam->GetForward();
 	Vector3 camRight = cam->GetRightVector();
 	Vector3 camUp = cam->GetUpVector();
-	float aspectRatio = this->params.windowWidth / this->params.windowHeight;
-	float tmp = 2 * tan(this->params.FOV * 0.5f);
+	float ww = this->params.windowWidth;
+	float hh = this->params.windowHeight;
+	float aspectRatio = ww / hh;
+	float tmp = tan(this->params.FOV) * 2;
+
+	//Near plane	
+	float halfNearHeight = tmp * this->shadowMappingSplitDepths[i];
+	float halfNearWidth = halfNearHeight * aspectRatio;
+
+	//Near points
+	Vector3	nearCenter = camPos + camForward * this->shadowMappingSplitDepths[i]; //near plane of slice
+	Vector3	nearTopLeft = nearCenter + (camUp * halfNearHeight) - (camRight * halfNearWidth);
+	Vector3	nearTopRight = nearCenter + (camUp * halfNearHeight) + (camRight * halfNearWidth);
+	Vector3	nearBottomLeft = nearCenter - (camUp * halfNearHeight) - (camRight * halfNearWidth);
+	Vector3	nearBottomRight = nearCenter - (camUp * halfNearHeight) + (camRight * halfNearWidth);
 
 	//Far plane
-	float halfFarHeight = tmp * this->params.FarClip * 0.5f;
+	float halfFarHeight = tmp * this->shadowMappingSplitDepths[i + 1];
 	float halfFarWidth = halfFarHeight * aspectRatio;
 	//Far points
 	Vector3 farCenter = camPos + camForward * this->shadowMappingSplitDepths[i + 1]; //far plane of slice
@@ -48,15 +61,17 @@ void CascadedShadowMap::CalcShadowMapMatrices(D3DXVECTOR3 sunLight, Camera* cam,
 	Vector3	farBottomLeft = farCenter - (camUp * halfFarHeight) - (camRight * halfFarWidth);
 	Vector3	farBottomRight = farCenter - (camUp * halfFarHeight) + (camRight * halfFarWidth);
 
-	//Near plane	
-	float halfNearHeight = tmp * this->params.NearClip * 0.5f;
-	float halfNearWidth = halfNearHeight * aspectRatio;
-	//Near points
-	Vector3	nearCenter = camPos + camForward * this->shadowMappingSplitDepths[i]; //near plane of slice
-	Vector3	nearTopLeft = nearCenter + (camUp * halfNearHeight) - (camRight * halfNearWidth);
-	Vector3	nearTopRight = nearCenter + (camUp * halfNearHeight) + (camRight * halfNearWidth);
-	Vector3	nearBottomLeft = nearCenter - (camUp * halfNearHeight) - (camRight * halfNearWidth);
-	Vector3	nearBottomRight = nearCenter - (camUp * halfNearHeight) + (camRight * halfNearWidth);
+
+	//**tillman, code above should work (liknande kod är testad & fungerar)
+
+
+
+
+
+
+
+
+
 
 	//Transform points into light’s homogeneous space.
 	D3DXMATRIX lightViewMatrix; //M

@@ -35,6 +35,7 @@ extern "C"
 		virtual void LookAt(Vector3 target) = 0;
 		virtual Vector3 GetUpVector() = 0;
 		virtual void SetUpVector(Vector3 up) = 0;
+		virtual Vector3 GetRightVector() = 0;
 
 		virtual void Update(float delta) = 0;
 

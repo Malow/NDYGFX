@@ -164,7 +164,93 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 
 	float templol = 0.0f;
 
+	//CASCADED SHADOWMAP:
 	GetGraphics()->SetSunLightProperties(Vector3(0, -1, 0));
+	//Set camera to look along the x-axis
+	GetGraphics()->GetCamera()->SetPosition(Vector3(0, 1, 0));
+	GetGraphics()->GetCamera()->LookAt(Vector3(1, 1, 0));
+
+	//calculate points (in world space) for the frustum slice
+	Vector3 camPos = GetGraphics()->GetCamera()->GetPosition();
+	Vector3 camForward = GetGraphics()->GetCamera()->GetForward();
+	Vector3 camRight = GetGraphics()->GetCamera()->GetRightVector();
+	Vector3 camUp = GetGraphics()->GetCamera()->GetUpVector();
+	float ww = (float)GetGraphics()->GetEngineParameters()->windowWidth;
+	float hh = (float)GetGraphics()->GetEngineParameters()->windowHeight;
+	float aspectRatio = ww / hh;
+	float tmp = tan(GetGraphics()->GetEngineParameters()->FOV) * 2;
+
+	float planes[4];
+	planes[0] = GetGraphics()->GetEngineParameters()->NearClip;
+	planes[1] = GetGraphics()->GetEngineParameters()->FarClip * 0.1f;
+	planes[2] = GetGraphics()->GetEngineParameters()->FarClip * 0.4f;
+	planes[3] = GetGraphics()->GetEngineParameters()->FarClip;
+
+	//**vertices to render as debug info**
+	int nrOfFrustumSlices = 3;
+	int ttte = 10;
+	Vector3* vertices = new Vector3[ttte * nrOfFrustumSlices];
+
+	for(int i = 0; i < nrOfFrustumSlices; i++)
+	{
+		//Near plane	
+		float halfNearHeight = tmp * planes[i];
+		float halfNearWidth = halfNearHeight * aspectRatio;
+
+		//Near points
+		Vector3	nearCenter = camPos + camForward * planes[i]; //near plane of slice
+		Vector3	nearTopLeft = nearCenter + (camUp * halfNearHeight) - (camRight * halfNearWidth);
+		Vector3	nearTopRight = nearCenter + (camUp * halfNearHeight) + (camRight * halfNearWidth);
+		Vector3	nearBottomLeft = nearCenter - (camUp * halfNearHeight) - (camRight * halfNearWidth);
+		Vector3	nearBottomRight = nearCenter - (camUp * halfNearHeight) + (camRight * halfNearWidth);
+
+		vertices[i * ttte] = nearCenter;
+		vertices[i * ttte + 1] = nearTopLeft;
+		vertices[i * ttte + 2] = nearTopRight;
+		vertices[i * ttte + 3] = nearBottomLeft;
+		vertices[i * ttte + 4] = nearBottomRight;
+		
+		//Far plane
+		float halfFarHeight = tmp * planes[i + 1];
+		float halfFarWidth = halfFarHeight * aspectRatio;
+		//Far points
+		Vector3 farCenter = camPos + camForward * planes[i + 1]; //far plane of slice
+		Vector3 farTopLeft = farCenter + (camUp * halfFarHeight) - (camRight * halfFarWidth);
+		Vector3	farTopRight = farCenter + (camUp * halfFarHeight) + (camRight * halfFarWidth);
+		Vector3	farBottomLeft = farCenter - (camUp * halfFarHeight) - (camRight * halfFarWidth);
+		Vector3	farBottomRight = farCenter - (camUp * halfFarHeight) + (camRight * halfFarWidth);
+
+		vertices[i * ttte + 5] = farCenter;
+		vertices[i * ttte + 6] = farTopLeft;
+		vertices[i * ttte + 7] = farTopRight;
+		vertices[i * ttte + 8] = farBottomLeft;
+		vertices[i * ttte + 9] = farBottomRight;
+	}
+
+
+
+	//Transform points into light’s homogeneous space.
+	GetGraphics()->DebugDummyFunction(vertices);
+
+
+
+
+
+
+
+
+
+
+	//render
+	iMesh** debugCSMPoints = new iMesh*[ttte * nrOfFrustumSlices];
+	for(int i = 0; i < ttte * nrOfFrustumSlices; i++)
+	{
+		//debugCSMPoints[i] = GetGraphics()->CreateStaticMesh("Media/ball.obj", vertices[i]);
+	}
+	
+	//restore camera settings
+	GetGraphics()->GetCamera()->SetPosition(Vector3(25, 25, 20));
+	GetGraphics()->GetCamera()->LookAt(Vector3(0, 0, 0));
 #endif
 //*************************************	    END OF PRE TEST       **********************
 
@@ -265,7 +351,20 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_RIGHT))
 			secModel->MoveBy(Vector3(0, 0, -1) * diff * 0.01f);
 
-
+		//CASCADED SHADOW MAPPING
+		static float debugCSMScale = 1.0f;
+		if(GetGraphics()->GetKeyListener()->IsPressed('Q'))
+		{
+			debugCSMScale += diff * 0.001f;
+		}
+		if(GetGraphics()->GetKeyListener()->IsPressed('E'))
+		{
+			debugCSMScale -= diff * 0.001f;
+		}
+		for(int i = 0; i < ttte * nrOfFrustumSlices; i++)
+		{
+			//debugCSMPoints[i]->SetScale(debugCSMScale);
+		}
 		/*
 		templol += diff;
 		if(templol > 100000.0f)
@@ -412,6 +511,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 	//*************************************	     POST TEST       **********************
 #ifdef TEST
 	delete[] testData;
+	delete[] debugCSMPoints;
 	//delete[] fileNames;
 #endif
 	//*************************************	   END OF POST TEST       **********************

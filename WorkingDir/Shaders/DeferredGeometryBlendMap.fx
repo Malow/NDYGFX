@@ -139,7 +139,7 @@ PSOut PSScene(PSSceneIn input) : SV_Target
 	output.Texture.w = -1.0f;
 
 	//NormalAndDepth RT
-	output.NormalAndDepth = float4(input.norm.xyz, input.pos.z / input.pos.w);	
+	output.NormalAndDepth = float4(input.norm, input.pos.z / input.pos.w);	
 	float depth = length(CameraPosition.xyz - input.posW.xyz) / 200.0f;		// Haxfix
 	output.NormalAndDepth.w = depth;
 
