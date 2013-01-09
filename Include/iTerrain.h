@@ -38,8 +38,9 @@ extern "C"
 			// Get Position Of Terrain
 			virtual Vector3 GetPosition() const = 0;
 
-			/*virtual Vector3 GetPosition() const = 0;
-			virtual Vector3 GetRotation() const = 0;
+			// TODO: Height Extraction
+
+			/*virtual Vector3 GetRotation() const = 0;
 			virtual Vector3 GetScaling() const = 0;
 
 			virtual void SetPosition(const Vector3& pos) = 0;

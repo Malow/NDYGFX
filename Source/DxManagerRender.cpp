@@ -2,7 +2,7 @@
 
 #include "DxManagerDebugging.h"
 
-HRESULT DxManager::Update(float deltaTime)
+HRESULT DxManager::Update(float)
 {
 	// update subsystems
 	//ps.update(deltaTime);

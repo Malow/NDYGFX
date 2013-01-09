@@ -632,11 +632,11 @@ void DxManager::SetSunLightProperties( Vector3 direction, Vector3 lightColor, fl
 
 void DxManager::ResizeRenderer(ResizeEvent* ev)
 {
-	float width = ev->GetWidth();
-	float height = ev->GetHeight();
+	unsigned int width = ev->GetWidth();
+	unsigned int height = ev->GetHeight();
 
-	this->params.windowWidth = (int)width;
-	this->params.windowHeight = (int)height;
+	this->params.windowWidth = width;
+	this->params.windowHeight = height;
 
 	this->camera->RecreateProjectionMatrix();
 
@@ -675,8 +675,8 @@ void DxManager::ResizeRenderer(ResizeEvent* ev)
 
 		// Create depth stencil texture
 		D3D11_TEXTURE2D_DESC descDepth;
-		descDepth.Width = (UINT)width;
-		descDepth.Height = (UINT)height;
+		descDepth.Width = width;
+		descDepth.Height = height;
 		descDepth.MipLevels = 1;
 		descDepth.ArraySize = 1;
 		descDepth.Format = DXGI_FORMAT_D32_FLOAT;
@@ -768,7 +768,7 @@ void DxManager::ResizeRenderer(ResizeEvent* ev)
 	}
 }
 
-void DxManager::ResizeEngine(float width, float height)
+void DxManager::ResizeEngine(unsigned int width, unsigned int height)
 {
 	ResizeEvent* te = new ResizeEvent("Resize", width, height);
 	this->PutEvent(te);

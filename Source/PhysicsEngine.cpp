@@ -81,7 +81,7 @@ CollisionData PhysicsEngine::GetCollisionMeshMesh(iMesh* mesh1, iMesh* mesh2)
 	return cd;
 }
 
-CollisionData PhysicsEngine::GetCollisionMeshTerrain( iMesh* mesh, iTerrain* terr )
+CollisionData PhysicsEngine::GetCollisionMeshTerrain( iMesh* mesh, iTerrain* )
 {
 	CollisionData cd;
 	// NYI
@@ -227,7 +227,8 @@ bool PhysicsEngine::DoCollisionRayVsTriangle(Vector3 rayOrigin, Vector3 rayDirec
 	if(v < 0.0f || u + v > 1.0f)
 		return false;
 
-	float t = f * (e2.GetDotProduct(q));
+	// Unreferenced
+	// float t = f * (e2.GetDotProduct(q));
 
 	Vector3 collPos;
 	float w = 1 - (u + v);
@@ -674,7 +675,7 @@ bool PhysicsEngine::DoCollisionTriangleVsTriangle(Vector3 v00, Vector3 v01, Vect
 		V12[1] = v12.y;
 		V12[2] = v12.z;
 
-		return coplanar_tri_tri(N1, V00, V01, V02, V10, V11, V12);
+		return coplanar_tri_tri(N1, V00, V01, V02, V10, V11, V12) > 0;
 	}
 
 	float dsec = 0.0f;
@@ -720,7 +721,7 @@ bool PhysicsEngine::DoCollisionTriangleVsTriangle(Vector3 v00, Vector3 v01, Vect
 		V12[1] = v12.y;
 		V12[2] = v12.z;
 
-		return coplanar_tri_tri(N1, V00, V01, V02, V10, V11, V12);
+		return coplanar_tri_tri(N1, V00, V01, V02, V10, V11, V12)>0;
 	}
 
 	//////////////////////////////////////////////////////////////////////////

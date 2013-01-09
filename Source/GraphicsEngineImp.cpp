@@ -714,7 +714,7 @@ void GraphicsEngineImp::SetSceneAmbientLight( Vector3 ambientLight )
 	this->dx->SetSceneAmbientLight(D3DXVECTOR3(ambientLight.x, ambientLight.y, ambientLight.z));
 }
 
-void GraphicsEngineImp::ResizeGraphicsEngine( float width, float height )
+void GraphicsEngineImp::ResizeGraphicsEngine( unsigned int width, unsigned int height )
 {
 	if(this->isManagingMyOwnWindow)
 		SetWindowPos(this->hWnd, 0 , 0 , 0, width, height, SWP_NOMOVE|SWP_NOZORDER|SWP_NOACTIVATE);

@@ -80,7 +80,7 @@ extern "C"
 		virtual void SetSceneAmbientLight(Vector3 ambientLight) = 0;
 		virtual Vector3 GetSceneAmbientLight() const = 0;
 
-		virtual void ResizeGraphicsEngine(float width, float height) = 0;
+		virtual void ResizeGraphicsEngine(unsigned int width, unsigned int height) = 0;
 	};
 
 	/*

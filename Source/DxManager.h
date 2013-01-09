@@ -167,7 +167,7 @@ public:
 	void SetSunLightDisabled();
 	void SetSceneAmbientLight(D3DXVECTOR3 amb) { this->sceneAmbientLight = amb; }
 	D3DXVECTOR3 GetSceneAmbientLight() const { return this->sceneAmbientLight; }
-	void ResizeEngine(float width, float height);
+	void ResizeEngine(unsigned int width, unsigned int height);
 };
 
 #endif

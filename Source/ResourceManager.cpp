@@ -10,7 +10,6 @@ ResourceManager::~ResourceManager()
 	//Do not release device & device context, this is done by DxManager.
 
 	//Delete any remaining resources
-	int counter = 0;
 	map<std::string, Texture*>::iterator it;
 	for(it = this->zTextures.begin(); it != this->zTextures.end(); it++)
 	{

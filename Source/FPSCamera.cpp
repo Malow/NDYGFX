@@ -25,7 +25,7 @@ FPSCamera::~FPSCamera()
 
 }
 
-void FPSCamera::UpdateSpecific(float delta)
+void FPSCamera::UpdateSpecific(float)
 {
 	POINT p;
 	if(GetCursorPos(&p))
