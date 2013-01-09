@@ -139,7 +139,7 @@ public:
 	virtual void SetSceneAmbientLight(Vector3 ambientLight);
 	virtual Vector3 GetSceneAmbientLight() const;
 
-	virtual void ResizeGraphicsEngine(float width, float height);
+	virtual void ResizeGraphicsEngine(unsigned int width, unsigned int height);
 	/*  Non-inherited functions */
 
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);

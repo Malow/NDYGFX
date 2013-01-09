@@ -6,7 +6,7 @@
 
 void ReplaceSlashes(string& str, char replace, char with)
 {
-	for(int i = 0; i < str.size(); i++)
+	for(unsigned int i = 0; i < str.size(); i++)
 	{
 		if(str.at(i) == replace)
 			str.at(i) = with;
@@ -20,7 +20,7 @@ void deleteCache()
 	GetModuleFileName(NULL, szPath, MAX_PATH);
 	string path = string(szPath);
 	path = path.substr(0, path.size() - string("ModelViewer.exe").size());
-	path += "\Media\\Cache";
+	path += "\\Media\\Cache\\*";
 	MaloW::Debug(path);
 
 	int len = strlen(path.c_str()) + 2; // required to set 2 nulls at end of argument to SHFileOperation.
@@ -40,11 +40,15 @@ void deleteCache()
 		0,
 		"" };
 
-	int ret = SHFileOperation(&file_op);
+	if ( int ret = SHFileOperation(&file_op) )
+	{
+		throw("Error!");
+	}
+
 	free(tempdir);
 }
 
-int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nShowCmd )
+int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 {
 	MaloW::ClearDebug();
 
@@ -71,9 +75,9 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 	iTerrain* iT = GetGraphics()->CreateTerrain(Vector3(0, 0, 0), Vector3(testSize, 0.0f, testSize), vertSize);
 	iTerrain* iT2 = GetGraphics()->CreateTerrain(Vector3(testSize, 0, 0), Vector3(testSize, 0.0f, testSize), vertSize);
 	
-	//iAnimatedMesh* iAM = GetGraphics()->CreateAnimatedMesh("Media/TestMedia/FlagBlue.ani", Vector3(0, 0, 0));
-	iImage* iM = GetGraphics()->CreateImage(Vector2(100, 100), Vector2(100, 100), "Media/BallTexture.png");
-	//iText* iTe = GetGraphics()->CreateText("durp", Vector2(300, 100), 1.0f, "Media/TestMedia/1");
+	// iAnimatedMesh* iAM = GetGraphics()->CreateAnimatedMesh("Media/TestMedia/FlagBlue.ani", Vector3(0, 0, 0));
+	// iImage* iM = GetGraphics()->CreateImage(Vector2(100, 100), Vector2(100, 100), "Media/BallTexture.png");
+	// iText* iTe = GetGraphics()->CreateText("durp", Vector2(300, 100), 1.0f, "Media/TestMedia/1");
 	
 	float test = 0.0f;
 	Vector2 dd = Vector2(0.1f, 0.2f);
@@ -114,7 +118,6 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 	}
 	catch(...)
 	{
-		float durpa  = 11.0f;
 	}
 	
 	
@@ -161,8 +164,6 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 	ball->Scale(0.1f);
 	iMesh* secModel = GetGraphics()->CreateMesh("Media/bth.obj", Vector3(10, 0, 10));
 	secModel->Scale(1.0f * 0.05f);
-
-	float templol = 0.0f;
 
 	//CASCADED SHADOWMAP:
 	GetGraphics()->SetSunLightProperties(Vector3(0, -1, 0));
@@ -400,8 +401,9 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 		if(GetGraphics()->GetKeyListener()->IsPressed('Z'))	
 		{
 			GetGraphics()->GetKeyListener()->SetMousePosition(Vector2(
-				GetGraphics()->GetEngineParameters()->windowWidth / 2, 
-				GetGraphics()->GetEngineParameters()->windowHeight / 2));
+				(float)(GetGraphics()->GetEngineParameters()->windowWidth) / 2.0f, 
+				(float)(GetGraphics()->GetEngineParameters()->windowHeight) / 2.0f));
+
 			GetGraphics()->GetCamera()->SetUpdateCamera(false);
 			GetGraphics()->GetKeyListener()->SetCursorVisibility(true);
 		}
@@ -507,7 +509,6 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpC
 	}
 	
 	FreeGraphics();
-
 	//*************************************	     POST TEST       **********************
 #ifdef TEST
 	delete[] testData;

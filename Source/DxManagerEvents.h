@@ -137,11 +137,11 @@ public:
 class ResizeEvent : public RendererEvent
 {
 private:
-	float width;
-	float height;
+	unsigned int width;
+	unsigned int height;
 
 public:
-	ResizeEvent(string msg, float width, float height) : RendererEvent(msg)
+	ResizeEvent(string msg, unsigned int width, unsigned int height) : RendererEvent(msg)
 	{
 		this->width = width;
 		this->height = height;

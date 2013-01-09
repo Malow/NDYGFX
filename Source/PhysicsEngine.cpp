@@ -41,7 +41,7 @@ CollisionData PhysicsEngine::GetCollisionRayMesh( Vector3 rayOrigin, Vector3 ray
 		this->DoCollisionRayVsMesh(rayOrigin, rayDirection, mesh, cd);
 	}
 	else
-		MaloW::Debug("Failed to cast iMesh to Mesh in PhysicsEngine.cpp");
+		MaloW::Debug("Failed to cast iMesh to Mesh in PhysicsEngine.cpp in RayMesh");
 
 	return cd;
 }
@@ -57,7 +57,7 @@ CollisionData PhysicsEngine::GetCollisionRayTerrain( Vector3 rayOrigin, Vector3 
 			terrain->GetIndicesPointer(), terrain->GetNrOfIndices(), terrain->GetWorldMatrix(), cd);
 	}
 	else
-		MaloW::Debug("Failed to cast iTerrain to Terrain in PhysicsEngine.cpp");
+		MaloW::Debug("Failed to cast iTerrain to Terrain in PhysicsEngine.cpp in RayTerrain");
 
 	return cd;
 }
@@ -73,18 +73,19 @@ CollisionData PhysicsEngine::GetCollisionMeshMesh(iMesh* mesh1, iMesh* mesh2)
 			this->DoCollisionMeshVsMesh(m1, m2, cd);
 		}
 		else
-			MaloW::Debug("Failed to cast iMesh* mesh2 to Mesh in PhysicsEngine.cpp");
+			MaloW::Debug("Failed to cast iMesh* mesh2 to Mesh in PhysicsEngine.cpp in MeshMesh");
 	}
 	else
-		MaloW::Debug("Failed to cast iMesh* mesh1 to Mesh in PhysicsEngine.cpp");
+		MaloW::Debug("Failed to cast iMesh* mesh1 to Mesh in PhysicsEngine.cpp in MeshMesh");
 
 	return cd;
 }
 
-CollisionData PhysicsEngine::GetCollisionMeshTerrain( iMesh* mesh, iTerrain* terr )
+CollisionData PhysicsEngine::GetCollisionMeshTerrain( iMesh* mesh, iTerrain* terr)
 {
 	CollisionData cd;
 	// NYI
+	MaloW::Debug("NYI ERROR: Tried using GetCollisionMeshTerrain in PhysicsEngine.cpp, this function is not yet Implemented.");
 	return cd;
 }
 
@@ -227,7 +228,8 @@ bool PhysicsEngine::DoCollisionRayVsTriangle(Vector3 rayOrigin, Vector3 rayDirec
 	if(v < 0.0f || u + v > 1.0f)
 		return false;
 
-	float t = f * (e2.GetDotProduct(q));
+	// Unreferenced
+	// float t = f * (e2.GetDotProduct(q));
 
 	Vector3 collPos;
 	float w = 1 - (u + v);
@@ -674,7 +676,7 @@ bool PhysicsEngine::DoCollisionTriangleVsTriangle(Vector3 v00, Vector3 v01, Vect
 		V12[1] = v12.y;
 		V12[2] = v12.z;
 
-		return coplanar_tri_tri(N1, V00, V01, V02, V10, V11, V12);
+		return coplanar_tri_tri(N1, V00, V01, V02, V10, V11, V12) > 0;
 	}
 
 	float dsec = 0.0f;
@@ -720,7 +722,7 @@ bool PhysicsEngine::DoCollisionTriangleVsTriangle(Vector3 v00, Vector3 v01, Vect
 		V12[1] = v12.y;
 		V12[2] = v12.z;
 
-		return coplanar_tri_tri(N1, V00, V01, V02, V10, V11, V12);
+		return coplanar_tri_tri(N1, V00, V01, V02, V10, V11, V12)>0;
 	}
 
 	//////////////////////////////////////////////////////////////////////////

@@ -2,7 +2,7 @@
 
 #include "DxManagerDebugging.h"
 
-HRESULT DxManager::Update(float deltaTime)
+HRESULT DxManager::Update(float)
 {
 	// update subsystems
 	//ps.update(deltaTime);
@@ -135,27 +135,22 @@ void DxManager::HandleTextEvent(TextEvent* te)
 
 void DxManager::Life()
 {
-	//Black starting
-	if(this->TimerAnimation < 1000.0f)
-	{
-		Image* img = new Image(D3DXVECTOR2(0.0f, 0.0f), D3DXVECTOR2((float)this->params.windowWidth, (float)this->params.windowHeight));
-		this->CreateImage(img, "Media/LoadingScreen/FadeTexture.png");
-		MaloW::ProcessEvent* ev = this->PeekEvent();
-		if(dynamic_cast<ImageEvent*>(ev) != NULL)
-		{
-			this->HandleImageEvent((ImageEvent*)ev);
-		}
+	//Engine Start Splash screen.
+	Image* img = new Image(D3DXVECTOR2(0.0f, 0.0f), D3DXVECTOR2((float)this->params.windowWidth, (float)this->params.windowHeight));
+	Texture* tex = NULL;
+	tex = GetResourceManager()->CreateTextureFromFile("Media/LoadingScreen/StartingSplash.png");
+	img->SetTexture(tex);
+	this->images.add(img);
 
-		delete ev;
-		while(!this->StartRender)
-		{
-			this->Render();
-			this->framecount++;
-		}
-		delete this->images.getAndRemove(0);
-		img = NULL;
-		Sleep(500);
+	while(!this->StartRender)
+	{
+		this->Render();
+		this->framecount++;
 	}
+	this->DeleteImage(img);
+	img = NULL;
+	Sleep(100);
+
 
 	while(this->stayAlive)
 	{
@@ -165,6 +160,7 @@ void DxManager::Life()
 			{
 				string msg = ((RendererEvent*)ev)->getMessage();
 				
+				// ResizeEvent
 				if(dynamic_cast<ResizeEvent*>(ev) != NULL)
 				{
 					this->ResizeRenderer((ResizeEvent*)ev);
@@ -199,9 +195,7 @@ void DxManager::Life()
 				{
 					this->HandleTextEvent((TextEvent*)ev);
 				}
-
 			}
-
 			delete ev;
 		}
 		this->camera->Update(this->TimerAnimation - this->LastCamUpdate);

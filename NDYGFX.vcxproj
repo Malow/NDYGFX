@@ -62,7 +62,6 @@
     <ClInclude Include="Source\Terrain.h" />
     <ClInclude Include="Source\Text.h" />
     <ClInclude Include="Source\Texture.h" />
-    <ClInclude Include="Source\TextureManager.h" />
     <ClInclude Include="Source\TRDCamera.h" />
     <ClInclude Include="Source\Vertex.h" />
     <ClInclude Include="Source\Windows.h" />
@@ -106,7 +105,6 @@
     <ClCompile Include="Source\Terrain.cpp" />
     <ClCompile Include="Source\Text.cpp" />
     <ClCompile Include="Source\Texture.cpp" />
-    <ClCompile Include="Source\TextureManager.cpp" />
     <ClCompile Include="Source\TRDCamera.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -188,7 +186,7 @@
       <AdditionalIncludeDirectories>
       </AdditionalIncludeDirectories>
       <PreprocessorDefinitions>DLL_EXPORT;WIN32;_DEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <DisableSpecificWarnings>4250;4099;4290;</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4250;4099;4290;4239;</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

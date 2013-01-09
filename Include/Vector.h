@@ -11,6 +11,7 @@
 // EDIT 2012-12-19 by Alexivan - Added Less Than Comparison, Removed Destructors
 // EDIT 2012-12-19 by Alexivan - Removed Destructors, Fixed GetRotated, Normalize with big N, Made some functions constant
 // EDIT 2013-01-07 by Tillman  - Optimized Constructors.
+// EDIT 2013-01-09 by Alexivan - GetXY, GetXZ, GetZY for Vector3
 
 #pragma warning ( push ) 
 #pragma warning ( disable : 4201 ) // nonstandard extension used : nameless struct/union
@@ -246,6 +247,21 @@ public:
 			throw("index out of bounds");
 		}
 		return values[i];
+	}
+
+	inline Vector2 GetXY() const
+	{
+		return Vector2(x,y);
+	}
+
+	inline Vector2 GetXZ() const
+	{
+		return Vector2(x,z);
+	}
+
+	inline Vector2 GetYZ() const
+	{
+		return Vector2(y,z);
 	}
 
 #ifdef D3DVECTOR_DEFINED

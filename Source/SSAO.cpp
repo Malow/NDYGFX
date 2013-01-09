@@ -73,7 +73,7 @@ SSAO::~SSAO()
 }
 
 
-void SSAO::Init(ID3D11Device* device, ID3D11DeviceContext* deviceContext)
+void SSAO::Init(ID3D11Device* device, ID3D11DeviceContext*)
 {
 	D3D11_TEXTURE2D_DESC texDesc;
 	texDesc.Width = 256;
