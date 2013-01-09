@@ -41,7 +41,7 @@ CollisionData PhysicsEngine::GetCollisionRayMesh( Vector3 rayOrigin, Vector3 ray
 		this->DoCollisionRayVsMesh(rayOrigin, rayDirection, mesh, cd);
 	}
 	else
-		MaloW::Debug("Failed to cast iMesh to Mesh in PhysicsEngine.cpp");
+		MaloW::Debug("Failed to cast iMesh to Mesh in PhysicsEngine.cpp in RayMesh");
 
 	return cd;
 }
@@ -57,7 +57,7 @@ CollisionData PhysicsEngine::GetCollisionRayTerrain( Vector3 rayOrigin, Vector3 
 			terrain->GetIndicesPointer(), terrain->GetNrOfIndices(), terrain->GetWorldMatrix(), cd);
 	}
 	else
-		MaloW::Debug("Failed to cast iTerrain to Terrain in PhysicsEngine.cpp");
+		MaloW::Debug("Failed to cast iTerrain to Terrain in PhysicsEngine.cpp in RayTerrain");
 
 	return cd;
 }
@@ -73,18 +73,19 @@ CollisionData PhysicsEngine::GetCollisionMeshMesh(iMesh* mesh1, iMesh* mesh2)
 			this->DoCollisionMeshVsMesh(m1, m2, cd);
 		}
 		else
-			MaloW::Debug("Failed to cast iMesh* mesh2 to Mesh in PhysicsEngine.cpp");
+			MaloW::Debug("Failed to cast iMesh* mesh2 to Mesh in PhysicsEngine.cpp in MeshMesh");
 	}
 	else
-		MaloW::Debug("Failed to cast iMesh* mesh1 to Mesh in PhysicsEngine.cpp");
+		MaloW::Debug("Failed to cast iMesh* mesh1 to Mesh in PhysicsEngine.cpp in MeshMesh");
 
 	return cd;
 }
 
-CollisionData PhysicsEngine::GetCollisionMeshTerrain( iMesh* mesh, iTerrain* )
+CollisionData PhysicsEngine::GetCollisionMeshTerrain( iMesh* mesh, iTerrain* terr)
 {
 	CollisionData cd;
 	// NYI
+	MaloW::Debug("NYI ERROR: Tried using GetCollisionMeshTerrain in PhysicsEngine.cpp, this function is not yet Implemented.");
 	return cd;
 }
 
