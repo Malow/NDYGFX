@@ -68,7 +68,7 @@ class Terrain : public iTerrain
 
 		//Get
 		int GetSize() const { return this->zSize; }
-		D3DXVECTOR3 GetPosition() const { return this->zPos; } 
+		virtual Vector3 GetPosition() const;
 		D3DXVECTOR3 GetScale() const { return this->zScale; }
 		D3DXMATRIX GetWorldMatrix() const { return this->zWorldMatrix; }
 
