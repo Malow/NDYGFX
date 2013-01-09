@@ -69,7 +69,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	
 //*************************************	     PRE TEST       **********************
 #ifdef TEST
-	int vertSize = 2;
+	int vertSize = 32;
 	float testSize = 5.0f;
 	
 	iTerrain* iT = GetGraphics()->CreateTerrain(Vector3(0, 0, 0), Vector3(testSize, 0.0f, testSize), vertSize);

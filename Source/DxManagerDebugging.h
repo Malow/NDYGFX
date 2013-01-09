@@ -11,7 +11,7 @@ inline void DrawNormals(MaloW::Array<StaticMesh*>* meshes, ID3D11Device* g_Devic
 	};
 
 	Shader* shadnorm = new Shader();
-	if(FAILED(shadnorm->Init(g_Device, g_DeviceContext, "../../MaloWLib/MaloWEngine/DebugNormals.fx", inputDesc, 4)))	// + on last if added above
+	if(FAILED(shadnorm->Init(g_Device, g_DeviceContext, "Shaders/DebugNormals.fx", inputDesc, 4)))	// + on last if added above
 	{
 		MaloW::Debug("Failed to open DebugNormals.fx");
 		return;
@@ -53,7 +53,56 @@ inline void DrawNormals(MaloW::Array<StaticMesh*>* meshes, ID3D11Device* g_Devic
 				g_DeviceContext->Draw(verts->GetElementCount(), 0);
 		}
 	}
+	delete shadnorm;
+}
 
+inline void DrawNormals(MaloW::Array<Terrain*>* terrains, ID3D11Device* g_Device, ID3D11DeviceContext* g_DeviceContext, D3DXMATRIX VP)
+{
+	D3D11_INPUT_ELEMENT_DESC inputDesc[] = {
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
+	};
+
+	Shader* shadnorm = new Shader();
+	if(FAILED(shadnorm->Init(g_Device, g_DeviceContext, "Shaders/DebugNormals.fx", inputDesc, 4)))	// + on last if added above
+	{
+		MaloW::Debug("Failed to open DebugNormals.fx");
+		return;
+	}
+
+	//Matrixes
+	D3DXMATRIX world, wvp;
+	//clear render target
+	for(int i = 0; i < terrains->size(); i++)
+	{
+		// Set matrixes
+		world = terrains->get(i)->GetWorldMatrix();
+		wvp = world * VP;
+
+		shadnorm->SetMatrix("WVP", wvp);
+		shadnorm->SetMatrix("worldMatrix", world);
+
+		g_DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+
+		Buffer* verts = terrains->get(i)->GetVertexBufferPointer();
+		if(verts)
+			verts->Apply();
+
+		Buffer* inds = terrains->get(i)->GetIndexBufferPointer();
+		if(inds)
+			inds->Apply();
+
+		shadnorm->Apply(0);
+
+		// draw
+		if(inds)
+			g_DeviceContext->DrawIndexed(inds->GetElementCount(), 0, 0);
+		else
+			g_DeviceContext->Draw(verts->GetElementCount(), 0);
+		
+	}
 	delete shadnorm;
 }
 

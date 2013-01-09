@@ -4,7 +4,6 @@
 	Class for using screen space ambient occlusion (SSAO)
 */
 
-#include "TextureManager.h"
 #include "Shader.h"
 #include "GraphicsEngineParameters.h"
 #include "Camera.h"
