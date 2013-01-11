@@ -23,6 +23,7 @@
     <ClInclude Include="Include\iText.h" />
     <ClInclude Include="Include\Matrix.h" />
     <ClInclude Include="Include\Vector.h" />
+    <ClInclude Include="Source\BoundingSphere.h" />
     <ClInclude Include="Source\AnimatedMesh.h" />
     <ClInclude Include="Source\Array.h" />
     <ClInclude Include="Source\Buffer.h" />

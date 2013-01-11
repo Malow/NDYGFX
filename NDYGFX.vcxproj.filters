@@ -190,6 +190,9 @@
     <ClInclude Include="Source\PhysicsEngine.h">
       <Filter>Source Files\Engine\Other</Filter>
     </ClInclude>
+    <ClInclude Include="Source\BoundingSphere.h">
+      <Filter>Source Files\Engine\Objects and Entities</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\GraphicsEngineImp.cpp">

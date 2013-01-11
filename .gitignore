@@ -4,7 +4,6 @@
 /Debug
 /Release
 /NDYGFX.opensdf
-/WorkingDir/Config.cfg
 /WorkingDir/MaloWDebug.txt
 /WorkingDir/ModelViewer.vcxproj.user
 /ModelViewer/Release
@@ -14,3 +13,5 @@
 /WorkingDir/Media/Cache
 /workingDir/Media/LoadingScreen/Thumbs.db
 /WorkingDir/Media/Thumbs.db
+/WorkingDir/config.cfg
+/WorkingDir/Microsoft.DTfW.DHL.manifest

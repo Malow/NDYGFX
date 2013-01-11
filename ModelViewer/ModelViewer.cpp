@@ -67,6 +67,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	GetGraphics()->SetSunLightProperties(Vector3(1, -1, 1));
 	GetGraphics()->SetSceneAmbientLight(Vector3(0.4f, 0.4f, 0.4f));
 	
+
 //*************************************	     PRE TEST       **********************
 #ifdef TEST
 	int vertSize = 16;
@@ -308,6 +309,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		// Updates camera etc, does NOT render the frame, another process is doing that, so diff should be very low.
 		float diff = GetGraphics()->Update();	
 		
+
 //*************************************	     RUN TESTS       **********************
 #ifdef TEST
 		CollisionData cd = GetGraphics()->GetPhysicsEngine()->GetCollisionRayMesh(
@@ -320,6 +322,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		{
 			ball->SetPosition(Vector3(0, -100, 0));
 		}
+
 		
 		static bool fesd = true;
 		if(GetGraphics()->GetKeyListener()->IsPressed('H'))
@@ -404,6 +407,8 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		*/
 #endif
 //*************************************	    END OF RUN TESTS       **********************
+
+
 		i->SetPosition(GetGraphics()->GetCamera()->GetPosition());
 
 		if(GetGraphics()->GetKeyListener()->IsPressed('W'))
@@ -526,6 +531,8 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	}
 	
 	FreeGraphics();
+
+
 	//*************************************	     POST TEST       **********************
 #ifdef TEST
 	delete[] testData;
@@ -533,5 +540,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	//delete[] fileNames;
 #endif
 	//*************************************	   END OF POST TEST       **********************
+
+
 	return 0;
 }

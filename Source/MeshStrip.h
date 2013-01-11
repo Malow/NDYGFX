@@ -3,6 +3,7 @@
 
 #include "Object3D.h"
 #include "Material.h"
+#include "BoundingSphere.h"
 #include <string>
 
 
@@ -16,6 +17,7 @@ private:
 	int* indicies;
 	std::string texture;
 	Material* material;
+	BoundingSphere bb;
 
 public:
 	MeshStrip();
@@ -38,6 +40,9 @@ public:
 
 	void SetMaterial(Material* mat);
 	Material* GetMaterial() const { return this->material; }
+
+	BoundingSphere GetBoundingSphere() const { return this->bb; }
+	void SetBoundingSphere(BoundingSphere bb) { this->bb = bb; }
 };
 
 #endif
