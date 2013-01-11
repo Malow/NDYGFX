@@ -69,7 +69,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	
 //*************************************	     PRE TEST       **********************
 #ifdef TEST
-	int vertSize = 32;
+	int vertSize = 16;
 	float testSize = 5.0f;
 	
 	iTerrain* iT = GetGraphics()->CreateTerrain(Vector3(0, 0, 0), Vector3(testSize, 0.0f, testSize), vertSize);
@@ -330,12 +330,14 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 					Vector3 fw = GetGraphics()->GetCamera()->GetForward();
 					GetGraphics()->ChangeCamera(FPS);
 					GetGraphics()->GetCamera()->SetForward(fw);
+					GetGraphics()->ResizeGraphicsEngine(500, 500);
 				}
 				else
 				{
 					Vector3 fw = GetGraphics()->GetCamera()->GetForward();
 					GetGraphics()->ChangeCamera(RTS);
 					GetGraphics()->GetCamera()->SetForward(fw);
+					GetGraphics()->ResizeGraphicsEngine(750, 250);
 				}
 				fesd = false;
 			}			
@@ -345,16 +347,6 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 
 		if(GetGraphics()->GetKeyListener()->IsPressed('J'))
 			GetGraphics()->SetSceneAmbientLight(Vector3(1.0f, 0.0f, 0.0f));
-
-		static bool asd = true;
-		if(GetGraphics()->GetKeyListener()->IsPressed('K'))
-		{
-			if(asd)
-			{
-				GetGraphics()->ResizeGraphicsEngine(500, 500);
-				asd = false;
-			}
-		}
 
 
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_UP))

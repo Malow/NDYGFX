@@ -716,6 +716,7 @@ void GraphicsEngineImp::SetSceneAmbientLight( Vector3 ambientLight )
 
 void GraphicsEngineImp::ResizeGraphicsEngine( unsigned int width, unsigned int height )
 {
+	MaloW::Debug("Resizing Engine to: " + MaloW::convertNrToString(width) + ", " + MaloW::convertNrToString(height));
 	if(this->isManagingMyOwnWindow)
 		SetWindowPos(this->hWnd, 0 , 0 , 0, width, height, SWP_NOMOVE|SWP_NOZORDER|SWP_NOACTIVATE);
 

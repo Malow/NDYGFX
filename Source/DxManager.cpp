@@ -658,17 +658,17 @@ void DxManager::ResizeRenderer(ResizeEvent* ev)
 
 		// Preserve the existing buffer count and format.
 		// Automatically choose the width and height to match the client rect for HWNDs.
-		if(!this->Dx_SwapChain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, 0))
+		if(FAILED(this->Dx_SwapChain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, 0)))
 			MaloW::Debug("Failed to call ResizeRenderer on DxManager: ResizeBuffers");
 
 	
 		// Get buffer and create a render-target-view.
 		ID3D11Texture2D* pBuffer;
-		if(!this->Dx_SwapChain->GetBuffer(0, __uuidof( ID3D11Texture2D), (void**) &pBuffer))
+		if(FAILED(this->Dx_SwapChain->GetBuffer(0, __uuidof( ID3D11Texture2D), (void**) &pBuffer)))
 			MaloW::Debug("Failed to call ResizeRenderer on DxManager: GetBuffer");
 		
 
-		if(!this->Dx_Device->CreateRenderTargetView(pBuffer, NULL, &this->Dx_RenderTargetView))
+		if(FAILED(this->Dx_Device->CreateRenderTargetView(pBuffer, NULL, &this->Dx_RenderTargetView)))
 			MaloW::Debug("Failed to call ResizeRenderer on DxManager: CreateRenderTargetView");
 		
 		pBuffer->Release();
@@ -692,7 +692,7 @@ void DxManager::ResizeRenderer(ResizeEvent* ev)
 		descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 		descDepth.CPUAccessFlags = 0;
 		descDepth.MiscFlags = 0;
-		if(!Dx_Device->CreateTexture2D( &descDepth, NULL, &Dx_DepthStencil ))
+		if(FAILED(Dx_Device->CreateTexture2D( &descDepth, NULL, &Dx_DepthStencil )))
 			MaloW::Debug("Failed to call ResizeRenderer on DxManager: CreateTexture2D");
 			
 
@@ -702,7 +702,7 @@ void DxManager::ResizeRenderer(ResizeEvent* ev)
 		descDSV.Format = descDepth.Format;
 		descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 		descDSV.Texture2D.MipSlice = 0;
-		if(!Dx_Device->CreateDepthStencilView(Dx_DepthStencil, &descDSV, &Dx_DepthStencilView))
+		if(FAILED(Dx_Device->CreateDepthStencilView(Dx_DepthStencil, &descDSV, &Dx_DepthStencilView)))
 			MaloW::Debug("Failed to call ResizeRenderer on DxManager: CreateDepthStencilView");
 
 

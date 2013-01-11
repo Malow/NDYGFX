@@ -16,10 +16,24 @@ SamplerState linearSampler
 };
 
 //-----------------------------------------------------------------------------------------
+// State Structures
+//-----------------------------------------------------------------------------------------
+RasterizerState NoCulling
+{
+	CullMode = Back;
+};
+
+DepthStencilState EnableDepth
+{
+    DepthEnable = TRUE;
+    DepthWriteMask = ALL;
+    DepthFunc = LESS_EQUAL;
+};
+
+
+//-----------------------------------------------------------------------------------------
 // Input and Output Structures
 //-----------------------------------------------------------------------------------------
-
-
 cbuffer EveryObject
 {
 	matrix WVP;
@@ -45,22 +59,9 @@ struct PSSceneIn
 	float4 Pos : SV_POSITION;
 };
 
-//-----------------------------------------------------------------------------------------
-// State Structures
-//-----------------------------------------------------------------------------------------
-RasterizerState NoCulling
-{
-	CullMode = Back;
-};
-
-DepthStencilState EnableDepth
-{
-    DepthEnable = TRUE;
-    DepthWriteMask = ALL;
-    DepthFunc = LESS_EQUAL;
-};
 
 
+/*
 //-----------------------------------------------------------------------------------------
 // VertexShader: VSScene
 //-----------------------------------------------------------------------------------------
@@ -99,6 +100,53 @@ float4 PSScene(PSSceneIn input) : SV_Target
 //-----------------------------------------------------------------------------------------
 // Technique: RenderTextured  
 //-----------------------------------------------------------------------------------------
+technique11 BasicTech
+{
+    pass p0
+    {
+		// Set VS, GS, and PS
+        SetVertexShader( CompileShader( vs_4_0, VSScene() ) );
+        SetGeometryShader( CompileShader( gs_4_0, GS() ) );
+        SetPixelShader( CompileShader( ps_4_0, PSScene() ) );
+	    
+
+		SetDepthStencilState( EnableDepth, 0 );
+	    SetRasterizerState( NoCulling );
+    }  
+}*/
+
+
+
+
+
+GSIn VSScene(VSIn input)
+{
+	GSIn output = (GSIn)0;
+
+	float4 pos = input.Pos;
+	output.Pos1 = mul(pos, WVP);
+	pos = pos + float4(input.norm, 0.0f);
+	//pos = pos + float4(0.0f, 1.0f, 0.0f, 0.0f);	// This should fucking work with terrain, but nope.
+	output.Pos2 = mul(pos, WVP);
+	
+	return output;
+}
+
+[maxvertexcount(2)]
+void GS(point GSIn input[1], inout LineStream<PSSceneIn> lineStream)
+{
+	PSSceneIn output;
+	output.Pos = input[0].Pos1;
+	lineStream.Append(output);
+	output.Pos = input[0].Pos2;
+	lineStream.Append(output);
+}
+
+float4 PSScene(PSSceneIn input) : SV_Target
+{	
+	return float4(0.9f, 0.9f, 0.9f, 1.0f);
+}
+
 technique11 BasicTech
 {
     pass p0
