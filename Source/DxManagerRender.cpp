@@ -555,6 +555,9 @@ void DxManager::RenderCascadedShadowMap()
 {
 	this->csm->PreRender(this->sun.direction, this->camera);
 	
+	D3DXMATRIX wvp;
+	D3DXMatrixIdentity(&wvp);
+
 	for (int l = 0; l < this->csm->GetNrOfCascadeLevels(); l++)
 	{
 		Dx_DeviceContext->OMSetRenderTargets(0, 0, this->csm->GetShadowMapDSV(l));
@@ -562,12 +565,49 @@ void DxManager::RenderCascadedShadowMap()
 		Dx_DeviceContext->RSSetViewports(1, &wp);
 		Dx_DeviceContext->ClearDepthStencilView(this->csm->GetShadowMapDSV(l), D3D11_CLEAR_DEPTH, 1.0f, 0);
 		
+		//Terrain
+		for(int i = 0; i < this->terrains.size(); i++)
+		{
+			//Matrices
+			wvp = this->terrains[i]->GetWorldMatrix() * this->csm->GetViewProjMatrix(l);
+			this->Shader_ShadowMap->SetMatrix("LightWVP", wvp);
+			
+			//Input Assembler
+			this->Dx_DeviceContext->IASetPrimitiveTopology(this->terrains[i]->GetTopology());
+
+			//Vertex data
+			Buffer* verts = this->terrains[i]->GetVertexBufferPointer();
+			Buffer* inds = this->terrains[i]->GetIndexBufferPointer();
+			if(verts)
+			{
+				inds->Apply();
+			}
+			if(inds)
+			{
+				verts->Apply();
+			}
+
+			//Apply Shader
+			this->Shader_ShadowMap->SetBool("textured", true); //**tillman - herp durp**
+			this->Shader_ShadowMap->Apply(0);
+
+			//Draw
+			if(inds)
+			{
+				this->Dx_DeviceContext->DrawIndexed(inds->GetElementCount(), 0, 0);
+			}
+			else
+			{
+				this->Dx_DeviceContext->Draw(verts->GetElementCount(), 0);
+			}
+		}
+
 		for(int i = 0; i < this->objects.size(); i++)
 		{
 			if(!this->objects[i]->IsUsingInvisibility())
 			{
 				MaloW::Array<MeshStrip*>* strips = this->objects[i]->GetStrips();
-				D3DXMATRIX wvp = this->objects[i]->GetWorldMatrix() * this->csm->GetViewProjMatrix(l);
+				wvp = this->objects[i]->GetWorldMatrix() * this->csm->GetViewProjMatrix(l);
 				this->Shader_ShadowMap->SetMatrix("LightWVP", wvp);
 
 				for(int u = 0; u < strips->size(); u++)
@@ -681,7 +721,7 @@ HRESULT DxManager::Render()
 	//for(int q = 0; q < this->lights.size(); q++)
 		//DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_BillBoard, this->lights[q]->GetShadowMapSRV(), q); 
 	//for(int q = 0; q < this->csm->GetNrOfCascadeLevels(); q++)
-		//DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_BillBoard, this->csm->GetShadowMapSRV(q), q); 
+	//	DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_BillBoard, this->csm->GetShadowMapSRV(q), q); 
 
 	
 	

@@ -111,7 +111,7 @@ PSOut PSScene(PSSceneIn input) : SV_Target
 		if(blendMapped)
 		{
 			//Sample blend map texture
-			float4 blendMapColor = normalize(blendMap.Sample(LinearWrapSampler, input.tex)); //normalize
+			float4 blendMapColor = normalize(blendMap.Sample(LinearClampSampler, input.tex)); //normalize
 		
 			//Inverse of all blend weights to scale final color to be in range [0,1]
 			float inverseTotal = 1.0f / (blendMapColor.r + blendMapColor.g + blendMapColor.b + blendMapColor.a);
