@@ -166,7 +166,6 @@ void DxManager::RenderDeferredGeometry()
 			}
 		}*/
 
-		//**TODO: TILLMAN: om tex 1-3 inte används, set de till tex 0, eller ladda in default**
 		if(hasTexture) 
 		{
 			//Check if blend map is used
@@ -408,13 +407,18 @@ void DxManager::RenderDeferredGeometry()
 
 				this->Dx_DeviceContext->IASetVertexBuffers(0, 2, vertexBuffers, strides, offsets);
 
-				if(ID3D11ShaderResourceView* texture = objOne->GetTexture()->GetSRVPointer())
+				if(objOne->GetTexture())
 				{
-					this->Shader_DeferredAnimatedGeometry->SetBool("textured", true);
-					this->Shader_DeferredAnimatedGeometry->SetResource("tex2D", texture);
+					if(ID3D11ShaderResourceView* texture = objOne->GetTexture()->GetSRVPointer())
+					{
+						this->Shader_DeferredAnimatedGeometry->SetBool("textured", true);
+						this->Shader_DeferredAnimatedGeometry->SetResource("tex2D", texture);
+					}
 				}
 				else
+				{
 					this->Shader_DeferredAnimatedGeometry->SetBool("textured", false);
+				}
 			
 
 				this->Shader_DeferredAnimatedGeometry->Apply(0);
@@ -438,10 +442,6 @@ void DxManager::RenderDeferredSkybox()
 {
 	if(!this->skybox)
 		return;
-	
-
-	//this->Dx_DeviceContext->OMSetRenderTargets(1, NULL, this->Dx_DepthStencilView); //**tillman - MaloW**
-
 
 		// Set matrixes
 	D3DXMATRIX world, wvp, view, proj;
@@ -493,7 +493,7 @@ void DxManager::RenderDeferredPerPixel()
 	this->Shader_DeferredLightning->SetMatrix("CameraVP", vp);
 	this->Shader_DeferredLightning->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetPositionD3DX(), 1));
 	//stdafx.fx:
-	this->Shader_DeferredLightning->SetFloat("NrOfLights", (float)this->lights.size()); //**tillman**
+	this->Shader_DeferredLightning->SetFloat("NrOfLights", (float)this->lights.size()); //**tillman - omstrukturering**
 	this->Shader_DeferredLightning->SetFloat4("SceneAmbientLight", D3DXVECTOR4(this->sceneAmbientLight, 1.0f));
 
 	this->Shader_DeferredLightning->SetFloat("timerMillis", this->TimerAnimation);

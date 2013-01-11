@@ -75,9 +75,9 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	iTerrain* iT = GetGraphics()->CreateTerrain(Vector3(0, 0, 0), Vector3(testSize, 0.0f, testSize), vertSize);
 	iTerrain* iT2 = GetGraphics()->CreateTerrain(Vector3(testSize, 0, 0), Vector3(testSize, 0.0f, testSize), vertSize);
 	
-	// iAnimatedMesh* iAM = GetGraphics()->CreateAnimatedMesh("Media/TestMedia/FlagBlue.ani", Vector3(0, 0, 0));
-	// iImage* iM = GetGraphics()->CreateImage(Vector2(100, 100), Vector2(100, 100), "Media/BallTexture.png");
-	// iText* iTe = GetGraphics()->CreateText("durp", Vector2(300, 100), 1.0f, "Media/TestMedia/1");
+	iAnimatedMesh* iAM = NULL;//GetGraphics()->CreateAnimatedMesh("Media/FlagBlue.ani", Vector3(0, 0, 0));
+	//iImage* iM = GetGraphics()->CreateImage(Vector2(100, 100), Vector2(100, 100), "Media/BallTexture.png");
+	//iText* iTe = GetGraphics()->CreateText("durp", Vector2(300, 100), 1.0f, "Media/Fonts/1");
 	
 	float test = 0.0f;
 	Vector2 dd = Vector2(0.1f, 0.2f);
@@ -86,8 +86,6 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	test = durp[2];
 	Vector4 hurp = Vector4(10.0f, 20.0f, 30.0f, 40.0f);
 	test = hurp[3];
-
-	//D3DXVECTOR2 ddd = dd.GetD3DXVECTOR2(); //**tillman / malow **
 
 	float inner = 1.0f;
 	float outer = inner * 2;
@@ -148,6 +146,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		iTs[i] = GetGraphics()->CreateTerrain(Vector3((testSize * 2) + (i * testSize), 0, 0), Vector3(testSize, 0.0f, testSize), vertSize);
 		iTs[i]->SetTextures(fileNames);
 		iTs[i]->SetBlendMap(size, testData);
+		iTs[i]->SetTextureScale(10);
 	}
 	/*
 	// test fps
@@ -374,6 +373,16 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		{
 			//debugCSMPoints[i]->SetScale(debugCSMScale);
 		}
+		if(GetGraphics()->GetKeyListener()->IsPressed(VK_SHIFT))
+			secModel->MoveBy(Vector3(0, 1, 0) * diff * 0.01f);
+		if(GetGraphics()->GetKeyListener()->IsPressed(VK_CONTROL))
+			secModel->MoveBy(Vector3(0, -1, 0) * diff * 0.01f);
+
+		if(iAM)
+		{
+			iAM->Update(diff);
+		}
+
 		/*
 		templol += diff;
 		if(templol > 100000.0f)

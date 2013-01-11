@@ -741,7 +741,7 @@ void GraphicsEngineImp::SetSunLightDisabled()
 }
 
 
-void GraphicsEngineImp::DebugDummyFunction(Vector3* arr)
+void GraphicsEngineImp::DebugDummyFunction(Vector3* arr) //**tillman**
 {
 	//Transform the points from world space to light’s homogeneous space.
 
@@ -825,7 +825,7 @@ void GraphicsEngineImp::DebugDummyFunction(Vector3* arr)
 
 
 
-	//test**tillman**
+	//test
 	D3DXMATRIX inverseLightViewMatrix;
 	D3DXMatrixIdentity(&inverseLightViewMatrix);
 	D3DXMatrixInverse(&inverseLightViewMatrix, NULL, &lightViewMatrix);

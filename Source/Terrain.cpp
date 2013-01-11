@@ -5,8 +5,6 @@
 void Terrain::CreateMesh()
 {
 	//Create vertices
-	int tilingFactor = 1; //**tillman - ändra senare?**
-
 	this->zNrOfVertices = this->zSize * this->zSize;
 	this->zVertices = new Vertex[this->zSize * this->zSize];
 
@@ -17,7 +15,7 @@ void Terrain::CreateMesh()
 			//local pos range [-0.5, 0.5f] * scale
 			this->zVertices[i * this->zSize + u] =
 				Vertex(	D3DXVECTOR3((float)u / (this->zSize - 1) - 0.5f, 0.0f, (float)i / (this->zSize - 1) - 0.5f), 
-						D3DXVECTOR2((float)u / ((this->zSize - 1) / tilingFactor),(float)i / ((this->zSize - 1) / tilingFactor)), 
+						D3DXVECTOR2((float)u / ((this->zSize - 1)),(float)i / ((this->zSize - 1))), 
 						D3DXVECTOR3(0.0f, 1.0f, 0.0f),
 						D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 		}
@@ -252,7 +250,7 @@ void Terrain::RecreateWorldMatrix()
 //iTerrain interface functions
 float Terrain::GetYPositionAt(float x, float z) const
 {
-	float ex = z / this->zScale.z; //**tillman - hackfix by swapping z & x **
+	float ex = z / this->zScale.z; //hackfix by swapping z & x
 	float ez = x / this->zScale.x;
 
 	//if(((ex && ex) <= 1.0f) && ((ex && ez) > 0.0f)) //**tillman opt

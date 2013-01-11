@@ -261,12 +261,6 @@ void DxManager::CreateStaticMesh(StaticMesh* mesh)
 				MaloW::Debug("CreateIndsBuffer Failed");
 		}
 
-		//**TODO TILLMAN - Resourcemanager**
-		/*ID3D11ShaderResourceView* texture = NULL;
-		if(strip->GetTexturePath() != "")
-		{
-			texture = GetResourceManager()->CreateShaderResourceViewFromFile(strip->GetTexturePath().c_str());
-		}*/
 		Texture* texture = NULL;
 		if(strip->GetTexturePath() != "")
 		{
@@ -326,21 +320,14 @@ void DxManager::CreateAnimatedMesh(AnimatedMesh* mesh)
 					MaloW::Debug("CreateIndsBuffer Failed");
 			}
 
-			//**TODO: TILLMAN - resource manager**
-			/*ID3D11ShaderResourceView* texture = NULL;
-			if(strip->GetTexturePath() != "")
-			{
-				D3DX11_IMAGE_LOAD_INFO loadInfo;
-				ZeroMemory(&loadInfo, sizeof(D3DX11_IMAGE_LOAD_INFO));
-				loadInfo.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-				loadInfo.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-				if(FAILED(D3DX11CreateShaderResourceViewFromFile(Dx_Device, strip->GetTexturePath().c_str(), &loadInfo, NULL, &texture, NULL)))
-					MaloW::Debug("Failed to load texture " + strip->GetTexturePath());
-			}*/
 			Texture* texture = NULL;
 			if(strip->GetTexturePath() != "")
 			{
 				texture = GetResourceManager()->CreateTextureFromFile(strip->GetTexturePath().c_str());
+			}
+			else
+			{
+				texture = NULL; //**TILLMAN**
 			}
 
 			Object3D* obj = new Object3D(verts, inds, texture, mesh->GetTopology()); 
@@ -375,17 +362,6 @@ Object3D* DxManager::createParticleObject(ParticleMesh* mesh)
 
 	Buffer* inds = NULL;
 
-	//**TODO: TILLMAN - resource manager**
-	/*ID3D11ShaderResourceView* texture = NULL;
-	if(mesh->GetTexturePath() != "")
-	{
-		D3DX11_IMAGE_LOAD_INFO loadInfo;
-		ZeroMemory(&loadInfo, sizeof(D3DX11_IMAGE_LOAD_INFO));
-		loadInfo.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-		loadInfo.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-		if(FAILED(D3DX11CreateShaderResourceViewFromFile(Dx_Device, mesh->GetTexturePath().c_str(), &loadInfo, NULL, &texture, NULL)))
-			MaloW::Debug("Failed to load texture " + mesh->GetTexturePath());
-	}*/
 	Texture* texture = NULL;
 	if(mesh->GetTexturePath() != "")
 	{
@@ -451,21 +427,12 @@ Light* DxManager::CreateLight(D3DXVECTOR3 pos, bool UseShadowMap)
 
 void DxManager::CreateImage(Image* image, string texture)
 {
-
-	//**TODO: TILLMAN - resource manager**
 	Texture* tex = NULL;
-	tex = GetResourceManager()->CreateTextureFromFile(texture.c_str());
+	if(texture != "")
+	{
+		tex = GetResourceManager()->CreateTextureFromFile(texture.c_str());
+	}
 
-	/*
-	ID3D11ShaderResourceView* tex = NULL;
-
-	D3DX11_IMAGE_LOAD_INFO loadInfo;
-	ZeroMemory(&loadInfo, sizeof(D3DX11_IMAGE_LOAD_INFO));
-	loadInfo.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	loadInfo.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	if(FAILED(D3DX11CreateShaderResourceViewFromFile(this->Dx_Device, texture.c_str(), &loadInfo, NULL, &tex, NULL)))
-		MaloW::Debug("Failed to load texture " + texture);
-	*/
 	image->SetTexture(tex);
 	
 	ImageEvent* re = new ImageEvent("Add Image", image);
@@ -578,31 +545,6 @@ void DxManager::CreateSkyBox(string texture)
 	if(FAILED(IndexBuffer->Init(this->Dx_Device, this->Dx_DeviceContext, indiceBufferDesc)))
 		MaloW::Debug("Failed to init skybox");
 	
-	//**tillman resource manager**
-	/*D3DX11_IMAGE_LOAD_INFO loadSMInfo;
-	loadSMInfo.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
-
-	
-	ID3D11Texture2D* SMTexture = 0;
-	D3DX11CreateTextureFromFile(this->Dx_Device, texture.c_str(), 
-		&loadSMInfo, 0, (ID3D11Resource**)&SMTexture, 0);
-
-
-	D3D11_TEXTURE2D_DESC SMTextureDesc;
-	SMTexture->GetDesc(&SMTextureDesc);
-
-	D3D11_SHADER_RESOURCE_VIEW_DESC SMViewDesc;
-	SMViewDesc.Format = SMTextureDesc.Format;
-	SMViewDesc.ViewDimension = D3D10_SRV_DIMENSION_TEXTURECUBE;
-	SMViewDesc.TextureCube.MipLevels = SMTextureDesc.MipLevels;
-	SMViewDesc.TextureCube.MostDetailedMip = 0;
-	//**TODO: TILLMAN - resourcemanager**
-	ID3D11ShaderResourceView* text;
-	this->Dx_Device->CreateShaderResourceView(SMTexture, &SMViewDesc, &text);
-
-	SMTexture->Release();
-	*/
-	//**TODO: TILLMAN - resourcemanager**
 	Texture* tex = NULL;
 	if(texture != "")
 	{

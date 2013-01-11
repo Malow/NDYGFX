@@ -12,8 +12,12 @@ extern "C"
 {
 	class DECLDIR iAnimatedMesh : public virtual iMesh
 	{	
-	public:
-		iAnimatedMesh() {};
-		virtual ~iAnimatedMesh() {};
+		public:
+			iAnimatedMesh() {};
+			virtual ~iAnimatedMesh() {};
+
+			virtual void SetCurrentTime(float currentTime) = 0;
+			virtual void Update(float deltaTime) = 0;
+
 	};
 }

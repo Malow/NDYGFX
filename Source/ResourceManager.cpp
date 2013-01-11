@@ -39,13 +39,6 @@ bool ResourceManager::Init(ID3D11Device* device, ID3D11DeviceContext* deviceCont
 	return true;
 }
 
-/*
-ID3D11Texture2D* ResourceManager::CreateTexture2D(const char* filePath)
-{
-
-
-}*/
-
 Texture* ResourceManager::CreateTextureFromFile( const char* filePath )
 {
 	auto tex = this->zTextures.find(filePath);

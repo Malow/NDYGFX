@@ -13,7 +13,7 @@
 Texture2D tex0; //R-channel in blendmap. ex: grass
 Texture2D tex1; //G-channel in blendmap. ex: dirt
 Texture2D tex2; //B-channel in blendmap. ex: leaves
-Texture2D tex3; //A-channel in blendmap. ex: footprints?**TILLMAN**
+Texture2D tex3; //A-channel in blendmap. ex: extra
 Texture2D<float4> blendMap;
 //Texture2D tex4; //**extra, ex: blood, footprints**
 

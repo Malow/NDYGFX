@@ -72,7 +72,7 @@ void CascadedShadowMap::CalcShadowMapMatrices(D3DXVECTOR3 sunLight, Camera* cam,
 
 
 	//Calculate the light's view matrix.
-	D3DXVECTOR3 lightPos = D3DXVECTOR3(-1000, 1000, -1000); //D3DXVECTOR3(0.0f, 99999.9f, 0.0f); //**tillman** D3DXVECTOR3(-50, 50, -50);
+	D3DXVECTOR3 lightPos = D3DXVECTOR3(-1000, 1000, -1000); //**tillman**
 	D3DXVECTOR3 lightLookAt = lightPos + sunLight;
 	D3DXVECTOR3 lightUp = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 	D3DXMATRIX lightViewMatrix;

@@ -6,7 +6,7 @@ AnimatedMesh::AnimatedMesh(D3DXVECTOR3 pos) : Mesh(pos)
 {
 	this->mNrOfTimesLooped = 0;
 	this->mLoopNormal = false;
-	this->mLoopSeamless = false;
+	this->mLoopSeamless = true;
 	this->mCurrentTime = 0.0f;
 	this->mKeyFrames = new MaloW::Array<KeyFrame*>();
 }
@@ -179,6 +179,10 @@ MaloW::Array<MeshStrip*>* AnimatedMesh::GetStrips()
 void AnimatedMesh::SetCurrentTime(float currentTime)
 {
 	this->mCurrentTime = currentTime;
+}
+void AnimatedMesh::Update(float deltaTime)
+{
+	this->mCurrentTime += deltaTime;
 }
 
 

@@ -267,12 +267,12 @@ void DxManager::RenderShadowMap()
 {
 	// Set sun-settings
 	this->Shader_DeferredLightning->SetBool("UseSun", this->useSun);
-	if(this->useSun) //**tillman**
+	if(this->useSun)
 	{
 		this->Shader_DeferredLightning->SetStructMemberAsFloat4("sun", "Direction", D3DXVECTOR4(this->sun.direction, 0.0f));
 		this->Shader_DeferredLightning->SetStructMemberAsFloat4("sun", "LightColor", D3DXVECTOR4(this->sun.lightColor, 0.0f));
 		this->Shader_DeferredLightning->SetStructMemberAsFloat("sun", "LightIntensity", this->sun.intensity);
-		Shader_ShadowMap->Apply(0);		// Dont know why the fuck this has to be here, but it does, otherwise textures wont be sent when rendering objects
+		//Shader_ShadowMap->Apply(0);		// Dont know why the fuck this has to be here, but it does, otherwise textures wont be sent when rendering objects. **Texture error**
 	}
 	// If special circle is used
 	if(this->specialCircleParams.x) //if inner radius > 0, then send/set data
@@ -375,7 +375,6 @@ void DxManager::RenderShadowMap()
 
 			// For deferred:
 			this->Shader_DeferredLightning->SetResourceAtIndex(l, "ShadowMap", this->lights[l]->GetShadowMapSRV());
-			//**tillman**
 			this->Shader_DeferredLightning->SetStructMemberAtIndexAsMatrix(l, "lights", "LightViewProj", lvp);
 			this->Shader_DeferredLightning->SetStructMemberAtIndexAsFloat4(l, "lights", "LightPosition", D3DXVECTOR4(this->lights[l]->GetPosition(), 1));
 			this->Shader_DeferredLightning->SetStructMemberAtIndexAsFloat4(l, "lights", "LightColor", D3DXVECTOR4(this->lights[l]->GetColor(), 1));
@@ -409,7 +408,7 @@ void DxManager::RenderShadowMap()
 	this->Shader_DeferredLightning->SetFloat("PCF_SIZE", PCF_SIZE);
 	this->Shader_DeferredLightning->SetFloat("PCF_SIZE_SQUARED", PCF_SQUARED);
 	//this->Shader_DeferredLightning->SetFloat("SMAP_DX", 1.0f / 256.0f);
-	this->Shader_DeferredLightning->SetFloat("NrOfLights", (float)this->lights.size()); //**tillman**
+	this->Shader_DeferredLightning->SetFloat("NrOfLights", (float)this->lights.size());
 	
 	/*
 	// for deferred quad:
@@ -588,7 +587,6 @@ void DxManager::RenderCascadedShadowMap()
 			}
 
 			//Apply Shader
-			this->Shader_ShadowMap->SetBool("textured", true); //**tillman - herp durp**
 			this->Shader_ShadowMap->Apply(0);
 
 			//Draw
@@ -617,7 +615,6 @@ void DxManager::RenderCascadedShadowMap()
 					Buffer* verts = obj->GetVertBuff();
 					if(verts)
 						verts->Apply();
-					Shader_ShadowMap->SetBool("textured", false);
 
 					Buffer* inds = obj->GetIndsBuff();
 					if(inds)

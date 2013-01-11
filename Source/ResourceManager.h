@@ -36,9 +36,6 @@ class ResourceManager
 
 		bool Init(ID3D11Device* device, ID3D11DeviceContext* deviceContext);
 
-		//ID3D11Texture2D* CreateTexture2D(const char* filePath);
-		//DEPRECATED**
-		//ID3D11ShaderResourceView* CreateShaderResourceViewFromFile(const char* filePath);
 		Texture* CreateTextureFromFile(const char* filePath);
 		Texture* CreateCubeTexture(const char* filePath);
 		//Deletes the texture sent. The pointer is automatically set to NULL.

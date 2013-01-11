@@ -15,6 +15,6 @@ Texture::Texture(string filePath, ID3D11ShaderResourceView* SRV) : zFilePath(fil
 
 Texture::~Texture()
 {
-	if(this->zSRV) this->zSRV->Release(); //this->zSRV = NULL; //**tillman
+	if(this->zSRV) this->zSRV->Release(); this->zSRV = NULL;
 }
 

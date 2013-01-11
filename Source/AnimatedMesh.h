@@ -72,8 +72,10 @@ class AnimatedMesh : public Mesh, public virtual iAnimatedMesh
 		/* ! Returns the strips of the second mesh currently being used. */
 		virtual MaloW::Array<MeshStrip*>* GetStrips();
 
-		/*! Set the current time. This must be done every frame to for the animation to be animated. */
-		void SetCurrentTime(float currentTime);
+		/*! Set the current time. This determines what key frames to interpolate. */
+		virtual void SetCurrentTime(float currentTime);
+		/*! This function must be called every frame to for the animation to be animated. */
+		virtual void Update(float deltaTime);
 
 		/*! Prevents looping. Default. */
 		void NoLooping();
