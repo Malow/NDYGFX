@@ -192,7 +192,7 @@ inline void DrawScreenSpaceBillboardDebug(ID3D11DeviceContext* g_DeviceContext, 
 		break;
 	}
 
-
+	g_DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 
 	Shader->SetFloat("posx", pos.x);
 	Shader->SetFloat("posy", pos.y);
