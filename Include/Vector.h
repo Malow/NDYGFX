@@ -20,6 +20,7 @@
 
 class Vector2UINT
 {
+public:
 	union
 	{
 		//the variable "values" and x and y share the same memory
