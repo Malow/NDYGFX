@@ -246,7 +246,7 @@ HRESULT DxManager::Init()
 	this->Shader_DeferredGeometryBlendMap = new Shader();
 	if(FAILED(this->Shader_DeferredGeometryBlendMap->Init(Dx_Device, Dx_DeviceContext, "Shaders/DeferredGeometryBlendMap.fx", DeferredGeometryBlendMapDesc, 4)))	// + on last if added above
 	{
-		MaloW::Debug("Failed to open DeferredGeometry.fx");
+		MaloW::Debug("Failed to open DeferredGeometryBlendMap.fx");
 		return E_FAIL;
 	}
 
