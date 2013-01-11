@@ -262,6 +262,8 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	{
 		//debugCSMPoints[i] = GetGraphics()->CreateStaticMesh("Media/ball.obj", vertices[i]);
 	}
+	//debugCSMPoints[0]->SetSpecialColor(GREEN_COLOR); //min
+	//debugCSMPoints[1]->SetSpecialColor(BLUE_COLOR); //max
 	
 	//restore camera settings
 	GetGraphics()->GetCamera()->SetPosition(Vector3(25, 25, 20));

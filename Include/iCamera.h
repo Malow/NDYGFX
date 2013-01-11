@@ -30,12 +30,12 @@ extern "C"
 		virtual void MoveUp(float diff) = 0;
 		virtual void MoveDown(float diff) = 0;
 
-		virtual Vector3 GetForward() = 0;
+		virtual Vector3 GetForward() const = 0;
 		virtual void SetForward(Vector3 forward) = 0;
 		virtual void LookAt(Vector3 target) = 0;
-		virtual Vector3 GetUpVector() = 0;
+		virtual Vector3 GetUpVector() const = 0;
 		virtual void SetUpVector(Vector3 up) = 0;
-		virtual Vector3 GetRightVector() = 0;
+		virtual Vector3 GetRightVector() const = 0;
 
 		virtual void Update(float delta) = 0;
 

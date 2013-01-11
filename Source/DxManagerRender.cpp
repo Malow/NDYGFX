@@ -690,25 +690,3 @@ HRESULT DxManager::Render()
 
 	return S_OK;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

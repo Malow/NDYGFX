@@ -61,12 +61,12 @@ public:
 	virtual void MoveUp(float diff) = 0;
 	virtual void MoveDown(float diff) = 0;
 
-	virtual Vector3 GetForward();
+	virtual Vector3 GetForward() const;
 	virtual void SetForward(Vector3 forward);
 	virtual void LookAt(Vector3 target);
-	virtual Vector3 GetUpVector();
+	virtual Vector3 GetUpVector() const;
 	virtual void SetUpVector(Vector3 up);
-	virtual Vector3 GetRightVector();
+	virtual Vector3 GetRightVector() const;
 
 	virtual void Update(float delta);
 
@@ -97,6 +97,8 @@ public:
 
 	D3DXVECTOR3 GetPositionD3DX() const { return this->pos; }
 	D3DXVECTOR3 GetForwardD3DX() const { return this->forward; }
+	D3DXVECTOR3 GetRightVectorD3DX() const;
+	D3DXVECTOR3 GetUpVectorD3DX() const { return this->up; }
 	void SetPosition(D3DXVECTOR3 pos) { this->pos = pos; }
 	void LookAt(D3DXVECTOR3 at) { this->LookAt(Vector3(at.x, at.y, at.z)); }
 

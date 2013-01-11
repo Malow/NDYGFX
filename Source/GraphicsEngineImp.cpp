@@ -796,14 +796,11 @@ void GraphicsEngineImp::DebugDummyFunction(Vector3* arr)
 	D3DXVECTOR3 minValue = D3DXVECTOR3(9999, 9999, 9999);
 	D3DXVECTOR3 maxValue = D3DXVECTOR3(-9999, -9999, -9999);
 	element = maxValue;
-	//float minZ = 200, maxZ = 1;
 	for(int index = 1; index < 10; index++) 
 	{
 		if(index != 5)
 		{
 			element = D3DXVECTOR3(arr[index].x, arr[index].y, arr[index].z);
-			//if(element.z < minZ) minZ = element.z;
-			//if(element.z > maxZ) maxZ = element.z;
 			D3DXVec3Minimize(&minValue, &minValue, &element);
 			D3DXVec3Maximize(&maxValue, &maxValue, &element);
 		}
@@ -822,4 +819,34 @@ void GraphicsEngineImp::DebugDummyFunction(Vector3* arr)
 		vLightCameraOrthographicMin.y, 
 		vLightCameraOrthographicMax.y, 
 		nearPlane, farPlane);
+
+
+
+
+
+
+	//test**tillman**
+	D3DXMATRIX inverseLightViewMatrix;
+	D3DXMatrixIdentity(&inverseLightViewMatrix);
+	D3DXMatrixInverse(&inverseLightViewMatrix, NULL, &lightViewMatrix);
+	D3DXVECTOR4 minV = D3DXVECTOR4(minValue, 1.0f);
+	D3DXVECTOR4 maxV = D3DXVECTOR4(maxValue, 1.0f);
+
+	for(int i = 2; i < 30; i++)
+	{
+		D3DXVECTOR4 vertex = D3DXVECTOR4(arr[i].x, arr[i].y, arr[i].z, 1.0f);
+
+		// Transform the point from world space to Light Camera Space.
+		D3DXVec4Transform(&vertex, &vertex, &inverseLightViewMatrix);
+
+		arr[i].x = vertex.x;
+		arr[i].y = vertex.y;
+		arr[i].z = vertex.z;
+	}
+
+	D3DXVec4Transform(&minV, &minV, &inverseLightViewMatrix);
+	D3DXVec4Transform(&maxV, &maxV, &inverseLightViewMatrix);
+
+	arr[0] = Vector3(minV.x, minV.y, minV.z);
+	arr[1] = Vector3(maxV.x, maxV.y, maxV.z);
 }

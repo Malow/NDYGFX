@@ -48,7 +48,7 @@ void Camera::SetPosition(Vector3 pos)
 	this->pos = D3DXVECTOR3(pos.x, pos.y, pos.z);
 }
 
-Vector3 Camera::GetForward()
+Vector3 Camera::GetForward() const
 {
 	return Vector3(this->forward.x, this->forward.y, this->forward.z);
 }
@@ -71,7 +71,7 @@ void Camera::LookAt(Vector3 target)
 	this->angleY = asin(this->forward.y);
 }
 
-Vector3 Camera::GetUpVector()
+Vector3 Camera::GetUpVector() const
 {
 	return Vector3(this->up.x, this->up.y, this->up.z);
 }
@@ -80,7 +80,7 @@ void Camera::SetUpVector(Vector3 up)
 {
 	this->up = D3DXVECTOR3(up.x, up.y, up.z);
 }
-Vector3 Camera::GetRightVector()
+Vector3 Camera::GetRightVector() const
 {
 	D3DXVECTOR3 tmp;
 	D3DXVec3Cross(&tmp, &forward, &up);
@@ -175,6 +175,12 @@ void Camera::FollowMesh( iMesh* target )
 void Camera::RecreateProjectionMatrix()
 {
 	D3DXMatrixPerspectiveFovLH(&this->projection, (float)D3DX_PI * this->params.FOV, this->params.windowWidth / (float)this->params.windowHeight, this->params.NearClip, this->params.FarClip);
+}
+D3DXVECTOR3 Camera::GetRightVectorD3DX() const
+{
+	Vector3 right = this->GetRightVector();
+
+	return D3DXVECTOR3(right.x, right.y, right.z);
 }
 
 Vector3 Camera::Get3DPickingRay()
