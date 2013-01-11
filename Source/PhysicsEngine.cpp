@@ -94,15 +94,59 @@ CollisionData PhysicsEngine::GetCollisionMeshTerrain( iMesh* mesh, iTerrain* ter
 //////////////////////////////////////////////////////////////////////////
 /////////////////////////////    Privates      ///////////////////////////
 //////////////////////////////////////////////////////////////////////////
+bool PhysicsEngine::DoCollisionSphereVsRay(BoundingSphere bs, D3DXMATRIX world, float scale, 
+										   Vector3 rayOrigin, Vector3 rayDirection)
+{
+	D3DXVECTOR4 pos;
+	D3DXVec3Transform(&pos, &bs.center, &world);
+
+	Vector3 v = Vector3(rayOrigin.x - pos.x, rayOrigin.y - pos.y, rayOrigin.z - pos.z);
+	float b = rayDirection.GetDotProduct(v);
+	float rad = bs.radius * scale;
+
+	float c = v.GetDotProduct(v) - (pow((double)rad, 2));
+
+	if(pow(double(b),  2) - c > 0)
+		return true;
+	else if(pow(double(b),  2) - c == 0)
+		return true;
+	else
+		return false;
+}
+
+bool PhysicsEngine::DoCollisionSphereVsSphere(BoundingSphere bs1, D3DXMATRIX world1, float scale1, 
+											  BoundingSphere bs2, D3DXMATRIX world2, float scale2)
+{
+	D3DXVECTOR4 tpos1;
+	D3DXVec3Transform(&tpos1, &bs1.center, &world1);
+
+	D3DXVECTOR4 tpos2;
+	D3DXVec3Transform(&tpos2, &bs2.center, &world2);
+
+	D3DXVECTOR3 pos1 = D3DXVECTOR3(tpos1.x, tpos1.y, tpos1.z);
+	D3DXVECTOR3 pos2 = D3DXVECTOR3(tpos2.x, tpos2.y, tpos2.z);
+
+	float distance = D3DXVec3Length(&(pos2 - pos1));
+	float radiuses = bs1.radius * scale1 + bs2.radius * scale2;
+	if(distance <= radiuses)
+		return true;
+	return false;
+}
+
 void PhysicsEngine::DoCollisionRayVsMesh(Vector3 rayOrigin, Vector3 rayDirection, 
 		Mesh* mesh, CollisionData& cd)
 {
 	MaloW::Array<MeshStrip*>* strips = mesh->GetStrips();
 	for(int i = 0; i < strips->size(); i++)
 	{
-		this->DoCollisionRayVsTriangles(rayOrigin, rayDirection, 
-			strips->get(i)->getVerts(), strips->get(i)->getNrOfVerts(), 
-			strips->get(i)->getIndicies(), strips->get(i)->getNrOfIndicies(), mesh->GetWorldMatrix(), cd);
+		float scale = max(mesh->GetScaling().x, max(mesh->GetScaling().y, mesh->GetScaling().z));
+		if(this->DoCollisionSphereVsRay(strips->get(i)->GetBoundingSphere(), mesh->GetWorldMatrix(), 
+			scale, rayOrigin, rayDirection))
+		{
+			this->DoCollisionRayVsTriangles(rayOrigin, rayDirection, 
+				strips->get(i)->getVerts(), strips->get(i)->getNrOfVerts(), 
+				strips->get(i)->getIndicies(), strips->get(i)->getNrOfIndicies(), mesh->GetWorldMatrix(), cd);
+		}
 	}
 }
 
@@ -114,10 +158,14 @@ void PhysicsEngine::DoCollisionMeshVsMesh( Mesh* m1, Mesh* m2, CollisionData& cd
 	{
 		for(int u = 0; u < strips2->size(); u++)
 		{
-			this->DoCollisionTrianglesVsTriangles(m1->GetPosition(), strips1->get(i)->getVerts(), strips1->get(i)->getNrOfVerts(),
-				strips1->get(i)->getIndicies(), strips1->get(i)->getNrOfIndicies(), m1->GetWorldMatrix(), 
-				strips2->get(u)->getVerts(), strips2->get(u)->getNrOfVerts(), strips2->get(u)->getIndicies(),
-				strips2->get(u)->getNrOfIndicies(), m2->GetWorldMatrix(), cd);
+			float scale1 = max(m1->GetScaling().x, max(m1->GetScaling().y, m1->GetScaling().z));
+			float scale2 = max(m2->GetScaling().x, max(m2->GetScaling().y, m2->GetScaling().z));
+			if(this->DoCollisionSphereVsSphere(strips1->get(i)->GetBoundingSphere(), m1->GetWorldMatrix(), scale1, 
+				strips2->get(u)->GetBoundingSphere(), m2->GetWorldMatrix(), scale2))
+				this->DoCollisionTrianglesVsTriangles(m1->GetPosition(), strips1->get(i)->getVerts(), strips1->get(i)->getNrOfVerts(),
+					strips1->get(i)->getIndicies(), strips1->get(i)->getNrOfIndicies(), m1->GetWorldMatrix(), 
+					strips2->get(u)->getVerts(), strips2->get(u)->getNrOfVerts(), strips2->get(u)->getIndicies(),
+					strips2->get(u)->getNrOfIndicies(), m2->GetWorldMatrix(), cd);
 		}
 	}
 }
@@ -782,6 +830,10 @@ bool PhysicsEngine::DoCollisionTriangleVsTriangle(Vector3 v00, Vector3 v01, Vect
 
 	return true;
 }
+
+
+
+
 
 
 

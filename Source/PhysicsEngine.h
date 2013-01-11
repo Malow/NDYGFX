@@ -22,6 +22,8 @@ private:
 		Vertex* vert2, int nrOfVerts2, int* inds2, int nrOfInds2, D3DXMATRIX worldMat2, CollisionData& cd);
 	bool DoCollisionTriangleVsTriangle(Vector3 v00, Vector3 v01, Vector3 v02, Vector3 v10, Vector3 v11, Vector3 v12,
 		CollisionData& tempCD);
+	bool DoCollisionSphereVsRay(BoundingSphere bs, D3DXMATRIX world, float scale, Vector3 rayOrigin, Vector3 rayDirection);
+	bool DoCollisionSphereVsSphere(BoundingSphere bs1, D3DXMATRIX world1, float scale1, BoundingSphere bs2, D3DXMATRIX world2, float scale2);
 	
 public:
 	PhysicsEngine();
