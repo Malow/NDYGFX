@@ -165,8 +165,18 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	iMesh* secModel = GetGraphics()->CreateMesh("Media/bth.obj", Vector3(10, 0, 10));
 	secModel->Scale(1.0f * 0.05f);
 
+
+
 	//CASCADED SHADOWMAP:
-	GetGraphics()->SetSunLightProperties(Vector3(1, -1, 0));
+	Vector3 lookAt = Vector3(0, 0, 0);
+	Vector3 pos = Vector3(-50, 50, -50);
+	Vector3 posToLookAt = lookAt - pos; //Pos --> lookAt
+	Vector3 dir;
+	Vector3 up = Vector3(0, 1, 0);
+	//D3DXVec3Normalize(&dir, &posToLookAt); 
+	posToLookAt.Normalize();
+	dir = posToLookAt;
+	GetGraphics()->SetSunLightProperties(dir);
 	//Set camera to look along the x-axis
 	GetGraphics()->GetCamera()->SetPosition(Vector3(0, 1, 0));
 	GetGraphics()->GetCamera()->LookAt(Vector3(1, 1, 0));
@@ -235,8 +245,12 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 
 
 
-
-
+	/*vertices[i * ttte] = nearCenter;
+	vertices[i * ttte + 1] = nearTopLeft;
+	vertices[i * ttte + 2] = nearTopRight;
+	vertices[i * ttte + 3] = nearBottomLeft;
+	vertices[i * ttte + 4] = nearBottomRight;
+	*/
 
 
 

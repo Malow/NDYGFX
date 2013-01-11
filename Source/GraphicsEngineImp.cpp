@@ -746,7 +746,7 @@ void GraphicsEngineImp::DebugDummyFunction(Vector3* arr)
 
 	//View matrix
 	D3DXVECTOR3 lookAt = D3DXVECTOR3(0, 0, 0);
-	D3DXVECTOR3 pos = D3DXVECTOR3(-15, 25, 0);
+	D3DXVECTOR3 pos = D3DXVECTOR3(-50, 50, -50);
 	D3DXVECTOR3 posToLookAt = lookAt - pos; //Pos --> lookAt
 	D3DXVECTOR3 dir;
 	D3DXVECTOR3 up = D3DXVECTOR3(0, 1, 0);
@@ -756,28 +756,69 @@ void GraphicsEngineImp::DebugDummyFunction(Vector3* arr)
 	D3DXMATRIX lightViewMatrix;
 	D3DXMatrixLookAtLH(&lightViewMatrix, &pos, &lookAt, &up); 
 
-
-
-	//**tillman todo: find min max xyz, create orthographics projection.
-
-
-	//Projection matrix
-	//D3DXMatrixOrthoLH(&lightProjMatrix, )
-	//Matrix.CreateOrthographicOffCenter(min.X, max.X, min.Y, max.Y, minZ, maxZ)
-
-
-	//Combine matrices
-	D3DXMATRIX lightViewProjMatrix = lightViewMatrix; //* lightProjMatrix;
-
 	for(int i = 0; i < 30; i++)
 	{
 		D3DXVECTOR4 vertex = D3DXVECTOR4(arr[i].x, arr[i].y, arr[i].z, 1.0f);
 		
-		
-		D3DXVec4Transform(&vertex, &vertex, &lightViewProjMatrix);
+		// Transform the point from world space to Light Camera Space.
+		D3DXVec4Transform(&vertex, &vertex, &lightViewMatrix);
 			
 		arr[i].x = vertex.x;
 		arr[i].y = vertex.y;
 		arr[i].z = vertex.z;
+
+
+		
 	}
+	
+	// This next section of code calculates the min and max values for the orthographic projection.
+	D3DXVECTOR3 vLightCameraOrthographicMin = D3DXVECTOR3(9999, 9999, 9999);
+	D3DXVECTOR3 vLightCameraOrthographicMax = D3DXVECTOR3(-9999, -9999, -9999);
+
+	D3DXVECTOR3 element = D3DXVECTOR3(0, 0, 0);
+	for(int i = 1; i < 10; i++)
+	{
+		if(i != 5)
+		{
+			element = D3DXVECTOR3(arr[i].x, arr[i].y, arr[i].z);
+			// Find the closest point.
+			D3DXVec3Minimize (&vLightCameraOrthographicMin, &element, &vLightCameraOrthographicMin );
+			D3DXVec3Maximize (&vLightCameraOrthographicMax, &element, &vLightCameraOrthographicMax );
+		}
+	}
+
+
+
+
+
+
+	D3DXVECTOR3 minValue = D3DXVECTOR3(9999, 9999, 9999);
+	D3DXVECTOR3 maxValue = D3DXVECTOR3(-9999, -9999, -9999);
+	element = maxValue;
+	//float minZ = 200, maxZ = 1;
+	for(int index = 1; index < 10; index++) 
+	{
+		if(index != 5)
+		{
+			element = D3DXVECTOR3(arr[index].x, arr[index].y, arr[index].z);
+			//if(element.z < minZ) minZ = element.z;
+			//if(element.z > maxZ) maxZ = element.z;
+			D3DXVec3Minimize(&minValue, &minValue, &element);
+			D3DXVec3Maximize(&maxValue, &maxValue, &element);
+		}
+	}
+
+	float nearPlane = minValue.z;
+	float farPlane = maxValue.z;
+
+	//Create orthographics projection.
+	// Craete the orthographic projection for this cascade.
+	D3DXMATRIX lightProjMatrix;
+
+	D3DXMatrixOrthoOffCenterLH( &lightProjMatrix, 
+		vLightCameraOrthographicMin.x, 
+		vLightCameraOrthographicMax.x, 
+		vLightCameraOrthographicMin.y, 
+		vLightCameraOrthographicMax.y, 
+		nearPlane, farPlane);
 }

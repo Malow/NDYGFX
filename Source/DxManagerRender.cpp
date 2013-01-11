@@ -447,7 +447,10 @@ void DxManager::RenderImages()
 		this->Shader_BillBoard->SetFloat("dimx", img->GetDimensions().x);
 		this->Shader_BillBoard->SetFloat("dimy", img->GetDimensions().y);
 		*/
-		this->Shader_BillBoard->SetResource("tex2D", img->GetTexture()->GetSRVPointer());
+		if(img->GetTexture() != NULL)
+		{
+			this->Shader_BillBoard->SetResource("tex2D", img->GetTexture()->GetSRVPointer());
+		}
 		this->Shader_BillBoard->Apply(0);
 		this->Dx_DeviceContext->Draw(1, 0);
 	}
