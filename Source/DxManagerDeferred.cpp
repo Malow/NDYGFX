@@ -66,6 +66,7 @@ void DxManager::RenderDeferredGeometry()
 
 	//Matrices
 	D3DXMATRIX world, view, proj, wvp, worldInverseTranspose;
+	D3DXMatrixIdentity(&worldInverseTranspose); //Needed to calculate correct world inverse matrix
 	view = this->camera->GetViewMatrix();
 	proj = this->camera->GetProjectionMatrix();
 
@@ -83,7 +84,7 @@ void DxManager::RenderDeferredGeometry()
 		//Calculate matrices & set them
 		world = terrPtr->GetWorldMatrix();
 		wvp = world * view * proj;
-		D3DXMatrixInverse(&worldInverseTranspose, NULL, &world);
+		D3DXMatrixInverse(&worldInverseTranspose, NULL, &world); //worldInverseTranspose needs to be an identity matrix.
 		D3DXMatrixTranspose(&worldInverseTranspose, &worldInverseTranspose); //Used for calculating right normal
 		this->Shader_DeferredGeometryBlendMap->SetMatrix("WVP", wvp);
 		this->Shader_DeferredGeometryBlendMap->SetMatrix("worldMatrix", world);

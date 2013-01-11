@@ -166,7 +166,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	secModel->Scale(1.0f * 0.05f);
 
 	//CASCADED SHADOWMAP:
-	GetGraphics()->SetSunLightProperties(Vector3(0, -1, 0));
+	GetGraphics()->SetSunLightProperties(Vector3(1, -1, 0));
 	//Set camera to look along the x-axis
 	GetGraphics()->GetCamera()->SetPosition(Vector3(0, 1, 0));
 	GetGraphics()->GetCamera()->LookAt(Vector3(1, 1, 0));

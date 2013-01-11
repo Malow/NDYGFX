@@ -338,7 +338,6 @@ float4 PSScene(PSSceneIn input) : SV_Target
 	//}
 
 	
-	//return float4(NormsAndDepth.xyz, 1.0f); //**tillman fixa normaler för terräng**
 	return saturate(finalColor);
 }
 
