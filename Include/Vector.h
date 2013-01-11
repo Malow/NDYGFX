@@ -26,53 +26,50 @@ class Vector2UINT
 		float values[2];
 		struct
 		{
-			unsigned int mX; //values[0]
-			unsigned int mY; //values[1]
+			unsigned int x; //values[0]
+			unsigned int y; //values[1]
 		};
 	};
 	
 
-	Vector2UINT(unsigned int x, unsigned int y) : mX(x), mY(y)
+	Vector2UINT(unsigned int x, unsigned int y) : x(x), y(y)
 	{
 
 	}
 
 	inline bool operator<( const Vector2UINT& v ) const
 	{
-		if ( mX < v.mX ) return true;
-		if ( v.mX < mX ) return false;
-		if ( mY < v.mY ) return true;
-		if ( v.mY < mY ) return false;
+		if ( x < v.x ) return true;
+		if ( v.x < x ) return false;
+		if ( y < v.y ) return true;
+		if ( v.y < y ) return false;
 
 		return false;
 	}
 
 	inline bool operator==( const Vector2UINT &v ) const
 	{
-		if( mX == v.mX )
-		{
-			if( mY == v.mY )
-			{
-				return true;
-			}
-		}
-
-		return false;
+		return ( x == v.x && y == v.y );
 	}
 
 	inline Vector2UINT operator+( const Vector2UINT& v ) const
 	{
-		return Vector2UINT( mX + v.mX, mY + v.mY );
+		return Vector2UINT( x + v.x, y + v.y );
 	}
 
 	inline Vector2UINT operator-( const Vector2UINT& v ) const
 	{
-		return Vector2UINT( mX - v.mX, mY - v.mY );
+		return Vector2UINT( x - v.x, y - v.y );
 	}
 
 	inline Vector2UINT operator*( const Vector2UINT& v ) const
 	{
-		return Vector2UINT( mX * v.mX, mY * v.mY );
+		return Vector2UINT( x * v.x, y * v.y );
+	}
+
+	inline Vector2UINT operator*( unsigned int v ) const
+	{
+		return Vector2UINT( x * v, y * v );
 	}
 
 	inline float& operator[]( unsigned int i ) throw(...)
