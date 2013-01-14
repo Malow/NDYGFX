@@ -158,7 +158,7 @@ LRESULT CALLBACK GraphicsEngineImp::WndProc(HWND hWnd, UINT message, WPARAM wPar
 			HDROP drop = (HDROP)wParam;
 			int nrOfFiles = DragQueryFile(drop, 0xFFFFFFFF, NULL, NULL);
 			if(nrOfFiles != 1)
-				MaloW::Debug("Multiple files not supported, you tried to drop " + MaloW::convertNrToString(nrOfFiles) + " files.");
+				MaloW::Debug("Multiple files not supported, you tried to drop " + MaloW::convertNrToString((float)nrOfFiles) + " files.");
 
 			TCHAR lpszFile[MAX_PATH] = {0};
 			lpszFile[0] = '\0';
@@ -757,7 +757,8 @@ void GraphicsEngineImp::DebugDummyFunction(Vector3* arr) //**tillman**
 	D3DXMATRIX lightViewMatrix;
 	D3DXMatrixLookAtLH(&lightViewMatrix, &pos, &lookAt, &up); 
 
-	for(int i = 0; i < 30; i++)
+	//for(int i = 0; i < 30; i++)
+	for(int i = 0; i < 24; i++)
 	{
 		D3DXVECTOR4 vertex = D3DXVECTOR4(arr[i].x, arr[i].y, arr[i].z, 1.0f);
 		
@@ -777,15 +778,16 @@ void GraphicsEngineImp::DebugDummyFunction(Vector3* arr) //**tillman**
 	D3DXVECTOR3 vLightCameraOrthographicMax = D3DXVECTOR3(-9999, -9999, -9999);
 
 	D3DXVECTOR3 element = D3DXVECTOR3(0, 0, 0);
-	for(int i = 1; i < 10; i++)
+	//for(int i = 1; i < 10; i++)
+	for(int i = 0; i < 8; i++)
 	{
-		if(i != 5)
-		{
+		//if(i != 5)
+		//{
 			element = D3DXVECTOR3(arr[i].x, arr[i].y, arr[i].z);
 			// Find the closest point.
 			D3DXVec3Minimize (&vLightCameraOrthographicMin, &element, &vLightCameraOrthographicMin );
 			D3DXVec3Maximize (&vLightCameraOrthographicMax, &element, &vLightCameraOrthographicMax );
-		}
+		//}
 	}
 
 
@@ -796,14 +798,15 @@ void GraphicsEngineImp::DebugDummyFunction(Vector3* arr) //**tillman**
 	D3DXVECTOR3 minValue = D3DXVECTOR3(9999, 9999, 9999);
 	D3DXVECTOR3 maxValue = D3DXVECTOR3(-9999, -9999, -9999);
 	element = maxValue;
-	for(int index = 1; index < 10; index++) 
+	//for(int index = 1; index < 10; index++) 
+	for(int i = 0; i < 8; i++)
 	{
-		if(index != 5)
-		{
-			element = D3DXVECTOR3(arr[index].x, arr[index].y, arr[index].z);
+		//if(index != 5)
+		//{
+			element = D3DXVECTOR3(arr[i].x, arr[i].y, arr[i].z);
 			D3DXVec3Minimize(&minValue, &minValue, &element);
 			D3DXVec3Maximize(&maxValue, &maxValue, &element);
-		}
+		//}
 	}
 
 	float nearPlane = minValue.z;
@@ -832,7 +835,9 @@ void GraphicsEngineImp::DebugDummyFunction(Vector3* arr) //**tillman**
 	D3DXVECTOR4 minV = D3DXVECTOR4(minValue, 1.0f);
 	D3DXVECTOR4 maxV = D3DXVECTOR4(maxValue, 1.0f);
 
-	for(int i = 2; i < 30; i++)
+	//for(int i = 2; i < 30; i++)
+
+	for(int i = 0; i < 24; i++)
 	{
 		D3DXVECTOR4 vertex = D3DXVECTOR4(arr[i].x, arr[i].y, arr[i].z, 1.0f);
 
@@ -847,6 +852,94 @@ void GraphicsEngineImp::DebugDummyFunction(Vector3* arr) //**tillman**
 	D3DXVec4Transform(&minV, &minV, &inverseLightViewMatrix);
 	D3DXVec4Transform(&maxV, &maxV, &inverseLightViewMatrix);
 
-	arr[0] = Vector3(minV.x, minV.y, minV.z);
-	arr[1] = Vector3(maxV.x, maxV.y, maxV.z);
+	
+	ofstream out("Media/CSMDebug.obj");
+	stringstream buffer;
+	buffer	<< "# This file uses centimeters as units for non-parametric coordinates. \n"
+			<< "mtllib CSMDebug.mtl \n"
+			<< "g default \n";
+	
+	//for(int i = 1; i < 30; i++)
+	for(int i = 0; i < 24; i++)
+	{
+		//if(i % 5 != 0)
+		{
+			buffer << "v " << arr[i].x << " " << arr[i].y << " " << arr[i].z << "\n";
+		}
+	}
+	//for(int i = 1; i < 30; i++)
+	for(int i = 0; i < 24; i++)
+	{
+		//if(i % 5 != 0)
+		{
+			buffer << "vt 0 0\n";
+		}
+	}
+		//for(int i = 1; i < 30; i++)
+	for(int i = 0; i < 24; i++)
+	{
+		//if(i % 5 != 0)
+		{
+			buffer << "vn 1 0 0\n";
+		}
+	}
+	for(int i = 0; i < 3; i++)
+	{
+		buffer << "usemtl initialShadingGroup" + MaloW::convertNrToString(i + 1) + "\n";
+		string nr1 = MaloW::convertNrToString(i * 8 + 1);
+		string nr2 = MaloW::convertNrToString(i * 8 + 2);
+		string nr3 = MaloW::convertNrToString(i * 8 + 3);
+		buffer << "f " << nr1 << "/" << nr1 << "/" << nr1 << " " << nr2 << "/" << nr2 << "/" << nr2 << " " << nr3 << "/" << nr3 << "/" << nr3 << "\n";
+		string nr4 = MaloW::convertNrToString(i * 8 + 2);
+		string nr5 = MaloW::convertNrToString(i * 8 + 3);
+		string nr6 = MaloW::convertNrToString(i * 8 + 4);
+		buffer << "f " << nr4 << "/" << nr4 << "/" << nr4 << " " << nr5 << "/" << nr5 << "/" << nr5 << " " << nr6 << "/" << nr6 << "/" << nr6 << "\n";
+		
+		//TOP
+		nr4 = MaloW::convertNrToString(i * 8 + 1);
+		nr5 = MaloW::convertNrToString(i * 8 + 5);
+		nr6 = MaloW::convertNrToString(i * 8 + 6);
+		buffer << "f " << nr4 << "/" << nr4 << "/" << nr4 << " " << nr5 << "/" << nr5 << "/" << nr5 << " " << nr6 << "/" << nr6 << "/" << nr6 << "\n";
+		nr4 = MaloW::convertNrToString(i * 8 + 1);
+		nr5 = MaloW::convertNrToString(i * 8 + 6);
+		nr6 = MaloW::convertNrToString(i * 8 + 2);
+		buffer << "f " << nr4 << "/" << nr4 << "/" << nr4 << " " << nr5 << "/" << nr5 << "/" << nr5 << " " << nr6 << "/" << nr6 << "/" << nr6 << "\n";
+
+		//BOTTOM
+		nr4 = MaloW::convertNrToString(i * 8 + 3);
+		nr5 = MaloW::convertNrToString(i * 8 + 7);
+		nr6 = MaloW::convertNrToString(i * 8 + 8);
+		buffer << "f " << nr4 << "/" << nr4 << "/" << nr4 << " " << nr5 << "/" << nr5 << "/" << nr5 << " " << nr6 << "/" << nr6 << "/" << nr6 << "\n";
+		nr4 = MaloW::convertNrToString(i * 8 + 3);
+		nr5 = MaloW::convertNrToString(i * 8 + 8);
+		nr6 = MaloW::convertNrToString(i * 8 + 4);
+		buffer << "f " << nr4 << "/" << nr4 << "/" << nr4 << " " << nr5 << "/" << nr5 << "/" << nr5 << " " << nr6 << "/" << nr6 << "/" << nr6 << "\n";
+
+		//LEFT SIDE
+		nr4 = MaloW::convertNrToString(i * 8 + 3);
+		nr5 = MaloW::convertNrToString(i * 8 + 7);
+		nr6 = MaloW::convertNrToString(i * 8 + 5);
+		buffer << "f " << nr4 << "/" << nr4 << "/" << nr4 << " " << nr5 << "/" << nr5 << "/" << nr5 << " " << nr6 << "/" << nr6 << "/" << nr6 << "\n";
+		nr4 = MaloW::convertNrToString(i * 8 + 3);
+		nr5 = MaloW::convertNrToString(i * 8 + 5);
+		nr6 = MaloW::convertNrToString(i * 8 + 1);
+		buffer << "f " << nr4 << "/" << nr4 << "/" << nr4 << " " << nr5 << "/" << nr5 << "/" << nr5 << " " << nr6 << "/" << nr6 << "/" << nr6 << "\n";
+
+		//RIGHT SIDE
+		nr4 = MaloW::convertNrToString(i * 8 + 2);
+		nr5 = MaloW::convertNrToString(i * 8 + 6);
+		nr6 = MaloW::convertNrToString(i * 8 + 8);
+		buffer << "f " << nr4 << "/" << nr4 << "/" << nr4 << " " << nr5 << "/" << nr5 << "/" << nr5 << " " << nr6 << "/" << nr6 << "/" << nr6 << "\n";
+		nr4 = MaloW::convertNrToString(i * 8 + 2);
+		nr5 = MaloW::convertNrToString(i * 8 + 8);
+		nr6 = MaloW::convertNrToString(i * 8 + 4);
+		buffer << "f " << nr4 << "/" << nr4 << "/" << nr4 << " " << nr5 << "/" << nr5 << "/" << nr5 << " " << nr6 << "/" << nr6 << "/" << nr6 << "\n";
+
+	}
+	out << buffer.str().c_str() << endl;
+	out.close();
+
+	//arr[0] = Vector3(minV.x, minV.y, minV.z);
+	//arr[1] = Vector3(maxV.x, maxV.y, maxV.z);
+
 }

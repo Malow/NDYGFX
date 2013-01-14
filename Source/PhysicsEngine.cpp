@@ -104,11 +104,11 @@ bool PhysicsEngine::DoCollisionSphereVsRay(BoundingSphere bs, D3DXMATRIX world, 
 	float b = rayDirection.GetDotProduct(v);
 	float rad = bs.radius * scale;
 
-	float c = v.GetDotProduct(v) - (pow((double)rad, 2));
+	float c = v.GetDotProduct(v) - (pow(rad, 2));
 
-	if(pow(double(b),  2) - c > 0)
+	if(pow(b,  2) - c > 0)
 		return true;
-	else if(pow(double(b),  2) - c == 0)
+	else if(pow(b,  2) - c == 0)
 		return true;
 	else
 		return false;

@@ -25,7 +25,7 @@ void GraphicsEngineParams::LoadFromFile(const char* file)
 	getline(in, line);
 	getline(in, line);
 	getline(in, line);
-	this->Maximized = (bool)atoi(line.c_str());
+	this->Maximized = atoi(line.c_str()) > 0;
 	getline(in, line);
 	getline(in, line);
 	getline(in, line);
@@ -41,15 +41,15 @@ void GraphicsEngineParams::LoadFromFile(const char* file)
 	getline(in, line);
 	getline(in, line);
 	getline(in, line);
-	this->FOV = atof(line.c_str());
+	this->FOV = (float)atof(line.c_str());
 	getline(in, line);
 	getline(in, line);
 	getline(in, line);
-	this->NearClip = atof(line.c_str());
+	this->NearClip = (float)atof(line.c_str());
 	getline(in, line);
 	getline(in, line);
 	getline(in, line);
-	this->FarClip = atof(line.c_str());
+	this->FarClip = (float)atof(line.c_str());
 	getline(in, line);
 	getline(in, line);
 	getline(in, line);

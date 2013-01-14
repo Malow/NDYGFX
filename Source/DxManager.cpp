@@ -651,8 +651,8 @@ void DxManager::ResizeRenderer(ResizeEvent* ev)
 		this->Dx_DeviceContext->OMSetRenderTargets(1, &this->Dx_RenderTargetView, Dx_DepthStencilView);
 
 		// Set up the viewport.
-		Dx_Viewport.Width = width;
-		Dx_Viewport.Height = height;
+		Dx_Viewport.Width = (FLOAT)width;
+		Dx_Viewport.Height = (FLOAT)height;
 		Dx_Viewport.MinDepth = 0.0f;
 		Dx_Viewport.MaxDepth = 1.0f;
 		Dx_Viewport.TopLeftX = 0;

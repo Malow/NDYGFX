@@ -129,7 +129,13 @@ void DxManager::RenderDeferredGeometry()
 		}
 
 		//Set Textures
+		//Reset textures so that previous textures are not used if a texture is missing.
+		this->Shader_DeferredGeometryBlendMap->SetResource("tex0", NULL);
+		this->Shader_DeferredGeometryBlendMap->SetResource("tex1", NULL);
+		this->Shader_DeferredGeometryBlendMap->SetResource("tex2", NULL);
+		this->Shader_DeferredGeometryBlendMap->SetResource("tex3", NULL);
 		//Check if texture(name/path) have changed, create new shader resource view if it has
+		//OBS! Do not put this code in a for loop using malow::ConvertNrToString()-function. (Performance loss).
 		bool hasTexture = false;
 		if(terrPtr->GetTexture(0) != NULL)
 		{
@@ -273,6 +279,7 @@ void DxManager::RenderDeferredGeometry()
 	}
 
 	//Unbind terrain resources
+	this->Shader_DeferredGeometryBlendMap->SetResource("tex0", NULL);
 	this->Shader_DeferredGeometryBlendMap->SetResource("tex1", NULL);
 	this->Shader_DeferredGeometryBlendMap->SetResource("tex2", NULL);
 	this->Shader_DeferredGeometryBlendMap->SetResource("tex3", NULL);
@@ -330,6 +337,7 @@ void DxManager::RenderDeferredGeometry()
 					else
 					{
 						this->Shader_DeferredGeometry->SetBool("textured", false);
+						this->Shader_DeferredGeometry->SetResource("tex2D", NULL);
 					}
 				}
 				Buffer* inds = obj->GetIndsBuff();

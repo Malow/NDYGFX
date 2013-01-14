@@ -26,7 +26,7 @@ void deleteCache()
 	int len = strlen(path.c_str()) + 2; // required to set 2 nulls at end of argument to SHFileOperation.
 	char* tempdir = (char*) malloc(len);
 	memset(tempdir,0,len);
-	strcpy(tempdir,path.c_str());
+	strcpy(tempdir,path.c_str()); //**tillman**
 
 	SHFILEOPSTRUCT file_op = {
 		NULL,
@@ -62,8 +62,8 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	GetGraphics()->CreateSkyBox("Media/skymap.dds");	// Reduces FPS from 130 to 40
 	GetGraphics()->GetCamera()->SetPosition(Vector3(25, 25, 20));
 	GetGraphics()->GetCamera()->LookAt(Vector3(0, 0, 0));
-	iLight* i = GetGraphics()->CreateLight(GetGraphics()->GetCamera()->GetPosition());
-	i->SetIntensity(0.001f);
+	iLight* li = GetGraphics()->CreateLight(GetGraphics()->GetCamera()->GetPosition());
+	li->SetIntensity(0.001f);
 	GetGraphics()->SetSunLightProperties(Vector3(1, -1, 1));
 	GetGraphics()->SetSceneAmbientLight(Vector3(0.4f, 0.4f, 0.4f));
 	
@@ -199,7 +199,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 
 	//**vertices to render as debug info**
 	int nrOfFrustumSlices = 3;
-	int ttte = 10;
+	int ttte = 8;
 	Vector3* vertices = new Vector3[ttte * nrOfFrustumSlices];
 
 	for(int i = 0; i < nrOfFrustumSlices; i++)
@@ -215,11 +215,15 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		Vector3	nearBottomLeft = nearCenter - (camUp * halfNearHeight) - (camRight * halfNearWidth);
 		Vector3	nearBottomRight = nearCenter - (camUp * halfNearHeight) + (camRight * halfNearWidth);
 
-		vertices[i * ttte] = nearCenter;
+		/*vertices[i * ttte] = nearCenter;
 		vertices[i * ttte + 1] = nearTopLeft;
 		vertices[i * ttte + 2] = nearTopRight;
 		vertices[i * ttte + 3] = nearBottomLeft;
-		vertices[i * ttte + 4] = nearBottomRight;
+		vertices[i * ttte + 4] = nearBottomRight;*/
+		vertices[i * ttte] = nearTopLeft;
+		vertices[i * ttte + 1] = nearTopRight;
+		vertices[i * ttte + 2] = nearBottomLeft;
+		vertices[i * ttte + 3] = nearBottomRight;
 		
 		//Far plane
 		float halfFarHeight = tmp * planes[i + 1];
@@ -231,11 +235,15 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		Vector3	farBottomLeft = farCenter - (camUp * halfFarHeight) - (camRight * halfFarWidth);
 		Vector3	farBottomRight = farCenter - (camUp * halfFarHeight) + (camRight * halfFarWidth);
 
-		vertices[i * ttte + 5] = farCenter;
+		/*vertices[i * ttte + 5] = farCenter;
 		vertices[i * ttte + 6] = farTopLeft;
 		vertices[i * ttte + 7] = farTopRight;
 		vertices[i * ttte + 8] = farBottomLeft;
-		vertices[i * ttte + 9] = farBottomRight;
+		vertices[i * ttte + 9] = farBottomRight;*/
+		vertices[i * ttte + 4] = farTopLeft;
+		vertices[i * ttte + 5] = farTopRight;
+		vertices[i * ttte + 6] = farBottomLeft;
+		vertices[i * ttte + 7] = farBottomRight;
 	}
 
 
@@ -264,6 +272,8 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	}
 	//debugCSMPoints[0]->SetSpecialColor(GREEN_COLOR); //min
 	//debugCSMPoints[1]->SetSpecialColor(BLUE_COLOR); //max
+
+	//GetGraphics()->CreateStaticMesh("Media/CSMDebug.obj", Vector3(0, 0, 0));
 	
 	//restore camera settings
 	GetGraphics()->GetCamera()->SetPosition(Vector3(25, 25, 20));
@@ -409,7 +419,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 //*************************************	    END OF RUN TESTS       **********************
 
 
-		i->SetPosition(GetGraphics()->GetCamera()->GetPosition());
+		li->SetPosition(GetGraphics()->GetCamera()->GetPosition());
 
 		if(GetGraphics()->GetKeyListener()->IsPressed('W'))
 			GetGraphics()->GetCamera()->MoveForward(diff);
@@ -485,14 +495,14 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		{
 			if(toggleLight)
 			{
-				if(i->GetIntensity() < 0.01f)
+				if(li->GetIntensity() < 0.01f)
 				{
-					i->SetIntensity(tempInt);
+					li->SetIntensity(tempInt);
 				}
 				else
 				{
-					tempInt = i->GetIntensity();
-					i->SetIntensity(0.001f);
+					tempInt = li->GetIntensity();
+					li->SetIntensity(0.001f);
 				}
 				toggleLight = false;
 			}
@@ -502,11 +512,11 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 
 		if(GetGraphics()->GetKeyListener()->IsPressed('T'))
 		{
-			i->SetIntensity(i->GetIntensity() * (1.0f + diff * 0.002f));
+			li->SetIntensity(li->GetIntensity() * (1.0f + diff * 0.002f));
 		}
 		if(GetGraphics()->GetKeyListener()->IsPressed('Y'))
 		{
-			i->SetIntensity(i->GetIntensity() * (1.0f - diff * 0.002f));
+			li->SetIntensity(li->GetIntensity() * (1.0f - diff * 0.002f));
 		}
 
 

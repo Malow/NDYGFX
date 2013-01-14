@@ -150,7 +150,7 @@ public:
 	{
 
 	}
-	float GetWidth() { return this->width; }
-	float GetHeight() { return this->height; }
+	unsigned int GetWidth() { return this->width; }
+	unsigned int GetHeight() { return this->height; }
 
 };

@@ -32,6 +32,30 @@ namespace MaloW
 		s = out.str();
 		return s;
 	}
+	inline std::string convertNrToString(int nr)
+	{
+		std::string s;
+		std::stringstream out;
+		out << nr;
+		s = out.str();
+		return s;
+	}
+	inline std::string convertNrToString(unsigned int nr)
+	{
+		std::string s;
+		std::stringstream out;
+		out << nr;
+		s = out.str();
+		return s;
+	}
+	inline std::string convertNrToString(double nr)
+	{
+		std::string s;
+		std::stringstream out;
+		out << nr;
+		s = out.str();
+		return s;
+	}
 
 	inline std::wstring convertStringToWString(const std::string& s)
 	{

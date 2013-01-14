@@ -35,8 +35,8 @@ void CascadedShadowMap::CalcShadowMapMatrices(D3DXVECTOR3 sunLight, Camera* cam,
 	D3DXVECTOR4 camForward = D3DXVECTOR4(cam->GetForwardD3DX(), 1.0f);
 	D3DXVECTOR4 camRight = D3DXVECTOR4(cam->GetRightVectorD3DX(), 1.0f);
 	D3DXVECTOR4 camUp = D3DXVECTOR4(cam->GetUpVectorD3DX(), 1.0f);
-	float ww = this->params.windowWidth;
-	float hh = this->params.windowHeight;
+	float ww = (float)this->params.windowWidth;
+	float hh = (float)this->params.windowHeight;
 	float aspectRatio = ww / hh;
 	float tmp = tan(this->params.FOV) * 2;
 
@@ -80,11 +80,11 @@ void CascadedShadowMap::CalcShadowMapMatrices(D3DXVECTOR3 sunLight, Camera* cam,
 	D3DXMatrixLookAtLH(&lightViewMatrix, &lightPos, &lightLookAt, &lightUp); 
 	
 	//Transform the points from world space to light’s homogeneous space.
-	for(int i = 0; i < 8; i++)
+	for(int index = 0; index < 8; index++)
 	{
 		//reset W
-		frustumPoints[i].w = 1.0f;
-		D3DXVec4Transform(&frustumPoints[i], &frustumPoints[i], &lightViewMatrix);
+		frustumPoints[index].w = 1.0f;
+		D3DXVec4Transform(&frustumPoints[index], &frustumPoints[index], &lightViewMatrix);
 	}
 	
 
@@ -95,9 +95,9 @@ void CascadedShadowMap::CalcShadowMapMatrices(D3DXVECTOR3 sunLight, Camera* cam,
 	D3DXVECTOR3 maxValue = D3DXVECTOR3(-infinity, -infinity, -infinity);
 	D3DXVECTOR3 vLightCameraOrthographicMin = D3DXVECTOR3(infinity, infinity, infinity); //**tillman, samma som minValue
 	D3DXVECTOR3 vLightCameraOrthographicMax = D3DXVECTOR3(-infinity, -infinity, -infinity);//**tillman, samma som maxValue
-	for(int i = 0; i < 8; i++)
+	for(int index = 0; index < 8; index++)
 	{
-		D3DXVECTOR3 vec3 = D3DXVECTOR3(frustumPoints[i].x, frustumPoints[i].y, frustumPoints[i].z);
+		D3DXVECTOR3 vec3 = D3DXVECTOR3(frustumPoints[index].x, frustumPoints[index].y, frustumPoints[index].z);
 
 		D3DXVec3Minimize(&minValue, &minValue, &vec3);
 		D3DXVec3Maximize(&maxValue, &maxValue, &vec3);

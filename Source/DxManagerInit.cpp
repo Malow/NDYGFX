@@ -21,8 +21,8 @@ HRESULT DxManager::Init()
 	int screenWidth = rc.right - rc.left;;
 	int screenHeight = rc.bottom - rc.top;
 
-	MaloW::Debug("Initing Engine with width: " + MaloW::convertNrToString(screenWidth) +
-		" and height: " + MaloW::convertNrToString(screenHeight));
+	MaloW::Debug("Initing Engine with width: " + MaloW::convertNrToString((float)screenWidth) +
+		" and height: " + MaloW::convertNrToString((float)screenHeight));
 
 	UINT createDeviceFlags = 0;
 #ifdef _DEBUG
