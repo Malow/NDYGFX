@@ -322,15 +322,25 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 
 //*************************************	     RUN TESTS       **********************
 #ifdef TEST
-		CollisionData cd = GetGraphics()->GetPhysicsEngine()->GetCollisionRayMesh(
+		CollisionData cd;
+		cd = GetGraphics()->GetPhysicsEngine()->GetCollisionRayMesh(
 			GetGraphics()->GetCamera()->GetPosition(), GetGraphics()->GetCamera()->Get3DPickingRay(), model);
+		if(cd.BoundingSphereCollision)
+		{
+			ball->SetScale(0.2f);
+		}
+		else
+		{
+			ball->SetScale(0.1f);
+		}
+
 		if(cd.collision)
 		{
 			ball->SetPosition(Vector3(cd.posx, cd.posy, cd.posz));
 		}
 		else
 		{
-			ball->SetPosition(Vector3(0, -100, 0));
+			//ball->SetPosition(Vector3(0, -100, 0));
 		}
 
 		
@@ -344,14 +354,14 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 					Vector3 fw = GetGraphics()->GetCamera()->GetForward();
 					GetGraphics()->ChangeCamera(FPS);
 					GetGraphics()->GetCamera()->SetForward(fw);
-					GetGraphics()->ResizeGraphicsEngine(500, 500);
+					//GetGraphics()->ResizeGraphicsEngine(500, 500);
 				}
 				else
 				{
 					Vector3 fw = GetGraphics()->GetCamera()->GetForward();
 					GetGraphics()->ChangeCamera(RTS);
 					GetGraphics()->GetCamera()->SetForward(fw);
-					GetGraphics()->ResizeGraphicsEngine(750, 250);
+					//GetGraphics()->ResizeGraphicsEngine(750, 250);
 				}
 				fesd = false;
 			}			
@@ -377,10 +387,12 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		if(GetGraphics()->GetKeyListener()->IsPressed('Q'))
 		{
 			debugCSMScale += diff * 0.001f;
+			model->Scale(1 + diff * 0.01f);
 		}
 		if(GetGraphics()->GetKeyListener()->IsPressed('E'))
 		{
 			debugCSMScale -= diff * 0.001f;
+			model->Scale(1 - diff * 0.01f);
 		}
 		for(int i = 0; i < ttte * nrOfFrustumSlices; i++)
 		{
