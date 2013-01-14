@@ -107,7 +107,7 @@ void DxManager::HandleImageEvent(ImageEvent* ie)
 		{
 			if(this->images[i] == img)
 			{
-				delete this->images.getAndRemove(i);
+				delete this->images.getAndRemoveStaySorted(i);
 				img = NULL;
 			}
 		}

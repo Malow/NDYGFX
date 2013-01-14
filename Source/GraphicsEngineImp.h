@@ -140,6 +140,13 @@ public:
 	virtual Vector3 GetSceneAmbientLight() const;
 
 	virtual void ResizeGraphicsEngine(unsigned int width, unsigned int height);
+
+	/*! 
+	Takes control of the thread and renders a loading-screen with a progress bar. Returns once all objects that have been sent to load is loaded.
+	To use it first make all CreateMesh()-calls that you need and then call LoadingScreen(.,.) directly after, and it will return once all the meshes are
+	created and being rendered in the background. */
+	virtual void LoadingScreen(const char* BackgroundTexture = "", const char* ProgressBarTexture = "", float FadeBlackInInTime = 0.0f, float FadeBlackInOutTime = 0.0f, float FadeBlackOutInTime = 0.0f, float FadeBlackOutOutTime = 0.0f);
+
 	/*  Non-inherited functions */
 
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -175,13 +182,6 @@ public:
 	bool GetManagingWindow() const { return this->isManagingMyOwnWindow; }
 
 	GraphicsEngineParams GetEngineParams() const { return this->parameters; }
-
-
-	/*! 
-	Takes control of the thread and renders a loading-screen with a progress bar. Returns once all objects that have been sent to load is loaded.
-	To use it first make all CreateMesh()-calls that you need and then call LoadingScreen(.,.) directly after, and it will return once all the meshes are
-	created and being rendered in the background. */
-	void LoadingScreen(string BackgroundTexture = "", string ProgressBarTexture = "", float FadeBlackInInTime = 0.0f, float FadeBlackInOutTime = 0.0f, float FadeBlackOutInTime = 0.0f, float FadeBlackOutOutTime = 0.0f);
 
 
 	// Get's

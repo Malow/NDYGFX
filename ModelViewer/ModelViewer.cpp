@@ -287,6 +287,10 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	iMesh* model = GetGraphics()->CreateMesh("Media/bth.obj", Vector3(15, 20, 20));
 	scaleHuman->Scale(1.0f / 20.0f);
 	model->Scale(1.0f * 0.05f);
+#ifdef TEST
+	GetGraphics()->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png"
+		, 1.0f, 1.0f, 1.0f, 1.0f);
+#endif
 
 	GetGraphics()->StartRendering();	// To force the engine to render a black image before it has loaded stuff to not get a clear-color rendered before skybox is in etc.
 
@@ -354,6 +358,13 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 					Vector3 fw = GetGraphics()->GetCamera()->GetForward();
 					GetGraphics()->ChangeCamera(FPS);
 					GetGraphics()->GetCamera()->SetForward(fw);
+					
+					for(int i = 0; i < 50; i++)
+						GetGraphics()->CreateMesh("Media/scale.obj", Vector3(30, -300, 30));
+
+					GetGraphics()->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", 
+						"Media/LoadingScreen/LoadingScreenPB.png"
+						, 1.0f, 1.0f, 1.0f, 1.0f);
 					//GetGraphics()->ResizeGraphicsEngine(500, 500);
 				}
 				else

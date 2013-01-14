@@ -508,17 +508,18 @@ void GraphicsEngineImp::SetSpecialCircle(float innerRadius, float outerRadius, V
 	this->dx->SetSpecialCircle(innerRadius, outerRadius, targetPos);
 }
 
-void GraphicsEngineImp::LoadingScreen(string BackgroundTexture, string ProgressBarTexture, float FadeBlackInInTime, float FadeBlackInOutTime, float FadeBlackOutInTime, float FadeBlackOutOutTime)
+void GraphicsEngineImp::LoadingScreen(const char* BackgroundTexture, const char* ProgressBarTexture, float FadeBlackInInTime, float FadeBlackInOutTime, float FadeBlackOutInTime, float FadeBlackOutOutTime)
 {
 	this->Update();
 
 	Image* bg = NULL;
 	if(BackgroundTexture != "")
-		bg = this->CreateImage(D3DXVECTOR2(0.0f, 0.0f), D3DXVECTOR2((float)this->parameters.windowWidth, (float)this->parameters.windowHeight), BackgroundTexture);
+		bg = this->CreateImage(D3DXVECTOR2(0.0f, 0.0f), D3DXVECTOR2(0.0f, 0.0f), BackgroundTexture);
 
 	Image* pb = NULL;
 	if(ProgressBarTexture != "")
-		pb = this->CreateImage(D3DXVECTOR2((this->parameters.windowWidth / 4.0f), ((this->parameters.windowHeight * 3.0f) / 4.0f)), D3DXVECTOR2(0, this->parameters.windowHeight / 10.0f), ProgressBarTexture);
+		pb = this->CreateImage(D3DXVECTOR2((this->parameters.windowWidth / 4.0f), ((this->parameters.windowHeight * 3.0f) / 4.0f)), 
+			D3DXVECTOR2(0, this->parameters.windowHeight / 10.0f), ProgressBarTexture);
 
 	int TotalItems = this->GetEventQueueSize();
 
@@ -531,10 +532,10 @@ void GraphicsEngineImp::LoadingScreen(string BackgroundTexture, string ProgressB
 
 	int state = 0;
 	/*
-	0 = fade in
+	0 = fade in to black
 	1 = fade out to loading screen
 	2 = loading 
-	3 = fade in
+	3 = fade in to black
 	4 = fade out to game
 	*/
 	this->StartRendering();
@@ -560,6 +561,7 @@ void GraphicsEngineImp::LoadingScreen(string BackgroundTexture, string ProgressB
 			{
 				state++;
 				timer = 0;
+				bg->SetDimensions(Vector2((float)this->parameters.windowWidth, (float)this->parameters.windowHeight));
 			}
 		}
 		else if(state == 1)
@@ -628,9 +630,16 @@ void GraphicsEngineImp::LoadingScreen(string BackgroundTexture, string ProgressB
 
 		int ItemsToGo = this->GetEventQueueSize();
 		
-		if(this->loading)
+		if(this->loading && state > 0)
 			if(pb)
-				pb->SetDimensions(Vector2(dx * (TotalItems - ItemsToGo), y));
+			{
+				if(ItemsToGo == 0)
+					pb->SetDimensions(Vector2(dx * (TotalItems - 0.5f), y));
+				else if(ItemsToGo < TotalItems - 1)
+					pb->SetDimensions(Vector2(dx * (TotalItems - ItemsToGo - 1), y));
+				else
+					pb->SetDimensions(Vector2(dx * 0.5f, y));
+			}
 	}
 
 	if(fade)
