@@ -135,8 +135,8 @@ void DxManager::HandleTextEvent(TextEvent* te)
 
 void DxManager::Life()
 {
-	while(this->TimerAnimation < 888.0f)
-	{
+	//while(this->TimerAnimation < 888.0f)
+//	{
 		//Engine Start Splash screen.
 		Image* img = new Image(D3DXVECTOR2(0.0f, 0.0f), D3DXVECTOR2((float)this->params.windowWidth, (float)this->params.windowHeight));
 		Texture* tex = NULL;
@@ -152,7 +152,7 @@ void DxManager::Life()
 		this->DeleteImage(img);
 		img = NULL;
 		Sleep(100);
-	}
+	//}
 
 
 	while(this->stayAlive)
