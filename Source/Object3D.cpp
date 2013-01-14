@@ -11,6 +11,7 @@ Object3D::Object3D(Buffer* verts, Buffer* inds, Texture* texture, D3D_PRIMITIVE_
 Object3D::~Object3D()
 {
 	if(this->texture) GetResourceManager()->DeleteTexture(this->texture);
+	//if(this->texture) this->texture->Release(); this->texture = NULL;
 	if(this->verts)
 		delete this->verts;
 	if(this->inds)

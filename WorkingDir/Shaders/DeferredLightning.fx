@@ -218,7 +218,7 @@ float4 PSScene(PSSceneIn input) : SV_Target
 		float3 h = normalize(normalize(CameraPosition.xyz - WorldPos.xyz) - sun.Direction);
 		float specLight = pow(saturate(dot(h, NormsAndDepth.xyz)), SpecularPower) * sun.LightIntensity;
 
-		/*
+		/* //TILLMAN START OF CSM
 		float4 posLight = mul(WorldPos, cascades[i].viewProj);
 		posLight.xy /= posLight.w;
 		float2 smTex = float2(0.5f*posLight.x, -0.5f*posLight.y) + 0.5f;
@@ -265,6 +265,8 @@ float4 PSScene(PSSceneIn input) : SV_Target
 		diffLight *= shadow;
 		specLight *= shadow;
 		*/
+		//**tillman end of CSM
+
 		diffuseLighting += diffLight;
 		specLighting += specLight;
 

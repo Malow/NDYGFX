@@ -309,3 +309,31 @@ void Mesh::SetScale(D3DXVECTOR3 scale)
 {
 	this->SetScale(Vector3(scale.x, scale.y, scale.z));
 }
+
+
+
+//**TILLMAN**
+/*
+	//**tillman
+	/*if(this->strips)
+	{
+		while(this->strips->size() > 0)
+			delete this->strips->getAndRemove(0);
+
+		delete this->strips;
+	}
+	GetResourceManager()->DeleteMesh(this->strips);
+	//Create mesh
+	this->strips = GetResourceManager()->CreateMeshFromFile(file.c_str());
+	//Set topology
+	this->topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+
+	if(this->strips != NULL)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+*/

@@ -3,12 +3,13 @@
 
 #include "Buffer.h"
 #include "Vertex.h"
-#include "ObjLoader.h"
-#include "Object3D.h"
-#include "Material.h"
-#include "MeshStrip.h"
+#include "ObjLoader.h" //**tillman
+#include "Object3D.h"//**tillman
+#include "Material.h"//**tillman
+#include "MeshStrip.h"//**tillman
 #include "iMesh.h"
 #include "Vector.h"
+//#include "MeshCounted.h"
 
 /*
 Mesh class that represents a 3d-object on the screen
@@ -23,7 +24,8 @@ protected:
 	bool usingInvisibilityEffect;
 	//float transparency; //default 0.0f (full visibility)
 
-	MaloW::Array<MeshStrip*>* strips;
+	MaloW::Array<MeshStrip*>* strips;//**tillman
+	//MeshCounted* strips;
 
 	D3D_PRIMITIVE_TOPOLOGY topology;
 

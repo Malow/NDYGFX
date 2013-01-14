@@ -193,6 +193,9 @@
     <ClInclude Include="Source\BoundingSphere.h">
       <Filter>Source Files\Engine\Objects and Entities</Filter>
     </ClInclude>
+    <ClInclude Include="Source\MeshCounted.h">
+      <Filter>Source Files\Engine\DxMan and Techs</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\GraphicsEngineImp.cpp">
@@ -311,6 +314,9 @@
     </ClCompile>
     <ClCompile Include="Source\PhysicsEngine.cpp">
       <Filter>Source Files\Engine\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MeshCounted.cpp">
+      <Filter>Source Files\Engine\DxMan and Techs</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -530,7 +530,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		}
 
 		
-		if(GetGraphics()->GetKeyListener()->IsPressed(VK_UP))
+		/*if(GetGraphics()->GetKeyListener()->IsPressed(VK_UP))
 			GetGraphics()->SetSunLightProperties(Vector3(1, -1, 1));
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_DOWN))
 			GetGraphics()->SetSunLightProperties(Vector3(-1, -1, -1));
@@ -538,6 +538,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 			GetGraphics()->SetSunLightProperties(Vector3(-1, -1, 1));
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_RIGHT))
 			GetGraphics()->SetSunLightProperties(Vector3(1, -1, -1));
+		*/
 	}
 	
 	FreeGraphics();

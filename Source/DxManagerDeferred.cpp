@@ -329,7 +329,7 @@ void DxManager::RenderDeferredGeometry()
 
 				if(obj->GetTexture() != NULL)
 				{
-					if(ID3D11ShaderResourceView* texture = obj->GetTexture()->GetSRVPointer())
+					if(ID3D11ShaderResourceView* texture = obj->GetTexture()->GetSRVPointer())///**TILLMAN
 					{
 						this->Shader_DeferredGeometry->SetBool("textured", true);
 						this->Shader_DeferredGeometry->SetResource("tex2D", texture);
@@ -417,7 +417,7 @@ void DxManager::RenderDeferredGeometry()
 
 				if(objOne->GetTexture())
 				{
-					if(ID3D11ShaderResourceView* texture = objOne->GetTexture()->GetSRVPointer())
+					if(ID3D11ShaderResourceView* texture = objOne->GetTexture()->GetSRVPointer())//**TILLMAN
 					{
 						this->Shader_DeferredAnimatedGeometry->SetBool("textured", true);
 						this->Shader_DeferredAnimatedGeometry->SetResource("tex2D", texture);
@@ -469,7 +469,7 @@ void DxManager::RenderDeferredSkybox()
 	obj->GetIndsBuff()->Apply();
 	if(obj->GetTexture() != NULL)
 	{
-		this->Shader_Skybox->SetResource("SkyMap", obj->GetTexture()->GetSRVPointer());
+		this->Shader_Skybox->SetResource("SkyMap", obj->GetTexture()->GetSRVPointer());//**TILLMAN
 	}
 	
 	this->Shader_Skybox->Apply(0);
@@ -612,7 +612,7 @@ void DxManager::RenderInvisibilityEffect()
 				Object3D* obj = strips->get(u)->GetRenderObject();
 
 				//Set texture
-				if(ID3D11ShaderResourceView* texture = obj->GetTexture()->GetSRVPointer())
+				if(ID3D11ShaderResourceView* texture = obj->GetTexture()->GetSRVPointer())//**TILLMAN
 				{
 					this->Shader_InvisibilityEffect->SetResource((char*)strips->get(u)->GetTexturePath().c_str(), texture);
 					this->Shader_InvisibilityEffect->SetBool("textured", true);

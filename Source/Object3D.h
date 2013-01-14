@@ -12,7 +12,8 @@ class Object3D
 private:
 	Buffer* verts;
 	Buffer* inds;
-	Texture* texture;
+	Texture* texture; //**TILLMAN
+	//ID3D11ShaderResourceView* texture; //**TILLMAN
 	D3D_PRIMITIVE_TOPOLOGY topology;
 
 public:
