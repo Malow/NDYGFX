@@ -224,3 +224,54 @@ inline int GetTrianglesQuantity(ID3D11Device* Dx_Device, ID3D11DeviceContext* Dx
 	q->Release();
 	return prims;
 }
+
+inline void DrawBoundingSpheres(MaloW::Array<StaticMesh*>* meshes, ID3D11Device* g_Device, ID3D11DeviceContext* g_DeviceContext, D3DXMATRIX VP)
+{
+	D3D11_INPUT_ELEMENT_DESC inputDesc[] = {
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
+	};
+
+	Shader* shadnorm = new Shader();
+	if(FAILED(shadnorm->Init(g_Device, g_DeviceContext, "Shaders/DebugBoundingSpheres.fx", inputDesc, 4)))	// + on last if added above
+	{
+		MaloW::Debug("Failed to open DebugBoundingSpheres.fx");
+		return;
+	}
+
+	//Matrixes
+	D3DXMATRIX world, wvp;
+	//clear render target
+	for(int i = 0; i < meshes->size(); i++)
+	{
+		MaloW::Array<MeshStrip*>* strips = meshes->get(i)->GetStrips();
+
+		// Set matrixes
+		world = meshes->get(i)->GetWorldMatrix();
+		wvp = world * VP;
+
+		shadnorm->SetMatrix("WVP", wvp);
+		shadnorm->SetMatrix("worldMatrix", world);
+		shadnorm->SetMatrix("VP", VP);
+		GraphicsEngineParams p;
+		shadnorm->SetFloat("AspectH", (float)p.windowHeight / (float)p.windowWidth);
+		shadnorm->SetFloat("width", (float)p.windowWidth);
+		shadnorm->SetFloat("height", (float)p.windowHeight);
+
+		for(int u = 0; u < strips->size(); u++)
+		{
+			shadnorm->SetFloat("SphereRadius", strips->get(u)->GetBoundingSphere().radius * 
+				max(meshes->get(i)->GetScaling().x, max(meshes->get(i)->GetScaling().y, meshes->get(i)->GetScaling().z)));
+			shadnorm->SetFloat3("SphereCenter", strips->get(u)->GetBoundingSphere().center);
+
+			g_DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+
+			shadnorm->Apply(0);
+
+			g_DeviceContext->Draw(1, 0);
+		}
+	}
+	delete shadnorm;
+}

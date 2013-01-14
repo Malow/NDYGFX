@@ -17,12 +17,14 @@ extern "C"
 		CollisionData()
 		{
 			this->collision = false;
+			this->BoundingSphereCollision = false;
 			this->distance = 999999.0f;
 			this->posx = 0.0f;
 			this->posy = 0.0f;
 			this->posz = 0.0f;
 		}
 		bool collision;
+		bool BoundingSphereCollision;
 		float distance;
 		float posx;
 		float posy;

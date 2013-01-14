@@ -107,7 +107,7 @@ void DxManager::HandleImageEvent(ImageEvent* ie)
 		{
 			if(this->images[i] == img)
 			{
-				delete this->images.getAndRemove(i);
+				delete this->images.getAndRemoveStaySorted(i);
 				img = NULL;
 			}
 		}
@@ -708,6 +708,9 @@ HRESULT DxManager::Render()
 	// Debug: Render Wireframe
 	//MaloW::Array<StaticMesh*>* meshes = &this->objects;
 	//DrawWireFrame(meshes, this->Dx_Device, this->Dx_DeviceContext, this->camera->GetViewMatrix() * this->camera->GetProjectionMatrix());
+	// Debug: Render BoundingSpheres
+	//MaloW::Array<StaticMesh*>* meshes = &this->objects;
+	//DrawBoundingSpheres(meshes, this->Dx_Device, this->Dx_DeviceContext, this->camera->GetViewMatrix() * this->camera->GetProjectionMatrix());
 
 	/*
 	// Render RTs pictures

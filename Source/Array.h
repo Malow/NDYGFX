@@ -26,10 +26,12 @@ namespace MaloW
 		void add(const T& item);
 		T& get(int pos);
 		T getAndRemove(int pos);
+		T getAndRemoveStaySorted(int pos);
 		bool isEmpty();
 		bool hasItem(const T& item);
 		bool remove(const T& item);
 		bool remove(int pos);
+		bool removeStaySorted(int pos);
 		int search(const T& item) const;
 		void sort();
 		int size() const { return this->nrOfItems; }
@@ -108,6 +110,15 @@ namespace MaloW
 	}
 
 	template <typename T>
+	T Array<T>::getAndRemoveStaySorted(int pos)
+	{
+		T retVal;
+		retVal = *this->items[pos];
+		this->removeStaySorted(pos);
+		return retVal;
+	}
+
+	template <typename T>
 	bool Array<T>::isEmpty()
 	{
 		bool ret = true;
@@ -143,6 +154,25 @@ namespace MaloW
 				delete this->items[pos];
 				this->nrOfItems--;
 				this->items[pos] = this->items[this->nrOfItems];
+				this->items[this->nrOfItems] = NULL;
+				succeed = true;
+			}
+		return succeed;
+	}
+
+	template <typename T>
+	bool Array<T>::removeStaySorted(int pos)
+	{
+		bool succeed = false;
+		if(pos > -1 || pos < this->nrOfItems)
+			if(this->items[pos])
+			{
+				delete this->items[pos];
+				this->nrOfItems--;
+				for(int i = pos; i < this->nrOfItems; i++)
+				{
+					this->items[i] = this->items[i + 1];
+				}
 				this->items[this->nrOfItems] = NULL;
 				succeed = true;
 			}

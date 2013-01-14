@@ -287,6 +287,10 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	iMesh* model = GetGraphics()->CreateMesh("Media/bth.obj", Vector3(15, 20, 20));
 	scaleHuman->Scale(1.0f / 20.0f);
 	model->Scale(1.0f * 0.05f);
+#ifdef TEST
+	GetGraphics()->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png"
+		, 1.0f, 1.0f, 1.0f, 1.0f);
+#endif
 
 	GetGraphics()->StartRendering();	// To force the engine to render a black image before it has loaded stuff to not get a clear-color rendered before skybox is in etc.
 
@@ -322,15 +326,25 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 
 //*************************************	     RUN TESTS       **********************
 #ifdef TEST
-		CollisionData cd = GetGraphics()->GetPhysicsEngine()->GetCollisionRayMesh(
+		CollisionData cd;
+		cd = GetGraphics()->GetPhysicsEngine()->GetCollisionRayMesh(
 			GetGraphics()->GetCamera()->GetPosition(), GetGraphics()->GetCamera()->Get3DPickingRay(), model);
+		if(cd.BoundingSphereCollision)
+		{
+			ball->SetScale(0.2f);
+		}
+		else
+		{
+			ball->SetScale(0.1f);
+		}
+
 		if(cd.collision)
 		{
 			ball->SetPosition(Vector3(cd.posx, cd.posy, cd.posz));
 		}
 		else
 		{
-			ball->SetPosition(Vector3(0, -100, 0));
+			//ball->SetPosition(Vector3(0, -100, 0));
 		}
 
 		
@@ -344,14 +358,21 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 					Vector3 fw = GetGraphics()->GetCamera()->GetForward();
 					GetGraphics()->ChangeCamera(FPS);
 					GetGraphics()->GetCamera()->SetForward(fw);
-					GetGraphics()->ResizeGraphicsEngine(500, 500);
+					
+					for(int i = 0; i < 50; i++)
+						GetGraphics()->CreateMesh("Media/scale.obj", Vector3(30, -300, 30));
+
+					GetGraphics()->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", 
+						"Media/LoadingScreen/LoadingScreenPB.png"
+						, 1.0f, 1.0f, 1.0f, 1.0f);
+					//GetGraphics()->ResizeGraphicsEngine(500, 500);
 				}
 				else
 				{
 					Vector3 fw = GetGraphics()->GetCamera()->GetForward();
 					GetGraphics()->ChangeCamera(RTS);
 					GetGraphics()->GetCamera()->SetForward(fw);
-					GetGraphics()->ResizeGraphicsEngine(750, 250);
+					//GetGraphics()->ResizeGraphicsEngine(750, 250);
 				}
 				fesd = false;
 			}			
@@ -377,10 +398,12 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		if(GetGraphics()->GetKeyListener()->IsPressed('Q'))
 		{
 			debugCSMScale += diff * 0.001f;
+			model->Scale(1 + diff * 0.01f);
 		}
 		if(GetGraphics()->GetKeyListener()->IsPressed('E'))
 		{
 			debugCSMScale -= diff * 0.001f;
+			model->Scale(1 - diff * 0.01f);
 		}
 		for(int i = 0; i < ttte * nrOfFrustumSlices; i++)
 		{
