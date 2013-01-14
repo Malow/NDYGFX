@@ -135,21 +135,24 @@ void DxManager::HandleTextEvent(TextEvent* te)
 
 void DxManager::Life()
 {
-	//Engine Start Splash screen.
-	Image* img = new Image(D3DXVECTOR2(0.0f, 0.0f), D3DXVECTOR2((float)this->params.windowWidth, (float)this->params.windowHeight));
-	Texture* tex = NULL;
-	tex = GetResourceManager()->CreateTextureFromFile("Media/LoadingScreen/StartingSplash.png");
-	img->SetTexture(tex);
-	this->images.add(img);
-
-	while(!this->StartRender)
+	while(this->TimerAnimation < 888.0f)
 	{
-		this->Render();
-		this->framecount++;
+		//Engine Start Splash screen.
+		Image* img = new Image(D3DXVECTOR2(0.0f, 0.0f), D3DXVECTOR2((float)this->params.windowWidth, (float)this->params.windowHeight));
+		Texture* tex = NULL;
+		tex = GetResourceManager()->CreateTextureFromFile("Media/LoadingScreen/StartingSplash.png");
+		img->SetTexture(tex);
+		this->images.add(img);
+
+		while(!this->StartRender)
+		{
+			this->Render();
+			this->framecount++;
+		}
+		this->DeleteImage(img);
+		img = NULL;
+		Sleep(100);
 	}
-	this->DeleteImage(img);
-	img = NULL;
-	Sleep(100);
 
 
 	while(this->stayAlive)
