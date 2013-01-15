@@ -42,7 +42,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(SolutionDir)/Include/;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)/Build/Debug/;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)/Build/Debug/;$(SolutionDir)/WorkingDir/;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)\Build\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)$(Configuration)\</IntDir>
   </PropertyGroup>

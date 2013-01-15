@@ -4,6 +4,8 @@
     <LocalDebuggerWorkingDirectory>$(SolutionDir)\WorkingDir\</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
     <LocalDebuggerDebuggerType>Auto</LocalDebuggerDebuggerType>
+    <LocalDebuggerEnvironment>PATH=$(SolutionDir)\WorkingDir;%PATH%
+$(LocalDebuggerEnvironment)</LocalDebuggerEnvironment>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LocalDebuggerWorkingDirectory>$(SolutionDir)\WorkingDir\</LocalDebuggerWorkingDirectory>
