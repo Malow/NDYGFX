@@ -6,10 +6,8 @@
 #include "Vector.h"
 #include "MaloW.h"
 
-static float PCFreq;
+static float PCFreq = 0.0f;
 static bool initTime = true;
-static float prevTime = 0.0f;
-static float totalTime = 0.0f;
 
 namespace MaloW
 {
@@ -19,7 +17,6 @@ namespace MaloW
 		QueryPerformanceFrequency(&li);
 		PCFreq = float(li.QuadPart)/1000.0f;
 		QueryPerformanceCounter(&li);
-		prevTime = (li.QuadPart / PCFreq) * 0.001f;
 
 		initTime = false;
 	}
@@ -33,12 +30,10 @@ namespace MaloW
 		LARGE_INTEGER li;
 		QueryPerformanceCounter(&li);
 		timer = (li.QuadPart / PCFreq) * 0.001f;
-		totalTime += (timer - prevTime);
-		prevTime = timer;
 
 		fstream writeFile;
 		writeFile.open ("MaloWDebug.txt", fstream::in | fstream::out | fstream::app);
-		writeFile << totalTime << ": " << msg << endl;
+		writeFile << timer << ": " << msg << endl;
 		writeFile.close();
 	}
 
@@ -56,20 +51,25 @@ namespace MaloW
 		LARGE_INTEGER li;
 		QueryPerformanceCounter(&li);
 		timer = (li.QuadPart / PCFreq) * 0.001f;
-		totalTime += (timer - prevTime);
-		prevTime = timer;
 		
 		fstream writeFile;
 		writeFile.open ("MaloWDebug.txt", fstream::in | fstream::out | fstream::app);
-		writeFile << totalTime << ": " << "Vector3 x: " << v.x << ", y: " << v.y << ", z: " << v.z << endl;
+		writeFile << timer << ": " << "Vector3 x: " << v.x << ", y: " << v.y << ", z: " << v.z << endl;
 		writeFile.close();
 	}
 
 	inline void ClearDebug()
 	{
+		InitTimeForDebug();
+
+		float timer = 0;
+		LARGE_INTEGER li;
+		QueryPerformanceCounter(&li);
+		timer = (li.QuadPart / PCFreq) * 0.001f;
+
 		ofstream writeFile;
 		writeFile.open ("MaloWDebug.txt", ios::out | ios::trunc);
-		writeFile << "";
+		writeFile << "Starting program at timer: " << timer << endl;
 		writeFile.close();
 	}
 }
