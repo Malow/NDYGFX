@@ -510,6 +510,8 @@ void GraphicsEngineImp::SetSpecialCircle(float innerRadius, float outerRadius, V
 
 void GraphicsEngineImp::LoadingScreen(const char* BackgroundTexture, const char* ProgressBarTexture, float FadeBlackInInTime, float FadeBlackInOutTime, float FadeBlackOutInTime, float FadeBlackOutOutTime)
 {
+	bool updateCam = this->cam->GetUpdatingCamera();
+	this->cam->SetUpdateCamera(false);
 	this->Update();
 
 	Image* bg = NULL;
@@ -646,6 +648,9 @@ void GraphicsEngineImp::LoadingScreen(const char* BackgroundTexture, const char*
 	{
 		this->DeleteImage(fade);
 	}
+	if(this->cam->GetCameraType() == FPS)
+		this->GetKeyList()->SetMousePosition(Vector2(this->parameters.windowWidth / 2.0f, this->parameters.windowHeight / 2.0f));
+	this->cam->SetUpdateCamera(updateCam);
 }
 
 iMesh* GraphicsEngineImp::CreateMesh( const char* filename, const Vector3& pos )
