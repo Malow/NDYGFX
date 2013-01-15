@@ -29,7 +29,7 @@ DepthStencilState DisableDepthWrite
 };
 
 
-cbuffer EveryFrame
+cbuffer EveryObject
 {
 	float opacity;
 	float posx;

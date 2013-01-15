@@ -3,7 +3,7 @@
 //	Written by Markus Tillman for project "Not dead yet" at Blekinge Tekniska Högskola.
 // 
 //	Mesh(strips)-resource class. Used by the ResourceManager.
-//  Requirements: ReferenceCounted.h.
+//  Requirements: ReferenceCounted.h. 
 //--------------------------------------------------------------------------------------------------
 
 #pragma once
@@ -15,18 +15,18 @@
 #include <string>
 using namespace std;
 
-class MeshCounted : public ReferenceCounted
+class MeshResource : public ReferenceCounted
 {
 	private:
 		string						zFilePath;
 		MaloW::Array<MeshStrip*>*	zMesh;
 
 	private:
-		virtual ~MeshCounted();
+		virtual ~MeshResource();
 
 	public:
-		MeshCounted();
-		MeshCounted(string filePath, MaloW::Array<MeshStrip*>* mesh);
+		MeshResource();
+		MeshResource(string filePath, MaloW::Array<MeshStrip*>* mesh);
 
 		string GetName() const { return this->zFilePath; }
 		MaloW::Array<MeshStrip*>* GetMeshPointer() const { return this->zMesh; }

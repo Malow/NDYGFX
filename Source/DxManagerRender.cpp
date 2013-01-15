@@ -139,8 +139,8 @@ void DxManager::Life()
 	{
 		//Engine Start Splash screen.
 		Image* img = new Image(D3DXVECTOR2(0.0f, 0.0f), D3DXVECTOR2((float)this->params.windowWidth, (float)this->params.windowHeight));
-		Texture* tex = NULL;
-		tex = GetResourceManager()->CreateTextureFromFile("Media/LoadingScreen/StartingSplash.png");
+		TextureResource* tex = NULL;
+		tex = GetResourceManager()->CreateTextureResourceFromFile("Media/LoadingScreen/StartingSplash.png");
 		img->SetTexture(tex);
 		this->images.add(img);
 
@@ -472,7 +472,7 @@ void DxManager::RenderText()
 	for(int i = 0; i < this->texts.size(); i++)
 	{
 		Text* txt = this->texts[i];
-		// if Convert from screenspace is needed, which it is
+		// if Convert from screen space is needed, which it is
 		this->Shader_Text->SetFloat("posx", (txt->GetPosition().x / this->params.windowWidth) * 2 - 1);
 		this->Shader_Text->SetFloat("posy", 2 - (txt->GetPosition().y / this->params.windowHeight) * 2 - 1);
 
@@ -493,7 +493,7 @@ void DxManager::RenderText()
 		}
 
 
-		this->Shader_Text->SetResource("tex2D", txt->GetFont()->texture->GetSRVPointer());
+		this->Shader_Text->SetResource("tex2D", txt->GetFont()->textureResource->GetSRVPointer());
 
 
 		string drawText = txt->GetText();
@@ -723,8 +723,8 @@ HRESULT DxManager::Render()
 	// Render shadowmap pictures:
 	//for(int q = 0; q < this->lights.size(); q++)
 		//DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_BillBoard, this->lights[q]->GetShadowMapSRV(), q); 
-	//for(int q = 0; q < this->csm->GetNrOfCascadeLevels(); q++)
-	//	DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_BillBoard, this->csm->GetShadowMapSRV(q), q); 
+	for(int q = 0; q < this->csm->GetNrOfCascadeLevels(); q++)
+		DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_BillBoard, this->csm->GetShadowMapSRV(q), q); 
 
 	
 	

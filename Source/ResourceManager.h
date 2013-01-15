@@ -4,27 +4,26 @@
 // 
 //	Manager for handling resources. 
 //	Resources include:
-//		Mesh(strips).
-//		Textures.
+//		Mesh(strips) - MeshResource.h.
+//		Textures - TextureResource.h. //**Tillman**
+//		Buffers - BufferResource.h
 //	Requirements: DirectX device & device context.
 //--------------------------------------------------------------------------------------------------
 #pragma once
 
 //#include "DirectX.h"
-#include "Texture.h"
-//#include "MeshCounted.h" //**TILLMAN circkulär include - Object3d.h**
+#include "TextureResource.h"
+//#include "MeshResource.h" //**TILLMAN circkulär include - Object3d.h**
 //#include "ObjLoader.h"
+#include "BufferResource.h"
 #include <string>
 #include <map>
 
 #include "Array.h"
 #include "MaloW.h"
 #include "MaloWFileDebug.h"
-using namespace std;
 
-#ifdef _DEBUG
-#include <vld.h>
-#endif // _DEBUG
+
 
 class ResourceManager 
 {
@@ -33,8 +32,9 @@ class ResourceManager
 		ID3D11DeviceContext*	gDeviceContext;
 
 	private:
-		std::map<std::string, Texture*> zTextures;
-		//std::map<std::string, MeshCounted*> zMeshes;
+		std::map<std::string, TextureResource*> zTextureResources;
+		//std::map<std::string, MeshCounted*> zMeshResources;
+		std::map<std::string, BufferResource*> zBufferResources;
 
 	private:
 		//void DoMinMax(D3DXVECTOR3& min, D3DXVECTOR3& max, D3DXVECTOR3 v); //tillman, used by loadmesh
@@ -46,17 +46,30 @@ class ResourceManager
 
 		bool Init(ID3D11Device* device, ID3D11DeviceContext* deviceContext);
 
+		//CREATE
 		//Textures
-		Texture* CreateTextureFromFile(const char* filePath);
-		Texture* CreateCubeTexture(const char* filePath);
+		/*	Creates a texture resource from file and returns a pointer to it.	*/
+		TextureResource* CreateTextureResourceFromFile(const char* filePath);
+		/*	Creates a cube texture resource from file and returns a pointer to it.	*/
+		TextureResource* CreateCubeTextureResourceFromFile(const char* filePath);
 
 		//Mesh
 		//MeshCounted* CreateMeshFromFile(const char* filePath);
 
-		//Deletes the texture sent through the parameter. The pointer to the texture sent is automatically set to NULL.
-		void DeleteTexture(Texture* &texture);
-		//Deletes the mesh sent through the parameter. The pointer to the mesh sent is automatically set to NULL.
-		//void DeleteMesh(MeshCounted* &meshCounted);
+		//Buffer
+		/*	
+			Creates a buffer resource and returns a pointer to it. Supported buffer types are: 
+			VERTEX_BUFFER and INDEX_BUFFER. 
+		*/
+		BufferResource* CreateBufferResource(BUFFER_TYPE bufferType);
+
+		//DELETE
+		/*	Deletes the texture resource sent through the parameter. The pointer to the texture sent is automatically set to NULL.	*/
+		void DeleteTextureResource(TextureResource* &textureResource);
+		/*	Deletes the mesh resource sent through the parameter. The pointer to the mesh resourcesent is automatically set to NULL.	*/
+		//void DeleteMesh(MeshResource* &meshResource);
+		/*	Deletes	the buffer resource sent through the parameter. The pointer to the buffer resource is automatically set to NULL.	*/
+		void DeleteBufferResource(BufferResource* &bufferResource);
 };
 
 bool ResourceManagerInit(ID3D11Device* device, ID3D11DeviceContext* deviceContext);

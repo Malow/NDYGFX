@@ -4,13 +4,13 @@ Image::Image(D3DXVECTOR2 pos, D3DXVECTOR2 dim)
 {
 	this->position = pos;
 	this->dimensions = dim;
-	this->texture = NULL;
+	this->textureResource = NULL;
 	this->opacity = 1.0f;
 }
 
 Image::~Image()
 {
-	if(this->texture) GetResourceManager()->DeleteTexture(this->texture);
+	if(this->textureResource) GetResourceManager()->DeleteTextureResource(this->textureResource);
 }
 
 Vector2 Image::GetPosition() const

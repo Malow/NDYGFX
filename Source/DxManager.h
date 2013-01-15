@@ -20,6 +20,11 @@
 #include "AnimatedMesh.h"
 #include "DxManagerEvents.h"
 #include "CascadedShadowMap.h"
+#if defined(DEBUG) || defined(_DEBUG)
+	#include <vld.h>
+	#define INCLUDE_NDYGFX
+#endif
+
 
 class DxManager : public MaloW::Process
 {

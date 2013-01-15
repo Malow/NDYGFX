@@ -2,6 +2,11 @@
 
 DxManager::DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam)
 {
+#ifdef INCLUDE_NDYGFX
+	MaloW::Debug("(DEBUG): NDYGFX: vld.h included.");
+	_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	MaloW::Debug("(DEBUG): NDYGFX: Debug flag set to: _CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF). ");
+#endif
 	this->StartRender = false;
 	this->params = params;
 	this->hWnd = g_hWnd;
@@ -261,10 +266,10 @@ void DxManager::CreateStaticMesh(StaticMesh* mesh)
 				MaloW::Debug("CreateIndsBuffer Failed");
 		}
 
-		Texture* texture = NULL;
+		TextureResource* texture = NULL;
 		if(strip->GetTexturePath() != "")
 		{
-			texture = GetResourceManager()->CreateTextureFromFile(strip->GetTexturePath().c_str());
+			texture = GetResourceManager()->CreateTextureResourceFromFile(strip->GetTexturePath().c_str());
 		}
 
 		Object3D* obj = new Object3D(verts, inds, texture, mesh->GetTopology()); 
@@ -320,10 +325,10 @@ void DxManager::CreateAnimatedMesh(AnimatedMesh* mesh)
 					MaloW::Debug("CreateIndsBuffer Failed");
 			}
 
-			Texture* texture = NULL;
+			TextureResource* texture = NULL;
 			if(strip->GetTexturePath() != "")
 			{
-				texture = GetResourceManager()->CreateTextureFromFile(strip->GetTexturePath().c_str());
+				texture = GetResourceManager()->CreateTextureResourceFromFile(strip->GetTexturePath().c_str());
 			}
 			else
 			{
@@ -362,10 +367,10 @@ Object3D* DxManager::createParticleObject(ParticleMesh* mesh)
 
 	Buffer* inds = NULL;
 
-	Texture* texture = NULL;
+	TextureResource* texture = NULL;
 	if(mesh->GetTexturePath() != "")
 	{
-		texture = GetResourceManager()->CreateTextureFromFile(mesh->GetTexturePath().c_str());
+		texture = GetResourceManager()->CreateTextureResourceFromFile(mesh->GetTexturePath().c_str());
 	}
 
 	Object3D* obj = new Object3D(verts, inds, texture, mesh->GetTopology());
@@ -427,10 +432,10 @@ Light* DxManager::CreateLight(D3DXVECTOR3 pos, bool UseShadowMap)
 
 void DxManager::CreateImage(Image* image, string texture)
 {
-	Texture* tex = NULL;
+	TextureResource* tex = NULL;
 	if(texture != "")
 	{
-		tex = GetResourceManager()->CreateTextureFromFile(texture.c_str());
+		tex = GetResourceManager()->CreateTextureResourceFromFile(texture.c_str());
 	}
 
 	image->SetTexture(tex);
@@ -453,14 +458,14 @@ void DxManager::DeleteText(Text* text)
 
 void DxManager::CreateText(Text* text, string font)
 {
-	Texture* tex = NULL;
+	TextureResource* tex = NULL;
 	if(font != "")
 	{
-		tex = GetResourceManager()->CreateTextureFromFile((font + ".png").c_str());
+		tex = GetResourceManager()->CreateTextureResourceFromFile((font + ".png").c_str());
 	}
 
 	Font* newFont = text->GetFont();
-	newFont->texture = tex;
+	newFont->textureResource = tex;
 
 	/* Font .txt structure:
 	char in int
@@ -545,10 +550,10 @@ void DxManager::CreateSkyBox(string texture)
 	if(FAILED(IndexBuffer->Init(this->Dx_Device, this->Dx_DeviceContext, indiceBufferDesc)))
 		MaloW::Debug("Failed to init skybox");
 	
-	Texture* tex = NULL;
+	TextureResource* tex = NULL;
 	if(texture != "")
 	{
-		tex = GetResourceManager()->CreateCubeTexture(texture.c_str());
+		tex = GetResourceManager()->CreateCubeTextureResourceFromFile(texture.c_str());
 	}
 
 	Object3D* ro = new Object3D(VertexBuffer, IndexBuffer, tex, sb->GetTopology());

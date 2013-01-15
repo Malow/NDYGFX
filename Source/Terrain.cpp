@@ -166,11 +166,11 @@ Terrain::Terrain()
 
 	this->zTextureScale = 1.0f;
 	this->zNrOfTextures = 4;
-	this->zTextures = new Texture*[this->zNrOfTextures];
-	this->zTextures[0] = NULL;
-	this->zTextures[1] = NULL;
-	this->zTextures[2] = NULL;
-	this->zTextures[3] = NULL;
+	this->zTextureResources = new TextureResource*[this->zNrOfTextures];
+	this->zTextureResources[0] = NULL;
+	this->zTextureResources[1] = NULL;
+	this->zTextureResources[2] = NULL;
+	this->zTextureResources[3] = NULL;
 	this->zBlendMap = NULL;
 }
 
@@ -197,11 +197,11 @@ Terrain::Terrain(D3DXVECTOR3 pos, D3DXVECTOR3 scale, unsigned int size)
 
 	this->zTextureScale = 1.0f;
 	this->zNrOfTextures = 4;
-	this->zTextures = new Texture*[this->zNrOfTextures];
-	this->zTextures[0] = NULL;
-	this->zTextures[1] = NULL;
-	this->zTextures[2] = NULL;
-	this->zTextures[3] = NULL;
+	this->zTextureResources = new TextureResource*[this->zNrOfTextures];
+	this->zTextureResources[0] = NULL;
+	this->zTextureResources[1] = NULL;
+	this->zTextureResources[2] = NULL;
+	this->zTextureResources[3] = NULL;
 	this->zBlendMap = NULL;
 
 	this->CreateMesh();
@@ -216,17 +216,17 @@ Terrain::~Terrain()
 
 	if(this->zMaterial) delete this->zMaterial; this->zMaterial = NULL;
 
-	if(this->zTextures)
+	if(this->zTextureResources)
 	{
 		//Decrease reference counter for every texture used
-		if(this->zTextures[0]) GetResourceManager()->DeleteTexture(this->zTextures[0]);
-		if(this->zTextures[1]) GetResourceManager()->DeleteTexture(this->zTextures[1]);
-		if(this->zTextures[2]) GetResourceManager()->DeleteTexture(this->zTextures[2]);
-		if(this->zTextures[3]) GetResourceManager()->DeleteTexture(this->zTextures[3]);
+		if(this->zTextureResources[0]) GetResourceManager()->DeleteTextureResource(this->zTextureResources[0]);
+		if(this->zTextureResources[1]) GetResourceManager()->DeleteTextureResource(this->zTextureResources[1]);
+		if(this->zTextureResources[2]) GetResourceManager()->DeleteTextureResource(this->zTextureResources[2]);
+		if(this->zTextureResources[3]) GetResourceManager()->DeleteTextureResource(this->zTextureResources[3]);
 
 		//Delete the array that held them.
-		delete [] this->zTextures;
-		this->zTextures = NULL;
+		delete [] this->zTextureResources;
+		this->zTextureResources = NULL;
 	}
 	if(this->zBlendMap) delete this->zBlendMap; this->zBlendMap = NULL;
 }
@@ -327,17 +327,17 @@ void Terrain::SetTextures(char const* const* const fileNames)
 		for(int i = 0; i < this->zNrOfTextures; i++)
 		{
 			//Check if any textures are loaded.
-			if(this->zTextures[i] == NULL)
+			if(this->zTextureResources[i] == NULL)
 			{
-				this->zTextures[i] = GetResourceManager()->CreateTextureFromFile(fileNames[i]);
+				this->zTextureResources[i] = GetResourceManager()->CreateTextureResourceFromFile(fileNames[i]);
 			}
 			//Check if texture file path has changed
-			else if(this->zTextures[i]->GetName() != string(fileNames[i]))
+			else if(this->zTextureResources[i]->GetName() != string(fileNames[i]))
 			{
 				//Decrease the reference
-				GetResourceManager()->DeleteTexture(this->zTextures[i]);
+				GetResourceManager()->DeleteTextureResource(this->zTextureResources[i]);
 				//Assign it to the new path if it has
-				this->zTextures[i] = GetResourceManager()->CreateTextureFromFile(fileNames[i]);
+				this->zTextureResources[i] = GetResourceManager()->CreateTextureResourceFromFile(fileNames[i]);
 			}
 		}
 	}

@@ -27,6 +27,7 @@
     <ClInclude Include="Source\AnimatedMesh.h" />
     <ClInclude Include="Source\Array.h" />
     <ClInclude Include="Source\Buffer.h" />
+    <ClInclude Include="Source\BufferResource.h" />
     <ClInclude Include="Source\Camera.h" />
     <ClInclude Include="Source\CamRecording.h" />
     <ClInclude Include="Source\CascadedShadowMap.h" />
@@ -45,7 +46,7 @@
     <ClInclude Include="Source\MaloWFileDebug.h" />
     <ClInclude Include="Source\Material.h" />
     <ClInclude Include="Source\Mesh.h" />
-    <ClInclude Include="Source\MeshCounted.h" />
+    <ClInclude Include="Source\MeshResource.h" />
     <ClInclude Include="Source\MeshStrip.h" />
     <ClInclude Include="Source\Object3D.h" />
     <ClInclude Include="Source\ObjLoader.h" />
@@ -63,7 +64,7 @@
     <ClInclude Include="Source\StaticMesh.h" />
     <ClInclude Include="Source\Terrain.h" />
     <ClInclude Include="Source\Text.h" />
-    <ClInclude Include="Source\Texture.h" />
+    <ClInclude Include="Source\TextureResource.h" />
     <ClInclude Include="Source\TRDCamera.h" />
     <ClInclude Include="Source\Vertex.h" />
     <ClInclude Include="Source\Windows.h" />
@@ -71,6 +72,7 @@
   <ItemGroup>
     <ClCompile Include="Source\AnimatedMesh.cpp" />
     <ClCompile Include="Source\Buffer.cpp" />
+    <ClCompile Include="Source\BufferResource.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
     <ClCompile Include="Source\CamRecording.cpp" />
     <ClCompile Include="Source\CascadedShadowMap.cpp" />
@@ -89,7 +91,7 @@
     <ClCompile Include="Source\KeyListener.cpp" />
     <ClCompile Include="Source\Light.cpp" />
     <ClCompile Include="Source\Mesh.cpp" />
-    <ClCompile Include="Source\MeshCounted.cpp" />
+    <ClCompile Include="Source\MeshResource.cpp" />
     <ClCompile Include="Source\MeshStrip.cpp" />
     <ClCompile Include="Source\Object3D.cpp" />
     <ClCompile Include="Source\ObjLoader.cpp" />
@@ -107,7 +109,7 @@
     <ClCompile Include="Source\TCBSpline.cpp" />
     <ClCompile Include="Source\Terrain.cpp" />
     <ClCompile Include="Source\Text.cpp" />
-    <ClCompile Include="Source\Texture.cpp" />
+    <ClCompile Include="Source\TextureResource.cpp" />
     <ClCompile Include="Source\TRDCamera.cpp" />
   </ItemGroup>
   <ItemGroup>

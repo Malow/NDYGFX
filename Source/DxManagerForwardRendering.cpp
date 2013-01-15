@@ -46,7 +46,7 @@ void DxManager::RenderForward()
 			if(verts)
 				verts->Apply();
 
-			if(ID3D11ShaderResourceView* texture = obj->GetTexture()->GetSRVPointer())//**TILLMAN
+			if(ID3D11ShaderResourceView* texture = obj->GetTextureResource()->GetSRVPointer())//**TILLMAN
 			{
 				this->Shader_ForwardRendering->SetBool("textured", true);
 				this->Shader_ForwardRendering->SetResource("tex2D", texture);

@@ -1,6 +1,11 @@
 #define TEST //<----------------------- kommentera ut vid behov **********************
 
 
+#if defined(DEBUG) || defined(_DEBUG)
+	#include <vld.h>
+	#define INCLUDE_MODEL_VIEWER
+#endif
+
 #include "Graphics.h"
 #include "MaloWFileDebug.h"
 
@@ -57,6 +62,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	
 #if defined(DEBUG) || defined(_DEBUG)
 	_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	MaloW::Debug("(DEBUG): ModelViewer: Debug flag set to: _CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF). ");
 #endif
 
 	GetGraphics()->CreateSkyBox("Media/skymap.dds");	// Reduces FPS from 130 to 40
@@ -70,6 +76,9 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 
 //*************************************	     PRE TEST       **********************
 #ifdef TEST
+#ifdef INCLUDE_MODEL_VIEWER
+	MaloW::Debug("(DEBUG): ModelViewer: vld included.");
+#endif
 	int vertSize = 16;
 	float testSize = 5.0f;
 	
@@ -253,12 +262,6 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 
 
 
-	/*vertices[i * ttte] = nearCenter;
-	vertices[i * ttte + 1] = nearTopLeft;
-	vertices[i * ttte + 2] = nearTopRight;
-	vertices[i * ttte + 3] = nearBottomLeft;
-	vertices[i * ttte + 4] = nearBottomRight;
-	*/
 
 
 
@@ -571,6 +574,8 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 #ifdef TEST
 	delete[] testData;
 	delete[] debugCSMPoints;
+	delete[] vertices;
+	delete[] iTs;
 	//delete[] fileNames;
 #endif
 	//*************************************	   END OF POST TEST       **********************

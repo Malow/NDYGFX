@@ -13,7 +13,7 @@
 #include "Vertex.h"
 #include "Buffer.h"
 #include "Material.h"
-#include "Texture.h"
+#include "TextureResource.h"
 #include "ResourceManager.h"
 
 
@@ -51,7 +51,7 @@ class Terrain : public iTerrain
 
 		float						zTextureScale;
 		int							zNrOfTextures;
-		Texture**					zTextures;
+		TextureResource**			zTextureResources;
 		BlendMap*					zBlendMap;
 		
 
@@ -85,7 +85,7 @@ class Terrain : public iTerrain
 
 		float GetTextureScale() const { return this->zTextureScale; }
 		int GetNrOfTextures() const { return this->zNrOfTextures; }
-		Texture* GetTexture(unsigned int index) const { return this->zTextures[index]; }
+		TextureResource* GetTexture(unsigned int index) const { return this->zTextureResources[index]; }
 		//string GetTextureFileName(unsigned int index) { return this->zTextureFileNames[index]; }
 		BlendMap* GetBlendMapPointer() { return this->zBlendMap; }
 

@@ -2,8 +2,8 @@
 //
 //	Written by Markus Tillman for project "Not dead yet" at Blekinge Tekniska Högskola.
 // 
-//	Texture-resource class. Used by the ResourceManager.
-//  Requirements: ReferenceCounted.h.
+//	Buffer-resource class. Used by the ResourceManager.
+//  Requirements: ReferenceCounted.h. Buffer.h
 //--------------------------------------------------------------------------------------------------
 
 #pragma once
@@ -11,25 +11,25 @@
 #include "ReferenceCounted.h"
 #include "DirectX.h"
 #include <d3dx11.h>
+#include "Buffer.h"
 #include <string>
 using namespace std;
 
-class Texture : public ReferenceCounted
+class BufferResource : public ReferenceCounted
 {
 	private:
-		string						zFilePath;
-		ID3D11ShaderResourceView*	zSRV;
+		string	zFilePath;
+		Buffer*	zBuffer;
 
 	private:
-		virtual ~Texture();
+		virtual ~BufferResource();
 
 	public:
-		Texture();
-		Texture(ID3D11ShaderResourceView* SRV);
-		Texture(string filePath, ID3D11ShaderResourceView* SRV);
+		BufferResource();
+		BufferResource(string filePath, Buffer* buffer);
 
 		const string& GetName() const { return this->zFilePath; }
-		ID3D11ShaderResourceView* GetSRVPointer() const { return this->zSRV; }
-		void SetSRVPointer(ID3D11ShaderResourceView* pointer) { this->zSRV = pointer; }
+		Buffer* GetSRVPointer() const { return this->zBuffer; }
+		void SetSRVPointer(Buffer* pointer) { this->zBuffer = pointer; }
 
 };
