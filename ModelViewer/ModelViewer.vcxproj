@@ -41,7 +41,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)/Include/;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)/Include/;..\NDYGFX\Source;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)/Build/Debug/;$(SolutionDir)/WorkingDir/;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)\Build\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)$(Configuration)\</IntDir>
@@ -92,7 +92,6 @@
   <ItemGroup>
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="MaloW.h" />
-    <ClInclude Include="MaloWFileDebug.h" />
     <ClInclude Include="Windows.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
