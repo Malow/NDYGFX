@@ -111,8 +111,8 @@ ResourceManager::~ResourceManager()
 
 	//Delete any remaining resources
 	//Textures
-	map<std::string, Texture*>::iterator texIterator;
-	for(texIterator = this->zTextures.begin(); texIterator != this->zTextures.end(); texIterator++)
+	map<std::string, TextureResource*>::iterator texIterator;
+	for(texIterator = this->zTextureResources.begin(); texIterator != this->zTextureResources.end(); texIterator++)
 	{
 		if(texIterator->second)
 		{
@@ -158,11 +158,11 @@ bool ResourceManager::Init(ID3D11Device* device, ID3D11DeviceContext* deviceCont
 	return true;
 }
 
-Texture* ResourceManager::CreateTextureFromFile( const char* filePath )
+TextureResource* ResourceManager::CreateTextureResourceFromFile( const char* filePath )
 {
-	auto tex = this->zTextures.find(filePath);
+	auto tex = this->zTextureResources.find(filePath);
 	//If the shader resource view was not found(already created) in the array, create it.
-	if(tex == this->zTextures.end())
+	if(tex == this->zTextureResources.end())
 	{
 		D3DX11_IMAGE_LOAD_INFO loadInfo;
 		ZeroMemory(&loadInfo, sizeof(D3DX11_IMAGE_LOAD_INFO));
@@ -187,24 +187,24 @@ Texture* ResourceManager::CreateTextureFromFile( const char* filePath )
 		else
 		{
 			//Create & Set shader resource view pointer if loading was successful.
-			this->zTextures[filePath] = new Texture(filePath, SRV);
+			this->zTextureResources[filePath] = new TextureResource(filePath, SRV);
 			//Increase reference count.
-			this->zTextures[filePath]->IncreaseReferenceCount();
+			this->zTextureResources[filePath]->IncreaseReferenceCount();
 			//Return newly created texture.
-			return this->zTextures[filePath];
+			return this->zTextureResources[filePath];
 		}
 	}
 
 	//If the texture already exists, increase reference counter & return texture.
-	this->zTextures[filePath]->IncreaseReferenceCount();
+	this->zTextureResources[filePath]->IncreaseReferenceCount();
 	
 	return tex->second;
 }
-Texture* ResourceManager::CreateCubeTexture( const char* filePath )
+TextureResource* ResourceManager::CreateCubeTextureResourceFromFile( const char* filePath )
 {
-	auto tex = this->zTextures.find(filePath);
+	auto tex = this->zTextureResources.find(filePath);
 	//If the texture was not found in the array, create it.
-	if(tex == this->zTextures.end())
+	if(tex == this->zTextureResources.end())
 	{
 		D3DX11_IMAGE_LOAD_INFO loadInfo;
 		loadInfo.BindFlags = D3D11_BIND_SHADER_RESOURCE;
@@ -229,16 +229,16 @@ Texture* ResourceManager::CreateCubeTexture( const char* filePath )
 		else
 		{
 			//Create & Set texture if loading was successful.
-			this->zTextures[filePath] = new Texture(filePath, SRV);
+			this->zTextureResources[filePath] = new TextureResource(filePath, SRV);
 			//Increase reference count.
-			this->zTextures[filePath]->IncreaseReferenceCount();
+			this->zTextureResources[filePath]->IncreaseReferenceCount();
 			//Return newly created texture.
-			return this->zTextures[filePath];
+			return this->zTextureResources[filePath];
 		}
 	}
 
 	//If the texture already exists, increase reference counter & return texture.
-	this->zTextures[filePath]->IncreaseReferenceCount();
+	this->zTextureResources[filePath]->IncreaseReferenceCount();
 
 	return tex->second;
 }
@@ -282,28 +282,29 @@ MeshCounted* ResourceManager::CreateMeshFromFile( const char* filePath )
 	return mesh->second;
 }*/
 
-void ResourceManager::DeleteTexture( Texture* &texture )
+void ResourceManager::DeleteTextureResource( TextureResource* &textureResource )
 {
-	if(texture)
+	if(textureResource)
 	{
-		texture->DecreaseReferenceCount();
+		textureResource->DecreaseReferenceCount();
 		//If reference count is 1, no objects other than the resource manager itself has a reference to it.
-		if(texture->GetReferenceCount() == 1)
+		if(textureResource->GetReferenceCount() == 1)
 		{
 			//Find texture.
-			auto tex = this->zTextures.find(texture->GetName());
+			auto tex = this->zTextureResources.find(textureResource->GetName());
 			//If found..
-			if(tex != this->zTextures.end())
+			if(tex != this->zTextureResources.end())
 			{
 				//Decrease reference counter once more so that the texture will delete itself.
 				tex->second->DecreaseReferenceCount();
 				//Remove texture from table.
-				this->zTextures.erase(tex);
+				this->zTextureResources.erase(tex);
 			}
-			texture = NULL;
+			textureResource = NULL;
 		}
 	}
 }
+
 /*
 void ResourceManager::DeleteMesh( MeshCounted* &meshCounted )
 {
@@ -328,6 +329,11 @@ void ResourceManager::DeleteMesh( MeshCounted* &meshCounted )
 	}
 }
 */
+
+void ResourceManager::DeleteBufferResource( BufferResource* &bufferResource )
+{
+
+}
 
 
 

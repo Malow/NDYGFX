@@ -10,7 +10,7 @@ Text::Text(string text, D3DXVECTOR2 position, float size)
 	this->position = position;
 	this->size = size;
 	this->font = new Font();
-	this->font->texture = NULL;
+	this->font->textureResource = NULL;
 	for(int i = 0; i < 256; i++)
 		this->font->charTexCoords[i] = 0;
 }
@@ -31,7 +31,7 @@ void Text::DeleteFromEnd(unsigned int CharsToDel)
 
 Text::~Text()
 {
-	if(this->font->texture) GetResourceManager()->DeleteTexture(this->font->texture);
+	if(this->font->textureResource) GetResourceManager()->DeleteTextureResource(this->font->textureResource);
 	if(this->font)
 		delete this->font;
 }

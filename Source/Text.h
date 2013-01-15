@@ -7,7 +7,7 @@
 
 struct Font
 {
-	Texture* texture;
+	TextureResource* textureResource;
 	int charTexCoords[256];
 	int charWidth[256];
 

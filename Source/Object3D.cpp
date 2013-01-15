@@ -1,16 +1,16 @@
 #include "Object3D.h"
 
-Object3D::Object3D(Buffer* verts, Buffer* inds, Texture* texture, D3D_PRIMITIVE_TOPOLOGY topology)
+Object3D::Object3D(Buffer* verts, Buffer* inds, TextureResource* textureResource, D3D_PRIMITIVE_TOPOLOGY topology)
 {
 	this->verts = verts;
 	this->inds = inds;
-	this->texture = texture;
+	this->textureResource = textureResource;
 	this->topology = topology;
 }
 
 Object3D::~Object3D()
 {
-	if(this->texture) GetResourceManager()->DeleteTexture(this->texture);
+	if(this->textureResource) GetResourceManager()->DeleteTextureResource(this->textureResource);
 	//if(this->texture) this->texture->Release(); this->texture = NULL;
 	if(this->verts)
 		delete this->verts;

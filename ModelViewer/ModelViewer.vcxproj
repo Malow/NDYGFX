@@ -41,8 +41,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)/Include/;..\NDYGFX\Source;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)/Build/Debug/;$(SolutionDir)/WorkingDir/;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)\External\VLD\include\;$(SolutionDir)/Include/;..\NDYGFX\Source;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)\External\VLD\lib\Win32;$(SolutionDir)/Build/Debug/;$(SolutionDir)/WorkingDir/;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)\Build\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)$(Configuration)\</IntDir>
   </PropertyGroup>

@@ -178,9 +178,6 @@
     <ClInclude Include="Source\GraphicsEngineParameters.h">
       <Filter>Source Files\Engine\Objects and Entities</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Texture.h">
-      <Filter>Source Files\Engine\DxMan and Techs</Filter>
-    </ClInclude>
     <ClInclude Include="Source\ResourceManager.h">
       <Filter>Source Files\Engine\DxMan and Techs</Filter>
     </ClInclude>
@@ -193,7 +190,13 @@
     <ClInclude Include="Source\BoundingSphere.h">
       <Filter>Source Files\Engine\Objects and Entities</Filter>
     </ClInclude>
-    <ClInclude Include="Source\MeshCounted.h">
+    <ClInclude Include="Source\MeshResource.h">
+      <Filter>Source Files\Engine\DxMan and Techs</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\TextureResource.h">
+      <Filter>Source Files\Engine\DxMan and Techs</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\BufferResource.h">
       <Filter>Source Files\Engine\DxMan and Techs</Filter>
     </ClInclude>
   </ItemGroup>
@@ -309,13 +312,16 @@
     <ClCompile Include="Source\ResourceManager.cpp">
       <Filter>Source Files\Engine\DxMan and Techs</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Texture.cpp">
-      <Filter>Source Files\Engine\DxMan and Techs</Filter>
-    </ClCompile>
     <ClCompile Include="Source\PhysicsEngine.cpp">
       <Filter>Source Files\Engine\Other</Filter>
     </ClCompile>
-    <ClCompile Include="Source\MeshCounted.cpp">
+    <ClCompile Include="Source\MeshResource.cpp">
+      <Filter>Source Files\Engine\DxMan and Techs</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\TextureResource.cpp">
+      <Filter>Source Files\Engine\DxMan and Techs</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\BufferResource.cpp">
       <Filter>Source Files\Engine\DxMan and Techs</Filter>
     </ClCompile>
   </ItemGroup>

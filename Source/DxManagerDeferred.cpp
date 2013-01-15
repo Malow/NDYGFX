@@ -327,9 +327,9 @@ void DxManager::RenderDeferredGeometry()
 				if(verts)
 					verts->Apply();
 
-				if(obj->GetTexture() != NULL)
+				if(obj->GetTextureResource() != NULL)
 				{
-					if(ID3D11ShaderResourceView* texture = obj->GetTexture()->GetSRVPointer())///**TILLMAN
+					if(ID3D11ShaderResourceView* texture = obj->GetTextureResource()->GetSRVPointer())///**TILLMAN
 					{
 						this->Shader_DeferredGeometry->SetBool("textured", true);
 						this->Shader_DeferredGeometry->SetResource("tex2D", texture);
@@ -415,9 +415,9 @@ void DxManager::RenderDeferredGeometry()
 
 				this->Dx_DeviceContext->IASetVertexBuffers(0, 2, vertexBuffers, strides, offsets);
 
-				if(objOne->GetTexture())
+				if(objOne->GetTextureResource())
 				{
-					if(ID3D11ShaderResourceView* texture = objOne->GetTexture()->GetSRVPointer())//**TILLMAN
+					if(ID3D11ShaderResourceView* texture = objOne->GetTextureResource()->GetSRVPointer())//**TILLMAN
 					{
 						this->Shader_DeferredAnimatedGeometry->SetBool("textured", true);
 						this->Shader_DeferredAnimatedGeometry->SetResource("tex2D", texture);
@@ -467,9 +467,9 @@ void DxManager::RenderDeferredSkybox()
 
 	obj->GetVertBuff()->Apply();
 	obj->GetIndsBuff()->Apply();
-	if(obj->GetTexture() != NULL)
+	if(obj->GetTextureResource() != NULL)
 	{
-		this->Shader_Skybox->SetResource("SkyMap", obj->GetTexture()->GetSRVPointer());//**TILLMAN
+		this->Shader_Skybox->SetResource("SkyMap", obj->GetTextureResource()->GetSRVPointer());//**TILLMAN
 	}
 	
 	this->Shader_Skybox->Apply(0);
@@ -612,7 +612,7 @@ void DxManager::RenderInvisibilityEffect()
 				Object3D* obj = strips->get(u)->GetRenderObject();
 
 				//Set texture
-				if(ID3D11ShaderResourceView* texture = obj->GetTexture()->GetSRVPointer())//**TILLMAN
+				if(ID3D11ShaderResourceView* texture = obj->GetTextureResource()->GetSRVPointer())//**TILLMAN
 				{
 					this->Shader_InvisibilityEffect->SetResource((char*)strips->get(u)->GetTexturePath().c_str(), texture);
 					this->Shader_InvisibilityEffect->SetBool("textured", true);

@@ -14,7 +14,7 @@ private:
 	D3DXVECTOR2 position;
 	D3DXVECTOR2 dimensions;
 	float opacity;
-	Texture* texture;
+	TextureResource* textureResource;
 
 
 public:
@@ -23,8 +23,8 @@ public:
 
 	virtual Vector2 GetPosition() const;
 	virtual void SetPosition(Vector2 pos);
-	Texture* GetTexture() const { return this->texture; }
-	void SetTexture(Texture* text) { this->texture = text; }
+	TextureResource* GetTexture() const { return this->textureResource; }
+	void SetTexture(TextureResource* text) { this->textureResource = text; }
 	virtual Vector2 GetDimensions() const;
 	virtual void SetDimensions(Vector2 dims);
 	virtual float GetOpacity() const { return this->opacity; }
