@@ -7,7 +7,8 @@
 #endif
 
 #include "Graphics.h"
-#include "MaloWFileDebug.h"
+#include "..\..\NDYGFX\Source\MaloWFileDebug.h"
+//#include "MaloWFileDebug.h"
 
 void ReplaceSlashes(string& str, char replace, char with)
 {
@@ -56,10 +57,8 @@ void deleteCache()
 int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 {
 	MaloW::ClearDebug();
-
 	if ( !GraphicsInit(hInstance) )
 		MaloW::Debug("Failed Creating Graphics Engine!");
-	
 #if defined(DEBUG) || defined(_DEBUG)
 	_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	MaloW::Debug("(DEBUG): ModelViewer: Debug flag set to: _CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF). ");
@@ -349,7 +348,6 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		{
 			//ball->SetPosition(Vector3(0, -100, 0));
 		}
-
 		
 		static bool fesd = true;
 		if(GetGraphics()->GetKeyListener()->IsPressed('H'))
