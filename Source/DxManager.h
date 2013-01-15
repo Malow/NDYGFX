@@ -166,11 +166,12 @@ public:
 	Camera* GetCamera() const { return this->camera; }
 
 	int GetTriangleCount() { return this->TriangleCount; }
-	int GetMeshCount() { return this->objects.size() + this->animations.size() + this->terrains.size(); }
+	int GetMeshCount() { return this->objects.size() + this->animations.size(); }
 	void SetFPSMAX( float maxFPS );
 	void SetSunLightProperties(Vector3 direction, Vector3 lightColor, float intensity);
 	void SetSunLightDisabled();
 	void SetSceneAmbientLight(D3DXVECTOR3 amb) { this->sceneAmbientLight = amb; }
+	SunLight GetSunLight() const { return this->sun; }
 	D3DXVECTOR3 GetSceneAmbientLight() const { return this->sceneAmbientLight; }
 	void ResizeEngine(unsigned int width, unsigned int height);
 };
