@@ -20,8 +20,7 @@ float GraphicsEngineParams::FarClip = 200.0f;
 int GraphicsEngineParams::RefreshRate = 60;
 
 
-GraphicsEngineImp::GraphicsEngineImp(GraphicsEngineParams params, HINSTANCE hInstance, int nCmdShow) :
-	GraphicsEngine()
+GraphicsEngineImp::GraphicsEngineImp(GraphicsEngineParams params, HINSTANCE hInstance, int nCmdShow)
 {
 	this->parameters = params;
 	this->cam = NULL;
@@ -515,11 +514,11 @@ void GraphicsEngineImp::LoadingScreen(const char* BackgroundTexture, const char*
 	this->Update();
 
 	Image* bg = NULL;
-	if(BackgroundTexture != "")
+	if( strcmp(BackgroundTexture, "") != 0 )
 		bg = this->CreateImage(D3DXVECTOR2(0.0f, 0.0f), D3DXVECTOR2(0.0f, 0.0f), BackgroundTexture);
 
 	Image* pb = NULL;
-	if(ProgressBarTexture != "")
+	if( strcmp(ProgressBarTexture, "") != 0)
 		pb = this->CreateImage(D3DXVECTOR2((this->parameters.windowWidth / 4.0f), ((this->parameters.windowHeight * 3.0f) / 4.0f)), 
 			D3DXVECTOR2(0, this->parameters.windowHeight / 10.0f), ProgressBarTexture);
 
@@ -547,7 +546,7 @@ void GraphicsEngineImp::LoadingScreen(const char* BackgroundTexture, const char*
 	{
 		float diff = this->Update();
 		timer += diff * 0.001f;
-
+		
 		
 		if(state == 0)
 		{
@@ -563,7 +562,9 @@ void GraphicsEngineImp::LoadingScreen(const char* BackgroundTexture, const char*
 			{
 				state++;
 				timer = 0;
-				bg->SetDimensions(Vector2((float)this->parameters.windowWidth, (float)this->parameters.windowHeight));
+
+				// Added by Alexivan
+				if ( bg ) bg->SetDimensions(Vector2((float)this->parameters.windowWidth, (float)this->parameters.windowHeight));
 			}
 		}
 		else if(state == 1)
