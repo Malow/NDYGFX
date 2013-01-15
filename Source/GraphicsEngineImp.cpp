@@ -952,3 +952,15 @@ void GraphicsEngineImp::DebugDummyFunction(Vector3* arr) //**tillman**
 	//arr[1] = Vector3(maxV.x, maxV.y, maxV.z);
 
 }
+
+Vector3 GraphicsEngineImp::GetSunLightDirection() const
+{
+	D3DXVECTOR3 v = this->dx->GetSunLight().direction;
+	return Vector3(v.x, v.y, v.z);
+}
+
+Vector3 GraphicsEngineImp::GetSunLightColor() const
+{
+	D3DXVECTOR3 v = this->dx->GetSunLight().lightColor;
+	return Vector3(v.x, v.y, v.z);
+}

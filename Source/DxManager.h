@@ -166,6 +166,7 @@ public:
 	void SetSunLightProperties(Vector3 direction, Vector3 lightColor, float intensity);
 	void SetSunLightDisabled();
 	void SetSceneAmbientLight(D3DXVECTOR3 amb) { this->sceneAmbientLight = amb; }
+	SunLight GetSunLight() const { return this->sun; }
 	D3DXVECTOR3 GetSceneAmbientLight() const { return this->sceneAmbientLight; }
 	void ResizeEngine(unsigned int width, unsigned int height);
 };
