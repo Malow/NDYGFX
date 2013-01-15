@@ -656,6 +656,86 @@ void DxManager::RenderCascadedShadowMap()
 			this->csm->GetSplitDepth(1), this->csm->GetSplitDepth(2), this->csm->GetSplitDepth(3)));
 }
 
+void DxManager::CalculateCulling()
+{
+	D3DXMATRIX view = this->camera->GetViewMatrix();
+	D3DXMATRIX proj = this->camera->GetProjectionMatrix();
+
+	/*
+	float zMinimum = -proj._43 / proj._33;
+	float r = this->params.FarClip / (this->params.FarClip - zMinimum);
+	proj._33 = r;
+	proj._43 = -r * zMinimum;
+	*/
+
+	D3DXMATRIX VP;
+	D3DXMatrixMultiply(&VP, &view, &proj);
+
+
+	// Calculate near plane of frustum.
+	FrustrumPlanes[0].a = VP._14 + VP._13;
+	FrustrumPlanes[0].b = VP._24 + VP._23;
+	FrustrumPlanes[0].c = VP._34 + VP._33;
+	FrustrumPlanes[0].d = VP._44 + VP._43;
+	D3DXPlaneNormalize(&FrustrumPlanes[0], &FrustrumPlanes[0]);
+
+	// Calculate far plane of frustum.
+	FrustrumPlanes[1].a = VP._14 - VP._13; 
+	FrustrumPlanes[1].b = VP._24 - VP._23;
+	FrustrumPlanes[1].c = VP._34 - VP._33;
+	FrustrumPlanes[1].d = VP._44 - VP._43;
+	D3DXPlaneNormalize(&FrustrumPlanes[1], &FrustrumPlanes[1]);
+
+	// Calculate left plane of frustum.
+	FrustrumPlanes[2].a = VP._14 + VP._11; 
+	FrustrumPlanes[2].b = VP._24 + VP._21;
+	FrustrumPlanes[2].c = VP._34 + VP._31;
+	FrustrumPlanes[2].d = VP._44 + VP._41;
+	D3DXPlaneNormalize(&FrustrumPlanes[2], &FrustrumPlanes[2]);
+
+	// Calculate right plane of frustum.
+	FrustrumPlanes[3].a = VP._14 - VP._11; 
+	FrustrumPlanes[3].b = VP._24 - VP._21;
+	FrustrumPlanes[3].c = VP._34 - VP._31;
+	FrustrumPlanes[3].d = VP._44 - VP._41;
+	D3DXPlaneNormalize(&FrustrumPlanes[3], &FrustrumPlanes[3]);
+
+	// Calculate top plane of frustum.
+	FrustrumPlanes[4].a = VP._14 - VP._12; 
+	FrustrumPlanes[4].b = VP._24 - VP._22;
+	FrustrumPlanes[4].c = VP._34 - VP._32;
+	FrustrumPlanes[4].d = VP._44 - VP._42;
+	D3DXPlaneNormalize(&FrustrumPlanes[4], &FrustrumPlanes[4]);
+
+	// Calculate bottom plane of frustum.
+	FrustrumPlanes[5].a = VP._14 + VP._12;
+	FrustrumPlanes[5].b = VP._24 + VP._22;
+	FrustrumPlanes[5].c = VP._34 + VP._32;
+	FrustrumPlanes[5].d = VP._44 + VP._42;
+	D3DXPlaneNormalize(&FrustrumPlanes[5], &FrustrumPlanes[5]);
+
+
+
+	for(int i = 0; i < this->objects.size(); i++)
+	{
+		StaticMesh* ms = this->objects.get(i);
+		MaloW::Array<MeshStrip*>* strips = ms->GetStrips();
+		for(int u = 0; u < strips->size(); u++)
+		{
+			MeshStrip* s = strips->get(u);
+			float scale = max(ms->GetScaling().x, max(ms->GetScaling().y, ms->GetScaling().z));
+			if(pe.FrustrumVsSphere(this->FrustrumPlanes, s->GetBoundingSphere(), ms->GetWorldMatrix(), scale))
+			{
+				s->SetCulled(false);
+			}
+			else
+			{
+				s->SetCulled(true);
+			}
+		}
+	}
+}
+
 HRESULT DxManager::Render()
 {
 	if(this->RendererSleep > 0)
@@ -668,6 +748,8 @@ HRESULT DxManager::Render()
 	this->prevTimeStamp = li.QuadPart;
 
 	this->TimerAnimation += diff;// / 1000.0f;	
+
+	this->CalculateCulling();
 
 	this->PreRender();
 

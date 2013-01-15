@@ -731,3 +731,23 @@ void DxManager::SetSunLightDisabled()
 {
 	this->useSun = false;
 }
+
+int DxManager::GetRenderedMeshCount()
+{
+	int nrOfRendered = 0;
+	for(int i = 0; i < this->objects.size(); i++)
+	{
+		StaticMesh* ms = this->objects.get(i);
+		MaloW::Array<MeshStrip*>* strips = ms->GetStrips();
+		for(int u = 0; u < strips->size(); u++)
+		{
+			MeshStrip* s = strips->get(u);
+			if(!s->GetCulled())
+			{
+				nrOfRendered++;
+				u = strips->size();
+			}
+		}
+	}
+	return nrOfRendered;
+}

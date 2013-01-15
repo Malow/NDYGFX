@@ -157,17 +157,17 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		iTs[i]->SetBlendMap(size, testData);
 		iTs[i]->SetTextureScale(10);
 	}
-	/*
+	
 	// test fps
-	for(int i = 0; i < 50; i++)
-		iMesh* ball = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(0, 10 + i * 3, 0));
-	for(int i = 0; i < 50; i++)
-		iMesh* ball = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(10, 10 + i * 3, 0));
-	for(int i = 0; i < 50; i++)
-		iMesh* ball = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(10, 10 + i * 3, 10));
-	for(int i = 0; i < 50; i++)
-		iMesh* ball = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(0, 10 + i * 3, 10));
-	*/
+	//for(int i = 0; i < 50; i++)
+	//	iMesh* ball = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(0, 10 + i * 3, 0));
+	//for(int i = 0; i < 50; i++)
+	//	iMesh* ball = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(10, 10 + i * 3, 0));
+	//for(int i = 0; i < 50; i++)
+	//	iMesh* ball = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(10, 10 + i * 3, 10));
+	//for(int i = 0; i < 50; i++)
+	//	iMesh* ball = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(0, 10 + i * 3, 10));
+	
 	iMesh* ball = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(0, -100, 0));
 	ball->Scale(0.1f);
 	iMesh* secModel = GetGraphics()->CreateMesh("Media/bth.obj", Vector3(10, 0, 10));
@@ -255,16 +255,8 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	}
 
 
-
 	//Transform points into light’s homogeneous space.
 	GetGraphics()->DebugDummyFunction(vertices);
-
-
-
-
-
-
-
 
 	//render
 	iMesh** debugCSMPoints = new iMesh*[ttte * nrOfFrustumSlices];
@@ -280,6 +272,10 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	//restore camera settings
 	GetGraphics()->GetCamera()->SetPosition(Vector3(25, 25, 20));
 	GetGraphics()->GetCamera()->LookAt(Vector3(0, 0, 0));
+
+	//for(int i = 0; i < 10; i++)
+		//for(int u = 0; u < 10; u++)
+			//GetGraphics()->CreateMesh("Media/Asdbfd.obj", Vector3(0 + i * 5, 5, 0 + u * 5))->SetScale(1.0f * 0.05f);
 #endif
 //*************************************	    END OF PRE TEST       **********************
 
