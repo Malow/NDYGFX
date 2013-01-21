@@ -384,7 +384,7 @@ void DxManager::RenderDeferredGeometry()
 			KeyFrame* one = NULL;
 			KeyFrame* two = NULL;
 			float t = 0.0f;
-			this->animations[i]->SetCurrentTime(this->Timer);
+			this->animations[i]->SetCurrentTime(this->Timer * 1000.0f); //Timer is in seconds.
 			this->animations[i]->GetCurrentKeyFrames(&one, &two, t);
 
 			MaloW::Array<MeshStrip*>* stripsOne = one->strips;
@@ -401,7 +401,7 @@ void DxManager::RenderDeferredGeometry()
 			this->Shader_DeferredAnimatedGeometry->SetMatrix("worldMatrixInverseTranspose", worldInverseTranspose);
 			this->Shader_DeferredAnimatedGeometry->SetFloat("t", t);
 
-			this->Shader_DeferredAnimatedGeometry->SetInt("specialColor", this->animations[i]->GetSpecialColor()); //*kraschar för att antalet animationer > antalet object
+			this->Shader_DeferredAnimatedGeometry->SetInt("specialColor", this->animations[i]->GetSpecialColor()); //*Tillman old: kraschar för att antalet animationer > antalet object
 
 			for(int u = 0; u < stripsOne->size(); u++)
 			{

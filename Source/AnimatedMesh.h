@@ -68,7 +68,7 @@ class AnimatedMesh : public Mesh, public virtual iAnimatedMesh
 		/* ! Returns the strips of the second mesh currently being used. */
 		virtual MaloW::Array<MeshStrip*>* GetStrips();
 
-		/*! Set the current time. This determines what key frames to interpolate. Must be called every frame for animation to work. */
+		/*! Set the current time in milliseconds. This determines what key frames to interpolate. Must be called every frame for animation to work. */
 		virtual void SetCurrentTime(float currentTime);
 	
 		/*! Load the keyframes from file. Input is expected to be "'filename'.ani". */
