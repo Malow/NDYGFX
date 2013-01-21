@@ -180,6 +180,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 
 
 	//CASCADED SHADOWMAP:
+	/*
 	Vector3 lookAt = Vector3(0, 0, 0);
 	Vector3 pos = Vector3(-50, 50, -50);
 	Vector3 posToLookAt = lookAt - pos; //Pos --> lookAt
@@ -232,7 +233,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		vertices[i * ttte + 2] = nearTopRight;
 		vertices[i * ttte + 3] = nearBottomLeft;
 		vertices[i * ttte + 4] = nearBottomRight;*/
-		vertices[i * ttte] = nearTopLeft;
+		/*vertices[i * ttte] = nearTopLeft;
 		vertices[i * ttte + 1] = nearTopRight;
 		vertices[i * ttte + 2] = nearBottomLeft;
 		vertices[i * ttte + 3] = nearBottomRight;
@@ -252,18 +253,18 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		vertices[i * ttte + 7] = farTopRight;
 		vertices[i * ttte + 8] = farBottomLeft;
 		vertices[i * ttte + 9] = farBottomRight;*/
-		vertices[i * ttte + 4] = farTopLeft;
+		/*vertices[i * ttte + 4] = farTopLeft;
 		vertices[i * ttte + 5] = farTopRight;
 		vertices[i * ttte + 6] = farBottomLeft;
 		vertices[i * ttte + 7] = farBottomRight;
 	}
-
+	*/
 
 	//Transform points into light’s homogeneous space.
-	GetGraphics()->DebugDummyFunction(vertices);
+	//GetGraphics()->DebugDummyFunction(vertices);
 
 	//render
-	iMesh** debugCSMPoints = new iMesh*[ttte * nrOfFrustumSlices];
+	/*iMesh** debugCSMPoints = new iMesh*[ttte * nrOfFrustumSlices];
 	for(int i = 0; i < ttte * nrOfFrustumSlices; i++)
 	{
 		//debugCSMPoints[i] = GetGraphics()->CreateStaticMesh("Media/ball.obj", vertices[i]); //Camera frustum corners
@@ -274,9 +275,9 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	//GetGraphics()->CreateStaticMesh("Media/CSMDebug.obj", Vector3(0, 0, 0)); //Camera frustum slices
 	
 	//restore camera settings
-	GetGraphics()->GetCamera()->SetPosition(Vector3(25, 25, 20));
+	/*GetGraphics()->GetCamera()->SetPosition(Vector3(25, 25, 20));
 	GetGraphics()->GetCamera()->LookAt(Vector3(0, 0, 0));
-
+	*/
 	//for(int i = 0; i < 10; i++)
 		//for(int u = 0; u < 10; u++)
 			//GetGraphics()->CreateMesh("Media/Asdbfd.obj", Vector3(0 + i * 5, 5, 0 + u * 5))->SetScale(1.0f * 0.05f);
@@ -369,7 +370,13 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 					Vector3 fw = GetGraphics()->GetCamera()->GetForward();
 					GetGraphics()->ChangeCamera(FPS);
 					GetGraphics()->GetCamera()->SetForward(fw);
-					ball->SetPosition(Vector3(GetGraphics()->GetCamera()->GetPosition()));
+					
+					for(int i = 0; i < 50; i++)
+						GetGraphics()->CreateMesh("Media/scale.obj", Vector3(30, -300, 30));
+
+					GetGraphics()->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", 
+						"Media/LoadingScreen/LoadingScreenPB.png"
+						, 1.0f, 1.0f, 1.0f, 1.0f);
 					//GetGraphics()->ResizeGraphicsEngine(500, 500);
 				}
 				else
@@ -377,11 +384,10 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 					Vector3 fw = GetGraphics()->GetCamera()->GetForward();
 					GetGraphics()->ChangeCamera(RTS);
 					GetGraphics()->GetCamera()->SetForward(fw);
-					ball->SetPosition(Vector3(GetGraphics()->GetCamera()->GetPosition()));
 					//GetGraphics()->ResizeGraphicsEngine(750, 250);
 				}
 				fesd = false;
-			}		
+			}			
 		}
 		else
 			fesd = true;
@@ -411,14 +417,15 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 			debugCSMScale -= diff * 0.001f;
 			model->Scale(1 - diff * 0.01f);
 		}
-		for(int i = 0; i < ttte * nrOfFrustumSlices; i++)
+		/*for(int i = 0; i < ttte * nrOfFrustumSlices; i++)
 		{
 			//debugCSMPoints[i]->SetScale(debugCSMScale);
-		}
+		}*/
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_SHIFT))
 			secModel->MoveBy(Vector3(0, 1, 0) * diff * 0.01f);
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_CONTROL))
 			secModel->MoveBy(Vector3(0, -1, 0) * diff * 0.01f);
+
 
 		/*
 		templol += diff;
@@ -571,8 +578,8 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	//*************************************	     POST TEST       **********************
 #ifdef TEST
 	delete[] testData;
-	delete[] debugCSMPoints;
-	delete[] vertices;
+	//delete[] debugCSMPoints;
+	//delete[] vertices;
 	delete[] iTs;
 	//delete[] fileNames;
 #endif

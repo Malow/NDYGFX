@@ -15,6 +15,13 @@ void DxManager::PreRender()
 	this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_GbufferRTs[3], ClearColor2);
 
 
+	if(this->useSun)	
+	{
+		this->csm->PreRender(this->sun.direction, this->camera);
+	}
+
+
+
 	/*
 	if(this->Shader_ForwardRendering)
 	{

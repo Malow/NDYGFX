@@ -263,17 +263,14 @@ float4 PSScene(PSSceneIn input) : SV_Target
 					if(cascademap == 0)
 					{
 						shadow += (CascadedShadowMap[0].SampleLevel(shadowMapSampler, smTex + float2(SMAP_DX * (s - PCF_SIZE/2) , SMAP_DX * (q - PCF_SIZE/2)), 0).r + SHADOW_EPSILON < depth) ? 0.0f : 1.0f;
-						//csmDbg = float4(1.0f, 0.0f, 0.0f, 1.0f);  // TILLMAN CSMDEBUG
 					}
 					if(cascademap == 1)
 					{
 						shadow += (CascadedShadowMap[1].SampleLevel(shadowMapSampler, smTex + float2(SMAP_DX * (s - PCF_SIZE/2) , SMAP_DX * (q - PCF_SIZE/2)), 0).r + SHADOW_EPSILON < depth) ? 0.0f : 1.0f;
-						//csmDbg = float4(0.0f, 1.0f, 0.0f, 1.0f);  // TILLMAN CSMDEBUG
 					}
 					if(cascademap == 2 || shadow == 0.0f)
 					{
 						shadow += (CascadedShadowMap[2].SampleLevel(shadowMapSampler, smTex + float2(SMAP_DX * (s - PCF_SIZE/2) , SMAP_DX * (q - PCF_SIZE/2)), 0).r + SHADOW_EPSILON < depth) ? 0.0f : 1.0f;
-						//csmDbg = float4(0.0f, 0.0f, 1.0f, 1.0f);  // TILLMAN CSMDEBUG
 					}
 				}
 			}
@@ -302,11 +299,6 @@ float4 PSScene(PSSceneIn input) : SV_Target
 		DiffuseColor * diffuseLighting + 
 		SpecularColor.xyz * specLighting), 
 		1.0f);
-	
-	//if(UseSun) // TILLMAN CSMDEBUG
-	//{
-	//	finalColor = csmDbg;
-	//}
 
 
 	
