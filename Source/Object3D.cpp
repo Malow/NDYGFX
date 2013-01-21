@@ -1,6 +1,6 @@
 #include "Object3D.h"
 
-Object3D::Object3D(Buffer* verts, Buffer* inds, TextureResource* textureResource, D3D_PRIMITIVE_TOPOLOGY topology)
+Object3D::Object3D(BufferResource* verts, BufferResource* inds, TextureResource* textureResource, D3D_PRIMITIVE_TOPOLOGY topology)
 {
 	this->verts = verts;
 	this->inds = inds;
@@ -10,10 +10,30 @@ Object3D::Object3D(Buffer* verts, Buffer* inds, TextureResource* textureResource
 
 Object3D::~Object3D()
 {
-	if(this->textureResource) GetResourceManager()->DeleteTextureResource(this->textureResource);
-	//if(this->texture) this->texture->Release(); this->texture = NULL;
-	if(this->verts)
-		delete this->verts;
-	if(this->inds)
-		delete this->inds;
+	if(this->textureResource) GetResourceManager()->DeleteTextureResource(this->textureResource); 
+	if(this->verts) GetResourceManager()->DeleteBufferResource(this->verts); 
+	if(this->inds) GetResourceManager()->DeleteBufferResource(this->inds);
+}
+
+Buffer* Object3D::GetVertBuff()
+{
+	if(this->verts != NULL)
+	{
+		return this->verts->GetBufferPointer();
+	}
+	else
+	{
+		return NULL;
+	}
+}
+Buffer* Object3D::GetIndsBuff()
+{
+	if(this->inds != NULL)
+	{
+		return this->inds->GetBufferPointer();
+	}
+	else
+	{
+		return NULL;
+	}
 }

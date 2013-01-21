@@ -18,7 +18,7 @@ using namespace std;
 class BufferResource : public ReferenceCounted
 {
 	private:
-		string	zFilePath;
+		string	zName; //Used as identification.
 		Buffer*	zBuffer;
 
 	private:
@@ -26,10 +26,10 @@ class BufferResource : public ReferenceCounted
 
 	public:
 		BufferResource();
-		BufferResource(string filePath, Buffer* buffer);
+		BufferResource(string ID, Buffer* buffer);
 
-		const string& GetName() const { return this->zFilePath; }
-		Buffer* GetSRVPointer() const { return this->zBuffer; }
-		void SetSRVPointer(Buffer* pointer) { this->zBuffer = pointer; }
+		const string& GetName() const { return this->zName; }
+		Buffer* GetBufferPointer() const { return this->zBuffer; }
+		void SetBufferPointer(Buffer* pointer) { this->zBuffer = pointer; }
 
 };

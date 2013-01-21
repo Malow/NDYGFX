@@ -2,6 +2,7 @@
 
 Mesh::Mesh(D3DXVECTOR3 pos)
 {
+	this->filePath = "";
 	this->specialColor = NULL_COLOR;
 	this->usingInvisibilityEffect = false;
 	//this->transparency = 0.0f;
@@ -24,6 +25,8 @@ Mesh::~Mesh()
 
 		delete this->strips;
 	}
+
+	GetResourceManager()->UnloadObjectData(this->filePath.c_str());
 }
 
 void DoMinMax(D3DXVECTOR3& min, D3DXVECTOR3& max, D3DXVECTOR3 v)
@@ -39,10 +42,18 @@ void DoMinMax(D3DXVECTOR3& min, D3DXVECTOR3& max, D3DXVECTOR3 v)
 
 bool Mesh::LoadFromFile(string file)
 {
+	this->filePath = file;
+
 	// if substr of the last 4 = .obj do this:    - else load other format / print error
 
-	ObjLoader oj;
-	ObjData* od = oj.LoadObjFile(file);
+	ObjData* od = GetResourceManager()->LoadObjectDataFromFile(filePath.c_str());
+	if(!od)
+	{
+		ObjLoader oj;
+		od = oj.LoadObjFile(file);
+		GetResourceManager()->SetObjectData(filePath.c_str(), od);
+	}
+	//ObjData* od = oj.LoadObjFile(file);
 
 	if(od)
 	{
@@ -127,7 +138,7 @@ bool Mesh::LoadFromFile(string file)
 			}
 		}
 		this->topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-		delete od;
+		//delete od;
 
 		return true;
 	}

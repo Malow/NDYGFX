@@ -62,9 +62,12 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 #if defined(DEBUG) || defined(_DEBUG)
 	_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	MaloW::Debug("(DEBUG): ModelViewer: Debug flag set to: _CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF). ");
+	#ifdef INCLUDE_MODEL_VIEWER
+		MaloW::Debug("(DEBUG): ModelViewer: vld.h included.");
+	#endif
 #endif
 
-	GetGraphics()->CreateSkyBox("Media/skymap.dds");	// Reduces FPS from 130 to 40
+	GetGraphics()->CreateSkyBox("Media/skymap.dds");	// Reduces FPS from 130 to 40 //** TILLMAN
 	GetGraphics()->GetCamera()->SetPosition(Vector3(25, 25, 20));
 	GetGraphics()->GetCamera()->LookAt(Vector3(0, 0, 0));
 	iLight* li = GetGraphics()->CreateLight(GetGraphics()->GetCamera()->GetPosition());
@@ -75,9 +78,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 
 //*************************************	     PRE TEST       **********************
 #ifdef TEST
-#ifdef INCLUDE_MODEL_VIEWER
-	MaloW::Debug("(DEBUG): ModelViewer: vld included.");
-#endif
+
 	int vertSize = 16;
 	float testSize = 5.0f;
 	
@@ -157,9 +158,9 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		iTs[i]->SetBlendMap(size, testData);
 		iTs[i]->SetTextureScale(10);
 	}
-	/*
+	
 	// test fps
-	for(int i = 0; i < 50; i++)
+	/*for(int i = 0; i < 50; i++)
 		iMesh* ball = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(0, 10 + i * 3, 0));
 	for(int i = 0; i < 50; i++)
 		iMesh* ball = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(10, 10 + i * 3, 0));
@@ -167,7 +168,9 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		iMesh* ball = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(10, 10 + i * 3, 10));
 	for(int i = 0; i < 50; i++)
 		iMesh* ball = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(0, 10 + i * 3, 10));
-	*/
+	for(int i = 0; i < 50; i++)
+		iMesh* ball = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(0, 10 + i * 3, 10));*/
+
 	iMesh* ball = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(0, -100, 0));
 	ball->Scale(0.1f);
 	iMesh* secModel = GetGraphics()->CreateMesh("Media/bth.obj", Vector3(10, 0, 10));

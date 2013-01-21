@@ -207,6 +207,9 @@ void ObjLoader::trianglulate(string& filename)
 
 ObjData* ObjLoader::LoadObjFile(string filepath)
 {
+
+
+
 	string mtlfile = "";
 	ObjData* returndata = new ObjData();
 	//this->trianglulate(filename);								////////// Not quite working
