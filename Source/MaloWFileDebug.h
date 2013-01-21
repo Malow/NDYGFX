@@ -6,43 +6,34 @@
 #include "Vector.h"
 #include "MaloW.h"
 
-static bool erase = false;
-static float PCFreq;
-static bool useTime = false;
-static float prevTime = 0.0f;
-static float totalTime = 0.0f;
+static float PCFreq = 0.0f;
+static bool initTime = true;
 
 namespace MaloW
 {
+	inline void InitTimeForDebug()
+	{
+		LARGE_INTEGER li;
+		QueryPerformanceFrequency(&li);
+		PCFreq = float(li.QuadPart)/1000.0f;
+		QueryPerformanceCounter(&li);
+
+		initTime = false;
+	}
+
 	inline void Debug(std::string msg)
 	{
-		if(erase)
-		{
-			ofstream writeFile;
-			writeFile.open ("MaloWDebug.txt", ios::out | ios::trunc);
-			writeFile << "";
-			writeFile.close();
-			erase = false;
-		}
+		if(initTime)
+			InitTimeForDebug();
 
 		float timer = 0;
-		if(useTime)
-		{
-			LARGE_INTEGER li;
-			QueryPerformanceCounter(&li);
-			timer = (li.QuadPart / PCFreq) * 0.001f;
-			totalTime += (timer - prevTime);
-			prevTime = timer;
-		}
+		LARGE_INTEGER li;
+		QueryPerformanceCounter(&li);
+		timer = (li.QuadPart / PCFreq) * 0.001f;
 
 		fstream writeFile;
 		writeFile.open ("MaloWDebug.txt", fstream::in | fstream::out | fstream::app);
-
-		if(useTime)
-			writeFile << totalTime << ": " << msg << endl;
-		else
-			writeFile << msg << endl;
-
+		writeFile << timer << ": " << msg << endl;
 		writeFile.close();
 	}
 
@@ -53,55 +44,33 @@ namespace MaloW
 
 	inline void Debug(Vector3 v)
 	{
-		if(erase)
-		{
-			ofstream writeFile;
-			writeFile.open ("MaloWDebug.txt", ios::out | ios::trunc);
-			writeFile << "";
-			writeFile.close();
-			erase = false;
-		}
-
+		if(initTime)
+			InitTimeForDebug();
+		
 		float timer = 0;
-		if(useTime)
-		{
-			LARGE_INTEGER li;
-			QueryPerformanceCounter(&li);
-			timer = (li.QuadPart / PCFreq) * 0.001f;
-			totalTime += (timer - prevTime);
-			prevTime = timer;
-		}
-
+		LARGE_INTEGER li;
+		QueryPerformanceCounter(&li);
+		timer = (li.QuadPart / PCFreq) * 0.001f;
+		
 		fstream writeFile;
 		writeFile.open ("MaloWDebug.txt", fstream::in | fstream::out | fstream::app);
-
-		if(useTime)
-			writeFile << totalTime << ": " << "Vector3 x: " << v.x << ", y: " << v.y << ", z: " << v.z << endl;
-		else
-			writeFile << "Vector3 x: " << v.x << ", y: " << v.y << ", z: " << v.z << endl;
-
+		writeFile << timer << ": " << "Vector3 x: " << v.x << ", y: " << v.y << ", z: " << v.z << endl;
 		writeFile.close();
 	}
 
-
 	inline void ClearDebug()
 	{
-		LARGE_INTEGER li;
-		if(!QueryPerformanceFrequency(&li))
-			MaloW::Debug("QueryPerformanceFrequency Failed! in MalDebug, High resolution performance counter not available?");
+		InitTimeForDebug();
 
-		PCFreq = float(li.QuadPart)/1000.0f;
-		useTime = true;
+		float timer = 0;
+		LARGE_INTEGER li;
 		QueryPerformanceCounter(&li);
-		prevTime = (li.QuadPart / PCFreq) * 0.001f;
+		timer = (li.QuadPart / PCFreq) * 0.001f;
 
 		ofstream writeFile;
 		writeFile.open ("MaloWDebug.txt", ios::out | ios::trunc);
-
-		writeFile << "";
-
+		writeFile << "Starting program at timer: " << timer << endl;
 		writeFile.close();
-		erase = false;
 	}
 }
 #endif

@@ -18,6 +18,7 @@
 #include "FXAA.h"
 #include "StaticMesh.h"
 #include "AnimatedMesh.h"
+#include "PhysicsEngine.h"
 #include "DxManagerEvents.h"
 #include "CascadedShadowMap.h"
 #if defined(DEBUG) || defined(_DEBUG)
@@ -105,6 +106,10 @@ private:
 	float LastCamUpdate;
 	float RendererSleep;
 
+	// Needed for frustrum culling
+	PhysicsEngine pe;
+	D3DXPLANE FrustrumPlanes[6];
+
 	//This Clears the scene(rendertargets & viewports) and function sets variables used by most shaders, such as camera position for instance.
 	void PreRender(); //stdafx.fx
 	void RenderForward();
@@ -120,6 +125,8 @@ private:
 	void RenderDeferredSkybox();
 	void RenderAntiAliasing();
 	void RenderText();
+
+	void CalculateCulling();
 
 	void ResizeRenderer(ResizeEvent* ev);
 
@@ -167,6 +174,7 @@ public:
 
 	int GetTriangleCount() { return this->TriangleCount; }
 	int GetMeshCount() { return this->objects.size() + this->animations.size(); }
+	int GetRenderedMeshCount();
 	void SetFPSMAX( float maxFPS );
 	void SetSunLightProperties(Vector3 direction, Vector3 lightColor, float intensity);
 	void SetSunLightDisabled();

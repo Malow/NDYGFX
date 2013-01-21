@@ -835,6 +835,36 @@ bool PhysicsEngine::DoCollisionTriangleVsTriangle(Vector3 v00, Vector3 v01, Vect
 	return true;
 }
 
+bool PhysicsEngine::FrustrumVsSphere( D3DXPLANE planes[], BoundingSphere bs, D3DXMATRIX world, float scale )
+{
+	// various distances
+	float fDistance;
+	D3DXVECTOR4 sPos;
+	D3DXVec3Transform(&sPos, &bs.center, &world);
+	D3DXVECTOR3 sPos3 = D3DXVECTOR3(sPos.x, sPos.y, sPos.z);
+	float radius = bs.radius * scale;
+	
+	// calculate our distances to each of the planes
+	for(int i = 0; i < 6; ++i) 
+	{
+
+		// find the distance to this plane
+		//fDistance = D3DXVec3Dot(&D3DXVECTOR3(planes[i].a, planes[i].b, planes[i].c), &bs.Center) + m_planes[i].Distance;
+		fDistance = D3DXPlaneDotCoord(&planes[i], &sPos3);// + m_planes->d;
+
+		// if this distance is < -sphere.radius, we are outside
+		if(fDistance < -radius)
+			return false;
+
+		// else if the distance is between +- radius, then we intersect
+		if((float)fabs(fDistance) < radius)
+			return true;
+	}
+
+	// otherwise we are fully in view
+	return true;
+}
+
 
 
 

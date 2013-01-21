@@ -2,6 +2,7 @@
 
 MeshStrip::MeshStrip()
 {
+	this->culled = false;
 	this->RenderObject = NULL;
 	this->indicies = NULL;
 	this->mesh = NULL;
