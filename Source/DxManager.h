@@ -106,6 +106,8 @@ private:
 	float LastCamUpdate;
 	float RendererSleep;
 
+	bool DelayGettingCamera;
+
 	// Needed for frustrum culling
 	PhysicsEngine pe;
 	D3DXPLANE FrustrumPlanes[6];
@@ -125,6 +127,7 @@ private:
 	void RenderDeferredSkybox();
 	void RenderAntiAliasing();
 	void RenderText();
+	void SetCamera(SetCameraEvent* ev);
 
 	void CalculateCulling();
 
@@ -169,8 +172,8 @@ public:
 	void DeleteImage(Image* image);
 	void DeleteText(Text* text);
 
-	void SetCamera(Camera* cam) { this->camera = cam; }
-	Camera* GetCamera() const { return this->camera; }
+	void SetCamera(Camera* cam);
+	Camera* GetCamera() const;
 
 	int GetTriangleCount() { return this->TriangleCount; }
 	int GetMeshCount() { return this->objects.size() + this->animations.size(); }
