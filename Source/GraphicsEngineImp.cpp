@@ -722,7 +722,6 @@ iCamera* GraphicsEngineImp::ChangeCamera( CameraType newCamType )
 	this->cam->SetUpdateCamera(oldcam->GetUpdatingCamera());
 	this->dx->SetCamera(this->cam);
 	this->parameters.CamType = newCamType;
-	delete oldcam;
 	return this->cam;	
 }
 

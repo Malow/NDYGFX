@@ -11,6 +11,17 @@ HRESULT DxManager::Update(float)
 	return S_OK;
 }
 
+void DxManager::SetCamera(SetCameraEvent* ev)
+{
+	
+	Camera* cam = ev->GetCamera();
+	Camera* oldCam = this->camera;
+	this->camera = cam;
+	delete oldCam;
+	oldCam = NULL;
+	this->DelayGettingCamera = false;
+}
+
 void DxManager::HandleTerrainEvent(TerrainEvent* me)
 {
 	string msg = me->getMessage();
@@ -161,6 +172,12 @@ void DxManager::Life()
 			{
 				string msg = ((RendererEvent*)ev)->getMessage();
 				
+				//SetCameraEvent
+				if(dynamic_cast<SetCameraEvent*>(ev) != NULL)
+				{
+					this->SetCamera((SetCameraEvent*)ev);
+				}
+
 				// ResizeEvent
 				if(dynamic_cast<ResizeEvent*>(ev) != NULL)
 				{

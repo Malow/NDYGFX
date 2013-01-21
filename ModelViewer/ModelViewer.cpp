@@ -275,9 +275,9 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	GetGraphics()->GetCamera()->SetPosition(Vector3(25, 25, 20));
 	GetGraphics()->GetCamera()->LookAt(Vector3(0, 0, 0));
 
-	//for(int i = 0; i < 10; i++)
-		//for(int u = 0; u < 10; u++)
-			//GetGraphics()->CreateMesh("Media/Asdbfd.obj", Vector3(0 + i * 5, 5, 0 + u * 5))->SetScale(1.0f * 0.05f);
+	for(int i = 0; i < 10; i++)
+		for(int u = 0; u < 10; u++)
+			GetGraphics()->CreateMesh("Media/Asdbfd.obj", Vector3(0 + i * 5, 5, 0 + u * 5))->SetScale(1.0f * 0.05f);
 #endif
 //*************************************	    END OF PRE TEST       **********************
 
@@ -357,13 +357,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 					Vector3 fw = GetGraphics()->GetCamera()->GetForward();
 					GetGraphics()->ChangeCamera(FPS);
 					GetGraphics()->GetCamera()->SetForward(fw);
-					
-					for(int i = 0; i < 50; i++)
-						GetGraphics()->CreateMesh("Media/scale.obj", Vector3(30, -300, 30));
-
-					GetGraphics()->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", 
-						"Media/LoadingScreen/LoadingScreenPB.png"
-						, 1.0f, 1.0f, 1.0f, 1.0f);
+					ball->SetPosition(Vector3(GetGraphics()->GetCamera()->GetPosition()));
 					//GetGraphics()->ResizeGraphicsEngine(500, 500);
 				}
 				else
@@ -371,10 +365,11 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 					Vector3 fw = GetGraphics()->GetCamera()->GetForward();
 					GetGraphics()->ChangeCamera(RTS);
 					GetGraphics()->GetCamera()->SetForward(fw);
+					ball->SetPosition(Vector3(GetGraphics()->GetCamera()->GetPosition()));
 					//GetGraphics()->ResizeGraphicsEngine(750, 250);
 				}
 				fesd = false;
-			}			
+			}		
 		}
 		else
 			fesd = true;

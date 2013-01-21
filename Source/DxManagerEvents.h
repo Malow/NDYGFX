@@ -152,5 +152,25 @@ public:
 	}
 	unsigned int GetWidth() { return this->width; }
 	unsigned int GetHeight() { return this->height; }
+};
 
+class SetCameraEvent : public RendererEvent
+{
+private:
+	Camera* cam;
+
+public:
+	SetCameraEvent(string msg, Camera* cam) : RendererEvent(msg)
+	{
+		this->cam = cam;
+	}
+	virtual ~SetCameraEvent()
+	{
+		if(this->deleteSelf)
+		{
+			if(this->cam)
+				delete this->cam;
+		}
+	}
+	Camera* GetCamera() { this->deleteSelf = false; return this->cam; }
 };

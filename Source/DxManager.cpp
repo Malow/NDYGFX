@@ -19,6 +19,8 @@ DxManager::DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam)
 	this->Dx_SwapChain = NULL;
 	this->Dx_Device = NULL;
 
+	this->DelayGettingCamera = false;
+
 	this->Shader_ShadowMap = NULL;
 	this->Shader_Text = NULL;
 	this->Shader_ShadowMapAnimated = NULL;
@@ -740,3 +742,24 @@ int DxManager::GetRenderedMeshCount()
 	}
 	return nrOfRendered;
 }
+
+void DxManager::SetCamera( Camera* cam )
+{
+	if(!this->camera)	// Needed for the first set of a camera.
+		this->camera = cam;
+	else
+	{
+		this->DelayGettingCamera = true;
+		SetCameraEvent* ev = new SetCameraEvent("SetCam", cam);
+		this->PutEvent(ev);
+	}
+}
+
+Camera* DxManager::GetCamera() const
+{
+	while(this->DelayGettingCamera)
+		Sleep(1);
+
+	return this->camera;
+}
+
