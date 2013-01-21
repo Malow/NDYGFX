@@ -8,6 +8,9 @@
 cbuffer EveryFrame
 {
 	matrix gWVP;
+	matrix world;
+	float FogHeight;
+	float CamY;
 }
 
 TextureCube SkyMap;
@@ -20,6 +23,7 @@ struct VSIn
 struct SKYMAP_VS_OUTPUT
 {
 	float4 Pos : SV_POSITION;
+	float3 worldPos : POSITION;
 	float3 texCoord : TEXCOORD; //(pos)
 };
 /*
@@ -58,13 +62,21 @@ SKYMAP_VS_OUTPUT SKYMAP_VS(VSIn input)
 	//Set Pos to xyww instead of xyzw, so that z/w will always be 1 (furthest from camera)
 	output.Pos = mul(float4(input.Pos, 1.0f), gWVP).xyww; 
 	output.texCoord = input.Pos;
+	output.worldPos = mul(float4(input.Pos, 1.0f), world);
 
 	return output;
 }
 //PSOut SKYMAP_PS(SKYMAP_VS_OUTPUT input) : SV_Target
 float4 SKYMAP_PS(SKYMAP_VS_OUTPUT input) : SV_Target
 {
-	return SkyMap.Sample(linearSampler, input.texCoord);
+	float4 ret = ret = SkyMap.Sample(linearSampler, input.texCoord);
+	if(input.worldPos.y < FogHeight)
+	{
+		float factor = (input.worldPos.y - CamY) / (FogHeight - CamY);
+
+		ret = lerp(float4(0.45f, 0.45f, 0.45f, 1.0f), ret, saturate(factor));
+	}
+	return ret;
 
 	/*PSOut output = (PSOut)0;
 

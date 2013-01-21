@@ -321,6 +321,11 @@ void Mesh::SetScale(D3DXVECTOR3 scale)
 	this->SetScale(Vector3(scale.x, scale.y, scale.z));
 }
 
+void Mesh::ResetRotation()
+{
+	this->rotQuat = D3DXQUATERNION(0, 0, 0, 1);
+}
+
 
 
 //**TILLMAN**

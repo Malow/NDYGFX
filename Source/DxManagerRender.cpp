@@ -137,8 +137,7 @@ void DxManager::HandleTextEvent(TextEvent* te)
 
 void DxManager::Life()
 {
-	//while(this->TimerAnimation < 888.0f)
-//	{
+	{
 		//Engine Start Splash screen.
 		Image* img = new Image(D3DXVECTOR2(0.0f, 0.0f), D3DXVECTOR2((float)this->params.windowWidth, (float)this->params.windowHeight));
 		TextureResource* tex = NULL;
@@ -154,8 +153,7 @@ void DxManager::Life()
 		this->DeleteImage(img);
 		img = NULL;
 		Sleep(100);
-	//}
-
+	}
 
 	while(this->stayAlive)
 	{
@@ -203,8 +201,8 @@ void DxManager::Life()
 			}
 			delete ev;
 		}
-		this->camera->Update(this->TimerAnimation - this->LastCamUpdate);
-		this->LastCamUpdate = this->TimerAnimation;
+		this->camera->Update(this->Timer - this->LastCamUpdate);
+		this->LastCamUpdate = this->Timer;
 		this->Render();
 		this->framecount++;
 	}
@@ -335,7 +333,7 @@ void DxManager::RenderShadowMap()
 					KeyFrame* one = NULL;
 					KeyFrame* two = NULL;
 					float t = 0.0f;
-					this->animations[i]->SetCurrentTime(this->TimerAnimation);
+					this->animations[i]->SetCurrentTime(this->Timer);
 					this->animations[i]->GetCurrentKeyFrames(&one, &two, t);
 					MaloW::Array<MeshStrip*>* stripsOne = one->strips;
 					MaloW::Array<MeshStrip*>* stripsTwo = two->strips;
@@ -749,7 +747,7 @@ HRESULT DxManager::Render()
 	float diff = (li.QuadPart - prevTimeStamp) / this->PCFreq;
 	this->prevTimeStamp = li.QuadPart;
 
-	this->TimerAnimation += diff;// / 1000.0f;	
+	this->Timer += diff * 0.001f;
 
 	this->CalculateCulling();
 
