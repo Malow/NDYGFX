@@ -99,8 +99,8 @@ PSout PSScene(PSSceneIn input) : SV_Target
 	float4 textureColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
 	if(textured)
 	{
-		textureColor.xyz = tex2D.Sample(linearSampler, input.tex).xyz;
-		if ( tex2D.Sample(linearSampler, input.tex).a < 0.5f )
+		textureColor = tex2D.Sample(linearSampler, input.tex);
+		if ( textureColor.a < 0.5f )
 			discard;
 	}
 	float4 finalColor = (textureColor + input.Color) * DiffuseColor;
