@@ -46,14 +46,14 @@ bool Mesh::LoadFromFile(string file)
 
 	// if substr of the last 4 = .obj do this:    - else load other format / print error
 
-	ObjData* od = GetResourceManager()->LoadObjectDataFromFile(filePath.c_str());
+	ObjData* od = GetResourceManager()->LoadObjectDataFromFile(this->filePath.c_str());
 	if(!od)
 	{
 		ObjLoader oj;
 		od = oj.LoadObjFile(file);
 		GetResourceManager()->SetObjectData(filePath.c_str(), od);
 	}
-	//ObjData* od = oj.LoadObjFile(file);
+	//ObjData* od = oj.LoadObjFile(file); //**Tillman old code
 
 	if(od)
 	{

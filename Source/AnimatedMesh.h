@@ -58,10 +58,6 @@ class AnimatedMesh : public Mesh, public virtual iAnimatedMesh
 		AnimatedMesh(D3DXVECTOR3 pos);
 		virtual ~AnimatedMesh();
 
-		unsigned int				GetNrOfTimesLooped()	const { return this->mNrOfTimesLooped; }
-		bool						IsLooping()				const { return this->mLoopNormal || this->mLoopSeamless; }
-		bool						IsLoopingNormal()		const { return this->mLoopNormal; }
-		bool						IsLoopingSeamless()		const { return this->mLoopSeamless; }
 		MaloW::Array<KeyFrame*>*	GetKeyFrames()			const { return this->mKeyFrames; }
 
 		/*! Returns the 2 keyframes to interpolate with value t[0,1] through the parameters depending on the current time. */
@@ -72,20 +68,24 @@ class AnimatedMesh : public Mesh, public virtual iAnimatedMesh
 		/* ! Returns the strips of the second mesh currently being used. */
 		virtual MaloW::Array<MeshStrip*>* GetStrips();
 
-		/*! Set the current time. This determines what key frames to interpolate. */
+		/*! Set the current time. This determines what key frames to interpolate. Must be called every frame for animation to work. */
 		virtual void SetCurrentTime(float currentTime);
-		/*! This function must be called every frame to for the animation to be animated. */
-		virtual void Update(float deltaTime);
-
-		/*! Prevents looping. Default. */
-		void NoLooping();
-		/*! Loops by returning to the first keyframe when last keyframe is reached. Note that this kind of looping is not seamless. */
-		void LoopNormal();
-		/*! Loops by adding the first keyframe as the last keyframe to prevent seamed(normal) looping */
-		void LoopSeamless(); 
-
-		/*! Load the keyframes from file. Input is exptected to be "'filename'.ani". */
+	
+		/*! Load the keyframes from file. Input is expected to be "'filename'.ani". */
 		virtual bool LoadFromFile(string file);
+
+		// iAnimatedMesh interface functions
+
+		virtual unsigned int	GetNrOfTimesLooped()	const { return this->mNrOfTimesLooped; }
+		virtual bool			IsLooping()				const { return this->mLoopNormal || this->mLoopSeamless; }
+		virtual bool			IsLoopingNormal()		const { return this->mLoopNormal; }
+		virtual bool			IsLoopingSeamless()		const { return this->mLoopSeamless; }
+		/*! Prevents looping. */
+		virtual void NoLooping();
+		/*! Loops by returning to the first keyframe when last keyframe is reached. Note that this kind of looping is not seamless. */
+		virtual void LoopNormal();
+		/*! Loops by adding the first keyframe as the last keyframe to prevent seamed(normal) looping */
+		virtual void LoopSeamless(); 
 };
 
 #pragma warning ( pop )

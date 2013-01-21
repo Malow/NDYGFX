@@ -293,7 +293,6 @@ void DxManager::RenderDeferredGeometry()
 	this->Shader_DeferredGeometry->SetFloat("NearClip", this->params.NearClip);
 	this->Shader_DeferredGeometry->SetFloat("FarClip", this->params.FarClip);
 
-	
 	for(int i = 0; i < this->objects.size(); i++)
 	{
 		if(!this->objects[i]->IsUsingInvisibility())
@@ -330,18 +329,25 @@ void DxManager::RenderDeferredGeometry()
 					if(verts)
 						verts->Apply();
 
+					//Check if the mesh uses a texture resource.
 					if(obj->GetTextureResource() != NULL)
 					{
+						//Then check if it actually has a shader resource view.
 						if(ID3D11ShaderResourceView* texture = obj->GetTextureResource()->GetSRVPointer())///**TILLMAN
 						{
 							this->Shader_DeferredGeometry->SetBool("textured", true);
 							this->Shader_DeferredGeometry->SetResource("tex2D", texture);
 						}
-						else
+						else //else set texture variables to not be used
 						{
 							this->Shader_DeferredGeometry->SetBool("textured", false);
 							this->Shader_DeferredGeometry->SetResource("tex2D", NULL);
 						}
+					}
+					else //else set texture variables to not be used
+					{
+						this->Shader_DeferredGeometry->SetBool("textured", false);
+						this->Shader_DeferredGeometry->SetResource("tex2D", NULL);
 					}
 					Buffer* inds = obj->GetIndsBuff();
 					if(inds)
@@ -395,7 +401,7 @@ void DxManager::RenderDeferredGeometry()
 			this->Shader_DeferredAnimatedGeometry->SetMatrix("worldMatrixInverseTranspose", worldInverseTranspose);
 			this->Shader_DeferredAnimatedGeometry->SetFloat("t", t);
 
-			this->Shader_DeferredGeometry->SetInt("specialColor", this->animations[i]->GetSpecialColor()); //*kraschar för att antalet animationer > antalet object
+			this->Shader_DeferredAnimatedGeometry->SetInt("specialColor", this->animations[i]->GetSpecialColor()); //*kraschar för att antalet animationer > antalet object
 
 			for(int u = 0; u < stripsOne->size(); u++)
 			{
@@ -418,20 +424,27 @@ void DxManager::RenderDeferredGeometry()
 				UINT offsets [] = {0, 0};
 
 				this->Dx_DeviceContext->IASetVertexBuffers(0, 2, vertexBuffers, strides, offsets);
-
-				if(objOne->GetTextureResource())
+				
+				//Check if the mesh(es) uses a texture resource.
+				if(objOne->GetTextureResource() != NULL)
 				{
+					//Then check if it actually has a shader resource view.
 					if(ID3D11ShaderResourceView* texture = objOne->GetTextureResource()->GetSRVPointer())//**TILLMAN
 					{
 						this->Shader_DeferredAnimatedGeometry->SetBool("textured", true);
 						this->Shader_DeferredAnimatedGeometry->SetResource("tex2D", texture);
 					}
+					else //else set texture variables to not be used
+					{
+						this->Shader_DeferredAnimatedGeometry->SetBool("textured", false);
+						this->Shader_DeferredAnimatedGeometry->SetResource("tex2D", NULL);
+					}
 				}
-				else
+				else //else set texture variables to not be used
 				{
 					this->Shader_DeferredAnimatedGeometry->SetBool("textured", false);
+					this->Shader_DeferredAnimatedGeometry->SetResource("tex2D", NULL);
 				}
-			
 
 				this->Shader_DeferredAnimatedGeometry->Apply(0);
 
