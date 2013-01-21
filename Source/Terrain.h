@@ -117,6 +117,11 @@ class Terrain : public iTerrain
 		virtual void SetDiffuseColor(const Vector3& color);
 		virtual void SetTextureScale(float textureScale);
 
+		// MaloW ToDO
+		// virtual void SetAIMap(int size, float const* data);
+		// Do just like blendmap, maybe even use the struct blendmap, and send it to GPU just like it
+		// And then render it. think about performance tho, this shouldnt affect client-side.
+
 
 };
 
