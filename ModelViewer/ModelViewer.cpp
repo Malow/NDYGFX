@@ -327,7 +327,10 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 
 			string loadModel = specString.substr(path.size() , specString.size());
 			GetGraphics()->DeleteMesh(model);
-			model = GetGraphics()->CreateMesh(loadModel.c_str(), Vector3(15, 20, 20));
+			if(loadModel.substr((loadModel.size() - 4), loadModel.size()) == ".obj")
+				model = GetGraphics()->CreateMesh(loadModel.c_str(), Vector3(15, 20, 20));
+			else if(loadModel.substr((loadModel.size() - 4), loadModel.size()) == ".ani")
+				model = GetGraphics()->CreateAnimatedMesh(loadModel.c_str(), Vector3(15, 20, 20));
 			model->Scale(1.0f / 20.0f);
 			lastSpecString = specString;
 		}
