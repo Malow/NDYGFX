@@ -69,7 +69,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	GetGraphics()->GetCamera()->LookAt(Vector3(0, 0, 0));
 	iLight* li = GetGraphics()->CreateLight(GetGraphics()->GetCamera()->GetPosition());
 	li->SetIntensity(0.001f);
-	GetGraphics()->SetSunLightProperties(Vector3(1, -1, 1));
+	GetGraphics()->SetSunLightProperties(Vector3(0, -1, 0));
 	GetGraphics()->SetSceneAmbientLight(Vector3(0.4f, 0.4f, 0.4f));
 	
 
@@ -79,7 +79,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	MaloW::Debug("(DEBUG): ModelViewer: vld included.");
 #endif
 	int vertSize = 16;
-	float testSize = 5.0f;
+	float testSize = 500.0f;
 	
 	iTerrain* iT = GetGraphics()->CreateTerrain(Vector3(0, 0, 0), Vector3(testSize, 0.0f, testSize), vertSize);
 	iTerrain* iT2 = GetGraphics()->CreateTerrain(Vector3(testSize, 0, 0), Vector3(testSize, 0.0f, testSize), vertSize);
@@ -173,7 +173,8 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	iMesh* secModel = GetGraphics()->CreateMesh("Media/bth.obj", Vector3(10, 0, 10));
 	secModel->Scale(1.0f * 0.05f);
 
-
+	iMesh* bush = GetGraphics()->CreateMesh("Media/Bush_01_v04_r.obj", Vector3(30, 10, 30));
+	bush->Scale(1.0f * 0.05f);
 
 	//CASCADED SHADOWMAP:
 	Vector3 lookAt = Vector3(0, 0, 0);

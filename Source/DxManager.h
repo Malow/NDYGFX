@@ -102,7 +102,7 @@ private:
 	float PCFreq;
 	__int64 prevTimeStamp;
 
-	float TimerAnimation;
+	float Timer;
 	float LastCamUpdate;
 	float RendererSleep;
 

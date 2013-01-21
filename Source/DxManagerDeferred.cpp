@@ -378,7 +378,7 @@ void DxManager::RenderDeferredGeometry()
 			KeyFrame* one = NULL;
 			KeyFrame* two = NULL;
 			float t = 0.0f;
-			this->animations[i]->SetCurrentTime(this->TimerAnimation);
+			this->animations[i]->SetCurrentTime(this->Timer);
 			this->animations[i]->GetCurrentKeyFrames(&one, &two, t);
 
 			MaloW::Array<MeshStrip*>* stripsOne = one->strips;
@@ -463,6 +463,9 @@ void DxManager::RenderDeferredSkybox()
 	wvp = world * view * proj;
 	
 	this->Shader_Skybox->SetMatrix("gWVP", wvp);
+	this->Shader_Skybox->SetMatrix("world", world);
+	this->Shader_Skybox->SetFloat("FogHeight", this->params.FarClip * 2.0f);
+	this->Shader_Skybox->SetFloat("CamY", this->camera->GetPosition().y + this->params.FarClip * 0.5f);
 
 	MeshStrip* strip = this->skybox->GetStrips()->get(0);
 
@@ -508,7 +511,7 @@ void DxManager::RenderDeferredPerPixel()
 	this->Shader_DeferredLightning->SetFloat("NrOfLights", (float)this->lights.size()); //**tillman - omstrukturering**
 	this->Shader_DeferredLightning->SetFloat4("SceneAmbientLight", D3DXVECTOR4(this->sceneAmbientLight, 1.0f));
 
-	this->Shader_DeferredLightning->SetFloat("timerMillis", this->TimerAnimation);
+	this->Shader_DeferredLightning->SetFloat("timerMillis", this->Timer);
 	this->Shader_DeferredLightning->SetInt("windowWidth", this->params.windowWidth);
 	this->Shader_DeferredLightning->SetInt("windowHeight", this->params.windowHeight);
 		

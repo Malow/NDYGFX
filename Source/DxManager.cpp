@@ -67,7 +67,7 @@ DxManager::DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam)
 	if(FAILED(this->Init()))
 		MaloW::Debug("Failed to init DxManager");
 
-	this->TimerAnimation = 0.0f;
+	this->Timer = 0.0f;
 	LARGE_INTEGER li;
 	if(!QueryPerformanceFrequency(&li))
 		MaloW::Debug("QueryPerformanceFrequency Failed!, High resolution performance counter not available?");

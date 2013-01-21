@@ -274,9 +274,14 @@ float4 PSScene(PSSceneIn input) : SV_Target
 		specLighting = saturate(specLighting);
 	}
 
-	//float4 finalColor = float4((AmbientLight.xyz * DiffuseColor.xyz + DiffuseColor.xyz * diffuseLighting + SpecularColor.xyz * specLighting), DiffuseColor.w);
-	float4 finalColor = float4((AmbientLight.xyz * DiffuseColor + DiffuseColor * diffuseLighting + SpecularColor.xyz * specLighting), 1.0f);
-	//finalColor.xyz = DiffuseColor;
+	// Reduction of ambientlight if diffuse and spec is high to prevent oversaturation.
+	AmbientLight /= 1.0f + diffuseLighting + specLighting;	
+
+	float4 finalColor = float4((							
+		AmbientLight.xyz * DiffuseColor + 
+		DiffuseColor * diffuseLighting + 
+		SpecularColor.xyz * specLighting), 
+		1.0f);
 	
 
 
@@ -288,19 +293,9 @@ float4 PSScene(PSSceneIn input) : SV_Target
 	if(NormsAndDepth.w > 1.0f)		// All pixels that has a greater than 1 depth means that there is no geometry and there is skybox, therefor go without lightcalcs.
 		finalColor = float4(DiffuseColor, 1.0f);
 	
-	/*
-	// Basic fog:
-	finalColor = saturate(finalColor);
-	float fogDepth = NormsAndDepth.w;
-	if(fogDepth > 0.25f)
-	{
-		float fogfactor = (fogDepth - 0.25f) * 1.33f;
+	
 
-		finalColor = lerp(finalColor, float4(0.5, 0.5, 0.5, 1.0f), saturate(fogfactor));
-	}
-	if(fogDepth < -0.5f)
-		finalColor = float4(0.5, 0.5, 0.5, 1.0f);
-	*/
+	
 	
 	//temp:
 	//ev. todo: if player is on red team, reduce redness and increase blueness**
@@ -338,6 +333,20 @@ float4 PSScene(PSSceneIn input) : SV_Target
 	finalColor.a = 1.0f;
 		
 	//}
+
+
+
+	///////////////////////////////////////////////////////////////////
+	//							Basic fog:							//
+	//////////////////////////////////////////////////////////////////
+	finalColor = saturate(finalColor);
+	float fogDepth = NormsAndDepth.w;
+	if(fogDepth > 0.75f)
+	{
+		float fogfactor = (fogDepth - 0.75f) * 4.1f;	// Linear scale the last 25% of farclip, but a little more 
+		finalColor = lerp(finalColor, float4(0.45f, 0.45f, 0.45f, 1.0f), saturate(fogfactor));
+	}
+			
 
 	
 	return saturate(finalColor);
