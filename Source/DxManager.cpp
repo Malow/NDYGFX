@@ -241,17 +241,16 @@ void DxManager::CreateStaticMesh(StaticMesh* mesh)
 		bufferDesc.InitData = strip->getVerts();
 		
 		
+		
 		// Last face black, should +1 this to solve it.
 		bufferDesc.NumElements = strip->getNrOfVerts();
 
 		bufferDesc.Type = VERTEX_BUFFER;
 		bufferDesc.Usage = BUFFER_DEFAULT;
-		
-		Buffer* verts = new Buffer();
-		if(FAILED(verts->Init(Dx_Device, Dx_DeviceContext, bufferDesc)))
-			MaloW::Debug("Initiate Buffer Failed in DxManager");
+	
+		BufferResource* verts = GetResourceManager()->CreateBufferResource((mesh->GetFilePath() + string("Vertex")).c_str(), bufferDesc);
 
-		Buffer* inds = NULL;
+		BufferResource* inds = NULL; 
 		if(strip->getIndicies())
 		{
 			BUFFER_INIT_DESC bufferInds;
@@ -261,9 +260,7 @@ void DxManager::CreateStaticMesh(StaticMesh* mesh)
 			bufferInds.Type = INDEX_BUFFER;
 			bufferInds.Usage = BUFFER_DEFAULT;
 	
-			inds = new Buffer();
-			if(FAILED(inds->Init(Dx_Device, Dx_DeviceContext, bufferInds)))
-				MaloW::Debug("CreateIndsBuffer Failed");
+			inds = GetResourceManager()->CreateBufferResource((mesh->GetFilePath() + string("Index")).c_str(), bufferInds);
 		}
 
 		TextureResource* texture = NULL;
@@ -302,15 +299,12 @@ void DxManager::CreateAnimatedMesh(AnimatedMesh* mesh)
 		
 			// Last face black, should +1 this to solve it.
 			bufferDesc.NumElements = strip->getNrOfVerts();
-
 			bufferDesc.Type = VERTEX_BUFFER;
 			bufferDesc.Usage = BUFFER_DEFAULT;
-		
-			Buffer* verts = new Buffer();
-			if(FAILED(verts->Init(Dx_Device, Dx_DeviceContext, bufferDesc)))
-				MaloW::Debug("Initiate Buffer Failed in DxManager");
+			
+			BufferResource* verts = GetResourceManager()->CreateBufferResource((mesh->GetFilePath() + string("Vertex")).c_str(), bufferDesc);
 
-			Buffer* inds = NULL;
+			BufferResource* inds = NULL;
 			if(strip->getIndicies())
 			{
 				BUFFER_INIT_DESC bufferInds;
@@ -320,9 +314,7 @@ void DxManager::CreateAnimatedMesh(AnimatedMesh* mesh)
 				bufferInds.Type = INDEX_BUFFER;
 				bufferInds.Usage = BUFFER_DEFAULT;
 	
-				inds = new Buffer();
-				if(FAILED(inds->Init(Dx_Device, Dx_DeviceContext, bufferInds)))
-					MaloW::Debug("CreateIndsBuffer Failed");
+				inds = GetResourceManager()->CreateBufferResource((mesh->GetFilePath() + string("Index")).c_str(), bufferInds);
 			}
 
 			TextureResource* texture = NULL;
@@ -332,7 +324,7 @@ void DxManager::CreateAnimatedMesh(AnimatedMesh* mesh)
 			}
 			else
 			{
-				texture = NULL; //**TILLMAN**
+				texture = NULL; 
 			}
 
 			Object3D* obj = new Object3D(verts, inds, texture, mesh->GetTopology()); 
@@ -350,7 +342,7 @@ void DxManager::CreateAnimatedMesh(AnimatedMesh* mesh)
 
 Object3D* DxManager::createParticleObject(ParticleMesh* mesh)
 {
-	BUFFER_INIT_DESC bufferDesc;
+	/*BUFFER_INIT_DESC bufferDesc;
 	bufferDesc.ElementSize = sizeof(ParticleVertex);
 	bufferDesc.InitData = mesh->getVerts();
 
@@ -361,11 +353,13 @@ Object3D* DxManager::createParticleObject(ParticleMesh* mesh)
 	bufferDesc.Type = VERTEX_BUFFER;
 	bufferDesc.Usage = BUFFER_DEFAULT;
 	
-	Buffer* verts = new Buffer();
+	/*Buffer* verts = new Buffer();
 	if(FAILED(verts->Init(Dx_Device, Dx_DeviceContext, bufferDesc)))
 		MaloW::Debug("Initiate Buffer Failed in DxManager");
+	//**TILLMAN resource manager
+	BufferResource* verts = GetResourceManager()->CreateBufferResource(mesh->GetFilePath().c_str(), bufferDesc);
 
-	Buffer* inds = NULL;
+	BufferResource* inds = NULL;
 
 	TextureResource* texture = NULL;
 	if(mesh->GetTexturePath() != "")
@@ -378,8 +372,9 @@ Object3D* DxManager::createParticleObject(ParticleMesh* mesh)
 	if(mesh->GetRenderObject())
 		delete mesh->GetRenderObject();
 	mesh->SetRenderObject(obj);
-
-	return obj;
+	
+	return obj;*/
+	return NULL;
 }
 
 void DxManager::CreateSmokeEffect()
@@ -530,12 +525,9 @@ void DxManager::CreateSkyBox(string texture)
 	BufferDesc.NumElements = strip->getNrOfVerts();
 	BufferDesc.Type = VERTEX_BUFFER;
 	BufferDesc.Usage = BUFFER_DEFAULT;
-
+	
 	// Create the buffer
-	Buffer* VertexBuffer = new Buffer();
-	if(FAILED(VertexBuffer->Init(this->Dx_Device, this->Dx_DeviceContext, BufferDesc)))
-		MaloW::Debug("Failed to init skybox");
-
+	BufferResource* VertexBuffer = GetResourceManager()->CreateBufferResource("SkyBoxDefaultVertex", BufferDesc);
 
 
 	BUFFER_INIT_DESC indiceBufferDesc;
@@ -545,11 +537,8 @@ void DxManager::CreateSkyBox(string texture)
 	indiceBufferDesc.Type = INDEX_BUFFER;
 	indiceBufferDesc.Usage = BUFFER_DEFAULT;
 
-	Buffer* IndexBuffer = new Buffer();
+	BufferResource* IndexBuffer = GetResourceManager()->CreateBufferResource("SkyBoxDefaultIndex", indiceBufferDesc);
 
-	if(FAILED(IndexBuffer->Init(this->Dx_Device, this->Dx_DeviceContext, indiceBufferDesc)))
-		MaloW::Debug("Failed to init skybox");
-	
 	TextureResource* tex = NULL;
 	if(texture != "")
 	{

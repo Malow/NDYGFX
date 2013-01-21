@@ -110,7 +110,7 @@ ResourceManager::~ResourceManager()
 	//Do not release device & device context, this is done by DxManager.
 
 	//Delete any remaining resources
-	//Textures
+	//Texture resources
 	map<std::string, TextureResource*>::iterator texIterator;
 	for(texIterator = this->zTextureResources.begin(); texIterator != this->zTextureResources.end(); texIterator++)
 	{
@@ -119,7 +119,7 @@ ResourceManager::~ResourceManager()
 			//A texture cannot be deleted since it's destructor is private to force correct use of texture creation/deletion.
 			//Instead decrease reference count until it deletes itself.
 			int refCount = texIterator->second->GetReferenceCount();
-			MaloW::Debug("WARNING: Resource manager deleted the resource: " + texIterator->second->GetName() + "; missing decrease(s) in reference counter somewhere. Occurrences: " + MaloW::convertNrToString(refCount));
+			MaloW::Debug("WARNING: Resource manager deleted the texture resource: " + texIterator->second->GetName() + "; missing decrease(s) in reference counter somewhere. Occurrences: " + MaloW::convertNrToString(refCount));
 			for(int i = 0; i < refCount; i++)
 			{
 				texIterator->second->DecreaseReferenceCount();
@@ -128,8 +128,27 @@ ResourceManager::~ResourceManager()
 			texIterator->second = NULL;
 		}
 	}
+	this->zTextureResources.clear();
+
+	//Object data resources
+	map<std::string, ObjData*>::iterator objDataIterator;
+	for(objDataIterator = this->zObjectDataResources.begin(); objDataIterator != this->zObjectDataResources.end(); objDataIterator++)
+	{
+		if(objDataIterator->second)
+		{
+			MaloW::Debug("WARNING: Resource manager deleted the object data resource: " + objDataIterator->first + "; missing call to delete resource somewhere.");
+			
+			//Delete object data 
+			delete objDataIterator->second;
+			//Set the pointer to NULL.
+			objDataIterator->second = NULL;  
+			//Remove object data from table.
+		}
+	}
+	this->zObjectDataResources.clear();
+
 	/*
-	//Meshes (strips)
+	//Mesh(strips) resources
 	map<std::string, MeshCounted*>::iterator meshIterator;
 	for(meshIterator = this->zMeshes.begin(); meshIterator != this->zMeshes.end(); meshIterator++)
 	{
@@ -138,7 +157,7 @@ ResourceManager::~ResourceManager()
 			//A mesh cannot be deleted since it's destructor is private to force correct use of mesh creation/deletion.
 			//Instead decrease reference count until it deletes itself.
 			int refCount = meshIterator->second->GetReferenceCount();
-			MaloW::Debug("WARNING: Resource manager deleted the resource: " + meshIterator->first + "; missing decrease(s) in reference counter somewhere. Occurrences: " + MaloW::convertNrToString(refCount));
+			MaloW::Debug("WARNING: Resource manager deleted the mesh resource: " + meshIterator->first + "; missing decrease(s) in reference counter somewhere. Occurrences: " + MaloW::convertNrToString(refCount));
 			for(int i = 0; i < refCount; i++)
 			{
 				meshIterator->second->DecreaseReferenceCount();
@@ -146,7 +165,29 @@ ResourceManager::~ResourceManager()
 
 			meshIterator->second = NULL;
 		}
-	}*/
+	}
+	this->zMeshResources.clear();
+	*/
+
+	//Buffer resources
+	map<std::string, BufferResource*>::iterator bufferIterator;
+	for(bufferIterator = this->zBufferResources.begin(); bufferIterator != this->zBufferResources.end(); bufferIterator++)
+	{
+		if(bufferIterator->second)
+		{
+			//A buffer resource cannot be deleted since it's destructor is private to force correct use of buffer resource creation/deletion.
+			//Instead decrease reference count until it deletes itself.
+			int refCount = bufferIterator->second->GetReferenceCount();
+			MaloW::Debug("WARNING: Resource manager deleted the buffer resource: " + bufferIterator->second->GetName() + "; missing decrease(s) in reference counter somewhere. Occurrences: " + MaloW::convertNrToString(refCount));
+			for(int i = 0; i < refCount; i++)
+			{
+				bufferIterator->second->DecreaseReferenceCount();
+			}
+
+			bufferIterator->second = NULL;
+		}
+	}
+	this->zBufferResources.clear();
 }
 
 
@@ -161,7 +202,7 @@ bool ResourceManager::Init(ID3D11Device* device, ID3D11DeviceContext* deviceCont
 TextureResource* ResourceManager::CreateTextureResourceFromFile( const char* filePath )
 {
 	auto tex = this->zTextureResources.find(filePath);
-	//If the shader resource view was not found(already created) in the array, create it.
+	//If the texture resource was not found in the array, create it.
 	if(tex == this->zTextureResources.end())
 	{
 		D3DX11_IMAGE_LOAD_INFO loadInfo;
@@ -186,7 +227,7 @@ TextureResource* ResourceManager::CreateTextureResourceFromFile( const char* fil
 		}
 		else
 		{
-			//Create & Set shader resource view pointer if loading was successful.
+			//Create if loading was successful.
 			this->zTextureResources[filePath] = new TextureResource(filePath, SRV);
 			//Increase reference count.
 			this->zTextureResources[filePath]->IncreaseReferenceCount();
@@ -242,6 +283,62 @@ TextureResource* ResourceManager::CreateCubeTextureResourceFromFile( const char*
 
 	return tex->second;
 }
+
+void ResourceManager::DeleteTextureResource( TextureResource* &textureResource )
+{
+	if(textureResource)
+	{
+		textureResource->DecreaseReferenceCount();
+		//If reference count is 1, no objects other than the resource manager itself has a reference to it.
+		if(textureResource->GetReferenceCount() == 1)
+		{
+			//Find texture resource.
+			auto tex = this->zTextureResources.find(textureResource->GetName());
+			//If found..
+			if(tex != this->zTextureResources.end())
+			{
+				//Decrease reference counter once more so that the texture will delete itself.
+				tex->second->DecreaseReferenceCount();
+				//Remove texture from table.
+				this->zTextureResources.erase(tex);
+			}
+			textureResource = NULL;
+		}
+	}
+}
+
+
+ObjData* ResourceManager::LoadObjectDataFromFile(const char* filePath)
+{
+	auto objData = this->zObjectDataResources.find(filePath);
+	//If the buffer resource was not found in the array, return NULL.
+	if(objData == this->zObjectDataResources.end())
+	{
+		return NULL;
+	}
+
+	//else return if found
+	return objData->second;
+}
+void ResourceManager::SetObjectData(const char* filePath, ObjData* objectData)
+{
+	//Create object data if loading was successful.
+	this->zObjectDataResources[filePath] = objectData;
+}
+void ResourceManager::UnloadObjectData(const char* filePath)
+{
+	auto objData = this->zObjectDataResources.find(filePath);
+	//If the buffer resource was not found in the array, return NULL.
+	if(objData != this->zObjectDataResources.end())
+	{
+		//Delete object data 
+		delete objData->second;
+		//Set the pointer to NULL.
+		objData->second = NULL;  
+		//Remove object data from table.
+		this->zObjectDataResources.erase(objData);
+	}
+}
 /*
 MeshCounted* ResourceManager::CreateMeshFromFile( const char* filePath )
 {
@@ -281,30 +378,6 @@ MeshCounted* ResourceManager::CreateMeshFromFile( const char* filePath )
 
 	return mesh->second;
 }*/
-
-void ResourceManager::DeleteTextureResource( TextureResource* &textureResource )
-{
-	if(textureResource)
-	{
-		textureResource->DecreaseReferenceCount();
-		//If reference count is 1, no objects other than the resource manager itself has a reference to it.
-		if(textureResource->GetReferenceCount() == 1)
-		{
-			//Find texture.
-			auto tex = this->zTextureResources.find(textureResource->GetName());
-			//If found..
-			if(tex != this->zTextureResources.end())
-			{
-				//Decrease reference counter once more so that the texture will delete itself.
-				tex->second->DecreaseReferenceCount();
-				//Remove texture from table.
-				this->zTextureResources.erase(tex);
-			}
-			textureResource = NULL;
-		}
-	}
-}
-
 /*
 void ResourceManager::DeleteMesh( MeshCounted* &meshCounted )
 {
@@ -330,9 +403,75 @@ void ResourceManager::DeleteMesh( MeshCounted* &meshCounted )
 }
 */
 
+
+
+BufferResource* ResourceManager::CreateBufferResource(const char* fileName, BUFFER_INIT_DESC bufferInitDesc)
+{
+	auto buff = this->zBufferResources.find(fileName);
+	//If the buffer resource was not found in the array, create it.
+	if(buff == this->zBufferResources.end())
+	{
+		//Create buffer
+		Buffer* buffer = new Buffer();
+		//Initialize buffer with device & deviceContext
+		if(FAILED(buffer->Init(this->gDevice, this->gDeviceContext, bufferInitDesc)))
+		{
+			MaloW::Debug("ERROR: ResourceManager: Could not create buffer:" + string(fileName));
+			return NULL;
+		}
+		else
+		{
+			//Create if loading was successful.
+			this->zBufferResources[fileName] = new BufferResource(fileName, buffer);
+			//Increase reference count.
+			this->zBufferResources[fileName]->IncreaseReferenceCount();
+			//Return newly created buffer.
+			return this->zBufferResources[fileName];
+		}
+	}
+
+	//If the buffer already exists, increase reference counter & return it.
+	this->zBufferResources[fileName]->IncreaseReferenceCount();
+
+	return buff->second;
+
+}
+bool ResourceManager::HasBuffer(const char* fileName)
+{
+	//Find exact match. ***partial TILLMAN**
+	auto buff = this->zBufferResources.find(fileName + string("Vertex")); //**TIllman, behöver bara kolla efter vertex buffer**
+	//If the buffer resource was not found in the array, return false.
+	if(buff == this->zBufferResources.end())
+	{
+		return false;
+	}
+	else
+	{
+		return true;
+	}
+}
+
 void ResourceManager::DeleteBufferResource( BufferResource* &bufferResource )
 {
-
+	if(bufferResource)
+	{
+		bufferResource->DecreaseReferenceCount();
+		//If reference count is 1, no objects other than the resource manager itself has a reference to it.
+		if(bufferResource->GetReferenceCount() == 1)
+		{
+			//Find buffer resource.
+			auto buff = this->zBufferResources.find(bufferResource->GetName());
+			//If found..
+			if(buff != this->zBufferResources.end())
+			{
+				//Decrease reference counter once more so that the texture will delete itself.
+				buff->second->DecreaseReferenceCount();
+				//Remove buffer resource from table.
+				this->zBufferResources.erase(buff);
+			}
+			bufferResource = NULL;
+		}
+	}
 }
 
 

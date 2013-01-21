@@ -20,6 +20,7 @@ Mesh class that represents a 3d-object on the screen
 class Mesh : public virtual iMesh
 {
 protected:
+	string filePath; 
 	COLOR specialColor;
 	bool usingInvisibilityEffect;
 	//float transparency; //default 0.0f (full visibility)
@@ -38,6 +39,9 @@ public:
 	Mesh(D3DXVECTOR3 pos);
 	virtual ~Mesh();
 	
+	// ID
+	string GetFilePath() { return this->filePath; }
+
 	// Mesh Color Overlay
 	virtual void SetSpecialColor(COLOR specialColor);
 	virtual COLOR GetSpecialColor() const { return this->specialColor; }
