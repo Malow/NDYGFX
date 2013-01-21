@@ -74,6 +74,7 @@ public:
 	virtual Vector3 GetPosition() const;
 	virtual Vector4 GetRotationQuaternion() const;
 	virtual Vector3 GetScaling() const;
+	virtual void ResetRotation();
 
 	
 	D3DXMATRIX GetWorldMatrix() { return this->worldMatrix; }

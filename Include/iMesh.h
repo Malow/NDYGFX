@@ -47,5 +47,6 @@ extern "C"
 		virtual Vector3 GetPosition() const = 0;
 		virtual Vector4 GetRotationQuaternion() const = 0;
 		virtual Vector3 GetScaling() const = 0;
+		virtual void ResetRotation() = 0;
 	};
 }
