@@ -54,6 +54,10 @@ void GraphicsEngineParams::LoadFromFile(const char* file)
 	getline(in, line);
 	getline(in, line);
 	this->RefreshRate = atoi(line.c_str());
+	getline(in, line);
+	getline(in, line);
+	getline(in, line);
+	this->MaxFPS = atoi(line.c_str());
 
 	in.close();
 }
@@ -97,6 +101,9 @@ void GraphicsEngineParams::SaveToFile(const char* file)
 	out << endl;
 	out << "Refresh Rate (hz):     Default: 60" << endl;
 	out << this->RefreshRate << std::endl;
+	out << endl;
+	out << "Max FPS:     Default: 0 (unlimited)" << endl;
+	out << this->MaxFPS << std::endl;
 	out << endl;
 
 	out.close();

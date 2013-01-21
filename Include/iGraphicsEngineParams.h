@@ -31,6 +31,7 @@ extern "C"
 		static float NearClip;
 		static float FarClip;
 		static int RefreshRate;
+		static int MaxFPS;
 
 		virtual void SaveToFile(const char* file) = 0;
 	};

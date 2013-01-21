@@ -18,6 +18,7 @@ float GraphicsEngineParams::FOV = 0.45f;
 float GraphicsEngineParams::NearClip = 0.01f;
 float GraphicsEngineParams::FarClip = 200.0f;
 int GraphicsEngineParams::RefreshRate = 60;
+int GraphicsEngineParams::MaxFPS = 0;
 
 
 GraphicsEngineImp::GraphicsEngineImp(GraphicsEngineParams params, HINSTANCE hInstance, int nCmdShow)
@@ -293,7 +294,7 @@ void GraphicsEngineImp::InitObjects()
 	}
 	*/
 	this->dx->SetCamera(this->cam);
-
+	this->dx->SetFPSMAX(this->parameters.MaxFPS);
 	this->dx->Start();
 }
 
