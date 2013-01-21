@@ -8,6 +8,8 @@ HRESULT DxManager::Update(float)
 	//ps.update(deltaTime);
 	//this->camera->Update(deltaTime);				// Moved to Life below to counter update spasms due to thread-collision
 
+
+
 	return S_OK;
 }
 

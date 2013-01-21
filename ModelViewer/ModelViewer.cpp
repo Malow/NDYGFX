@@ -85,7 +85,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	iTerrain* iT = GetGraphics()->CreateTerrain(Vector3(0, 0, 0), Vector3(testSize, 0.0f, testSize), vertSize);
 	iTerrain* iT2 = GetGraphics()->CreateTerrain(Vector3(testSize, 0, 0), Vector3(testSize, 0.0f, testSize), vertSize);
 	
-	iAnimatedMesh* iAM = NULL;//GetGraphics()->CreateAnimatedMesh("Media/FlagBlue.ani", Vector3(0, 0, 0));
+	iAnimatedMesh* iAM = GetGraphics()->CreateAnimatedMesh("Media/FlagBlue.ani", Vector3(0, 0, 0));
 	//iImage* iM = GetGraphics()->CreateImage(Vector2(100, 100), Vector2(100, 100), "Media/BallTexture.png");
 	//iText* iTe = GetGraphics()->CreateText("durp", Vector2(300, 100), 1.0f, "Media/Fonts/1");
 	
@@ -275,9 +275,19 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	GetGraphics()->GetCamera()->SetPosition(Vector3(25, 25, 20));
 	GetGraphics()->GetCamera()->LookAt(Vector3(0, 0, 0));
 
-	for(int i = 0; i < 10; i++)
-		for(int u = 0; u < 10; u++)
-			GetGraphics()->CreateMesh("Media/Asdbfd.obj", Vector3(0 + i * 5, 5, 0 + u * 5))->SetScale(1.0f * 0.05f);
+	//for(int i = 0; i < 10; i++)
+		//for(int u = 0; u < 10; u++)
+			//GetGraphics()->CreateMesh("Media/Asdbfd.obj", Vector3(0 + i * 5, 5, 0 + u * 5))->SetScale(1.0f * 0.05f);
+	
+	//scale texture debugging(fixed)
+	/*
+	iMesh* fernDbg1 = GetGraphics()->CreateMesh("Media/Fern_02_v01.obj", Vector3(2, 0, 2));
+	iMesh* scaleDbg = GetGraphics()->CreateMesh("Media/scale.obj", Vector3(0, 0, 0));
+	fernDbg1->Scale(1.0f / 20.0f);
+	scaleDbg->Scale(1.0f * 0.05f);
+	*/
+
+
 #endif
 //*************************************	    END OF PRE TEST       **********************
 
@@ -407,11 +417,6 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 			secModel->MoveBy(Vector3(0, 1, 0) * diff * 0.01f);
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_CONTROL))
 			secModel->MoveBy(Vector3(0, -1, 0) * diff * 0.01f);
-
-		if(iAM)
-		{
-			iAM->Update(diff);
-		}
 
 		/*
 		templol += diff;

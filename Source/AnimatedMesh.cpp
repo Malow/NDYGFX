@@ -15,8 +15,17 @@ AnimatedMesh::~AnimatedMesh()
 {
 	if(this->mKeyFrames)
 	{
+		int number = 0;
+		string path = string(this->filePath);
+		path.resize(path.size() - 4);
 		while(this->mKeyFrames->size() > 0)
+		{
+			path += MaloW::convertNrToString(++number) + ".obj";
+			GetResourceManager()->UnloadObjectData(path.c_str());
+			path.resize(path.size() - 5);
+
 			delete this->mKeyFrames->getAndRemove(0);
+		}
 
 		delete this->mKeyFrames;
 	}
@@ -180,11 +189,6 @@ void AnimatedMesh::SetCurrentTime(float currentTime)
 {
 	this->mCurrentTime = currentTime;
 }
-void AnimatedMesh::Update(float deltaTime)
-{
-	this->mCurrentTime += deltaTime;
-}
-
 
 void AnimatedMesh::NoLooping()
 {
@@ -206,6 +210,8 @@ void AnimatedMesh::LoopSeamless()
 
 bool AnimatedMesh::LoadFromFile(string file)
 {
+	this->filePath = file;
+
 	// if substr of the last 4 = .obj do this:    - else load other format / print error
 	ObjLoader oj;
 
@@ -216,7 +222,7 @@ bool AnimatedMesh::LoadFromFile(string file)
 	while(slashpos != string::npos)
 	{
 		slashpos = tempFilename.find("/");
-		pathfolder += tempFilename.substr(0, slashpos+1);
+		pathfolder += tempFilename.substr(0, slashpos + 1);
 		tempFilename = tempFilename.substr(slashpos + 1);
 	}
 
@@ -239,8 +245,17 @@ bool AnimatedMesh::LoadFromFile(string file)
 			KeyFrame* frame = new KeyFrame();
 			frame->time = time;
 
+			//The code for loading the object(+/data) files
 			{
-				ObjData* od = oj.LoadObjFile(pathfolder + path);
+				string tmpPath = pathfolder + path;
+				ObjData* od = GetResourceManager()->LoadObjectDataFromFile(tmpPath.c_str());
+				if(!od)
+				{
+					ObjLoader oj;
+					od = oj.LoadObjFile(tmpPath);
+					GetResourceManager()->SetObjectData(tmpPath.c_str(), od);
+				}
+				//ObjData* od = oj.LoadObjFile(pathfolder + path);//**Tillman old code
 				MaloW::Array<MaterialData>* mats = od->mats;
 				for(int q = 0; q < mats->size(); q++)
 				{
@@ -308,7 +323,7 @@ bool AnimatedMesh::LoadFromFile(string file)
 						delete strip;
 				}
 				this->topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-				delete od;
+				//delete od;
 
 			}
 			this->mKeyFrames->add(frame);
