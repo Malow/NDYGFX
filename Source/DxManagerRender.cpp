@@ -292,6 +292,8 @@ void DxManager::RenderShadowMap()
 			D3D11_VIEWPORT wp = this->lights[l]->GetShadowMapViewPort();
 			Dx_DeviceContext->RSSetViewports(1, &wp);
 			Dx_DeviceContext->ClearDepthStencilView(this->lights[l]->GetShadowMapDSV(), D3D11_CLEAR_DEPTH, 1.0f, 0);
+
+			//Static meshes
 			for(int i = 0; i < this->objects.size(); i++)
 			{
 				if(!this->objects[i]->IsUsingInvisibility())
@@ -316,7 +318,7 @@ void DxManager::RenderShadowMap()
 						Shader_ShadowMap->Apply(0);
 
 					
-						// draw
+						//Draw
 						if(inds)
 							Dx_DeviceContext->DrawIndexed(inds->GetElementCount(), 0, 0);
 						else
@@ -325,7 +327,7 @@ void DxManager::RenderShadowMap()
 				}
 			}
 		
-			//animated meshes
+			//Animated meshes
 			for(int i = 0; i < this->animations.size(); i++)
 			{
 				if(!this->animations[i]->IsUsingInvisibility())
@@ -562,10 +564,10 @@ void DxManager::RenderCascadedShadowMap()
 
 	for (int l = 0; l < this->csm->GetNrOfCascadeLevels(); l++)
 	{
-		Dx_DeviceContext->OMSetRenderTargets(0, 0, this->csm->GetShadowMapDSV(l));
+		this->Dx_DeviceContext->OMSetRenderTargets(0, 0, this->csm->GetShadowMapDSV(l));
 		D3D11_VIEWPORT wp = this->csm->GetShadowMapViewPort(l);
-		Dx_DeviceContext->RSSetViewports(1, &wp);
-		Dx_DeviceContext->ClearDepthStencilView(this->csm->GetShadowMapDSV(l), D3D11_CLEAR_DEPTH, 1.0f, 0);
+		this->Dx_DeviceContext->RSSetViewports(1, &wp);
+		this->Dx_DeviceContext->ClearDepthStencilView(this->csm->GetShadowMapDSV(l), D3D11_CLEAR_DEPTH, 1.0f, 0);
 		
 		//Terrain
 		for(int i = 0; i < this->terrains.size(); i++)
@@ -603,6 +605,7 @@ void DxManager::RenderCascadedShadowMap()
 			}
 		}
 
+		//Static meshes
 		for(int i = 0; i < this->objects.size(); i++)
 		{
 			if(!this->objects[i]->IsUsingInvisibility())
@@ -639,7 +642,6 @@ void DxManager::RenderCascadedShadowMap()
 
 		// For deferred:
 		this->Shader_DeferredLightning->SetResourceAtIndex(l, "CascadedShadowMap", this->csm->GetShadowMapSRV(l));
-		//**tillman**
 		this->Shader_DeferredLightning->SetStructMemberAtIndexAsMatrix(l, "cascades", "viewProj", lvp);
 	}
 	

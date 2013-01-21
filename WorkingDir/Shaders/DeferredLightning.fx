@@ -210,6 +210,7 @@ float4 PSScene(PSSceneIn input) : SV_Target
 	
 	
 	// Sun
+	float4 csmDbg = float4(1.0f, 1.0f, 1.0f, 1.0f);
 	if(UseSun)
 	{
 		// Diff light
@@ -218,8 +219,20 @@ float4 PSScene(PSSceneIn input) : SV_Target
 		float3 h = normalize(normalize(CameraPosition.xyz - WorldPos.xyz) - sun.Direction);
 		float specLight = pow(saturate(dot(h, NormsAndDepth.xyz)), SpecularPower) * sun.LightIntensity;
 
-		/* //TILLMAN START OF CSM
-		float4 posLight = mul(WorldPos, cascades[i].viewProj);
+		//TILLMAN START OF CSM
+		
+		uint cascademap = 0;
+		float distancePixel = length(CameraPosition.xyz - WorldPos.xyz);
+		if(distancePixel > CascadeLevels.y)
+		{
+			cascademap = 1;
+		}
+		if(distancePixel > CascadeLevels.z)
+		{
+			cascademap = 2;
+		}
+
+		float4 posLight = mul(WorldPos, cascades[cascademap].viewProj); //**TILLMAN "i"
 		posLight.xy /= posLight.w;
 		float2 smTex = float2(0.5f*posLight.x, -0.5f*posLight.y) + 0.5f;
 		
@@ -231,18 +244,16 @@ float4 PSScene(PSSceneIn input) : SV_Target
 
 		//float PCF_SIZE = 3.0f;								////// Not able to move this to cbuffer, why?
 
-		float cascademap = 0;
-		float distanceSun = length(CameraPosition.xyz - WorldPos.xyz);
-		if(distanceSun > CascadeLevels.y)
-			cascademap = 1;
-		if(distanceSun > CascadeLevels.z)
-			cascademap = 2;
 		// PCF
 		float shadow = 0.0f;
 		if(smTex.x < 0 || smTex.x > 1 || smTex.y < 0 || smTex.y > 1)
+		{
 			shadow = 1.0f;
+		}
 		else if(depth > 1.0f)
+		{
 			shadow = 1.0f;
+		}
 		else
 		{
 			for(float s = 0; s < PCF_SIZE; s++)
@@ -250,11 +261,20 @@ float4 PSScene(PSSceneIn input) : SV_Target
 				for(float q = 0; q < PCF_SIZE; q++)
 				{
 					if(cascademap == 0)
+					{
 						shadow += (CascadedShadowMap[0].SampleLevel(shadowMapSampler, smTex + float2(SMAP_DX * (s - PCF_SIZE/2) , SMAP_DX * (q - PCF_SIZE/2)), 0).r + SHADOW_EPSILON < depth) ? 0.0f : 1.0f;
+						//csmDbg = float4(1.0f, 0.0f, 0.0f, 1.0f);  // TILLMAN CSMDEBUG
+					}
 					if(cascademap == 1)
+					{
 						shadow += (CascadedShadowMap[1].SampleLevel(shadowMapSampler, smTex + float2(SMAP_DX * (s - PCF_SIZE/2) , SMAP_DX * (q - PCF_SIZE/2)), 0).r + SHADOW_EPSILON < depth) ? 0.0f : 1.0f;
-					if(cascademap == 2)
+						//csmDbg = float4(0.0f, 1.0f, 0.0f, 1.0f);  // TILLMAN CSMDEBUG
+					}
+					if(cascademap == 2 || shadow == 0.0f)
+					{
 						shadow += (CascadedShadowMap[2].SampleLevel(shadowMapSampler, smTex + float2(SMAP_DX * (s - PCF_SIZE/2) , SMAP_DX * (q - PCF_SIZE/2)), 0).r + SHADOW_EPSILON < depth) ? 0.0f : 1.0f;
+						//csmDbg = float4(0.0f, 0.0f, 1.0f, 1.0f);  // TILLMAN CSMDEBUG
+					}
 				}
 			}
 			shadow *= PCF_SIZE_SQUARED;
@@ -264,7 +284,7 @@ float4 PSScene(PSSceneIn input) : SV_Target
 		
 		diffLight *= shadow;
 		specLight *= shadow;
-		*/
+		
 		//**tillman end of CSM
 
 		diffuseLighting += diffLight;
@@ -283,6 +303,10 @@ float4 PSScene(PSSceneIn input) : SV_Target
 		SpecularColor.xyz * specLighting), 
 		1.0f);
 	
+	//if(UseSun) // TILLMAN CSMDEBUG
+	//{
+	//	finalColor = csmDbg;
+	//}
 
 
 	

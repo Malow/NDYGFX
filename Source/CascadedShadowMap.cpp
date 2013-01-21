@@ -93,8 +93,8 @@ void CascadedShadowMap::CalcShadowMapMatrices(D3DXVECTOR3 sunLight, Camera* cam,
 	float infinity = std::numeric_limits<float>::infinity();
 	D3DXVECTOR3 minValue = D3DXVECTOR3(infinity, infinity, infinity);
 	D3DXVECTOR3 maxValue = D3DXVECTOR3(-infinity, -infinity, -infinity);
-	D3DXVECTOR3 vLightCameraOrthographicMin = D3DXVECTOR3(infinity, infinity, infinity); //**tillman, samma som minValue
-	D3DXVECTOR3 vLightCameraOrthographicMax = D3DXVECTOR3(-infinity, -infinity, -infinity);//**tillman, samma som maxValue
+	D3DXVECTOR3 vLightCameraOrthographicMin = D3DXVECTOR3(infinity, infinity, infinity); //**tillman pot opt, samma som minValue
+	D3DXVECTOR3 vLightCameraOrthographicMax = D3DXVECTOR3(-infinity, -infinity, -infinity);//**tillman pot opt, samma som maxValue
 	for(int index = 0; index < 8; index++)
 	{
 		D3DXVECTOR3 vec3 = D3DXVECTOR3(frustumPoints[index].x, frustumPoints[index].y, frustumPoints[index].z);

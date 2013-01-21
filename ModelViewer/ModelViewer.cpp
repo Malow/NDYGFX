@@ -72,7 +72,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	GetGraphics()->GetCamera()->LookAt(Vector3(0, 0, 0));
 	iLight* li = GetGraphics()->CreateLight(GetGraphics()->GetCamera()->GetPosition());
 	li->SetIntensity(0.001f);
-	GetGraphics()->SetSunLightProperties(Vector3(0, -1, 0));
+	GetGraphics()->SetSunLightProperties(Vector3(1, -1, 1));
 	GetGraphics()->SetSceneAmbientLight(Vector3(0.4f, 0.4f, 0.4f));
 	
 
@@ -80,12 +80,12 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 #ifdef TEST
 
 	int vertSize = 16;
-	float testSize = 500.0f;
+	float testSize = 5.0f;
 	
 	iTerrain* iT = GetGraphics()->CreateTerrain(Vector3(0, 0, 0), Vector3(testSize, 0.0f, testSize), vertSize);
 	iTerrain* iT2 = GetGraphics()->CreateTerrain(Vector3(testSize, 0, 0), Vector3(testSize, 0.0f, testSize), vertSize);
 	
-	iAnimatedMesh* iAM = GetGraphics()->CreateAnimatedMesh("Media/FlagBlue.ani", Vector3(0, 0, 0));
+	//iAnimatedMesh* iAM = GetGraphics()->CreateAnimatedMesh("Media/FlagBlue.ani", Vector3(0, 0, 0));
 	//iImage* iM = GetGraphics()->CreateImage(Vector2(100, 100), Vector2(100, 100), "Media/BallTexture.png");
 	//iText* iTe = GetGraphics()->CreateText("durp", Vector2(300, 100), 1.0f, "Media/Fonts/1");
 	
@@ -177,6 +177,8 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	iMesh* bush = GetGraphics()->CreateMesh("Media/Bush_01_v04_r.obj", Vector3(30, 10, 30));
 	bush->Scale(1.0f * 0.05f);
 
+
+
 	//CASCADED SHADOWMAP:
 	Vector3 lookAt = Vector3(0, 0, 0);
 	Vector3 pos = Vector3(-50, 50, -50);
@@ -264,12 +266,12 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	iMesh** debugCSMPoints = new iMesh*[ttte * nrOfFrustumSlices];
 	for(int i = 0; i < ttte * nrOfFrustumSlices; i++)
 	{
-		//debugCSMPoints[i] = GetGraphics()->CreateStaticMesh("Media/ball.obj", vertices[i]);
+		//debugCSMPoints[i] = GetGraphics()->CreateStaticMesh("Media/ball.obj", vertices[i]); //Camera frustum corners
 	}
 	//debugCSMPoints[0]->SetSpecialColor(GREEN_COLOR); //min
 	//debugCSMPoints[1]->SetSpecialColor(BLUE_COLOR); //max
 
-	//GetGraphics()->CreateStaticMesh("Media/CSMDebug.obj", Vector3(0, 0, 0));
+	//GetGraphics()->CreateStaticMesh("Media/CSMDebug.obj", Vector3(0, 0, 0)); //Camera frustum slices
 	
 	//restore camera settings
 	GetGraphics()->GetCamera()->SetPosition(Vector3(25, 25, 20));
@@ -558,7 +560,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		}
 
 		
-		/*if(GetGraphics()->GetKeyListener()->IsPressed(VK_UP))
+		if(GetGraphics()->GetKeyListener()->IsPressed(VK_UP))
 			GetGraphics()->SetSunLightProperties(Vector3(1, -1, 1));
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_DOWN))
 			GetGraphics()->SetSunLightProperties(Vector3(-1, -1, -1));
@@ -566,7 +568,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 			GetGraphics()->SetSunLightProperties(Vector3(-1, -1, 1));
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_RIGHT))
 			GetGraphics()->SetSunLightProperties(Vector3(1, -1, -1));
-		*/
+		
 	}
 	
 	FreeGraphics();
