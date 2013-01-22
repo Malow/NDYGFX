@@ -61,5 +61,6 @@ extern "C"
 		virtual Vector3 Get3DPickingRay() = 0;
 
 		virtual CameraType GetCameraType() const = 0;
+		virtual void MoveOnlyInXZ(bool DoItOrNotThatIsTheQuestion) = 0;
 	};
 }
