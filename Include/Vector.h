@@ -173,6 +173,20 @@ public:
 		y *= t;
 		return *this;
 	}
+
+	inline Vector2& operator+=( const float& t )
+	{
+		x += t;
+		y += t;
+		return *this;
+	}
+
+	inline Vector2& operator+=( const Vector2& t )
+	{
+		x += t.x;
+		y += t.y;
+		return *this;
+	}
 };
 
 
