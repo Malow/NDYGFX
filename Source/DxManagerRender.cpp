@@ -733,7 +733,7 @@ void DxManager::CalculateCulling()
 	FrustrumPlanes[5].c = VP._34 + VP._32;
 	FrustrumPlanes[5].d = VP._44 + VP._42;
 	D3DXPlaneNormalize(&FrustrumPlanes[5], &FrustrumPlanes[5]);
-	/*
+	
 	//Terrain
 	for(int i = 0; i < this->terrains.size(); i++)
 	{
@@ -749,8 +749,6 @@ void DxManager::CalculateCulling()
 			terr->SetCulled(true);
 		}
 	}
-	*/
-
 
 	//Static meshes
 	for(int i = 0; i < this->objects.size(); i++)
