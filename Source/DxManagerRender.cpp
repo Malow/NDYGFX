@@ -739,15 +739,8 @@ void DxManager::CalculateCulling()
 	{
 		Terrain* terr = this->terrains.get(i);
 
-		//Get bounding box
-		BoundingBox bb = terr->GetBoundingBox();
-		
-		//**TILLMAN**
 		float scale = max(terr->GetScale().x, max(terr->GetScale().y, terr->GetScale().z));
-		D3DXVECTOR3 minPos = D3DXVECTOR3(bb.MinPos.x, bb.MinPos.y, bb.MinPos.z);
-		D3DXVECTOR3 maxPos = D3DXVECTOR3(bb.MaxPos.x, bb.MaxPos.y, bb.MaxPos.z);
-		BoundingSphere bs = BoundingSphere(minPos, maxPos);
-		if(pe.FrustrumVsSphere(this->FrustrumPlanes, bs, terr->GetWorldMatrix(), scale))
+		if(pe.FrustrumVsSphere(this->FrustrumPlanes, terr->GetBoundingSphere(), terr->GetWorldMatrix(), scale))
 		{
 			terr->SetCulled(false);
 		}

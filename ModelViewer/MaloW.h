@@ -24,6 +24,15 @@ namespace MaloW
 			msg += arr[i];
 	}
 	
+	template<typename T>
+	inline addNrToString(const T &nr, std::string &out)
+	{
+		std::stringstream output;
+		output << nr;
+		out += output.str();
+	}
+
+	/* THIS FUNCTION IS DEPRECATED, PLEASE CONSIDER USING addNrToString(const T &nr, std::string &out). */
 	inline std::string convertNrToString(float nr)
 	{
 		std::string s;
