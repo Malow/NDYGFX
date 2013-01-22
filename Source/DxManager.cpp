@@ -199,7 +199,7 @@ void DxManager::CreateTerrain(Terrain* terrain)
 	vertexBufferDesc.InitData = terrain->GetVerticesPointer(); 
 	vertexBufferDesc.NumElements = terrain->GetNrOfVertices();
 	vertexBufferDesc.Type = VERTEX_BUFFER;
-	vertexBufferDesc.Usage = BUFFER_DEFAULT; //BUFFER_CPU_WRITE***
+	vertexBufferDesc.Usage = BUFFER_DEFAULT;
 
 	Buffer* vertexBuffer = new Buffer();
 	if(FAILED(vertexBuffer->Init(this->Dx_Device, this->Dx_DeviceContext, vertexBufferDesc)))

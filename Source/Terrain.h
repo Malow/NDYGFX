@@ -61,6 +61,8 @@ class Terrain : public iTerrain
 		float						zTextureScale;
 		int							zNrOfTextures;
 		TextureResource**			zTextureResources;
+		bool						zTextureResourceHasChanged[4];
+		string						zTextureResourceToLoadFileName[4]; //**TILLMAN
 		BlendMap*					zBlendMap;
 		bool						zRecreateBoundingBox;
 		BoundingBox					zBoundingBox;
@@ -98,6 +100,8 @@ class Terrain : public iTerrain
 		float GetTextureScale() const { return this->zTextureScale; }
 		int GetNrOfTextures() const { return this->zNrOfTextures; }
 		TextureResource* GetTexture(unsigned int index) const { return this->zTextureResources[index]; }
+		bool HasTextureResourceChanged(unsigned int index) const { return this->zTextureResourceHasChanged[index]; }
+		string GetTextureResourceToLoadFileName(unsigned int index) const { return this->zTextureResourceToLoadFileName[index]; }
 		//string GetTextureFileName(unsigned int index) { return this->zTextureFileNames[index]; }
 		BlendMap* GetBlendMapPointer() { return this->zBlendMap; }
 		BoundingBox GetBoundingBox() { if(this->zRecreateBoundingBox) { RecreateBoundingBox(); } return this->zBoundingBox; }
@@ -108,6 +112,8 @@ class Terrain : public iTerrain
 		void HeightMapHasChanged(bool has) { this->zHeightMapHasChanged = has; }
 		void SetVertexBuffer(Buffer* vertexBuffer) { this->zVertexBuffer = vertexBuffer; }
 		void SetIndexBuffer(Buffer* indexBuffer) { this->zIndexBuffer = indexBuffer; }
+		void SetTexture(unsigned int index, TextureResource* textureResource) const { this->zTextureResources[index] = textureResource; }
+		void TextureResourceHasChanged(unsigned int index, bool has) { this->zTextureResourceHasChanged[index] = has; this->zTextureResourceToLoadFileName[index] = ""; }
 		
 
 		//Other
