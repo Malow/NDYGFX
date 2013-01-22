@@ -84,6 +84,9 @@ class Terrain : public iTerrain
 		D3DXVECTOR3 GetScale() const { return this->zScale; }
 		D3DXMATRIX GetWorldMatrix() const { return this->zWorldMatrix; }
 
+		// Easier access to normals
+		inline D3DXVECTOR3& GetNormalAt( unsigned int x, unsigned int y ) const { return zVertices[y * zSize + x].normal; }
+
 		bool HasHeightMapChanged() const { return this->zHeightMapHasChanged; }
 		int GetNrOfVertices() const { return this->zNrOfVertices; }
 		Vertex* GetVerticesPointer() const { return this->zVertices; }
