@@ -25,6 +25,9 @@ DxManager::DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam)
 	this->Shader_Text = NULL;
 	this->Shader_ShadowMapAnimated = NULL;
 
+	this->RenderedMeshes = 0;
+	this->RenderedTerrains = 0;
+
 	this->Shader_BillBoard = NULL;
 
 	for(int i = 0; i < NrOfRenderTargets; i++)
@@ -734,32 +737,11 @@ void DxManager::SetSunLightDisabled()
 
 int DxManager::GetRenderedMeshCount() const
 {
-	int nrOfRendered = 0;
-	for(int i = 0; i < this->objects.size(); i++)
-	{
-		StaticMesh* ms = this->objects.get(i);
-		MaloW::Array<MeshStrip*>* strips = ms->GetStrips();
-		for(int u = 0; u < strips->size(); u++)
-		{
-			MeshStrip* s = strips->get(u);
-			if(!s->GetCulled())
-			{
-				nrOfRendered++;
-				u = strips->size();
-			}
-		}
-	}
-	return nrOfRendered;
+	return this->RenderedMeshes;
 }
 int DxManager::GetRenderedTerrainCount() const
 {
-	int nrOfRendered = 0;
-	for(int i = 0; i < this->terrains.size(); i++)
-	{
-		nrOfRendered += !this->terrains.get(i)->IsCulled();
-	}
-
-	return nrOfRendered;
+	return this->RenderedTerrains;
 }
 
 void DxManager::SetCamera( Camera* cam )
