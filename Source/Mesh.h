@@ -16,6 +16,18 @@ Mesh class that represents a 3d-object on the screen
 */
 
 
+inline void DoMinMax(D3DXVECTOR3& min, D3DXVECTOR3& max, D3DXVECTOR3 v)
+{
+	min.x = min(min.x, v.x);
+	min.y = min(min.y, v.y);
+	min.z = min(min.z, v.z);
+
+	max.x = max(max.x, v.x);
+	max.y = max(max.y, v.y);
+	max.z = max(max.z, v.z);
+}
+
+
 
 class Mesh : public virtual iMesh
 {

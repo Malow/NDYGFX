@@ -70,7 +70,8 @@ void DxManager::RenderDeferredGeometry()
 	this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_GbufferRTs[2], ClearColor2);
 	this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_GbufferRTs[3], ClearColor2);
 
-
+	int CurrentRenderedMeshes = 0;
+	int CurrentRenderedTerrains = 0;
 	//Matrices
 	D3DXMATRIX world, view, proj, wvp, worldInverseTranspose;
 	D3DXMatrixIdentity(&worldInverseTranspose); //Needed to calculate correct world inverse matrix
@@ -87,6 +88,7 @@ void DxManager::RenderDeferredGeometry()
 		//Check if the terrain has been culled.
 		if(terrPtr->IsCulled() == false)
 		{
+			CurrentRenderedTerrains++;
 			//Set topology
 			this->Dx_DeviceContext->IASetPrimitiveTopology(terrPtr->GetTopology());
 
@@ -325,11 +327,19 @@ void DxManager::RenderDeferredGeometry()
 			this->Shader_DeferredGeometry->SetMatrix("WVP", wvp);
 			this->Shader_DeferredGeometry->SetMatrix("worldMatrix", world);
 			this->Shader_DeferredGeometry->SetMatrix("worldMatrixInverseTranspose", worldInverseTranspose);
+
+			bool hasBeenCounted = false;
 			
 			for(int u = 0; u < strips->size(); u++)
 			{
 				if(!strips->get(u)->GetCulled())
 				{
+					if(!hasBeenCounted)
+					{
+						CurrentRenderedMeshes++;
+						hasBeenCounted = true;
+					}
+
 					Object3D* obj = strips->get(u)->GetRenderObject();
 					this->Dx_DeviceContext->IASetPrimitiveTopology(obj->GetTopology());
 
@@ -393,77 +403,84 @@ void DxManager::RenderDeferredGeometry()
 
 	for(int i = 0; i < this->animations.size(); i++)
 	{
-		if(!this->animations[i]->IsUsingInvisibility())
+		AnimatedMesh* ani = this->animations[i];
+		if(!ani->IsUsingInvisibility())
 		{
-			KeyFrame* one = NULL;
-			KeyFrame* two = NULL;
-			float t = 0.0f;
-			this->animations[i]->SetCurrentTime(this->Timer * 1000.0f); //Timer is in seconds.
-			this->animations[i]->GetCurrentKeyFrames(&one, &two, t);
-
-			MaloW::Array<MeshStrip*>* stripsOne = one->strips;
-			MaloW::Array<MeshStrip*>* stripsTwo = two->strips;
-		
-			// Set matrixes
-			world = this->animations[i]->GetWorldMatrix();
-			wvp = world * view * proj;
-			D3DXMatrixInverse(&worldInverseTranspose, NULL, &world);
-			D3DXMatrixTranspose(&worldInverseTranspose, &worldInverseTranspose);
-		
-			this->Shader_DeferredAnimatedGeometry->SetMatrix("WVP", wvp);
-			this->Shader_DeferredAnimatedGeometry->SetMatrix("worldMatrix", world);
-			this->Shader_DeferredAnimatedGeometry->SetMatrix("worldMatrixInverseTranspose", worldInverseTranspose);
-			this->Shader_DeferredAnimatedGeometry->SetFloat("t", t);
-
-			this->Shader_DeferredAnimatedGeometry->SetInt("specialColor", this->animations[i]->GetSpecialColor()); //*Tillman old: kraschar för att antalet animationer > antalet object
-
-			for(int u = 0; u < stripsOne->size(); u++)
+			if(!ani->GetKeyFrames()->get(0)->strips->get(0)->GetCulled())
 			{
-				Object3D* objOne = stripsOne->get(u)->GetRenderObject();
-				Object3D* objTwo = stripsTwo->get(u)->GetRenderObject();
+				CurrentRenderedMeshes++;			
 
-				this->Dx_DeviceContext->IASetPrimitiveTopology(objOne->GetTopology());
+				KeyFrame* one = NULL;
+				KeyFrame* two = NULL;
+				float t = 0.0f;
+				ani->SetCurrentTime(this->Timer * 1000.0f); //Timer is in seconds.
+				ani->GetCurrentKeyFrames(&one, &two, t);
 
-				// Setting lightning from material
-				this->Shader_DeferredAnimatedGeometry->SetFloat4("SpecularColor", D3DXVECTOR4(stripsOne->get(u)->GetMaterial()->SpecularColor, 1));
-				this->Shader_DeferredAnimatedGeometry->SetFloat("SpecularPower", stripsOne->get(u)->GetMaterial()->SpecularPower);
-				this->Shader_DeferredAnimatedGeometry->SetFloat4("AmbientLight", D3DXVECTOR4(stripsOne->get(u)->GetMaterial()->AmbientColor, 1));
-				this->Shader_DeferredAnimatedGeometry->SetFloat4("DiffuseColor", D3DXVECTOR4(stripsOne->get(u)->GetMaterial()->DiffuseColor, 1));
+				MaloW::Array<MeshStrip*>* stripsOne = one->strips;
+				MaloW::Array<MeshStrip*>* stripsTwo = two->strips;
+		
+				// Set matrixes
+				world = ani->GetWorldMatrix();
+				wvp = world * view * proj;
+				D3DXMatrixInverse(&worldInverseTranspose, NULL, &world);
+				D3DXMatrixTranspose(&worldInverseTranspose, &worldInverseTranspose);
+		
+				this->Shader_DeferredAnimatedGeometry->SetMatrix("WVP", wvp);
+				this->Shader_DeferredAnimatedGeometry->SetMatrix("worldMatrix", world);
+				this->Shader_DeferredAnimatedGeometry->SetMatrix("worldMatrixInverseTranspose", worldInverseTranspose);
+				this->Shader_DeferredAnimatedGeometry->SetFloat("t", t);
 
-				Buffer* vertsOne = objOne->GetVertBuff();
-				Buffer* vertsTwo = objTwo->GetVertBuff();
+				this->Shader_DeferredAnimatedGeometry->SetInt("specialColor", ani->GetSpecialColor()); //*Tillman old: kraschar för att antalet animationer > antalet object
 
-				ID3D11Buffer* vertexBuffers [] = {vertsOne->GetBufferPointer(), vertsTwo->GetBufferPointer()};
-				UINT strides [] = {sizeof(Vertex), sizeof(Vertex)};
-				UINT offsets [] = {0, 0};
-
-				this->Dx_DeviceContext->IASetVertexBuffers(0, 2, vertexBuffers, strides, offsets);
-				
-				//Check if the mesh(es) uses a texture resource.
-				if(objOne->GetTextureResource() != NULL)
+				for(int u = 0; u < stripsOne->size(); u++)
 				{
-					//Then check if it actually has a shader resource view.
-					if(ID3D11ShaderResourceView* texture = objOne->GetTextureResource()->GetSRVPointer())//**TILLMAN
+
+					Object3D* objOne = stripsOne->get(u)->GetRenderObject();
+					Object3D* objTwo = stripsTwo->get(u)->GetRenderObject();
+
+					this->Dx_DeviceContext->IASetPrimitiveTopology(objOne->GetTopology());
+
+					// Setting lightning from material
+					this->Shader_DeferredAnimatedGeometry->SetFloat4("SpecularColor", D3DXVECTOR4(stripsOne->get(u)->GetMaterial()->SpecularColor, 1));
+					this->Shader_DeferredAnimatedGeometry->SetFloat("SpecularPower", stripsOne->get(u)->GetMaterial()->SpecularPower);
+					this->Shader_DeferredAnimatedGeometry->SetFloat4("AmbientLight", D3DXVECTOR4(stripsOne->get(u)->GetMaterial()->AmbientColor, 1));
+					this->Shader_DeferredAnimatedGeometry->SetFloat4("DiffuseColor", D3DXVECTOR4(stripsOne->get(u)->GetMaterial()->DiffuseColor, 1));
+
+					Buffer* vertsOne = objOne->GetVertBuff();
+					Buffer* vertsTwo = objTwo->GetVertBuff();
+
+					ID3D11Buffer* vertexBuffers [] = {vertsOne->GetBufferPointer(), vertsTwo->GetBufferPointer()};
+					UINT strides [] = {sizeof(Vertex), sizeof(Vertex)};
+					UINT offsets [] = {0, 0};
+
+					this->Dx_DeviceContext->IASetVertexBuffers(0, 2, vertexBuffers, strides, offsets);
+				
+					//Check if the mesh(es) uses a texture resource.
+					if(objOne->GetTextureResource() != NULL)
 					{
-						this->Shader_DeferredAnimatedGeometry->SetBool("textured", true);
-						this->Shader_DeferredAnimatedGeometry->SetResource("tex2D", texture);
+						//Then check if it actually has a shader resource view.
+						if(ID3D11ShaderResourceView* texture = objOne->GetTextureResource()->GetSRVPointer())//**TILLMAN
+						{
+							this->Shader_DeferredAnimatedGeometry->SetBool("textured", true);
+							this->Shader_DeferredAnimatedGeometry->SetResource("tex2D", texture);
+						}
+						else //else set texture variables to not be used
+						{
+							this->Shader_DeferredAnimatedGeometry->SetBool("textured", false);
+							this->Shader_DeferredAnimatedGeometry->SetResource("tex2D", NULL);
+						}
 					}
 					else //else set texture variables to not be used
 					{
 						this->Shader_DeferredAnimatedGeometry->SetBool("textured", false);
 						this->Shader_DeferredAnimatedGeometry->SetResource("tex2D", NULL);
 					}
-				}
-				else //else set texture variables to not be used
-				{
-					this->Shader_DeferredAnimatedGeometry->SetBool("textured", false);
-					this->Shader_DeferredAnimatedGeometry->SetResource("tex2D", NULL);
-				}
 
-				this->Shader_DeferredAnimatedGeometry->Apply(0);
+					this->Shader_DeferredAnimatedGeometry->Apply(0);
 
-				// draw
-				this->Dx_DeviceContext->Draw(vertsOne->GetElementCount(), 0);
+					// draw
+					this->Dx_DeviceContext->Draw(vertsOne->GetElementCount(), 0);
+				}
 			}
 		}
 		else
@@ -474,6 +491,9 @@ void DxManager::RenderDeferredGeometry()
 	//Unbind resources animated geometry:
 	this->Shader_DeferredAnimatedGeometry->SetResource("tex2D", NULL);
 	this->Shader_DeferredAnimatedGeometry->Apply(0);
+
+	this->RenderedMeshes = CurrentRenderedMeshes;
+	this->RenderedTerrains = CurrentRenderedTerrains;
 }
 
 

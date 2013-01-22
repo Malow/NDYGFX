@@ -733,7 +733,7 @@ void DxManager::CalculateCulling()
 	FrustrumPlanes[5].c = VP._34 + VP._32;
 	FrustrumPlanes[5].d = VP._44 + VP._42;
 	D3DXPlaneNormalize(&FrustrumPlanes[5], &FrustrumPlanes[5]);
-
+	/*
 	//Terrain
 	for(int i = 0; i < this->terrains.size(); i++)
 	{
@@ -756,7 +756,7 @@ void DxManager::CalculateCulling()
 			terr->SetCulled(true);
 		}
 	}
-
+	*/
 
 
 	//Static meshes
@@ -776,6 +776,23 @@ void DxManager::CalculateCulling()
 			{
 				s->SetCulled(true);
 			}
+		}
+	}
+
+	//Animated meshes
+	for(int i = 0; i < this->animations.size(); i++)
+	{
+		AnimatedMesh* ms = this->animations.get(i);
+		MeshStrip* s = ms->GetStrips()->get(0);
+
+		float scale = max(ms->GetScaling().x, max(ms->GetScaling().y, ms->GetScaling().z));
+		if(pe.FrustrumVsSphere(this->FrustrumPlanes, s->GetBoundingSphere(), ms->GetWorldMatrix(), scale))
+		{
+			s->SetCulled(false);
+		}
+		else
+		{
+			s->SetCulled(true);
 		}
 	}
 }
