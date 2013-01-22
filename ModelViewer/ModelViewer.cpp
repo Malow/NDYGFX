@@ -80,7 +80,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 #ifdef TEST
 
 	int vertSize = 16;
-	float testSize = 5.0f;
+	float testSize = 50.0f;
 	
 	iTerrain* iT = GetGraphics()->CreateTerrain(Vector3(0, 0, 0), Vector3(testSize, 0.0f, testSize), vertSize);
 	iTerrain* iT2 = GetGraphics()->CreateTerrain(Vector3(testSize, 0, 0), Vector3(testSize, 0.0f, testSize), vertSize);
@@ -171,13 +171,15 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	
 	iMesh* ball = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(0, -100, 0));
 	ball->Scale(0.1f);
-	iMesh* secModel = GetGraphics()->CreateMesh("Media/bth.obj", Vector3(10, 0, 10));
+	iMesh* secModel = GetGraphics()->CreateMesh("Media/bth.obj", Vector3(10, 2, 10));
 	secModel->Scale(1.0f * 0.05f);
 
 	iMesh* bush = GetGraphics()->CreateMesh("Media/Bush_01_v04_r.obj", Vector3(30, 10, 30));
 	bush->Scale(1.0f * 0.05f);
 
-
+	iMesh* arrow = GetGraphics()->CreateMesh("Media/Arrow_v01.obj", Vector3(30, 10, 30));
+	arrow->Scale(1.0f * 0.05f);
+	Vector3 arrowDir = Vector3(0, 0, -1);
 
 	//CASCADED SHADOWMAP:
 	/*
@@ -373,13 +375,6 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 					Vector3 fw = GetGraphics()->GetCamera()->GetForward();
 					GetGraphics()->ChangeCamera(FPS);
 					GetGraphics()->GetCamera()->SetForward(fw);
-					
-					for(int i = 0; i < 50; i++)
-						GetGraphics()->CreateMesh("Media/scale.obj", Vector3(30, -300, 30));
-
-					GetGraphics()->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", 
-						"Media/LoadingScreen/LoadingScreenPB.png"
-						, 1.0f, 1.0f, 1.0f, 1.0f);
 					//GetGraphics()->ResizeGraphicsEngine(500, 500);
 				}
 				else
@@ -389,7 +384,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 					GetGraphics()->GetCamera()->SetForward(fw);
 					//GetGraphics()->ResizeGraphicsEngine(750, 250);
 				}
-				fesd = false;
+				//fesd = false;
 			}			
 		}
 		else
@@ -429,6 +424,24 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_CONTROL))
 			secModel->MoveBy(Vector3(0, -1, 0) * diff * 0.01f);
 
+
+		if(GetGraphics()->GetKeyListener()->IsClicked(1))
+		{
+			arrow->SetPosition(GetGraphics()->GetCamera()->GetPosition());
+
+			Vector3 vec(0, 0, -1);
+
+			Vector3 camDir = GetGraphics()->GetCamera()->GetForward();
+			arrowDir = camDir;
+
+			arrow->ResetRotation();
+			Vector3 around = vec.GetCrossProduct(camDir);
+			float angle = acos(vec.GetDotProduct(camDir) / (vec.GetLength() * camDir.GetLength()));
+			arrow->RotateAxis(around, angle);
+		}
+
+		arrow->MoveBy(arrowDir * diff * 0.01f);
+		
 
 		/*
 		templol += diff;
