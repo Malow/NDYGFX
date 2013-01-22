@@ -48,29 +48,26 @@ struct SunLight
 //------------------------------------------------------------------------------------------------------
 //	Constant buffers
 //------------------------------------------------------------------------------------------------------
-cbuffer EveryFrame
-{
-	matrix CameraVP;
-	float4 CameraPosition;
-	
-	float NrOfLights;//**tillman**
-	Light lights[10];//**tillman**
-	float4 SceneAmbientLight;//**tillman**
-	
-	bool UseSun;//**tillman**
-	SunLight sun; //**tillman**
+matrix CameraVP;
+float4 CameraPosition;
 
-	float NrOfCascades;
-	float4 CascadeLevels;
-	Cascade cascades[10];
+float NrOfLights;//**tillman**
+Light lights[10];//**tillman**
+float4 SceneAmbientLight;//**tillman**
 
-	float timerMillis;
+bool UseSun;//**tillman**
+SunLight sun; //**tillman**
 
-	uint windowWidth;
-	uint windowHeight;
-	float NearClip;
-	float FarClip;
-};
+float NrOfCascades;
+float4 CascadeLevels;
+Cascade cascades[10];
+
+float timerMillis;
+
+uint windowWidth;
+uint windowHeight;
+float NearClip;
+float FarClip;
 
 //------------------------------------------------------------------------------------------------------
 //	State structures

@@ -15,7 +15,6 @@ Texture2D tex1; //G-channel in blendmap. ex: dirt
 Texture2D tex2; //B-channel in blendmap. ex: leaves
 Texture2D tex3; //A-channel in blendmap. ex: extra
 Texture2D<float4> blendMap;
-//Texture2D tex4; //**extra, ex: blood, footprints**
 
 //-----------------------------------------------------------------------------------------
 // Constant buffers
@@ -140,7 +139,7 @@ PSOut PSScene(PSSceneIn input) : SV_Target
 
 	//NormalAndDepth RT
 	output.NormalAndDepth = float4(input.norm, input.pos.z / input.pos.w);	
-	float depth = length(CameraPosition.xyz - input.posW.xyz) / 200.0f;		// Haxfix
+	float depth = length(CameraPosition.xyz - input.posW.xyz) / FarClip;		// Haxfix
 	output.NormalAndDepth.w = depth;
 
 	//Position RT

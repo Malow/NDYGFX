@@ -80,8 +80,9 @@ void DxManager::RenderDeferredGeometry()
 
 	//Terrain
 	this->Shader_DeferredGeometryBlendMap->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetPositionD3DX(), 1));
+	this->Shader_DeferredGeometryBlendMap->SetFloat("NearClip", this->params.NearClip);
+	this->Shader_DeferredGeometryBlendMap->SetFloat("FarClip", this->params.FarClip);
 
-	//Per object 
 	for(int i = 0; i < this->terrains.size(); i++)
 	{
 		Terrain* terrPtr = this->terrains.get(i);
@@ -310,7 +311,7 @@ void DxManager::RenderDeferredGeometry()
 
 
 
-	//Normal (visible) geometry
+	//Normal geometry
 	this->Shader_DeferredGeometry->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetPositionD3DX(), 1));
 	this->Shader_DeferredGeometry->SetFloat("NearClip", this->params.NearClip);
 	this->Shader_DeferredGeometry->SetFloat("FarClip", this->params.FarClip);
@@ -398,15 +399,16 @@ void DxManager::RenderDeferredGeometry()
 			this->invisibleGeometry = true;
 		}
 	}
-	//Unbind resources static geometry:
+	// Unbind resources static geometry:
 	this->Shader_DeferredGeometry->SetResource("tex2D", NULL);
 	this->Shader_DeferredGeometry->Apply(0);
 
 
 
-	//Normal (visible) Animated meshes
+	// Normal Animated meshes
 	this->Shader_DeferredAnimatedGeometry->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetPositionD3DX(), 1));
-
+	this->Shader_DeferredAnimatedGeometry->SetFloat("NearClip", this->params.NearClip);
+	this->Shader_DeferredAnimatedGeometry->SetFloat("FarClip", this->params.FarClip);
 	for(int i = 0; i < this->animations.size(); i++)
 	{
 		AnimatedMesh* ani = this->animations[i];

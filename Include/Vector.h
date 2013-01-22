@@ -13,6 +13,7 @@
 // EDIT 2013-01-07 by Tillman  - Optimized Constructors.
 // EDIT 2013-01-09 by Alexivan - GetXY, GetXZ, GetZY for Vector3
 // EDIT 2013-01-11 by Tillman - Added the class Vector2UINT.
+// EDIT 2013-01-22 by Alexivan - Vector2 Multiply.
 
 #pragma warning ( push ) 
 #pragma warning ( disable : 4201 ) // nonstandard extension used : nameless struct/union
@@ -161,6 +162,31 @@ public:
 		return values[i];
 	}
 
+	inline Vector2 operator*( const float& t ) const
+	{
+		return Vector2( x * t, y * t );
+	}
+
+	inline Vector2& operator*=( const float& t )
+	{
+		x *= t;
+		y *= t;
+		return *this;
+	}
+
+	inline Vector2& operator+=( const float& t )
+	{
+		x += t;
+		y += t;
+		return *this;
+	}
+
+	inline Vector2& operator+=( const Vector2& t )
+	{
+		x += t.x;
+		y += t.y;
+		return *this;
+	}
 };
 
 

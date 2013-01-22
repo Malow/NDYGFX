@@ -138,10 +138,17 @@ void Terrain::CalculateNormals()
 	}
 
 	// TODO: Corners
-	this->zVertices[0].normal = D3DXVECTOR3(0.0f,1.0f,0.0f);
-	this->zVertices[zSize-1].normal = D3DXVECTOR3(0.0f,1.0f,0.0f);
-	this->zVertices[zSize*(zSize-1)].normal = D3DXVECTOR3(0.0f,1.0f,0.0f);
-	this->zVertices[zSize*zSize-1].normal = D3DXVECTOR3(0.0f,1.0f,0.0f);
+	zVertices[0].normal = GetNormalAt(1,0) + GetNormalAt(1,1) + GetNormalAt(0,1);
+	D3DXVec3Normalize(&zVertices[0].normal,&zVertices[0].normal);
+
+	this->zVertices[zSize-1].normal = GetNormalAt(zSize-2,0) + GetNormalAt(zSize-2,1) + GetNormalAt(zSize-1,1);
+	D3DXVec3Normalize(&zVertices[zSize-1].normal,&zVertices[zSize-1].normal);
+
+	this->zVertices[zSize*(zSize-1)].normal = GetNormalAt(0,zSize-2) + GetNormalAt(1,zSize-2) + GetNormalAt(1,zSize-1);
+	D3DXVec3Normalize(&zVertices[zSize*(zSize-1)].normal,&zVertices[zSize*(zSize-1)].normal);
+
+	this->zVertices[zSize*zSize-1].normal = GetNormalAt(zSize-2,zSize-1) + GetNormalAt(zSize-2,zSize-2) + GetNormalAt(zSize-1,zSize-2);
+	D3DXVec3Normalize(&zVertices[zSize*zSize-1].normal,&zVertices[zSize*zSize-1].normal);
 }
 
 
@@ -255,7 +262,9 @@ void Terrain::RecreateWorldMatrix()
 
 	this->zWorldMatrix = world;
 }
-void Terrain::RecreateBoundingSphere()
+
+
+void Terrain::RecreateBoudingSphere()
 {
 	//Go through the vertices and find the biggest and smallest values.
 	float infinity = std::numeric_limits<float>::infinity();
@@ -284,7 +293,7 @@ float Terrain::GetYPositionAt(float x, float z) const
 	float ez = x / this->zScale.x;
 
 	//if(((ex && ex) <= 1.0f) && ((ex && ez) > 0.0f)) //**tillman opt
-	if(ex <= 1.0f && ez <= 1.0f && ex > 0.0f && ez > 0.0f) 
+	if(ex < 1.0f && ez < 1.0f && ex >= 0.0f && ez >= 0.0f) 
 	{
 		ex *= this->zSize;
 		ez *= this->zSize;

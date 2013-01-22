@@ -8,7 +8,7 @@ Camera::Camera(HWND g_hWnd, GraphicsEngineParams params)
 	this->pos = D3DXVECTOR3(0, 0, 0);
 	this->terrain = NULL;
 	this->followTarget = NULL;
-	
+	this->moveOnlyInXZ = false;
 	this->angleX = 0;
 	this->angleY = 0;
 	
@@ -222,5 +222,10 @@ Vector3 Camera::Get3DPickingRay()
 		MaloW::Debug("Get3DPickingRay failed.");
 
 	return v;
+}
+
+void Camera::MoveOnlyInXZ( bool DoItOrNotThatIsTheQuestion )
+{
+	this->moveOnlyInXZ = true;
 }
 
