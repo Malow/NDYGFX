@@ -206,8 +206,6 @@ void AnimatedMesh::LoopSeamless()
 	this->mLoopSeamless = true;
 }
 
-
-
 bool AnimatedMesh::LoadFromFile(string file)
 {
 	this->filePath = file;
@@ -261,7 +259,10 @@ bool AnimatedMesh::LoadFromFile(string file)
 				{
 					bool hasFace = false;
 					MeshStrip* strip = new MeshStrip();
-		
+
+					/////// For hit/bounding boxes
+					D3DXVECTOR3 min = D3DXVECTOR3(99999.9f, 99999.9f, 99999.9f);
+					D3DXVECTOR3 max = -min;
 
 					int nrOfVerts = 0;
 		
@@ -275,52 +276,62 @@ bool AnimatedMesh::LoadFromFile(string file)
 							int textcoord = od->faces->get(i).data[0][1] - 1;
 							int norm = od->faces->get(i).data[0][2] - 1;
 							tempverts[nrOfVerts] = Vertex(od->vertspos->get(vertpos), od->textcoords->get(textcoord), od->vertsnorms->get(norm));
+							DoMinMax(min, max, tempverts[nrOfVerts].pos);
 							nrOfVerts++;
 
 							vertpos = od->faces->get(i).data[2][0] - 1;
 							textcoord = od->faces->get(i).data[2][1] - 1;
 							norm = od->faces->get(i).data[2][2] - 1;
 							tempverts[nrOfVerts] = Vertex(od->vertspos->get(vertpos), od->textcoords->get(textcoord), od->vertsnorms->get(norm));
+							DoMinMax(min, max, tempverts[nrOfVerts].pos);
 							nrOfVerts++;
 
 							vertpos = od->faces->get(i).data[1][0] - 1;
 							textcoord = od->faces->get(i).data[1][1] - 1;
 							norm = od->faces->get(i).data[1][2] - 1;
 							tempverts[nrOfVerts] = Vertex(od->vertspos->get(vertpos), od->textcoords->get(textcoord), od->vertsnorms->get(norm));
+							DoMinMax(min, max, tempverts[nrOfVerts].pos);
 							nrOfVerts++;
 
 							hasFace = true;
 						}
 					}
 
-					strip->setNrOfVerts(nrOfVerts);
-
-					Vertex* verts = new Vertex[nrOfVerts];
-					for(int z = 0; z < nrOfVerts; z++)
+					if(!hasFace)
 					{
-						verts[z] = tempverts[z];
-					}
-					delete tempverts;
-					strip->SetVerts(verts);
-			
-					strip->SetTexturePath(od->mats->get(q).texture);
-
-					Material* mat = new Material();
-					mat->AmbientColor = od->mats->get(q).ka;
-					if(mat->AmbientColor == D3DXVECTOR3(0.0f, 0.0f, 0.0f))				//////////// MaloW Fix, otherwise completely black with most objs
-						mat->AmbientColor += D3DXVECTOR3(0.2f, 0.2f, 0.2f);			//////////// MaloW Fix, otherwise completely black with most objs
-
-					mat->DiffuseColor = od->mats->get(q).kd;
-					if(mat->DiffuseColor == D3DXVECTOR3(0.0f, 0.0f, 0.0f))				//////////// MaloW Fix, otherwise completely black with most objs
-						mat->DiffuseColor += D3DXVECTOR3(0.6f, 0.6f, 0.6f);			//////////// MaloW Fix, otherwise completely black with most objs
-			
-					mat->SpecularColor = od->mats->get(q).ks;
-					strip->SetMaterial(mat);
-
-					if(hasFace)
-						frame->strips->add(strip);
-					else
+						delete tempverts;
 						delete strip;
+					}
+					else
+					{
+						strip->setNrOfVerts(nrOfVerts);
+
+						Vertex* verts = new Vertex[nrOfVerts];
+						for(int z = 0; z < nrOfVerts; z++)
+						{
+							verts[z] = tempverts[z];
+						}
+						delete tempverts;
+						strip->SetVerts(verts);
+
+						strip->SetTexturePath(od->mats->get(q).texture);
+
+						Material* mat = new Material();
+						mat->AmbientColor = od->mats->get(q).ka;
+						if(mat->AmbientColor == D3DXVECTOR3(0.0f, 0.0f, 0.0f))				//////////// MaloW Fix, otherwise completely black with most objs
+							mat->AmbientColor += D3DXVECTOR3(0.2f, 0.2f, 0.2f);			//////////// MaloW Fix, otherwise completely black with most objs
+
+						mat->DiffuseColor = od->mats->get(q).kd;
+						if(mat->DiffuseColor == D3DXVECTOR3(0.0f, 0.0f, 0.0f))				//////////// MaloW Fix, otherwise completely black with most objs
+							mat->DiffuseColor += D3DXVECTOR3(0.6f, 0.6f, 0.6f);			//////////// MaloW Fix, otherwise completely black with most objs
+
+						mat->SpecularColor = od->mats->get(q).ks;
+						strip->SetMaterial(mat);
+
+						strip->SetBoundingSphere(BoundingSphere(min, max));
+
+						frame->strips->add(strip);
+					}
 				}
 				this->topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 				//delete od;

@@ -107,6 +107,8 @@ private:
 	float RendererSleep;
 
 	bool DelayGettingCamera;
+	int RenderedMeshes;
+	int RenderedTerrains;
 
 	// Needed for frustrum culling
 	PhysicsEngine pe;

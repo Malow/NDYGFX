@@ -175,14 +175,16 @@ Terrain::Terrain()
 	this->zTextureScale = 1.0f;
 	this->zNrOfTextures = 4;
 	this->zTextureResources = new TextureResource*[this->zNrOfTextures];
-	this->zTextureResources[0] = NULL;
-	this->zTextureResources[1] = NULL;
-	this->zTextureResources[2] = NULL;
-	this->zTextureResources[3] = NULL;
+	for(int i = 0; i < this->zNrOfTextures; i++)
+	{
+		this->zTextureResources[i] = NULL;
+		this->zTextureResourceHasChanged[i] = false;
+		this->zTextureResourceToLoadFileName[i] = "";
+	}
 	this->zBlendMap = NULL;
 
-	this->zRecreateBoundingBox = false;
-	this->zBoundingBox = BoundingBox();
+	this->zRecreateBoundingSphere = false;
+	this->zBoundingSphere = BoundingSphere();
 }
 
 
@@ -210,13 +212,17 @@ Terrain::Terrain(D3DXVECTOR3 pos, D3DXVECTOR3 scale, unsigned int size)
 	this->zTextureScale = 1.0f;
 	this->zNrOfTextures = 4;
 	this->zTextureResources = new TextureResource*[this->zNrOfTextures];
-	this->zTextureResources[0] = NULL;
-	this->zTextureResources[1] = NULL;
-	this->zTextureResources[2] = NULL;
-	this->zTextureResources[3] = NULL;
+	for(int i = 0; i < this->zNrOfTextures; i++)
+	{
+		this->zTextureResources[i] = NULL;
+		this->zTextureResourceHasChanged[i] = false;
+		this->zTextureResourceToLoadFileName[i] = "";
+	}
 	this->zBlendMap = NULL;
 
 	this->CreateMesh();
+	this->zRecreateBoundingSphere = true;
+	this->zBoundingSphere = BoundingSphere();
 }
 
 Terrain::~Terrain()
@@ -258,7 +264,7 @@ void Terrain::RecreateWorldMatrix()
 }
 
 
-void Terrain::RecreateBoundingBox()
+void Terrain::RecreateBoudingSphere()
 {
 	//Go through the vertices and find the biggest and smallest values.
 	float infinity = std::numeric_limits<float>::infinity();
@@ -269,14 +275,13 @@ void Terrain::RecreateBoundingBox()
 		D3DXVec3Minimize(&minPos, &minPos, &this->zVertices[i].pos);
 		D3DXVec3Maximize(&maxPos, &maxPos, &this->zVertices[i].pos);
 	}
-	//Set positions for bounding box.
-	this->zBoundingBox.MinPos = Vector3(minPos.x, minPos.y, minPos.z);
-	this->zBoundingBox.MaxPos = Vector3(maxPos.x, maxPos.y, maxPos.z);
-	//Calculate the distance between min and max pos. (maxPos.x - minPos.X = width, etc.).
-	D3DXVECTOR3 size = maxPos - minPos;
-	this->zBoundingBox.Size = Vector3(size.x, size.y, size.z);
-	//Finally, set zRecreateBoundingBox to false so that no unnecessary computation is done next time GetBoundingBox() is called.
-	this->zRecreateBoundingBox = false;
+	//Get the center position and radius from maxPos and minPos.
+	this->zBoundingSphere.center = (maxPos + minPos) * 0.5f;
+	D3DXVECTOR3 tmp = D3DXVECTOR3(maxPos - this->zBoundingSphere.center);
+	this->zBoundingSphere.radius = D3DXVec3Length(&tmp);
+
+	//Finally, set zRecreateBoundingSphere to false so that no unnecessary computation is done next time GetBoundingSphere() is called.
+	this->zRecreateBoundingSphere = false;
 }
 
 
@@ -352,7 +357,7 @@ void Terrain::SetHeightMap(float const* const data)
 	this->CalculateNormals();
 
 	this->zHeightMapHasChanged = true;
-	this->zRecreateBoundingBox = true; //Bounding box needs to be recreated (done when calling GetBoundingBox()).
+	this->zRecreateBoundingSphere = true; //Bounding sphere needs to be recreated (done when calling GetBoundingSphere()).
 }
 
 void Terrain::SetTextures(char const* const* const fileNames)
@@ -362,18 +367,25 @@ void Terrain::SetTextures(char const* const* const fileNames)
 		for(int i = 0; i < this->zNrOfTextures; i++)
 		{
 			//Check if any textures are loaded.
-			if(this->zTextureResources[i] == NULL)
+			if(this->zTextureResources[i] == NULL || this->zTextureResources[i]->GetName() != string(fileNames[i]))
 			{
-				this->zTextureResources[i] = GetResourceManager()->CreateTextureResourceFromFile(fileNames[i]);
+				this->zTextureResourceHasChanged[i] = true;
+				this->zTextureResourceToLoadFileName[i] = fileNames[i];
+
+				//this->zTextureResources[i] = GetResourceManager()->CreateTextureResourceFromFile(fileNames[i]);
 			}
+			/*
 			//Check if texture file path has changed
 			else if(this->zTextureResources[i]->GetName() != string(fileNames[i]))
 			{
-				//Decrease the reference
+
+				/*
+				//Delete(Decrease the reference) current one.
 				GetResourceManager()->DeleteTextureResource(this->zTextureResources[i]);
-				//Assign it to the new path if it has
+				//Assign it to the new path if it has.
 				this->zTextureResources[i] = GetResourceManager()->CreateTextureResourceFromFile(fileNames[i]);
-			}
+			
+			}*/
 		}
 	}
 }

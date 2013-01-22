@@ -25,6 +25,9 @@ DxManager::DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam)
 	this->Shader_Text = NULL;
 	this->Shader_ShadowMapAnimated = NULL;
 
+	this->RenderedMeshes = 0;
+	this->RenderedTerrains = 0;
+
 	this->Shader_BillBoard = NULL;
 
 	for(int i = 0; i < NrOfRenderTargets; i++)
@@ -199,7 +202,7 @@ void DxManager::CreateTerrain(Terrain* terrain)
 	vertexBufferDesc.InitData = terrain->GetVerticesPointer(); 
 	vertexBufferDesc.NumElements = terrain->GetNrOfVertices();
 	vertexBufferDesc.Type = VERTEX_BUFFER;
-	vertexBufferDesc.Usage = BUFFER_DEFAULT; //BUFFER_CPU_WRITE***
+	vertexBufferDesc.Usage = BUFFER_DEFAULT;
 
 	Buffer* vertexBuffer = new Buffer();
 	if(FAILED(vertexBuffer->Init(this->Dx_Device, this->Dx_DeviceContext, vertexBufferDesc)))
@@ -734,32 +737,11 @@ void DxManager::SetSunLightDisabled()
 
 int DxManager::GetRenderedMeshCount() const
 {
-	int nrOfRendered = 0;
-	for(int i = 0; i < this->objects.size(); i++)
-	{
-		StaticMesh* ms = this->objects.get(i);
-		MaloW::Array<MeshStrip*>* strips = ms->GetStrips();
-		for(int u = 0; u < strips->size(); u++)
-		{
-			MeshStrip* s = strips->get(u);
-			if(!s->GetCulled())
-			{
-				nrOfRendered++;
-				u = strips->size();
-			}
-		}
-	}
-	return nrOfRendered;
+	return this->RenderedMeshes;
 }
 int DxManager::GetRenderedTerrainCount() const
 {
-	int nrOfRendered = 0;
-	for(int i = 0; i < this->terrains.size(); i++)
-	{
-		nrOfRendered += !this->terrains.get(i)->IsCulled();
-	}
-
-	return nrOfRendered;
+	return this->RenderedTerrains;
 }
 
 void DxManager::SetCamera( Camera* cam )

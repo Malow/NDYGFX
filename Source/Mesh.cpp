@@ -29,17 +29,6 @@ Mesh::~Mesh()
 	GetResourceManager()->UnloadObjectData(this->filePath.c_str());
 }
 
-void DoMinMax(D3DXVECTOR3& min, D3DXVECTOR3& max, D3DXVECTOR3 v)
-{
-	min.x = min(min.x, v.x);
-	min.y = min(min.y, v.y);
-	min.z = min(min.z, v.z);
-
-	max.x = max(max.x, v.x);
-	max.y = max(max.y, v.y);
-	max.z = max(max.z, v.z);
-}
-
 bool Mesh::LoadFromFile(string file)
 {
 	this->filePath = file;

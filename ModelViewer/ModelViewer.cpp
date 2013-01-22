@@ -85,7 +85,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	iTerrain* iT = GetGraphics()->CreateTerrain(Vector3(0, 0, 0), Vector3(testSize, 0.0f, testSize), vertSize);
 	iTerrain* iT2 = GetGraphics()->CreateTerrain(Vector3(testSize, 0, 0), Vector3(testSize, 0.0f, testSize), vertSize);
 	
-	//iAnimatedMesh* iAM = GetGraphics()->CreateAnimatedMesh("Media/FlagBlue.ani", Vector3(0, 0, 0));
+	iAnimatedMesh* iAM = GetGraphics()->CreateAnimatedMesh("Media/FlagBlue.ani", Vector3(30, 30, 30));
 	//iImage* iM = GetGraphics()->CreateImage(Vector2(100, 100), Vector2(100, 100), "Media/BallTexture.png");
 	//iText* iTe = GetGraphics()->CreateText("durp", Vector2(300, 100), 1.0f, "Media/Fonts/1");
 	
@@ -409,11 +409,21 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		{
 			debugCSMScale += diff * 0.001f;
 			model->Scale(1 + diff * 0.01f);
+			fileNames[0] = "Media/TerrainTexture.png";
+			fileNames[1] = "Media/BallTexture.png";
+			fileNames[2] = "Media/BallTexture.png";
+			fileNames[3] = "Media/BallTexture.png";
+			iT->SetTextures(fileNames);
 		}
 		if(GetGraphics()->GetKeyListener()->IsPressed('E'))
 		{
 			debugCSMScale -= diff * 0.001f;
 			model->Scale(1 - diff * 0.01f);
+			fileNames[0] = "Media/BallTexture.png";
+			fileNames[1] = "Media/TerrainTexture.png";
+			fileNames[2] = "Media/TerrainTexture.png";
+			fileNames[3] = "Media/TerrainTexture.png";
+			iT->SetTextures(fileNames);
 		}
 		/*for(int i = 0; i < ttte * nrOfFrustumSlices; i++)
 		{

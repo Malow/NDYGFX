@@ -733,21 +733,14 @@ void DxManager::CalculateCulling()
 	FrustrumPlanes[5].c = VP._34 + VP._32;
 	FrustrumPlanes[5].d = VP._44 + VP._42;
 	D3DXPlaneNormalize(&FrustrumPlanes[5], &FrustrumPlanes[5]);
-
+	/*
 	//Terrain
 	for(int i = 0; i < this->terrains.size(); i++)
 	{
 		Terrain* terr = this->terrains.get(i);
 
-		//Get bounding box
-		BoundingBox bb = terr->GetBoundingBox();
-		
-		//**TILLMAN**
 		float scale = max(terr->GetScale().x, max(terr->GetScale().y, terr->GetScale().z));
-		D3DXVECTOR3 minPos = D3DXVECTOR3(bb.MinPos.x, bb.MinPos.y, bb.MinPos.z);
-		D3DXVECTOR3 maxPos = D3DXVECTOR3(bb.MaxPos.x, bb.MaxPos.y, bb.MaxPos.z);
-		BoundingSphere bs = BoundingSphere(minPos, maxPos);
-		if(pe.FrustrumVsSphere(this->FrustrumPlanes, bs, terr->GetWorldMatrix(), scale))
+		if(pe.FrustrumVsSphere(this->FrustrumPlanes, terr->GetBoundingSphere(), terr->GetWorldMatrix(), scale))
 		{
 			terr->SetCulled(false);
 		}
@@ -756,7 +749,7 @@ void DxManager::CalculateCulling()
 			terr->SetCulled(true);
 		}
 	}
-
+	*/
 
 
 	//Static meshes
@@ -776,6 +769,23 @@ void DxManager::CalculateCulling()
 			{
 				s->SetCulled(true);
 			}
+		}
+	}
+
+	//Animated meshes
+	for(int i = 0; i < this->animations.size(); i++)
+	{
+		AnimatedMesh* ms = this->animations.get(i);
+		MeshStrip* s = ms->GetStrips()->get(0);
+
+		float scale = max(ms->GetScaling().x, max(ms->GetScaling().y, ms->GetScaling().z));
+		if(pe.FrustrumVsSphere(this->FrustrumPlanes, s->GetBoundingSphere(), ms->GetWorldMatrix(), scale))
+		{
+			s->SetCulled(false);
+		}
+		else
+		{
+			s->SetCulled(true);
 		}
 	}
 }

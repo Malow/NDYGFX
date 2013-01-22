@@ -15,6 +15,7 @@
 #include "Material.h"
 #include "TextureResource.h"
 #include "ResourceManager.h"
+#include "BoundingSphere.h"
 
 
 struct BlendMap
@@ -28,7 +29,7 @@ struct BlendMap
 	BlendMap(unsigned int size, float* data) {HasChanged = true; Size = size; Data = data; SRV = NULL; }
 	virtual ~BlendMap() { Data = NULL; if(SRV) SRV->Release(); SRV = NULL; }
 
-};
+};/*
 struct BoundingBox
 {
 	Vector3 Size;
@@ -36,7 +37,7 @@ struct BoundingBox
 	Vector3 MaxPos; 
 
 	BoundingBox(const Vector3 &Size = Vector3(), const Vector3 &MinPos = Vector3(), const Vector3 &MaxPos = Vector3()) : Size(Size), MinPos(MinPos), MaxPos(MaxPos) {}
-};
+};*/
 
 class Terrain : public iTerrain
 {
@@ -61,9 +62,12 @@ class Terrain : public iTerrain
 		float						zTextureScale;
 		int							zNrOfTextures;
 		TextureResource**			zTextureResources;
+		bool						zTextureResourceHasChanged[4];
+		string						zTextureResourceToLoadFileName[4]; //**TILLMAN
 		BlendMap*					zBlendMap;
-		bool						zRecreateBoundingBox;
-		BoundingBox					zBoundingBox;
+		bool						zRecreateBoundingSphere;
+		BoundingSphere				zBoundingSphere;
+
 		
 
 	private:
@@ -101,9 +105,11 @@ class Terrain : public iTerrain
 		float GetTextureScale() const { return this->zTextureScale; }
 		int GetNrOfTextures() const { return this->zNrOfTextures; }
 		TextureResource* GetTexture(unsigned int index) const { return this->zTextureResources[index]; }
+		bool HasTextureResourceChanged(unsigned int index) const { return this->zTextureResourceHasChanged[index]; }
+		string GetTextureResourceToLoadFileName(unsigned int index) const { return this->zTextureResourceToLoadFileName[index]; }
 		//string GetTextureFileName(unsigned int index) { return this->zTextureFileNames[index]; }
 		BlendMap* GetBlendMapPointer() { return this->zBlendMap; }
-		BoundingBox GetBoundingBox() { if(this->zRecreateBoundingBox) { RecreateBoundingBox(); } return this->zBoundingBox; }
+		BoundingSphere GetBoundingSphere() { if(this->zRecreateBoundingSphere) { RecreateBoundingSphere(); } return this->zBoundingSphere; }
 
 		//Set
 		void SetCulled(bool cull) { this->zIsCulled = cull; }
@@ -111,12 +117,14 @@ class Terrain : public iTerrain
 		void HeightMapHasChanged(bool has) { this->zHeightMapHasChanged = has; }
 		void SetVertexBuffer(Buffer* vertexBuffer) { this->zVertexBuffer = vertexBuffer; }
 		void SetIndexBuffer(Buffer* indexBuffer) { this->zIndexBuffer = indexBuffer; }
+		void SetTexture(unsigned int index, TextureResource* textureResource) const { this->zTextureResources[index] = textureResource; }
+		void TextureResourceHasChanged(unsigned int index, bool has) { this->zTextureResourceHasChanged[index] = has; this->zTextureResourceToLoadFileName[index] = ""; }
 		
 
 		//Other
 		//Is used internally when needed, but can be used from the outside for debugging.
 		void RecreateWorldMatrix();
-		void RecreateBoundingBox();
+		void RecreateBoundingSphere();
 		
 		//bool LoadTexture();
 		//bool LoadTextures()
