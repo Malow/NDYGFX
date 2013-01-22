@@ -288,7 +288,7 @@ float Terrain::GetYPositionAt(float x, float z) const
 	float ez = x / this->zScale.x;
 
 	//if(((ex && ex) <= 1.0f) && ((ex && ez) > 0.0f)) //**tillman opt
-	if(ex <= 1.0f && ez <= 1.0f && ex > 0.0f && ez > 0.0f) 
+	if(ex < 1.0f && ez < 1.0f && ex >= 0.0f && ez >= 0.0f) 
 	{
 		ex *= this->zSize;
 		ez *= this->zSize;
