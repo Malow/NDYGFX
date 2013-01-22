@@ -436,8 +436,10 @@ float GraphicsEngineImp::Update()
 	
 	this->dx->Update(diff);
 
-	std::string txt = "FPS: " + MaloW::convertNrToString((float)this->fpsLast) + " - "; 
-	txt += "Camera Pos: " + MaloW::convertNrToString(this->dx->GetCamera()->GetPosition().x) + " " + 
+	if(this->isManagingMyOwnWindow)
+	{
+		std::string txt = "FPS: " + MaloW::convertNrToString((float)this->fpsLast) + " - "; 
+		txt += "Camera Pos: " + MaloW::convertNrToString(this->dx->GetCamera()->GetPosition().x) + " " + 
 		MaloW::convertNrToString(this->dx->GetCamera()->GetPosition().y) + " " + 
 		MaloW::convertNrToString(this->dx->GetCamera()->GetPosition().z) + "    -    Mesh Count: " + 
 		MaloW::convertNrToString(this->dx->GetMeshCount()) + "    -    Rendered Meshes: " + 
@@ -445,7 +447,8 @@ float GraphicsEngineImp::Update()
 		MaloW::convertNrToString(this->dx->GetTerrainCount()) + "   -   Rendered Terrains: " +
 		MaloW::convertNrToString(this->dx->GetRenderedTerrainCount());
 
-	SetWindowText(this->hWnd, txt.c_str());
+		SetWindowText(this->hWnd, txt.c_str());
+	}
 
 	return diff;	// Return in seconds
 }
