@@ -175,9 +175,11 @@ public:
 	void SetCamera(Camera* cam);
 	Camera* GetCamera() const;
 
-	int GetTriangleCount() { return this->TriangleCount; }
-	int GetMeshCount() { return this->objects.size() + this->animations.size(); }
-	int GetRenderedMeshCount();
+	inline int GetTriangleCount() { return this->TriangleCount; }
+	inline int GetMeshCount() { return this->objects.size() + this->animations.size(); }
+	int GetRenderedMeshCount() const;
+	inline int GetTerrainCount() const { return this->terrains.size(); }
+	int GetRenderedTerrainCount() const; 
 	void SetFPSMAX( float maxFPS );
 	void SetSunLightProperties(Vector3 direction, Vector3 lightColor, float intensity);
 	void SetSunLightDisabled();

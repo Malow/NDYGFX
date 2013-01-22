@@ -208,9 +208,8 @@ float4 PSScene(PSSceneIn input) : SV_Target
 		specLighting = saturate(specLighting / NrOfLights);
 	}
 	
-	
+	//TILLMAN START OF CSM
 	// Sun
-	float4 csmDbg = float4(1.0f, 1.0f, 1.0f, 1.0f);
 	if(UseSun)
 	{
 		// Diff light
@@ -219,7 +218,7 @@ float4 PSScene(PSSceneIn input) : SV_Target
 		float3 h = normalize(normalize(CameraPosition.xyz - WorldPos.xyz) - sun.Direction);
 		float specLight = pow(saturate(dot(h, NormsAndDepth.xyz)), SpecularPower) * sun.LightIntensity;
 
-		//TILLMAN START OF CSM
+		
 		
 		uint cascademap = 0;
 		float distancePixel = length(CameraPosition.xyz - WorldPos.xyz);
@@ -239,8 +238,13 @@ float4 PSScene(PSSceneIn input) : SV_Target
 		// Compute pixel depth for shadowing.
 		float depth = posLight.z / posLight.w;
 
-		float SHADOW_EPSILON = 0.00001f;			////////////// PUT THIS WHERE?
+		//A value of 0.004f is required to remove all self-shadowing. //**TILLMAN - 0.004f för helt, 0.002f för self?**
+		float CSM_SHADOW_EPSILON = 0.002f;			////////////// PUT THIS WHERE?
 
+		/*float strength = 1.0f;
+		uint nrOfCSMs = 3;
+		float z = strength * n pow(f / n),i / nrOfCSMs) + (1 - strength) * (n + (i / nrOfCSMs) * (f - n);
+		*/
 
 		//float PCF_SIZE = 3.0f;								////// Not able to move this to cbuffer, why?
 
@@ -262,15 +266,15 @@ float4 PSScene(PSSceneIn input) : SV_Target
 				{
 					if(cascademap == 0)
 					{
-						shadow += (CascadedShadowMap[0].SampleLevel(shadowMapSampler, smTex + float2(SMAP_DX * (s - PCF_SIZE/2) , SMAP_DX * (q - PCF_SIZE/2)), 0).r + SHADOW_EPSILON < depth) ? 0.0f : 1.0f;
+						shadow += (CascadedShadowMap[0].SampleLevel(shadowMapSampler, smTex + float2(SMAP_DX * (s - PCF_SIZE/2) , SMAP_DX * (q - PCF_SIZE/2)), 0).r + CSM_SHADOW_EPSILON < depth) ? 0.0f : 1.0f;
 					}
 					if(cascademap == 1)
 					{
-						shadow += (CascadedShadowMap[1].SampleLevel(shadowMapSampler, smTex + float2(SMAP_DX * (s - PCF_SIZE/2) , SMAP_DX * (q - PCF_SIZE/2)), 0).r + SHADOW_EPSILON < depth) ? 0.0f : 1.0f;
+						shadow += (CascadedShadowMap[1].SampleLevel(shadowMapSampler, smTex + float2(SMAP_DX * (s - PCF_SIZE/2) , SMAP_DX * (q - PCF_SIZE/2)), 0).r + CSM_SHADOW_EPSILON < depth) ? 0.0f : 1.0f;
 					}
 					if(cascademap == 2 || shadow == 0.0f)
 					{
-						shadow += (CascadedShadowMap[2].SampleLevel(shadowMapSampler, smTex + float2(SMAP_DX * (s - PCF_SIZE/2) , SMAP_DX * (q - PCF_SIZE/2)), 0).r + SHADOW_EPSILON < depth) ? 0.0f : 1.0f;
+						shadow += (CascadedShadowMap[2].SampleLevel(shadowMapSampler, smTex + float2(SMAP_DX * (s - PCF_SIZE/2) , SMAP_DX * (q - PCF_SIZE/2)), 0).r + CSM_SHADOW_EPSILON < depth) ? 0.0f : 1.0f;
 					}
 				}
 			}

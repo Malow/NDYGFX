@@ -107,7 +107,7 @@ void CascadedShadowMap::CalcShadowMapMatrices(D3DXVECTOR3 sunLight, Camera* cam,
 		D3DXVec3Maximize (&vLightCameraOrthographicMax, &vec3, &vLightCameraOrthographicMax );
 	}
 	D3DXVECTOR3 tmpNearPlanePoint = minValue;
-	tmpNearPlanePoint += sunLight * 100.0f; //**tillman opt || variablifiera (((i + 1) ))
+	tmpNearPlanePoint += sunLight * 100.0f; //set the near plane to be closer to the light to include more potential occluders.//**tillman opt || variablifiera (((i + 1) ))
 	float nearPlane = tmpNearPlanePoint.z; 
 	float farPlane = maxValue.z;
 
@@ -216,6 +216,12 @@ void CascadedShadowMap::CalcShadowMappingSplitDepths()
 	float camFar  = this->params.FarClip;
 
 	this->shadowMappingSplitDepths[0] = camNear;
+	/*float scale = ;
+	for(int i = 1; i < SHADOW_MAP_CASCADE_COUNT; i++) //TILLMAN TODO
+	{
+		this->shadowMappingSplitDepths[i] = camFar * scale * 0.001f;
+	}*/
+	//this->shadowMappingSplitDepths[1] = camFar * 0.025f;
 	this->shadowMappingSplitDepths[1] = camFar * 0.1f;
 	this->shadowMappingSplitDepths[2] = camFar * 0.4f;
 	this->shadowMappingSplitDepths[SHADOW_MAP_CASCADE_COUNT] = camFar;
@@ -239,8 +245,8 @@ void CascadedShadowMap::CalcShadowMappingSplitDepths()
 void CascadedShadowMap::Init(ID3D11Device* g_Device, int quality)
 {
 	this->quality = quality;
-	int width = (int)(256 * pow(2.0f, quality/2));
-	int height = (int)(256 * pow(2.0f, quality/2));
+	int width = (int)(256.0f * pow(2.0f, quality / 2.0f));
+	int height = (int)(256.0f * pow(2.0f, quality / 2.0f));
 
 	for(int i = 0; i < SHADOW_MAP_CASCADE_COUNT; i++)
 	{

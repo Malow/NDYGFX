@@ -864,20 +864,3 @@ bool PhysicsEngine::FrustrumVsSphere( D3DXPLANE planes[], BoundingSphere bs, D3D
 	// otherwise we are fully in view
 	return true;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

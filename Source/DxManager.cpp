@@ -732,7 +732,7 @@ void DxManager::SetSunLightDisabled()
 	this->useSun = false;
 }
 
-int DxManager::GetRenderedMeshCount()
+int DxManager::GetRenderedMeshCount() const
 {
 	int nrOfRendered = 0;
 	for(int i = 0; i < this->objects.size(); i++)
@@ -749,6 +749,16 @@ int DxManager::GetRenderedMeshCount()
 			}
 		}
 	}
+	return nrOfRendered;
+}
+int DxManager::GetRenderedTerrainCount() const
+{
+	int nrOfRendered = 0;
+	for(int i = 0; i < this->terrains.size(); i++)
+	{
+		nrOfRendered += !this->terrains.get(i)->IsCulled();
+	}
+
 	return nrOfRendered;
 }
 

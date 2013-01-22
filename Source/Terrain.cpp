@@ -147,6 +147,7 @@ void Terrain::CalculateNormals()
 
 Terrain::Terrain()
 {
+	this->zIsCulled = false;
 	this->zSize = 0;
 	this->zPos = D3DXVECTOR3(0, 0, 0);
 	this->zScale = D3DXVECTOR3(0, 0, 0);
@@ -172,12 +173,16 @@ Terrain::Terrain()
 	this->zTextureResources[2] = NULL;
 	this->zTextureResources[3] = NULL;
 	this->zBlendMap = NULL;
+
+	this->zRecreateBoundingBox = false;
+	this->zBoundingBox = BoundingBox();
 }
 
 
 
 Terrain::Terrain(D3DXVECTOR3 pos, D3DXVECTOR3 scale, unsigned int size)
 {
+	this->zIsCulled = false;
 	this->zPos = pos;
 	this->zScale = scale;
 	this->zSize = size;
@@ -243,6 +248,26 @@ void Terrain::RecreateWorldMatrix()
 	D3DXMATRIX world = scaling * translate;
 
 	this->zWorldMatrix = world;
+}
+void Terrain::RecreateBoundingBox()
+{
+	//Go through the vertices and find the biggest and smallest values.
+	float infinity = std::numeric_limits<float>::infinity();
+	D3DXVECTOR3 minPos = D3DXVECTOR3(infinity, infinity, infinity);
+	D3DXVECTOR3 maxPos = D3DXVECTOR3(-infinity, -infinity, -infinity);
+	for(int i = 0; i < this->zNrOfVertices; i++)
+	{
+		D3DXVec3Minimize(&minPos, &minPos, &this->zVertices[i].pos);
+		D3DXVec3Maximize(&maxPos, &maxPos, &this->zVertices[i].pos);
+	}
+	//Set positions for bounding box.
+	this->zBoundingBox.MinPos = Vector3(minPos.x, minPos.y, minPos.z);
+	this->zBoundingBox.MaxPos = Vector3(maxPos.x, maxPos.y, maxPos.z);
+	//Calculate the distance between min and max pos. (maxPos.x - minPos.X = width, etc.).
+	D3DXVECTOR3 size = maxPos - minPos;
+	this->zBoundingBox.Size = Vector3(size.x, size.y, size.z);
+	//Finally, set zRecreateBoundingBox to false so that no unnecessary computation is done next time GetBoundingBox() is called.
+	this->zRecreateBoundingBox = false;
 }
 
 
@@ -318,6 +343,7 @@ void Terrain::SetHeightMap(float const* const data)
 	this->CalculateNormals();
 
 	this->zHeightMapHasChanged = true;
+	this->zRecreateBoundingBox = true; //Bounding box needs to be recreated (done when calling GetBoundingBox()).
 }
 
 void Terrain::SetTextures(char const* const* const fileNames)

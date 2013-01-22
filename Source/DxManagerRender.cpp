@@ -426,7 +426,7 @@ void DxManager::RenderShadowMap()
 
 	
 	// Deferred:
-	this->Shader_DeferredLightning->SetFloat("SMAP_DX", 1.0f / (256 * pow(2.0f, this->params.ShadowMapSettings/2)));
+	this->Shader_DeferredLightning->SetFloat("SMAP_DX", 1.0f / (256.0f * pow(2.0f, this->params.ShadowMapSettings / 2.0f)));
 	this->Shader_DeferredLightning->SetFloat("PCF_SIZE", PCF_SIZE);
 	this->Shader_DeferredLightning->SetFloat("PCF_SIZE_SQUARED", PCF_SQUARED);
 	//this->Shader_DeferredLightning->SetFloat("SMAP_DX", 1.0f / 256.0f);
@@ -666,7 +666,7 @@ void DxManager::RenderCascadedShadowMap()
 		float PCF_SIZE = (float)this->params.ShadowMapSettings + 1;
 		float PCF_SQUARED = 1 / (PCF_SIZE * PCF_SIZE);
 
-		this->Shader_DeferredLightning->SetFloat("SMAP_DX", 1.0f / (256 * pow(2.0f, this->params.ShadowMapSettings/2)));
+		this->Shader_DeferredLightning->SetFloat("SMAP_DX", 1.0f / (256.0f * pow(2.0f, this->params.ShadowMapSettings / 2.0f)));
 		this->Shader_DeferredLightning->SetFloat("PCF_SIZE", PCF_SIZE);
 		this->Shader_DeferredLightning->SetFloat("PCF_SIZE_SQUARED", PCF_SQUARED);
 		this->Shader_DeferredLightning->SetFloat("NrOfCascades", (float)this->csm->GetNrOfCascadeLevels());
@@ -734,8 +734,32 @@ void DxManager::CalculateCulling()
 	FrustrumPlanes[5].d = VP._44 + VP._42;
 	D3DXPlaneNormalize(&FrustrumPlanes[5], &FrustrumPlanes[5]);
 
+	//Terrain
+	for(int i = 0; i < this->terrains.size(); i++)
+	{
+		Terrain* terr = this->terrains.get(i);
+
+		//Get bounding box
+		BoundingBox bb = terr->GetBoundingBox();
+		
+		//**TILLMAN**
+		float scale = max(terr->GetScale().x, max(terr->GetScale().y, terr->GetScale().z));
+		D3DXVECTOR3 minPos = D3DXVECTOR3(bb.MinPos.x, bb.MinPos.y, bb.MinPos.z);
+		D3DXVECTOR3 maxPos = D3DXVECTOR3(bb.MaxPos.x, bb.MaxPos.y, bb.MaxPos.z);
+		BoundingSphere bs = BoundingSphere(minPos, maxPos);
+		if(pe.FrustrumVsSphere(this->FrustrumPlanes, bs, terr->GetWorldMatrix(), scale))
+		{
+			terr->SetCulled(false);
+		}
+		else
+		{
+			terr->SetCulled(true);
+		}
+	}
 
 
+
+	//Static meshes
 	for(int i = 0; i < this->objects.size(); i++)
 	{
 		StaticMesh* ms = this->objects.get(i);

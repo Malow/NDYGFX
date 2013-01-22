@@ -29,10 +29,19 @@ struct BlendMap
 	virtual ~BlendMap() { Data = NULL; if(SRV) SRV->Release(); SRV = NULL; }
 
 };
+struct BoundingBox
+{
+	Vector3 Size;
+	Vector3 MinPos;
+	Vector3 MaxPos; 
+
+	BoundingBox(const Vector3 &Size = Vector3(), const Vector3 &MinPos = Vector3(), const Vector3 &MaxPos = Vector3()) : Size(Size), MinPos(MinPos), MaxPos(MaxPos) {}
+};
 
 class Terrain : public iTerrain
 {
 	private:
+		bool						zIsCulled;
 		unsigned int				zSize; //size of mesh (width & height)
 		D3DXVECTOR3					zPos;
 		D3DXVECTOR3					zScale;
@@ -53,6 +62,8 @@ class Terrain : public iTerrain
 		int							zNrOfTextures;
 		TextureResource**			zTextureResources;
 		BlendMap*					zBlendMap;
+		bool						zRecreateBoundingBox;
+		BoundingBox					zBoundingBox;
 		
 
 	private:
@@ -67,7 +78,8 @@ class Terrain : public iTerrain
 		virtual ~Terrain();
 
 		//Get
-		int GetSize() const { return this->zSize; }
+		bool IsCulled() const { return this->zIsCulled; }
+		unsigned int GetSize() const { return this->zSize; }
 		virtual Vector3 GetPosition() const;
 		D3DXVECTOR3 GetScale() const { return this->zScale; }
 		D3DXMATRIX GetWorldMatrix() const { return this->zWorldMatrix; }
@@ -88,8 +100,10 @@ class Terrain : public iTerrain
 		TextureResource* GetTexture(unsigned int index) const { return this->zTextureResources[index]; }
 		//string GetTextureFileName(unsigned int index) { return this->zTextureFileNames[index]; }
 		BlendMap* GetBlendMapPointer() { return this->zBlendMap; }
+		BoundingBox GetBoundingBox() { if(this->zRecreateBoundingBox) { RecreateBoundingBox(); } return this->zBoundingBox; }
 
 		//Set
+		void SetCulled(bool cull) { this->zIsCulled = cull; }
 		void SetScale(D3DXVECTOR3 scale) { this->zScale = scale; }
 		void HeightMapHasChanged(bool has) { this->zHeightMapHasChanged = has; }
 		void SetVertexBuffer(Buffer* vertexBuffer) { this->zVertexBuffer = vertexBuffer; }
@@ -99,6 +113,7 @@ class Terrain : public iTerrain
 		//Other
 		//Is used internally when needed, but can be used from the outside for debugging.
 		void RecreateWorldMatrix();
+		void RecreateBoundingBox();
 		
 		//bool LoadTexture();
 		//bool LoadTextures()

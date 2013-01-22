@@ -21,12 +21,13 @@ namespace MaloW
 		Array();
 		virtual ~Array();
 
-		T& operator[](int pos);
+		T& operator[](unsigned int pos);
 
 		void add(const T& item);
-		T& get(int pos);
-		T getAndRemove(int pos);
-		T getAndRemoveStaySorted(int pos);
+		const T& get(unsigned int pos) const;
+		T& get(unsigned int pos);
+		T getAndRemove(unsigned int pos);
+		T getAndRemoveStaySorted(unsigned int pos);
 		bool isEmpty();
 		bool hasItem(const T& item);
 		bool remove(const T& item);
@@ -80,7 +81,7 @@ namespace MaloW
 	}
 
 	template <typename T>
-	T& Array<T>::operator[](int pos)
+	T& Array<T>::operator[](unsigned int pos)
 	{
 		return this->get(pos);
 	}
@@ -95,13 +96,19 @@ namespace MaloW
 	}
 
 	template <typename T>
-	T& Array<T>::get(int pos)
+	const T& Array<T>::get( unsigned int pos) const
 	{
 		return *this->items[pos];
 	}
 
 	template <typename T>
-	T Array<T>::getAndRemove(int pos)
+	T& Array<T>::get( unsigned int pos)
+	{
+		return *this->items[pos];
+	}
+
+	template <typename T>
+	T Array<T>::getAndRemove( unsigned int pos)
 	{
 		T retVal;
 		retVal = *this->items[pos];
@@ -110,7 +117,7 @@ namespace MaloW
 	}
 
 	template <typename T>
-	T Array<T>::getAndRemoveStaySorted(int pos)
+	T Array<T>::getAndRemoveStaySorted(unsigned int pos)
 	{
 		T retVal;
 		retVal = *this->items[pos];

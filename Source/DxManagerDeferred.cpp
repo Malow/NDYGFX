@@ -84,205 +84,212 @@ void DxManager::RenderDeferredGeometry()
 	for(int i = 0; i < this->terrains.size(); i++)
 	{
 		Terrain* terrPtr = this->terrains.get(i);
-
-		//Set topology
-		this->Dx_DeviceContext->IASetPrimitiveTopology(terrPtr->GetTopology());
-
-		//Calculate matrices & set them
-		world = terrPtr->GetWorldMatrix();
-		wvp = world * view * proj;
-		D3DXMatrixInverse(&worldInverseTranspose, NULL, &world); //worldInverseTranspose needs to be an identity matrix.
-		D3DXMatrixTranspose(&worldInverseTranspose, &worldInverseTranspose); //Used for calculating right normal
-		this->Shader_DeferredGeometryBlendMap->SetMatrix("WVP", wvp);
-		this->Shader_DeferredGeometryBlendMap->SetMatrix("worldMatrix", world);
-		this->Shader_DeferredGeometryBlendMap->SetMatrix("worldMatrixInverseTranspose", worldInverseTranspose);
-
-		//Update vertex buffer if y-value for vertices (height map) have changed
-		if(terrPtr->HasHeightMapChanged())
+		//Check if the terrain has been culled.
+		if(terrPtr->IsCulled() == false)
 		{
-			//**OPT(OBS! Ev. only for editor): should be replaced with an update function ** TILLMAN
-				//this->Dx_DeviceContext->UpdateSubresource()
-			/*int srcRP = sizeof(float) * terrPtr->GetSize();
-			int srcDP = srcRP * terrPtr->GetSize(); 
-			this->Dx_DeviceContext->UpdateSubresource(
-				terrPtr->GetVertexBufferPointer()->GetBufferPointer(),
-				D3D10CalcSubresource(0, 0, 1),
-				NULL,
-				terrPtr->GetVerticesPointer(),
-				srcRP,
-				srcDP);
-			*/
-			//Save pointer to buffer
-			Buffer* oldBuffer = terrPtr->GetVertexBufferPointer();
+			//Set topology
+			this->Dx_DeviceContext->IASetPrimitiveTopology(terrPtr->GetTopology());
 
-			//Create new vertex buffer
-			BUFFER_INIT_DESC vertexBufferDesc;
-			vertexBufferDesc.ElementSize = sizeof(Vertex);
-			vertexBufferDesc.InitData = terrPtr->GetVerticesPointer(); 
-			vertexBufferDesc.NumElements = terrPtr->GetNrOfVertices();
-			vertexBufferDesc.Type = VERTEX_BUFFER;
-			vertexBufferDesc.Usage = BUFFER_DEFAULT;
+			//Calculate matrices & set them
+			world = terrPtr->GetWorldMatrix();
+			wvp = world * view * proj;
+			D3DXMatrixInverse(&worldInverseTranspose, NULL, &world); //worldInverseTranspose needs to be an identity matrix.
+			D3DXMatrixTranspose(&worldInverseTranspose, &worldInverseTranspose); //Used for calculating right normal
+			this->Shader_DeferredGeometryBlendMap->SetMatrix("WVP", wvp);
+			this->Shader_DeferredGeometryBlendMap->SetMatrix("worldMatrix", world);
+			this->Shader_DeferredGeometryBlendMap->SetMatrix("worldMatrixInverseTranspose", worldInverseTranspose);
 
-			Buffer* newBuffer = new Buffer();
-			if(FAILED(newBuffer->Init(this->Dx_Device, this->Dx_DeviceContext, vertexBufferDesc)))
-				MaloW::Debug("ERROR: Could not create new vertex buffer for terrain.");
-			//Set it
-			terrPtr->SetVertexBuffer(newBuffer);
-			//Delete old buffer
-			if(oldBuffer) delete oldBuffer;
-
-			//Set that the height map shall not be changed anymore.
-			terrPtr->HeightMapHasChanged(false);
-		}
-
-		//Set Textures
-		//Reset textures so that previous textures are not used if a texture is missing.
-		this->Shader_DeferredGeometryBlendMap->SetResource("tex0", NULL);
-		this->Shader_DeferredGeometryBlendMap->SetResource("tex1", NULL);
-		this->Shader_DeferredGeometryBlendMap->SetResource("tex2", NULL);
-		this->Shader_DeferredGeometryBlendMap->SetResource("tex3", NULL);
-		//Check if texture(name/path) have changed, create new shader resource view if it has
-		//OBS! Do not put this code in a for loop using malow::ConvertNrToString()-function. (Performance loss).
-		bool hasTexture = false;
-		if(terrPtr->GetTexture(0) != NULL)
-		{
-			this->Shader_DeferredGeometryBlendMap->SetResource("tex0", terrPtr->GetTexture(0)->GetSRVPointer());
-			hasTexture = true;
-		}
-		if(terrPtr->GetTexture(1) != NULL)
-		{
-			this->Shader_DeferredGeometryBlendMap->SetResource("tex1", terrPtr->GetTexture(1)->GetSRVPointer());
-			hasTexture = true;
-		}
-		if(terrPtr->GetTexture(2) != NULL)
-		{
-			this->Shader_DeferredGeometryBlendMap->SetResource("tex2", terrPtr->GetTexture(2)->GetSRVPointer());
-			hasTexture = true;
-		}
-		if(terrPtr->GetTexture(3) != NULL)
-		{
-			this->Shader_DeferredGeometryBlendMap->SetResource("tex3", terrPtr->GetTexture(3)->GetSRVPointer());
-			hasTexture = true;
-		}
-
-		/*for(int j = 0; j < terrPtr->GetNrOfTextures(); j++)
-		{
-			shaderTexName += MaloW::convertNrToString((float)(j + 1));
-			if(terrPtr->GetTexture(j) != NULL)
+			//Update vertex buffer if y-value for vertices (height map) have changed
+			if(terrPtr->HasHeightMapChanged())
 			{
-				this->Shader_DeferredGeometryBlendMap->SetResource(shaderTexName.c_str(), terrPtr->GetTexture(j)->GetSRVPointer());
+				//**OPT(OBS! Ev. only for editor): should be replaced with an update function ** TILLMAN
+					//this->Dx_DeviceContext->UpdateSubresource()
+				/*int srcRP = sizeof(float) * terrPtr->GetSize();
+				int srcDP = srcRP * terrPtr->GetSize(); 
+				this->Dx_DeviceContext->UpdateSubresource(
+					terrPtr->GetVertexBufferPointer()->GetBufferPointer(),
+					D3D10CalcSubresource(0, 0, 1),
+					NULL,
+					terrPtr->GetVerticesPointer(),
+					srcRP,
+					srcDP);
+				*/
+				//Save pointer to buffer
+				Buffer* oldBuffer = terrPtr->GetVertexBufferPointer();
+
+				//Create new vertex buffer
+				BUFFER_INIT_DESC vertexBufferDesc;
+				vertexBufferDesc.ElementSize = sizeof(Vertex);
+				vertexBufferDesc.InitData = terrPtr->GetVerticesPointer(); 
+				vertexBufferDesc.NumElements = terrPtr->GetNrOfVertices();
+				vertexBufferDesc.Type = VERTEX_BUFFER;
+				vertexBufferDesc.Usage = BUFFER_DEFAULT;
+
+				Buffer* newBuffer = new Buffer();
+				if(FAILED(newBuffer->Init(this->Dx_Device, this->Dx_DeviceContext, vertexBufferDesc)))
+					MaloW::Debug("ERROR: Could not create new vertex buffer for terrain.");
+				//Set it
+				terrPtr->SetVertexBuffer(newBuffer);
+				//Delete old buffer
+				if(oldBuffer) delete oldBuffer;
+
+				//Set that the height map shall not be changed anymore.
+				terrPtr->HeightMapHasChanged(false);
+			}
+
+			//Set Textures
+			//Reset textures so that previous textures are not used if a texture is missing.
+			this->Shader_DeferredGeometryBlendMap->SetResource("tex0", NULL);
+			this->Shader_DeferredGeometryBlendMap->SetResource("tex1", NULL);
+			this->Shader_DeferredGeometryBlendMap->SetResource("tex2", NULL);
+			this->Shader_DeferredGeometryBlendMap->SetResource("tex3", NULL);
+			//Check if texture(name/path) have changed, create new shader resource view if it has
+			//OBS! Do not put this code in a for loop using malow::ConvertNrToString()-function. (Performance loss).
+			bool hasTexture = false;
+			if(terrPtr->GetTexture(0) != NULL)
+			{
+				this->Shader_DeferredGeometryBlendMap->SetResource("tex0", terrPtr->GetTexture(0)->GetSRVPointer());
 				hasTexture = true;
 			}
-			else
+			if(terrPtr->GetTexture(1) != NULL)
 			{
-				this->Shader_DeferredGeometryBlendMap->SetResource(shaderTexName.c_str(), NULL);
+				this->Shader_DeferredGeometryBlendMap->SetResource("tex1", terrPtr->GetTexture(1)->GetSRVPointer());
+				hasTexture = true;
 			}
-		}*/
-
-		if(hasTexture) 
-		{
-			//Check if blend map is used
-			BlendMap* bmPtr = terrPtr->GetBlendMapPointer();
-			if(bmPtr != NULL)
+			if(terrPtr->GetTexture(2) != NULL)
 			{
-				if(bmPtr->HasChanged)
+				this->Shader_DeferredGeometryBlendMap->SetResource("tex2", terrPtr->GetTexture(2)->GetSRVPointer());
+				hasTexture = true;
+			}
+			if(terrPtr->GetTexture(3) != NULL)
+			{
+				this->Shader_DeferredGeometryBlendMap->SetResource("tex3", terrPtr->GetTexture(3)->GetSRVPointer());
+				hasTexture = true;
+			}
+
+			/*for(int j = 0; j < terrPtr->GetNrOfTextures(); j++)
+			{
+				shaderTexName += MaloW::convertNrToString((float)(j + 1));
+				if(terrPtr->GetTexture(j) != NULL)
 				{
-					//Release old shader resource view
-					if(bmPtr->SRV) bmPtr->SRV->Release();
+					this->Shader_DeferredGeometryBlendMap->SetResource(shaderTexName.c_str(), terrPtr->GetTexture(j)->GetSRVPointer());
+					hasTexture = true;
+				}
+				else
+				{
+					this->Shader_DeferredGeometryBlendMap->SetResource(shaderTexName.c_str(), NULL);
+				}
+			}*/
 
-					//Create texture
-					int widthOrHeight = bmPtr->Size;
-					D3D11_TEXTURE2D_DESC texDesc;
-					texDesc.Width = widthOrHeight;
-					texDesc.Height = widthOrHeight;
-					texDesc.MipLevels = 1;
-					texDesc.ArraySize = 1;
-					texDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT; 
-					texDesc.SampleDesc.Count = 1;
-					texDesc.SampleDesc.Quality = 0;
-					texDesc.Usage = D3D11_USAGE_IMMUTABLE;
-					texDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-					texDesc.CPUAccessFlags = 0;
-					texDesc.MiscFlags = 0;
-
-					D3D11_SUBRESOURCE_DATA initData = {0};
-					initData.SysMemPitch = widthOrHeight * sizeof(float) * 4;
-					initData.pSysMem = bmPtr->Data; 
-
-					ID3D11Texture2D* tex = NULL;
-					if(FAILED(this->Dx_Device->CreateTexture2D(&texDesc, &initData, &tex)))
+			if(hasTexture) 
+			{
+				//Check if blend map is used
+				BlendMap* bmPtr = terrPtr->GetBlendMapPointer();
+				if(bmPtr != NULL)
+				{
+					if(bmPtr->HasChanged)
 					{
-						MaloW::Debug("ERROR: Failed to create texture with blend map data.");
+						//Release old shader resource view
+						if(bmPtr->SRV) bmPtr->SRV->Release();
+
+						//Create texture
+						int widthOrHeight = bmPtr->Size;
+						D3D11_TEXTURE2D_DESC texDesc;
+						texDesc.Width = widthOrHeight;
+						texDesc.Height = widthOrHeight;
+						texDesc.MipLevels = 1;
+						texDesc.ArraySize = 1;
+						texDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT; 
+						texDesc.SampleDesc.Count = 1;
+						texDesc.SampleDesc.Quality = 0;
+						texDesc.Usage = D3D11_USAGE_IMMUTABLE;
+						texDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+						texDesc.CPUAccessFlags = 0;
+						texDesc.MiscFlags = 0;
+
+						D3D11_SUBRESOURCE_DATA initData = {0};
+						initData.SysMemPitch = widthOrHeight * sizeof(float) * 4;
+						initData.pSysMem = bmPtr->Data; 
+
+						ID3D11Texture2D* tex = NULL;
+						if(FAILED(this->Dx_Device->CreateTexture2D(&texDesc, &initData, &tex)))
+						{
+							MaloW::Debug("ERROR: Failed to create texture with blend map data.");
+						}
+						//Create shader resource view
+						if(FAILED(this->Dx_Device->CreateShaderResourceView(tex, 0, &bmPtr->SRV)))
+						{
+							MaloW::Debug("ERROR: Failed to create Shader resource view with blend map texture.");
+						}
+						//Set that the blend map shall not be changed anymore.
+						bmPtr->HasChanged = false;
 					}
-					//Create shader resource view
-					if(FAILED(this->Dx_Device->CreateShaderResourceView(tex, 0, &bmPtr->SRV)))
-					{
-						MaloW::Debug("ERROR: Failed to create Shader resource view with blend map texture.");
-					}
-					//Set that the blend map shall not be changed anymore.
-					bmPtr->HasChanged = false;
+
+					//Set blend map variables
+					this->Shader_DeferredGeometryBlendMap->SetBool("blendMapped", true);
+					this->Shader_DeferredGeometryBlendMap->SetResource("blendMap", bmPtr->SRV);
+				}
+				else
+				{
+					//Set blend map  variables
+					this->Shader_DeferredGeometryBlendMap->SetBool("blendMapped", false);
 				}
 
-				//Set blend map variables
-				this->Shader_DeferredGeometryBlendMap->SetBool("blendMapped", true);
-				this->Shader_DeferredGeometryBlendMap->SetResource("blendMap", bmPtr->SRV);
+				//Set that textures shall be used and its scale
+				this->Shader_DeferredGeometryBlendMap->SetBool("textured", true);
+				this->Shader_DeferredGeometryBlendMap->SetFloat("texScale", terrPtr->GetTextureScale());
 			}
 			else
 			{
-				//Set blend map  variables
-				this->Shader_DeferredGeometryBlendMap->SetBool("blendMapped", false);
+				//Set texture variable
+				this->Shader_DeferredGeometryBlendMap->SetBool("textured", false);
 			}
 
-			//Set that textures shall be used and its scale
-			this->Shader_DeferredGeometryBlendMap->SetBool("textured", true);
-			this->Shader_DeferredGeometryBlendMap->SetFloat("texScale", terrPtr->GetTextureScale());
-		}
-		else
-		{
-			//Set texture variable
-			this->Shader_DeferredGeometryBlendMap->SetBool("textured", false);
-		}
+			//Set lighting from material
+			this->Shader_DeferredGeometryBlendMap->SetFloat("specularPower", terrPtr->GetMaterial()->SpecularPower);
+			this->Shader_DeferredGeometryBlendMap->SetFloat3("specularColor", terrPtr->GetMaterial()->SpecularColor);
+			this->Shader_DeferredGeometryBlendMap->SetFloat3("diffuseColor", terrPtr->GetMaterial()->DiffuseColor);
 
-		//Set lighting from material
-		this->Shader_DeferredGeometryBlendMap->SetFloat("specularPower", terrPtr->GetMaterial()->SpecularPower);
-		this->Shader_DeferredGeometryBlendMap->SetFloat3("specularColor", terrPtr->GetMaterial()->SpecularColor);
-		this->Shader_DeferredGeometryBlendMap->SetFloat3("diffuseColor", terrPtr->GetMaterial()->DiffuseColor);
-
-		//Apply vertices & indices & shader
-		Buffer* vertices = terrPtr->GetVertexBufferPointer();
-		if(vertices) 
-		{
-			if(FAILED(vertices->Apply()))
+			//Apply vertices & indices & shader
+			Buffer* vertices = terrPtr->GetVertexBufferPointer();
+			if(vertices) 
 			{
-				MaloW::Debug("ERROR: Could not apply vertices for terrain.");
+				if(FAILED(vertices->Apply()))
+				{
+					MaloW::Debug("ERROR: Could not apply vertices for terrain.");
+				}
 			}
-		}
-		else
-		{
-			MaloW::Debug("ERROR: Could not apply vertices for terrain. REASON: vertex buffer has not been created.");
-		}
-		Buffer* indices = terrPtr->GetIndexBufferPointer();
-		if(indices) 
-		{
-			if(FAILED(indices->Apply()))
+			else
 			{
-				MaloW::Debug("ERROR: Could not apply indices for terrain.");
+				MaloW::Debug("ERROR: Could not apply vertices for terrain. REASON: vertex buffer has not been created.");
+			}
+			Buffer* indices = terrPtr->GetIndexBufferPointer();
+			if(indices) 
+			{
+				if(FAILED(indices->Apply()))
+				{
+					MaloW::Debug("ERROR: Could not apply indices for terrain.");
+				}
+			}
+			else
+			{
+				MaloW::Debug("ERROR: Could not apply indices for terrain.  REASON: index buffer has not been created");
+			}
+			if(FAILED(this->Shader_DeferredGeometryBlendMap->Apply(0)))
+			{
+				MaloW::Debug("ERROR: Could not apply shader for terrain.");
+			}
+
+			//Draw
+			if(indices)
+			{
+				this->Dx_DeviceContext->DrawIndexed(indices->GetElementCount(), 0, 0);
+			}
+			else
+			{
+				this->Dx_DeviceContext->Draw(vertices->GetElementCount(), 0);
 			}
 		}
-		else
-		{
-			MaloW::Debug("ERROR: Could not apply indices for terrain.  REASON: index buffer has not been created");
-		}
-		if(FAILED(this->Shader_DeferredGeometryBlendMap->Apply(0)))
-		{
-			MaloW::Debug("ERROR: Could not apply shader for terrain.");
-		}
-
-		//Draw
-		if(indices)
-			this->Dx_DeviceContext->DrawIndexed(indices->GetElementCount(), 0, 0);
-		else
-			this->Dx_DeviceContext->Draw(vertices->GetElementCount(), 0);
 	}
 
 	//Unbind terrain resources
