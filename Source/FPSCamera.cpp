@@ -93,12 +93,28 @@ void FPSCamera::UpdateSpecific(float)
 
 void FPSCamera::MoveForward(float diff)
 {
-	this->pos += this->forward * ((float)diff/100) * this->speed;
+	if(this->moveOnlyInXZ)
+	{
+		D3DXVECTOR3 dir = this->forward;
+		dir.y = 0;
+		D3DXVec3Normalize(&dir, &dir);
+		this->pos += dir * ((float)diff/100) * this->speed;
+	}
+	else
+		this->pos += this->forward * ((float)diff/100) * this->speed;
 }
 
 void FPSCamera::MoveBackward(float diff)
 {
-	this->pos -= this->forward * ((float)diff/100) * this->speed;
+	if(this->moveOnlyInXZ)
+	{
+		D3DXVECTOR3 dir = this->forward;
+		dir.y = 0;
+		D3DXVec3Normalize(&dir, &dir);
+		this->pos -= dir * ((float)diff/100) * this->speed;
+	}
+	else
+		this->pos -= this->forward * ((float)diff/100) * this->speed;
 }
 
 void FPSCamera::MoveLeft(float diff)

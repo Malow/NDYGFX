@@ -41,7 +41,8 @@ protected:
 
 	bool updateCamera;
 	bool activeWindowDisabling;
-	
+	bool moveOnlyInXZ;
+
 	D3DXVECTOR3 NormalizeVector(D3DXVECTOR3 vec);
 
 public:
@@ -89,6 +90,7 @@ public:
 	virtual void SetUpdateCamera(bool update) { this->updateCamera = update; }
 
 	virtual Vector3 Get3DPickingRay();
+	virtual void MoveOnlyInXZ(bool DoItOrNotThatIsTheQuestion);
 
 	/* Not inherited */
 	D3DXMATRIX GetViewMatrix();
