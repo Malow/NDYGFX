@@ -264,7 +264,7 @@ void Terrain::RecreateWorldMatrix()
 }
 
 
-void Terrain::RecreateBoudingSphere()
+void Terrain::RecreateBoundingSphere()
 {
 	//Go through the vertices and find the biggest and smallest values.
 	float infinity = std::numeric_limits<float>::infinity();
