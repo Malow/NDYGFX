@@ -835,6 +835,8 @@ bool PhysicsEngine::DoCollisionTriangleVsTriangle(Vector3 v00, Vector3 v01, Vect
 	return true;
 }
 
+
+// Original Content: http://www.chadvernon.com/blog/resources/directx9/frustum-culling/
 bool PhysicsEngine::FrustrumVsSphere( D3DXPLANE planes[], BoundingSphere bs, D3DXMATRIX world, float scale )
 {
 	// various distances
@@ -856,9 +858,11 @@ bool PhysicsEngine::FrustrumVsSphere( D3DXPLANE planes[], BoundingSphere bs, D3D
 		if(fDistance < -radius)
 			return false;
 
+		/* Does Not Work Correctly - Alexivan
 		// else if the distance is between +- radius, then we intersect
 		if((float)fabs(fDistance) < radius)
 			return true;
+		*/
 	}
 
 	// otherwise we are fully in view
