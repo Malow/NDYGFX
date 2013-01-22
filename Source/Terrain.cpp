@@ -168,10 +168,12 @@ Terrain::Terrain()
 	this->zTextureScale = 1.0f;
 	this->zNrOfTextures = 4;
 	this->zTextureResources = new TextureResource*[this->zNrOfTextures];
-	this->zTextureResources[0] = NULL;
-	this->zTextureResources[1] = NULL;
-	this->zTextureResources[2] = NULL;
-	this->zTextureResources[3] = NULL;
+	for(int i = 0; i < this->zNrOfTextures; i++)
+	{
+		this->zTextureResources[i] = NULL;
+		this->zTextureResourceHasChanged[i] = false;
+		this->zTextureResourceToLoadFileName[i] = "";
+	}
 	this->zBlendMap = NULL;
 
 	this->zRecreateBoundingBox = false;
@@ -203,10 +205,12 @@ Terrain::Terrain(D3DXVECTOR3 pos, D3DXVECTOR3 scale, unsigned int size)
 	this->zTextureScale = 1.0f;
 	this->zNrOfTextures = 4;
 	this->zTextureResources = new TextureResource*[this->zNrOfTextures];
-	this->zTextureResources[0] = NULL;
-	this->zTextureResources[1] = NULL;
-	this->zTextureResources[2] = NULL;
-	this->zTextureResources[3] = NULL;
+	for(int i = 0; i < this->zNrOfTextures; i++)
+	{
+		this->zTextureResources[i] = NULL;
+		this->zTextureResourceHasChanged[i] = false;
+		this->zTextureResourceToLoadFileName[i] = "";
+	}
 	this->zBlendMap = NULL;
 
 	this->CreateMesh();
@@ -353,18 +357,25 @@ void Terrain::SetTextures(char const* const* const fileNames)
 		for(int i = 0; i < this->zNrOfTextures; i++)
 		{
 			//Check if any textures are loaded.
-			if(this->zTextureResources[i] == NULL)
+			if(this->zTextureResources[i] == NULL || this->zTextureResources[i]->GetName() != string(fileNames[i]))
 			{
-				this->zTextureResources[i] = GetResourceManager()->CreateTextureResourceFromFile(fileNames[i]);
+				this->zTextureResourceHasChanged[i] = true;
+				this->zTextureResourceToLoadFileName[i] = fileNames[i];
+
+				//this->zTextureResources[i] = GetResourceManager()->CreateTextureResourceFromFile(fileNames[i]);
 			}
+			/*
 			//Check if texture file path has changed
 			else if(this->zTextureResources[i]->GetName() != string(fileNames[i]))
 			{
-				//Decrease the reference
+
+				/*
+				//Delete(Decrease the reference) current one.
 				GetResourceManager()->DeleteTextureResource(this->zTextureResources[i]);
-				//Assign it to the new path if it has
+				//Assign it to the new path if it has.
 				this->zTextureResources[i] = GetResourceManager()->CreateTextureResourceFromFile(fileNames[i]);
-			}
+			
+			}*/
 		}
 	}
 }

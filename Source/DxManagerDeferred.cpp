@@ -102,7 +102,7 @@ void DxManager::RenderDeferredGeometry()
 			this->Shader_DeferredGeometryBlendMap->SetMatrix("worldMatrixInverseTranspose", worldInverseTranspose);
 
 			//Update vertex buffer if y-value for vertices (height map) have changed
-			if(terrPtr->HasHeightMapChanged())
+			if(terrPtr->HasHeightMapChanged()) //**TILLMAN LOADTHREAD**
 			{
 				//**OPT(OBS! Ev. only for editor): should be replaced with an update function ** TILLMAN
 					//this->Dx_DeviceContext->UpdateSubresource()
@@ -146,7 +146,27 @@ void DxManager::RenderDeferredGeometry()
 			this->Shader_DeferredGeometryBlendMap->SetResource("tex2", NULL);
 			this->Shader_DeferredGeometryBlendMap->SetResource("tex3", NULL);
 			//Check if texture(name/path) have changed, create new shader resource view if it has
-			//OBS! Do not put this code in a for loop using malow::ConvertNrToString()-function. (Performance loss).
+			for(int j = 0; j < terrPtr->GetNrOfTextures(); j++)
+			{
+				if(terrPtr->HasTextureResourceChanged(j))
+				{
+					//Check if any textures are already loaded.
+					if(terrPtr->GetTexture(j) != NULL)
+					{
+						//Delete(Decrease the reference) current one.
+						TextureResource* tmp = terrPtr->GetTexture(j);
+						GetResourceManager()->DeleteTextureResource(tmp);
+					}
+					
+					//Create the new one.
+					terrPtr->SetTexture(j, GetResourceManager()->CreateTextureResourceFromFile(terrPtr->GetTextureResourceToLoadFileName(j).c_str()));
+					//Set that the texture resource shall not be changed anymore.
+					terrPtr->TextureResourceHasChanged(j, false);
+				}
+			}
+
+
+			//OBS! Do not put this code in a for loop using malow::ConvertNrToString()-function. (Huge performance loss).
 			bool hasTexture = false;
 			if(terrPtr->GetTexture(0) != NULL)
 			{
@@ -169,20 +189,6 @@ void DxManager::RenderDeferredGeometry()
 				hasTexture = true;
 			}
 
-			/*for(int j = 0; j < terrPtr->GetNrOfTextures(); j++)
-			{
-				shaderTexName += MaloW::convertNrToString((float)(j + 1));
-				if(terrPtr->GetTexture(j) != NULL)
-				{
-					this->Shader_DeferredGeometryBlendMap->SetResource(shaderTexName.c_str(), terrPtr->GetTexture(j)->GetSRVPointer());
-					hasTexture = true;
-				}
-				else
-				{
-					this->Shader_DeferredGeometryBlendMap->SetResource(shaderTexName.c_str(), NULL);
-				}
-			}*/
-
 			if(hasTexture) 
 			{
 				//Check if blend map is used
@@ -191,7 +197,7 @@ void DxManager::RenderDeferredGeometry()
 				{
 					if(bmPtr->HasChanged)
 					{
-						//Release old shader resource view
+						//Release old shader resource view //**TILLMAN LOAD-THREAD**
 						if(bmPtr->SRV) bmPtr->SRV->Release();
 
 						//Create texture
