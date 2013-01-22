@@ -375,13 +375,6 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 					Vector3 fw = GetGraphics()->GetCamera()->GetForward();
 					GetGraphics()->ChangeCamera(FPS);
 					GetGraphics()->GetCamera()->SetForward(fw);
-					
-					for(int i = 0; i < 50; i++)
-						GetGraphics()->CreateMesh("Media/scale.obj", Vector3(30, -300, 30));
-
-					GetGraphics()->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", 
-						"Media/LoadingScreen/LoadingScreenPB.png"
-						, 1.0f, 1.0f, 1.0f, 1.0f);
 					//GetGraphics()->ResizeGraphicsEngine(500, 500);
 				}
 				else
@@ -391,7 +384,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 					GetGraphics()->GetCamera()->SetForward(fw);
 					//GetGraphics()->ResizeGraphicsEngine(750, 250);
 				}
-				fesd = false;
+				//fesd = false;
 			}			
 		}
 		else
