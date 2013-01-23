@@ -42,7 +42,8 @@ float4 PS(PSIn input) : SV_TARGET
 			discard;
 		}
 	}
-	return mul(input.Pos, lightWVP);
+
+	return input.Pos;
 }
 
 technique11 RenderShadowMap
