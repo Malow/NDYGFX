@@ -711,7 +711,16 @@ iGraphicsEngineParams* GraphicsEngineImp::GetEngineParameters() const
 
 void GraphicsEngineImp::DeleteMesh( iMesh* delMesh )
 {
-	this->DeleteStaticMesh(dynamic_cast<StaticMesh*>(delMesh));
+	string fileName = dynamic_cast<Mesh*>(delMesh)->GetFilePath();
+	string tmp = string(fileName); //".fileType"
+	if(tmp.substr(tmp.length() - 4) == ".obj") 
+	{
+		this->DeleteStaticMesh(dynamic_cast<StaticMesh*>(delMesh));
+	}
+	else if(tmp.substr(tmp.length() - 4) == ".ani")
+	{
+		this->DeleteAnimatedMesh(dynamic_cast<AnimatedMesh*>(delMesh));
+	}
 }
 
 const char* GraphicsEngineImp::GetSpecialString()

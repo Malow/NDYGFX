@@ -441,6 +441,8 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 			fileNames[2] = "Media/TerrainTexture.png";
 			fileNames[3] = "Media/TerrainTexture.png";
 			iT->SetTextures(fileNames);
+			GetGraphics()->DeleteMesh(flagCSMTest);
+			GetGraphics()->DeleteMesh(bushCSMTest);
 		}
 		/*for(int i = 0; i < ttte * nrOfFrustumSlices; i++)
 		{
