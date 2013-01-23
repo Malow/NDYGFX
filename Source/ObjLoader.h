@@ -93,7 +93,7 @@ public:
 
 	ObjData* LoadObjFile(std::string filepath);
 	void ReadFromBinaryFile(ObjData* returndata, ifstream& binfile);
-	void CreateBinaryFile(std::string filename, ObjData* returndata);
+	void CreateBinaryFile(std::string filename, std::string cacheFolder, ObjData* returndata);
 
 };
 

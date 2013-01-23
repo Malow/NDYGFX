@@ -109,7 +109,7 @@ class Terrain : public iTerrain
 		string GetTextureResourceToLoadFileName(unsigned int index) const { return this->zTextureResourceToLoadFileName[index]; }
 		//string GetTextureFileName(unsigned int index) { return this->zTextureFileNames[index]; }
 		BlendMap* GetBlendMapPointer() { return this->zBlendMap; }
-		BoundingSphere GetBoundingSphere() { if(this->zRecreateBoundingSphere) { RecreateBoundingSphere(); } return this->zBoundingSphere; }
+		
 
 		//Set
 		void SetCulled(bool cull) { this->zIsCulled = cull; }
@@ -142,7 +142,7 @@ class Terrain : public iTerrain
 		virtual void SetBlendMap(unsigned int size, float const* const data);
 		virtual void SetDiffuseColor(const Vector3& color);
 		virtual void SetTextureScale(float textureScale);
-
+		virtual BoundingSphere GetBoundingSphere() { if(this->zRecreateBoundingSphere) { RecreateBoundingSphere(); } return this->zBoundingSphere; }
 		// MaloW ToDO
 		// virtual void SetAIMap(int size, float const* data);
 		// Do just like blendmap, maybe even use the struct blendmap, and send it to GPU just like it

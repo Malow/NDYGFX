@@ -253,16 +253,17 @@ bool AnimatedMesh::LoadFromFile(string file)
 					od = oj.LoadObjFile(tmpPath);
 					GetResourceManager()->SetObjectData(tmpPath.c_str(), od);
 				}
+
+				/////// For hit/bounding boxes
+				D3DXVECTOR3 min = D3DXVECTOR3(99999.9f, 99999.9f, 99999.9f);
+				D3DXVECTOR3 max = -min;
+
 				//ObjData* od = oj.LoadObjFile(pathfolder + path);//**Tillman old code
 				MaloW::Array<MaterialData>* mats = od->mats;
 				for(int q = 0; q < mats->size(); q++)
 				{
 					bool hasFace = false;
 					MeshStrip* strip = new MeshStrip();
-
-					/////// For hit/bounding boxes
-					D3DXVECTOR3 min = D3DXVECTOR3(99999.9f, 99999.9f, 99999.9f);
-					D3DXVECTOR3 max = -min;
 
 					int nrOfVerts = 0;
 		
@@ -328,11 +329,16 @@ bool AnimatedMesh::LoadFromFile(string file)
 						mat->SpecularColor = od->mats->get(q).ks;
 						strip->SetMaterial(mat);
 
-						strip->SetBoundingSphere(BoundingSphere(min, max));
-
 						frame->strips->add(strip);
 					}
 				}
+
+				if(frame)
+				{
+					if(MeshStrip* strip = frame->strips->get(0))
+						strip->SetBoundingSphere(BoundingSphere(min, max));
+				}
+
 				this->topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 				//delete od;
 

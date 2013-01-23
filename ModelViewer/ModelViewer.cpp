@@ -359,7 +359,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 #ifdef TEST
 		CollisionData cd;
 		cd = GetGraphics()->GetPhysicsEngine()->GetCollisionRayMesh(
-			GetGraphics()->GetCamera()->GetPosition(), GetGraphics()->GetCamera()->Get3DPickingRay(), model);
+			GetGraphics()->GetCamera()->GetPosition(), GetGraphics()->GetCamera()->Get3DPickingRay(), iAM);
 		if(cd.BoundingSphereCollision)
 		{
 			ball->SetScale(0.2f);
@@ -408,13 +408,13 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 
 
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_UP))
-			secModel->MoveBy(Vector3(1, 0, 0) * diff * 0.01f);
+			secModel->MoveBy(Vector3(1, 0, 0) * diff * 0.1f);
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_DOWN))
-			secModel->MoveBy(Vector3(-1, 0, 0) * diff * 0.01f);
+			secModel->MoveBy(Vector3(-1, 0, 0) * diff * 0.1f);
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_LEFT))
-			secModel->MoveBy(Vector3(0, 0, 1) * diff * 0.01f);
+			secModel->MoveBy(Vector3(0, 0, 1) * diff * 0.1f);
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_RIGHT))
-			secModel->MoveBy(Vector3(0, 0, -1) * diff * 0.01f);
+			secModel->MoveBy(Vector3(0, 0, -1) * diff * 0.1f);
 
 		//CASCADED SHADOW MAPPING
 		static float debugCSMScale = 1.0f;
@@ -443,9 +443,9 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 			//debugCSMPoints[i]->SetScale(debugCSMScale);
 		}*/
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_SHIFT))
-			secModel->MoveBy(Vector3(0, 1, 0) * diff * 0.01f);
+			secModel->MoveBy(Vector3(0, 1, 0) * diff * 0.1f);
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_CONTROL))
-			secModel->MoveBy(Vector3(0, -1, 0) * diff * 0.01f);
+			secModel->MoveBy(Vector3(0, -1, 0) * diff * 0.1f);
 
 
 		if(GetGraphics()->GetKeyListener()->IsClicked(1))
@@ -492,13 +492,13 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		li->SetPosition(GetGraphics()->GetCamera()->GetPosition());
 
 		if(GetGraphics()->GetKeyListener()->IsPressed('W'))
-			GetGraphics()->GetCamera()->MoveForward(diff);
+			GetGraphics()->GetCamera()->MoveForward(diff * 10.0f);
 		if(GetGraphics()->GetKeyListener()->IsPressed('A'))
-			GetGraphics()->GetCamera()->MoveLeft(diff);
+			GetGraphics()->GetCamera()->MoveLeft(diff * 10.0f);
 		if(GetGraphics()->GetKeyListener()->IsPressed('S'))	
-			GetGraphics()->GetCamera()->MoveBackward(diff);
+			GetGraphics()->GetCamera()->MoveBackward(diff * 10.0f);
 		if(GetGraphics()->GetKeyListener()->IsPressed('D'))	
-			GetGraphics()->GetCamera()->MoveRight(diff);
+			GetGraphics()->GetCamera()->MoveRight(diff * 10.0f);
 
 		if(GetGraphics()->GetKeyListener()->IsPressed('Z'))	
 		{
@@ -553,9 +553,9 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 			GetGraphics()->GetCamera()->SetSpeed(GetGraphics()->GetCamera()->GetSpeed() * (1.0f - diff * 0.01f));
 
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_SPACE))
-			GetGraphics()->GetCamera()->MoveUp(diff);
+			GetGraphics()->GetCamera()->MoveUp(diff * 10.0f);
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_CONTROL))
-			GetGraphics()->GetCamera()->MoveDown(diff);
+			GetGraphics()->GetCamera()->MoveDown(diff * 10.0f);
 
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_ESCAPE))
 			go = false;

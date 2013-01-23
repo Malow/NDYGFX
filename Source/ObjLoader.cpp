@@ -354,7 +354,7 @@ ObjData* ObjLoader::LoadObjFile(string filepath)
 	
 	file.close();
 
-	this->CreateBinaryFile(folders + "Cache/" + filename, returndata);
+	this->CreateBinaryFile(folders + "Cache/" + filename, folders + "Cache/", returndata);
 
 	return returndata;
 }
@@ -475,9 +475,19 @@ void ObjLoader::ReadFromBinaryFile(ObjData* returndata, ifstream& binfile)
 	}
 }
 
-void ObjLoader::CreateBinaryFile(string filename, ObjData* returndata)
+void ObjLoader::CreateBinaryFile(std::string filename, std::string cacheFolder, ObjData* returndata)
 {
-	CreateDirectory("Media\\Cache\\", NULL);
+	string cacheRearranged = "";
+	size_t slashpos = cacheFolder.find("/");
+	while(slashpos != string::npos)
+	{
+		cacheFolder.replace(slashpos, 1, "\\");
+		cacheRearranged += cacheFolder.substr(0, slashpos + 1);
+		cacheFolder = cacheFolder.substr(slashpos + 1);
+		slashpos = cacheFolder.find("/");
+	}
+	
+	CreateDirectory(cacheRearranged.c_str(), NULL);
 	string binfilename = filename.substr(0, filename.length()-4);
 	ofstream binfile;
 	binfile.open(binfilename + ".MalEng", ios::binary);

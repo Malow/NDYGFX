@@ -98,10 +98,10 @@ void FPSCamera::MoveForward(float diff)
 		D3DXVECTOR3 dir = this->forward;
 		dir.y = 0;
 		D3DXVec3Normalize(&dir, &dir);
-		this->pos += dir * ((float)diff/100) * this->speed;
+		this->pos += dir * ((float)diff/1000.0f) * this->speed;
 	}
 	else
-		this->pos += this->forward * ((float)diff/100) * this->speed;
+		this->pos += this->forward * ((float)diff/1000.0f) * this->speed;
 }
 
 void FPSCamera::MoveBackward(float diff)
@@ -111,30 +111,30 @@ void FPSCamera::MoveBackward(float diff)
 		D3DXVECTOR3 dir = this->forward;
 		dir.y = 0;
 		D3DXVec3Normalize(&dir, &dir);
-		this->pos -= dir * ((float)diff/100) * this->speed;
+		this->pos -= dir * ((float)diff/1000.0f) * this->speed;
 	}
 	else
-		this->pos -= this->forward * ((float)diff/100) * this->speed;
+		this->pos -= this->forward * ((float)diff/1000.0f) * this->speed;
 }
 
 void FPSCamera::MoveLeft(float diff)
 {
-	this->pos.x -= sin(this->angleX) * ((float)diff/100) * this->speed;
-	this->pos.z += cos(this->angleX) * ((float)diff/100) * this->speed;
+	this->pos.x -= sin(this->angleX) * ((float)diff/1000.0f) * this->speed;
+	this->pos.z += cos(this->angleX) * ((float)diff/1000.0f) * this->speed;
 }
 
 void FPSCamera::MoveRight(float diff)
 {
-	this->pos.x += sin(this->angleX) * ((float)diff/100) * this->speed;
-	this->pos.z -= cos(this->angleX) * ((float)diff/100) * this->speed;
+	this->pos.x += sin(this->angleX) * ((float)diff/1000.0f) * this->speed;
+	this->pos.z -= cos(this->angleX) * ((float)diff/1000.0f) * this->speed;
 }
 
 void FPSCamera::MoveUp( float diff )
 {
-	this->pos.y += ((float)diff/100.0f) * this->speed;
+	this->pos.y += ((float)diff/1000.0f) * this->speed;
 }
 
 void FPSCamera::MoveDown( float diff )
 {
-	this->pos.y -= ((float)diff/100.0f) * this->speed;
+	this->pos.y -= ((float)diff/1000.0f) * this->speed;
 }
