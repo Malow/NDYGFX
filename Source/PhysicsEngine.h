@@ -4,6 +4,7 @@
 #include "iPhysicsEngine.h"
 #include "Terrain.h"
 #include "Mesh.h"
+#include "AnimatedMesh.h"
 #include "MaloW.h"
 #include "MaloWFileDebug.h"
 

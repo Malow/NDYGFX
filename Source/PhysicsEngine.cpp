@@ -52,9 +52,15 @@ CollisionData PhysicsEngine::GetCollisionRayTerrain( Vector3 rayOrigin, Vector3 
 
 	if(Terrain* terrain = dynamic_cast<Terrain*>(iTerr))
 	{
-		this->DoCollisionRayVsTriangles(rayOrigin, rayDirection, 
-			terrain->GetVerticesPointer(), terrain->GetNrOfVertices(), 
-			terrain->GetIndicesPointer(), terrain->GetNrOfIndices(), terrain->GetWorldMatrix(), cd);
+		float scale = max(terrain->GetScale().x, max(terrain->GetScale().y, terrain->GetScale().z));
+		if(this->DoCollisionSphereVsRay(terrain->GetBoundingSphere(), terrain->GetWorldMatrix(), scale, 
+			rayOrigin, rayDirection))
+		{
+			cd.BoundingSphereCollision = true;
+			this->DoCollisionRayVsTriangles(rayOrigin, rayDirection, 
+				terrain->GetVerticesPointer(), terrain->GetNrOfVertices(), 
+				terrain->GetIndicesPointer(), terrain->GetNrOfIndices(), terrain->GetWorldMatrix(), cd);
+		}
 	}
 	else
 		MaloW::Debug("Failed to cast iTerrain to Terrain in PhysicsEngine.cpp in RayTerrain");
@@ -140,10 +146,23 @@ void PhysicsEngine::DoCollisionRayVsMesh(Vector3 rayOrigin, Vector3 rayDirection
 	for(int i = 0; i < strips->size(); i++)
 	{
 		float scale = max(mesh->GetScaling().x, max(mesh->GetScaling().y, mesh->GetScaling().z));
-		if(this->DoCollisionSphereVsRay(strips->get(i)->GetBoundingSphere(), mesh->GetWorldMatrix(), 
-			scale, rayOrigin, rayDirection))
+		
+		// Special case for Anis, only first strip has a boundingSphere and it has one covering all strips.
+		if(AnimatedMesh* aniMesh = dynamic_cast<AnimatedMesh*>(mesh))
 		{
-			cd.BoundingSphereCollision = true;
+			if(this->DoCollisionSphereVsRay(strips->get(0)->GetBoundingSphere(), mesh->GetWorldMatrix(), 
+				scale, rayOrigin, rayDirection))
+				cd.BoundingSphereCollision = true;
+		}
+		else
+		{
+			if(this->DoCollisionSphereVsRay(strips->get(i)->GetBoundingSphere(), mesh->GetWorldMatrix(), 
+				scale, rayOrigin, rayDirection))
+				cd.BoundingSphereCollision = true;
+		}
+
+		if(cd.BoundingSphereCollision)
+		{
 			this->DoCollisionRayVsTriangles(rayOrigin, rayDirection, 
 				strips->get(i)->getVerts(), strips->get(i)->getNrOfVerts(), 
 				strips->get(i)->getIndicies(), strips->get(i)->getNrOfIndicies(), mesh->GetWorldMatrix(), cd);
