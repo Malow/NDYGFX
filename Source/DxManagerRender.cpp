@@ -381,18 +381,19 @@ void DxManager::RenderShadowMap()
 					KeyFrame* one = NULL;
 					KeyFrame* two = NULL;
 					float t = 0.0f;
-					this->animations[i]->SetCurrentTime(this->Timer);
+					this->animations[i]->SetCurrentTime(this->Timer * 1000.0f); //Timer is in seconds.
 					this->animations[i]->GetCurrentKeyFrames(&one, &two, t);
 					MaloW::Array<MeshStrip*>* stripsOne = one->strips;
 					MaloW::Array<MeshStrip*>* stripsTwo = two->strips;
 
-					//set shader data (per object)
+					//Set shader data (per object)
+					this->Shader_ShadowMapAnimated->SetFloat("t", t);
 					D3DXMATRIX wvp = this->animations[i]->GetWorldMatrix() * this->lights[l]->GetViewProjMatrix();
 					this->Shader_ShadowMapAnimated->SetMatrix("LightWVP", wvp); 
-					this->Shader_ShadowMapAnimated->SetFloat("t", t);
 
-					for(int u = 0; u < stripsOne->size(); u++) 
+					for(int u = 0; u < stripsOne->size(); u++)  //**Tillman todo - indices?**
 					{
+						//Set shader data per strip
 						Object3D* objOne = stripsOne->get(u)->GetRenderObject();
 						Object3D* objTwo = stripsTwo->get(u)->GetRenderObject();
 
@@ -407,7 +408,10 @@ void DxManager::RenderShadowMap()
 
 						this->Dx_DeviceContext->IASetVertexBuffers(0, 2, vertexBuffers, strides, offsets);
 
-						Shader_ShadowMapAnimated->Apply(0);
+						//Apply shader
+						this->Shader_ShadowMapAnimated->Apply(0);
+
+						//Draw
 						this->Dx_DeviceContext->Draw(vertsOne->GetElementCount(), 0);
 					}
 				}
@@ -715,6 +719,77 @@ void DxManager::RenderCascadedShadowMap()
 					}
 				}
 			}
+			//Unbind shader resources
+			this->Shader_ShadowMap->SetResource("diffuseMap", NULL);
+
+			//Animated meshes
+			for(int i = 0; i < this->animations.size(); i++)
+			{
+				if(!this->animations[i]->IsUsingInvisibility())
+				{
+					KeyFrame* one = NULL;
+					KeyFrame* two = NULL;
+					float t = 0.0f;
+					this->animations[i]->SetCurrentTime(this->Timer * 1000.0f); //Timer is in seconds.
+					this->animations[i]->GetCurrentKeyFrames(&one, &two, t);
+					MaloW::Array<MeshStrip*>* stripsOne = one->strips;
+					MaloW::Array<MeshStrip*>* stripsTwo = two->strips;
+
+					//Set shader data (per object)
+					this->Shader_ShadowMapAnimated->SetFloat("t", t);
+					D3DXMATRIX wvp = this->animations[i]->GetWorldMatrix() * this->csm->GetViewProjMatrix(l);
+					this->Shader_ShadowMapAnimated->SetMatrix("lightWVP", wvp); 
+
+					for(int u = 0; u < stripsOne->size(); u++)  //**Tillman todo - indices?**
+					{
+						//Set shader data per strip
+						Object3D* objOne = stripsOne->get(u)->GetRenderObject();
+						Object3D* objTwo = stripsTwo->get(u)->GetRenderObject();
+
+						//Vertex data
+						this->Dx_DeviceContext->IASetPrimitiveTopology(objOne->GetTopology()); 
+						Buffer* vertsOne = objOne->GetVertBuff();
+						Buffer* vertsTwo = objTwo->GetVertBuff();
+						ID3D11Buffer* vertexBuffers [] = {vertsOne->GetBufferPointer(), vertsTwo->GetBufferPointer()};
+						UINT strides [] = {sizeof(Vertex), sizeof(Vertex)};
+						UINT offsets [] = {0, 0};
+						this->Dx_DeviceContext->IASetVertexBuffers(0, 2, vertexBuffers, strides, offsets);
+
+						//Textures
+						if(objOne->GetTextureResource() != NULL && objTwo->GetTextureResource() != NULL)
+						{
+							if(objOne->GetTextureResource()->GetSRVPointer() != NULL && objTwo->GetTextureResource()->GetSRVPointer() != NULL)
+							{
+								this->Shader_ShadowMapAnimated->SetResource("diffuseMap0", objOne->GetTextureResource()->GetSRVPointer());
+								this->Shader_ShadowMapAnimated->SetResource("diffuseMap1", objTwo->GetTextureResource()->GetSRVPointer());
+								this->Shader_ShadowMapAnimated->SetBool("textured", true);
+							}
+							else
+							{
+								this->Shader_ShadowMapAnimated->SetResource("diffuseMap0", NULL);
+								this->Shader_ShadowMapAnimated->SetResource("diffuseMap1", NULL);
+								this->Shader_ShadowMapAnimated->SetBool("textured", false);
+							}
+						}
+						else
+						{
+							this->Shader_ShadowMapAnimated->SetResource("diffuseMap0", NULL);
+							this->Shader_ShadowMapAnimated->SetResource("diffuseMap1", NULL);
+							this->Shader_ShadowMapAnimated->SetBool("textured", false);
+						}
+
+						//Apply
+						this->Shader_ShadowMapAnimated->Apply(0);
+
+						//Draw
+						this->Dx_DeviceContext->Draw(vertsOne->GetElementCount(), 0);
+					}
+				}
+			}
+			//Unbind shader resources
+			this->Shader_ShadowMapAnimated->SetResource("diffuseMap0", NULL);
+			this->Shader_ShadowMapAnimated->SetResource("diffuseMap1", NULL);
+
 		
 			D3DXMATRIX lvp = this->csm->GetViewProjMatrix(l);
 
@@ -918,8 +993,8 @@ HRESULT DxManager::Render()
 	// Render shadowmap pictures:
 	//for(int q = 0; q < this->lights.size(); q++)
 		//DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_BillBoard, this->lights[q]->GetShadowMapSRV(), q); 
-	for(int q = 0; q < this->csm->GetNrOfCascadeLevels(); q++)
-		DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_BillBoard, this->csm->GetShadowMapSRV(q), q); 
+	//for(int q = 0; q < this->csm->GetNrOfCascadeLevels(); q++)
+	//	DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_BillBoard, this->csm->GetShadowMapSRV(q), q); 
 
 	
 	

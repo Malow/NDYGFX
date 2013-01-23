@@ -668,7 +668,20 @@ void GraphicsEngineImp::LoadingScreen(const char* BackgroundTexture, const char*
 
 iMesh* GraphicsEngineImp::CreateMesh( const char* filename, const Vector3& pos )
 {
-	return CreateStaticMesh(filename,D3DXVECTOR3(pos.x,pos.y,pos.z));
+	string tmp = string(filename); //".fileType"
+	if(tmp.substr(tmp.length() - 4) == ".obj") 
+	{
+		return CreateStaticMesh(filename,D3DXVECTOR3(pos.x,pos.y,pos.z));
+	}
+	else if(tmp.substr(tmp.length() - 4) == ".ani")
+	{
+		return CreateAnimatedMesh(filename,D3DXVECTOR3(pos.x,pos.y,pos.z));
+	}
+	else
+	{
+		MaloW::Debug("WARNING: Failed to create mesh! (Returning NULL). ");
+		return NULL;
+	}
 }
 
 iLight* GraphicsEngineImp::CreateLight( Vector3 pos )
