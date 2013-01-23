@@ -177,7 +177,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	iMesh* bush = GetGraphics()->CreateMesh("Media/Bush_01_v04_r.obj", Vector3(30, 10, 30));
 	bush->Scale(1.0f * 0.05f);
 
-	iMesh* arrow = GetGraphics()->CreateMesh("Media/Test/Arrow_v01.obj", Vector3(30, 10, 30));
+	iMesh* arrow = GetGraphics()->CreateMesh("Media/Arrow_v01.obj", Vector3(30, 10, 30));
 	arrow->Scale(1.0f * 0.05f);
 	Vector3 arrowDir = Vector3(0, 0, -1);
 
