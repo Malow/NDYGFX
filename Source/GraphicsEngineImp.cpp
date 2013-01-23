@@ -1,11 +1,5 @@
 #include "GraphicsEngineImp.h"
-/*
-DxManager* GraphicsEngine::dx = NULL;
-HINSTANCE GraphicsEngine::hInstance = NULL;
-HWND GraphicsEngine::hWnd = NULL;
-MaloW::KeyListener* GraphicsEngine::kl = NULL;
-SoundEngine* GraphicsEngine::sound = NULL;
-*/
+
 bool CursorControl::visable = true;
 
 int GraphicsEngineParams::windowWidth = 1024;
@@ -267,7 +261,6 @@ HRESULT GraphicsEngineImp::InitWindow(HINSTANCE hInstance, int nCmdShow)
 	}
 	if(!this->hWnd)
 		return E_FAIL;
-
 
 	ShowWindow(this->hWnd, nCmdShow);
 	MoveWindow(this->hWnd, 0, 0, rc.right - rc.left, rc.bottom - rc.top, false);

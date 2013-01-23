@@ -25,21 +25,37 @@ private:
 		CollisionData& tempCD);
 	bool DoCollisionSphereVsRay(BoundingSphere bs, D3DXMATRIX world, float scale, Vector3 rayOrigin, Vector3 rayDirection);
 	bool DoCollisionSphereVsSphere(BoundingSphere bs1, D3DXMATRIX world1, float scale1, BoundingSphere bs2, D3DXMATRIX world2, float scale2);
-	
+	CollisionData DoCollisionSphereVsRayDetailed(BoundingSphere bs, D3DXMATRIX world, float scale, Vector3 rayOrigin, Vector3 rayDirection);
+	CollisionData DoCollisionSphereVsSphereDetailed(BoundingSphere bs1, D3DXMATRIX world1, float scale1, BoundingSphere bs2, D3DXMATRIX world2, float scale2);
+
 public:
 	PhysicsEngine();
 	virtual ~PhysicsEngine();
 
 	bool FrustrumVsSphere(D3DXPLANE planes[], BoundingSphere bs, D3DXMATRIX world, float scale);
 
+	// Functions
 	virtual CollisionData GetCollisionRayMesh(Vector3 rayOrigin, Vector3 rayDirection, iMesh* imesh);
-	virtual CollisionData GetCollisionRayTerrain(Vector3 rayOrigin, Vector3 rayDirection, iTerrain* iTerr);
+	virtual CollisionData GetCollisionRayTerrain(Vector3 rayOrigin, Vector3 rayDirection, iTerrain* iterr);
 	virtual CollisionData GetCollisionMeshMesh(iMesh* mesh1, iMesh* mesh2);
 	virtual CollisionData GetCollisionMeshTerrain(iMesh* mesh, iTerrain* terr);
 
-	// Overloaded
+	// Only BoundingSphere functions
+	virtual CollisionData GetCollisionRayMeshBoundingOnly(Vector3 rayOrigin, Vector3 rayDirection, iMesh* imesh);;
+	virtual CollisionData GetCollisionRayTerrainBoundingOnly(Vector3 rayOrigin, Vector3 rayDirection, iTerrain* iterr);
+	virtual CollisionData GetCollisionMeshMeshBoundingOnly(iMesh* mesh1, iMesh* mesh2);
+	virtual CollisionData GetCollisionMeshTerrainBoundingOnly(iMesh* mesh, iTerrain* terr);
+
+
+	// Overloaded functions
 	virtual CollisionData GetCollision(Vector3 rayOrigin, Vector3 rayDirection, iMesh* mesh);
 	virtual CollisionData GetCollision(Vector3 rayOrigin, Vector3 rayDirection, iTerrain* iTerr);
 	virtual CollisionData GetCollision(iMesh* mesh1, iMesh* mesh2);
 	virtual CollisionData GetCollision(iMesh* mesh, iTerrain* terr);
+
+	// Only BoundingSphere functions
+	virtual CollisionData GetCollisionBoundingOnly(Vector3 rayOrigin, Vector3 rayDirection, iMesh* imesh);
+	virtual CollisionData GetCollisionBoundingOnly(Vector3 rayOrigin, Vector3 rayDirection, iTerrain* iterr);
+	virtual CollisionData GetCollisionBoundingOnly(iMesh* mesh1, iMesh* mesh2);
+	virtual CollisionData GetCollisionBoundingOnly(iMesh* mesh, iTerrain* terr);
 };

@@ -207,9 +207,6 @@ void ObjLoader::trianglulate(string& filename)
 
 ObjData* ObjLoader::LoadObjFile(string filepath)
 {
-
-
-
 	string mtlfile = "";
 	ObjData* returndata = new ObjData();
 	//this->trianglulate(filename);								////////// Not quite working
@@ -224,7 +221,6 @@ ObjData* ObjLoader::LoadObjFile(string filepath)
 		filename = filename.substr(slashpos + 1);
 	}
 
-	
 	// Binary file
 	ifstream binfile;
 	binfile.open(folders + "Cache/" + filename.substr(0, filename.size() - 4) + ".MalEng", ios::binary);
@@ -234,8 +230,6 @@ ObjData* ObjLoader::LoadObjFile(string filepath)
 		binfile.close();
 		return returndata;			// Return and skip the Obj-file.
 	}
-	
-
 
 	// Obj file
 	ifstream file;
@@ -282,14 +276,12 @@ ObjData* ObjLoader::LoadObjFile(string filepath)
 	file.close();
 
 
-	
 	// mtl file
 	if(mtlfile == "")
 		return returndata;
 	
 	mtlfile = folders + mtlfile;
 	
-
 	file.open(mtlfile);
 	if(!file)
 	{

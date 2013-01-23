@@ -37,15 +37,29 @@ extern "C"
 		iPhysicsEngine() {};
 		virtual ~iPhysicsEngine() {};
 
+		// Functions
 		virtual CollisionData GetCollisionRayMesh(Vector3 rayOrigin, Vector3 rayDirection, iMesh* imesh) = 0;
 		virtual CollisionData GetCollisionRayTerrain(Vector3 rayOrigin, Vector3 rayDirection, iTerrain* iterr) = 0;
 		virtual CollisionData GetCollisionMeshMesh(iMesh* mesh1, iMesh* mesh2) = 0;
 		virtual CollisionData GetCollisionMeshTerrain(iMesh* mesh, iTerrain* terr) = 0;
 
-		// Overloaded
+		// Only BoundingSphere functions
+		virtual CollisionData GetCollisionRayMeshBoundingOnly(Vector3 rayOrigin, Vector3 rayDirection, iMesh* imesh) = 0;
+		virtual CollisionData GetCollisionRayTerrainBoundingOnly(Vector3 rayOrigin, Vector3 rayDirection, iTerrain* iterr) = 0;
+		virtual CollisionData GetCollisionMeshMeshBoundingOnly(iMesh* mesh1, iMesh* mesh2) = 0;
+		virtual CollisionData GetCollisionMeshTerrainBoundingOnly(iMesh* mesh, iTerrain* terr) = 0;
+
+
+		// Overloaded functions
 		virtual CollisionData GetCollision(Vector3 rayOrigin, Vector3 rayDirection, iMesh* mesh) = 0;
 		virtual CollisionData GetCollision(Vector3 rayOrigin, Vector3 rayDirection, iTerrain* iTerr) = 0;
 		virtual CollisionData GetCollision(iMesh* mesh1, iMesh* mesh2) = 0;
 		virtual CollisionData GetCollision(iMesh* mesh, iTerrain* terr) = 0;
+
+		// Only BoundingSphere functions
+		virtual CollisionData GetCollisionBoundingOnly(Vector3 rayOrigin, Vector3 rayDirection, iMesh* imesh) = 0;
+		virtual CollisionData GetCollisionBoundingOnly(Vector3 rayOrigin, Vector3 rayDirection, iTerrain* iterr) = 0;
+		virtual CollisionData GetCollisionBoundingOnly(iMesh* mesh1, iMesh* mesh2) = 0;
+		virtual CollisionData GetCollisionBoundingOnly(iMesh* mesh, iTerrain* terr) = 0;
 	};
 }
