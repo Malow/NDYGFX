@@ -226,6 +226,6 @@ Vector3 Camera::Get3DPickingRay()
 
 void Camera::MoveOnlyInXZ( bool DoItOrNotThatIsTheQuestion )
 {
-	this->moveOnlyInXZ = true;
+	this->moveOnlyInXZ = DoItOrNotThatIsTheQuestion;
 }
 
