@@ -388,7 +388,7 @@ void DxManager::RenderShadowMap()
 
 					//set shader data (per object)
 					D3DXMATRIX wvp = this->animations[i]->GetWorldMatrix() * this->lights[l]->GetViewProjMatrix();
-					this->Shader_ShadowMapAnimated->SetMatrix("LightWVP", wvp); //**TILLMAN TODO
+					this->Shader_ShadowMapAnimated->SetMatrix("LightWVP", wvp); 
 					this->Shader_ShadowMapAnimated->SetFloat("t", t);
 
 					for(int u = 0; u < stripsOne->size(); u++) 

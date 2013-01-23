@@ -184,8 +184,12 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 
 
 	//CASCADED SHADOWMAP:
+	//Transparancy:
 	iMesh* bushCSMTest = GetGraphics()->CreateMesh("Media/Bush_01_v04_r.obj", Vector3(10, 2, 0));
 	bushCSMTest->Scale(1.0f * 0.05f);
+	iMesh* flagCSMTest = GetGraphics()->CreateMesh("Media/FlagBlue.ani", Vector3(12, 2, 0));
+
+	//General shadowing:
 	iMesh* bushScaleBugTest = GetGraphics()->CreateMesh("Media/Bush_01_v04_r.obj", Vector3(0, 0, 0));
 	iMesh* scaleBugTest = GetGraphics()->CreateMesh("Media/scale.obj", Vector3(5, 0, 0));
 	iMesh* bushScaleBugTest2 = GetGraphics()->CreateMesh("Media/Bush_01_v04_r.obj", Vector3(2, 0, 0));

@@ -221,9 +221,9 @@ void CascadedShadowMap::CalcShadowMappingSplitDepths()
 	{
 		this->shadowMappingSplitDepths[i] = camFar * scale * 0.001f;
 	}*/
-	//this->shadowMappingSplitDepths[1] = camFar * 0.025f;
-	this->shadowMappingSplitDepths[1] = camFar * 0.1f;
-	this->shadowMappingSplitDepths[2] = camFar * 0.4f;
+	this->shadowMappingSplitDepths[1] = camFar * 0.025f;
+	this->shadowMappingSplitDepths[2] = camFar * 0.1f;
+	this->shadowMappingSplitDepths[3] = camFar * 0.4f;
 	this->shadowMappingSplitDepths[SHADOW_MAP_CASCADE_COUNT] = camFar;
 	
 	/*
