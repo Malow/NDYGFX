@@ -1,46 +1,49 @@
+// EDIT 2013-01-23 by Tillman: Added transparency.
+#include "stdafx.fx"
+Texture2D diffuseMap;
 
-cbuffer EveryFrame
+cbuffer PerObject
 {
-	matrix LightWVP;
+	matrix lightWVP;
 };
+cbuffer PerStrip
+{
+	bool textured;
+}
 
 struct VSIn
 {
-	float4 Pos : POSITION;
-	float2 tex : TEXCOORD;
-	float3 norm : NORMAL;
-	float4 Color : COLOR;
+	float4 Pos		: POSITION;
+	float2 Tex		: TEXCOORD;
+	float3 Normal	: NORMAL;
+	float4 Color	: COLOR;
 };
 
 struct PSIn
 {
-	float4 Pos : SV_POSITION;
+	float4 Pos	: SV_POSITION;
+	float2 Tex	: TEXCOORD;
 };
 
 PSIn VS(VSIn input)
 {
 	PSIn output = (PSIn)0;
-	output.Pos = mul(input.Pos, LightWVP);
+	output.Pos = mul(input.Pos, lightWVP);
+	output.Tex = input.Tex;
+
 	return output;
 }
-
-BlendState NoBlend
+float4 PS(PSIn input) : SV_TARGET
 {
-	BlendEnable[0] = FALSE;
-};
-
-RasterizerState rs
-{
-	FillMode = Solid;
-	CullMode = Front;
-};
-
-DepthStencilState EnableDepth
-{
-	DepthEnable = TRUE;
-	DepthWriteMask = ALL;
-	DepthFunc = LESS_EQUAL;
-};
+	if(textured)
+	{
+		if(diffuseMap.Sample(PointWrapSampler, input.Tex).a < 0.5f)
+		{
+			discard;
+		}
+	}
+	return mul(input.Pos, lightWVP);
+}
 
 technique11 RenderShadowMap
 {
@@ -48,9 +51,9 @@ technique11 RenderShadowMap
 	{
 		SetVertexShader( CompileShader( vs_4_0, VS() ) );
 		SetGeometryShader( NULL );
-		SetPixelShader( NULL );
+		SetPixelShader( CompileShader ( ps_4_0, PS() ) );
 		SetDepthStencilState( EnableDepth, 0 );
 		SetBlendState( NoBlend, float4( 0.0f, 0.0f, 0.0f, 0.0f ), 0xFFFFFFFF );
-		SetRasterizerState(rs);
+		SetRasterizerState( SolidFrontCulling );
 	}
 }

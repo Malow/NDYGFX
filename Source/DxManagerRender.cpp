@@ -301,6 +301,7 @@ void DxManager::RenderShadowMap()
 	}
 
 	// Generate and send shadowmaps to the main-shader
+	//EDIT 2013-01-23 by Tillman - Added transparancy.
 	if(!this->lights.size())
 	{
 		for (int l = 0; l < this->lights.size(); l++)
@@ -317,29 +318,57 @@ void DxManager::RenderShadowMap()
 				{
 					MaloW::Array<MeshStrip*>* strips = this->objects[i]->GetStrips();
 					D3DXMATRIX wvp = this->objects[i]->GetWorldMatrix() * this->lights[l]->GetViewProjMatrix();
-					this->Shader_ShadowMap->SetMatrix("LightWVP", wvp);
+					this->Shader_ShadowMap->SetMatrix("lightWVP", wvp);
 				
 					for(int u = 0; u < strips->size(); u++)
 					{
 						Object3D* obj = strips->get(u)->GetRenderObject();
-						Dx_DeviceContext->IASetPrimitiveTopology(obj->GetTopology());
+						
+						//Vertex data
+						this->Dx_DeviceContext->IASetPrimitiveTopology(obj->GetTopology());
 						Buffer* verts = obj->GetVertBuff();
-						if(verts)
-							verts->Apply();
-						Shader_ShadowMap->SetBool("textured", false);
-
 						Buffer* inds = obj->GetIndsBuff();
+						if(verts)
+						{
+							verts->Apply();
+						}
 						if(inds)
+						{
 							inds->Apply();
+						}
 
-						Shader_ShadowMap->Apply(0);
+						//Texture
+						if(obj->GetTextureResource() != NULL)
+						{
+							if(obj->GetTextureResource()->GetSRVPointer() != NULL)
+							{
+								this->Shader_ShadowMap->SetResource("diffuseMap", obj->GetTextureResource()->GetSRVPointer());
+								this->Shader_ShadowMap->SetBool("textured", true);
+							}
+							else
+							{
+								this->Shader_ShadowMap->SetResource("diffuseMap", NULL);
+								this->Shader_ShadowMap->SetBool("textured", false);
+							}
+						}
+						else
+						{
+							this->Shader_ShadowMap->SetResource("diffuseMap", NULL);
+							this->Shader_ShadowMap->SetBool("textured", false);
+						}
 
-					
+						//Apply to shader
+						this->Shader_ShadowMap->Apply(0);
+
 						//Draw
 						if(inds)
+						{
 							Dx_DeviceContext->DrawIndexed(inds->GetElementCount(), 0, 0);
+						}
 						else
+						{
 							Dx_DeviceContext->Draw(verts->GetElementCount(), 0);
+						}
 					}
 				}
 			}
@@ -359,7 +388,7 @@ void DxManager::RenderShadowMap()
 
 					//set shader data (per object)
 					D3DXMATRIX wvp = this->animations[i]->GetWorldMatrix() * this->lights[l]->GetViewProjMatrix();
-					this->Shader_ShadowMapAnimated->SetMatrix("LightWVP", wvp);
+					this->Shader_ShadowMapAnimated->SetMatrix("LightWVP", wvp); //**TILLMAN TODO
 					this->Shader_ShadowMapAnimated->SetFloat("t", t);
 
 					for(int u = 0; u < stripsOne->size(); u++) 
@@ -574,6 +603,7 @@ void DxManager::RenderText()
 
 void DxManager::RenderCascadedShadowMap()
 {
+	//EDIT 2013-01-23 by Tillman - Added transparancy.
 	if(this->useSun)
 	{
 		D3DXMATRIX wvp;
@@ -591,7 +621,7 @@ void DxManager::RenderCascadedShadowMap()
 			{
 				//Matrices
 				wvp = this->terrains[i]->GetWorldMatrix() * this->csm->GetViewProjMatrix(l);
-				this->Shader_ShadowMap->SetMatrix("LightWVP", wvp);
+				this->Shader_ShadowMap->SetMatrix("lightWVP", wvp);
 			
 				//Input Assembler
 				this->Dx_DeviceContext->IASetPrimitiveTopology(this->terrains[i]->GetTopology());
@@ -607,6 +637,8 @@ void DxManager::RenderCascadedShadowMap()
 				{
 					verts->Apply();
 				}
+
+				//**TILLMAN EV TODO: (TEXTURE)TRANSPARANCY.
 
 				//Apply Shader
 				this->Shader_ShadowMap->Apply(0);
@@ -629,28 +661,57 @@ void DxManager::RenderCascadedShadowMap()
 				{
 					MaloW::Array<MeshStrip*>* strips = this->objects[i]->GetStrips();
 					wvp = this->objects[i]->GetWorldMatrix() * this->csm->GetViewProjMatrix(l);
-					this->Shader_ShadowMap->SetMatrix("LightWVP", wvp);
+					this->Shader_ShadowMap->SetMatrix("lightWVP", wvp);
 
 					for(int u = 0; u < strips->size(); u++)
 					{
 						Object3D* obj = strips->get(u)->GetRenderObject();
-						Dx_DeviceContext->IASetPrimitiveTopology(obj->GetTopology());
+
+						//Vertex data
+						this->Dx_DeviceContext->IASetPrimitiveTopology(obj->GetTopology());
 						Buffer* verts = obj->GetVertBuff();
-						if(verts)
-							verts->Apply();
-
 						Buffer* inds = obj->GetIndsBuff();
+						if(verts)
+						{
+							verts->Apply();
+						}
 						if(inds)
+						{
 							inds->Apply();
-
-						Shader_ShadowMap->Apply(0);
-
-
-						// draw
-						if(inds)
-							Dx_DeviceContext->DrawIndexed(inds->GetElementCount(), 0, 0);
+						}
+						
+						//Texture
+						if(obj->GetTextureResource() != NULL)
+						{
+							if(obj->GetTextureResource()->GetSRVPointer() != NULL)
+							{
+								this->Shader_ShadowMap->SetResource("diffuseMap", obj->GetTextureResource()->GetSRVPointer());
+								this->Shader_ShadowMap->SetBool("textured", true);
+							}
+							else
+							{
+								this->Shader_ShadowMap->SetResource("diffuseMap", NULL);
+								this->Shader_ShadowMap->SetBool("textured", false);
+							}
+						}
 						else
+						{
+							this->Shader_ShadowMap->SetResource("diffuseMap", NULL);
+							this->Shader_ShadowMap->SetBool("textured", false);
+						}
+
+						//Apply Shader
+						this->Shader_ShadowMap->Apply(0);
+
+						//Draw
+						if(inds)
+						{
+							Dx_DeviceContext->DrawIndexed(inds->GetElementCount(), 0, 0);
+						}
+						else
+						{
 							Dx_DeviceContext->Draw(verts->GetElementCount(), 0);
+						}
 					}
 				}
 			}
@@ -857,8 +918,8 @@ HRESULT DxManager::Render()
 	// Render shadowmap pictures:
 	//for(int q = 0; q < this->lights.size(); q++)
 		//DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_BillBoard, this->lights[q]->GetShadowMapSRV(), q); 
-	//for(int q = 0; q < this->csm->GetNrOfCascadeLevels(); q++)
-	//	DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_BillBoard, this->csm->GetShadowMapSRV(q), q); 
+	for(int q = 0; q < this->csm->GetNrOfCascadeLevels(); q++)
+		DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_BillBoard, this->csm->GetShadowMapSRV(q), q); 
 
 	
 	

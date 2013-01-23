@@ -112,8 +112,8 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	iT->SetHeightMap(hmData);
 	const char* fileNames[4];
 	fileNames[0] = "Media/BallTexture.png";
-	fileNames[1] = "Media/BallTexture.png";
-	fileNames[2] = "Media/BallTexture.png";
+	fileNames[1] = "Media/TerrainTexture.png";
+	fileNames[2] = "Media/TerrainTexture.png";
 	fileNames[3] = "Media/TerrainTexture.png";
 	iT->SetTextures(fileNames);
 	iT->SetHeightMap(hmData);
@@ -181,7 +181,20 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	arrow->Scale(1.0f * 0.05f);
 	Vector3 arrowDir = Vector3(0, 0, -1);
 
+
+
 	//CASCADED SHADOWMAP:
+	iMesh* bushCSMTest = GetGraphics()->CreateMesh("Media/Bush_01_v04_r.obj", Vector3(10, 2, 0));
+	bushCSMTest->Scale(1.0f * 0.05f);
+	iMesh* bushScaleBugTest = GetGraphics()->CreateMesh("Media/Bush_01_v04_r.obj", Vector3(0, 0, 0));
+	iMesh* scaleBugTest = GetGraphics()->CreateMesh("Media/scale.obj", Vector3(5, 0, 0));
+	iMesh* bushScaleBugTest2 = GetGraphics()->CreateMesh("Media/Bush_01_v04_r.obj", Vector3(2, 0, 0));
+	iMesh* scaleBugTest2 = GetGraphics()->CreateMesh("Media/scale.obj", Vector3(4, 0, 0));
+
+	bushScaleBugTest->Scale(1.0f * 0.05f);
+	scaleBugTest->Scale(1.0f * 0.05f);
+	bushScaleBugTest2->Scale(1.0f * 0.05f);
+	scaleBugTest2->Scale(1.0f * 0.25f);
 	/*
 	Vector3 lookAt = Vector3(0, 0, 0);
 	Vector3 pos = Vector3(-50, 50, -50);

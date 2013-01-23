@@ -107,7 +107,7 @@ void CascadedShadowMap::CalcShadowMapMatrices(D3DXVECTOR3 sunLight, Camera* cam,
 		D3DXVec3Maximize (&vLightCameraOrthographicMax, &vec3, &vLightCameraOrthographicMax );
 	}
 	D3DXVECTOR3 tmpNearPlanePoint = minValue;
-	tmpNearPlanePoint += sunLight * 100.0f; //set the near plane to be closer to the light to include more potential occluders.//**tillman opt || variablifiera (((i + 1) ))
+	//tmpNearPlanePoint += sunLight * 100.0f; //set the near plane to be closer to the light to include more potential occluders.//**tillman opt || variablifiera (((i + 1) ))
 	float nearPlane = tmpNearPlanePoint.z; 
 	float farPlane = maxValue.z;
 
@@ -225,7 +225,7 @@ void CascadedShadowMap::CalcShadowMappingSplitDepths()
 	this->shadowMappingSplitDepths[1] = camFar * 0.1f;
 	this->shadowMappingSplitDepths[2] = camFar * 0.4f;
 	this->shadowMappingSplitDepths[SHADOW_MAP_CASCADE_COUNT] = camFar;
-
+	
 	/*
 	float i_f = 1.0f;
 	float cascadeCount = (float)SHADOW_MAP_CASCADE_COUNT;

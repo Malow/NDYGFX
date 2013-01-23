@@ -128,6 +128,20 @@ RasterizerState FrontCulling
 {
 	CullMode = Front;
 };
+RasterizerState SolidFrontCulling
+{
+	FillMode = Solid;
+	CullMode = Front;
+};
+
+
+//------------------------------------------------------------------------------------------------------
+//	RasterizerStates
+//------------------------------------------------------------------------------------------------------
+BlendState NoBlend
+{
+	BlendEnable[0] = FALSE;
+};
 
 //------------------------------------------------------------------------------------------------------
 //	DepthStencilStates
