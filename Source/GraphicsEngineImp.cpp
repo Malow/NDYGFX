@@ -709,17 +709,22 @@ iGraphicsEngineParams* GraphicsEngineImp::GetEngineParameters() const
 	return &this->GetEngineParams();
 }
 
-void GraphicsEngineImp::DeleteMesh( iMesh* delMesh )
+void GraphicsEngineImp::DeleteMesh( iMesh* &delMesh )
 {
-	string fileName = dynamic_cast<Mesh*>(delMesh)->GetFilePath();
-	string tmp = string(fileName); //".fileType"
-	if(tmp.substr(tmp.length() - 4) == ".obj") 
+	Mesh* tmpMesh = dynamic_cast<Mesh*>(delMesh);
+	if(tmpMesh != NULL)
 	{
-		this->DeleteStaticMesh(dynamic_cast<StaticMesh*>(delMesh));
-	}
-	else if(tmp.substr(tmp.length() - 4) == ".ani")
-	{
-		this->DeleteAnimatedMesh(dynamic_cast<AnimatedMesh*>(delMesh));
+		string fileName = tmpMesh->GetFilePath();
+		string tmpStr = string(fileName); //".fileType"
+		if(tmpStr.substr(tmpStr.length() - 4) == ".obj") 
+		{
+			this->DeleteStaticMesh(dynamic_cast<StaticMesh*>(delMesh));
+		}
+		else if(tmpStr.substr(tmpStr.length() - 4) == ".ani")
+		{
+			this->DeleteAnimatedMesh(dynamic_cast<AnimatedMesh*>(delMesh));
+		}
+		delMesh = NULL;
 	}
 }
 

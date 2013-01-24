@@ -245,6 +245,8 @@ bool AnimatedMesh::LoadFromFile(string file)
 
 			//The code for loading the object(+/data) files
 			{
+
+				//**TILLMAN TODO: test spawn.obj. ev try catch**
 				string tmpPath = pathfolder + path;
 				ObjData* od = GetResourceManager()->LoadObjectDataFromFile(tmpPath.c_str());
 				if(!od)

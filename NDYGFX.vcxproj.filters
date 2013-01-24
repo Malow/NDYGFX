@@ -331,9 +331,6 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="WorkingDir\Shaders\DeferredGeometryBlendMap.fx">
-      <Filter>Source Files\Engine\Shaders</Filter>
-    </FxCompile>
     <FxCompile Include="WorkingDir\Shaders\DeferredGeometry.fx">
       <Filter>Source Files\Engine\Shaders</Filter>
     </FxCompile>

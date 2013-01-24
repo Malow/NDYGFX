@@ -53,10 +53,26 @@ class ResourceManager
 
 		//CREATE
 		//Textures
-		/*	Creates a texture resource from file and returns a pointer to it.	*/
+		/*	Creates a texture resource from file with:
+			BindFlags = D3D11_BIND_SHADER_RESOURCE;
+			Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+			MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
+			and returns a pointer to it.
+		*/
 		TextureResource* CreateTextureResourceFromFile(const char* filePath);
-		/*	Creates a cube texture resource from file and returns a pointer to it.	*/
+		/*	Creates a cube texture resource from file with:
+			BindFlags = D3D11_BIND_SHADER_RESOURCE;
+			Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+			MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
+			and returns a pointer to it.
+			*/
 		TextureResource* CreateCubeTextureResourceFromFile(const char* filePath);
+		/*	Creates a texture resource with the provided identification and D3DX11_IMAGE_LOAD_INFO and returns a pointer to it.	*/
+		/*TextureResource* CreateTextureResource(const char* id, D3DX11_IMAGE_LOAD_INFO loadInfo);
+		/*	Checks if the specified filepath has been used to create a texture resource already. Otherwise returns NULL.	*/
+		/*TextureResource* HasTextureResource(const char* filePath);
+		/*	Saves the pointer of the specified resource. */
+		/*void SetTextureResource(TextureResource* textureResource);
 		/*	Deletes the texture resource sent through the parameter. The pointer to the texture sent is automatically set to NULL.	*/
 		void DeleteTextureResource(TextureResource* &textureResource);
 

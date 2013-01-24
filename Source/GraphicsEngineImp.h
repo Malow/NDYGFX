@@ -94,7 +94,7 @@ public:
 
 	/*  Inherited from interface  */
 	virtual iMesh* CreateMesh(const char* filename, const Vector3& pos);
-	virtual void DeleteMesh(iMesh* delMesh);
+	virtual void DeleteMesh(iMesh* &delMesh);
 	virtual iMesh* CreateStaticMesh(const char* filename, const Vector3& pos);
 	virtual iAnimatedMesh* CreateAnimatedMesh(const char* filename, const Vector3& pos);
 	

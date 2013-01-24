@@ -42,12 +42,14 @@ struct BoundingBox
 class Terrain : public iTerrain
 {
 	private:
-		bool						zIsCulled;
+		//Object data
 		unsigned int				zSize; //size of mesh (width & height)
 		D3DXVECTOR3					zPos;
 		D3DXVECTOR3					zScale;
 		D3DXMATRIX					zWorldMatrix;
+		Material*					zMaterial;
 
+		//Vertex data
 		bool						zHeightMapHasChanged;
 		int							zNrOfVertices;
 		Vertex*						zVertices;	
@@ -55,18 +57,26 @@ class Terrain : public iTerrain
 		int							zNrOfIndices;
 		int*						zIndices; 
 		Buffer*						zIndexBuffer;
-
-		Material*					zMaterial;
 		D3D_PRIMITIVE_TOPOLOGY		zTopology;
 
+		//Texturing
 		float						zTextureScale;
 		int							zNrOfTextures;
 		TextureResource**			zTextureResources;
 		bool						zTextureResourceHasChanged[4];
-		string						zTextureResourceToLoadFileName[4]; //**TILLMAN
+		string						zTextureResourceToLoadFileName[4]; 
 		BlendMap*					zBlendMap;
+
+		//Collision
+		bool						zIsCulled;
 		bool						zRecreateBoundingSphere;
 		BoundingSphere				zBoundingSphere;
+
+		//Editor
+		unsigned int				zNrOfAINodesPerSide;
+		void*						zAIData;
+		bool						zAIGridHasChanged;	
+		ID3D11ShaderResourceView*	zAIGridShaderResourceView; //Is unique for every terrain so the use of resource is unnecessary.
 
 		
 
@@ -81,16 +91,13 @@ class Terrain : public iTerrain
 		Terrain(D3DXVECTOR3 pos, D3DXVECTOR3 scale, unsigned int size);
 		virtual ~Terrain();
 
-		//Get
-		bool IsCulled() const { return this->zIsCulled; }
+		//GET-functions
+		//Object data
 		unsigned int GetSize() const { return this->zSize; }
-		virtual Vector3 GetPosition() const;
 		D3DXVECTOR3 GetScale() const { return this->zScale; }
 		D3DXMATRIX GetWorldMatrix() const { return this->zWorldMatrix; }
 
-		// Easier access to normals
-		inline D3DXVECTOR3& GetNormalAt( unsigned int x, unsigned int y ) const { return zVertices[y * zSize + x].normal; }
-
+		//Vertex data
 		bool HasHeightMapChanged() const { return this->zHeightMapHasChanged; }
 		int GetNrOfVertices() const { return this->zNrOfVertices; }
 		Vertex* GetVerticesPointer() const { return this->zVertices; }
@@ -98,10 +105,12 @@ class Terrain : public iTerrain
 		int GetNrOfIndices() const { return this->zNrOfIndices; }
 		int* GetIndicesPointer() const { return this->zIndices; }
 		Buffer* GetIndexBufferPointer() const { return this->zIndexBuffer; }
-
 		Material* GetMaterial() const { return this->zMaterial; }
 		D3D_PRIMITIVE_TOPOLOGY GetTopology() const { return this->zTopology; }
+		// Easier access to normals
+		inline D3DXVECTOR3& GetNormalAt( unsigned int x, unsigned int y ) const { return zVertices[y * zSize + x].normal; }
 
+		//Textures
 		float GetTextureScale() const { return this->zTextureScale; }
 		int GetNrOfTextures() const { return this->zNrOfTextures; }
 		TextureResource* GetTexture(unsigned int index) const { return this->zTextureResources[index]; }
@@ -109,40 +118,71 @@ class Terrain : public iTerrain
 		string GetTextureResourceToLoadFileName(unsigned int index) const { return this->zTextureResourceToLoadFileName[index]; }
 		//string GetTextureFileName(unsigned int index) { return this->zTextureFileNames[index]; }
 		BlendMap* GetBlendMapPointer() { return this->zBlendMap; }
-		
 
-		//Set
-		void SetCulled(bool cull) { this->zIsCulled = cull; }
+		//Collision
+		bool IsCulled() const { return this->zIsCulled; }
+		
+		//Editor
+		unsigned int GetNrOfAINodesPerSide() const { return this->zNrOfAINodesPerSide; }
+		const void* GetAIData() const { return (const void*)this->zAIData; }
+		bool HasAIGridChanged() const { return this->zAIGridHasChanged; }
+		ID3D11ShaderResourceView*& GetAIShaderResourceView() { return this->zAIGridShaderResourceView; }
+
+		//SET-functions.
+		//Object data
 		void SetScale(D3DXVECTOR3 scale) { this->zScale = scale; }
+
+		//Vertex data
 		void HeightMapHasChanged(bool has) { this->zHeightMapHasChanged = has; }
 		void SetVertexBuffer(Buffer* vertexBuffer) { this->zVertexBuffer = vertexBuffer; }
 		void SetIndexBuffer(Buffer* indexBuffer) { this->zIndexBuffer = indexBuffer; }
+
+		//Textures
 		void SetTexture(unsigned int index, TextureResource* textureResource) const { this->zTextureResources[index] = textureResource; }
 		void TextureResourceHasChanged(unsigned int index, bool has) { this->zTextureResourceHasChanged[index] = has; this->zTextureResourceToLoadFileName[index] = ""; }
 		
+		//Collision
+		void SetCulled(bool cull) { this->zIsCulled = cull; }
+		BoundingSphere GetBoundingSphere() { if(this->zRecreateBoundingSphere) { RecreateBoundingSphere(); } return this->zBoundingSphere; }
 
-		//Other
+		//Editor
+		void SetAIGridShaderResourceView(ID3D11ShaderResourceView* AIGridShaderResourceView) { this->zAIGridShaderResourceView = AIGridShaderResourceView; }
+		void AIGridHasChanged(bool has) {this->zAIGridHasChanged = has; }
+		float GetAINodeSize() const { return (float)this->zSize / (float)this->zNrOfAINodesPerSide; }
+
+		//OTHER.
 		//Is used internally when needed, but can be used from the outside for debugging.
 		void RecreateWorldMatrix();
 		void RecreateBoundingSphere();
+
+
+
+		//** iTerrain interface functions ** - for descriptions, see iTerrain.h.
+		//GET-functions.
+		//Object data
+		virtual Vector3 GetPosition() const { return Vector3(zPos.x,zPos.y,zPos.z); } ;
 		
-		//bool LoadTexture();
-		//bool LoadTextures()
-
-
-
-		//iTerrain interface functions
-		//Get
+		//Vertex data
 		virtual float GetYPositionAt(float x, float z) const throw(...); 
 
-		//Set
+		//SET-functions
+		//Object data
 		virtual void SetScale(const Vector3& scale);
+		virtual void SetDiffuseColor(const Vector3& color);
+		
+		//Vertex data
 		virtual void SetHeightMap(float const* const data); 
+		
+		//Texture
+		virtual void SetTextureScale(float textureScale) { this->zTextureScale = textureScale; }
 		virtual void SetTextures(char const* const* const fileNames);
 		virtual void SetBlendMap(unsigned int size, float const* const data);
-		virtual void SetDiffuseColor(const Vector3& color);
-		virtual void SetTextureScale(float textureScale);
-		virtual BoundingSphere GetBoundingSphere() { if(this->zRecreateBoundingSphere) { RecreateBoundingSphere(); } return this->zBoundingSphere; }
+		
+		
+		//Editor
+		virtual void SetAIGrid(unsigned int nrOfAINodesPerSide, void* aiData) { this->zNrOfAINodesPerSide = nrOfAINodesPerSide; this->zAIData = aiData; this->zAIGridHasChanged = true; }
+
+
 		// MaloW ToDO
 		// virtual void SetAIMap(int size, float const* data);
 		// Do just like blendmap, maybe even use the struct blendmap, and send it to GPU just like it

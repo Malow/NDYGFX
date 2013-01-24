@@ -8,6 +8,7 @@
 
 #include "Graphics.h"
 #include "..\..\NDYGFX\Source\MaloWFileDebug.h"
+#include <bitset>
 //#include "MaloWFileDebug.h"
 
 void ReplaceSlashes(string& str, char replace, char with)
@@ -309,7 +310,38 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	scaleDbg->Scale(1.0f * 0.05f);
 	*/
 
+	//Memory leak with texture resources for iImage
+	//iImage* imm1 = GetGraphics()->CreateImage(Vector2(100, 100), Vector2(100, 100), "Media/BallTexture.png");
+		//iImage* imm2 = GetGraphics()->CreateImage(Vector2(200, 100), Vector2(100, 100), "Media/Bush_leaf_01_v07.png");
+		//iImage* imm3 = GetGraphics()->CreateImage(Vector2(300, 100), Vector2(100, 100), "Media/Arrow_v01.png");
+		//iImage* imm4 = GetGraphics()->CreateImage(Vector2(300, 100), Vector2(100, 100), "Media/Arrow_v01.png");
 
+		//Editor crasch test
+		//iMesh* spawnP = GetGraphics()->CreateStaticMesh("Media/spawn.obj", Vector3());
+
+
+	//AI grid test
+	char aiData[64*64];
+	for(int i = 0; i < 64*64/2; i++)
+	{
+		aiData[i] = 0; //not blocked = false = 0 = green
+	}
+	for(int i = 64*64/2; i < 64*64; i++)
+	{
+		aiData[i] = 255; //blocked = true = 255 = 1 = red
+	}
+	aiData[0] = 255; //blocked = true = 255 = 1 = red
+	aiData[77] = 255; //blocked = true = 255 = 1 = red
+	aiData[9] = 255; //blocked = true = 255 = 1 = red
+	aiData[90] = 255; //blocked = true = 255 = 1 = red
+	aiData[177] = 255; //blocked = true = 255 = 1 = red
+	aiData[356] = 255; //blocked = true = 255 = 1 = red
+	aiData[1278] = 255; //blocked = true = 255 = 1 = red
+	aiData[2743] = 0; //blocked = false = 0 = green
+	aiData[2999] = 0; //blocked = false = 0 = green
+	aiData[3204] = 0; //blocked = false = 0 = green
+	aiData[3777] = 0; //blocked = false = 0 = green
+	
 #endif
 //*************************************	    END OF PRE TEST       **********************
 
@@ -431,6 +463,12 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 			fileNames[2] = "Media/BallTexture.png";
 			fileNames[3] = "Media/BallTexture.png";
 			iT->SetTextures(fileNames);
+			static bool oncee = false;
+			if(!oncee)
+			{
+				iT->SetAIGrid(64, (void*)&aiData);
+				oncee = true;
+			}
 		}
 		if(GetGraphics()->GetKeyListener()->IsPressed('E'))
 		{
@@ -491,9 +529,19 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		}
 		
 		*/
+
+		//Editor crash testing
+		//GetGraphics()->DeleteMesh(spawnP);
+		/*static bool once = false;
+		if(!once)
+		{
+			int index = 0;
+			iMesh* spawnPP = GetGraphics()->CreateStaticMesh("Media/spawn.obj", Vector3(0,0, 2 * index++));
+			iMesh* spawnPPP = GetGraphics()->CreateStaticMesh("Media/spawn.obj", Vector3(0,0, 2 * index++)); //Crashes
+			once = true;
+		}*/
 #endif
 //*************************************	    END OF RUN TESTS       **********************
-
 
 		li->SetPosition(GetGraphics()->GetCamera()->GetPosition());
 

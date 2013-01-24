@@ -282,8 +282,43 @@ TextureResource* ResourceManager::CreateCubeTextureResourceFromFile( const char*
 	this->zTextureResources[filePath]->IncreaseReferenceCount();
 
 	return tex->second;
+}/*
+TextureResource* ResourceManager::CreateTextureResource(const char* id, D3DX11_IMAGE_LOAD_INFO loadInfo)
+{
+	return NULL; //**TILLMAN TODO**
+}
+TextureResource* ResourceManager::HasTextureResource(const char* filePath)
+{
+	//Try to find resource.
+	auto tex = this->zTextureResources.find(filePath);
+	//If not found, return NULL.
+	if(tex == this->zTextureResources.end())
+	{
+		return NULL;
+	}
+	else 
+	{
+		tex->second->IncreaseReferenceCount(); //Increase reference counter and...
+		return tex->second; //...return resource.
+	}
 }
 
+void ResourceManager::SetTextureResource(TextureResource* textureResource)
+{
+	//Check if texture resource already exists in the table.
+	TextureResource* tmp = this->HasTextureResource(textureResource->GetName().c_str());
+	if(tmp != NULL) //If it does, increase it's reference count.
+	{
+		tmp->IncreaseReferenceCount(); //AKA textureResource.
+	}
+	else //If not, add it.
+	{
+		//Save the pointer.
+		this->zTextureResources[textureResource->GetName()] = textureResource;
+		//Increase reference count. (The resource manager has a reference to the resource).
+		this->zTextureResources[textureResource->GetName()]->IncreaseReferenceCount();
+	}
+}*/
 void ResourceManager::DeleteTextureResource( TextureResource* &textureResource )
 {
 	if(textureResource)
@@ -301,6 +336,14 @@ void ResourceManager::DeleteTextureResource( TextureResource* &textureResource )
 				tex->second->DecreaseReferenceCount();
 				//Remove texture from table.
 				this->zTextureResources.erase(tex);
+			}
+			else
+			{
+				while(textureResource->GetReferenceCount() > 0)
+				{
+					textureResource->DecreaseReferenceCount();
+				}
+				MaloW::Debug("WARNING: ResourceManager::DeleteTextureResource: Could not find the specified texture:" + textureResource->GetName());
 			}
 			textureResource = NULL;
 		}

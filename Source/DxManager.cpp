@@ -40,7 +40,7 @@ DxManager::DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam)
 	this->csm = NULL;
 
 	this->Shader_DeferredGeometry = NULL;
-	this->Shader_DeferredGeometryBlendMap = NULL;
+	this->Shader_TerrainEditor = NULL;
 	this->Shader_DeferredLightning = NULL;
 	this->Shader_InvisibilityEffect = NULL;
 
@@ -101,8 +101,8 @@ DxManager::~DxManager()
 	if(this->Shader_DeferredGeometry)
 		delete this->Shader_DeferredGeometry;
 
-	if(this->Shader_DeferredGeometryBlendMap)
-		delete this->Shader_DeferredGeometryBlendMap;
+	if(this->Shader_TerrainEditor)
+		delete this->Shader_TerrainEditor;
 
 	if(this->Shader_DeferredLightning)
 		delete this->Shader_DeferredLightning;
@@ -441,6 +441,40 @@ void DxManager::CreateImage(Image* image, string texture)
 	TextureResource* tex = NULL;
 	if(texture != "")
 	{
+		/*** TILLMAN: 
+		//Check if texture resource has already been created.
+		tex = GetResourceManager()->HasTextureResource(texture.c_str());
+		//If not...
+		if(tex == NULL)
+		{
+			//...create it...
+			D3DX11_IMAGE_LOAD_INFO loadInfo;
+			ZeroMemory(&loadInfo, sizeof(D3DX11_IMAGE_LOAD_INFO));
+			loadInfo.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+			loadInfo.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+
+			ID3D11ShaderResourceView* SRV = NULL;
+			HRESULT hr = S_OK;
+			if(D3DX11CreateShaderResourceViewFromFile(	
+				this->Dx_Device, 
+				texture.c_str(),
+				&loadInfo, 
+				NULL, 
+				&SRV,
+				NULL))
+			{
+				string dbgStr = "WARNING: Failed to load texture: ";
+				dbgStr += texture;
+				MaloW::Debug(dbgStr);
+			}
+			else 
+			{
+				tex = new TextureResource(texture, SRV);
+
+				//...and let the resource manager know it has been created.
+				GetResourceManager()->SetTextureResource(tex);
+			}
+		}*/
 		tex = GetResourceManager()->CreateTextureResourceFromFile(texture.c_str());
 	}
 

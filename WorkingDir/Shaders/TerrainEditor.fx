@@ -15,6 +15,10 @@ Texture2D tex1; //G-channel in blendmap. ex: dirt
 Texture2D tex2; //B-channel in blendmap. ex: leaves
 Texture2D tex3; //A-channel in blendmap. ex: extra
 Texture2D<float4> blendMap;
+//Texture2D<uint> AIMap;
+Texture2D AIMap;
+//Texture2D<int> AIMap; //**uint
+
 
 //-----------------------------------------------------------------------------------------
 // Constant buffers
@@ -29,14 +33,17 @@ cbuffer PerObject
 	//Texture
 	bool	textured;
 	bool	blendMapped;
-	float	texScale;
+	float	textureScale;
 
 	//Material
 	float	specularPower;
 	float3	specularColor;
 	float3	diffuseColor;
-};
 
+	//AI(editor)
+	bool useAIMap;
+	float nodesPerSide;
+};
 //-----------------------------------------------------------------------------------------
 // Input and Output Structures
 //-----------------------------------------------------------------------------------------
@@ -66,16 +73,44 @@ struct PSOut
 	float4 Specular			: SV_TARGET3;	//Specular XYZ, specular power W
 };
 
+float3 RenderTextured(float scale, float2 tex, bool useBlendMap)
+{
+	//Sample R,G,B,A textures
+	float2 texCoord = scale * tex;
+	float3 tex1Color = tex0.Sample(LinearWrapSampler, texCoord).rgb; //**tillman opti, FORMAT = RGB och inte A**
+	float3 tex2Color = tex1.Sample(LinearWrapSampler, texCoord).rgb; //**tillman opti, FORMAT = RGB och inte A**
+	float3 tex3Color = tex2.Sample(LinearWrapSampler, texCoord).rgb; //**tillman opti, FORMAT = RGB och inte A**
+	float3 tex4Color = tex3.Sample(LinearWrapSampler, texCoord).rgb; //**tillman opti, FORMAT = RGB och inte A**
+		
+	if(useBlendMap)
+	{
+		//Sample blend map texture
+		float4 blendMapColor = normalize(blendMap.Sample(LinearClampSampler, tex)); //normalize (don't use texture scaling).
+		
+		//Inverse of all blend weights to scale final color to be in range [0,1]
+		float inverseTotal = 1.0f / (blendMapColor.r + blendMapColor.g + blendMapColor.b + blendMapColor.a);
 
+		//Scale color for each texture by the weight in the blendmap and scale to [0,1]
+		tex1Color *= blendMapColor.r * inverseTotal;
+		tex2Color *= blendMapColor.g * inverseTotal;
+		tex3Color *= blendMapColor.b * inverseTotal;
+		tex4Color *= blendMapColor.a * inverseTotal;
+
+		//Blendmapped color (normalize it)
+		return (tex1Color + tex2Color + tex3Color + tex4Color) * diffuseColor;
+	}
+	else
+	{
+		//Saturated color
+		return saturate((tex1Color + tex2Color + tex3Color + tex4Color) * diffuseColor);
+	}
+}
 
 //-----------------------------------------------------------------------------------------
 // VertexShader: VSScene
 //-----------------------------------------------------------------------------------------
 PSSceneIn VSScene(VSIn input)
 {
-	//input.color.w = 1.0f;
-	//input.pos.w = 1.0f; //**
-
 	PSSceneIn output = (PSSceneIn)0;
 	output.pos = mul(float4(input.pos, 1.0f), WVP);
 	output.tex = input.tex;
@@ -95,45 +130,43 @@ PSOut PSScene(PSSceneIn input) : SV_Target
 
 	//Texture RT
 	float3 finalColor = float3(0.0f, 0.0f, 0.0f);
-	if(textured) 
+
+	if(useAIMap) //AIMap color
 	{
-		//finalColor = tex3.Sample(LinearWrapSampler, input.tex).xyz * diffuseColor; //debug
-		//finalColor = blendMap.Sample(LinearWrapSampler, input.tex).rgb; //Debug
-		
-		//Sample R,G,B,A textures
-		float2 texCoord = input.tex * texScale;
-		float3 tex1Color = tex0.Sample(LinearWrapSampler, texCoord).rgb; //**tillman opti, FORMAT = RGB och inte A**
-		float3 tex2Color = tex1.Sample(LinearWrapSampler, texCoord).rgb; //**tillman opti, FORMAT = RGB och inte A**
-		float3 tex3Color = tex2.Sample(LinearWrapSampler, texCoord).rgb; //**tillman opti, FORMAT = RGB och inte A**
-		float3 tex4Color = tex3.Sample(LinearWrapSampler, texCoord).rgb; //**tillman opti, FORMAT = RGB och inte A**
-		
-		if(blendMapped)
+		float boolColor = AIMap.Sample(PointClampSampler, input.tex).r;
+
+		//If node is blocked, render it red (true = 1 = red).
+		if(boolColor == 1.0f)
 		{
-			//Sample blend map texture
-			float4 blendMapColor = normalize(blendMap.Sample(LinearClampSampler, input.tex)); //normalize
-		
-			//Inverse of all blend weights to scale final color to be in range [0,1]
-			float inverseTotal = 1.0f / (blendMapColor.r + blendMapColor.g + blendMapColor.b + blendMapColor.a);
-
-			//Scale color for each texture by the weight in the blendmap and scale to [0,1]
-			tex1Color *= blendMapColor.r * inverseTotal;
-			tex2Color *= blendMapColor.g * inverseTotal;
-			tex3Color *= blendMapColor.b * inverseTotal;
-			tex4Color *= blendMapColor.a * inverseTotal;
-
-			//Blendmapped color (normalize it)
-			finalColor = (tex1Color + tex2Color + tex3Color + tex4Color) * diffuseColor;
+			finalColor.r = 1.0f; //Render non-traversable/blocked nodes
 		}
-		else
+		else if(textured)
 		{
-			//Saturated color
-			finalColor = saturate((tex1Color + tex2Color + tex3Color + tex4Color) * diffuseColor);
+			finalColor = RenderTextured(textureScale, input.tex, blendMapped);
+		}
+
+		//Render grid
+		float deltaXY = 1.0f / nodesPerSide;
+		float texX = fmod(input.tex.x, deltaXY);
+		float texY = fmod(input.tex.y, deltaXY);
+		float EPSILON = 0.001f;
+		if(	texX > 0.0f && texX < EPSILON || 
+			texY >  0.0f && texY < EPSILON) 
+		{
+			finalColor.rgb = 1.0f;
 		}
 	}
-	else
+	else if(textured) //Texture color(s)
 	{
-		finalColor = input.color; //Geometry color
+		finalColor = RenderTextured(textureScale, input.tex, blendMapped);
 	}
+	else //Geometry color
+	{
+		finalColor = input.color; 
+	}
+
+	//RENDERTARGET DATA:
+	//Texture RT
 	output.Texture.xyz = finalColor;
 	output.Texture.w = -1.0f;
 
@@ -148,7 +181,7 @@ PSOut PSScene(PSSceneIn input) : SV_Target
 	//Specular RT
 	output.Specular.xyz = specularColor;
 	output.Specular.w = specularPower;
-
+	
 	return output;
 }
 
@@ -156,7 +189,7 @@ PSOut PSScene(PSSceneIn input) : SV_Target
 //-----------------------------------------------------------------------------------------
 // Technique: RenderTextured  
 //-----------------------------------------------------------------------------------------
-technique11 DeferredGeometryBlendMapTech
+technique11 TerrainEditorTech
 {
     pass p0
     {

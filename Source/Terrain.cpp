@@ -154,13 +154,15 @@ void Terrain::CalculateNormals()
 
 Terrain::Terrain()
 {
-	this->zIsCulled = false;
+	//Object data
 	this->zSize = 0;
 	this->zPos = D3DXVECTOR3(0, 0, 0);
 	this->zScale = D3DXVECTOR3(0, 0, 0);
 	D3DXMatrixIdentity(&this->zWorldMatrix);
 	this->RecreateWorldMatrix();
+	this->zMaterial = new Material(MaterialType::LAMBERT);
 
+	//Vertex data
 	this->zHeightMapHasChanged = false;
 	this->zNrOfVertices = 0;
 	this->zVertices = NULL;
@@ -168,10 +170,9 @@ Terrain::Terrain()
 	this->zNrOfIndices = 0;
 	this->zIndices = NULL;
 	this->zIndexBuffer = NULL;
-
-	this->zMaterial = new Material(MaterialType::LAMBERT);
 	this->zTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
+	//Texturing
 	this->zTextureScale = 1.0f;
 	this->zNrOfTextures = 4;
 	this->zTextureResources = new TextureResource*[this->zNrOfTextures];
@@ -183,21 +184,31 @@ Terrain::Terrain()
 	}
 	this->zBlendMap = NULL;
 
+	//Collision
+	this->zIsCulled = false;
 	this->zRecreateBoundingSphere = false;
 	this->zBoundingSphere = BoundingSphere();
+	
+	//Editor
+	this->zNrOfAINodesPerSide = 0;
+	this->zAIData = NULL;
+	this->zAIGridHasChanged = false;
+	this->zAIGridShaderResourceView = NULL;
 }
 
 
 
 Terrain::Terrain(D3DXVECTOR3 pos, D3DXVECTOR3 scale, unsigned int size)
 {
-	this->zIsCulled = false;
+	//Object data
 	this->zPos = pos;
 	this->zScale = scale;
 	this->zSize = size;
 	D3DXMatrixIdentity(&this->zWorldMatrix);
 	this->RecreateWorldMatrix();
+	this->zMaterial = new Material(MaterialType::LAMBERT);
 
+	//Vertex data
 	this->zHeightMapHasChanged = false;
 	this->zNrOfVertices = 0;
 	this->zVertices = NULL;
@@ -205,10 +216,9 @@ Terrain::Terrain(D3DXVECTOR3 pos, D3DXVECTOR3 scale, unsigned int size)
 	this->zNrOfIndices = 0;
 	this->zIndices = NULL;
 	this->zIndexBuffer = NULL;
-
-	this->zMaterial = new Material(MaterialType::LAMBERT);
 	this->zTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
+	//Texturing
 	this->zTextureScale = 1.0f;
 	this->zNrOfTextures = 4;
 	this->zTextureResources = new TextureResource*[this->zNrOfTextures];
@@ -221,8 +231,17 @@ Terrain::Terrain(D3DXVECTOR3 pos, D3DXVECTOR3 scale, unsigned int size)
 	this->zBlendMap = NULL;
 
 	this->CreateMesh();
+
+	//Collision
+	this->zIsCulled = false;
 	this->zRecreateBoundingSphere = true;
 	this->zBoundingSphere = BoundingSphere();
+
+	//Editor
+	this->zNrOfAINodesPerSide = 0;
+	this->zAIData = NULL;
+	this->zAIGridHasChanged = false;
+	this->zAIGridShaderResourceView = NULL;
 }
 
 Terrain::~Terrain()
@@ -247,9 +266,14 @@ Terrain::~Terrain()
 		this->zTextureResources = NULL;
 	}
 	if(this->zBlendMap) delete this->zBlendMap; this->zBlendMap = NULL;
+	if(this->zAIGridShaderResourceView)
+	{
+		this->zAIGridShaderResourceView->Release();
+		this->zAIGridShaderResourceView = NULL;
+	}
 }
 
-
+//OTHER
 void Terrain::RecreateWorldMatrix()
 {
 	D3DXMATRIX translate;
@@ -287,6 +311,8 @@ void Terrain::RecreateBoundingSphere()
 
 
 //iTerrain interface functions
+//GET
+//Vertex data
 float Terrain::GetYPositionAt(float x, float z) const
 {
 	float ex = z / this->zScale.z; //hackfix by swapping z & x
@@ -336,13 +362,18 @@ float Terrain::GetYPositionAt(float x, float z) const
 	}
 }
 
-//Set
+//SET
+//Object data
 void Terrain::SetScale(const Vector3& scale)
 {
 	this->zScale.x = scale.x;
 	this->zScale.y = scale.y;
 	this->zScale.z = scale.z;
 	this->RecreateWorldMatrix();
+}
+void Terrain::SetDiffuseColor(const Vector3& color )
+{
+	this->zMaterial->DiffuseColor = D3DXVECTOR3(color.x, color.y, color.z);
 }
 
 void Terrain::SetHeightMap(float const* const data)
@@ -360,6 +391,8 @@ void Terrain::SetHeightMap(float const* const data)
 	this->zRecreateBoundingSphere = true; //Bounding sphere needs to be recreated (done when calling GetBoundingSphere()).
 }
 
+
+//Texture
 void Terrain::SetTextures(char const* const* const fileNames)
 {
 	if(fileNames)
@@ -371,21 +404,7 @@ void Terrain::SetTextures(char const* const* const fileNames)
 			{
 				this->zTextureResourceHasChanged[i] = true;
 				this->zTextureResourceToLoadFileName[i] = fileNames[i];
-
-				//this->zTextureResources[i] = GetResourceManager()->CreateTextureResourceFromFile(fileNames[i]);
 			}
-			/*
-			//Check if texture file path has changed
-			else if(this->zTextureResources[i]->GetName() != string(fileNames[i]))
-			{
-
-				/*
-				//Delete(Decrease the reference) current one.
-				GetResourceManager()->DeleteTextureResource(this->zTextureResources[i]);
-				//Assign it to the new path if it has.
-				this->zTextureResources[i] = GetResourceManager()->CreateTextureResourceFromFile(fileNames[i]);
-			
-			}*/
 		}
 	}
 }
@@ -401,18 +420,6 @@ void Terrain::SetBlendMap(unsigned int size, float const* const data)
 	this->zBlendMap->HasChanged = true;
 }
 
-void Terrain::SetDiffuseColor(const Vector3& color )
-{
-	this->zMaterial->DiffuseColor = D3DXVECTOR3(color.x, color.y, color.z);
-}
 
-void Terrain::SetTextureScale(float textureScale)
-{
-	this->zTextureScale = textureScale;
-}
-
-
-Vector3 Terrain::GetPosition() const
-{
-	return Vector3(zPos.x,zPos.y,zPos.z);
-}
+//Collision
+//Editor

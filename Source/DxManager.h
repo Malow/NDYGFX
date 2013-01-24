@@ -80,7 +80,7 @@ private:
 	ID3D11RenderTargetView* Dx_GbufferRTs[NrOfRenderTargets];
 	ID3D11ShaderResourceView* Dx_GbufferSRVs[NrOfRenderTargets];
 	Shader* Shader_DeferredGeometry;
-	Shader* Shader_DeferredGeometryBlendMap;
+	Shader* Shader_TerrainEditor;
 	Shader* Shader_DeferredLightning;
 	Shader* Shader_InvisibilityEffect;
 

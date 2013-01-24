@@ -35,6 +35,7 @@ bool Mesh::LoadFromFile(string file)
 
 	// if substr of the last 4 = .obj do this:    - else load other format / print error
 
+	//**TILLMAN TODO: test spawn.obj. ev try catch**
 	ObjData* od = GetResourceManager()->LoadObjectDataFromFile(this->filePath.c_str());
 	if(!od)
 	{
