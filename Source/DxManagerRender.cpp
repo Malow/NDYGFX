@@ -910,9 +910,9 @@ void DxManager::CalculateCulling()
 	for(int i = 0; i < this->animations.size(); i++)
 	{
 		AnimatedMesh* ms = this->animations.get(i);
-		if ( ms->GetStrips()->size() > 0 )
+		if ( !ms->GetKeyFrames()->get(0)->strips->isEmpty() )
 		{
-			MeshStrip* s = ms->GetStrips()->get(0);
+			MeshStrip* s = ms->GetKeyFrames()->get(0)->strips->get(0);
 
 			float scale = max(ms->GetScaling().x, max(ms->GetScaling().y, ms->GetScaling().z));
 			if(pe.FrustrumVsSphere(this->FrustrumPlanes, s->GetBoundingSphere(), ms->GetWorldMatrix(), scale))
