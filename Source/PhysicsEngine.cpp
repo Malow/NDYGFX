@@ -43,12 +43,16 @@ CollisionData PhysicsEngine::GetCollisionBoundingOnly( iMesh* mesh, iTerrain* te
 
 PhysicsEngine::PhysicsEngine()
 {
-
+	this->tempVerts = NULL;
 }
 
 PhysicsEngine::~PhysicsEngine()
 {
-
+	if(this->tempVerts)
+	{
+		delete this->tempVerts;
+		this->tempVerts = NULL;
+	}
 }
 
 
@@ -1121,3 +1125,193 @@ bool PhysicsEngine::FrustrumVsSphere( D3DXPLANE planes[], BoundingSphere bs, D3D
 	// otherwise we are fully in view
 	return true;
 }
+
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////
+//							Specials									//
+//////////////////////////////////////////////////////////////////////////
+
+CollisionData PhysicsEngine::GetSpecialCollisionRayTerrain( Vector3 rayOrigin, Vector3 rayDirection, iTerrain* iterr, float distanceBetweenVerticies )
+{
+	CollisionData cd;
+
+	if(Terrain* terrain = dynamic_cast<Terrain*>(iterr))
+	{
+		float scale = max(terrain->GetScale().x, max(terrain->GetScale().y, terrain->GetScale().z));
+		if(this->DoCollisionSphereVsRay(terrain->GetBoundingSphere(), terrain->GetWorldMatrix(), scale, 
+			rayOrigin, rayDirection))
+		{
+			cd.BoundingSphereCollision = true;
+			Vertex* terrVerts = terrain->GetVerticesPointer();
+
+			int vertCount = 0;
+			if(!this->tempVerts)
+			{
+				tempVerts = new Vertex[terrain->GetNrOfVertices()];
+				this->tempVertsSize = sqrt(terrain->GetNrOfVertices());
+			}
+
+			Vector3 terrPos = iterr->GetPosition();
+
+
+			// Bresenham's line algorithm
+			float deltax = rayDirection.x;
+			float deltaz = rayDirection.z;
+
+			int error = 0;
+			int deltaerr = abs(deltaz / deltax);
+
+			int z =	rayOrigin.z;
+
+			// rayOrigin is not the start of the grid, it's the start of the ray.
+			// find the start of the grid for the ray?
+			// Using distancebetweenverticies instead of 1 due to our grid being that size.
+			for(int x = rayOrigin.x; x < terrPos.x + this->tempVertsSize * distanceBetweenVerticies; x += distanceBetweenVerticies)
+			{
+				//plot(x, z);	// Add it as a square that is to be triangletested
+				error = error + deltaerr;
+				if(error >= 0.5)
+				{
+					z += distanceBetweenVerticies;
+					error = error - distanceBetweenVerticies;
+				}
+			}
+
+
+			/*
+			//MaloW Code:
+
+			Vector2 ray1o = Vector2(rayOrigin.x, rayOrigin.z);
+			Vector2 ray1d = Vector2(rayDirection.x, rayDirection.z);
+
+			Vector2 ray2o = Vector2(terrPos.x, 0);
+			Vector2 ray2d = Vector2(1, 0);
+
+			for(int i = 0; i < this->tempVertsSize - 1; i++)
+			{
+				ray2o.y = terrPos.z + distanceBetweenVerticies * i;
+
+				float dx = ray2o.x - ray1o.x;
+				float dy = ray2o.y - ray1o.y;
+				float det = ray2d.x * ray1d.y - ray2d.y * ray1d.x;
+				float u = (dy * ray2d.x - dx * ray2d.y) / det;
+				float v = (dy * ray1d.x - dx * ray1d.y) / det;
+
+				if(v > 0.0f && u > 0.0f)
+				{
+					// we have a collision of lines gogo.
+					// intersectionpoint = ray2o + ray2d * v
+					// i = vertex in Z-axis, v / distanceBetweenVerticies = vertex in X-axis
+					int vv = v / distanceBetweenVerticies;
+					if(vv < this->tempVertsSize - 1)
+					{
+						tempVerts[vertCount++] = terrVerts[i * this->tempVertsSize + vv];
+						tempVerts[vertCount++] = terrVerts[(i + 1) * this->tempVertsSize + vv];
+						tempVerts[vertCount++] = terrVerts[(i + 1) * this->tempVertsSize + vv + 1];
+
+						tempVerts[vertCount++] = terrVerts[i * this->tempVertsSize + vv];
+						tempVerts[vertCount++] = terrVerts[i * this->tempVertsSize + vv - 1];
+						tempVerts[vertCount++] = terrVerts[(i + 1) * this->tempVertsSize + vv];
+
+					}
+				}
+				
+			}
+			*/
+			this->DoSpecialCollisionRayVsTerrainTriangles(rayOrigin, rayDirection, 
+				tempVerts, vertCount, NULL, 0, terrain->GetWorldMatrix(), cd);
+		}
+	}
+	else
+		MaloW::Debug("Failed to cast iTerrain to Terrain in PhysicsEngine.cpp in RayTerrain");
+
+	return cd;
+}
+
+void PhysicsEngine::DoSpecialCollisionRayVsTerrainTriangles( Vector3 rayOrigin, Vector3 rayDirection, Vertex* vertices, 
+															int nrOfVertices, int* indices, int nrOfIndices, 
+															D3DXMATRIX worldMat, CollisionData& cd)
+{
+	if(!indices)
+	{
+		for(int i = 0; i < nrOfVertices; i += 3)
+		{
+			CollisionData tempCD;
+
+			Vertex vert0 = vertices[i];
+			Vertex vert1 = vertices[i + 1];
+			Vertex vert2 = vertices[i + 2];
+
+			// D3DX STUFF
+
+			D3DXVECTOR4 pos0;
+			D3DXVec3Transform(&pos0, &vert0.pos, &worldMat);
+			D3DXVECTOR4 pos1;
+			D3DXVec3Transform(&pos1, &vert1.pos, &worldMat);
+			D3DXVECTOR4 pos2;
+			D3DXVec3Transform(&pos2, &vert2.pos, &worldMat);
+
+			Vector3 v0 = Vector3(pos0.x, pos0.y, pos0.z);
+			Vector3 v1 = Vector3(pos1.x, pos1.y, pos1.z);
+			Vector3 v2 = Vector3(pos2.x, pos2.y, pos2.z);
+
+			// END OF D3DX STUFF			
+
+			if(this->DoCollisionRayVsTriangle(rayOrigin, rayDirection, v0, v1, v2, tempCD))
+			{
+				if(tempCD.distance < cd.distance)
+				{
+					cd.distance = tempCD.distance;
+					cd.posx = tempCD.posx;
+					cd.posy = tempCD.posy;
+					cd.posz = tempCD.posz;
+					cd.collision = true;
+				}
+			}
+		}
+	}
+	else
+	{
+		for(int i = 0; i < nrOfIndices; i += 3)
+		{
+			CollisionData tempCD;
+
+			Vertex vert0 = vertices[indices[i]];
+			Vertex vert1 = vertices[indices[i + 1]];
+			Vertex vert2 = vertices[indices[i + 2]];
+
+			// D3DX STUFF
+
+			D3DXVECTOR4 pos0;
+			D3DXVec3Transform(&pos0, &vert0.pos, &worldMat);
+			D3DXVECTOR4 pos1;
+			D3DXVec3Transform(&pos1, &vert1.pos, &worldMat);
+			D3DXVECTOR4 pos2;
+			D3DXVec3Transform(&pos2, &vert2.pos, &worldMat);
+
+			Vector3 v0 = Vector3(pos0.x, pos0.y, pos0.z);
+			Vector3 v1 = Vector3(pos1.x, pos1.y, pos1.z);
+			Vector3 v2 = Vector3(pos2.x, pos2.y, pos2.z);
+
+			// END OF D3DX STUFF
+
+			if(this->DoCollisionRayVsTriangle(rayOrigin, rayDirection, v0, v1, v2, tempCD))
+			{
+				if(tempCD.distance < cd.distance)
+				{
+					cd.distance = tempCD.distance;
+					cd.posx = tempCD.posx;
+					cd.posy = tempCD.posy;
+					cd.posz = tempCD.posz;
+					cd.collision = true;
+				}
+			}
+		}
+	}
+}
+
+

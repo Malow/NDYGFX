@@ -11,6 +11,9 @@
 class PhysicsEngine : public iPhysicsEngine
 {
 private:
+	Vertex* tempVerts;
+	int tempVertsSize;
+
 	void DoCollisionRayVsMesh(Vector3 rayOrigin, Vector3 rayDirection, 
 		Mesh* mesh, CollisionData& cd);
 	void DoCollisionRayVsTriangles(Vector3 rayOrigin, Vector3 rayDirection, 
@@ -27,6 +30,9 @@ private:
 	bool DoCollisionSphereVsSphere(BoundingSphere bs1, D3DXMATRIX world1, float scale1, BoundingSphere bs2, D3DXMATRIX world2, float scale2);
 	CollisionData DoCollisionSphereVsRayDetailed(BoundingSphere bs, D3DXMATRIX world, float scale, Vector3 rayOrigin, Vector3 rayDirection);
 	CollisionData DoCollisionSphereVsSphereDetailed(BoundingSphere bs1, D3DXMATRIX world1, float scale1, BoundingSphere bs2, D3DXMATRIX world2, float scale2);
+	
+	void DoSpecialCollisionRayVsTerrainTriangles(Vector3 rayOrigin, Vector3 rayDirection, Vertex* vertices,
+		int nrOfVertices, int* indices, int nrOfIndices, D3DXMATRIX worldMat, CollisionData& cd);
 
 public:
 	PhysicsEngine();
@@ -45,6 +51,11 @@ public:
 	virtual CollisionData GetCollisionRayTerrainBoundingOnly(Vector3 rayOrigin, Vector3 rayDirection, iTerrain* iterr);
 	virtual CollisionData GetCollisionMeshMeshBoundingOnly(iMesh* mesh1, iMesh* mesh2);
 	virtual CollisionData GetCollisionMeshTerrainBoundingOnly(iMesh* mesh, iTerrain* terr);
+
+
+	// Special
+	virtual CollisionData GetSpecialCollisionRayTerrain(Vector3 rayOrigin, Vector3 rayDirection, iTerrain* iterr, 
+		float distanceBetweenVerticies);
 
 
 	// Overloaded functions

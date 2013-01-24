@@ -78,7 +78,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 //*************************************	     PRE TEST       **********************
 #ifdef TEST
 
-	int vertSize = 16;
+	int vertSize = 32;
 	float testSize = 50.0f;
 	
 	iTerrain* iT = GetGraphics()->CreateTerrain(Vector3(0, 0, 0), Vector3(testSize, 0.0f, testSize), vertSize);
@@ -379,6 +379,19 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		CollisionData cd;
 		cd = GetGraphics()->GetPhysicsEngine()->GetCollisionRayMesh(
 			GetGraphics()->GetCamera()->GetPosition(), GetGraphics()->GetCamera()->Get3DPickingRay(), ball2);
+		/*
+		diff = GetGraphics()->Update();
+		GetGraphics()->GetPhysicsEngine()->GetCollisionRayTerrain(
+			GetGraphics()->GetCamera()->GetPosition(), GetGraphics()->GetCamera()->Get3DPickingRay(), iT);
+		diff = GetGraphics()->Update();
+		//MaloW::Debug("Normal: " + MaloW::convertNrToString(diff));
+		diff = GetGraphics()->Update();
+		cd = GetGraphics()->GetPhysicsEngine()->GetSpecialCollisionRayTerrain(
+			GetGraphics()->GetCamera()->GetPosition(), GetGraphics()->GetCamera()->Get3DPickingRay(), iT, testSize / vertSize);
+		diff = GetGraphics()->Update();
+		//MaloW::Debug("Special: " + MaloW::convertNrToString(diff));
+		diff = 100.0f;
+		*/
 		if(cd.BoundingSphereCollision)
 		{
 			ball->SetScale(0.2f);
@@ -394,6 +407,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		}
 		else
 		{
+			ball->SetScale(0.5f);
 			//ball->SetPosition(Vector3(0, -100, 0));
 		}
 		

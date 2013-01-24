@@ -50,6 +50,11 @@ extern "C"
 		virtual CollisionData GetCollisionMeshTerrainBoundingOnly(iMesh* mesh, iTerrain* terr) = 0;
 
 
+		// Special
+		virtual CollisionData GetSpecialCollisionRayTerrain(Vector3 rayOrigin, Vector3 rayDirection, iTerrain* iterr, 
+			float distanceBetweenVerticies) = 0;
+
+
 		// Overloaded functions
 		virtual CollisionData GetCollision(Vector3 rayOrigin, Vector3 rayDirection, iMesh* mesh) = 0;
 		virtual CollisionData GetCollision(Vector3 rayOrigin, Vector3 rayDirection, iTerrain* iTerr) = 0;
