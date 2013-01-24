@@ -1,11 +1,5 @@
 #include "GraphicsEngineImp.h"
-/*
-DxManager* GraphicsEngine::dx = NULL;
-HINSTANCE GraphicsEngine::hInstance = NULL;
-HWND GraphicsEngine::hWnd = NULL;
-MaloW::KeyListener* GraphicsEngine::kl = NULL;
-SoundEngine* GraphicsEngine::sound = NULL;
-*/
+
 bool CursorControl::visable = true;
 
 int GraphicsEngineParams::windowWidth = 1024;
@@ -268,7 +262,6 @@ HRESULT GraphicsEngineImp::InitWindow(HINSTANCE hInstance, int nCmdShow)
 	if(!this->hWnd)
 		return E_FAIL;
 
-
 	ShowWindow(this->hWnd, nCmdShow);
 	MoveWindow(this->hWnd, 0, 0, rc.right - rc.left, rc.bottom - rc.top, false);
 	DragAcceptFiles(hWnd,true);
@@ -465,15 +458,15 @@ void GraphicsEngineImp::Life()
 		if(MaloW::ProcessEvent* ev = this->WaitEvent())
 		{
 			this->loading = true;
-			if(dynamic_cast<LoadMeshEvent*>(ev) != NULL)
+			if( LoadMeshEvent* LME = dynamic_cast<LoadMeshEvent*>(ev) )
 			{
-				string filename = ((LoadMeshEvent*)ev)->GetFileName();
-				if(StaticMesh* mesh = ((LoadMeshEvent*)ev)->GetStaticMesh())
+				string filename = LME->GetFileName();
+				if(StaticMesh* mesh = LME->GetStaticMesh())
 				{
 					mesh->LoadFromFile(filename);
 					this->dx->CreateStaticMesh(mesh);
 
-					if(Material* material = ((LoadMeshEvent*)ev)->GetMaterial())
+					if(Material* material = LME->GetMaterial())
 					{
 						MaloW::Array<MeshStrip*>* strips = mesh->GetStrips();
 						for(int i = 0; i < strips->size(); i++)
@@ -484,7 +477,7 @@ void GraphicsEngineImp::Life()
 						}
 					}
 				}
-				else if(AnimatedMesh* mesh = ((LoadMeshEvent*)ev)->GetAnimatedMesh())
+				else if(AnimatedMesh* mesh = LME->GetAnimatedMesh())
 				{
 					//Check if loading the animation from file was successful...
 					if(mesh->LoadFromFile(filename))

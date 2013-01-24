@@ -335,7 +335,7 @@ bool AnimatedMesh::LoadFromFile(string file)
 					}
 				}
 
-				if(frame)
+				if( frame && strips->size() > 0 )
 				{
 					if(MeshStrip* strip = frame->strips->get(0))
 						strip->SetBoundingSphere(BoundingSphere(min, max));

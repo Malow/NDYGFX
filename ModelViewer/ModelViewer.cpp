@@ -8,8 +8,6 @@
 
 #include "Graphics.h"
 #include "..\..\NDYGFX\Source\MaloWFileDebug.h"
-#include <bitset>
-//#include "MaloWFileDebug.h"
 
 void ReplaceSlashes(string& str, char replace, char with)
 {
@@ -68,7 +66,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	#endif
 #endif
 
-	GetGraphics()->CreateSkyBox("Media/skymap.dds");	// Reduces FPS from 130 to 40 //** TILLMAN
+	GetGraphics()->CreateSkyBox("Media/skymap.dds"); //** TILLMAN
 	GetGraphics()->GetCamera()->SetPosition(Vector3(25, 25, 20));
 	GetGraphics()->GetCamera()->LookAt(Vector3(0, 0, 0));
 	iLight* li = GetGraphics()->CreateLight(GetGraphics()->GetCamera()->GetPosition());
@@ -80,7 +78,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 //*************************************	     PRE TEST       **********************
 #ifdef TEST
 
-	int vertSize = 16;
+	int vertSize = 32;
 	float testSize = 50.0f;
 	
 	iTerrain* iT = GetGraphics()->CreateTerrain(Vector3(0, 0, 0), Vector3(testSize, 0.0f, testSize), vertSize);
@@ -161,7 +159,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	}
 	
 	// test fps
-//for(int i = 0; i < 50; i++)
+	//for(int i = 0; i < 50; i++)
 	//	iMesh* ball = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(0, 10 + i * 3, 0));
 	//for(int i = 0; i < 50; i++)
 	//	iMesh* ball = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(10, 10 + i * 3, 0));
@@ -309,12 +307,30 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	fernDbg1->Scale(1.0f / 20.0f);
 	scaleDbg->Scale(1.0f * 0.05f);
 	*/
+		
+	iImage* iM = GetGraphics()->CreateImage(Vector2(100, 100), Vector2(100, 100), "Media/BallTexture.png");
+	iImage* iM2 = GetGraphics()->CreateImage(Vector2(200, 200), Vector2(100, 100), "Media/BallTexture.png");
+	iImage* iM3 = GetGraphics()->CreateImage(Vector2(100, 200), Vector2(100, 100), "Media/Bush_leaf_01_v07.png");
+	iImage* iM4 = GetGraphics()->CreateImage(Vector2(200, 100), Vector2(100, 100), "Media/Bush_leaf_01_v07.png");
+	iImage* iM5 = GetGraphics()->CreateImage(Vector2(300, 100), Vector2(100, 100), "Media/Arrow_v01.png");
+
+iText* iTe = GetGraphics()->CreateText("durp", Vector2(300, 100), 1.0f, "Media/Fonts/1");
+	iText* iTe2 = GetGraphics()->CreateText("burp", Vector2(300, 200), 1.0f, "Media/Fonts/1");
+	iText* iTe3 = GetGraphics()->CreateText("lurp", Vector2(300, 300), 1.0f, "Media/Fonts/1");
+	iText* iTe4 = GetGraphics()->CreateText("kurp", Vector2(300, 400), 1.0f, "Media/Fonts/1");
+	iText* iTe5 = GetGraphics()->CreateText("hurp", Vector2(300, 500), 1.0f, "Media/Fonts/1");
+	
+	iMesh* ball2 = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(20, 20, 20));
+	ball2->Scale(0.8f);
 
 	//Memory leak with texture resources for iImage
+	
 	//iImage* imm1 = GetGraphics()->CreateImage(Vector2(100, 100), Vector2(100, 100), "Media/BallTexture.png");
 		//iImage* imm2 = GetGraphics()->CreateImage(Vector2(200, 100), Vector2(100, 100), "Media/Bush_leaf_01_v07.png");
+
 		//iImage* imm3 = GetGraphics()->CreateImage(Vector2(300, 100), Vector2(100, 100), "Media/Arrow_v01.png");
 		//iImage* imm4 = GetGraphics()->CreateImage(Vector2(300, 100), Vector2(100, 100), "Media/Arrow_v01.png");
+
 
 		//Editor crasch test
 		//iMesh* spawnP = GetGraphics()->CreateStaticMesh("Media/spawn.obj", Vector3());
@@ -356,7 +372,9 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		, 1.0f, 1.0f, 1.0f, 1.0f);
 #endif
 
-	GetGraphics()->StartRendering();	// To force the engine to render a black image before it has loaded stuff to not get a clear-color rendered before skybox is in etc.
+	// To stop the engine rendering a splash image before it has loaded stuff 
+	// to not get a clear-color rendered before skybox is in etc.
+	GetGraphics()->StartRendering();	
 
 	string lastSpecString = "";
 	bool showscale = false;
@@ -395,7 +413,20 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 #ifdef TEST
 		CollisionData cd;
 		cd = GetGraphics()->GetPhysicsEngine()->GetCollisionRayMesh(
-			GetGraphics()->GetCamera()->GetPosition(), GetGraphics()->GetCamera()->Get3DPickingRay(), iAM);
+			GetGraphics()->GetCamera()->GetPosition(), GetGraphics()->GetCamera()->Get3DPickingRay(), ball2);
+		/*
+		diff = GetGraphics()->Update();
+		GetGraphics()->GetPhysicsEngine()->GetCollisionRayTerrain(
+			GetGraphics()->GetCamera()->GetPosition(), GetGraphics()->GetCamera()->Get3DPickingRay(), iT);
+		diff = GetGraphics()->Update();
+		//MaloW::Debug("Normal: " + MaloW::convertNrToString(diff));
+		diff = GetGraphics()->Update();
+		cd = GetGraphics()->GetPhysicsEngine()->GetSpecialCollisionRayTerrain(
+			GetGraphics()->GetCamera()->GetPosition(), GetGraphics()->GetCamera()->Get3DPickingRay(), iT, testSize / vertSize);
+		diff = GetGraphics()->Update();
+		//MaloW::Debug("Special: " + MaloW::convertNrToString(diff));
+		diff = 100.0f;
+		*/
 		if(cd.BoundingSphereCollision)
 		{
 			ball->SetScale(0.2f);
@@ -411,6 +442,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		}
 		else
 		{
+			ball->SetScale(0.5f);
 			//ball->SetPosition(Vector3(0, -100, 0));
 		}
 		
@@ -665,8 +697,6 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		
 	}
 	
-	FreeGraphics();
-
 
 	//*************************************	     POST TEST       **********************
 #ifdef TEST
@@ -675,9 +705,23 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	//delete[] vertices;
 	delete[] iTs;
 	//delete[] fileNames;
+	
+	GetGraphics()->DeleteImage(iM);
+	GetGraphics()->DeleteImage(iM2);
+	GetGraphics()->DeleteImage(iM3);
+	GetGraphics()->DeleteImage(iM4);
+	GetGraphics()->DeleteImage(iM5);
+
+	GetGraphics()->DeleteText(iTe);
+	GetGraphics()->DeleteText(iTe2);
+	GetGraphics()->DeleteText(iTe3);
+	GetGraphics()->DeleteText(iTe4);
+	GetGraphics()->DeleteText(iTe5);
+	
+
 #endif
 	//*************************************	   END OF POST TEST       **********************
 
-
+	FreeGraphics();
 	return 0;
 }
