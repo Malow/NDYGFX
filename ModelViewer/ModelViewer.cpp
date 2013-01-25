@@ -7,7 +7,7 @@
 #endif
 
 #include "Graphics.h"
-#include "..\..\NDYGFX\Source\MaloWFileDebug.h"
+#include "..\Source\MaloWFileDebug.h"
 
 void ReplaceSlashes(string& str, char replace, char with)
 {
@@ -429,7 +429,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 #ifdef TEST
 		CollisionData cd;
 		cd = GetGraphics()->GetPhysicsEngine()->GetCollisionRayMesh(
-			GetGraphics()->GetCamera()->GetPosition(), GetGraphics()->GetCamera()->Get3DPickingRay(), ball2);
+			GetGraphics()->GetCamera()->GetPosition(), GetGraphics()->GetCamera()->Get3DPickingRay(), iAM);
 		/*
 		diff = GetGraphics()->Update();
 		GetGraphics()->GetPhysicsEngine()->GetCollisionRayTerrain(
