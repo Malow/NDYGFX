@@ -708,19 +708,21 @@ iGraphicsEngineParams* GraphicsEngineImp::GetEngineParameters() const
 void GraphicsEngineImp::DeleteMesh( iMesh* &delMesh )
 {
 	Mesh* tmpMesh = dynamic_cast<Mesh*>(delMesh);
-	if(tmpMesh != NULL)
+	if( tmpMesh != NULL )
 	{
 		string fileName = tmpMesh->GetFilePath();
-		string tmpStr = string(fileName); //".fileType"
-		if(tmpStr.substr(tmpStr.length() - 4) == ".obj") 
+		if ( fileName.length() > 4 )
 		{
-			this->DeleteStaticMesh(dynamic_cast<StaticMesh*>(delMesh));
+			if(fileName.substr(fileName.length() - 4) == ".obj") 
+			{
+				this->DeleteStaticMesh(dynamic_cast<StaticMesh*>(delMesh));
+			}
+			else if(fileName.substr(fileName.length() - 4) == ".ani")
+			{
+				this->DeleteAnimatedMesh(dynamic_cast<AnimatedMesh*>(delMesh));
+			}
+			delMesh = NULL;
 		}
-		else if(tmpStr.substr(tmpStr.length() - 4) == ".ani")
-		{
-			this->DeleteAnimatedMesh(dynamic_cast<AnimatedMesh*>(delMesh));
-		}
-		delMesh = NULL;
 	}
 }
 
