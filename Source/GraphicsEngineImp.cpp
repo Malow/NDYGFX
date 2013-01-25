@@ -708,7 +708,7 @@ void GraphicsEngineImp::DeleteMesh( iMesh* &delMesh )
 	if( tmpMesh != NULL )
 	{
 		string fileName = tmpMesh->GetFilePath();
-		if ( fileName.length > 4 )
+		if ( fileName.length() > 4 )
 		{
 			if(fileName.substr(fileName.length() - 4) == ".obj") 
 			{
