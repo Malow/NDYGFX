@@ -511,11 +511,12 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 			fileNames[2] = "Media/BallTexture.png";
 			fileNames[3] = "Media/BallTexture.png";
 			iT->SetTextures(fileNames);
+			iT->SetAIGridThickness(0.005f);
+			iT->UseAIMap(true);
 			static bool oncee = false;
 			if(!oncee)
 			{
 				iT->SetAIGrid(64, (void*)&aiData);
-				iT->SetAIGridThickness(0.005f);
 				oncee = true;
 			}
 		}
@@ -530,6 +531,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 			iT->SetTextures(fileNames);
 			GetGraphics()->DeleteMesh(flagCSMTest);
 			GetGraphics()->DeleteMesh(bushCSMTest);
+			iT->UseAIMap(false);
 		}
 		/*for(int i = 0; i < ttte * nrOfFrustumSlices; i++)
 		{

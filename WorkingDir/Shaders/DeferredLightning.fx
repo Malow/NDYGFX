@@ -218,8 +218,31 @@ float4 PSScene(PSSceneIn input) : SV_Target
 		float3 h = normalize(normalize(CameraPosition.xyz - WorldPos.xyz) - sun.Direction);
 		float specLight = pow(saturate(dot(h, NormsAndDepth.xyz)), SpecularPower) * sun.LightIntensity;
 
+
+
+
+		//Choose cascade map
+
+		/*
+		float4 vShadowMapTextureCoordViewSpace = Output.vTexShadow = mul( Input.vPosition, m_mShadow )
+			
+		for( int i = 0; i < CASCADE_COUNT_FLAG && iCascadeFound == 0; ++i ) 
+        {
+            smTex = vShadowMapTextureCoordViewSpace * m_vCascadeScale[i];
+            smTex += m_vCascadeOffset[i];
+
+            if ( min( vShadowMapTextureCoord.x, vShadowMapTextureCoord.y ) > m_fMinBorderPadding && 
+                max( vShadowMapTextureCoord.x, vShadowMapTextureCoord.y ) < m_fMaxBorderPadding )
+            { 
+                iCurrentCascadeIndex = iCascadeIndex;   
+                iCascadeFound = 1; 
+            }
+        }*/
 		
-		
+
+
+
+
 		uint cascadeIndex = 0;
 		float distancePixel = length(CameraPosition.xyz - WorldPos.xyz);
 		if(distancePixel > CascadeLevels.y * 1.1f) //**tillman - måste kolla om pixeln är innanför frustumet, och inte radie från kamera
