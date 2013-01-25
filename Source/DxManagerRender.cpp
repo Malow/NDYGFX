@@ -803,12 +803,21 @@ void DxManager::RenderCascadedShadowMap()
 		float PCF_SQUARED = 1 / (PCF_SIZE * PCF_SIZE);
 
 		this->Shader_DeferredLightning->SetFloat("SMAP_DX", 1.0f / (256.0f * pow(2.0f, this->params.ShadowMapSettings / 2.0f)));
+		
+		this->Shader_DeferredLightning->SetFloat("usePCF", true); //** TILLMAN CSM VARIABLE**
 		this->Shader_DeferredLightning->SetFloat("PCF_SIZE", PCF_SIZE);
 		this->Shader_DeferredLightning->SetFloat("PCF_SIZE_SQUARED", PCF_SQUARED);
-		this->Shader_DeferredLightning->SetFloat("NrOfCascades", (float)this->csm->GetNrOfCascadeLevels());
+		
+		this->Shader_DeferredLightning->SetBool("blendCascades", false); //** TILLMAN CSM VARIABLE**
+		this->Shader_DeferredLightning->SetFloat("blendStrength", 0.0f); //** TILLMAN CSM VARIABLE**
 
-		this->Shader_DeferredLightning->SetFloat4("CascadeLevels", D3DXVECTOR4(this->csm->GetSplitDepth(0),
-				this->csm->GetSplitDepth(1), this->csm->GetSplitDepth(2), this->csm->GetSplitDepth(3)));
+		this->Shader_DeferredLightning->SetInt("nrOfCascades", this->csm->GetNrOfCascadeLevels());
+		D3DXVECTOR4 cascadeFarPlanes = D3DXVECTOR4(-1.0f, -1.0f, -1.0f, -1.0f);
+		for(int i = 0; i < this->csm->GetNrOfCascadeLevels(); i++)
+		{
+			cascadeFarPlanes[i] = this->csm->GetSplitDepth(i + 1);
+		}
+		this->Shader_DeferredLightning->SetFloat4("cascadeFarPlanes", cascadeFarPlanes);
 	}
 }
 

@@ -47,9 +47,21 @@ BlendState SrcAlphaBlendingAdd
 //-----------------------------------------------------------------------------------------
 cbuffer ef
 {
-	float SMAP_DX;
+	//Single sampling
+	float SMAP_DX; 
+
+	//PCF sampling
+	bool usePCF;
 	float PCF_SIZE;
 	float PCF_SIZE_SQUARED;
+
+	//Multiple sampling
+	bool blendCascades;
+	float blendStrength;
+
+	//Both
+	uint nrOfCascades;
+	float4 cascadeFarPlanes;
 };
 
 
@@ -82,6 +94,10 @@ RasterizerState NoCulling
 //-----------------------------------------------------------------------------------------
 VSIn VSScene(VSIn input)
 {
+	 // Transform the shadow texture coordinates for all the cascades.
+	//  Output.vTexShadow = mul( Input.vPosition, m_mShadow ); //**TILLMAN
+
+
 	return input;
 }
 
@@ -113,6 +129,30 @@ void GS( point VSIn input[1], inout TriangleStream<PSSceneIn> triStream )
 	triStream.Append(output);
 }
 
+uint FindCascadeToBlendWith(float shadowMapTextureCoordViewSpaceDepth)
+{
+	//använda cascadeFarPlanes**
+	return -1;
+}
+float SampleCascades(uint cascadeIndex, uint otherCascadeIndex, float2 shadowMapTextureCoords) 
+{
+	float shadow = 1.0f; 
+	
+	if(blendCascades) //global variable
+	{
+
+	}
+	else
+	{
+
+		//shadow += (CascadedShadowMap[cascadeIndex].SampleLevel(shadowMapSampler, shadowMapTextureCoords + float2(SMAP_DX * (s - PCF_SIZE/2) , SMAP_DX * (q - PCF_SIZE/2)), 0).r + CSM_SHADOW_EPSILON < depth) ? 0.0f : 1.0f;
+			
+	}
+	
+
+	return shadow;
+}
+		
 
 
 //-----------------------------------------------------------------------------------------
@@ -218,40 +258,63 @@ float4 PSScene(PSSceneIn input) : SV_Target
 		float3 h = normalize(normalize(CameraPosition.xyz - WorldPos.xyz) - sun.Direction);
 		float specLight = pow(saturate(dot(h, NormsAndDepth.xyz)), SpecularPower) * sun.LightIntensity;
 
-
-
-
-		//Choose cascade map
-
-		/*
-		float4 vShadowMapTextureCoordViewSpace = Output.vTexShadow = mul( Input.vPosition, m_mShadow )
-			
-		for( int i = 0; i < CASCADE_COUNT_FLAG && iCascadeFound == 0; ++i ) 
-        {
-            smTex = vShadowMapTextureCoordViewSpace * m_vCascadeScale[i];
-            smTex += m_vCascadeOffset[i];
-
-            if ( min( vShadowMapTextureCoord.x, vShadowMapTextureCoord.y ) > m_fMinBorderPadding && 
-                max( vShadowMapTextureCoord.x, vShadowMapTextureCoord.y ) < m_fMaxBorderPadding )
-            { 
-                iCurrentCascadeIndex = iCascadeIndex;   
-                iCascadeFound = 1; 
-            }
-        }*/
 		
+		//I PS:
+		//Determine the proper shadow map.
+		//Transforms the texture coordinates if necessary.
+		//Samples the cascade.
+		//Lights the pixel.
 
+		
+		
+		//Transform the texture coordinates to texel space. **Tillman - ev. ersätta/skicka med inversmatris?**
+		/*float4 shadowMapTextureCoordViewSpace = input.shadowMapTextureCoordViewSpace; //vertex shader**
+		float4 lightPosition = mul(WorldPos, cascades[cascadeIndex].viewProj); //Transform pixel from world space to **Tillman**[-w,w].
+		lightPosition.xy /= lightPosition.w; //Transform to **Tillman**[-1,1].
+		float2 texTexelSpace = float2(0.5f * lightPosition.x, -0.5f * lightPosition.y) + 0.5f; //Transform to texel space [0,1].
+			*/
 
-
-
+		//Determine the shadow map to use.
 		uint cascadeIndex = 0;
+		/*for(int i = 0; i < nrOfCascades; i++)
+		{
+			//Check if the shadow map tex coord (in view space) is inside the frustum.
+			if(shadowMapTextureCoordViewSpace.z < cascadeFarPlanes[i]) //(cascadeFarPlanes contains the z-distance(in view space)).
+			{
+				cascadeIndex = i;
+				break; //Stop looping.
+			}
+		}
+
+		//Determine the second shadow map to use if blending between cascades shall be done.
+		uint otherCascadeIndex = -1;
+		bool blendCascades = false; //**TILLMAN TMP**
+		if(blendCascades)
+		{
+			otherCascadeIndex = FindCascadeToBlendWith(shadowMapTextureCoordViewSpace.z); //**internt: cascadeFarPlanes**
+		}
+
+		//Sample the cascade(s)
+		shadow = SampleCascades(cascadeIndex, otherCascadeIndex, shadowMapTextureCoord); //**internt blendCascades
+		
+		*/
+
+
+
+		
+		
 		float distancePixel = length(CameraPosition.xyz - WorldPos.xyz);
-		if(distancePixel > CascadeLevels.y * 1.1f) //**tillman - måste kolla om pixeln är innanför frustumet, och inte radie från kamera
+		if(distancePixel > cascadeFarPlanes.x * 1.1f) //**tillman - måste kolla om pixeln är innanför frustumet, och inte radie från kamera
 		{
 			cascadeIndex = 1;
 		}
-		if(distancePixel > CascadeLevels.z * 1.1f) //**tillman - måste kolla om pixeln är innanför frustumet, och inte radie från kamera
+		if(distancePixel > cascadeFarPlanes.y * 1.1f) //**tillman - måste kolla om pixeln är innanför frustumet, och inte radie från kamera
 		{
 			cascadeIndex = 2;
+		}
+		if(distancePixel > cascadeFarPlanes.z * 1.1f) //**tillman - måste kolla om pixeln är innanför frustumet, och inte radie från kamera
+		{
+			cascadeIndex = 3;
 		}
 
 		float4 posLight = mul(WorldPos, cascades[cascadeIndex].viewProj); //**TILLMAN "i"

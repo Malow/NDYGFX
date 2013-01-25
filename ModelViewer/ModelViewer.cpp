@@ -506,12 +506,12 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		{
 			debugCSMScale += diff * 0.001f;
 			model->Scale(1 + diff * 0.01f);
-			fileNames[0] = "Media/TerrainTexture.png";
-			fileNames[1] = "Media/BallTexture.png";
-			fileNames[2] = "Media/BallTexture.png";
-			fileNames[3] = "Media/BallTexture.png";
+			fileNames[0] = "Media/BallTexture.png";
+			fileNames[1] = "Media/TerrainTexture.png";
+			fileNames[2] = "Media/TerrainTexture.png";
+			fileNames[3] = "Media/TerrainTexture.png";
 			iT->SetTextures(fileNames);
-			iT->SetAIGridThickness(0.005f);
+			iT->SetAIGridThickness(0.0005f);
 			iT->UseAIMap(true);
 			static bool oncee = false;
 			if(!oncee)
@@ -524,10 +524,10 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		{
 			debugCSMScale -= diff * 0.001f;
 			model->Scale(1 - diff * 0.01f);
-			fileNames[0] = "Media/BallTexture.png";
-			fileNames[1] = "Media/TerrainTexture.png";
-			fileNames[2] = "Media/TerrainTexture.png";
-			fileNames[3] = "Media/TerrainTexture.png";
+			fileNames[0] = "Media/TerrainTexture.png";
+			fileNames[1] = "Media/BallTexture.png";
+			fileNames[2] = "Media/BallTexture.png";
+			fileNames[3] = "Media/BallTexture.png";
 			iT->SetTextures(fileNames);
 			GetGraphics()->DeleteMesh(flagCSMTest);
 			GetGraphics()->DeleteMesh(bushCSMTest);

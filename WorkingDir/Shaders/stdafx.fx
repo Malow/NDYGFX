@@ -58,8 +58,8 @@ float4 SceneAmbientLight;//**tillman**
 bool UseSun;//**tillman**
 SunLight sun; //**tillman**
 
-float NrOfCascades;
-float4 CascadeLevels;
+float NrOfCascades; //Deprecated**tillman**
+float4 CascadeLevels; //Deprecated**tillman**
 Cascade cascades[10];
 
 float timerMillis;

@@ -463,8 +463,11 @@ void GraphicsEngineImp::Life()
 				string filename = LME->GetFileName();
 				if(StaticMesh* mesh = LME->GetStaticMesh())
 				{
-					mesh->LoadFromFile(filename);
-					this->dx->CreateStaticMesh(mesh);
+					bool success = mesh->LoadFromFile(filename);
+					if(success)
+					{
+						this->dx->CreateStaticMesh(mesh);
+					}
 
 					if(Material* material = LME->GetMaterial())
 					{
