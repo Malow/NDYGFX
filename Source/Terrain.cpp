@@ -190,6 +190,7 @@ Terrain::Terrain()
 	this->zBoundingSphere = BoundingSphere();
 	
 	//Editor
+	this->zUseAIMap = false;
 	this->zNrOfAINodesPerSide = 0;
 	this->zAIData = NULL;
 	this->zAIGridHasChanged = false;
@@ -239,6 +240,7 @@ Terrain::Terrain(D3DXVECTOR3 pos, D3DXVECTOR3 scale, unsigned int size)
 	this->zBoundingSphere = BoundingSphere();
 
 	//Editor
+	this->zUseAIMap = false;
 	this->zNrOfAINodesPerSide = 0;
 	this->zAIData = NULL;
 	this->zAIGridHasChanged = false;

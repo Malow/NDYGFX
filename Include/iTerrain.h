@@ -58,6 +58,8 @@ extern "C"
 			
 			/*	Set how thick the grid will be. Measured in world units. */
 			virtual void SetAIGridThickness(float thickness = 0.001f) = 0;
+			/*	Determines if the AI map shall be used or not.	*/
+			virtual void UseAIMap(bool use) = 0;
 
 
 			// TODO: Height Extraction

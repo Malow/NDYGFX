@@ -73,6 +73,7 @@ class Terrain : public iTerrain
 		BoundingSphere				zBoundingSphere;
 
 		//Editor
+		bool						zUseAIMap;
 		unsigned int				zNrOfAINodesPerSide;
 		void*						zAIData;
 		bool						zAIGridHasChanged;	
@@ -146,6 +147,7 @@ class Terrain : public iTerrain
 		BoundingSphere GetBoundingSphere() { if(this->zRecreateBoundingSphere) { RecreateBoundingSphere(); } return this->zBoundingSphere; }
 
 		//Editor
+		bool UseAIMap() { return this->zUseAIMap; }
 		void SetAIGridShaderResourceView(ID3D11ShaderResourceView* AIGridShaderResourceView) { this->zAIGridShaderResourceView = AIGridShaderResourceView; }
 		void AIGridHasChanged(bool has) {this->zAIGridHasChanged = has; }
 		float GetAINodeSize() const { return (float)this->zSize / (float)this->zNrOfAINodesPerSide; }
@@ -181,6 +183,7 @@ class Terrain : public iTerrain
 		virtual void SetBlendMap(unsigned int size, float const* const data);
 		
 		//Editor
+		virtual void UseAIMap(bool use) { this->zUseAIMap = use; }
 		virtual void SetAIGrid(unsigned int nrOfAINodesPerSide, void* aiData) { this->zNrOfAINodesPerSide = nrOfAINodesPerSide; this->zAIData = aiData; this->zAIGridHasChanged = true; }
 		virtual void SetAIGridThickness(float thickness = 0.001f) { this->zAIGridThickness = thickness; }
 
