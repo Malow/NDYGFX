@@ -245,8 +245,6 @@ bool AnimatedMesh::LoadFromFile(string file)
 
 			//The code for loading the object(+/data) files
 			{
-
-				//**TILLMAN TODO: test spawn.obj. ev try catch**
 				string tmpPath = pathfolder + path;
 				ObjData* od = GetResourceManager()->LoadObjectDataFromFile(tmpPath.c_str());
 				if(!od)
@@ -335,7 +333,7 @@ bool AnimatedMesh::LoadFromFile(string file)
 					}
 				}
 
-				if( frame && strips->size() > 0 )
+				if(frame)
 				{
 					if(MeshStrip* strip = frame->strips->get(0))
 						strip->SetBoundingSphere(BoundingSphere(min, max));

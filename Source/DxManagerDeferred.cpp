@@ -468,7 +468,7 @@ void DxManager::RenderDeferredGeometry()
 		AnimatedMesh* ani = this->animations[i];
 		if(!ani->IsUsingInvisibility())
 		{
-			if( ani->GetKeyFrames()->get(0)->strips->size() > 0 && !ani->GetKeyFrames()->get(0)->strips->get(0)->GetCulled())
+			if(!ani->GetKeyFrames()->get(0)->strips->get(0)->GetCulled())
 			{
 				CurrentRenderedMeshes++;			
 
