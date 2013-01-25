@@ -55,7 +55,9 @@ extern "C"
 				Keep in mind that char variable = 255 will be 1(true) in the shader.
 			*/
 			virtual void SetAIGrid(unsigned int nrOfAINodesPerSide, void* aiData) = 0;
-
+			
+			/*	Set how thick the grid will be. Measured in world units. */
+			virtual void SetAIGridThickness(float thickness = 0.001f) = 0;
 
 
 			// TODO: Height Extraction

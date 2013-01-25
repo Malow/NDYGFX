@@ -300,6 +300,7 @@ void DxManager::RenderDeferredGeometry()
 				this->Shader_TerrainEditor->SetResource("AIMap", terrPtr->GetAIShaderResourceView());
 				this->Shader_TerrainEditor->SetBool("useAIMap", true);
 				this->Shader_TerrainEditor->SetFloat("nodesPerSide", terrPtr->GetNrOfAINodesPerSide());
+				this->Shader_TerrainEditor->SetFloat("AIGridThickness", terrPtr->GetAIGridThickness());
 			}
 			else
 			{

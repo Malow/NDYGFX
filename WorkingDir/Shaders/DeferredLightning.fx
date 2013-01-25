@@ -220,18 +220,18 @@ float4 PSScene(PSSceneIn input) : SV_Target
 
 		
 		
-		uint cascademap = 0;
+		uint cascadeIndex = 0;
 		float distancePixel = length(CameraPosition.xyz - WorldPos.xyz);
-		if(distancePixel > CascadeLevels.y)
+		if(distancePixel > CascadeLevels.y * 1.1f) //**tillman - måste kolla om pixeln är innanför frustumet, och inte radie från kamera
 		{
-			cascademap = 1;
+			cascadeIndex = 1;
 		}
-		if(distancePixel > CascadeLevels.z)
+		if(distancePixel > CascadeLevels.z * 1.1f) //**tillman - måste kolla om pixeln är innanför frustumet, och inte radie från kamera
 		{
-			cascademap = 2;
+			cascadeIndex = 2;
 		}
 
-		float4 posLight = mul(WorldPos, cascades[cascademap].viewProj); //**TILLMAN "i"
+		float4 posLight = mul(WorldPos, cascades[cascadeIndex].viewProj); //**TILLMAN "i"
 		posLight.xy /= posLight.w;
 		float2 smTex = float2(0.5f*posLight.x, -0.5f*posLight.y) + 0.5f;
 		
@@ -264,15 +264,15 @@ float4 PSScene(PSSceneIn input) : SV_Target
 			{
 				for(float q = 0; q < PCF_SIZE; q++)
 				{
-					if(cascademap == 0)
+					if(cascadeIndex == 0)
 					{
 						shadow += (CascadedShadowMap[0].SampleLevel(shadowMapSampler, smTex + float2(SMAP_DX * (s - PCF_SIZE/2) , SMAP_DX * (q - PCF_SIZE/2)), 0).r + CSM_SHADOW_EPSILON < depth) ? 0.0f : 1.0f;
 					}
-					if(cascademap == 1)
+					if(cascadeIndex == 1)
 					{
 						shadow += (CascadedShadowMap[1].SampleLevel(shadowMapSampler, smTex + float2(SMAP_DX * (s - PCF_SIZE/2) , SMAP_DX * (q - PCF_SIZE/2)), 0).r + CSM_SHADOW_EPSILON < depth) ? 0.0f : 1.0f;
 					}
-					if(cascademap == 2 || shadow == 0.0f)
+					if(cascadeIndex == 2 || shadow == 0.0f)
 					{
 						shadow += (CascadedShadowMap[2].SampleLevel(shadowMapSampler, smTex + float2(SMAP_DX * (s - PCF_SIZE/2) , SMAP_DX * (q - PCF_SIZE/2)), 0).r + CSM_SHADOW_EPSILON < depth) ? 0.0f : 1.0f;
 					}

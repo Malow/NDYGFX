@@ -77,6 +77,26 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 
 //*************************************	     PRE TEST       **********************
 #ifdef TEST
+		
+
+	iImage* iM = GetGraphics()->CreateImage(Vector2(100, 100), Vector2(100, 100), "Media/BallTexture.png");
+	iImage* iM2 = GetGraphics()->CreateImage(Vector2(200, 200), Vector2(100, 100), "Media/BallTexture.png");
+	
+	//iMesh* bbbush = GetGraphics()->CreateMesh("Media/Bush_01_v04_r.obj", Vector3(-1, 0, 0));
+
+		
+
+	iImage* iM5 = GetGraphics()->CreateImage(Vector2(300, 100), Vector2(100, 100), "Media/Arrow_v01.png");	//**minnesläcka om createmesh använder samma texture OCH skapas FÖRE!
+
+		iMesh* arrow = GetGraphics()->CreateMesh("Media/Arrow_v01.obj", Vector3(30, 10, 30));					//**ORSAKAR minnesläcka om createmesh använder samma texture OCH skapas FÖRE!
+	arrow->Scale(1.0f * 0.05f);
+	Vector3 arrowDir = Vector3(0, 0, -1);
+	
+
+	iImage* iM3 = GetGraphics()->CreateImage(Vector2(100, 200), Vector2(100, 100), "Media/Bush_leaf_01_v07.png"); //**minnesläcka om arrow mesh & image ligger ovanför och Bush_leaf_01_v07.png finns fortfarande efter den har tagits bort.
+	iImage* iM4 = GetGraphics()->CreateImage(Vector2(200, 100), Vector2(100, 100), "Media/Bush_leaf_01_v07.png");
+
+
 
 	int vertSize = 32;
 	float testSize = 50.0f;
@@ -176,9 +196,9 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	iMesh* bush = GetGraphics()->CreateMesh("Media/Bush_01_v04_r.obj", Vector3(30, 10, 30));
 	bush->Scale(1.0f * 0.05f);
 
-	iMesh* arrow = GetGraphics()->CreateMesh("Media/Arrow_v01.obj", Vector3(30, 10, 30));
-	arrow->Scale(1.0f * 0.05f);
-	Vector3 arrowDir = Vector3(0, 0, -1);
+	//iMesh* arrow = GetGraphics()->CreateMesh("Media/Arrow_v01.obj", Vector3(30, 10, 30));
+	//arrow->Scale(1.0f * 0.05f);
+	//Vector3 arrowDir = Vector3(0, 0, -1);
 
 
 
@@ -307,19 +327,15 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	fernDbg1->Scale(1.0f / 20.0f);
 	scaleDbg->Scale(1.0f * 0.05f);
 	*/
-		
-	iImage* iM = GetGraphics()->CreateImage(Vector2(100, 100), Vector2(100, 100), "Media/BallTexture.png");
-	iImage* iM2 = GetGraphics()->CreateImage(Vector2(200, 200), Vector2(100, 100), "Media/BallTexture.png");
-	iImage* iM3 = GetGraphics()->CreateImage(Vector2(100, 200), Vector2(100, 100), "Media/Bush_leaf_01_v07.png");
-	iImage* iM4 = GetGraphics()->CreateImage(Vector2(200, 100), Vector2(100, 100), "Media/Bush_leaf_01_v07.png");
-	iImage* iM5 = GetGraphics()->CreateImage(Vector2(300, 100), Vector2(100, 100), "Media/Arrow_v01.png");
 
-iText* iTe = GetGraphics()->CreateText("durp", Vector2(300, 100), 1.0f, "Media/Fonts/1");
+
+
+/*iText* iTe = GetGraphics()->CreateText("durp", Vector2(300, 100), 1.0f, "Media/Fonts/1");
 	iText* iTe2 = GetGraphics()->CreateText("burp", Vector2(300, 200), 1.0f, "Media/Fonts/1");
 	iText* iTe3 = GetGraphics()->CreateText("lurp", Vector2(300, 300), 1.0f, "Media/Fonts/1");
 	iText* iTe4 = GetGraphics()->CreateText("kurp", Vector2(300, 400), 1.0f, "Media/Fonts/1");
 	iText* iTe5 = GetGraphics()->CreateText("hurp", Vector2(300, 500), 1.0f, "Media/Fonts/1");
-	
+	*/
 	iMesh* ball2 = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(20, 20, 20));
 	ball2->Scale(0.8f);
 
@@ -499,6 +515,7 @@ iText* iTe = GetGraphics()->CreateText("durp", Vector2(300, 100), 1.0f, "Media/F
 			if(!oncee)
 			{
 				iT->SetAIGrid(64, (void*)&aiData);
+				iT->SetAIGridThickness(0.005f);
 				oncee = true;
 			}
 		}
@@ -712,12 +729,12 @@ iText* iTe = GetGraphics()->CreateText("durp", Vector2(300, 100), 1.0f, "Media/F
 	GetGraphics()->DeleteImage(iM4);
 	GetGraphics()->DeleteImage(iM5);
 
-	GetGraphics()->DeleteText(iTe);
+	/*GetGraphics()->DeleteText(iTe);
 	GetGraphics()->DeleteText(iTe2);
 	GetGraphics()->DeleteText(iTe3);
 	GetGraphics()->DeleteText(iTe4);
 	GetGraphics()->DeleteText(iTe5);
-	
+	*/
 
 #endif
 	//*************************************	   END OF POST TEST       **********************

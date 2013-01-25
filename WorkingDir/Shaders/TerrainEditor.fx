@@ -43,6 +43,7 @@ cbuffer PerObject
 	//AI(editor)
 	bool useAIMap;
 	float nodesPerSide;
+	float AIGridThickness;
 };
 //-----------------------------------------------------------------------------------------
 // Input and Output Structures
@@ -149,9 +150,8 @@ PSOut PSScene(PSSceneIn input) : SV_Target
 		float deltaXY = 1.0f / nodesPerSide;
 		float texX = fmod(input.tex.x, deltaXY);
 		float texY = fmod(input.tex.y, deltaXY);
-		float EPSILON = 0.001f;
-		if(	texX > 0.0f && texX < EPSILON || 
-			texY >  0.0f && texY < EPSILON) 
+		if(	texX > 0.0f && texX < AIGridThickness || 
+			texY >  0.0f && texY < AIGridThickness) 
 		{
 			finalColor.rgb = 1.0f;
 		}

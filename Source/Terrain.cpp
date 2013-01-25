@@ -194,6 +194,7 @@ Terrain::Terrain()
 	this->zAIData = NULL;
 	this->zAIGridHasChanged = false;
 	this->zAIGridShaderResourceView = NULL;
+	this->zAIGridThickness = 0.0f;
 }
 
 
@@ -242,6 +243,7 @@ Terrain::Terrain(D3DXVECTOR3 pos, D3DXVECTOR3 scale, unsigned int size)
 	this->zAIData = NULL;
 	this->zAIGridHasChanged = false;
 	this->zAIGridShaderResourceView = NULL;
+	this->zAIGridThickness = 0.0f;
 }
 
 Terrain::~Terrain()
