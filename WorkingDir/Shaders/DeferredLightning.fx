@@ -134,20 +134,42 @@ uint FindCascadeToBlendWith(float shadowMapTextureCoordViewSpaceDepth)
 	//använda cascadeFarPlanes**
 	return -1;
 }
-float SampleCascades(uint cascadeIndex, uint otherCascadeIndex, float2 shadowMapTextureCoords) 
+float SampleCascades(uint cascadeIndex, uint otherCascadeIndex, float2 shadowMapTextureCoords, float shadowMapdepth) 
 {
+	float CSM_SHADOW_EPSILON = 0.002f; //**ändra beroende på CSM level/slice**
 	float shadow = 1.0f; 
 	
 	if(blendCascades) //global variable
 	{
-
+		//**if(usePCF)??**
 	}
 	else
 	{
-
-		//shadow += (CascadedShadowMap[cascadeIndex].SampleLevel(shadowMapSampler, shadowMapTextureCoords + float2(SMAP_DX * (s - PCF_SIZE/2) , SMAP_DX * (q - PCF_SIZE/2)), 0).r + CSM_SHADOW_EPSILON < depth) ? 0.0f : 1.0f;
-			
+		if(usePCF)
+		{
+			for(float s = 0; s < PCF_SIZE; s++)
+			{
+				for(float q = 0; q < PCF_SIZE; q++)
+				{
+					shadow += (CascadedShadowMap[cascadeIndex].SampleLevel(shadowMapSampler, shadowMapTextureCoords + float2(SMAP_DX * (s - PCF_SIZE/2) , SMAP_DX * (q - PCF_SIZE/2)), 0).r + CSM_SHADOW_EPSILON < shadowMapdepth) ? 0.0f : 1.0f;
+				}
+			}
+			shadow *= PCF_SIZE_SQUARED;
+		}
+		else
+		{
+			shadow = (CascadedShadowMap[cascadeIndex].SampleLevel(shadowMapSampler, shadowMapTextureCoords + float2(SMAP_DX, SMAP_DX), 0).r + CSM_SHADOW_EPSILON < shadowMapdepth) ? 0.0f : 1.0f;
+		}
 	}
+
+	/**ev: if(shadowMapTextureCoords.x < 0 || shadowMapTextureCoords.x > 1 || shadowMapTextureCoords.y < 0 || shadowMapTextureCoords.y > 1)
+		{
+			shadow = 1.0f;
+		}
+		else if(depth > 1.0f)
+		{
+			shadow = 1.0f;
+		}***/
 	
 
 	return shadow;
@@ -295,7 +317,7 @@ float4 PSScene(PSSceneIn input) : SV_Target
 		}
 
 		//Sample the cascade(s)
-		shadow = SampleCascades(cascadeIndex, otherCascadeIndex, shadowMapTextureCoord); //**internt blendCascades
+		shadow = SampleCascades(cascadeIndex, otherCascadeIndex, shadowMapTextureCoord, shadowMapdepth); //**internt blendCascades
 		
 		*/
 
@@ -358,10 +380,16 @@ float4 PSScene(PSSceneIn input) : SV_Target
 					{
 						shadow += (CascadedShadowMap[1].SampleLevel(shadowMapSampler, smTex + float2(SMAP_DX * (s - PCF_SIZE/2) , SMAP_DX * (q - PCF_SIZE/2)), 0).r + CSM_SHADOW_EPSILON < depth) ? 0.0f : 1.0f;
 					}
-					if(cascadeIndex == 2 || shadow == 0.0f)
+					if(cascadeIndex == 2)
 					{
 						shadow += (CascadedShadowMap[2].SampleLevel(shadowMapSampler, smTex + float2(SMAP_DX * (s - PCF_SIZE/2) , SMAP_DX * (q - PCF_SIZE/2)), 0).r + CSM_SHADOW_EPSILON < depth) ? 0.0f : 1.0f;
 					}
+					if(cascadeIndex == 3)
+					{
+						shadow += (CascadedShadowMap[3].SampleLevel(shadowMapSampler, smTex + float2(SMAP_DX * (s - PCF_SIZE/2) , SMAP_DX * (q - PCF_SIZE/2)), 0).r + CSM_SHADOW_EPSILON < depth) ? 0.0f : 1.0f;
+					}
+					//**TILLMAN test loop: ** shadow += (CascadedShadowMap[cascadeIndex].SampleLevel(shadowMapSampler, smTex + float2(SMAP_DX * (s - PCF_SIZE/2) , SMAP_DX * (q - PCF_SIZE/2)), 0).r + CSM_SHADOW_EPSILON < depth) ? 0.0f : 1.0f;
+					
 				}
 			}
 			shadow *= PCF_SIZE_SQUARED;
