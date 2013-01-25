@@ -332,6 +332,12 @@ void ResourceManager::DeleteTextureResource( TextureResource* &textureResource )
 			//If found..
 			if(tex != this->zTextureResources.end())
 			{
+				/*if(textureResource->GetName() == "Media/Bush_leaf_01_v07.png") //**TILLMAN MEM LEAK
+				{
+					float derp = 1.0f;
+
+				}*/
+
 				//Decrease reference counter once more so that the texture will delete itself.
 				tex->second->DecreaseReferenceCount();
 				//Remove texture from table.
@@ -339,11 +345,13 @@ void ResourceManager::DeleteTextureResource( TextureResource* &textureResource )
 			}
 			else
 			{
-				while(textureResource->GetReferenceCount() > 0)
+				int refCount = textureResource->GetReferenceCount();
+				for(int i = 0; i < refCount; i++)
 				{
-					textureResource->DecreaseReferenceCount();
+					//textureResource->DecreaseReferenceCount(); //**TILLMAN
 				}
-				MaloW::Debug("WARNING: ResourceManager::DeleteTextureResource: Could not find the specified texture:" + textureResource->GetName());
+				MaloW::Debug("WARNING: DETECTED MEMORY LEAK!:");
+				MaloW::Debug("ResourceManager::DeleteTextureResource: Could not find the specified texture:" + textureResource->GetName() + ", references: " + MaloW::convertNrToString(refCount));
 			}
 			textureResource = NULL;
 		}

@@ -77,7 +77,7 @@ class Terrain : public iTerrain
 		void*						zAIData;
 		bool						zAIGridHasChanged;	
 		ID3D11ShaderResourceView*	zAIGridShaderResourceView; //Is unique for every terrain so the use of resource is unnecessary.
-
+		float						zAIGridThickness;
 		
 
 	private:
@@ -149,6 +149,7 @@ class Terrain : public iTerrain
 		void SetAIGridShaderResourceView(ID3D11ShaderResourceView* AIGridShaderResourceView) { this->zAIGridShaderResourceView = AIGridShaderResourceView; }
 		void AIGridHasChanged(bool has) {this->zAIGridHasChanged = has; }
 		float GetAINodeSize() const { return (float)this->zSize / (float)this->zNrOfAINodesPerSide; }
+		float GetAIGridThickness() const { return this->zAIGridThickness; }
 
 		//OTHER.
 		//Is used internally when needed, but can be used from the outside for debugging.
@@ -165,6 +166,7 @@ class Terrain : public iTerrain
 		//Vertex data
 		virtual float GetYPositionAt(float x, float z) const throw(...); 
 
+
 		//SET-functions
 		//Object data
 		virtual void SetScale(const Vector3& scale);
@@ -178,10 +180,9 @@ class Terrain : public iTerrain
 		virtual void SetTextures(char const* const* const fileNames);
 		virtual void SetBlendMap(unsigned int size, float const* const data);
 		
-		
 		//Editor
 		virtual void SetAIGrid(unsigned int nrOfAINodesPerSide, void* aiData) { this->zNrOfAINodesPerSide = nrOfAINodesPerSide; this->zAIData = aiData; this->zAIGridHasChanged = true; }
-
+		virtual void SetAIGridThickness(float thickness = 0.001f) { this->zAIGridThickness = thickness; }
 
 		// MaloW ToDO
 		// virtual void SetAIMap(int size, float const* data);
