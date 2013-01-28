@@ -195,7 +195,7 @@ float SampleCascades(uint cascadeIndex, uint otherCascadeIndex, float2 pixelPosT
 	float shadow = 0.0f; 
 	if(blendCascades) //global variable
 	{
-		if(usePCF)
+		if(usePCF) //**TILLMAN, ersätta med if PCF_SIZE != 0??**
 		{
 			for(float s = 0; s < PCF_SIZE; s++) // error X3511: forced to unroll loop, but unrolling failed.
 			{
