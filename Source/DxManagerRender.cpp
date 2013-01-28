@@ -808,7 +808,8 @@ void DxManager::RenderCascadedShadowMap()
 		this->Shader_DeferredLightning->SetFloat("PCF_SIZE", PCF_SIZE);
 		this->Shader_DeferredLightning->SetFloat("PCF_SIZE_SQUARED", PCF_SQUARED);
 		
-		this->Shader_DeferredLightning->SetBool("blendCascades", false); //** TILLMAN CSM VARIABLE**
+		this->Shader_DeferredLightning->SetBool("blendCascades", true); //** TILLMAN CSM VARIABLE**
+		this->Shader_DeferredLightning->SetFloat("blendDistance", 0.0f); //** TILLMAN CSM VARIABLE**
 		this->Shader_DeferredLightning->SetFloat("blendStrength", 0.0f); //** TILLMAN CSM VARIABLE**
 
 		this->Shader_DeferredLightning->SetInt("nrOfCascades", this->csm->GetNrOfCascadeLevels());
@@ -1006,8 +1007,8 @@ HRESULT DxManager::Render()
 	// Render shadowmap pictures:
 	//for(int q = 0; q < this->lights.size(); q++)
 		//DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_BillBoard, this->lights[q]->GetShadowMapSRV(), q); 
-	for(int q = 0; q < this->csm->GetNrOfCascadeLevels(); q++)
-		DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_BillBoard, this->csm->GetShadowMapSRV(q), q); 
+	//for(int q = 0; q < this->csm->GetNrOfCascadeLevels(); q++)
+	//	DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_BillBoard, this->csm->GetShadowMapSRV(q), q); 
 
 	
 	
