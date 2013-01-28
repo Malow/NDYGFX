@@ -14,6 +14,7 @@ class CascadedShadowMap
 private:
 	GraphicsEngineParams params;
 	int quality;
+	float blendDistance;
 
 	ID3D11Texture2D* shadowMap[SHADOW_MAP_CASCADE_COUNT];
 	ID3D11DepthStencilView* shadowMapDepthView[SHADOW_MAP_CASCADE_COUNT];
@@ -37,6 +38,7 @@ public:
 	*/
 	void PreRender(D3DXVECTOR3 sunLight, Camera* cam, float nearPlaneDistanceCloserToSun);
 
+	float GetBlendDistance() { return this->blendDistance; }
 	int GetNrOfCascadeLevels() { return SHADOW_MAP_CASCADE_COUNT; }
 	D3D11_VIEWPORT GetShadowMapViewPort(int i) const { return this->ShadowMapViewPort[i]; }
 	ID3D11ShaderResourceView* GetShadowMapSRV(int i) const { return this->shadowMapSRView[i]; }
@@ -44,4 +46,6 @@ public:
 	ID3D11Texture2D* GetShadowMap(int i) const { return this->shadowMap[i]; }
 	D3DXMATRIX GetViewProjMatrix(int i);
 	float GetSplitDepth(int i) { return this->shadowMappingSplitDepths[i]; }
+
+	float SetBlendDistance(float blendDist) { this->blendDistance = blendDist; }
 };

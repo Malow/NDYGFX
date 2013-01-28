@@ -7,6 +7,7 @@
 CascadedShadowMap::CascadedShadowMap()
 {
 	this->quality = 0;
+	this->blendDistance = 0.1f; //**Tmp, ska vara 0.0f;**
 	for(int i = 0; i < SHADOW_MAP_CASCADE_COUNT; i++)
 	{
 		this->shadowMap[i] = NULL;
@@ -104,20 +105,22 @@ void CascadedShadowMap::CalcShadowMapMatrices(D3DXVECTOR3 sunLight, Camera* cam,
 		D3DXVec3Minimize (&vLightCameraOrthographicMin, &vec3, &vLightCameraOrthographicMin );
 		D3DXVec3Maximize (&vLightCameraOrthographicMax, &vec3, &vLightCameraOrthographicMax );
 	}
+	
 	D3DXVECTOR3 tmpNearPlanePoint = minValue;
-	//set the near plane to be closer to the light to include more potential occluders.
+	//Set the near plane to be closer to the light to include more potential occluders.
 	tmpNearPlanePoint -= sunLight * nearPlaneDistanceCloserToSun * (i + 1); 
 	float nearPlane = tmpNearPlanePoint.z; 
 	float farPlane = maxValue.z;
 
 	// Create the orthographic projection for this cascade/frustum slice.
+	// Add the blend distance to make the projections overlap each other for blending between the shadow maps.
 	D3DXMATRIX lightProjMatrix;
 	D3DXMatrixIdentity(&lightProjMatrix);
 	D3DXMatrixOrthoOffCenterLH( &lightProjMatrix, 
-		vLightCameraOrthographicMin.x, 
-		vLightCameraOrthographicMax.x, 
-		vLightCameraOrthographicMin.y, 
-		vLightCameraOrthographicMax.y, 
+		vLightCameraOrthographicMin.x - this->blendDistance, 
+		vLightCameraOrthographicMax.x + this->blendDistance, 
+		vLightCameraOrthographicMin.y - this->blendDistance, 
+		vLightCameraOrthographicMax.y + this->blendDistance, 
 		nearPlane, farPlane);
 
 	this->viewProj[i] = lightViewMatrix * lightProjMatrix;

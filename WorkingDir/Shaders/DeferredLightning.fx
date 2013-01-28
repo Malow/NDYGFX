@@ -24,7 +24,7 @@ SamplerState linearSampler
 };
 
 Texture2D ShadowMap[10];
-Texture2D CascadedShadowMap[10];
+Texture2D CascadedShadowMap[4];
 SamplerState shadowMapSampler
 {
 	Filter = MIN_MAG_MIP_POINT;
@@ -57,14 +57,13 @@ cbuffer ef
 	float SMAP_DX; 
 
 	//PCF sampling
-	bool usePCF;
 	float PCF_SIZE;
 	float PCF_SIZE_SQUARED;
 
 	//Multiple sampling
-	bool blendCascades;
+	bool blendCascades; //**ersätta med blenddistance
 	float blendDistance; //the number of pixels to blend.
-	float blendStrength; //How much to blend.
+	float blendStrength; //How much to blend. **to use?**
 
 	//Both/other
 	uint nrOfCascades;
@@ -185,7 +184,7 @@ float SampleCascades(uint cascadeIndex, uint otherCascadeIndex, float2 pixelPosT
 	//**
 	if(otherCascadeIndex < 0 || otherCascadeIndex > (nrOfCascades - 1))
 	{
-		//return 0.0f;
+		//return 0.0f; //Debug
 	}
 
 
@@ -195,7 +194,14 @@ float SampleCascades(uint cascadeIndex, uint otherCascadeIndex, float2 pixelPosT
 	float shadow = 0.0f; 
 	if(blendCascades) //global variable
 	{
-		if(usePCF) //**TILLMAN, ersätta med if PCF_SIZE != 0??**
+		//Convert pixel depth to world units.
+		float pixelDepthWorld = pixelDepth * cascadeFarPlanes[nrOfCascades - 1];
+		//Check if pixel is within blending distance.
+		//**todo CHECK** TILLMAN
+		//if true, sample both and lerp samples**
+		//else: kod under
+
+		if(PCF_SIZE > 0) //**TILLMAN, ersätta med if PCF_SIZE != 0??**
 		{
 			for(float s = 0; s < PCF_SIZE; s++) // error X3511: forced to unroll loop, but unrolling failed.
 			{
@@ -245,7 +251,7 @@ float SampleCascades(uint cascadeIndex, uint otherCascadeIndex, float2 pixelPosT
 	}
 	else
 	{
-		if(usePCF)
+		if(PCF_SIZE > 0)
 		{
 			for(float s = 0; s < PCF_SIZE; s++) // error X3511: forced to unroll loop, but unrolling failed.
 			{
@@ -432,7 +438,7 @@ float4 PSScene(PSSceneIn input) : SV_Target
 
 		//Determine the second cascade to use if blending between cascades is enabled:
 		uint otherCascadeIndex = -1; //**TILLMAN TODO**
-		if(!blendCascades)
+		if(blendCascades)
 		{
 			otherCascadeIndex = FindCascadeToBlendWith(cascadeIndex, pixelDepthCameraViewSpace); 
 		}
@@ -458,7 +464,7 @@ float4 PSScene(PSSceneIn input) : SV_Target
 		
 		
 		//**tillman end of CSM
-
+		
 		diffuseLighting += diffLight;
 		specLighting += specLight;
 
