@@ -1138,52 +1138,329 @@ bool PhysicsEngine::FrustrumVsSphere( D3DXPLANE planes[], BoundingSphere bs, D3D
 CollisionData PhysicsEngine::GetSpecialCollisionRayTerrain( Vector3 rayOrigin, Vector3 rayDirection, iTerrain* iterr, float distanceBetweenVerticies )
 {
 	CollisionData cd;
-
 	if(Terrain* terrain = dynamic_cast<Terrain*>(iterr))
 	{
 		float scale = max(terrain->GetScale().x, max(terrain->GetScale().y, terrain->GetScale().z));
 		if(this->DoCollisionSphereVsRay(terrain->GetBoundingSphere(), terrain->GetWorldMatrix(), scale, 
 			rayOrigin, rayDirection))
 		{
-			cd.BoundingSphereCollision = true;
-			Vertex* terrVerts = terrain->GetVerticesPointer();
-
 			int vertCount = 0;
 			if(!this->tempVerts)
 			{
-				tempVerts = new Vertex[terrain->GetNrOfVertices()];
+				tempVerts = new Vertex[terrain->GetNrOfIndices()];	// bigger is needed for some reason.
 				this->tempVertsSize = sqrt(terrain->GetNrOfVertices());
 			}
 
+			cd.BoundingSphereCollision = true;
+			float terrWidth = (this->tempVertsSize - 1) * distanceBetweenVerticies;
 			Vector3 terrPos = iterr->GetPosition();
-
+			terrPos.x -= terrWidth * 0.5f;
+			terrPos.z -= terrWidth * 0.5f;
 
 			// Bresenham's line algorithm
+			bool go = true;
 			float deltax = rayDirection.x;
 			float deltaz = rayDirection.z;
+			float x = rayOrigin.x;
+			float z = rayOrigin.z;
 
-			int error = 0;
-			int deltaerr = abs(deltaz / deltax);
 
-			int z =	rayOrigin.z;
-
-			// rayOrigin is not the start of the grid, it's the start of the ray.
-			// find the start of the grid for the ray?
-			// Using distancebetweenverticies instead of 1 due to our grid being that size.
-			for(int x = rayOrigin.x; x < terrPos.x + this->tempVertsSize * distanceBetweenVerticies; x += distanceBetweenVerticies)
+			if(rayOrigin.x >= terrPos.x && rayOrigin.x < terrPos.x + terrWidth &&
+				rayOrigin.z >= terrPos.z && rayOrigin.z < terrPos.z + terrWidth)
 			{
-				//plot(x, z);	// Add it as a square that is to be triangletested
-				error = error + deltaerr;
-				if(error >= 0.5)
+				// Change the if and else, invert if, the if isnt needed, all I want is the else on it
+			}
+			else
+			{
+				if(deltax > 0.0f)
 				{
-					z += distanceBetweenVerticies;
-					error = error - distanceBetweenVerticies;
+					float mindistX = (terrPos.x - x) / deltax;
+					if(mindistX > 0.0f)
+					{
+						// Target is "infront" of us, continue
+						float zatmindistx = z + deltaz * mindistX;
+						if(zatmindistx > terrPos.z && zatmindistx < terrPos.z + terrWidth)
+						{
+							// found our start point
+							x += deltax * mindistX;
+							z = zatmindistx;
+						}
+						else
+							go = false;
+					}
+					else
+					{
+						// test Z-wise
+						float mindistZ = (terrPos.z - z) / deltaz;
+						if(mindistZ > 0.0f)
+						{
+							// Target is "infront" of us, continue
+							float xatmindistz = x + deltax * mindistZ;
+							if(xatmindistz > terrPos.x && xatmindistz < terrPos.x + terrWidth)
+							{
+								// found our start point
+								z += deltaz * mindistZ;
+								x = xatmindistz;
+							}
+							else
+								go = false;
+						}
+						
+					}
 				}
+				else
+				{
+					float mindistX = ((terrPos.x + terrWidth) - x) / deltax;
+					if(mindistX > 0.0f)
+					{
+						// Target is "infront" of us, continue
+						float zatmindistx = z + deltaz * mindistX;
+						if(zatmindistx > terrPos.z && zatmindistx < terrPos.z + terrWidth)
+						{
+							// found our start point
+							x += deltax * mindistX;
+							z = zatmindistx;
+						}
+						else
+							go = false;
+					}
+					else
+					{
+						// test Z-wise
+						float mindistZ = ((terrPos.z + terrWidth) - z) / deltaz;
+						if(mindistZ > 0.0f)
+						{
+							// Target is "infront" of us, continue
+							float xatmindistz = x + deltax * mindistZ;
+							if(xatmindistz > terrPos.x && xatmindistz < terrPos.x + terrWidth)
+							{
+								// found our start point
+								z += deltaz * mindistZ;
+								x = xatmindistz;
+							}
+							else
+								go = false;
+						}
+					}
+				}
+			}
+
+			if(go)	// ray is within terrain and we found our start pos
+			{
+				Vertex* terrVerts = terrain->GetVerticesPointer();
+
+
+				// Need to do special cases depending on if X or Z delta is bigger?
+				// Because of z "skipping" several spaces when delta x is like 0.2 and deltaz 0.9 = stepZ at 5'ish?
+				if(abs(deltax) > abs(deltaz))
+				{
+					float zStep = (deltaz / deltax) * distanceBetweenVerticies;
+
+					// x = x start of ray in grid
+					// y = y start of ray in grid
+					// deltax = rayDir.x
+					// deltay = rayDir.y
+
+					if(deltax > 0.0f)
+					{
+						int arrX = (x - terrPos.x) / distanceBetweenVerticies;
+						int arrZ = (z - terrPos.z) / distanceBetweenVerticies;
+						int rows = this->tempVertsSize;
+					
+						for(; x < terrPos.x + terrWidth && 
+							z >= terrPos.z && z < terrPos.z + terrWidth; 
+							x += distanceBetweenVerticies)
+						{
+							arrX = (x - terrPos.x) / distanceBetweenVerticies;
+							arrZ = (z - terrPos.z) / distanceBetweenVerticies;
+
+							tempVerts[vertCount++] = terrVerts[arrZ * rows + arrX];
+							tempVerts[vertCount++] = terrVerts[(arrZ + 1) * rows + arrX];
+							tempVerts[vertCount++] = terrVerts[(arrZ + 1) * rows + arrX + 1];
+
+							tempVerts[vertCount++] = terrVerts[arrZ * rows + arrX];
+							tempVerts[vertCount++] = terrVerts[(arrZ + 1) * rows + arrX + 1];
+							tempVerts[vertCount++] = terrVerts[arrZ * rows + arrX + 1];		
+						
+
+						
+							z += zStep;
+
+							int oldZ = arrZ;	// Check if several grids in Z is hit.
+							arrZ = (z - terrPos.z) / distanceBetweenVerticies;
+							while(oldZ != arrZ && z >= terrPos.z && z < terrPos.z + terrWidth)
+							{
+								if(deltaz > 0.0f)
+									oldZ++;
+								else
+									oldZ--;
+
+								tempVerts[vertCount++] = terrVerts[oldZ * rows + arrX];
+								tempVerts[vertCount++] = terrVerts[(oldZ + 1) * rows + arrX];
+								tempVerts[vertCount++] = terrVerts[(oldZ + 1) * rows + arrX + 1];
+
+								tempVerts[vertCount++] = terrVerts[oldZ * rows + arrX];
+								tempVerts[vertCount++] = terrVerts[(oldZ + 1) * rows + arrX + 1];
+								tempVerts[vertCount++] = terrVerts[oldZ * rows + arrX + 1];	
+							}
+						}
+					}
+					else
+					{
+						int arrX = (x - terrPos.x) / distanceBetweenVerticies;
+						int arrZ = (z - terrPos.z) / distanceBetweenVerticies;
+						int rows = this->tempVertsSize;
+
+
+						for(; x >= terrPos.x && 
+							z >= terrPos.z && z < terrPos.z + terrWidth - distanceBetweenVerticies; 
+							x -= distanceBetweenVerticies)
+						{
+							arrX = (x - terrPos.x) / distanceBetweenVerticies;
+							arrZ = (z - terrPos.z) / distanceBetweenVerticies;
+
+							tempVerts[vertCount++] = terrVerts[arrZ * rows + arrX];
+							tempVerts[vertCount++] = terrVerts[(arrZ + 1) * rows + arrX];
+							tempVerts[vertCount++] = terrVerts[(arrZ + 1) * rows + arrX + 1];
+
+							tempVerts[vertCount++] = terrVerts[arrZ * rows + arrX];
+							tempVerts[vertCount++] = terrVerts[(arrZ + 1) * rows + arrX + 1];
+							tempVerts[vertCount++] = terrVerts[arrZ * rows + arrX + 1];		
+
+
+
+							z -= zStep;
+
+							int oldZ = arrZ;	// Check if several grids in Z is hit.
+							arrZ = (z - terrPos.z) / distanceBetweenVerticies;
+							while(oldZ != arrZ && z >= terrPos.z && z < terrPos.z + terrWidth)
+							{
+								if(deltaz > 0.0f)
+									oldZ++;
+								else
+									oldZ--;
+
+								tempVerts[vertCount++] = terrVerts[oldZ * rows + arrX];
+								tempVerts[vertCount++] = terrVerts[(oldZ + 1) * rows + arrX];
+								tempVerts[vertCount++] = terrVerts[(oldZ + 1) * rows + arrX + 1];
+
+								tempVerts[vertCount++] = terrVerts[oldZ * rows + arrX];
+								tempVerts[vertCount++] = terrVerts[(oldZ + 1) * rows + arrX + 1];
+								tempVerts[vertCount++] = terrVerts[oldZ * rows + arrX + 1];	
+							}
+						}
+					}
+				}
+				else
+				{
+					float xStep = (deltax / deltaz) * distanceBetweenVerticies;
+
+					// x = x start of ray in grid
+					// y = y start of ray in grid
+					// deltax = rayDir.x
+					// deltay = rayDir.y
+
+					if(deltaz > 0.0f)
+					{
+						int arrX = (x - terrPos.x) / distanceBetweenVerticies;
+						int arrZ = (z - terrPos.z) / distanceBetweenVerticies;
+						int rows = this->tempVertsSize;
+
+						for(; z < terrPos.z + terrWidth && 
+							x >= terrPos.z && x < terrPos.x + terrWidth; 
+							z += distanceBetweenVerticies)
+						{
+							arrX = (x - terrPos.x) / distanceBetweenVerticies;
+							arrZ = (z - terrPos.z) / distanceBetweenVerticies;
+
+							tempVerts[vertCount++] = terrVerts[arrZ * rows + arrX];
+							tempVerts[vertCount++] = terrVerts[(arrZ + 1) * rows + arrX];
+							tempVerts[vertCount++] = terrVerts[(arrZ + 1) * rows + arrX + 1];
+
+							tempVerts[vertCount++] = terrVerts[arrZ * rows + arrX];
+							tempVerts[vertCount++] = terrVerts[(arrZ + 1) * rows + arrX + 1];
+							tempVerts[vertCount++] = terrVerts[arrZ * rows + arrX + 1];		
+
+
+
+							x += xStep;
+
+							int oldX = arrX;	// Check if several grids in X is hit.
+							arrX = (x - terrPos.x) / distanceBetweenVerticies;
+							while(oldX != arrX && x >= terrPos.x && x < terrPos.x + terrWidth)
+							{
+								if(deltax > 0.0f)
+									oldX++;
+								else
+									oldX--;
+
+								tempVerts[vertCount++] = terrVerts[oldX * rows + arrX];
+								tempVerts[vertCount++] = terrVerts[(oldX + 1) * rows + arrX];
+								tempVerts[vertCount++] = terrVerts[(oldX + 1) * rows + arrX + 1];
+
+								tempVerts[vertCount++] = terrVerts[oldX * rows + arrX];
+								tempVerts[vertCount++] = terrVerts[(oldX + 1) * rows + arrX + 1];
+								tempVerts[vertCount++] = terrVerts[oldX * rows + arrX + 1];	
+							}
+						}
+					}
+					else
+					{
+						int arrX = (x - terrPos.x) / distanceBetweenVerticies;
+						int arrZ = (z - terrPos.z) / distanceBetweenVerticies;
+						int rows = this->tempVertsSize;
+
+
+						for(; z >= terrPos.z && 
+							x >= terrPos.x && x < terrPos.x + terrWidth - distanceBetweenVerticies; 
+							z -= distanceBetweenVerticies)
+						{
+							arrX = (x - terrPos.x) / distanceBetweenVerticies;
+							arrZ = (z - terrPos.z) / distanceBetweenVerticies;
+
+							tempVerts[vertCount++] = terrVerts[arrZ * rows + arrX];
+							tempVerts[vertCount++] = terrVerts[(arrZ + 1) * rows + arrX];
+							tempVerts[vertCount++] = terrVerts[(arrZ + 1) * rows + arrX + 1];
+
+							tempVerts[vertCount++] = terrVerts[arrZ * rows + arrX];
+							tempVerts[vertCount++] = terrVerts[(arrZ + 1) * rows + arrX + 1];
+							tempVerts[vertCount++] = terrVerts[arrZ * rows + arrX + 1];		
+
+
+
+							x -= xStep;
+
+							int oldX = arrX;	// Check if several grids in Z is hit.
+							arrX = (x - terrPos.x) / distanceBetweenVerticies;
+							while(oldX != arrX && x >= terrPos.x && x < terrPos.x + terrWidth)
+							{
+								if(deltax > 0.0f)
+									oldX++;
+								else
+									oldX--;
+
+								tempVerts[vertCount++] = terrVerts[oldX * rows + arrX];
+								tempVerts[vertCount++] = terrVerts[(oldX + 1) * rows + arrX];
+								tempVerts[vertCount++] = terrVerts[(oldX + 1) * rows + arrX + 1];
+
+								tempVerts[vertCount++] = terrVerts[oldX * rows + arrX];
+								tempVerts[vertCount++] = terrVerts[(oldX + 1) * rows + arrX + 1];
+								tempVerts[vertCount++] = terrVerts[oldX * rows + arrX + 1];	
+							}
+						}
+					}
+
+				}
+
+				this->DoSpecialCollisionRayVsTerrainTriangles(rayOrigin, rayDirection, 
+					tempVerts, vertCount, NULL, 0, terrain->GetWorldMatrix(), cd);
 			}
 
 
 			/*
 			//MaloW Code:
+			Vertex* terrVerts = terrain->GetVerticesPointer();
+
 
 			Vector2 ray1o = Vector2(rayOrigin.x, rayOrigin.z);
 			Vector2 ray1d = Vector2(rayDirection.x, rayDirection.z);
@@ -1221,9 +1498,10 @@ CollisionData PhysicsEngine::GetSpecialCollisionRayTerrain( Vector3 rayOrigin, V
 				}
 				
 			}
-			*/
+			
 			this->DoSpecialCollisionRayVsTerrainTriangles(rayOrigin, rayDirection, 
 				tempVerts, vertCount, NULL, 0, terrain->GetWorldMatrix(), cd);
+				*/
 		}
 	}
 	else

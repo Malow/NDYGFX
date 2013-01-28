@@ -990,6 +990,9 @@ HRESULT DxManager::Render()
 	// Debug: Render Wireframe
 	//MaloW::Array<StaticMesh*>* meshes = &this->objects;
 	//DrawWireFrame(meshes, this->Dx_Device, this->Dx_DeviceContext, this->camera->GetViewMatrix() * this->camera->GetProjectionMatrix());
+	// Debug: Render Wireframe
+	//MaloW::Array<Terrain*>* terrs = &this->terrains;
+	//DrawWireFrame(terrs, this->Dx_Device, this->Dx_DeviceContext, this->camera->GetViewMatrix() * this->camera->GetProjectionMatrix());
 	// Debug: Render BoundingSpheres
 	//MaloW::Array<StaticMesh*>* meshes = &this->objects;
 	//DrawBoundingSpheres(meshes, this->Dx_Device, this->Dx_DeviceContext, this->camera->GetViewMatrix() * this->camera->GetProjectionMatrix());
