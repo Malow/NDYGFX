@@ -818,6 +818,7 @@ void DxManager::RenderCascadedShadowMap()
 			cascadeFarPlanes[i] = this->csm->GetSplitDepth(i + 1);
 		}
 		this->Shader_DeferredLightning->SetFloat4("cascadeFarPlanes", cascadeFarPlanes);
+		this->Shader_DeferredLightning->SetMatrix("cameraViewMatrix", this->camera->GetViewMatrix()); //Send camera view matrix to determine what frustum slice to use.
 	}
 }
 
@@ -1005,8 +1006,8 @@ HRESULT DxManager::Render()
 	// Render shadowmap pictures:
 	//for(int q = 0; q < this->lights.size(); q++)
 		//DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_BillBoard, this->lights[q]->GetShadowMapSRV(), q); 
-	//for(int q = 0; q < this->csm->GetNrOfCascadeLevels(); q++)
-	//	DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_BillBoard, this->csm->GetShadowMapSRV(q), q); 
+	for(int q = 0; q < this->csm->GetNrOfCascadeLevels(); q++)
+		DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_BillBoard, this->csm->GetShadowMapSRV(q), q); 
 
 	
 	

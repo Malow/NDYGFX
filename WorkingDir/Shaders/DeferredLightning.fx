@@ -1,4 +1,10 @@
-
+//-----------------------------------------------------------------------------------------------------
+//
+//	Originally made by MaloW.
+//
+//	Cascaded shadow maps written by Tillman for projekt Not Deat Yet at Blekinge tekniska högskola.
+//
+//-----------------------------------------------------------------------------------------------------
 #include "stdafx.fx"
 #include "SSAO.fx"
 #include "PPHighlightArea.fx"
@@ -59,9 +65,10 @@ cbuffer ef
 	bool blendCascades;
 	float blendStrength;
 
-	//Both
+	//Both/other
 	uint nrOfCascades;
 	float4 cascadeFarPlanes;
+	matrix cameraViewMatrix;
 };
 
 
@@ -94,10 +101,6 @@ RasterizerState NoCulling
 //-----------------------------------------------------------------------------------------
 VSIn VSScene(VSIn input)
 {
-	 // Transform the shadow texture coordinates for all the cascades.
-	//  Output.vTexShadow = mul( Input.vPosition, m_mShadow ); //**TILLMAN
-
-
 	return input;
 }
 
@@ -129,15 +132,35 @@ void GS( point VSIn input[1], inout TriangleStream<PSSceneIn> triStream )
 	triStream.Append(output);
 }
 
+//Returns the index of the cascade(frustum slice) to use.
+uint FindCascade(float pixelDepthCameraViewSpace)
+{
+	//pixelPosCameraViewSpace is the position of the pixel in camera view space.
+	uint i = 0;
+	for(; i < nrOfCascades; i++)
+	{
+		//cascadeFarPlanes is the z-distance of the frustum slices in view space.
+		//If the depthposition of the pixel is less than the far plane, the pixel is inside that frustum slice.
+		if(pixelDepthCameraViewSpace < cascadeFarPlanes[i])
+		{
+			return i; //return early if the pixel is close to the camera's position. (Origo).
+		}
+	}
+
+	return -1; //the pixel is outside of the cameras frustum.
+}
+//Returns the index of the cascade(frustum slice) to blend with.
 uint FindCascadeToBlendWith(float shadowMapTextureCoordViewSpaceDepth)
 {
 	//använda cascadeFarPlanes**
 	return -1;
 }
-float SampleCascades(uint cascadeIndex, uint otherCascadeIndex, float2 shadowMapTextureCoords, float shadowMapdepth) 
+//Return a floating point value representing the shadow factor. Range[0,1].
+float SampleCascades(uint cascadeIndex, uint otherCascadeIndex, float2 pixelPosTexelSpace, float pixelDepth) 
 {
+	//**TILLMAN TODO: X3511: flatten/unroll etc**
 	float CSM_SHADOW_EPSILON = 0.002f; //**ändra beroende på CSM level/slice**
-	float shadow = 1.0f; 
+	float shadow = 0.0f; 
 	
 	if(blendCascades) //global variable
 	{
@@ -147,18 +170,50 @@ float SampleCascades(uint cascadeIndex, uint otherCascadeIndex, float2 shadowMap
 	{
 		if(usePCF)
 		{
-			for(float s = 0; s < PCF_SIZE; s++)
+			for(float s = 0; s < PCF_SIZE; s++) // error X3511: forced to unroll loop, but unrolling failed.
 			{
 				for(float q = 0; q < PCF_SIZE; q++)
 				{
-					shadow += (CascadedShadowMap[cascadeIndex].SampleLevel(shadowMapSampler, shadowMapTextureCoords + float2(SMAP_DX * (s - PCF_SIZE/2) , SMAP_DX * (q - PCF_SIZE/2)), 0).r + CSM_SHADOW_EPSILON < shadowMapdepth) ? 0.0f : 1.0f;
+					//X3511: shadow += (CascadedShadowMap[cascadeIndex].SampleLevel(shadowMapSampler, pixelPosTexelSpace + float2(SMAP_DX * (s - PCF_SIZE/2) , SMAP_DX * (q - PCF_SIZE/2)), 0).r + CSM_SHADOW_EPSILON < pixelDepth) ? 0.0f : 1.0f;
+					if(cascadeIndex == 0)
+					{
+						shadow += (CascadedShadowMap[0].SampleLevel(shadowMapSampler, pixelPosTexelSpace + float2(SMAP_DX * (s - PCF_SIZE/2) , SMAP_DX * (q - PCF_SIZE/2)), 0).r + CSM_SHADOW_EPSILON < pixelDepth) ? 0.0f : 1.0f;
+					}
+					else if(cascadeIndex == 1) 
+					{
+						shadow += (CascadedShadowMap[1].SampleLevel(shadowMapSampler, pixelPosTexelSpace + float2(SMAP_DX * (s - PCF_SIZE/2) , SMAP_DX * (q - PCF_SIZE/2)), 0).r + CSM_SHADOW_EPSILON < pixelDepth) ? 0.0f : 1.0f;
+					}
+					else if(cascadeIndex == 2)
+					{
+						shadow += (CascadedShadowMap[2].SampleLevel(shadowMapSampler, pixelPosTexelSpace + float2(SMAP_DX * (s - PCF_SIZE/2) , SMAP_DX * (q - PCF_SIZE/2)), 0).r + CSM_SHADOW_EPSILON < pixelDepth) ? 0.0f : 1.0f;
+					}
+					else if(cascadeIndex == 3)
+					{
+						shadow += (CascadedShadowMap[3].SampleLevel(shadowMapSampler, pixelPosTexelSpace + float2(SMAP_DX * (s - PCF_SIZE/2) , SMAP_DX * (q - PCF_SIZE/2)), 0).r + CSM_SHADOW_EPSILON < pixelDepth) ? 0.0f : 1.0f;
+					}
 				}
 			}
 			shadow *= PCF_SIZE_SQUARED;
 		}
 		else
 		{
-			shadow = (CascadedShadowMap[cascadeIndex].SampleLevel(shadowMapSampler, shadowMapTextureCoords + float2(SMAP_DX, SMAP_DX), 0).r + CSM_SHADOW_EPSILON < shadowMapdepth) ? 0.0f : 1.0f;
+			//X3511: shadow = (CascadedShadowMap[cascadeIndex].SampleLevel(shadowMapSampler, pixelPosTexelSpace + float2(SMAP_DX, SMAP_DX), 0).r + CSM_SHADOW_EPSILON < pixelDepth) ? 0.0f : 1.0f;
+			if(cascadeIndex == 0)
+			{
+				shadow = (CascadedShadowMap[0].SampleLevel(shadowMapSampler, pixelPosTexelSpace + float2(SMAP_DX, SMAP_DX), 0).r + CSM_SHADOW_EPSILON < pixelDepth) ? 0.0f : 1.0f;
+			}
+			else if(cascadeIndex == 1) 
+			{
+				shadow = (CascadedShadowMap[1].SampleLevel(shadowMapSampler, pixelPosTexelSpace + float2(SMAP_DX, SMAP_DX), 0).r + CSM_SHADOW_EPSILON < pixelDepth) ? 0.0f : 1.0f;
+			}
+			else if(cascadeIndex == 2)
+			{
+				shadow = (CascadedShadowMap[2].SampleLevel(shadowMapSampler, pixelPosTexelSpace + float2(SMAP_DX, SMAP_DX), 0).r + CSM_SHADOW_EPSILON < pixelDepth) ? 0.0f : 1.0f;
+			}
+			else if(cascadeIndex == 3)
+			{
+				shadow = (CascadedShadowMap[3].SampleLevel(shadowMapSampler, pixelPosTexelSpace + float2(SMAP_DX, SMAP_DX), 0).r + CSM_SHADOW_EPSILON < pixelDepth) ? 0.0f : 1.0f;
+			}
 		}
 	}
 
@@ -275,9 +330,9 @@ float4 PSScene(PSSceneIn input) : SV_Target
 	if(UseSun)
 	{
 		// Diff light
-		float diffLight = saturate(dot(NormsAndDepth.xyz, -sun.Direction)) * sun.LightIntensity;
+		float diffLight = saturate(dot(NormsAndDepth.xyz, -sun.Direction.xyz)) * sun.LightIntensity;
 		// Spec Light
-		float3 h = normalize(normalize(CameraPosition.xyz - WorldPos.xyz) - sun.Direction);
+		float3 h = normalize(normalize(CameraPosition.xyz - WorldPos.xyz) - sun.Direction.xyz);
 		float specLight = pow(saturate(dot(h, NormsAndDepth.xyz)), SpecularPower) * sun.LightIntensity;
 
 		
@@ -288,115 +343,40 @@ float4 PSScene(PSSceneIn input) : SV_Target
 		//Lights the pixel.
 
 		
-		
-		//Transform the texture coordinates to texel space. **Tillman - ev. ersätta/skicka med inversmatris?**
-		/*float4 shadowMapTextureCoordViewSpace = input.shadowMapTextureCoordViewSpace; //vertex shader**
-		float4 lightPosition = mul(WorldPos, cascades[cascadeIndex].viewProj); //Transform pixel from world space to **Tillman**[-w,w].
-		lightPosition.xy /= lightPosition.w; //Transform to **Tillman**[-1,1].
-		float2 texTexelSpace = float2(0.5f * lightPosition.x, -0.5f * lightPosition.y) + 0.5f; //Transform to texel space [0,1].
-			*/
+		//Determine the shadow map to use:
+		//First transform the pixel from world space to CAMERA view space.
+		float pixelDepthCameraViewSpace = mul(WorldPos, cameraViewMatrix).z; 
+		//Find the index of the cascade(frustum slice) it is inside of.
+		uint cascadeIndex = -1;
+		cascadeIndex = FindCascade(pixelDepthCameraViewSpace);
 
-		//Determine the shadow map to use.
-		uint cascadeIndex = 0;
-		/*for(int i = 0; i < nrOfCascades; i++)
-		{
-			//Check if the shadow map tex coord (in view space) is inside the frustum.
-			if(shadowMapTextureCoordViewSpace.z < cascadeFarPlanes[i]) //(cascadeFarPlanes contains the z-distance(in view space)).
-			{
-				cascadeIndex = i;
-				break; //Stop looping.
-			}
-		}
+		//**TILLMAN TODO** early exit: if (CascadeIndex == -1), warning dock! kan reducera fps istället**
 
-		//Determine the second shadow map to use if blending between cascades shall be done.
-		uint otherCascadeIndex = -1;
-		bool blendCascades = false; //**TILLMAN TMP**
+
+		//Determine the second cascade to use if blending between cascades is enabled:
+		uint otherCascadeIndex = -1; //**TILLMAN TODO**
 		if(blendCascades)
 		{
-			otherCascadeIndex = FindCascadeToBlendWith(shadowMapTextureCoordViewSpace.z); //**internt: cascadeFarPlanes**
+			otherCascadeIndex = FindCascadeToBlendWith(pixelDepthCameraViewSpace); 
 		}
 
-		//Sample the cascade(s)
-		shadow = SampleCascades(cascadeIndex, otherCascadeIndex, shadowMapTextureCoord, shadowMapdepth); //**internt blendCascades
-		
-		*/
 
-
-
-		
-		
-		float distancePixel = length(CameraPosition.xyz - WorldPos.xyz);
-		if(distancePixel > cascadeFarPlanes.x * 1.1f) //**tillman - måste kolla om pixeln är innanför frustumet, och inte radie från kamera
-		{
-			cascadeIndex = 1;
-		}
-		if(distancePixel > cascadeFarPlanes.y * 1.1f) //**tillman - måste kolla om pixeln är innanför frustumet, och inte radie från kamera
-		{
-			cascadeIndex = 2;
-		}
-		if(distancePixel > cascadeFarPlanes.z * 1.1f) //**tillman - måste kolla om pixeln är innanför frustumet, och inte radie från kamera
-		{
-			cascadeIndex = 3;
-		}
-
-		float4 posLight = mul(WorldPos, cascades[cascadeIndex].viewProj); //**TILLMAN "i"
-		posLight.xy /= posLight.w;
-		float2 smTex = float2(0.5f*posLight.x, -0.5f*posLight.y) + 0.5f;
-		
-		// Compute pixel depth for shadowing.
-		float depth = posLight.z / posLight.w;
-
-		//A value of 0.004f is required to remove all self-shadowing. //**TILLMAN - 0.004f för helt, 0.002f för self?**
-		float CSM_SHADOW_EPSILON = 0.002f;			////////////// PUT THIS WHERE?
-
-		/*float strength = 1.0f;
-		uint nrOfCSMs = 3;
-		float z = strength * n pow(f / n),i / nrOfCSMs) + (1 - strength) * (n + (i / nrOfCSMs) * (f - n);
-		*/
-
-		//float PCF_SIZE = 3.0f;								////// Not able to move this to cbuffer, why?
-
-		// PCF
+		//Sample the cascade(s):
 		float shadow = 0.0f;
-		if(smTex.x < 0 || smTex.x > 1 || smTex.y < 0 || smTex.y > 1)
-		{
-			shadow = 1.0f;
-		}
-		else if(depth > 1.0f)
-		{
-			shadow = 1.0f;
-		}
-		else
-		{
-			for(float s = 0; s < PCF_SIZE; s++)
-			{
-				for(float q = 0; q < PCF_SIZE; q++)
-				{
-					if(cascadeIndex == 0)
-					{
-						shadow += (CascadedShadowMap[0].SampleLevel(shadowMapSampler, smTex + float2(SMAP_DX * (s - PCF_SIZE/2) , SMAP_DX * (q - PCF_SIZE/2)), 0).r + CSM_SHADOW_EPSILON < depth) ? 0.0f : 1.0f;
-					}
-					if(cascadeIndex == 1)
-					{
-						shadow += (CascadedShadowMap[1].SampleLevel(shadowMapSampler, smTex + float2(SMAP_DX * (s - PCF_SIZE/2) , SMAP_DX * (q - PCF_SIZE/2)), 0).r + CSM_SHADOW_EPSILON < depth) ? 0.0f : 1.0f;
-					}
-					if(cascadeIndex == 2)
-					{
-						shadow += (CascadedShadowMap[2].SampleLevel(shadowMapSampler, smTex + float2(SMAP_DX * (s - PCF_SIZE/2) , SMAP_DX * (q - PCF_SIZE/2)), 0).r + CSM_SHADOW_EPSILON < depth) ? 0.0f : 1.0f;
-					}
-					if(cascadeIndex == 3)
-					{
-						shadow += (CascadedShadowMap[3].SampleLevel(shadowMapSampler, smTex + float2(SMAP_DX * (s - PCF_SIZE/2) , SMAP_DX * (q - PCF_SIZE/2)), 0).r + CSM_SHADOW_EPSILON < depth) ? 0.0f : 1.0f;
-					}
-					//**TILLMAN test loop: ** shadow += (CascadedShadowMap[cascadeIndex].SampleLevel(shadowMapSampler, smTex + float2(SMAP_DX * (s - PCF_SIZE/2) , SMAP_DX * (q - PCF_SIZE/2)), 0).r + CSM_SHADOW_EPSILON < depth) ? 0.0f : 1.0f;
-					
-				}
-			}
-			shadow *= PCF_SIZE_SQUARED;
-		}
-
 		
+		//Get the texture coordinates to sample with by first transforming the pixel from world space to LIGHT's clip space xy[-w,w], z[0,w].
+		float4 pixelPosTexelSpace = mul(WorldPos, cascades[cascadeIndex].viewProj); 
+		//Then convert it to normalized device coordinates xy[-1,1], z[0,1].
+		pixelPosTexelSpace.xyz /= pixelPosTexelSpace.w;
+		//Finally convert it to texel space xy[0,1]. (Don't forget that the y-axis needs to be inverted).
+		pixelPosTexelSpace.x = pixelPosTexelSpace.x * 0.5f;
+		pixelPosTexelSpace.y = pixelPosTexelSpace.y * -0.5f;
+		pixelPosTexelSpace.xy += 0.5f;
 		
+		//And finally sample the cascades(s).
+		shadow = SampleCascades(cascadeIndex, otherCascadeIndex, pixelPosTexelSpace.xy, pixelPosTexelSpace.z); 
+		
+		//Multiply the shadow into the light.
 		diffLight *= shadow;
 		specLight *= shadow;
 		
