@@ -804,11 +804,11 @@ void DxManager::RenderCascadedShadowMap()
 
 		this->Shader_DeferredLightning->SetFloat("SMAP_DX", 1.0f / (256.0f * pow(2.0f, this->params.ShadowMapSettings / 2.0f)));
 		
-		this->Shader_DeferredLightning->SetFloat("usePCF", true); //** TILLMAN CSM VARIABLE**
 		this->Shader_DeferredLightning->SetFloat("PCF_SIZE", PCF_SIZE);
 		this->Shader_DeferredLightning->SetFloat("PCF_SIZE_SQUARED", PCF_SQUARED);
 		
-		this->Shader_DeferredLightning->SetBool("blendCascades", false); //** TILLMAN CSM VARIABLE**
+		this->Shader_DeferredLightning->SetBool("blendCascades", true); //** TILLMAN CSM VARIABLE**
+		this->Shader_DeferredLightning->SetFloat("blendDistance", this->csm->GetBlendDistance()); //** TILLMAN CSM VARIABLE**
 		this->Shader_DeferredLightning->SetFloat("blendStrength", 0.0f); //** TILLMAN CSM VARIABLE**
 
 		this->Shader_DeferredLightning->SetInt("nrOfCascades", this->csm->GetNrOfCascadeLevels());
@@ -818,6 +818,7 @@ void DxManager::RenderCascadedShadowMap()
 			cascadeFarPlanes[i] = this->csm->GetSplitDepth(i + 1);
 		}
 		this->Shader_DeferredLightning->SetFloat4("cascadeFarPlanes", cascadeFarPlanes);
+		this->Shader_DeferredLightning->SetMatrix("cameraViewMatrix", this->camera->GetViewMatrix()); //Send camera view matrix to determine what frustum slice to use.
 	}
 }
 

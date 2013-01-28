@@ -151,8 +151,11 @@ PSOut PSScene(PSSceneIn input) : SV_Target
 		float deltaXY = 1.0f / nodesPerSide;
 		float texX = fmod(input.tex.x, deltaXY);
 		float texY = fmod(input.tex.y, deltaXY);
-		if(	texX > 0.0f && texX < AIGridThickness || 
+		/*if(	texX > 0.0f && texX < AIGridThickness || 
 			texY >  0.0f && texY < AIGridThickness) 
+		{*/
+		if(texX > deltaXY - (AIGridThickness * 0.5f) || texX < (AIGridThickness * 0.5f) || 
+			texY > deltaXY - (AIGridThickness * 0.5f) || texY < (AIGridThickness * 0.5f)) 
 		{
 			finalColor.rgb = 1.0f;
 		}

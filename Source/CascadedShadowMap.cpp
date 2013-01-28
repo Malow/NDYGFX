@@ -7,6 +7,7 @@
 CascadedShadowMap::CascadedShadowMap()
 {
 	this->quality = 0;
+	this->blendDistance = 0.1f; //**Tmp, ska vara 0.0f;**
 	for(int i = 0; i < SHADOW_MAP_CASCADE_COUNT; i++)
 	{
 		this->shadowMap[i] = NULL;
@@ -28,7 +29,7 @@ CascadedShadowMap::~CascadedShadowMap()
 	}
 }
 
-void CascadedShadowMap::CalcShadowMapMatrices(D3DXVECTOR3 sunLight, Camera* cam, int i)
+void CascadedShadowMap::CalcShadowMapMatrices(D3DXVECTOR3 sunLight, Camera* cam, int i, float nearPlaneDistanceCloserToSun)
 {
 	//calculate points (in world space) for the frustum slice
 	D3DXVECTOR4 camPos = D3DXVECTOR4(cam->GetPositionD3DX(), 1.0f);
@@ -66,9 +67,7 @@ void CascadedShadowMap::CalcShadowMapMatrices(D3DXVECTOR3 sunLight, Camera* cam,
 									farTopLeft, farTopRight, farBottomLeft, farBottomRight };
 	
 	
-	//**tillman, code above should work (liknande kod är testad & fungerar)
-
-
+	
 
 
 	//Calculate the light's view matrix.
@@ -106,108 +105,25 @@ void CascadedShadowMap::CalcShadowMapMatrices(D3DXVECTOR3 sunLight, Camera* cam,
 		D3DXVec3Minimize (&vLightCameraOrthographicMin, &vec3, &vLightCameraOrthographicMin );
 		D3DXVec3Maximize (&vLightCameraOrthographicMax, &vec3, &vLightCameraOrthographicMax );
 	}
+	
 	D3DXVECTOR3 tmpNearPlanePoint = minValue;
-	//tmpNearPlanePoint += sunLight * 100.0f; //set the near plane to be closer to the light to include more potential occluders.//**tillman opt || variablifiera (((i + 1) ))
+	//Set the near plane to be closer to the light to include more potential occluders.
+	tmpNearPlanePoint -= sunLight * nearPlaneDistanceCloserToSun * (i + 1); 
 	float nearPlane = tmpNearPlanePoint.z; 
 	float farPlane = maxValue.z;
 
 	// Create the orthographic projection for this cascade/frustum slice.
+	// Add the blend distance to make the projections overlap each other for blending between the shadow maps.
 	D3DXMATRIX lightProjMatrix;
 	D3DXMatrixIdentity(&lightProjMatrix);
 	D3DXMatrixOrthoOffCenterLH( &lightProjMatrix, 
-		vLightCameraOrthographicMin.x, 
-		vLightCameraOrthographicMax.x, 
-		vLightCameraOrthographicMin.y, 
-		vLightCameraOrthographicMax.y, 
+		vLightCameraOrthographicMin.x - this->blendDistance, 
+		vLightCameraOrthographicMax.x + this->blendDistance, 
+		vLightCameraOrthographicMin.y - this->blendDistance, 
+		vLightCameraOrthographicMax.y + this->blendDistance, 
 		nearPlane, farPlane);
 
 	this->viewProj[i] = lightViewMatrix * lightProjMatrix;
-
-	
-
-
-	/* //**Tillman: old code**
-	//Transform points into light’s homogeneous space.
-	D3DXMATRIX lightViewMatrix; //M
-	D3DXMatrixLookAtLH(&lightViewMatrix, &D3DXVECTOR3(0.0f, 0.0f, 0.0f), &sunLight, &D3DXVECTOR3(0, 1, 0)); //**
-	D3DXMATRIX lightProjMatrix; //P
-	D3DXMatrixIdentity(&lightProjMatrix);
-	//Far
-	D3DXVECTOR4 farTopLeftH = D3DXVECTOR4(farTopLeft.x, farTopLeft.y, farTopLeft.z, 1.0f);
-	D3DXVECTOR4 farTopRightH = D3DXVECTOR4(farTopRight.x, farTopRight.y, farTopRight.z, 1.0f);
-	D3DXVECTOR4	farBottomLeftH = D3DXVECTOR4(farBottomLeft.x, farBottomLeft.y, farBottomLeft.z, 1.0f);
-	D3DXVECTOR4	farBottomRightH = D3DXVECTOR4(farBottomRight.x, farBottomRight.y, farBottomRight.z, 1.0f);
-	//Near
-	D3DXVECTOR4	nearTopLeftH = D3DXVECTOR4(nearTopLeft.x, nearTopLeft.y, nearTopLeft.z, 1.0f);
-	D3DXVECTOR4	nearTopRightH = D3DXVECTOR4(nearTopRight.x, nearTopRight.y, nearTopRight.z, 1.0f);
-	D3DXVECTOR4	nearBottomLeftH = D3DXVECTOR4(nearBottomLeft.x, nearBottomLeft.y, nearBottomLeft.z, 1.0f);
-	D3DXVECTOR4	nearBottomRightH = D3DXVECTOR4(nearBottomRight.x, nearBottomRight.y, nearBottomRight.z, 1.0f);
-	D3DXMATRIX lightViewProjMatrix = lightProjMatrix * lightViewMatrix;
-	//Far
-	D3DXVec4Transform(&farTopLeftH, &farTopLeftH, &lightViewProjMatrix);
-	D3DXVec4Transform(&farTopRightH, &farTopRightH, &lightViewProjMatrix);
-	D3DXVec4Transform(&farBottomLeftH, &farBottomLeftH, &lightViewProjMatrix);
-	D3DXVec4Transform(&farBottomRightH, &farBottomRightH, &lightViewProjMatrix);
-	//Near
-	D3DXVec4Transform(&nearTopLeftH, &nearTopLeftH, &lightViewProjMatrix);
-	D3DXVec4Transform(&nearTopRightH, &nearTopRightH, &lightViewProjMatrix);
-	D3DXVec4Transform(&nearBottomLeftH, &nearBottomLeftH, &lightViewProjMatrix);
-	D3DXVec4Transform(&nearBottomRightH, &nearBottomRightH, &lightViewProjMatrix);
-
-	//Calculate crop matrix
-	//Find min & max values in each dimension
-	float minX = min(farTopLeftH.x, min(farTopRightH.x, min(farBottomLeftH.x, min(farBottomRightH.x, 
-		min(nearTopLeftH.x, min(nearTopRightH.x, min(nearBottomLeftH.x, nearBottomRightH.x)))))));
-	float maxX = max(farTopLeftH.x, max(farTopRightH.x, max(farBottomLeftH.x, max(farBottomRightH.x, 
-		max(nearTopLeftH.x, max(nearTopRightH.x, max(nearBottomLeftH.x, nearBottomRightH.x)))))));
-	float minY = min(farTopLeftH.y, min(farTopRightH.y, min(farBottomLeftH.y, min(farBottomRightH.y, 
-		min(nearTopLeftH.y, min(nearTopRightH.y, min(nearBottomLeftH.y, nearBottomRightH.y)))))));
-	float maxY = max(farTopLeftH.y, max(farTopRightH.y, max(farBottomLeftH.y, max(farBottomRightH.y, 
-		max(nearTopLeftH.y, max(nearTopRightH.y, max(nearBottomLeftH.y, nearBottomRightH.y)))))));
-	float minZ = min(farTopLeftH.z, min(farTopRightH.z, min(farBottomLeftH.z, min(farBottomRightH.z, 
-		min(nearTopLeftH.z, min(nearTopRightH.z, min(nearBottomLeftH.z, nearBottomRightH.z)))))));
-	float maxZ = max(farTopLeftH.z, max(farTopRightH.z, max(farBottomLeftH.z, max(farBottomRightH.z, 
-		max(nearTopLeftH.z, max(nearTopRightH.z, max(nearBottomLeftH.z, nearBottomRightH.z)))))));
-	
-	//Determine scale
-	float scaleX = 2 / maxX - minX;
-	float scaleY = 2 / maxY - minY;
-	//Determine offset
-	float offsetX = -0.5f * (maxX + minX) * scaleX;
-	float offsetY = -0.5f * (maxY + minY) * scaleY;
-
-	//Create cropmatrix and projection matrix
-	D3DXMATRIX cropMatrix, lightProjMatrix2; //lightProjMatrix2 (Pz)
-	D3DXMatrixIdentity(&cropMatrix);
-	cropMatrix._11 = scaleX;
-	cropMatrix._22 = scaleY;
-	cropMatrix._41 = offsetX;
-	cropMatrix._42 = offsetY;
-	//D3DXMatrixOrthoLH(&lightProjMatrix2, width, height, minZ, maxZ); //**width? height?
-
-	//Lastly, modify the projection matrix (P=CPz)
-	lightProjMatrix = cropMatrix * lightProjMatrix2;
-
-	D3DXMATRIX View;
-	D3DXMatrixLookAtLH(&View, &(cam->GetPositionD3DX() - sunLight), &sunLight, &D3DXVECTOR3(0, 1, 0));
-
-	float fNearPlane = this->shadowMappingSplitDepths[i];
-	float fFarPlane = this->shadowMappingSplitDepths[i + 1];
-
-	D3DXMATRIX Proj;
-	float size = pow(5.0f, (i + 1.0f));
-	D3DXMatrixOrthoLH(&Proj, size, size, fNearPlane, fFarPlane);
-	//D3DXMatrixOrthoOffCenterLH(&Proj, -size, size, -size, size,	0.001f, fFarPlane);
-	this->viewProj[i] = View * Proj;
-	*/
-	/*
-	D3DXMATRIX viewportToTex = D3DXMATRIX(
-		0.5f,  0.f,  0.f, 0.f,
-		0.f,  -0.5f, 0.f, 0.f,
-		0.f,   0.f,  1.f, 0.f,
-		0.5f,  0.5f, SHADOW_MAP_DEPTH_BIAS, 0.f);
-	outShadowMapTexXform = outViewProj * viewportToTex;
-	*/
 }
 
 void CascadedShadowMap::CalcShadowMappingSplitDepths()
@@ -308,10 +224,10 @@ D3DXMATRIX CascadedShadowMap::GetViewProjMatrix(int i)
 	return this->viewProj[i];
 }
 
-void CascadedShadowMap::PreRender(D3DXVECTOR3 sunLight, Camera* cam)
+void CascadedShadowMap::PreRender(D3DXVECTOR3 sunLight, Camera* cam, float nearPlaneDistanceCloserToSun)
 {
 	for (int i = 0; i < SHADOW_MAP_CASCADE_COUNT; i++)
 	{
-		CalcShadowMapMatrices(sunLight, cam, i);
+		CalcShadowMapMatrices(sunLight, cam, i, nearPlaneDistanceCloserToSun);
 	}
 }
