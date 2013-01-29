@@ -421,20 +421,21 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 //*************************************	     RUN TESTS       **********************
 #ifdef TEST
 		CollisionData cd;
-		cd = GetGraphics()->GetPhysicsEngine()->GetCollisionRayMesh(
-			GetGraphics()->GetCamera()->GetPosition(), GetGraphics()->GetCamera()->Get3DPickingRay(), iAM);
+		//cd = GetGraphics()->GetPhysicsEngine()->GetCollisionRayMesh(
+			//GetGraphics()->GetCamera()->GetPosition(), GetGraphics()->GetCamera()->Get3DPickingRay(), iAM);
 		
-		diff = GetGraphics()->Update();
-		GetGraphics()->GetPhysicsEngine()->GetCollisionRayTerrain(
-			GetGraphics()->GetCamera()->GetPosition(), GetGraphics()->GetCamera()->GetForward(), iT);
-		diff = GetGraphics()->Update();
+		//diff = GetGraphics()->Update();
+		//GetGraphics()->GetPhysicsEngine()->GetCollisionRayTerrain(
+			//GetGraphics()->GetCamera()->GetPosition(), GetGraphics()->GetCamera()->GetForward(), iT);
+		//diff = GetGraphics()->Update();
 		//MaloW::Debug("Normal: " + MaloW::convertNrToString(diff));
-		diff = GetGraphics()->Update();
+		//diff = GetGraphics()->Update();
 		cd = GetGraphics()->GetPhysicsEngine()->GetSpecialCollisionRayTerrain(
 			GetGraphics()->GetCamera()->GetPosition(), GetGraphics()->GetCamera()->GetForward(), iT, testSize / (vertSize - 1));
-		diff = GetGraphics()->Update();
+		//diff = GetGraphics()->Update();
 		//MaloW::Debug("Special: " + MaloW::convertNrToString(diff));
-		diff = 100.0f;
+		//MaloW::Debug(" ");
+		//diff = 100.0f;
 		
 		if(cd.BoundingSphereCollision)
 		{

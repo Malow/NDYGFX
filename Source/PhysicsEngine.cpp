@@ -1135,6 +1135,111 @@ bool PhysicsEngine::FrustrumVsSphere( D3DXPLANE planes[], BoundingSphere bs, D3D
 //							Specials									//
 //////////////////////////////////////////////////////////////////////////
 
+bool FindXZInGrid(float &x, float &z, float deltax, float deltaz, Vector3 terrPos, float terrWidth)
+{
+	bool go = true;
+	if(x >= terrPos.x && x < terrPos.x + terrWidth &&
+		z >= terrPos.z && z < terrPos.z + terrWidth)
+	{
+		// Change the if and else, invert if, the if isnt needed, all I want is the else on it
+		go = true;
+	}
+	else
+	{
+		if(deltax > 0.0f)
+		{
+			float mindistX = (terrPos.x - x) / deltax;
+			if(mindistX > 0.0f)
+			{
+				// Target is "infront" of us, continue
+				float zatmindistx = z + deltaz * mindistX;
+				if(zatmindistx >= terrPos.z && zatmindistx < terrPos.z + terrWidth)
+				{
+					// found our start point
+					x += deltax * mindistX;
+					z = zatmindistx;
+				}
+				else
+					go = false;
+			}
+			else
+			{
+				if(deltaz > 0.0f)
+				{
+					// test Z-wise
+					float mindistZ = (terrPos.z - z) / deltaz;
+					if(mindistZ > 0.0f)
+					{
+						// Target is "infront" of us, continue
+						float xatmindistz = x + deltax * mindistZ;
+						if(xatmindistz >= terrPos.x && xatmindistz < terrPos.x + terrWidth)
+						{
+							// found our start point
+							z += deltaz * mindistZ;
+							x = xatmindistz;
+						}
+						else
+							go = false;
+					}
+				}
+				else
+				{
+					float mindistZ = ((terrPos.z + terrWidth) - z) / deltaz;
+					if(mindistZ > 0.0f)
+					{
+						// Target is "infront" of us, continue
+						float xatmindistz = x + deltax * mindistZ;
+						if(xatmindistz >= terrPos.x && xatmindistz < terrPos.x + terrWidth)
+						{
+							// found our start point
+							z += deltaz * mindistZ;
+							x = xatmindistz;
+						}
+						else
+							go = false;
+					}
+				}
+			}
+		}
+		else
+		{
+			float mindistX = ((terrPos.x + terrWidth) - x) / deltax;
+			if(mindistX > 0.0f)
+			{
+				// Target is "infront" of us, continue
+				float zatmindistx = z + deltaz * mindistX;
+				if(zatmindistx >= terrPos.z && zatmindistx < terrPos.z + terrWidth)
+				{
+					// found our start point
+					x += deltax * mindistX;
+					z = zatmindistx;
+				}
+				else
+					go = false;
+			}
+			else
+			{
+				// test Z-wise
+				float mindistZ = ((terrPos.z + terrWidth) - z) / deltaz;
+				if(mindistZ > 0.0f)
+				{
+					// Target is "infront" of us, continue
+					float xatmindistz = x + deltax * mindistZ;
+					if(xatmindistz >= terrPos.x && xatmindistz < terrPos.x + terrWidth)
+					{
+						// found our start point
+						z += deltaz * mindistZ;
+						x = xatmindistz;
+					}
+					else
+						go = false;
+				}
+			}
+		}
+	}
+	return go;
+}
+
 CollisionData PhysicsEngine::GetSpecialCollisionRayTerrain( Vector3 rayOrigin, Vector3 rayDirection, iTerrain* iterr, float distanceBetweenVerticies )
 {
 	CollisionData cd;
@@ -1164,86 +1269,7 @@ CollisionData PhysicsEngine::GetSpecialCollisionRayTerrain( Vector3 rayOrigin, V
 			float x = rayOrigin.x;
 			float z = rayOrigin.z;
 
-
-			if(rayOrigin.x >= terrPos.x && rayOrigin.x < terrPos.x + terrWidth &&
-				rayOrigin.z >= terrPos.z && rayOrigin.z < terrPos.z + terrWidth)
-			{
-				// Change the if and else, invert if, the if isnt needed, all I want is the else on it
-			}
-			else
-			{
-				if(deltax > 0.0f)
-				{
-					float mindistX = (terrPos.x - x) / deltax;
-					if(mindistX > 0.0f)
-					{
-						// Target is "infront" of us, continue
-						float zatmindistx = z + deltaz * mindistX;
-						if(zatmindistx > terrPos.z && zatmindistx < terrPos.z + terrWidth)
-						{
-							// found our start point
-							x += deltax * mindistX;
-							z = zatmindistx;
-						}
-						else
-							go = false;
-					}
-					else
-					{
-						// test Z-wise
-						float mindistZ = (terrPos.z - z) / deltaz;
-						if(mindistZ > 0.0f)
-						{
-							// Target is "infront" of us, continue
-							float xatmindistz = x + deltax * mindistZ;
-							if(xatmindistz > terrPos.x && xatmindistz < terrPos.x + terrWidth)
-							{
-								// found our start point
-								z += deltaz * mindistZ;
-								x = xatmindistz;
-							}
-							else
-								go = false;
-						}
-						
-					}
-				}
-				else
-				{
-					float mindistX = ((terrPos.x + terrWidth) - x) / deltax;
-					if(mindistX > 0.0f)
-					{
-						// Target is "infront" of us, continue
-						float zatmindistx = z + deltaz * mindistX;
-						if(zatmindistx > terrPos.z && zatmindistx < terrPos.z + terrWidth)
-						{
-							// found our start point
-							x += deltax * mindistX;
-							z = zatmindistx;
-						}
-						else
-							go = false;
-					}
-					else
-					{
-						// test Z-wise
-						float mindistZ = ((terrPos.z + terrWidth) - z) / deltaz;
-						if(mindistZ > 0.0f)
-						{
-							// Target is "infront" of us, continue
-							float xatmindistz = x + deltax * mindistZ;
-							if(xatmindistz > terrPos.x && xatmindistz < terrPos.x + terrWidth)
-							{
-								// found our start point
-								z += deltaz * mindistZ;
-								x = xatmindistz;
-							}
-							else
-								go = false;
-						}
-					}
-				}
-			}
+			go = FindXZInGrid(x, z, deltax, deltaz, terrPos, terrWidth);
 
 			if(go)	// ray is within terrain and we found our start pos
 			{
@@ -1355,11 +1381,6 @@ CollisionData PhysicsEngine::GetSpecialCollisionRayTerrain( Vector3 rayOrigin, V
 				{
 					float xStep = (deltax / deltaz) * distanceBetweenVerticies;
 
-					// x = x start of ray in grid
-					// y = y start of ray in grid
-					// deltax = rayDir.x
-					// deltay = rayDir.y
-
 					if(deltaz > 0.0f)
 					{
 						int arrX = (x - terrPos.x) / distanceBetweenVerticies;
@@ -1410,7 +1431,6 @@ CollisionData PhysicsEngine::GetSpecialCollisionRayTerrain( Vector3 rayOrigin, V
 						int arrZ = (z - terrPos.z) / distanceBetweenVerticies;
 						int rows = this->tempVertsSize;
 
-
 						for(; z >= terrPos.z && 
 							x >= terrPos.x && x < terrPos.x + terrWidth - distanceBetweenVerticies; 
 							z -= distanceBetweenVerticies)
@@ -1427,10 +1447,9 @@ CollisionData PhysicsEngine::GetSpecialCollisionRayTerrain( Vector3 rayOrigin, V
 							tempVerts[vertCount++] = terrVerts[arrZ * rows + arrX + 1];		
 
 
-
 							x -= xStep;
 
-							int oldX = arrX;	// Check if several grids in Z is hit.
+							int oldX = arrX;	// Check if several grids in X is hit.
 							arrX = (x - terrPos.x) / distanceBetweenVerticies;
 							while(oldX != arrX && x >= terrPos.x && x < terrPos.x + terrWidth)
 							{
@@ -1451,57 +1470,14 @@ CollisionData PhysicsEngine::GetSpecialCollisionRayTerrain( Vector3 rayOrigin, V
 					}
 
 				}
-
+				
 				this->DoSpecialCollisionRayVsTerrainTriangles(rayOrigin, rayDirection, 
 					tempVerts, vertCount, NULL, 0, terrain->GetWorldMatrix(), cd);
+
+				if(!cd.collision)
+					this->DoCollisionRayVsTriangles(rayOrigin, rayDirection, terrain->GetVerticesPointer(), terrain->GetNrOfVertices(), 
+					terrain->GetIndicesPointer(), terrain->GetNrOfIndices(), terrain->GetWorldMatrix(), cd);
 			}
-
-
-			/*
-			//MaloW Code:
-			Vertex* terrVerts = terrain->GetVerticesPointer();
-
-
-			Vector2 ray1o = Vector2(rayOrigin.x, rayOrigin.z);
-			Vector2 ray1d = Vector2(rayDirection.x, rayDirection.z);
-
-			Vector2 ray2o = Vector2(terrPos.x, 0);
-			Vector2 ray2d = Vector2(1, 0);
-
-			for(int i = 0; i < this->tempVertsSize - 1; i++)
-			{
-				ray2o.y = terrPos.z + distanceBetweenVerticies * i;
-
-				float dx = ray2o.x - ray1o.x;
-				float dy = ray2o.y - ray1o.y;
-				float det = ray2d.x * ray1d.y - ray2d.y * ray1d.x;
-				float u = (dy * ray2d.x - dx * ray2d.y) / det;
-				float v = (dy * ray1d.x - dx * ray1d.y) / det;
-
-				if(v > 0.0f && u > 0.0f)
-				{
-					// we have a collision of lines gogo.
-					// intersectionpoint = ray2o + ray2d * v
-					// i = vertex in Z-axis, v / distanceBetweenVerticies = vertex in X-axis
-					int vv = v / distanceBetweenVerticies;
-					if(vv < this->tempVertsSize - 1)
-					{
-						tempVerts[vertCount++] = terrVerts[i * this->tempVertsSize + vv];
-						tempVerts[vertCount++] = terrVerts[(i + 1) * this->tempVertsSize + vv];
-						tempVerts[vertCount++] = terrVerts[(i + 1) * this->tempVertsSize + vv + 1];
-
-						tempVerts[vertCount++] = terrVerts[i * this->tempVertsSize + vv];
-						tempVerts[vertCount++] = terrVerts[i * this->tempVertsSize + vv - 1];
-						tempVerts[vertCount++] = terrVerts[(i + 1) * this->tempVertsSize + vv];
-
-					}
-				}
-				
-			}
-			
-			this->DoSpecialCollisionRayVsTerrainTriangles(rayOrigin, rayDirection, 
-				tempVerts, vertCount, NULL, 0, terrain->GetWorldMatrix(), cd);
-				*/
 		}
 	}
 	else
@@ -1591,5 +1567,4 @@ void PhysicsEngine::DoSpecialCollisionRayVsTerrainTriangles( Vector3 rayOrigin, 
 		}
 	}
 }
-
 
