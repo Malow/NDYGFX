@@ -13,6 +13,7 @@ float GraphicsEngineParams::NearClip = 0.01f;
 float GraphicsEngineParams::FarClip = 200.0f;
 int GraphicsEngineParams::RefreshRate = 60;
 int GraphicsEngineParams::MaxFPS = 0;
+int GraphicsEngineParams::ShadowFit = 50;
 
 
 GraphicsEngineImp::GraphicsEngineImp(GraphicsEngineParams params, HINSTANCE hInstance, int nCmdShow)
