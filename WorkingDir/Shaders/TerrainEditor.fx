@@ -113,10 +113,10 @@ float3 RenderTextured(float scale, float2 tex, bool useBlendMap)
 			float inverseTotal = 1.0f / (blendMap1Color.r + blendMap1Color.g + blendMap1Color.b + blendMap1Color.a);
 		
 			//Sample R,G,B,A textures	
-			float3 tex4Color = tex0.Sample(LinearWrapSampler, texCoord).rgb; 
-			float3 tex5Color = tex1.Sample(LinearWrapSampler, texCoord).rgb; 
-			float3 tex6Color = tex2.Sample(LinearWrapSampler, texCoord).rgb; 
-			float3 tex7Color = tex3.Sample(LinearWrapSampler, texCoord).rgb; 
+			float3 tex4Color = tex4.Sample(LinearWrapSampler, texCoord).rgb; 
+			float3 tex5Color = tex5.Sample(LinearWrapSampler, texCoord).rgb; 
+			float3 tex6Color = tex6.Sample(LinearWrapSampler, texCoord).rgb; 
+			float3 tex7Color = tex7.Sample(LinearWrapSampler, texCoord).rgb; 
 		
 			//Scale color for each texture by the weight in the blendmap and scale to [0,1]
 			tex4Color *= blendMap1Color.r * inverseTotal;

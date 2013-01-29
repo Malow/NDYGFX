@@ -172,10 +172,10 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 
 
 	fileNames[0] = "Media/BallTexture.png";
-	fileNames[1] = "Media/TerrainTexture.png";
-	fileNames[2] = "Media/TerrainTexture.png";
-	fileNames[3] = "Media/TerrainTexture.png";
-	fileNames[4] = "Media/BallTexture.png";
+	fileNames[1] = "Media/BallTexture.png";
+	fileNames[2] = "Media/BallTexture.png";
+	fileNames[3] = "Media/BallTexture.png";
+	fileNames[4] = "Media/TerrainTexture.png";
 	fileNames[5] = "Media/TerrainTexture.png";
 	fileNames[6] = "Media/TerrainTexture.png";
 	fileNames[7] = "Media/TerrainTexture.png";
@@ -515,15 +515,15 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		{
 			debugCSMScale += diff * 0.001f;
 			model->Scale(1 + diff * 0.01f);
-			fileNames[0] = "Media/BallTexture.png";
+			fileNames[0] = "Media/TerrainTexture.png";
 			fileNames[1] = "Media/TerrainTexture.png";
 			fileNames[2] = "Media/TerrainTexture.png";
 			fileNames[3] = "Media/TerrainTexture.png";
 			fileNames[4] = "Media/BallTexture.png";
-			fileNames[5] = "Media/TerrainTexture.png";
-			fileNames[6] = "Media/TerrainTexture.png";
-			fileNames[7] = "Media/TerrainTexture.png";
-			iT->SetTextures(fileNames);
+			fileNames[5] = "Media/BallTexture.png";
+			fileNames[6] = "Media/BallTexture.png";
+			fileNames[7] = "Media/BallTexture.png";
+			iT2->SetTextures(fileNames);
 			iT->SetAIGridThickness(0.0005f);
 			iT->UseAIMap(true);
 			static bool oncee = false;
@@ -538,13 +538,13 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 			debugCSMScale -= diff * 0.001f;
 			model->Scale(1 - diff * 0.01f);
 			fileNames[0] = "Media/TerrainTexture.png";
-			fileNames[1] = "Media/BallTexture.png";
-			fileNames[2] = "Media/BallTexture.png";
-			fileNames[3] = "Media/BallTexture.png";
+			fileNames[1] = "Media/TerrainTexture.png";
+			fileNames[2] = "Media/TerrainTexture.png";
+			fileNames[3] = "Media/TerrainTexture.png";
 			fileNames[4] = "Media/TerrainTexture.png";
-			fileNames[5] = "Media/BallTexture.png";
-			fileNames[6] = "Media/BallTexture.png";
-			fileNames[7] = "Media/BallTexture.png";
+			fileNames[5] = "Media/TerrainTexture.png";
+			fileNames[6] = "Media/TerrainTexture.png";
+			fileNames[7] = "Media/TerrainTexture.png";
 			iT->SetTextures(fileNames);
 			GetGraphics()->DeleteMesh(flagCSMTest);
 			GetGraphics()->DeleteMesh(bushCSMTest);
