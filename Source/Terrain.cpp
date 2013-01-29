@@ -174,15 +174,22 @@ Terrain::Terrain()
 
 	//Texturing
 	this->zTextureScale = 1.0f;
-	this->zNrOfTextures = 4;
-	this->zTextureResources = new TextureResource*[this->zNrOfTextures];
-	for(int i = 0; i < this->zNrOfTextures; i++)
+	this->zNrOfTextures = 0;
+	this->zTextureCapacity = 8;
+	this->zTextureResources = new TextureResource*[this->zTextureCapacity];
+	this->zTextureResourceToLoadFileName = new string[this->zTextureCapacity];
+	for(unsigned int i = 0; i < this->zTextureCapacity; i++)
 	{
 		this->zTextureResources[i] = NULL;
-		this->zTextureResourceHasChanged[i] = false;
+		//this->zTextureResourceHasChanged[i] = false;
 		this->zTextureResourceToLoadFileName[i] = "";
 	}
-	this->zBlendMap = NULL;
+	this->zNrOfBlendMaps = 0;
+	this->zBlendMaps = new BlendMap*[this->zTextureCapacity / 4]; //4 textures per blend map.
+	for(unsigned int i = 0; i < this->zTextureCapacity / 4; i++)
+	{
+		this->zBlendMaps[i] = NULL;
+	}
 
 	//Collision
 	this->zIsCulled = false;
@@ -222,15 +229,22 @@ Terrain::Terrain(D3DXVECTOR3 pos, D3DXVECTOR3 scale, unsigned int size)
 
 	//Texturing
 	this->zTextureScale = 1.0f;
-	this->zNrOfTextures = 4;
-	this->zTextureResources = new TextureResource*[this->zNrOfTextures];
-	for(int i = 0; i < this->zNrOfTextures; i++)
+	this->zNrOfTextures = 0;
+	this->zTextureCapacity = 8;
+	this->zTextureResources = new TextureResource*[this->zTextureCapacity];
+	this->zTextureResourceToLoadFileName = new string[this->zTextureCapacity];
+	for(unsigned int i = 0; i < this->zTextureCapacity; i++)
 	{
 		this->zTextureResources[i] = NULL;
-		this->zTextureResourceHasChanged[i] = false;
+		//this->zTextureResourceHasChanged[i] = false;
 		this->zTextureResourceToLoadFileName[i] = "";
 	}
-	this->zBlendMap = NULL;
+	this->zNrOfBlendMaps = 0;
+	this->zBlendMaps = new BlendMap*[this->zTextureCapacity / 4]; //4 textures per blend map.
+	for(unsigned int i = 0; i < this->zTextureCapacity / 4; i++)
+	{
+		this->zBlendMaps[i] = NULL;
+	}
 
 	this->CreateMesh();
 
@@ -259,17 +273,34 @@ Terrain::~Terrain()
 
 	if(this->zTextureResources)
 	{
-		//Decrease reference counter for every texture used
-		if(this->zTextureResources[0]) GetResourceManager()->DeleteTextureResource(this->zTextureResources[0]);
-		if(this->zTextureResources[1]) GetResourceManager()->DeleteTextureResource(this->zTextureResources[1]);
-		if(this->zTextureResources[2]) GetResourceManager()->DeleteTextureResource(this->zTextureResources[2]);
-		if(this->zTextureResources[3]) GetResourceManager()->DeleteTextureResource(this->zTextureResources[3]);
+
+		for(unsigned int i = 0; i < this->zNrOfTextures; i++)
+		{
+			//Decrease reference counter for every texture used
+			if(this->zTextureResources[i]) GetResourceManager()->DeleteTextureResource(this->zTextureResources[i]);
+		}
 
 		//Delete the array that held them.
 		delete [] this->zTextureResources;
 		this->zTextureResources = NULL;
 	}
-	if(this->zBlendMap) delete this->zBlendMap; this->zBlendMap = NULL;
+
+	if(this->zTextureResourceToLoadFileName)
+	{
+		delete [] this->zTextureResourceToLoadFileName;
+		this->zTextureResourceToLoadFileName = NULL;
+	}
+
+	if(this->zBlendMaps) 
+	{
+		for(unsigned int i = 0; i < this->zNrOfBlendMaps; i++)
+		{
+			delete this->zBlendMaps[i];
+			this->zBlendMaps[i] = NULL;
+		}
+		delete [] this->zBlendMaps; 
+		this->zBlendMaps = NULL;
+	}
 	if(this->zAIGridShaderResourceView)
 	{
 		this->zAIGridShaderResourceView->Release();
@@ -399,29 +430,45 @@ void Terrain::SetHeightMap(float const* const data)
 //Texture
 void Terrain::SetTextures(char const* const* const fileNames)
 {
-	if(fileNames)
+	if(fileNames != NULL)
 	{
-		for(int i = 0; i < this->zNrOfTextures; i++)
+		for(unsigned int i = 0; i < this->zTextureCapacity; i++)
 		{
 			//Check if any textures are loaded.
 			if(this->zTextureResources[i] == NULL || this->zTextureResources[i]->GetName() != string(fileNames[i]))
 			{
-				this->zTextureResourceHasChanged[i] = true;
 				this->zTextureResourceToLoadFileName[i] = fileNames[i];
 			}
 		}
+		this->zNrOfTextures = 8; //**Tillman
 	}
 }
-
-void Terrain::SetBlendMap(unsigned int size, float const* const data)
+void Terrain::SetBlendMaps(unsigned int nrOfBlendMaps, unsigned int* sizes, float const* const* const data)
 {
-	if(this->zBlendMap == NULL)
+	if(data != NULL)
 	{
-		this->zBlendMap = new BlendMap();
+		if(nrOfBlendMaps > this->zTextureCapacity / 4)
+		{
+			MaloW::Debug("WARNING: Terrain: SetBlendMaps: First parameter is too big, truncating to fit.");
+			this->zNrOfBlendMaps = this->zTextureCapacity / 4;
+		}
+		else if(nrOfBlendMaps < this->zTextureCapacity / 4)
+		{
+			MaloW::Debug("INFO: Terrain: SetBlendMaps: First parameter is too small, not using all blend maps.");
+		}
+
+		this->zNrOfBlendMaps = nrOfBlendMaps;
+		for(unsigned int i = 0; i < this->zNrOfBlendMaps; i++)
+		{
+			if(this->zBlendMaps[i] == NULL)
+			{
+				this->zBlendMaps[i] = new BlendMap();
+			}
+			this->zBlendMaps[i]->Size = sizes[i];
+			this->zBlendMaps[i]->Data = data[i];
+			this->zBlendMaps[i]->HasChanged = true;
+		}
 	}
-	this->zBlendMap->Size = size;
-	this->zBlendMap->Data = data;
-	this->zBlendMap->HasChanged = true;
 }
 
 

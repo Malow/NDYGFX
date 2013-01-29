@@ -61,11 +61,14 @@ class Terrain : public iTerrain
 
 		//Texturing
 		float						zTextureScale;
-		int							zNrOfTextures;
+		unsigned int				zNrOfTextures;
+		unsigned int				zTextureCapacity;
 		TextureResource**			zTextureResources;
-		bool						zTextureResourceHasChanged[4];
-		string						zTextureResourceToLoadFileName[4]; 
-		BlendMap*					zBlendMap;
+		//bool						zTextureResourceHasChanged[8];	 //**
+		string*						zTextureResourceToLoadFileName;
+		unsigned int				zNrOfBlendMaps;
+		//No need for a capacity variable, we can use zTextureCapacity.
+		BlendMap**					zBlendMaps;
 
 		//Collision
 		bool						zIsCulled;
@@ -115,10 +118,9 @@ class Terrain : public iTerrain
 		float GetTextureScale() const { return this->zTextureScale; }
 		int GetNrOfTextures() const { return this->zNrOfTextures; }
 		TextureResource* GetTexture(unsigned int index) const { return this->zTextureResources[index]; }
-		bool HasTextureResourceChanged(unsigned int index) const { return this->zTextureResourceHasChanged[index]; }
 		string GetTextureResourceToLoadFileName(unsigned int index) const { return this->zTextureResourceToLoadFileName[index]; }
-		//string GetTextureFileName(unsigned int index) { return this->zTextureFileNames[index]; }
-		BlendMap* GetBlendMapPointer() { return this->zBlendMap; }
+		int GetNrOfBlendMaps() const { return this->zNrOfBlendMaps; }
+		BlendMap* GetBlendMapPointer(unsigned int index) { return this->zBlendMaps[index]; }
 
 		//Collision
 		bool IsCulled() const { return this->zIsCulled; }
@@ -140,7 +142,7 @@ class Terrain : public iTerrain
 
 		//Textures
 		void SetTexture(unsigned int index, TextureResource* textureResource) const { this->zTextureResources[index] = textureResource; }
-		void TextureResourceHasChanged(unsigned int index, bool has) { this->zTextureResourceHasChanged[index] = has; this->zTextureResourceToLoadFileName[index] = ""; }
+		void SetTextureResourceToLoadFileName(unsigned int index, string fileName) { this->zTextureResourceToLoadFileName[index] = ""; }
 		
 		//Collision
 		void SetCulled(bool cull) { this->zIsCulled = cull; }
@@ -163,7 +165,7 @@ class Terrain : public iTerrain
 		//** iTerrain interface functions ** - for descriptions, see iTerrain.h.
 		//GET-functions.
 		//Object data
-		virtual Vector3 GetPosition() const { return Vector3(zPos.x,zPos.y,zPos.z); } ;
+		virtual Vector3 GetPosition() const { return Vector3(this->zPos.x, this->zPos.y, this->zPos.z); } ;
 		
 		//Vertex data
 		virtual float GetYPositionAt(float x, float z) const throw(...); 
@@ -180,7 +182,7 @@ class Terrain : public iTerrain
 		//Texture
 		virtual void SetTextureScale(float textureScale) { this->zTextureScale = textureScale; }
 		virtual void SetTextures(char const* const* const fileNames);
-		virtual void SetBlendMap(unsigned int size, float const* const data);
+		virtual void SetBlendMaps(unsigned int nrOfBlendMaps, unsigned int* sizes, float const* const* const data);
 		
 		//Editor
 		virtual void UseAIMap(bool use) { this->zUseAIMap = use; }

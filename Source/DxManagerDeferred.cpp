@@ -146,10 +146,14 @@ void DxManager::RenderDeferredGeometry()
 			this->Shader_TerrainEditor->SetResource("tex1", NULL);
 			this->Shader_TerrainEditor->SetResource("tex2", NULL);
 			this->Shader_TerrainEditor->SetResource("tex3", NULL);
+			this->Shader_TerrainEditor->SetResource("tex4", NULL);
+			this->Shader_TerrainEditor->SetResource("tex5", NULL);
+			this->Shader_TerrainEditor->SetResource("tex6", NULL);
+			this->Shader_TerrainEditor->SetResource("tex7", NULL);
 			//Check if texture(name/path) have changed, create new shader resource view if it has
 			for(int j = 0; j < terrPtr->GetNrOfTextures(); j++)
 			{
-				if(terrPtr->HasTextureResourceChanged(j))
+				if(terrPtr->GetTextureResourceToLoadFileName(j) != "")
 				{
 					//Check if any textures are already loaded.
 					if(terrPtr->GetTexture(j) != NULL)
@@ -162,7 +166,7 @@ void DxManager::RenderDeferredGeometry()
 					//Create the new one.
 					terrPtr->SetTexture(j, GetResourceManager()->CreateTextureResourceFromFile(terrPtr->GetTextureResourceToLoadFileName(j).c_str()));
 					//Set that the texture resource shall not be changed anymore.
-					terrPtr->TextureResourceHasChanged(j, false);
+					terrPtr->SetTextureResourceToLoadFileName(j, "");
 				}
 			}
 
@@ -189,20 +193,41 @@ void DxManager::RenderDeferredGeometry()
 				this->Shader_TerrainEditor->SetResource("tex3", terrPtr->GetTexture(3)->GetSRVPointer());
 				hasTexture = true;
 			}
+			if(terrPtr->GetTexture(4) != NULL)
+			{
+				this->Shader_TerrainEditor->SetResource("tex4", terrPtr->GetTexture(4)->GetSRVPointer());
+				hasTexture = true;
+			}
+			if(terrPtr->GetTexture(5) != NULL)
+			{
+				this->Shader_TerrainEditor->SetResource("tex5", terrPtr->GetTexture(5)->GetSRVPointer());
+				hasTexture = true;
+			}
+			if(terrPtr->GetTexture(6) != NULL)
+			{
+				this->Shader_TerrainEditor->SetResource("tex6", terrPtr->GetTexture(6)->GetSRVPointer());
+				hasTexture = true;
+			}
+			if(terrPtr->GetTexture(7) != NULL)
+			{
+				this->Shader_TerrainEditor->SetResource("tex7", terrPtr->GetTexture(7)->GetSRVPointer());
+				hasTexture = true;
+			}
+
 
 			if(hasTexture) 
 			{
 				//Check if blend map is used
-				BlendMap* bmPtr = terrPtr->GetBlendMapPointer();
-				if(bmPtr != NULL)
+				BlendMap* bmPtr0 = terrPtr->GetBlendMapPointer(0); 
+				if(bmPtr0 != NULL)
 				{
-					if(bmPtr->HasChanged)
+					if(bmPtr0->HasChanged)
 					{
 						//Release old shader resource view //**TILLMAN LOAD-THREAD**
-						if(bmPtr->SRV) bmPtr->SRV->Release();
+						if(bmPtr0->SRV) bmPtr0->SRV->Release();
 
 						//Create texture
-						int widthOrHeight = bmPtr->Size;
+						int widthOrHeight = bmPtr0->Size;
 						D3D11_TEXTURE2D_DESC texDesc;
 						texDesc.Width = widthOrHeight;
 						texDesc.Height = widthOrHeight;
@@ -218,7 +243,7 @@ void DxManager::RenderDeferredGeometry()
 
 						D3D11_SUBRESOURCE_DATA initData = {0};
 						initData.SysMemPitch = widthOrHeight * sizeof(float) * 4;
-						initData.pSysMem = bmPtr->Data; 
+						initData.pSysMem = bmPtr0->Data; 
 
 						ID3D11Texture2D* tex = NULL;
 						if(FAILED(this->Dx_Device->CreateTexture2D(&texDesc, &initData, &tex)))
@@ -226,17 +251,63 @@ void DxManager::RenderDeferredGeometry()
 							MaloW::Debug("ERROR: Failed to create texture with blend map data.");
 						}
 						//Create shader resource view
-						if(FAILED(this->Dx_Device->CreateShaderResourceView(tex, 0, &bmPtr->SRV)))
+						if(FAILED(this->Dx_Device->CreateShaderResourceView(tex, 0, &bmPtr0->SRV)))
 						{
 							MaloW::Debug("ERROR: Failed to create Shader resource view with blend map texture.");
 						}
 						//Set that the blend map shall not be changed anymore.
-						bmPtr->HasChanged = false;
+						bmPtr0->HasChanged = false;
+					}
+
+					BlendMap* bmPtr1 = terrPtr->GetBlendMapPointer(1);  //**tillman ändra**
+					if(bmPtr1 != NULL)
+					{
+						if(bmPtr1->HasChanged)
+						{
+							//Release old shader resource view //**TILLMAN LOAD-THREAD**
+							if(bmPtr1->SRV) bmPtr1->SRV->Release();
+
+							//Create texture
+							int widthOrHeight = bmPtr1->Size;
+							D3D11_TEXTURE2D_DESC texDesc;
+							texDesc.Width = widthOrHeight;
+							texDesc.Height = widthOrHeight;
+							texDesc.MipLevels = 1;
+							texDesc.ArraySize = 1;
+							texDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT; 
+							texDesc.SampleDesc.Count = 1;
+							texDesc.SampleDesc.Quality = 0;
+							texDesc.Usage = D3D11_USAGE_IMMUTABLE;
+							texDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+							texDesc.CPUAccessFlags = 0;
+							texDesc.MiscFlags = 0;
+
+							D3D11_SUBRESOURCE_DATA initData = {0};
+							initData.SysMemPitch = widthOrHeight * sizeof(float) * 4;
+							initData.pSysMem = bmPtr1->Data; 
+
+							ID3D11Texture2D* tex = NULL;
+							if(FAILED(this->Dx_Device->CreateTexture2D(&texDesc, &initData, &tex)))
+							{
+								MaloW::Debug("ERROR: Failed to create texture with blend map data.");
+							}
+							//Create shader resource view
+							if(FAILED(this->Dx_Device->CreateShaderResourceView(tex, 0, &bmPtr1->SRV)))
+							{
+								MaloW::Debug("ERROR: Failed to create Shader resource view with blend map texture.");
+							}
+							//Set that the blend map shall not be changed anymore.
+							bmPtr1->HasChanged = false;
+						}
+
+						//Set blend map variables
+						this->Shader_TerrainEditor->SetResource("blendMap1", bmPtr1->SRV);
 					}
 
 					//Set blend map variables
 					this->Shader_TerrainEditor->SetBool("blendMapped", true);
-					this->Shader_TerrainEditor->SetResource("blendMap", bmPtr->SRV);
+					this->Shader_TerrainEditor->SetInt("nrOfBlendMaps", terrPtr->GetNrOfBlendMaps());
+					this->Shader_TerrainEditor->SetResource("blendMap0", bmPtr0->SRV);
 				}
 				else
 				{
@@ -360,7 +431,12 @@ void DxManager::RenderDeferredGeometry()
 	this->Shader_TerrainEditor->SetResource("tex1", NULL);
 	this->Shader_TerrainEditor->SetResource("tex2", NULL);
 	this->Shader_TerrainEditor->SetResource("tex3", NULL);
-	this->Shader_TerrainEditor->SetResource("blendMap", NULL);
+	this->Shader_TerrainEditor->SetResource("tex4", NULL);
+	this->Shader_TerrainEditor->SetResource("tex5", NULL);
+	this->Shader_TerrainEditor->SetResource("tex6", NULL);
+	this->Shader_TerrainEditor->SetResource("tex7", NULL);
+	this->Shader_TerrainEditor->SetResource("blendMap0", NULL);
+	this->Shader_TerrainEditor->SetResource("blendMap1", NULL);
 	this->Shader_TerrainEditor->SetResource("AIMap", NULL);
 	this->Shader_TerrainEditor->Apply(0);
 

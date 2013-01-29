@@ -128,11 +128,15 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		hmData[i] = 0.0f;
 	}
 	iT->SetHeightMap(hmData);
-	const char* fileNames[4];
+	const char* fileNames[8];
 	fileNames[0] = "Media/BallTexture.png";
 	fileNames[1] = "Media/TerrainTexture.png";
 	fileNames[2] = "Media/TerrainTexture.png";
 	fileNames[3] = "Media/TerrainTexture.png";
+	fileNames[4] = "Media/BallTexture.png";
+	fileNames[5] = "Media/TerrainTexture.png";
+	fileNames[6] = "Media/TerrainTexture.png";
+	fileNames[7] = "Media/TerrainTexture.png";
 	iT->SetTextures(fileNames);
 	iT->SetHeightMap(hmData);
 	iT->SetTextureScale(-4);
@@ -146,26 +150,37 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	{
 	}
 	
-	
-	int size = 2048;
-	float* testData = new float[size*size*4]; 
-	for(int i = 0; i < size*size; i++)
+	int nrOfBlendMaps = 2;
+	unsigned int size = 2048;
+	unsigned int* sizes = new unsigned int[2];
+	sizes[0] = size;
+	sizes[1] = size;
+	float** testData = new float*[nrOfBlendMaps]; 
+	unsigned int channels = 4;
+	for(int j = 0; j < nrOfBlendMaps; j++)
 	{
-		testData[ i * 4 + 0 ] = 1.0f;
-		testData[ i * 4 + 1 ] = 1.0f;
-		testData[ i * 4 + 2 ] = 1.0f;
-		testData[ i * 4 + 3 ] = 1.0f;
+		testData[j] = new float[sizes[j]*sizes[j]*channels];
+		for(int i = 0; i < sizes[j]*sizes[j]; i++)
+		{
+			testData[j][ i * channels + 0 ] = 1.0f;
+			testData[j][ i * channels + 1 ] = 1.0f;
+			testData[j][ i * channels + 2 ] = 1.0f;
+			testData[j][ i * channels + 3 ] = 1.0f;
+		}
 	}
-
-	iT->SetBlendMap(size, testData);
+	iT->SetBlendMaps(nrOfBlendMaps, sizes, testData);
 
 
 	fileNames[0] = "Media/BallTexture.png";
 	fileNames[1] = "Media/TerrainTexture.png";
 	fileNames[2] = "Media/TerrainTexture.png";
 	fileNames[3] = "Media/TerrainTexture.png";
+	fileNames[4] = "Media/BallTexture.png";
+	fileNames[5] = "Media/TerrainTexture.png";
+	fileNames[6] = "Media/TerrainTexture.png";
+	fileNames[7] = "Media/TerrainTexture.png";
 	iT2->SetTextures(fileNames);
-	iT2->SetBlendMap(size, testData);
+	iT2->SetBlendMaps(nrOfBlendMaps, sizes, testData);
 
 	int klerp = 10;
 	iTerrain** iTs = new iTerrain*[klerp];
@@ -173,7 +188,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	{
 		iTs[i] = GetGraphics()->CreateTerrain(Vector3((testSize * 2) + (i * testSize), 0, 0), Vector3(testSize, 0.0f, testSize), vertSize);
 		iTs[i]->SetTextures(fileNames);
-		iTs[i]->SetBlendMap(size, testData);
+		iTs[i]->SetBlendMaps(nrOfBlendMaps, sizes, testData);
 		iTs[i]->SetTextureScale(10);
 	}
 	
@@ -511,6 +526,10 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 			fileNames[1] = "Media/TerrainTexture.png";
 			fileNames[2] = "Media/TerrainTexture.png";
 			fileNames[3] = "Media/TerrainTexture.png";
+			fileNames[4] = "Media/BallTexture.png";
+			fileNames[5] = "Media/TerrainTexture.png";
+			fileNames[6] = "Media/TerrainTexture.png";
+			fileNames[7] = "Media/TerrainTexture.png";
 			iT->SetTextures(fileNames);
 			iT->SetAIGridThickness(0.0005f);
 			iT->UseAIMap(true);
@@ -529,6 +548,10 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 			fileNames[1] = "Media/BallTexture.png";
 			fileNames[2] = "Media/BallTexture.png";
 			fileNames[3] = "Media/BallTexture.png";
+			fileNames[4] = "Media/TerrainTexture.png";
+			fileNames[5] = "Media/BallTexture.png";
+			fileNames[6] = "Media/BallTexture.png";
+			fileNames[7] = "Media/BallTexture.png";
 			iT->SetTextures(fileNames);
 			GetGraphics()->DeleteMesh(flagCSMTest);
 			GetGraphics()->DeleteMesh(bushCSMTest);
@@ -720,12 +743,16 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 
 	//*************************************	     POST TEST       **********************
 #ifdef TEST
-	delete[] testData;
+	//delete[] testData;
 	//delete[] debugCSMPoints;
 	//delete[] vertices;
 	delete[] iTs;
 	//delete[] fileNames;
-	
+	delete [] sizes;
+	delete testData[0];
+	delete testData[1];
+	delete [] testData;
+
 	GetGraphics()->DeleteImage(iM);
 	GetGraphics()->DeleteImage(iM2);
 	GetGraphics()->DeleteImage(iM3);

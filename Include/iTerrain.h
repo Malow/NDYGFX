@@ -41,10 +41,16 @@ extern "C"
 			virtual void SetHeightMap(float const* const data) = 0;
 
 			//Texture data
-			/* Set 0-4 textures to blend. */
+			/*	
+				Set 0-8 textures to blend. 
+				the parameter is assumed to contain 8 names.
+			*/
 			virtual void SetTextures(char const* const* const fileNames) = 0;
-			/* Size(width or height) = dimension of blend map in texels, data = pointer of 1D array of floats (4 sequential floats in the array represent the R,B,G,A-channels). Range [0,1]. */
-			virtual void SetBlendMap(unsigned int size, float const* const data) = 0;
+			/*	Size(width or height) = dimension of blend map in texels, data = pointer of 1D array of floats 
+				(4 sequential floats in the array represent the R,B,G,A-channels). Range [0,1]. 
+				
+			*/
+			virtual void SetBlendMaps(unsigned int nrOfBlendMaps, unsigned int* sizes, float const* const* const data) = 0;
 			/* Set the number of times a texture shall repeat over a surface. */
 			virtual void SetTextureScale(float textureScale = 1.0f) = 0; 
 			
