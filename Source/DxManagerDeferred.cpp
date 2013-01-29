@@ -17,7 +17,7 @@ void DxManager::PreRender()
 
 	if(this->useSun)	
 	{
-		this->csm->PreRender(this->sun.direction, this->camera, 50.0f);
+		this->csm->PreRender(this->sun.direction, this->camera, this->params.ShadowFit);
 	}
 
 

@@ -58,6 +58,10 @@ void GraphicsEngineParams::LoadFromFile(const char* file)
 	getline(in, line);
 	getline(in, line);
 	this->MaxFPS = atoi(line.c_str());
+	getline(in, line);
+	getline(in, line);
+	getline(in, line);
+	this->ShadowFit = atoi(line.c_str());
 
 	in.close();
 }
@@ -104,6 +108,9 @@ void GraphicsEngineParams::SaveToFile(const char* file)
 	out << endl;
 	out << "Max FPS:     Default: 0 (unlimited)" << endl;
 	out << this->MaxFPS << std::endl;
+	out << endl;
+	out << "ShadowFit:     Default: 50" << endl;
+	out << this->ShadowFit << std::endl;
 	out << endl;
 
 	out.close();
