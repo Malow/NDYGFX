@@ -684,6 +684,14 @@ void DxManager::RenderDeferredPerPixel()
 	this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_RenderTargetView, ClearColor);
 
 	this->Dx_DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+	
+	// Set sun-settings
+	if(this->useSun) 
+	{
+		this->Shader_DeferredLightning->SetStructMemberAsFloat4("sun", "Direction", D3DXVECTOR4(this->sun.direction, 0.0f));
+		this->Shader_DeferredLightning->SetStructMemberAsFloat4("sun", "LightColor", D3DXVECTOR4(this->sun.lightColor, 0.0f));
+		this->Shader_DeferredLightning->SetStructMemberAsFloat("sun", "LightIntensity", this->sun.intensity);
+	}
 
 	//DeferredLightning.fx:
 	this->Shader_DeferredLightning->SetResource("Texture", this->Dx_GbufferSRVs[0]);

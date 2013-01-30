@@ -69,6 +69,9 @@ cbuffer ef
 	uint nrOfCascades;
 	float4 cascadeFarPlanes;
 	matrix cameraViewMatrix;
+
+
+	bool useShadow;
 };
 
 
@@ -485,7 +488,7 @@ float4 PSScene(PSSceneIn input) : SV_Target
 		specLighting = saturate(specLighting / NrOfLights);
 	}
 	
-	//TILLMAN START OF CSM
+	
 	// Sun
 	if(UseSun)
 	{
@@ -496,62 +499,59 @@ float4 PSScene(PSSceneIn input) : SV_Target
 		float specLight = pow(saturate(dot(h, NormsAndDepth.xyz)), SpecularPower) * sun.LightIntensity;
 
 		
-		//I PS:
-		//Determine the proper shadow map.
-		//Transforms the texture coordinates if necessary.
-		//Samples the cascade.
-		//Lights the pixel.
-
-		
-		//Determine the shadow map to use:
-		//First transform the pixel from world space to CAMERA view space.
-		float pixelDepthCameraViewSpace = mul(WorldPos, cameraViewMatrix).z; 
-		//Find the index of the cascade(frustum slice) it is inside of.
-		uint cascadeIndex = -1;
-		cascadeIndex = FindCascade(pixelDepthCameraViewSpace);
-
-		//**TILLMAN TODO** early exit: if (CascadeIndex == -1), warning dock! kan reducera fps istället**
-
-
-		//Determine the second cascade to use if blending between cascades is enabled:
-		uint otherCascadeIndex = -1; //**TILLMAN TODO**
-		if(blendCascades)
+		//SHADOW: //TILLMAN START OF CSM**
+		if(useShadow)
 		{
-			otherCascadeIndex = FindCascadeToBlendWith(cascadeIndex, pixelDepthCameraViewSpace); 
-		}
+			//Determine the shadow map to use:
+			//First transform the pixel from world space to CAMERA view space.
+			float pixelDepthCameraViewSpace = mul(WorldPos, cameraViewMatrix).z; 
+			//Find the index of the cascade(frustum slice) it is inside of.
+			uint cascadeIndex = -1;
+			cascadeIndex = FindCascade(pixelDepthCameraViewSpace);
 
-		//Sample the cascade(s):
-		float shadow = 0.0f;
+			//**TILLMAN TODO** early exit: if (CascadeIndex == -1), warning dock! kan reducera fps istället**
+
+
+			//Determine the second cascade to use if blending between cascades is enabled:
+			uint otherCascadeIndex = -1; //**TILLMAN TODO**
+			if(blendCascades)
+			{
+				otherCascadeIndex = FindCascadeToBlendWith(cascadeIndex, pixelDepthCameraViewSpace); 
+			}
+
+			//Sample the cascade(s):
+			float shadow = 0.0f;
 		
-		//Get the texture coordinates to sample with by first transforming the pixel from world space to LIGHT's clip space xy[-w,w], z[0,w].
-		float4 pixelPosTexelSpace = mul(WorldPos, cascades[cascadeIndex].viewProj); 
-		//Then convert it to normalized device coordinates xy[-1,1], z[0,1].
-		pixelPosTexelSpace.xyz /= pixelPosTexelSpace.w;
-		//Finally convert it to texel space xy[0,1]. (Don't forget that the y-axis needs to be inverted).
-		pixelPosTexelSpace.x = pixelPosTexelSpace.x * 0.5f;
-		pixelPosTexelSpace.y = pixelPosTexelSpace.y * -0.5f;
-		pixelPosTexelSpace.xy += 0.5f;
+			//Get the texture coordinates to sample with by first transforming the pixel from world space to LIGHT's clip space xy[-w,w], z[0,w].
+			float4 pixelPosTexelSpace = mul(WorldPos, cascades[cascadeIndex].viewProj); 
+			//Then convert it to normalized device coordinates xy[-1,1], z[0,1].
+			pixelPosTexelSpace.xyz /= pixelPosTexelSpace.w;
+			//Finally convert it to texel space xy[0,1]. (Don't forget that the y-axis needs to be inverted).
+			pixelPosTexelSpace.x = pixelPosTexelSpace.x * 0.5f;
+			pixelPosTexelSpace.y = pixelPosTexelSpace.y * -0.5f;
+			pixelPosTexelSpace.xy += 0.5f;
 		
-		//And finally sample the cascades(s).
-		shadow = SampleCascades(cascadeIndex, otherCascadeIndex, pixelPosTexelSpace.xy, pixelPosTexelSpace.z); 
+			//And finally sample the cascades(s).
+			shadow = SampleCascades(cascadeIndex, otherCascadeIndex, pixelPosTexelSpace.xy, pixelPosTexelSpace.z); 
 		
-		//Multiply the shadow into the light.
-		diffLight *= shadow;
-		specLight *= shadow;
-		
+			//Multiply the shadow into the light.
+			diffLight *= shadow;
+			specLight *= shadow;
+		}
 		
 		//**tillman end of CSM
 		
 		diffuseLighting += diffLight;
 		specLighting += specLight;
-		if(shadow == -1.0f)
-		{
-			diffuseLighting = 1.0f;
-		}
+		
 		diffuseLighting = saturate(diffuseLighting);
 		specLighting = saturate(specLighting);
 
 		//**DEBUG**
+		/*if(shadow == -1.0f)
+		{
+			diffuseLighting = 1.0f;
+		}*/
 		/*if(otherCascadeIndex < cascadeIndex)
 		{
 			DiffuseColor = float3(1.0f, 0.0f, 0.0f);

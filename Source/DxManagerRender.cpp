@@ -287,15 +287,7 @@ void DxManager::RenderParticles()
 
 void DxManager::RenderShadowMap()
 {
-	// Set sun-settings
-	this->Shader_DeferredLightning->SetBool("UseSun", this->useSun);
-	if(this->useSun)
-	{
-		this->Shader_DeferredLightning->SetStructMemberAsFloat4("sun", "Direction", D3DXVECTOR4(this->sun.direction, 0.0f));
-		this->Shader_DeferredLightning->SetStructMemberAsFloat4("sun", "LightColor", D3DXVECTOR4(this->sun.lightColor, 0.0f));
-		this->Shader_DeferredLightning->SetStructMemberAsFloat("sun", "LightIntensity", this->sun.intensity);
-		//Shader_ShadowMap->Apply(0);		// Dont know why the fuck this has to be here, but it does, otherwise textures wont be sent when rendering objects. **Texture error**
-	}
+	
 	// If special circle is used
 	if(this->specialCircleParams.x) //if inner radius > 0, then send/set data
 	{
@@ -609,9 +601,15 @@ void DxManager::RenderText()
 
 void DxManager::RenderCascadedShadowMap()
 {
-	//EDIT 2013-01-23 by Tillman - Added transparancy.
-	if(this->useSun)
+	//EDIT 2013-01-23 by Tillman - Added transparency.
+
+	if(this->useSun && this->useShadow) //* TILLMAN - sun ska också inte ligga här?*
 	{
+		// Set sun-settings
+		this->Shader_DeferredLightning->SetStructMemberAsFloat4("sun", "Direction", D3DXVECTOR4(this->sun.direction, 0.0f));
+		this->Shader_DeferredLightning->SetStructMemberAsFloat4("sun", "LightColor", D3DXVECTOR4(this->sun.lightColor, 0.0f));
+		this->Shader_DeferredLightning->SetStructMemberAsFloat("sun", "LightIntensity", this->sun.intensity);
+
 		D3DXMATRIX wvp;
 		D3DXMatrixIdentity(&wvp);
 
@@ -621,7 +619,7 @@ void DxManager::RenderCascadedShadowMap()
 			D3D11_VIEWPORT wp = this->csm->GetShadowMapViewPort(l);
 			this->Dx_DeviceContext->RSSetViewports(1, &wp);
 			this->Dx_DeviceContext->ClearDepthStencilView(this->csm->GetShadowMapDSV(l), D3D11_CLEAR_DEPTH, 1.0f, 0);
-		
+			
 			//Terrain
 			for(int i = 0; i < this->terrains.size(); i++)
 			{
@@ -723,7 +721,7 @@ void DxManager::RenderCascadedShadowMap()
 			}
 			//Unbind shader resources
 			this->Shader_ShadowMap->SetResource("diffuseMap", NULL);
-
+			
 			//Animated meshes
 			for(int i = 0; i < this->animations.size(); i++)
 			{
@@ -784,10 +782,12 @@ void DxManager::RenderCascadedShadowMap()
 						this->Shader_ShadowMapAnimated->Apply(0);
 
 						//Draw
-						this->Dx_DeviceContext->Draw(vertsOne->GetElementCount(), 0);
+						//this->Dx_DeviceContext->Draw(vertsOne->GetElementCount(), 0);
 					}
 				}
 			}
+		
+
 			//Unbind shader resources
 			this->Shader_ShadowMapAnimated->SetResource("diffuseMap0", NULL);
 			this->Shader_ShadowMapAnimated->SetResource("diffuseMap1", NULL);
@@ -800,7 +800,7 @@ void DxManager::RenderCascadedShadowMap()
 			this->Shader_DeferredLightning->SetStructMemberAtIndexAsMatrix(l, "cascades", "viewProj", lvp);
 		}
 	
-
+			
 		float PCF_SIZE = (float)this->params.ShadowMapSettings + 1;
 		float PCF_SQUARED = 1 / (PCF_SIZE * PCF_SIZE);
 
@@ -810,7 +810,7 @@ void DxManager::RenderCascadedShadowMap()
 		this->Shader_DeferredLightning->SetFloat("PCF_SIZE_SQUARED", PCF_SQUARED);
 		
 		this->Shader_DeferredLightning->SetBool("blendCascades", true); //** TILLMAN CSM VARIABLE**
-		this->Shader_DeferredLightning->SetFloat("blendDistance", this->csm->GetBlendDistance()); //** TILLMAN CSM VARIABLE**
+		this->Shader_DeferredLightning->SetFloat("blendDistance", this->csm->GetBlendDistance()); 
 		this->Shader_DeferredLightning->SetFloat("blendStrength", 0.0f); //** TILLMAN CSM VARIABLE**
 
 		this->Shader_DeferredLightning->SetInt("nrOfCascades", this->csm->GetNrOfCascadeLevels());
@@ -822,6 +822,16 @@ void DxManager::RenderCascadedShadowMap()
 		this->Shader_DeferredLightning->SetFloat4("cascadeFarPlanes", cascadeFarPlanes);
 		this->Shader_DeferredLightning->SetMatrix("cameraViewMatrix", this->camera->GetViewMatrix()); //Send camera view matrix to determine what frustum slice to use.
 	}
+	else
+	{
+		this->Shader_ShadowMapAnimated->Apply(0); //**TILLMAN - SKA INTE BEHÖVAS, MEN MÅSTE. 
+		//** min gissning är att någon variabel (som ligger i stdafx.fx) sätts av denna shader
+		//och används en en ANNAN shader och måste därmed applyas. **
+	}
+
+	//Always tell the shader to use sun and/or shadows.
+	this->Shader_DeferredLightning->SetBool("UseSun", this->useSun);
+	this->Shader_DeferredLightning->SetBool("useShadow", this->useShadow);
 }
 
 void DxManager::CalculateCulling()

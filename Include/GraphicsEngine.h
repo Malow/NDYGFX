@@ -61,6 +61,9 @@ extern "C"
 		virtual iGraphicsEngineParams* GetEngineParameters() const = 0;
 
 		virtual void CreateSkyBox(const char* texture) = 0;
+
+		virtual void UseShadow(bool useShadow) = 0;
+
 		/*! OBS! InnerRadius has to be greater than zero. */
 		virtual void SetSpecialCircle(float innerRadius, float outerRadius, Vector2& targetPos) const = 0;
 

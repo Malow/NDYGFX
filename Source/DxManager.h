@@ -71,6 +71,7 @@ private:
 	Shader* Shader_Text;
 	Shader* Shader_ShadowMapAnimated;
 
+	bool useShadow;
 	CascadedShadowMap* csm;
 
 	// Deferred Rendering
@@ -163,6 +164,7 @@ public:
 	void CreateImage(Image* image, string texture);
 	void CreateText(Text* text, string font);
 	void CreateSkyBox(string texture);
+	void UseShadow(bool useShadow);
 	void SetSpecialCircle(float innerRadius, float outerRadius, Vector2& targetPos);
 
 	long GetFrameCount() const { return this->framecount; }
