@@ -439,8 +439,12 @@ HRESULT DxManager::Init()
 	this->fxaa->Init(this->Dx_Device, this->Dx_DeviceContext, this->Dx_SwapChain);
 	this->Shader_Fxaa = new Shader();
 	this->Shader_Fxaa->Init(this->Dx_Device, this->Dx_DeviceContext, "Shaders/FXAA.fx", NULL, 0);
-	this->csm = new CascadedShadowMap();
-	this->csm->Init(this->Dx_Device, this->params.ShadowMapSettings);
+	if(this->params.ShadowMapSettings > 0)
+	{
+		this->csm = new CascadedShadowMap();
+		this->csm->Init(this->Dx_Device, this->params.ShadowMapSettings);
+	}
+	
 
 	this->invisibleGeometry = false;
 

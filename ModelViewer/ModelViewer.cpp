@@ -397,6 +397,13 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	iMesh* mmm = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(0,2,0));
 
 
+	/*for(int i = 0; i < 50; i++)
+	{
+		iMesh* temp = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(i * 2, 0, 0));
+		temp->SetScale(0.05f);
+	}*/
+
+
 #endif
 //*************************************	    END OF PRE TEST       **********************
 
