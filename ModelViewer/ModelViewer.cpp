@@ -621,6 +621,15 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 			GetGraphics()->GetCamera()->LookAt(cameraLookAt);
 		}
 
+		if(GetGraphics()->GetKeyListener()->IsPressed('O'))
+		{
+			GetGraphics()->SetSunLightProperties(Vector3(1, -1, 1), GetGraphics()->GetSunLightColor() * (1.0f + diff * 0.002f));
+		}
+		if(GetGraphics()->GetKeyListener()->IsPressed('P'))
+		{
+			GetGraphics()->SetSunLightProperties(Vector3(1, -1, 1), GetGraphics()->GetSunLightColor() * (1.0f - diff * 0.002f));
+		}
+
 #endif
 //*************************************	    END OF RUN TESTS       **********************
 
