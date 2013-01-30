@@ -381,6 +381,8 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	aiData[3777] = 0; //blocked = false = 0 = green
 	
 	//iMesh* aniFern = GetGraphics()->CreateMesh("Media/Fern_02.ani", Vector3(-1, 0, 0));
+	Vector3 cameraPoint = Vector3(0.0f, 5.0f, 5.0f);
+	Vector3 cameraLookAt = Vector3(100.0f, 0.0f, 0.0f);
 
 #endif
 //*************************************	    END OF PRE TEST       **********************
@@ -608,6 +610,14 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 			iMesh* spawnPPP = GetGraphics()->CreateStaticMesh("Media/spawn.obj", Vector3(0,0, 2 * index++)); //Crashes
 			once = true;
 		}*/
+
+		//Camera reset/teleport
+		if(GetGraphics()->GetKeyListener()->IsPressed('V'))
+		{
+			GetGraphics()->GetCamera()->SetPosition(cameraPoint);
+			GetGraphics()->GetCamera()->LookAt(cameraLookAt);
+		}
+
 #endif
 //*************************************	    END OF RUN TESTS       **********************
 
