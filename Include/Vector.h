@@ -34,7 +34,7 @@ public:
 	};
 	
 
-	Vector2UINT(unsigned int x, unsigned int y) : x(x), y(y)
+	explicit Vector2UINT(unsigned int x=0, unsigned int y=0) : x(x), y(y)
 	{
 
 	}
@@ -62,6 +62,11 @@ public:
 	inline Vector2UINT operator-( const Vector2UINT& v ) const
 	{
 		return Vector2UINT( x - v.x, y - v.y );
+	}
+
+	inline Vector2UINT operator-( const unsigned int& scalar ) const
+	{
+		return Vector2UINT( x - scalar, y - scalar );
 	}
 
 	inline Vector2UINT operator*( const Vector2UINT& v ) const
@@ -108,7 +113,7 @@ public:
 		};
 	};
 
-	Vector2(float _x = 0.0f, float _y = 0.0f) : x(_x), y(_y)
+	explicit Vector2(float _x = 0.0f, float _y = 0.0f) : x(_x), y(_y)
 	{
 		
 	}
@@ -137,6 +142,11 @@ public:
 	inline Vector2 operator-( const Vector2& v ) const
 	{
 		return Vector2( x - v.x, y - v.y );
+	}
+
+	inline Vector2 operator-( const float& scalar ) const
+	{
+		return Vector2( x - scalar, y - scalar );
 	}
 
 	inline Vector2 operator+( const Vector2& v ) const
@@ -205,7 +215,7 @@ public:
 		};
 	};
 
-	Vector3(float _x = 0.0f, float _y = 0.0f, float _z = 0.0f) : x(_x), y(_y), z(_z)
+	explicit Vector3(float _x = 0.0f, float _y = 0.0f, float _z = 0.0f) : x(_x), y(_y), z(_z)
 	{
 
 	}
@@ -259,6 +269,11 @@ public:
 	inline Vector3 operator-(const Vector3& v) const
 	{
 		return Vector3(this->x-v.x, this->y-v.y, this->z-v.z);
+	}
+
+	inline Vector3 operator-( const float& scalar ) const
+	{
+		return Vector3( x - scalar, y - scalar, z - scalar );
 	}
 
 	inline Vector3 operator*(const float& scalar) const
@@ -388,7 +403,7 @@ public:
 		};
 	};
 
-	Vector4(float _x=0.0f, float _y=0.0f, float _z=0.0f, float _w=0.0f) : x(_x), y(_y), z(_z), w(_w)
+	explicit Vector4(float _x=0.0f, float _y=0.0f, float _z=0.0f, float _w=0.0f) : x(_x), y(_y), z(_z), w(_w)
 	{
 
 	}
@@ -450,6 +465,11 @@ public:
 	inline Vector4 operator-(const Vector4& v) const
 	{
 		return Vector4(this->x-v.x, this->y-v.y, this->z-v.z, w-v.w);
+	}
+
+	inline Vector4 operator-( const float& scalar ) const
+	{
+		return Vector4( x - scalar, y - scalar, z - scalar, w - scalar );
 	}
 
 	inline Vector4 operator*(const float& scalar) const
