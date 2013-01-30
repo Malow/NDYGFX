@@ -67,8 +67,8 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 #endif
 
 	GetGraphics()->CreateSkyBox("Media/skymap.dds"); //** TILLMAN
-	GetGraphics()->GetCamera()->SetPosition(Vector3(25, 25, 20));
-	GetGraphics()->GetCamera()->LookAt(Vector3(0, 0, 0));
+	GetGraphics()->GetCamera()->SetPosition(Vector3(10, 3, 0));
+	GetGraphics()->GetCamera()->LookAt(Vector3(0, 3, 0));
 	iLight* li = GetGraphics()->CreateLight(GetGraphics()->GetCamera()->GetPosition());
 	li->SetIntensity(0.001f);
 	GetGraphics()->SetSunLightProperties(Vector3(1, -1, 1));
@@ -224,9 +224,9 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 
 	//General shadowing:
 	iMesh* bushScaleBugTest = GetGraphics()->CreateMesh("Media/Bush_01_v04_r.obj", Vector3(0, 0, 0));
-	iMesh* scaleBugTest = GetGraphics()->CreateMesh("Media/scale.obj", Vector3(5, 0, 0));
+	iMesh* scaleBugTest = GetGraphics()->CreateMesh("Media/scale.obj", Vector3(50, 0, 0));
 	iMesh* bushScaleBugTest2 = GetGraphics()->CreateMesh("Media/Bush_01_v04_r.obj", Vector3(2, 0, 0));
-	iMesh* scaleBugTest2 = GetGraphics()->CreateMesh("Media/scale.obj", Vector3(4, 0, 0));
+	iMesh* scaleBugTest2 = GetGraphics()->CreateMesh("Media/scale.obj", Vector3(40, 0, 0));
 
 	bushScaleBugTest->Scale(1.0f * 0.05f);
 	scaleBugTest->Scale(1.0f * 0.05f);
@@ -381,6 +381,9 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	aiData[3777] = 0; //blocked = false = 0 = green
 	
 	//iMesh* aniFern = GetGraphics()->CreateMesh("Media/Fern_02.ani", Vector3(-1, 0, 0));
+	iMesh* tree = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(0, 0, 0));
+	tree->SetScale(0.05f);
+	
 
 #endif
 //*************************************	    END OF PRE TEST       **********************
@@ -445,13 +448,18 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		//diff = GetGraphics()->Update();
 		//MaloW::Debug("Normal: " + MaloW::convertNrToString(diff));
 		//diff = GetGraphics()->Update();
+		scaleHuman->SetPosition(Vector3(70.2, 0, 55.75));
+		GetGraphics()->GetCamera()->SetPosition(Vector3(69.2, 2, 55.43));
+		GetGraphics()->GetCamera()->SetForward(Vector3(0.858, -0.4, 0.31));
 		cd = GetGraphics()->GetPhysicsEngine()->GetCollisionRayMesh(
-			GetGraphics()->GetCamera()->GetPosition(), GetGraphics()->GetCamera()->GetForward(), model);
+			GetGraphics()->GetCamera()->GetPosition(), GetGraphics()->GetCamera()->GetForward(), scaleHuman);
+		//cd = GetGraphics()->GetPhysicsEngine()->GetCollisionRayMesh(
+			//GetGraphics()->GetCamera()->GetPosition(), GetGraphics()->GetCamera()->GetForward(), model);
 		//diff = GetGraphics()->Update();
 		//MaloW::Debug("Special: " + MaloW::convertNrToString(diff));
 		//MaloW::Debug(" ");
 		//diff = 100.0f;
-		
+		iCamera* cam = GetGraphics()->GetCamera();
 		if(cd.BoundingSphereCollision)
 		{
 			ball->SetScale(0.2f);
