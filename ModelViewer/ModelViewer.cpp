@@ -129,11 +129,11 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	}
 	iT->SetHeightMap(hmData);
 	const char* fileNames[8];
-	fileNames[0] = "Media/BallTexture.png";
+	fileNames[0] = "Media/TerrainTexture.png";
 	fileNames[1] = "Media/TerrainTexture.png";
 	fileNames[2] = "Media/TerrainTexture.png";
 	fileNames[3] = "Media/TerrainTexture.png";
-	fileNames[4] = "Media/BallTexture.png";
+	fileNames[4] = "Media/TerrainTexture.png";
 	fileNames[5] = "Media/TerrainTexture.png";
 	fileNames[6] = "Media/TerrainTexture.png";
 	fileNames[7] = "Media/TerrainTexture.png";
@@ -157,17 +157,25 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	sizes[1] = size;
 	float** testData = new float*[nrOfBlendMaps]; 
 	unsigned int channels = 4;
-	for(int j = 0; j < nrOfBlendMaps; j++)
+	
+	testData[0] = new float[sizes[0]*sizes[0]*channels];
+	for(int i = 0; i < sizes[0]*sizes[0]; i++)
 	{
-		testData[j] = new float[sizes[j]*sizes[j]*channels];
-		for(int i = 0; i < sizes[j]*sizes[j]; i++)
-		{
-			testData[j][ i * channels + 0 ] = 1.0f;
-			testData[j][ i * channels + 1 ] = 1.0f;
-			testData[j][ i * channels + 2 ] = 1.0f;
-			testData[j][ i * channels + 3 ] = 1.0f;
-		}
+		testData[0][ i * channels + 0 ] = 0.0f;
+		testData[0][ i * channels + 1 ] = 0.0f;
+		testData[0][ i * channels + 2 ] = 0.0f;
+		testData[0][ i * channels + 3 ] = 0.0f;
 	}
+	testData[1] = new float[sizes[1]*sizes[1]*channels];
+	for(int i = 0; i < sizes[1]*sizes[1]; i++)
+	{
+		testData[1][ i * channels + 0 ] = 0.0f;
+		testData[1][ i * channels + 1 ] = 0.0f;
+		testData[1][ i * channels + 2 ] = 0.0f;
+		testData[1][ i * channels + 3 ] = 0.0f;
+	}
+
+
 	iT->SetBlendMaps(nrOfBlendMaps, sizes, testData);
 
 
