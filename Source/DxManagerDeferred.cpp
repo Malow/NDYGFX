@@ -692,6 +692,8 @@ void DxManager::RenderDeferredPerPixel()
 		this->Shader_DeferredLightning->SetStructMemberAsFloat4("sun", "LightColor", D3DXVECTOR4(this->sun.lightColor, 0.0f));
 		this->Shader_DeferredLightning->SetStructMemberAsFloat("sun", "LightIntensity", this->sun.intensity);
 	}
+	//Always tell the shader whether to use sun or not.
+	this->Shader_DeferredLightning->SetBool("UseSun", this->useSun);
 
 	//DeferredLightning.fx:
 	this->Shader_DeferredLightning->SetResource("Texture", this->Dx_GbufferSRVs[0]);

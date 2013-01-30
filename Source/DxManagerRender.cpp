@@ -829,8 +829,7 @@ void DxManager::RenderCascadedShadowMap()
 		//och används en en ANNAN shader och måste därmed applyas. **
 	}
 
-	//Always tell the shader to use sun and/or shadows.
-	this->Shader_DeferredLightning->SetBool("UseSun", this->useSun);
+	//Always tell the shader whether to use shadows or not.
 	this->Shader_DeferredLightning->SetBool("useShadow", this->useShadow);
 }
 

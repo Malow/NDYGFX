@@ -221,14 +221,23 @@ PSOut PSScene(PSSceneIn input) : SV_Target
 		}
 
 		//Render grid
-		float deltaXY = 1.0f / nodesPerSide;
-		float texX = fmod(input.tex.x, deltaXY);
-		float texY = fmod(input.tex.y, deltaXY);
-
-		if(texX > deltaXY - (AIGridThickness * 0.5f) || texX < (AIGridThickness * 0.5f) || 
-			texY > deltaXY - (AIGridThickness * 0.5f) || texY < (AIGridThickness * 0.5f)) 
+		float nodeSize = 1.0f / nodesPerSide;
+		float nodeTexX = fmod(input.tex.x, nodeSize);
+		float nodeTexY = fmod(input.tex.y, nodeSize);
+		float halfAIGridThickness = AIGridThickness * 0.5f;
+		float halfNodeSize = nodeSize * 0.5f;
+		if(nodeTexX > nodeSize - halfAIGridThickness || nodeTexX < halfAIGridThickness || 
+			nodeTexY > nodeSize - halfAIGridThickness || nodeTexY < halfAIGridThickness) 
 		{
 			finalColor.rgb = 1.0f;
+		}
+		if(	(input.tex.x > 0.0f	&& input.tex.x < halfNodeSize 		)	|| 
+			(input.tex.x < 1.0f && input.tex.x > 1.0f - halfNodeSize	)	||
+			(input.tex.y > 0.0f	&& input.tex.y < halfNodeSize		)	|| 
+			(input.tex.y < 1.0f && input.tex.y > 1.0f - halfNodeSize	)
+			)
+		{
+			finalColor.rgb = 0.0f;
 		}
 	}
 	else if(textured) //Texture color(s)
