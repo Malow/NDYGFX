@@ -1511,11 +1511,10 @@ CollisionData PhysicsEngine::GetSpecialCollisionRayTerrain( Vector3 rayOrigin, V
 				
 				this->DoSpecialCollisionRayVsTerrainTriangles(rayOrigin, rayDirection, 
 					tempVerts, vertCount, NULL, 0, terrain->GetWorldMatrix(), cd);
-
-				if(!cd.collision)
-					this->DoCollisionRayVsTriangles(rayOrigin, rayDirection, terrain->GetVerticesPointer(), terrain->GetNrOfVertices(), 
-					terrain->GetIndicesPointer(), terrain->GetNrOfIndices(), terrain->GetWorldMatrix(), cd);
 			}
+			if(!cd.collision)
+				this->DoCollisionRayVsTriangles(rayOrigin, rayDirection, terrain->GetVerticesPointer(), terrain->GetNrOfVertices(), 
+				terrain->GetIndicesPointer(), terrain->GetNrOfIndices(), terrain->GetWorldMatrix(), cd);
 		}
 	}
 	else

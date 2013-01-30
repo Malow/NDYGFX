@@ -199,6 +199,9 @@
     <ClInclude Include="Source\BufferResource.h">
       <Filter>Source Files\Engine\DxMan and Techs</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Process.h">
+      <Filter>Source Files\Engine\Other</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\GraphicsEngineImp.cpp">
