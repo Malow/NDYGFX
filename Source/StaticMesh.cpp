@@ -16,7 +16,6 @@ bool StaticMesh::LoadFromFile(string file)
 	return Mesh::LoadFromFile(file);
 }
 
-
 MaloW::Array<MeshStrip*>* StaticMesh::GetStrips()
 { 
 	return this->strips; 
