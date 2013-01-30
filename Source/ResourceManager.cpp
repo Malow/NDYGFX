@@ -102,7 +102,7 @@ MaloW::Array<MeshStrip*>* ResourceManager::LoadMesh(const char* filePath, ObjDat
 
 ResourceManager::ResourceManager() : gDevice(NULL), gDeviceContext(NULL)
 {
-	
+	this->mutex = CreateMutex(NULL, false, NULL);
 }
 
 ResourceManager::~ResourceManager()
@@ -188,6 +188,8 @@ ResourceManager::~ResourceManager()
 		}
 	}
 	this->zBufferResources.clear();
+
+	CloseHandle(this->mutex);
 }
 
 
@@ -361,6 +363,13 @@ void ResourceManager::DeleteTextureResource( TextureResource* &textureResource )
 
 ObjData* ResourceManager::LoadObjectDataFromFile(const char* filePath)
 {
+	if(this->mutex)
+	{
+		WaitForSingleObject(this->mutex, INFINITE);
+	}
+	else 
+		MaloW::Debug("Mutex is broken / hasn't been created / has been closed for Resourcemanager Loadobjectdata.");
+
 	auto objData = this->zObjectDataResources.find(filePath);
 	//If the buffer resource was not found in the array, return NULL.
 	if(objData == this->zObjectDataResources.end())
@@ -370,14 +379,31 @@ ObjData* ResourceManager::LoadObjectDataFromFile(const char* filePath)
 
 	//else return if found
 	return objData->second;
+
+	ReleaseMutex(this->mutex);
 }
 void ResourceManager::SetObjectData(const char* filePath, ObjData* objectData)
 {
+	if(this->mutex)
+	{
+		WaitForSingleObject(this->mutex, INFINITE);
+	}
+	else 
+		MaloW::Debug("Mutex is broken / hasn't been created / has been closed for Resourcemanager SetObjectData.");
 	//Create object data if loading was successful.
 	this->zObjectDataResources[filePath] = objectData;
+
+	ReleaseMutex(this->mutex);
 }
 void ResourceManager::UnloadObjectData(const char* filePath)
 {
+	if(this->mutex)
+	{
+		WaitForSingleObject(this->mutex, INFINITE);
+	}
+	else 
+		MaloW::Debug("Mutex is broken / hasn't been created / has been closed for Resourcemanager UnloadObjectData.");
+
 	auto objData = this->zObjectDataResources.find(filePath);
 	//If the buffer resource was not found in the array, return NULL.
 	if(objData != this->zObjectDataResources.end())
@@ -391,6 +417,8 @@ void ResourceManager::UnloadObjectData(const char* filePath)
 		// Delete object data
 		delete objectData;
 	}
+
+	ReleaseMutex(this->mutex);
 }
 /*
 MeshCounted* ResourceManager::CreateMeshFromFile( const char* filePath )

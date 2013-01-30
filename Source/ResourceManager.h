@@ -38,6 +38,7 @@ class ResourceManager
 		std::map<std::string, ObjData*>			zObjectDataResources;
 		//std::map<std::string, MeshCounted*>	zMeshResources;
 		std::map<std::string, BufferResource*>	zBufferResources;
+		HANDLE mutex;
 
 	private:
 		//void DoMinMax(D3DXVECTOR3& min, D3DXVECTOR3& max, D3DXVECTOR3 v); //tillman, used by loadmesh

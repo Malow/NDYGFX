@@ -54,6 +54,7 @@
     <ClInclude Include="Source\ParticleSystem.h" />
     <ClInclude Include="Source\ParticleSystemHandler.h" />
     <ClInclude Include="Source\PhysicsEngine.h" />
+    <ClInclude Include="Source\Process.h" />
     <ClInclude Include="Source\Random.h" />
     <ClInclude Include="Source\ReferenceCounted.h" />
     <ClInclude Include="Source\ResourceManager.h" />
