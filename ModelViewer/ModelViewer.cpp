@@ -455,8 +455,8 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		//diff = GetGraphics()->Update();
 		//MaloW::Debug("Normal: " + MaloW::convertNrToString(diff));
 		//diff = GetGraphics()->Update();
-		cd = GetGraphics()->GetPhysicsEngine()->GetCollisionRayMesh(
-			GetGraphics()->GetCamera()->GetPosition(), GetGraphics()->GetCamera()->GetForward(), model);
+		cd = GetGraphics()->GetPhysicsEngine()->GetSpecialCollisionRayTerrain(
+			GetGraphics()->GetCamera()->GetPosition(), GetGraphics()->GetCamera()->GetForward(), iT, testSize / (vertSize - 1));
 		//diff = GetGraphics()->Update();
 		//MaloW::Debug("Special: " + MaloW::convertNrToString(diff));
 		//MaloW::Debug(" ");
