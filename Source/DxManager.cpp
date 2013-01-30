@@ -37,6 +37,7 @@ DxManager::DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam)
 		this->Dx_GbufferSRVs[i] = NULL;
 	}
 
+	this->useShadow = true;
 	this->csm = NULL;
 
 	this->Shader_DeferredGeometry = NULL;
@@ -594,6 +595,11 @@ void DxManager::CreateSkyBox(string texture)
 	strip->SetRenderObject(ro);
 
 	this->skybox = sb;
+}
+
+void DxManager::UseShadow(bool useShadow)
+{
+	this->useShadow = useShadow;
 }
 
 void DxManager::SetSpecialCircle(float innerRadius, float outerRadius, Vector2& targetPos)

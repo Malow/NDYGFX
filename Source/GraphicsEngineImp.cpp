@@ -511,6 +511,11 @@ void GraphicsEngineImp::CreateSkyBox(const char* texture)
 	this->dx->CreateSkyBox(string(texture));
 }
 
+void GraphicsEngineImp::UseShadow(bool useShadow)
+{
+	this->dx->UseShadow(useShadow);
+}
+
 void GraphicsEngineImp::SetSpecialCircle(float innerRadius, float outerRadius, Vector2& targetPos) const
 {
 	this->dx->SetSpecialCircle(innerRadius, outerRadius, targetPos);
