@@ -149,7 +149,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	catch(...)
 	{
 	}
-
+	
 	int nrOfBlendMaps = 2;
 	unsigned int size = 2048;
 	unsigned int* sizes = new unsigned int[2];
@@ -362,7 +362,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		//iImage* imm4 = GetGraphics()->CreateImage(Vector2(300, 100), Vector2(100, 100), "Media/Arrow_v01.png");
 
 
-		//Editor crash test
+		//Editor crasch test
 		//iMesh* spawnP = GetGraphics()->CreateStaticMesh("Media/spawn.obj", Vector3());
 
 
@@ -388,14 +388,9 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	aiData[3204] = 0; //blocked = false = 0 = green
 	aiData[3777] = 0; //blocked = false = 0 = green
 	
+	//iMesh* aniFern = GetGraphics()->CreateMesh("Media/Fern_02.ani", Vector3(-1, 0, 0));
 	Vector3 cameraPoint = Vector3(0.0f, 5.0f, 5.0f);
 	Vector3 cameraLookAt = Vector3(100.0f, 0.0f, 0.0f);
-
-	iLight* lll = GetGraphics()->CreateLight(Vector3(0,2,0));
-	lll->SetLookAt(Vector3(1, 0, 1));
-	lll->SetIntensity(1.0f);
-	iMesh* mmm = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(0,2,0));
-
 
 #endif
 //*************************************	    END OF PRE TEST       **********************
@@ -634,36 +629,6 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		{
 			GetGraphics()->SetSunLightProperties(Vector3(1, -1, 1), GetGraphics()->GetSunLightColor() * (1.0f - diff * 0.002f));
 		}
-
-		if(GetGraphics()->GetKeyListener()->IsPressed('M'))
-		{
-			GetGraphics()->UseShadow(false);
-		}
-		if(GetGraphics()->GetKeyListener()->IsPressed('K'))
-		{
-			GetGraphics()->UseShadow(true);
-		}
-		if(GetGraphics()->GetKeyListener()->IsPressed('U'))
-		{
-			lll->Move(Vector3(0.01f * diff, 0, 0));
-			mmm->MoveBy(Vector3(0.01f * diff, 0, 0));
-		}
-		if(GetGraphics()->GetKeyListener()->IsPressed('I'))
-		{
-			lll->Move(Vector3(-0.01f * diff, 0, 0));
-			mmm->MoveBy(Vector3(-0.01f * diff, 0, 0));
-		}
-		if(GetGraphics()->GetKeyListener()->IsPressed('O'))
-		{
-			lll->Move(Vector3(0, 0, -0.01f * diff));
-			mmm->MoveBy(Vector3(0, 0, -0.01f * diff));
-		}
-		if(GetGraphics()->GetKeyListener()->IsPressed('P'))
-		{
-			lll->Move(Vector3(0, 0, 0.01f * diff));
-			mmm->MoveBy(Vector3(0, 0, 0.01f * diff));
-		}
-
 
 #endif
 //*************************************	    END OF RUN TESTS       **********************
