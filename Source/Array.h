@@ -51,10 +51,12 @@ namespace MaloW
 	Array<T>::~Array()
 	{
 		for(int i = 0; i < this->nrOfItems; i++)
+		{
 			if(this->items[i])
 			{
 				delete this->items[i];
 			}
+		}
 
 		delete this->items;
 	}

@@ -61,6 +61,7 @@ void DxManager::HandleMeshEvent(MeshEvent* me)
 			{
 				delete this->objects.getAndRemove(i);
 				mesh = NULL;
+				break;
 			}
 		}
 	}
@@ -77,6 +78,7 @@ void DxManager::HandleMeshEvent(MeshEvent* me)
 			{
 				delete this->animations.getAndRemove(i);
 				mesh = NULL;
+				break;
 			}
 		}
 	}
