@@ -88,57 +88,96 @@ float3 RenderTextured(float scale, float2 tex, bool useBlendMap)
 	float3 tex1Color = tex1.Sample(LinearWrapSampler, texCoord).rgb; 
 	float3 tex2Color = tex2.Sample(LinearWrapSampler, texCoord).rgb; 
 	float3 tex3Color = tex3.Sample(LinearWrapSampler, texCoord).rgb; 
-		
+	
 	if(useBlendMap)
 	{
 		//Sample blend map texture
-		float4 blendMap0Color = normalize(blendMap0.Sample(LinearClampSampler, tex)); //normalize (don't use texture scaling).
+		float4 blendMap0Color = blendMap0.Sample(LinearClampSampler, tex); 
 		
-		//Inverse of all blend weights to scale final color to be in range [0,1]
-		float inverseTotal = 1.0f / (blendMap0Color.r + blendMap0Color.g + blendMap0Color.b + blendMap0Color.a);
+		// Is blendmap 0 empty?
+		if ( length(blendMap0Color) > 0.0 )
+		{	
+			// Are we using multiple blendmaps?
+			if(nrOfBlendMaps == 2)
+			{
+				float4 blendMap1Color = blendMap1.Sample(LinearClampSampler, tex);
 
-		//Scale color for each texture by the weight in the blendmap and scale to [0,1]
-		tex0Color *= blendMap0Color.r * inverseTotal;
-		tex1Color *= blendMap0Color.g * inverseTotal;
-		tex2Color *= blendMap0Color.b * inverseTotal;
-		tex3Color *= blendMap0Color.a * inverseTotal;
-
+				// Is blendmap 1 empty?
+				if ( length(blendMap1Color) > 0.0 )
+				{
+					float blendSum0 = blendMap0Color.r + blendMap0Color.g + blendMap0Color.b + blendMap0Color.a;
+					float blendSum1 = blendMap1Color.r + blendMap1Color.g + blendMap1Color.b + blendMap1Color.a;
+					float4 blendValues0 = blendMap0Color / (blendSum0 + blendSum1); 
+					float4 blendValues1 = blendMap1Color / (blendSum1 + blendSum0); 
+					
+					// Scale color for each texture by the weight in the blendmap.
+					float3 tex0Color = tex0.Sample(LinearWrapSampler, texCoord).rgb * blendValues0.r;
+					float3 tex1Color = tex1.Sample(LinearWrapSampler, texCoord).rgb * blendValues0.g;
+					float3 tex2Color = tex2.Sample(LinearWrapSampler, texCoord).rgb * blendValues0.b;
+					float3 tex3Color = tex3.Sample(LinearWrapSampler, texCoord).rgb * blendValues0.a;
+				
+					// Scale color for each texture by the weight in the blendmap.
+					float3 tex4Color = tex4.Sample(LinearWrapSampler, texCoord).rgb * blendValues1.r; 
+					float3 tex5Color = tex5.Sample(LinearWrapSampler, texCoord).rgb * blendValues1.g; 
+					float3 tex6Color = tex6.Sample(LinearWrapSampler, texCoord).rgb * blendValues1.b; 
+					float3 tex7Color = tex7.Sample(LinearWrapSampler, texCoord).rgb * blendValues1.a; 
+		
+					//Blendmapped color 
+					return saturate(tex0Color + tex1Color + tex2Color + tex3Color + tex4Color + tex5Color + tex6Color + tex7Color) * diffuseColor;
+				}
+				else
+				{
+					// Only Blendmap 0 if Blendmap 1 is empty
+					float blendSum0 = blendMap0Color.r + blendMap0Color.g + blendMap0Color.b + blendMap0Color.a;
+					float4 blendValues0 = blendMap0Color / blendSum0; 
 			
-		if(nrOfBlendMaps == 2)
-		{
-			//Sample blend map texture
-			float4 blendMap1Color = normalize(blendMap1.Sample(LinearClampSampler, tex)); //normalize (don't use texture scaling).
-		
-			//Inverse of all blend weights to scale final color to be in range [0,1]
-			float inverseTotal = 1.0f / (blendMap1Color.r + blendMap1Color.g + blendMap1Color.b + blendMap1Color.a);
-		
-			//Sample R,G,B,A textures	
-			float3 tex4Color = tex4.Sample(LinearWrapSampler, texCoord).rgb; 
-			float3 tex5Color = tex5.Sample(LinearWrapSampler, texCoord).rgb; 
-			float3 tex6Color = tex6.Sample(LinearWrapSampler, texCoord).rgb; 
-			float3 tex7Color = tex7.Sample(LinearWrapSampler, texCoord).rgb; 
-		
-			//Scale color for each texture by the weight in the blendmap and scale to [0,1]
-			tex4Color *= blendMap1Color.r * inverseTotal;
-			tex5Color *= blendMap1Color.g * inverseTotal;
-			tex6Color *= blendMap1Color.b * inverseTotal;
-			tex7Color *= blendMap1Color.a * inverseTotal;
-
-			//Blendmapped color 
-			return (tex0Color + tex1Color + tex2Color + tex3Color + tex4Color + tex5Color + tex6Color + tex7Color) * 0.5f * diffuseColor;
+					float3 tex0Color = tex0.Sample(LinearWrapSampler, texCoord).rgb * blendValues0.r;
+					float3 tex1Color = tex1.Sample(LinearWrapSampler, texCoord).rgb * blendValues0.g;
+					float3 tex2Color = tex2.Sample(LinearWrapSampler, texCoord).rgb * blendValues0.b;
+					float3 tex3Color = tex3.Sample(LinearWrapSampler, texCoord).rgb * blendValues0.a;
+					
+					// Blendmapped color 
+					return saturate(tex0Color + tex1Color + tex2Color + tex3Color) * diffuseColor;
+				}
+			}
+			else
+			{
+				// Only Blendmap 0 
+				float blendSum0 = blendMap0Color.r + blendMap0Color.g + blendMap0Color.b + blendMap0Color.a;
+				float4 blendValues0 = blendMap0Color / blendSum0;
+			
+				float3 tex0Color = tex0.Sample(LinearWrapSampler, texCoord).rgb * blendValues0.r;
+				float3 tex1Color = tex1.Sample(LinearWrapSampler, texCoord).rgb * blendValues0.g;
+				float3 tex2Color = tex2.Sample(LinearWrapSampler, texCoord).rgb * blendValues0.b;
+				float3 tex3Color = tex3.Sample(LinearWrapSampler, texCoord).rgb * blendValues0.a;
+				
+				// Blendmapped color 
+				return saturate(tex0Color + tex1Color + tex2Color + tex3Color) * diffuseColor;
+			}
 		}
 		else
-		{	
-			//Blendmapped color 
-			return (tex0Color + tex1Color + tex2Color + tex3Color) * diffuseColor;
+		{
+			float4 blendMap1Color = blendMap1.Sample(LinearClampSampler, tex); 
+
+			// Only Blendmap 1 if Blendmap 0 is empty
+			if ( length(blendMap1Color) > 0.0 )
+			{
+				float blendSum1 = blendMap1Color.r + blendMap1Color.g + blendMap1Color.b + blendMap1Color.a;
+				float4 blendValues1 = blendMap1Color / blendSum1; 
+			
+				float3 tex4Color = tex4.Sample(LinearWrapSampler, texCoord).rgb * blendValues1.r;
+				float3 tex5Color = tex5.Sample(LinearWrapSampler, texCoord).rgb * blendValues1.g;
+				float3 tex6Color = tex6.Sample(LinearWrapSampler, texCoord).rgb * blendValues1.b;
+				float3 tex7Color = tex7.Sample(LinearWrapSampler, texCoord).rgb * blendValues1.a;
+				
+				// Blendmapped color 
+				return saturate(tex4Color + tex5Color + tex6Color + tex7Color) * diffuseColor;
+			}
 		}
 	}
-	else
-	{
-		//If blend map is not used, return the saturated color of the sampled textures and diffusecolor.
-		return saturate((tex0Color + tex1Color + tex2Color + tex3Color) * diffuseColor);
-		//return ((tex1Color + tex2Color + tex3Color + tex4Color) / 4) * diffuseColor; //**tillman - istället?
-	}
+	
+	//if blendmapping is not used OR both blendmaps are empty, saturate texture colors.
+	return saturate((tex0Color + tex1Color + tex2Color + tex3Color) * 0.25f) * diffuseColor;
 }
 
 //-----------------------------------------------------------------------------------------

@@ -382,12 +382,14 @@ void ResourceManager::UnloadObjectData(const char* filePath)
 	//If the buffer resource was not found in the array, return NULL.
 	if(objData != this->zObjectDataResources.end())
 	{
-		//Delete object data 
-		delete objData->second;
-		//Set the pointer to NULL.
-		objData->second = NULL;  
-		//Remove object data from table.
+		// Store Object
+		ObjData* objectData = objData->second;
+
+		// Remove object data from table.
 		this->zObjectDataResources.erase(objData);
+
+		// Delete object data
+		delete objectData;
 	}
 }
 /*
