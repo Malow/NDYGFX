@@ -571,6 +571,9 @@ float4 PSScene(PSSceneIn input) : SV_Target
 		SpecularColor.xyz * specLighting), 
 		1.0f);
 
+	if(UseSun)
+		finalColor.xyz *= sun.LightColor;
+
 	
 	
 	// Haxfix, want it above but I lose 75% of my FPS then (??!?!? :S:S:S:S:S)
@@ -622,7 +625,6 @@ float4 PSScene(PSSceneIn input) : SV_Target
 	//}
 
 
-
 	///////////////////////////////////////////////////////////////////
 	//							Basic fog:							//
 	//////////////////////////////////////////////////////////////////
@@ -634,8 +636,6 @@ float4 PSScene(PSSceneIn input) : SV_Target
 		finalColor = lerp(finalColor, float4(0.45f, 0.45f, 0.45f, 1.0f), saturate(fogfactor));
 	}
 			
-
-	
 	return saturate(finalColor);
 }
 
