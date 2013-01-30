@@ -374,13 +374,13 @@ ObjData* ResourceManager::LoadObjectDataFromFile(const char* filePath)
 	//If the buffer resource was not found in the array, return NULL.
 	if(objData == this->zObjectDataResources.end())
 	{
+		ReleaseMutex(this->mutex);
 		return NULL;
 	}
 
 	//else return if found
-	return objData->second;
-
 	ReleaseMutex(this->mutex);
+	return objData->second;
 }
 void ResourceManager::SetObjectData(const char* filePath, ObjData* objectData)
 {

@@ -633,6 +633,15 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 			GetGraphics()->GetCamera()->LookAt(cameraLookAt);
 		}
 
+		if(GetGraphics()->GetKeyListener()->IsPressed('O'))
+		{
+			GetGraphics()->SetSunLightProperties(Vector3(1, -1, 1), GetGraphics()->GetSunLightColor() * (1.0f + diff * 0.002f));
+		}
+		if(GetGraphics()->GetKeyListener()->IsPressed('P'))
+		{
+			GetGraphics()->SetSunLightProperties(Vector3(1, -1, 1), GetGraphics()->GetSunLightColor() * (1.0f - diff * 0.002f));
+		}
+
 		if(GetGraphics()->GetKeyListener()->IsPressed('M'))
 		{
 			GetGraphics()->UseShadow(false);
@@ -661,6 +670,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 			lll->Move(Vector3(0, 0, 0.01f * diff));
 			mmm->MoveBy(Vector3(0, 0, 0.01f * diff));
 		}
+
 
 #endif
 //*************************************	    END OF RUN TESTS       **********************
