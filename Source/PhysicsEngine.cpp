@@ -136,28 +136,34 @@ CollisionData PhysicsEngine::GetCollisionRayMeshBoundingOnly( Vector3 rayOrigin,
 			{
 				CollisionData tempCD = this->DoCollisionSphereVsRayDetailed(strips->get(0)->GetBoundingSphere(), 
 					mesh->GetWorldMatrix(), scale, rayOrigin, rayDirection);
-				if(tempCD.distance < cd.distance)
+				if(tempCD.distance > 0.0f)
 				{
-					cd.distance = tempCD.distance;
-					cd.posx = tempCD.posx;
-					cd.posy = tempCD.posy;
-					cd.posz = tempCD.posz;
-					cd.collision = true;
-					cd.BoundingSphereCollision = true;
+					if(tempCD.distance < cd.distance)
+					{
+						cd.distance = tempCD.distance;
+						cd.posx = tempCD.posx;
+						cd.posy = tempCD.posy;
+						cd.posz = tempCD.posz;
+						cd.collision = true;
+						cd.BoundingSphereCollision = true;
+					}
 				}
 			}
 			else
 			{
 				CollisionData tempCD = this->DoCollisionSphereVsRayDetailed(strips->get(i)->GetBoundingSphere(), 
 					mesh->GetWorldMatrix(), scale, rayOrigin, rayDirection);
-				if(tempCD.distance < cd.distance)
+				if(tempCD.distance > 0.0f)
 				{
-					cd.distance = tempCD.distance;
-					cd.posx = tempCD.posx;
-					cd.posy = tempCD.posy;
-					cd.posz = tempCD.posz;
-					cd.collision = true;
-					cd.BoundingSphereCollision = true;
+					if(tempCD.distance < cd.distance)
+					{
+						cd.distance = tempCD.distance;
+						cd.posx = tempCD.posx;
+						cd.posy = tempCD.posy;
+						cd.posz = tempCD.posz;
+						cd.collision = true;
+						cd.BoundingSphereCollision = true;
+					}
 				}
 			}
 		}
@@ -177,14 +183,17 @@ CollisionData PhysicsEngine::GetCollisionRayTerrainBoundingOnly( Vector3 rayOrig
 		float scale = max(terrain->GetScale().x, max(terrain->GetScale().y, terrain->GetScale().z));
 		CollisionData tempCD = this->DoCollisionSphereVsRayDetailed(terrain->GetBoundingSphere(), 
 			terrain->GetWorldMatrix(), scale, rayOrigin, rayDirection);
-		if(tempCD.distance < cd.distance)
+		if(tempCD.distance > 0.0f)
 		{
-			cd.distance = tempCD.distance;
-			cd.posx = tempCD.posx;
-			cd.posy = tempCD.posy;
-			cd.posz = tempCD.posz;
-			cd.collision = true;
-			cd.BoundingSphereCollision = true;
+			if(tempCD.distance < cd.distance)
+			{
+				cd.distance = tempCD.distance;
+				cd.posx = tempCD.posx;
+				cd.posy = tempCD.posy;
+				cd.posz = tempCD.posz;
+				cd.collision = true;
+				cd.BoundingSphereCollision = true;
+			}
 		}
 	}
 	else
@@ -252,8 +261,12 @@ bool PhysicsEngine::DoCollisionSphereVsRay(BoundingSphere bs, D3DXMATRIX world, 
 	D3DXVec3Transform(&pos, &bs.center, &world);
 
 	Vector3 v = Vector3(rayOrigin.x - pos.x, rayOrigin.y - pos.y, rayOrigin.z - pos.z);
-	float b = rayDirection.GetDotProduct(v);
 	float rad = bs.radius * scale;
+	if(v.GetLength() < rad)
+		return true;
+	float b = rayDirection.GetDotProduct(v);
+	if(b > 0.0f)
+		return false;
 
 	float c = v.GetDotProduct(v) - (pow(rad, 2));
 
@@ -327,9 +340,19 @@ CollisionData PhysicsEngine::DoCollisionSphereVsRayDetailed(BoundingSphere bs, D
 
 	if(tempCD.collision)
 	{
-		tempCD.BoundingSphereCollision = true;
-		tempCD.distance = (rayOrigin - collisionPoint).GetLength();
 		Vector3 colPos = collisionPoint;
+
+		float nrOfdirs = 0.0f;
+		if(rayDirection.x > 0.0f)
+			nrOfdirs = (colPos.x - rayOrigin.x) / rayDirection.x;
+		else if(rayDirection.y > 0.0f)
+			nrOfdirs = (colPos.y - rayOrigin.y) / rayDirection.y;
+		else
+			nrOfdirs = (colPos.z - rayOrigin.z) / rayDirection.z;
+
+
+		tempCD.BoundingSphereCollision = true;
+		tempCD.distance = nrOfdirs;
 		tempCD.posx = colPos.x;
 		tempCD.posy = colPos.y;
 		tempCD.posz = colPos.z;
@@ -461,13 +484,16 @@ void PhysicsEngine::DoCollisionRayVsTriangles(Vector3 rayOrigin, Vector3 rayDire
 
 			if(this->DoCollisionRayVsTriangle(rayOrigin, rayDirection, v0, v1, v2, tempCD))
 			{
-				if(tempCD.distance < cd.distance)
+				if(tempCD.distance > 0.0f)
 				{
-					cd.distance = tempCD.distance;
-					cd.posx = tempCD.posx;
-					cd.posy = tempCD.posy;
-					cd.posz = tempCD.posz;
-					cd.collision = true;
+					if(tempCD.distance < cd.distance)
+					{
+						cd.distance = tempCD.distance;
+						cd.posx = tempCD.posx;
+						cd.posy = tempCD.posy;
+						cd.posz = tempCD.posz;
+						cd.collision = true;
+					}
 				}
 			}
 		}
@@ -499,13 +525,16 @@ void PhysicsEngine::DoCollisionRayVsTriangles(Vector3 rayOrigin, Vector3 rayDire
 
 			if(this->DoCollisionRayVsTriangle(rayOrigin, rayDirection, v0, v1, v2, tempCD))
 			{
-				if(tempCD.distance < cd.distance)
+				if(tempCD.distance > 0.0f)
 				{
-					cd.distance = tempCD.distance;
-					cd.posx = tempCD.posx;
-					cd.posy = tempCD.posy;
-					cd.posz = tempCD.posz;
-					cd.collision = true;
+					if(tempCD.distance < cd.distance)
+					{
+						cd.distance = tempCD.distance;
+						cd.posx = tempCD.posx;
+						cd.posy = tempCD.posy;
+						cd.posz = tempCD.posz;
+						cd.collision = true;
+					}
 				}
 			}
 		}
@@ -545,11 +574,20 @@ bool PhysicsEngine::DoCollisionRayVsTriangle(Vector3 rayOrigin, Vector3 rayDirec
 
 	collPos = (v0 * w) + (v1 * u) + (v2 * v);
 			
+	float nrOfdirs = 0.0f;
+	if(rayDirection.x > 0.0f)
+		nrOfdirs = (collPos.x - rayOrigin.x) / rayDirection.x;
+	else if(rayDirection.y > 0.0f)
+		nrOfdirs = (collPos.y - rayOrigin.y) / rayDirection.y;
+	else
+		nrOfdirs = (collPos.z - rayOrigin.z) / rayDirection.z;
+
+
 	tempCD.collision = true;
 	tempCD.posx = collPos.x;
 	tempCD.posy = collPos.y;
 	tempCD.posz = collPos.z;
-	tempCD.distance = (rayOrigin - Vector3(tempCD.posx, tempCD.posy, tempCD.posz)).GetLength();
+	tempCD.distance = nrOfdirs;
 
 	return true;
 }
@@ -1517,13 +1555,16 @@ void PhysicsEngine::DoSpecialCollisionRayVsTerrainTriangles( Vector3 rayOrigin, 
 
 			if(this->DoCollisionRayVsTriangle(rayOrigin, rayDirection, v0, v1, v2, tempCD))
 			{
-				if(tempCD.distance < cd.distance)
+				if(tempCD.distance > 0.0f)
 				{
-					cd.distance = tempCD.distance;
-					cd.posx = tempCD.posx;
-					cd.posy = tempCD.posy;
-					cd.posz = tempCD.posz;
-					cd.collision = true;
+					if(tempCD.distance < cd.distance)
+					{
+						cd.distance = tempCD.distance;
+						cd.posx = tempCD.posx;
+						cd.posy = tempCD.posy;
+						cd.posz = tempCD.posz;
+						cd.collision = true;
+					}
 				}
 			}
 		}
@@ -1555,13 +1596,16 @@ void PhysicsEngine::DoSpecialCollisionRayVsTerrainTriangles( Vector3 rayOrigin, 
 
 			if(this->DoCollisionRayVsTriangle(rayOrigin, rayDirection, v0, v1, v2, tempCD))
 			{
-				if(tempCD.distance < cd.distance)
+				if(tempCD.distance > 0.0f)
 				{
-					cd.distance = tempCD.distance;
-					cd.posx = tempCD.posx;
-					cd.posy = tempCD.posy;
-					cd.posz = tempCD.posz;
-					cd.collision = true;
+					if(tempCD.distance < cd.distance)
+					{
+						cd.distance = tempCD.distance;
+						cd.posx = tempCD.posx;
+						cd.posy = tempCD.posy;
+						cd.posz = tempCD.posz;
+						cd.collision = true;
+					}
 				}
 			}
 		}
