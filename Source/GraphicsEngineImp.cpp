@@ -1012,3 +1012,8 @@ Vector3 GraphicsEngineImp::GetSunLightColor() const
 	D3DXVECTOR3 v = this->dx->GetSunLight().lightColor;
 	return Vector3(v.x, v.y, v.z);
 }
+
+float GraphicsEngineImp::GetSunLightIntensity() const
+{
+	return this->dx->GetSunLight().intensity;
+}
