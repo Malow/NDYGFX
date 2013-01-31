@@ -13,6 +13,25 @@ HRESULT DxManager::Update(float)
 	return S_OK;
 }
 
+void DxManager::HandleWaterPlaneEvent(WaterPlaneEvent* ie)
+{
+	string msg = ie->getMessage();
+	if(msg == "Add WaterPlane")
+		this->waterplanes.add(ie->GetWaterPlane());
+	else if(msg == "Delete WaterPlane")
+	{
+		WaterPlane* wp = ie->GetWaterPlane();
+		for(int i = 0; i < this->waterplanes.size(); i++)
+		{
+			if(this->waterplanes[i] == wp)
+			{
+				delete this->waterplanes.getAndRemove(i);
+				wp = NULL;
+			}
+		}
+	}
+}
+
 void DxManager::SetCamera(SetCameraEvent* ev)
 {
 	
@@ -176,6 +195,12 @@ void DxManager::Life()
 			{
 				string msg = ((RendererEvent*)ev)->getMessage();
 				
+				//WaterPlaneEvent
+				if(dynamic_cast<WaterPlaneEvent*>(ev) != NULL)
+				{
+					this->HandleWaterPlaneEvent((WaterPlaneEvent*)ev);
+				}
+
 				//SetCameraEvent
 				if(dynamic_cast<SetCameraEvent*>(ev) != NULL)
 				{
@@ -946,6 +971,11 @@ void DxManager::CalculateCulling()
 			}
 		}
 	}
+}
+
+void DxManager::RenderWaterPlanes()
+{
+
 }
 
 HRESULT DxManager::Render()

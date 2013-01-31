@@ -10,3 +10,8 @@ WaterPlane::~WaterPlane()
 {
 
 }
+
+MaloW::Array<MeshStrip*>* WaterPlane::GetStrips()
+{
+	return NULL;
+}

@@ -807,3 +807,22 @@ Camera* DxManager::GetCamera() const
 	return this->camera;
 }
 
+void DxManager::CreateWaterPlane( WaterPlane* wp, string texture )
+{
+	TextureResource* tex = NULL;
+	if(texture != "")
+	{
+		tex = GetResourceManager()->CreateTextureResourceFromFile(texture.c_str());
+	}
+
+	wp->SetTexture(tex);
+	
+	WaterPlaneEvent* re = new WaterPlaneEvent("Add WaterPlane", wp);
+	this->PutEvent(re);
+}
+
+void DxManager::DeleteWaterPlane( WaterPlane* wp )
+{
+	WaterPlaneEvent* re = new WaterPlaneEvent("Delete WaterPlane", wp);
+	this->PutEvent(re);
+}

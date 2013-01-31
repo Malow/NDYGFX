@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Process.h"
+#include "WaterPlane.h"
 
 /* Process events for adding to rendering */
 
@@ -173,4 +174,25 @@ public:
 		}
 	}
 	Camera* GetCamera() { this->deleteSelf = false; return this->cam; }
+};
+
+class WaterPlaneEvent : public RendererEvent
+{
+private:
+	WaterPlane* wp;
+
+public:
+	WaterPlaneEvent(string msg, WaterPlane* wp) : RendererEvent(msg)
+	{
+		this->wp = wp;
+	}
+	virtual ~WaterPlaneEvent() 
+	{
+		if(this->deleteSelf && this->message.substr(0, 6) != "Delete")
+		{
+			if(this->wp)
+				delete this->wp;
+		}
+	}
+	WaterPlane* GetWaterPlane() { this->deleteSelf = false; return this->wp; }
 };

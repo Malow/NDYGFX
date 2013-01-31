@@ -797,210 +797,6 @@ void GraphicsEngineImp::SetSunLightDisabled()
 	this->dx->SetSunLightDisabled();
 }
 
-
-void GraphicsEngineImp::DebugDummyFunction(Vector3* arr) //**tillman**
-{
-	//Transform the points from world space to light’s homogeneous space.
-
-	//View matrix
-	D3DXVECTOR3 lookAt = D3DXVECTOR3(0, 0, 0);
-	D3DXVECTOR3 pos = D3DXVECTOR3(-50, 50, -50);
-	D3DXVECTOR3 posToLookAt = lookAt - pos; //Pos --> lookAt
-	D3DXVECTOR3 dir;
-	D3DXVECTOR3 up = D3DXVECTOR3(0, 1, 0);
-	D3DXVec3Normalize(&dir, &posToLookAt); 
-	lookAt = pos + dir;
-
-	D3DXMATRIX lightViewMatrix;
-	D3DXMatrixLookAtLH(&lightViewMatrix, &pos, &lookAt, &up); 
-
-	//for(int i = 0; i < 30; i++)
-	for(int i = 0; i < 24; i++)
-	{
-		D3DXVECTOR4 vertex = D3DXVECTOR4(arr[i].x, arr[i].y, arr[i].z, 1.0f);
-		
-		// Transform the point from world space to Light Camera Space.
-		D3DXVec4Transform(&vertex, &vertex, &lightViewMatrix);
-			
-		arr[i].x = vertex.x;
-		arr[i].y = vertex.y;
-		arr[i].z = vertex.z;
-
-
-		
-	}
-	
-	// This next section of code calculates the min and max values for the orthographic projection.
-	D3DXVECTOR3 vLightCameraOrthographicMin = D3DXVECTOR3(9999, 9999, 9999);
-	D3DXVECTOR3 vLightCameraOrthographicMax = D3DXVECTOR3(-9999, -9999, -9999);
-
-	D3DXVECTOR3 element = D3DXVECTOR3(0, 0, 0);
-	//for(int i = 1; i < 10; i++)
-	for(int i = 0; i < 8; i++)
-	{
-		//if(i != 5)
-		//{
-			element = D3DXVECTOR3(arr[i].x, arr[i].y, arr[i].z);
-			// Find the closest point.
-			D3DXVec3Minimize (&vLightCameraOrthographicMin, &element, &vLightCameraOrthographicMin );
-			D3DXVec3Maximize (&vLightCameraOrthographicMax, &element, &vLightCameraOrthographicMax );
-		//}
-	}
-
-
-
-
-
-
-	D3DXVECTOR3 minValue = D3DXVECTOR3(9999, 9999, 9999);
-	D3DXVECTOR3 maxValue = D3DXVECTOR3(-9999, -9999, -9999);
-	element = maxValue;
-	//for(int index = 1; index < 10; index++) 
-	for(int i = 0; i < 8; i++)
-	{
-		//if(index != 5)
-		//{
-			element = D3DXVECTOR3(arr[i].x, arr[i].y, arr[i].z);
-			D3DXVec3Minimize(&minValue, &minValue, &element);
-			D3DXVec3Maximize(&maxValue, &maxValue, &element);
-		//}
-	}
-
-	float nearPlane = minValue.z;
-	float farPlane = maxValue.z;
-
-	//Create orthographics projection.
-	// Craete the orthographic projection for this cascade.
-	D3DXMATRIX lightProjMatrix;
-
-	D3DXMatrixOrthoOffCenterLH( &lightProjMatrix, 
-		vLightCameraOrthographicMin.x, 
-		vLightCameraOrthographicMax.x, 
-		vLightCameraOrthographicMin.y, 
-		vLightCameraOrthographicMax.y, 
-		nearPlane, farPlane);
-
-
-
-
-
-
-	//test
-	D3DXMATRIX inverseLightViewMatrix;
-	D3DXMatrixIdentity(&inverseLightViewMatrix);
-	D3DXMatrixInverse(&inverseLightViewMatrix, NULL, &lightViewMatrix);
-	D3DXVECTOR4 minV = D3DXVECTOR4(minValue, 1.0f);
-	D3DXVECTOR4 maxV = D3DXVECTOR4(maxValue, 1.0f);
-
-	//for(int i = 2; i < 30; i++)
-
-	for(int i = 0; i < 24; i++)
-	{
-		D3DXVECTOR4 vertex = D3DXVECTOR4(arr[i].x, arr[i].y, arr[i].z, 1.0f);
-
-		// Transform the point from world space to Light Camera Space.
-		D3DXVec4Transform(&vertex, &vertex, &inverseLightViewMatrix);
-
-		arr[i].x = vertex.x;
-		arr[i].y = vertex.y;
-		arr[i].z = vertex.z;
-	}
-
-	D3DXVec4Transform(&minV, &minV, &inverseLightViewMatrix);
-	D3DXVec4Transform(&maxV, &maxV, &inverseLightViewMatrix);
-
-	
-	ofstream out("Media/CSMDebug.obj");
-	stringstream buffer;
-	buffer	<< "# This file uses centimeters as units for non-parametric coordinates. \n"
-			<< "mtllib CSMDebug.mtl \n"
-			<< "g default \n";
-	
-	//for(int i = 1; i < 30; i++)
-	for(int i = 0; i < 24; i++)
-	{
-		//if(i % 5 != 0)
-		{
-			buffer << "v " << arr[i].x << " " << arr[i].y << " " << arr[i].z << "\n";
-		}
-	}
-	//for(int i = 1; i < 30; i++)
-	for(int i = 0; i < 24; i++)
-	{
-		//if(i % 5 != 0)
-		{
-			buffer << "vt 0 0\n";
-		}
-	}
-		//for(int i = 1; i < 30; i++)
-	for(int i = 0; i < 24; i++)
-	{
-		//if(i % 5 != 0)
-		{
-			buffer << "vn 1 0 0\n";
-		}
-	}
-	for(int i = 0; i < 3; i++)
-	{
-		buffer << "usemtl initialShadingGroup" + MaloW::convertNrToString(i + 1) + "\n";
-		string nr1 = MaloW::convertNrToString(i * 8 + 1);
-		string nr2 = MaloW::convertNrToString(i * 8 + 2);
-		string nr3 = MaloW::convertNrToString(i * 8 + 3);
-		buffer << "f " << nr1 << "/" << nr1 << "/" << nr1 << " " << nr2 << "/" << nr2 << "/" << nr2 << " " << nr3 << "/" << nr3 << "/" << nr3 << "\n";
-		string nr4 = MaloW::convertNrToString(i * 8 + 2);
-		string nr5 = MaloW::convertNrToString(i * 8 + 3);
-		string nr6 = MaloW::convertNrToString(i * 8 + 4);
-		buffer << "f " << nr4 << "/" << nr4 << "/" << nr4 << " " << nr5 << "/" << nr5 << "/" << nr5 << " " << nr6 << "/" << nr6 << "/" << nr6 << "\n";
-		
-		//TOP
-		nr4 = MaloW::convertNrToString(i * 8 + 1);
-		nr5 = MaloW::convertNrToString(i * 8 + 5);
-		nr6 = MaloW::convertNrToString(i * 8 + 6);
-		buffer << "f " << nr4 << "/" << nr4 << "/" << nr4 << " " << nr5 << "/" << nr5 << "/" << nr5 << " " << nr6 << "/" << nr6 << "/" << nr6 << "\n";
-		nr4 = MaloW::convertNrToString(i * 8 + 1);
-		nr5 = MaloW::convertNrToString(i * 8 + 6);
-		nr6 = MaloW::convertNrToString(i * 8 + 2);
-		buffer << "f " << nr4 << "/" << nr4 << "/" << nr4 << " " << nr5 << "/" << nr5 << "/" << nr5 << " " << nr6 << "/" << nr6 << "/" << nr6 << "\n";
-
-		//BOTTOM
-		nr4 = MaloW::convertNrToString(i * 8 + 3);
-		nr5 = MaloW::convertNrToString(i * 8 + 7);
-		nr6 = MaloW::convertNrToString(i * 8 + 8);
-		buffer << "f " << nr4 << "/" << nr4 << "/" << nr4 << " " << nr5 << "/" << nr5 << "/" << nr5 << " " << nr6 << "/" << nr6 << "/" << nr6 << "\n";
-		nr4 = MaloW::convertNrToString(i * 8 + 3);
-		nr5 = MaloW::convertNrToString(i * 8 + 8);
-		nr6 = MaloW::convertNrToString(i * 8 + 4);
-		buffer << "f " << nr4 << "/" << nr4 << "/" << nr4 << " " << nr5 << "/" << nr5 << "/" << nr5 << " " << nr6 << "/" << nr6 << "/" << nr6 << "\n";
-
-		//LEFT SIDE
-		nr4 = MaloW::convertNrToString(i * 8 + 3);
-		nr5 = MaloW::convertNrToString(i * 8 + 7);
-		nr6 = MaloW::convertNrToString(i * 8 + 5);
-		buffer << "f " << nr4 << "/" << nr4 << "/" << nr4 << " " << nr5 << "/" << nr5 << "/" << nr5 << " " << nr6 << "/" << nr6 << "/" << nr6 << "\n";
-		nr4 = MaloW::convertNrToString(i * 8 + 3);
-		nr5 = MaloW::convertNrToString(i * 8 + 5);
-		nr6 = MaloW::convertNrToString(i * 8 + 1);
-		buffer << "f " << nr4 << "/" << nr4 << "/" << nr4 << " " << nr5 << "/" << nr5 << "/" << nr5 << " " << nr6 << "/" << nr6 << "/" << nr6 << "\n";
-
-		//RIGHT SIDE
-		nr4 = MaloW::convertNrToString(i * 8 + 2);
-		nr5 = MaloW::convertNrToString(i * 8 + 6);
-		nr6 = MaloW::convertNrToString(i * 8 + 8);
-		buffer << "f " << nr4 << "/" << nr4 << "/" << nr4 << " " << nr5 << "/" << nr5 << "/" << nr5 << " " << nr6 << "/" << nr6 << "/" << nr6 << "\n";
-		nr4 = MaloW::convertNrToString(i * 8 + 2);
-		nr5 = MaloW::convertNrToString(i * 8 + 8);
-		nr6 = MaloW::convertNrToString(i * 8 + 4);
-		buffer << "f " << nr4 << "/" << nr4 << "/" << nr4 << " " << nr5 << "/" << nr5 << "/" << nr5 << " " << nr6 << "/" << nr6 << "/" << nr6 << "\n";
-
-	}
-	out << buffer.str().c_str() << endl;
-	out.close();
-
-	//arr[0] = Vector3(minV.x, minV.y, minV.z);
-	//arr[1] = Vector3(maxV.x, maxV.y, maxV.z);
-
-}
-
 Vector3 GraphicsEngineImp::GetSunLightDirection() const
 {
 	D3DXVECTOR3 v = this->dx->GetSunLight().direction;
@@ -1016,4 +812,16 @@ Vector3 GraphicsEngineImp::GetSunLightColor() const
 float GraphicsEngineImp::GetSunLightIntensity() const
 {
 	return this->dx->GetSunLight().intensity;
+}
+
+iWaterPlane* GraphicsEngineImp::CreateWaterPlane( Vector3& pos, const char* texture )
+{
+	WaterPlane* plane = new WaterPlane(D3DXVECTOR3(pos.x, pos.y, pos.z));
+	this->dx->CreateWaterPlane(plane, texture);
+	return plane;
+}
+
+void GraphicsEngineImp::DeleteWaterPlane( iWaterPlane*& del )
+{
+	this->dx->DeleteWaterPlane(dynamic_cast<WaterPlane*>(del));
 }

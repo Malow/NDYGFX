@@ -21,6 +21,8 @@
 #include "PhysicsEngine.h"
 #include "DxManagerEvents.h"
 #include "CascadedShadowMap.h"
+#include "WaterPlane.h"
+
 #if defined(DEBUG) || defined(_DEBUG)
 	#include <vld.h>
 	#define INCLUDE_NDYGFX
@@ -51,6 +53,7 @@ private:
 	MaloW::Array<Terrain*> terrains; //terrain = sector data
 	MaloW::Array<StaticMesh*> objects;
 	MaloW::Array<AnimatedMesh*> animations;
+	MaloW::Array<WaterPlane*> waterplanes;
 
 	MaloW::Array<Image*> images;
 	MaloW::Array<Text*> texts;
@@ -117,6 +120,7 @@ private:
 
 	//This Clears the scene(rendertargets & viewports) and function sets variables used by most shaders, such as camera position for instance.
 	void PreRender(); //stdafx.fx
+
 	void RenderForward();
 	void RenderDeferredGeometry();
 	void RenderDeferredPerPixel();
@@ -130,7 +134,15 @@ private:
 	void RenderDeferredSkybox();
 	void RenderAntiAliasing();
 	void RenderText();
+	void RenderWaterPlanes();
+
 	void SetCamera(SetCameraEvent* ev);
+	void HandleTerrainEvent(TerrainEvent* me);
+	void HandleMeshEvent(MeshEvent* me);
+	void HandleLightEvent(LightEvent* le);
+	void HandleImageEvent(ImageEvent* ie);
+	void HandleTextEvent(TextEvent* te);
+	void HandleWaterPlaneEvent(WaterPlaneEvent* ie);
 
 	void CalculateCulling();
 
@@ -146,11 +158,7 @@ public:
 	DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam);
 	virtual ~DxManager();
 
-	void HandleTerrainEvent(TerrainEvent* me);
-	void HandleMeshEvent(MeshEvent* me);
-	void HandleLightEvent(LightEvent* le);
-	void HandleImageEvent(ImageEvent* ie);
-	void HandleTextEvent(TextEvent* te);
+
 	virtual void Life();
 	HRESULT Render();
 	HRESULT Update(float deltaTime);
@@ -163,6 +171,7 @@ public:
 	Light* CreateLight(D3DXVECTOR3 pos, bool UseShadowMap);
 	void CreateImage(Image* image, string texture);
 	void CreateText(Text* text, string font);
+	void CreateWaterPlane(WaterPlane* wp, string texture);
 	void CreateSkyBox(string texture);
 	void UseShadow(bool useShadow);
 	void SetSpecialCircle(float innerRadius, float outerRadius, Vector2& targetPos);
@@ -175,6 +184,7 @@ public:
 	void DeleteLight(Light* light);
 	void DeleteImage(Image* image);
 	void DeleteText(Text* text);
+	void DeleteWaterPlane(WaterPlane* wp);
 
 	void SetCamera(Camera* cam);
 	Camera* GetCamera() const;
