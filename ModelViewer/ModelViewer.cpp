@@ -643,6 +643,37 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 			GetGraphics()->SetSunLightProperties(Vector3(1, -1, 1), GetGraphics()->GetSunLightColor() * (1.0f - diff * 0.002f));
 		}
 
+		//Toggle shadow on/off
+		if(GetGraphics()->GetKeyListener()->IsPressed('M'))
+		{
+			GetGraphics()->UseShadow(false);
+		}
+		if(GetGraphics()->GetKeyListener()->IsPressed('K'))
+		{
+			GetGraphics()->UseShadow(true);
+		}
+		//Move test light
+		if(GetGraphics()->GetKeyListener()->IsPressed('U'))
+		{
+			lll->Move(Vector3(0.01f * diff, 0, 0));
+			mmm->MoveBy(Vector3(0.01f * diff, 0, 0));
+		}
+		if(GetGraphics()->GetKeyListener()->IsPressed('I'))
+		{
+			lll->Move(Vector3(-0.01f * diff, 0, 0));
+			mmm->MoveBy(Vector3(-0.01f * diff, 0, 0));
+		}
+		if(GetGraphics()->GetKeyListener()->IsPressed('O'))
+		{
+			lll->Move(Vector3(0, 0, -0.01f * diff));
+			mmm->MoveBy(Vector3(0, 0, -0.01f * diff));
+		}
+		if(GetGraphics()->GetKeyListener()->IsPressed('P'))
+		{
+			lll->Move(Vector3(0, 0, 0.01f * diff));
+			mmm->MoveBy(Vector3(0, 0, 0.01f * diff));
+		}
+
 #endif
 //*************************************	    END OF RUN TESTS       **********************
 

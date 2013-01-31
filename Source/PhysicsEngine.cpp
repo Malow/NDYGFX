@@ -470,10 +470,10 @@ void PhysicsEngine::DoCollisionRayVsTriangles(Vector3 rayOrigin, Vector3 rayDire
 			// D3DX STUFF
 
 			D3DXVECTOR4 pos0;
-			D3DXVec3Transform(&pos0, &vert0.pos, &worldMat);
 			D3DXVECTOR4 pos1;
-			D3DXVec3Transform(&pos1, &vert1.pos, &worldMat);
 			D3DXVECTOR4 pos2;
+			D3DXVec3Transform(&pos0, &vert0.pos, &worldMat);
+			D3DXVec3Transform(&pos1, &vert1.pos, &worldMat);
 			D3DXVec3Transform(&pos2, &vert2.pos, &worldMat);
 
 			Vector3 v0 = Vector3(pos0.x, pos0.y, pos0.z);
