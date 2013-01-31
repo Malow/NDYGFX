@@ -21,6 +21,7 @@
     <ClInclude Include="Include\iPhysicsEngine.h" />
     <ClInclude Include="Include\iTerrain.h" />
     <ClInclude Include="Include\iText.h" />
+    <ClInclude Include="Include\iWaterPlane.h" />
     <ClInclude Include="Include\Matrix.h" />
     <ClInclude Include="Include\Vector.h" />
     <ClInclude Include="Source\BoundingSphere.h" />
@@ -68,6 +69,7 @@
     <ClInclude Include="Source\TextureResource.h" />
     <ClInclude Include="Source\TRDCamera.h" />
     <ClInclude Include="Source\Vertex.h" />
+    <ClInclude Include="Source\WaterPlane.h" />
     <ClInclude Include="Source\Windows.h" />
   </ItemGroup>
   <ItemGroup>
@@ -112,6 +114,7 @@
     <ClCompile Include="Source\Text.cpp" />
     <ClCompile Include="Source\TextureResource.cpp" />
     <ClCompile Include="Source\TRDCamera.cpp" />
+    <ClCompile Include="Source\WaterPlane.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Include\iKeyListener.h" />
