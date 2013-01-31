@@ -88,7 +88,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 
 	iImage* iM5 = GetGraphics()->CreateImage(Vector2(300, 100), Vector2(100, 100), "Media/Arrow_v01.png");	//**minnesläcka om createmesh använder samma texture som en image OCH skapas FÖRE!
 
-		iMesh* arrow = GetGraphics()->CreateMesh("Media/Arrow_v01.obj", Vector3(30, 10, 30));					//**ORSAKAR minnesläcka om createmesh använder samma texture OCH skapas FÖRE!
+	iMesh* arrow = GetGraphics()->CreateMesh("Media/Arrow_v01.obj", Vector3(30, 10, 30));					//**ORSAKAR minnesläcka om createmesh använder samma texture OCH skapas FÖRE!
 	arrow->Scale(1.0f * 0.05f);
 	Vector3 arrowDir = Vector3(0, 0, -1);
 	
@@ -99,7 +99,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 
 
 	int vertSize = 64;
-	float testSize = 50.0f;
+	float testSize = 25.0f;
 	
 	iTerrain* iT = GetGraphics()->CreateTerrain(Vector3(0, 0, 0), Vector3(testSize, 0.0f, testSize), vertSize);
 	iTerrain* iT2 = GetGraphics()->CreateTerrain(Vector3(testSize, 0, 0), Vector3(testSize, 0.0f, testSize), vertSize);
@@ -190,7 +190,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	iT2->SetTextures(fileNames);
 	iT2->SetBlendMaps(nrOfBlendMaps, sizes, testData);
 
-	int klerp = 10;
+	int klerp = 2;
 	iTerrain** iTs = new iTerrain*[klerp];
 	for(int i = 0; i < klerp; i++)
 	{
@@ -201,14 +201,16 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	}
 	
 	// test fps
-	//for(int i = 0; i < 50; i++)
-	//	iMesh* ball = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(0, 10 + i * 3, 0));
-	//for(int i = 0; i < 50; i++)
-	//	iMesh* ball = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(10, 10 + i * 3, 0));
-	//for(int i = 0; i < 50; i++)
-	//	iMesh* ball = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(10, 10 + i * 3, 10));
-	//for(int i = 0; i < 50; i++)
-	//	iMesh* ball = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(0, 10 + i * 3, 10));
+	/*
+	for(int i = 0; i < 50; i++)
+		iMesh* ball = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(50, 5 + i, -5));
+	for(int i = 0; i < 50; i++)
+		iMesh* ball = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(50, 5 + i, 0));
+	for(int i = 0; i < 50; i++)
+		iMesh* ball = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(50, 5 + i, 5));
+	for(int i = 0; i < 50; i++)
+		iMesh* ball = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(50, 10 + i * 3, 10));
+		*/
 	
 	iMesh* ball = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(0, -100, 0));
 	ball->Scale(0.1f);
@@ -378,11 +380,9 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	iMesh* mmm = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(0,2,0));
 
 
-	/*for(int i = 0; i < 50; i++)
-	{
-		iMesh* temp = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(i * 2, 0, 0));
-		temp->SetScale(0.05f);
-	}*/
+	iMesh* temp = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(50, 0, 0));
+	temp->SetScale(0.05f);
+
 
 
 	//Preload testing
