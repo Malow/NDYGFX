@@ -10,6 +10,15 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\Graphics.cpp" />
+    <ClCompile Include="Source\ModelViewer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\Graphics.h" />
+    <ClInclude Include="Source\MaloW.h" />
+    <ClInclude Include="Source\Windows.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{E44C1BA5-FE53-4A74-B3DB-0F4469F47014}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
@@ -41,18 +50,19 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)\External\VLD\include\;$(SolutionDir)/Include/;..\NDYGFX\Source;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)\External\VLD\include\;$(SolutionDir)/NDYGFX/Include/;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)\External\VLD\lib\Win32;$(SolutionDir)/Build/Debug/;$(SolutionDir)/WorkingDir/;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)\Build\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)$(Configuration)\</IntDir>
+    <IntDir>$(ProjectDir)\Obj\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)\Build\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)$(Configuration)\</IntDir>
-    <TargetExt>R.exe</TargetExt>
-    <IncludePath>$(SolutionDir)/Include/;$(IncludePath)</IncludePath>
+    <IntDir>$(ProjectDir)\Obj\$(Configuration)\</IntDir>
+    <TargetExt>.exe</TargetExt>
+    <IncludePath>$(SolutionDir)/NDYGFX/Include/;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)/Build/Release/;$(LibraryPath)</LibraryPath>
+    <TargetName>$(ProjectName)R</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -85,15 +95,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="Graphics.cpp" />
-    <ClCompile Include="ModelViewer.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Graphics.h" />
-    <ClInclude Include="MaloW.h" />
-    <ClInclude Include="Windows.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

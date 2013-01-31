@@ -7,21 +7,21 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ModelViewer.cpp">
+    <ClCompile Include="Source\Graphics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Graphics.cpp">
+    <ClCompile Include="Source\ModelViewer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Graphics.h">
+    <ClInclude Include="Source\Graphics.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="MaloW.h">
+    <ClInclude Include="Source\MaloW.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Windows.h">
+    <ClInclude Include="Source\Windows.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
