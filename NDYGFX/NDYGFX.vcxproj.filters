@@ -202,17 +202,19 @@
     <ClInclude Include="Source\Process.h">
       <Filter>Source Files\Engine\Other</Filter>
     </ClInclude>
-	<ClInclude Include="Include\iWaterPlane.h">
+    <ClInclude Include="Include\iWaterPlane.h">
       <Filter>Source Files\Wrapper</Filter>
     </ClInclude>
     <ClInclude Include="Source\WaterPlane.h">
       <Filter>Source Files\Engine\Objects and Entities</Filter>
     </ClInclude>
-	<ClInclude Include="Include\iFBXMesh.h">
+    <ClInclude Include="Include\iFBXMesh.h">
       <Filter>Source Files\Wrapper</Filter>
-    </ClInclude>	<ClInclude Include="Source\ObjectDataResource.h">
+    </ClInclude>
+    <ClInclude Include="Source\ObjectDataResource.h">
       <Filter>Source Files\Engine\DxMan and Techs</Filter>
-    </ClInclude>  </ItemGroup>
+    </ClInclude>
+  </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\GraphicsEngineImp.cpp">
       <Filter>Source Files\Engine</Filter>
@@ -337,11 +339,13 @@
     <ClCompile Include="Source\BufferResource.cpp">
       <Filter>Source Files\Engine\DxMan and Techs</Filter>
     </ClCompile>
-	<ClCompile Include="Source\WaterPlane.cpp">
+    <ClCompile Include="Source\WaterPlane.cpp">
       <Filter>Source Files\Engine\Objects and Entities</Filter>
-    </ClCompile>	<ClCompile Include="Source\ObjectDataResource.cpp">
+    </ClCompile>
+    <ClCompile Include="Source\ObjectDataResource.cpp">
       <Filter>Source Files\Engine\DxMan and Techs</Filter>
-    </ClCompile>  </ItemGroup>
+    </ClCompile>
+  </ItemGroup>
   <ItemGroup>
     <Text Include="Include\iKeyListener.h">
       <Filter>Source Files\Wrapper</Filter>
