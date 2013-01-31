@@ -807,6 +807,7 @@ Vector3 GraphicsEngineImp::GetSunLightColor() const
 float GraphicsEngineImp::GetSunLightIntensity() const
 {
 	return this->dx->GetSunLight().intensity;
+}
 
 iWaterPlane* GraphicsEngineImp::CreateWaterPlane( Vector3& pos, const char* texture )
 {
