@@ -421,5 +421,8 @@
     <FxCompile Include="..\WorkingDir\Shaders\TextRenderer.fx">
       <Filter>Source Files\Engine\Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="..\WorkingDir\Shaders\WaterPlane.fx">
+      <Filter>Source Files\Engine\Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

@@ -975,7 +975,59 @@ void DxManager::CalculateCulling()
 
 void DxManager::RenderWaterPlanes()
 {
+	//Matrixes
+	D3DXMATRIX world, view, proj, wvp, worldInverseTranspose;
+	view = this->camera->GetViewMatrix();
+	proj = this->camera->GetProjectionMatrix();
 
+	this->Shader_Water->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetPositionD3DX(), 1));
+
+	for(int i = 0; i < this->waterplanes.size(); i++)
+	{
+		// Set matrixes
+		world = this->waterplanes[i]->GetWorldMatrix();
+		wvp = world * view * proj;
+		D3DXMatrixInverse(&worldInverseTranspose, NULL, &world);
+		D3DXMatrixTranspose(&worldInverseTranspose, &worldInverseTranspose);
+
+		this->Shader_Water->SetMatrix("WVP", wvp);
+		this->Shader_Water->SetMatrix("worldMatrix", world);
+		this->Shader_Water->SetMatrix("worldMatrixInverseTranspose", worldInverseTranspose);
+
+		this->Dx_DeviceContext->IASetPrimitiveTopology(this->waterplanes[i]->GetTopology());
+
+		// Setting lightning from material
+		this->Shader_Water->SetFloat4("SpecularColor", D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1));
+		this->Shader_Water->SetFloat("SpecularPower", 1.0f);
+		this->Shader_Water->SetFloat4("AmbientLight", D3DXVECTOR4(this->sceneAmbientLight, 1.0f));
+		this->Shader_Water->SetFloat4("DiffuseColor", D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1));
+
+		Buffer* verts = this->waterplanes[i]->GetVertexBuffer();
+		if(verts)
+			verts->Apply();
+
+		if(ID3D11ShaderResourceView* texture = this->waterplanes[i]->GetTextureResource()->GetSRVPointer())//**TILLMAN
+		{
+			this->Shader_Water->SetBool("textured", true);
+			this->Shader_Water->SetResource("tex2D", texture);
+		}
+		else
+			this->Shader_Water->SetBool("textured", false);
+			
+		this->Shader_Water->Apply(0);
+			
+		// draw
+		this->Dx_DeviceContext->Draw(verts->GetElementCount(), 0);
+		
+	}
+
+	// Unbind resources:
+	this->Shader_Water->SetResource("tex2D", NULL);
+	for(int i = 0; i < this->lights.size(); i++)
+	{
+		this->Shader_Water->SetResourceAtIndex(i, "ShadowMap", NULL);
+	}
+	this->Shader_Water->Apply(0);
 }
 
 HRESULT DxManager::Render()
@@ -1012,6 +1064,8 @@ HRESULT DxManager::Render()
 	
 	if(this->invisibleGeometry)
 		this->RenderInvisibilityEffect(); 
+
+	this->RenderWaterPlanes();
 	
 	this->RenderDeferredSkybox();
 

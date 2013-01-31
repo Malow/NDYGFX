@@ -285,8 +285,22 @@ HRESULT DxManager::Init()
 	}
 
 
+	// Water Shader
+	D3D11_INPUT_ELEMENT_DESC WaterDesc[] = {
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
+	};
+	this->Shader_Water = new Shader();
+	if(FAILED(this->Shader_Water->Init(Dx_Device, Dx_DeviceContext, "Shaders/WaterPlane.fx", WaterDesc, 4)))	// + on last if added above
+	{
+		MaloW::Debug("Failed to open DeferredGeometry.fx");
+		return E_FAIL;
+	}
 
 
+	/*
 	// Deferred Quad pass
 	D3D11_INPUT_ELEMENT_DESC DeferredQuadDesc[] = {
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -301,6 +315,7 @@ HRESULT DxManager::Init()
 		return E_FAIL;
 	}
 
+
 	// Deferred Texture pass
 	D3D11_INPUT_ELEMENT_DESC DeferredTextureDesc[] = {
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -314,7 +329,7 @@ HRESULT DxManager::Init()
 		MaloW::Debug("Failed to open DeferredTexture.fx");
 		return E_FAIL;
 	}
-
+	*/
 
 
 	/*

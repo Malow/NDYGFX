@@ -48,6 +48,7 @@ DxManager::DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam)
 	this->Shader_DeferredQuad = NULL;
 	this->Shader_DeferredTexture = NULL;
 	this->Shader_DeferredAnimatedGeometry = NULL;
+	this->Shader_Water = NULL;
 
 	this->Dx_DeferredTexture = NULL;
 	this->Dx_DeferredQuadRT = NULL;
@@ -118,6 +119,9 @@ DxManager::~DxManager()
 
 	if(this->Shader_DeferredAnimatedGeometry)
 		delete this->Shader_DeferredAnimatedGeometry;
+
+	if(this->Shader_Water)
+		delete this->Shader_Water;
 
 	/*
 	if(this->Dx_DeferredTexture)
@@ -814,8 +818,22 @@ void DxManager::CreateWaterPlane( WaterPlane* wp, string texture )
 	{
 		tex = GetResourceManager()->CreateTextureResourceFromFile(texture.c_str());
 	}
-
 	wp->SetTexture(tex);
+
+
+	//Create vertex buffer
+	BUFFER_INIT_DESC vertexBufferDesc;
+	vertexBufferDesc.ElementSize = sizeof(Vertex);
+	vertexBufferDesc.InitData = wp->GetVerts(); 
+	vertexBufferDesc.NumElements = wp->GetNrOfVerts();
+	vertexBufferDesc.Type = VERTEX_BUFFER;
+	vertexBufferDesc.Usage = BUFFER_DEFAULT;
+
+	Buffer* vertexBuffer = new Buffer();
+	if(FAILED(vertexBuffer->Init(this->Dx_Device, this->Dx_DeviceContext, vertexBufferDesc)))
+		MaloW::Debug("ERROR: Could not create vertex buffer. REASON: CreateWaterPlane");
+	wp->SetVertexBuffer(vertexBuffer);
+
 	
 	WaterPlaneEvent* re = new WaterPlaneEvent("Add WaterPlane", wp);
 	this->PutEvent(re);

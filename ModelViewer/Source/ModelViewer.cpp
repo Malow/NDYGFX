@@ -77,7 +77,11 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 
 //*************************************	     PRE TEST       **********************
 #ifdef TEST
-		
+	iWaterPlane* wp = GetGraphics()->CreateWaterPlane(Vector3(0, 10, 0), "Media/WaterTexture.png");
+	wp->SetScale(10.0f);
+	iWaterPlane* wp2 = GetGraphics()->CreateWaterPlane(Vector3(5, 9, 0), "Media/WaterTexture.png");
+	wp2->Rotate(Vector3(0.1f, 0.1f, 0.1f));
+	wp2->SetScale(9.0f);
 
 	iImage* iM = GetGraphics()->CreateImage(Vector2(100, 100), Vector2(100, 100), "Media/BallTexture.png");
 	iImage* iM2 = GetGraphics()->CreateImage(Vector2(200, 200), Vector2(100, 100), "Media/BallTexture.png");

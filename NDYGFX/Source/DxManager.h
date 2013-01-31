@@ -54,6 +54,7 @@ private:
 	MaloW::Array<StaticMesh*> objects;
 	MaloW::Array<AnimatedMesh*> animations;
 	MaloW::Array<WaterPlane*> waterplanes;
+	Shader* Shader_Water;
 
 	MaloW::Array<Image*> images;
 	MaloW::Array<Text*> texts;
@@ -73,6 +74,8 @@ private:
 	Shader* Shader_BillBoard;
 	Shader* Shader_Text;
 	Shader* Shader_ShadowMapAnimated;
+
+	
 
 	bool useShadow;
 	CascadedShadowMap* csm;
