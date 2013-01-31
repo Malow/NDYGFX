@@ -154,6 +154,9 @@ public:
 	created and being rendered in the background. */
 	virtual void LoadingScreen(const char* BackgroundTexture = "", const char* ProgressBarTexture = "", float FadeBlackInInTime = 0.0f, float FadeBlackInOutTime = 0.0f, float FadeBlackOutInTime = 0.0f, float FadeBlackOutOutTime = 0.0f);
 
+	virtual iWaterPlane* CreateWaterPlane(Vector3& pos, const char* texture);
+	virtual void DeleteWaterPlane(iWaterPlane*& del);
+
 	/*  Non-inherited functions */
 
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);

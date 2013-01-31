@@ -202,7 +202,13 @@
     <ClInclude Include="Source\Process.h">
       <Filter>Source Files\Engine\Other</Filter>
     </ClInclude>
-    <ClInclude Include="Include\iFBXMesh.h">
+ 	<ClInclude Include="Include\iWaterPlane.h">
+      <Filter>Source Files\Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\WaterPlane.h">
+      <Filter>Source Files\Engine\Objects and Entities</Filter>
+    </ClInclude>
+	<ClInclude Include="Include\iFBXMesh.h">
       <Filter>Source Files\Wrapper</Filter>
     </ClInclude>
   </ItemGroup>
@@ -329,6 +335,9 @@
     </ClCompile>
     <ClCompile Include="Source\BufferResource.cpp">
       <Filter>Source Files\Engine\DxMan and Techs</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\WaterPlane.cpp">
+      <Filter>Source Files\Engine\Objects and Entities</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

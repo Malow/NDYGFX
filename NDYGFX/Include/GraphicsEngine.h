@@ -21,6 +21,7 @@
 #include "iTerrain.h"
 #include "iGraphicsEngineParams.h"
 #include "iPhysicsEngine.h"
+#include "iWaterPlane.h"
 
 extern "C"
 {
@@ -87,9 +88,12 @@ extern "C"
 
 		virtual void ResizeGraphicsEngine(unsigned int width, unsigned int height) = 0;
 
-		virtual void DebugDummyFunction(Vector3* arr) = 0;
+		virtual void LoadingScreen(const char* BackgroundTexture = "", const char* ProgressBarTexture = "", 
+			float FadeBlackInInTime = 0.0f, float FadeBlackInOutTime = 0.0f, float FadeBlackOutInTime = 0.0f, 
+			float FadeBlackOutOutTime = 0.0f) = 0;
 
-		virtual void LoadingScreen(const char* BackgroundTexture = "", const char* ProgressBarTexture = "", float FadeBlackInInTime = 0.0f, float FadeBlackInOutTime = 0.0f, float FadeBlackOutInTime = 0.0f, float FadeBlackOutOutTime = 0.0f) = 0;
+		virtual iWaterPlane* CreateWaterPlane(Vector3& pos, const char* texture) = 0;
+		virtual void DeleteWaterPlane(iWaterPlane*& del) = 0;
 	};
 
 	/*
