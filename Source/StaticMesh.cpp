@@ -8,7 +8,7 @@ StaticMesh::StaticMesh(D3DXVECTOR3 pos) : Mesh(pos)
 
 StaticMesh::~StaticMesh()
 {
-
+	GetResourceManager()->UnloadObjectDataResource(this->filePath.c_str());
 }
 
 bool StaticMesh::LoadFromFile(string file)

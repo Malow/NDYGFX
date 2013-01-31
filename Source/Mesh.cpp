@@ -25,25 +25,24 @@ Mesh::~Mesh()
 
 		delete this->strips;
 	}
-
-	GetResourceManager()->UnloadObjectData(this->filePath.c_str());
 }
 
 bool Mesh::LoadFromFile(string file)
 {
-	this->filePath = file;
+	if(file != "")
+	{
+		this->filePath = file;
+	}
+	else
+	{
+		float derp = 1.0f;
+	}
+	
 
 	// if substr of the last 4 = .obj do this:    - else load other format / print error
 
-	//**TILLMAN TODO: test spawn.obj. ev try catch**
-	ObjData* od = GetResourceManager()->LoadObjectDataFromFile(this->filePath.c_str());
-	if(!od)
-	{
-		ObjLoader oj;
-		od = oj.LoadObjFile(file);
-		GetResourceManager()->SetObjectData(filePath.c_str(), od);
-	}
-	//ObjData* od = oj.LoadObjFile(file); //**Tillman old code
+	ObjData* od = GetResourceManager()->LoadObjectDataResourceFromFile(this->filePath.c_str())->GetObjectDataPointer();
+	
 
 	try
 	{

@@ -102,13 +102,13 @@ public:
 	virtual void DeleteTerrain( iTerrain*& terrain );
 
 	virtual iLight* CreateLight(Vector3 pos);
-	virtual void DeleteLight(iLight* light);
+	virtual void DeleteLight(iLight* &light);
 
 	virtual iImage* CreateImage(Vector2 pos, Vector2 dimensions, const char* texture);
-	virtual void DeleteImage(iImage* delImg);
+	virtual void DeleteImage(iImage* &delImg);
 
 	virtual iText* CreateText(const char* text, Vector2 pos, float size, const char* fontTexturePath);
-	virtual void DeleteText(iText* deltxt);
+	virtual void DeleteText(iText* &deltxt);
 
 	virtual iCamera* GetCamera() const;
 	virtual iKeyListener* GetKeyListener() const;
@@ -124,6 +124,8 @@ public:
 	virtual void UseShadow(bool useShadow);
 
 	virtual void SetSpecialCircle(float innerRadius, float outerRadius, Vector2& targetPos) const;
+
+	virtual void PreLoadMeshes(unsigned int nrOfMeshes, char const* const* const meshesFileNames);
 
 	virtual void StartRendering() { this->dx->StartRender = true; }
 

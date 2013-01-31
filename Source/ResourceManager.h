@@ -15,7 +15,9 @@
 #include "TextureResource.h"
 //#include "MeshResource.h" //**TILLMAN circkulär include - Object3d.h**
 //#include "ObjLoader.h"
-#include "ObjLoader.h"
+#include "ObjectDataResource.h"
+//#include "StaticMesh.h" //Circulär include - TILLMAN
+//#include "AnimatedMesh.h"
 
 #include "BufferResource.h"
 #include <string>
@@ -35,7 +37,8 @@ class ResourceManager
 
 	private:
 		std::map<std::string, TextureResource*> zTextureResources;
-		std::map<std::string, ObjData*>			zObjectDataResources;
+		std::map<std::string, ObjectDataResource*>			zObjectDataResources;
+		//std::map<std::string, ObjData*>			zObjectDataResources;
 		//std::map<std::string, MeshCounted*>	zMeshResources;
 		std::map<std::string, BufferResource*>	zBufferResources;
 		HANDLE mutex;
@@ -85,9 +88,8 @@ class ResourceManager
 
 
 		//Object data
-		ObjData* LoadObjectDataFromFile(const char* filePath);
-		void SetObjectData(const char* filePath, ObjData* objectData);
-		void UnloadObjectData(const char* filePath);
+		ObjectDataResource* LoadObjectDataResourceFromFile(const char* filePath);
+		void UnloadObjectDataResource(const char* filePath);
 
 		//Buffer
 		/*	
@@ -100,6 +102,10 @@ class ResourceManager
 		bool HasBuffer(const char* fileName);
 		/*	Deletes	the buffer resource sent through the parameter. The pointer to the buffer resource is automatically set to NULL.	*/
 		void DeleteBufferResource(BufferResource* &bufferResource);
+
+
+		//Preloading ** TILLMAN
+		//void PreloadObjects(unsigned int nrOfObjects, char const* const* const objectFileNames);
 };
 
 bool ResourceManagerInit(ID3D11Device* device, ID3D11DeviceContext* deviceContext);

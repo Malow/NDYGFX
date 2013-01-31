@@ -1,104 +1,5 @@
 #include "ResourceManager.h"
  
-/*
-void ResourceManager::DoMinMax(D3DXVECTOR3& min, D3DXVECTOR3& max, D3DXVECTOR3 v)
-{
-	min.x = min(min.x, v.x);
-	min.y = min(min.y, v.y);
-	min.z = min(min.z, v.z);
-
-	max.x = max(max.x, v.x);
-	max.y = max(max.y, v.y);
-	max.z = max(max.z, v.z);
-}
-
-MaloW::Array<MeshStrip*>* ResourceManager::LoadMesh(const char* filePath, ObjData* objData)
-{
-	MaloW::Array<MeshStrip*>* mesh = NULL;
-	MaloW::Array<MaterialData>* mats = objData->mats;
-	for(int q = 0; q < mats->size(); q++)
-	{
-		bool hasFace = false;
-		MeshStrip* strip = new MeshStrip();
-
-		/////// For hit/bounding boxes
-		D3DXVECTOR3 min = D3DXVECTOR3(99999.9f, 99999.9f, 99999.9f);
-		D3DXVECTOR3 max = -min;
-
-		int nrOfVerts = 0;
-
-		Vertex* tempverts = new Vertex[objData->faces->size()*3];
-
-		for(int i = 0;  i < objData->faces->size(); i++)
-		{
-			if(objData->faces->get(i).material == mats->get(q).name)
-			{
-				int vertpos = objData->faces->get(i).data[0][0] - 1;
-				int textcoord = objData->faces->get(i).data[0][1] - 1;
-				int norm = objData->faces->get(i).data[0][2] - 1;
-				tempverts[nrOfVerts] = Vertex(objData->vertspos->get(vertpos), objData->textcoords->get(textcoord), objData->vertsnorms->get(norm));
-				DoMinMax(min, max, tempverts[nrOfVerts].pos);
-				nrOfVerts++;
-
-				vertpos = objData->faces->get(i).data[2][0] - 1;
-				textcoord = objData->faces->get(i).data[2][1] - 1;
-				norm = objData->faces->get(i).data[2][2] - 1;
-				tempverts[nrOfVerts] = Vertex(objData->vertspos->get(vertpos), objData->textcoords->get(textcoord), objData->vertsnorms->get(norm));
-				DoMinMax(min, max, tempverts[nrOfVerts].pos);
-				nrOfVerts++;
-
-				vertpos = objData->faces->get(i).data[1][0] - 1;
-				textcoord = objData->faces->get(i).data[1][1] - 1;
-				norm = objData->faces->get(i).data[1][2] - 1;
-				tempverts[nrOfVerts] = Vertex(objData->vertspos->get(vertpos), objData->textcoords->get(textcoord), objData->vertsnorms->get(norm));
-				DoMinMax(min, max, tempverts[nrOfVerts].pos);
-				nrOfVerts++;
-
-				hasFace = true;
-			}
-		}
-
-		if(!hasFace)
-		{
-			delete tempverts;
-			delete strip;
-		}
-		else
-		{
-			strip->setNrOfVerts(nrOfVerts);
-			Vertex* verts = new Vertex[nrOfVerts];
-			for(int z = 0; z < nrOfVerts; z++)
-			{
-				verts[z] = tempverts[z];
-			}
-			delete tempverts;
-			strip->SetVerts(verts);
-
-			strip->SetTexturePath(objData->mats->get(q).texture);
-
-			Material* mat = new Material();
-			mat->AmbientColor = objData->mats->get(q).ka;
-			if(mat->AmbientColor == D3DXVECTOR3(0.0f, 0.0f, 0.0f))				//////////// MaloW Fix, otherwise completely black with most objs
-				mat->AmbientColor += D3DXVECTOR3(0.2f, 0.2f, 0.2f);			//////////// MaloW Fix, otherwise completely black with most objs
-
-			mat->DiffuseColor = objData->mats->get(q).kd;
-			if(mat->DiffuseColor == D3DXVECTOR3(0.0f, 0.0f, 0.0f))				//////////// MaloW Fix, otherwise completely black with most objs
-				mat->DiffuseColor += D3DXVECTOR3(0.6f, 0.6f, 0.6f);			//////////// MaloW Fix, otherwise completely black with most objs
-
-			mat->SpecularColor = objData->mats->get(q).ks;
-			strip->SetMaterial(mat);
-
-			strip->SetBoundingSphere(BoundingSphere(min, max));
-
-			mesh->add(strip);
-			//this->strips->add(strip);//**tillman**
-		}
-	}
-	delete objData;
-
-	return NULL;
-}
-*/
 
 ResourceManager::ResourceManager() : gDevice(NULL), gDeviceContext(NULL)
 {
@@ -131,43 +32,25 @@ ResourceManager::~ResourceManager()
 	this->zTextureResources.clear();
 
 	//Object data resources
-	map<std::string, ObjData*>::iterator objDataIterator;
+	map<std::string, ObjectDataResource*>::iterator objDataIterator;
 	for(objDataIterator = this->zObjectDataResources.begin(); objDataIterator != this->zObjectDataResources.end(); objDataIterator++)
 	{
 		if(objDataIterator->second)
 		{
-			MaloW::Debug("WARNING: Resource manager deleted the object data resource: " + objDataIterator->first + "; missing call to delete resource somewhere.");
-			
-			//Delete object data 
-			delete objDataIterator->second;
-			//Set the pointer to NULL.
-			objDataIterator->second = NULL;  
-			//Remove object data from table.
+			//An object data cannot be deleted since it's destructor is private to force correct use of texture creation/deletion.
+			//Instead decrease reference count until it deletes itself.
+			int refCount = objDataIterator->second->GetReferenceCount();
+			MaloW::Debug("WARNING: Resource manager deleted the object resource: " + objDataIterator->second->GetName() + "; missing decrease(s) in reference counter somewhere. Occurrences: " + MaloW::convertNrToString(refCount));
+			for(int i = 0; i < refCount; i++)
+			{
+				objDataIterator->second->DecreaseReferenceCount();
+			}
+
+			objDataIterator->second = NULL;
 		}
 	}
 	this->zObjectDataResources.clear();
-
-	/*
-	//Mesh(strips) resources
-	map<std::string, MeshCounted*>::iterator meshIterator;
-	for(meshIterator = this->zMeshes.begin(); meshIterator != this->zMeshes.end(); meshIterator++)
-	{
-		if(meshIterator->second)
-		{
-			//A mesh cannot be deleted since it's destructor is private to force correct use of mesh creation/deletion.
-			//Instead decrease reference count until it deletes itself.
-			int refCount = meshIterator->second->GetReferenceCount();
-			MaloW::Debug("WARNING: Resource manager deleted the mesh resource: " + meshIterator->first + "; missing decrease(s) in reference counter somewhere. Occurrences: " + MaloW::convertNrToString(refCount));
-			for(int i = 0; i < refCount; i++)
-			{
-				meshIterator->second->DecreaseReferenceCount();
-			}
-
-			meshIterator->second = NULL;
-		}
-	}
-	this->zMeshResources.clear();
-	*/
+	
 
 	//Buffer resources
 	map<std::string, BufferResource*>::iterator bufferIterator;
@@ -284,43 +167,8 @@ TextureResource* ResourceManager::CreateCubeTextureResourceFromFile( const char*
 	this->zTextureResources[filePath]->IncreaseReferenceCount();
 
 	return tex->second;
-}/*
-TextureResource* ResourceManager::CreateTextureResource(const char* id, D3DX11_IMAGE_LOAD_INFO loadInfo)
-{
-	return NULL; //**TILLMAN TODO**
-}
-TextureResource* ResourceManager::HasTextureResource(const char* filePath)
-{
-	//Try to find resource.
-	auto tex = this->zTextureResources.find(filePath);
-	//If not found, return NULL.
-	if(tex == this->zTextureResources.end())
-	{
-		return NULL;
-	}
-	else 
-	{
-		tex->second->IncreaseReferenceCount(); //Increase reference counter and...
-		return tex->second; //...return resource.
-	}
 }
 
-void ResourceManager::SetTextureResource(TextureResource* textureResource)
-{
-	//Check if texture resource already exists in the table.
-	TextureResource* tmp = this->HasTextureResource(textureResource->GetName().c_str());
-	if(tmp != NULL) //If it does, increase it's reference count.
-	{
-		tmp->IncreaseReferenceCount(); //AKA textureResource.
-	}
-	else //If not, add it.
-	{
-		//Save the pointer.
-		this->zTextureResources[textureResource->GetName()] = textureResource;
-		//Increase reference count. (The resource manager has a reference to the resource).
-		this->zTextureResources[textureResource->GetName()]->IncreaseReferenceCount();
-	}
-}*/
 void ResourceManager::DeleteTextureResource( TextureResource* &textureResource )
 {
 	if(textureResource)
@@ -361,7 +209,7 @@ void ResourceManager::DeleteTextureResource( TextureResource* &textureResource )
 }
 
 
-ObjData* ResourceManager::LoadObjectDataFromFile(const char* filePath)
+ObjectDataResource* ResourceManager::LoadObjectDataResourceFromFile(const char* filePath)
 {
 	if(this->mutex)
 	{
@@ -370,32 +218,45 @@ ObjData* ResourceManager::LoadObjectDataFromFile(const char* filePath)
 	else 
 		MaloW::Debug("Mutex is broken / hasn't been created / has been closed for Resourcemanager Loadobjectdata.");
 
+
+
 	auto objData = this->zObjectDataResources.find(filePath);
-	//If the buffer resource was not found in the array, return NULL.
+	//If the object data resource was not found in the array, create it.
 	if(objData == this->zObjectDataResources.end())
 	{
-		ReleaseMutex(this->mutex);
-		return NULL;
+		//Create and load object data.
+		ObjData* objectData = NULL;
+		ObjLoader oj;
+		objectData = oj.LoadObjFile(filePath);
+
+		if(objectData == NULL)
+		{
+			string dbgStr = "WARNING: Failed to load object data from file: ";
+			dbgStr += filePath;
+			MaloW::Debug(dbgStr);
+
+			return NULL;
+		}
+		else
+		{
+			//Create if loading was successful.
+			this->zObjectDataResources[filePath] = new ObjectDataResource(filePath, objectData);
+			//Increase reference count.
+			this->zObjectDataResources[filePath]->IncreaseReferenceCount();
+			
+			//Return newly created object data resource.
+			return this->zObjectDataResources[filePath];
+		}
 	}
 
-	//else return if found
+	//If the object data resource already exists, increase reference counter & return it.
+	this->zObjectDataResources[filePath]->IncreaseReferenceCount();
+
 	ReleaseMutex(this->mutex);
 	return objData->second;
 }
-void ResourceManager::SetObjectData(const char* filePath, ObjData* objectData)
-{
-	if(this->mutex)
-	{
-		WaitForSingleObject(this->mutex, INFINITE);
-	}
-	else 
-		MaloW::Debug("Mutex is broken / hasn't been created / has been closed for Resourcemanager SetObjectData.");
-	//Create object data if loading was successful.
-	this->zObjectDataResources[filePath] = objectData;
 
-	ReleaseMutex(this->mutex);
-}
-void ResourceManager::UnloadObjectData(const char* filePath)
+void ResourceManager::UnloadObjectDataResource(const char* filePath)
 {
 	if(this->mutex)
 	{
@@ -404,87 +265,30 @@ void ResourceManager::UnloadObjectData(const char* filePath)
 	else 
 		MaloW::Debug("Mutex is broken / hasn't been created / has been closed for Resourcemanager UnloadObjectData.");
 
+
 	auto objData = this->zObjectDataResources.find(filePath);
-	//If the buffer resource was not found in the array, return NULL.
+	//If the object data resource was found in the array, decrease its reference counter.
 	if(objData != this->zObjectDataResources.end())
 	{
-		// Store Object
-		ObjData* objectData = objData->second;
+		ObjectDataResource* objectData = objData->second;
+		objectData->DecreaseReferenceCount();
 
-		// Remove object data from table.
-		this->zObjectDataResources.erase(objData);
-
-		// Delete object data
-		delete objectData;
+		//If reference count is 1, no objects other than the resource manager itself has a reference to it.
+		if(objectData->GetReferenceCount() == 1)
+		{
+			//therefore delete it by decreasing its reference count one more time.
+			objectData->DecreaseReferenceCount();
+			//Remove object data resource from table.
+			this->zObjectDataResources.erase(objData);
+		}
 	}
-
+	else
+	{
+		MaloW::Debug("WARNING: ResourceManager::UnloadObjectDataResource(): Could not find the following object data resource to unload: " + string(filePath));
+	}
+	
 	ReleaseMutex(this->mutex);
 }
-/*
-MeshCounted* ResourceManager::CreateMeshFromFile( const char* filePath )
-{
-	auto mesh = this->zMeshes.find(filePath);
-	//If the mesh was not found in the array, create it.
-	if(mesh == this->zMeshes.end())
-	{
-		//Load data from secondary to primary memory.
-		ObjLoader objLoader;
-		ObjData* objData = objLoader.LoadObjFile(filePath);
-
-		//If data was transferred (was was successfully read), then load data into classes.
-		if(objData)
-		{
-			//Loads the mesh into array.
-			MaloW::Array<MeshStrip*>* meshStrips = this->LoadMesh(filePath);
-			//Create & Set loaded mesh.
-			this->zMeshes[filePath] = new MeshCounted(meshStrips);
-			//Increase reference count.
-			this->zMeshes[filePath]->IncreaseReferenceCount();
-			
-			//Return newly created texture.
-			return this->zMeshes[filePath];
-		}
-		else
-		{
-			string dbgStr = "WARNING: Failed to load mesh: ";
-			dbgStr += filePath;
-			MaloW::Debug(dbgStr);
-
-			return NULL;
-		}
-	}
-
-	//If the mesh already exists, increase reference counter & return mesh.
-	this->zMeshes[filePath]->IncreaseReferenceCount();
-
-	return mesh->second;
-}*/
-/*
-void ResourceManager::DeleteMesh( MeshCounted* &meshCounted )
-{
-	if(meshCounted)
-	{
-		meshCounted->DecreaseReferenceCount();
-		//If reference count is 1, no objects other than the resource manager itself has a reference to it.
-		if(meshCounted->GetReferenceCount() == 1)
-		{
-			//Find texture.
-			auto mesh = this->zMeshes.find(meshCounted->GetName());
-			//If found..
-			if(mesh != this->zMeshes.end())
-			{
-				//Decrease reference counter once more so that the texture will delete itself.
-				mesh->second->DecreaseReferenceCount();
-				//Remove texture from table.
-				this->zMeshes.erase(mesh);
-			}
-			meshCounted = NULL;
-		}
-	}
-}
-*/
-
-
 
 BufferResource* ResourceManager::CreateBufferResource(const char* fileName, BUFFER_INIT_DESC bufferInitDesc)
 {
@@ -555,11 +359,96 @@ void ResourceManager::DeleteBufferResource( BufferResource* &bufferResource )
 	}
 }
 
+/* /TILLMAN
+void ResourceManager::PreloadObjects(unsigned int nrOfObjects, char const* const* const objectFileNames)
+{
+	if(objectFileNames != NULL)
+	{
+		ObjData* tmpObjData = NULL;
+		for(unsigned int i = 0; i < nrOfObjects; i++)
+		{
+			if(objectFileNames != NULL)
+			{
+				tmpObjData = this->LoadObjectDataFromFile(objectFileNames[i]);
+				if(tmpObjData == NULL)
+				{
+					/*		CIRCULÄR INCLUDE - TILLMAN					
+					Mesh* tmpMesh = NULL;
+					string tmpFileName = string(objectFileNames[i]);
+					
+					if(tmpFileName.substr(tmpFileName.length() - 4) == ".obj") 
+					{
+						tmpMesh = new StaticMesh(D3DXVECTOR3());
+					}
+					else if(tmpFileName.substr(tmpFileName.length() - 4) == ".ani")
+					{
+						tmpMesh = new AnimatedMesh(D3DXVECTOR3());
+					}
+
+					//tmp = tmpMesh->GetObjData(); //***TILLMAN
+
+					tmpMesh->LoadFromFile(objectFileNames[i]);
+					
+
+					//todo: load objdata - TILLMAN**
+					string tmpFileName = string(objectFileNames[i]);
+
+					/*if(tmpFileName.substr(tmpFileName.length() - 4) == ".obj") //detta på insidan av ny funktion?
+					{
+						//tmpObjData = GetGraphics()->LoadObjDataFromFile(objectFileNames[i]);
+					}
+					else if(tmpFileName.substr(tmpFileName.length() - 4) == ".ani")  //detta på insidan av ny funktion?
+					{
+						//tmpObjData = GetGraphics()->LoadObjDataFromFile(objectFileNames[i]);
+					}
+					//this->SetObjectData(objectFileNames[i], tmpObjData);
+					//todo: load textures - TILLMAN**
+					//todo: load buffer - TILLMAN**
+				}
+			}
+			else
+			{
+				MaloW::Debug("WARNING: ResourceManager: PreloadObjects(): element to preload was empty.");
+			}
+		}
+	}
+	else
+	{
+		MaloW::Debug("WARNING: ResourceManager: PreloadObjects(): array of objects to preload was empty.");
+	}
 
 
 
 
 
+	/* buffer & texture
+	string resourceNameVertices = mesh->GetFilePath() + string("Strip") + MaloW::convertNrToString(i) + string("Vertices");
+	BufferResource* verts = GetResourceManager()->CreateBufferResource(resourceNameVertices.c_str(), bufferDesc);
+
+	BufferResource* inds = NULL; 
+	if(strip->getIndicies())
+	{
+		BUFFER_INIT_DESC bufferInds;
+		bufferInds.ElementSize = sizeof(int);
+		bufferInds.InitData = strip->getIndicies();
+		bufferInds.NumElements = strip->getNrOfIndicies();
+		bufferInds.Type = INDEX_BUFFER;
+		bufferInds.Usage = BUFFER_DEFAULT;
+
+
+		string resourceNameIndices = mesh->GetFilePath() + string("Strip") + MaloW::convertNrToString(i) + string("Indices");
+		inds = GetResourceManager()->CreateBufferResource(resourceNameIndices.c_str(), bufferInds);
+	}
+
+	TextureResource* texture = NULL;
+	if(strip->GetTexturePath() != "")
+	{
+		texture = GetResourceManager()->CreateTextureResourceFromFile(strip->GetTexturePath().c_str());
+	}
+}
+
+
+*/
 
 
 

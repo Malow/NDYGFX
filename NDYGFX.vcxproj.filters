@@ -202,6 +202,9 @@
     <ClInclude Include="Source\Process.h">
       <Filter>Source Files\Engine\Other</Filter>
     </ClInclude>
+    <ClInclude Include="Source\ObjectDataResource.h">
+      <Filter>Source Files\Engine\DxMan and Techs</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\GraphicsEngineImp.cpp">
@@ -325,6 +328,9 @@
       <Filter>Source Files\Engine\DxMan and Techs</Filter>
     </ClCompile>
     <ClCompile Include="Source\BufferResource.cpp">
+      <Filter>Source Files\Engine\DxMan and Techs</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ObjectDataResource.cpp">
       <Filter>Source Files\Engine\DxMan and Techs</Filter>
     </ClCompile>
   </ItemGroup>

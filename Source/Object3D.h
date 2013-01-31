@@ -1,5 +1,4 @@
-#ifndef OBJECT_3D
-#define OBJECT_3D
+#pragma once
 
 #include "DirectX.h"
 #include "Buffer.h"
@@ -28,5 +27,3 @@ public:
 	TextureResource* GetTextureResource() { return this->textureResource; }
 
 };
-
-#endif

@@ -49,6 +49,7 @@
     <ClInclude Include="Source\MeshResource.h" />
     <ClInclude Include="Source\MeshStrip.h" />
     <ClInclude Include="Source\Object3D.h" />
+    <ClInclude Include="Source\ObjectDataResource.h" />
     <ClInclude Include="Source\ObjLoader.h" />
     <ClInclude Include="Source\ParticleShader.h" />
     <ClInclude Include="Source\ParticleSystem.h" />
@@ -95,6 +96,7 @@
     <ClCompile Include="Source\MeshResource.cpp" />
     <ClCompile Include="Source\MeshStrip.cpp" />
     <ClCompile Include="Source\Object3D.cpp" />
+    <ClCompile Include="Source\ObjectDataResource.cpp" />
     <ClCompile Include="Source\ObjLoader.cpp" />
     <ClCompile Include="Source\ParticleShader.cpp" />
     <ClCompile Include="Source\ParticleSystem.cpp" />

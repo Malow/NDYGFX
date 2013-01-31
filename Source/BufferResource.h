@@ -9,8 +9,6 @@
 #pragma once
 
 #include "ReferenceCounted.h"
-#include "DirectX.h"
-#include <d3dx11.h>
 #include "Buffer.h"
 #include <string>
 using namespace std;

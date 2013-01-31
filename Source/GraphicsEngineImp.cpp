@@ -373,9 +373,10 @@ bool GraphicsEngineImp::DeleteImage(Image* delImage)
 	return true;
 }
 
-void GraphicsEngineImp::DeleteImage( iImage* delImg )
+void GraphicsEngineImp::DeleteImage( iImage* &delImg )
 {
 	this->DeleteImage(dynamic_cast<Image*>(delImg));
+	delImg = NULL;
 }
 
 Text* GraphicsEngineImp::CreateText(string text, D3DXVECTOR2 position, float size, string fontTexturePath)
@@ -396,9 +397,10 @@ bool GraphicsEngineImp::DeleteText(Text* delText)
 	return true;
 }
 
-void GraphicsEngineImp::DeleteText( iText* deltxt )
+void GraphicsEngineImp::DeleteText( iText* &deltxt )
 {
 	this->DeleteText(dynamic_cast<Text*>(deltxt));
+	deltxt = NULL;
 }
 
 float GraphicsEngineImp::Update()
@@ -519,6 +521,15 @@ void GraphicsEngineImp::UseShadow(bool useShadow)
 void GraphicsEngineImp::SetSpecialCircle(float innerRadius, float outerRadius, Vector2& targetPos) const
 {
 	this->dx->SetSpecialCircle(innerRadius, outerRadius, targetPos);
+}
+
+void GraphicsEngineImp::PreLoadMeshes(unsigned int nrOfMeshes, char const* const* const meshesFileNames)
+{
+	for(int i = 0; i < nrOfMeshes; i++) //**TILLMAN - krångligt på annat sätt, dock kommer dessa meshes inte användas.
+	{
+		iMesh* tmpMesh = this->CreateMesh(meshesFileNames[i], Vector3());
+		tmpMesh->SetScale(0.0f); //Never show them (put them in the unused list).
+	}
 }
 
 void GraphicsEngineImp::LoadingScreen(const char* BackgroundTexture, const char* ProgressBarTexture, float FadeBlackInInTime, float FadeBlackInOutTime, float FadeBlackOutInTime, float FadeBlackOutOutTime)
@@ -691,9 +702,11 @@ iLight* GraphicsEngineImp::CreateLight( Vector3 pos )
 	return this->CreateLight(D3DXVECTOR3(pos.x, pos.y, pos.z));
 }
 
-void GraphicsEngineImp::DeleteLight( iLight* light )
+void GraphicsEngineImp::DeleteLight( iLight* &light )
 {
 	this->DeleteLight(dynamic_cast<Light*>(light));
+
+	light = NULL;
 }
 
 iCamera* GraphicsEngineImp::GetCamera() const

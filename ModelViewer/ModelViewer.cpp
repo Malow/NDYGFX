@@ -86,7 +86,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 
 		
 
-	iImage* iM5 = GetGraphics()->CreateImage(Vector2(300, 100), Vector2(100, 100), "Media/Arrow_v01.png");	//**minnesläcka om createmesh använder samma texture OCH skapas FÖRE!
+	iImage* iM5 = GetGraphics()->CreateImage(Vector2(300, 100), Vector2(100, 100), "Media/Arrow_v01.png");	//**minnesläcka om createmesh använder samma texture som en image OCH skapas FÖRE!
 
 		iMesh* arrow = GetGraphics()->CreateMesh("Media/Arrow_v01.obj", Vector3(30, 10, 30));					//**ORSAKAR minnesläcka om createmesh använder samma texture OCH skapas FÖRE!
 	arrow->Scale(1.0f * 0.05f);
@@ -341,29 +341,9 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	//for(int i = 0; i < 10; i++)
 		//for(int u = 0; u < 10; u++)
 			//GetGraphics()->CreateMesh("Media/Asdbfd.obj", Vector3(0 + i * 5, 5, 0 + u * 5))->SetScale(1.0f * 0.05f);
-	
-	//scale texture debugging(fixed)
-	/*
-	iMesh* fernDbg1 = GetGraphics()->CreateMesh("Media/Fern_02_v01.obj", Vector3(2, 0, 2));
-	iMesh* scaleDbg = GetGraphics()->CreateMesh("Media/scale.obj", Vector3(0, 0, 0));
-	fernDbg1->Scale(1.0f / 20.0f);
-	scaleDbg->Scale(1.0f * 0.05f);
-	*/
 
 	iMesh* ball2 = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(20, 20, 20));
 	ball2->Scale(0.8f);
-
-	//Memory leak with texture resources for iImage
-	
-	//iImage* imm1 = GetGraphics()->CreateImage(Vector2(100, 100), Vector2(100, 100), "Media/BallTexture.png");
-		//iImage* imm2 = GetGraphics()->CreateImage(Vector2(200, 100), Vector2(100, 100), "Media/Bush_leaf_01_v07.png");
-
-		//iImage* imm3 = GetGraphics()->CreateImage(Vector2(300, 100), Vector2(100, 100), "Media/Arrow_v01.png");
-		//iImage* imm4 = GetGraphics()->CreateImage(Vector2(300, 100), Vector2(100, 100), "Media/Arrow_v01.png");
-
-
-		//Editor crasch test
-		//iMesh* spawnP = GetGraphics()->CreateStaticMesh("Media/spawn.obj", Vector3());
 
 
 	//AI grid test
@@ -405,6 +385,16 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	}*/
 
 
+	//Preload testing
+	/*unsigned int nrOfObjects = 5;
+	const char** meshFileNames = new const char*[nrOfObjects];
+	meshFileNames[0] = "Media/ball.obj";
+	meshFileNames[2] = "Media/bth.obj";
+	meshFileNames[4] = "Media/scale.obj";
+	GetGraphics()->PreLoadMeshes(nrOfObjects, meshFileNames);
+
+	GetGraphics()->CreateMesh("Media/scale.obj", Vector3(30, -300, 30));
+	*/
 #endif
 //*************************************	    END OF PRE TEST       **********************
 
@@ -802,15 +792,12 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 
 	//*************************************	     POST TEST       **********************
 #ifdef TEST
-	//delete[] testData;
-	//delete[] debugCSMPoints;
-	//delete[] vertices;
 	delete[] iTs;
-	//delete[] fileNames;
 	delete [] sizes;
 	delete testData[0];
 	delete testData[1];
 	delete [] testData;
+	//delete[] objectFileNames;
 
 	GetGraphics()->DeleteImage(iM);
 	GetGraphics()->DeleteImage(iM2);
