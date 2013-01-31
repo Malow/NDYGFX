@@ -1,0 +1,342 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Include\GraphicsEngine.h" />
+    <ClInclude Include="Include\iAnimatedMesh.h" />
+    <ClInclude Include="Include\iCamera.h" />
+    <ClInclude Include="Include\iFBXMesh.h" />
+    <ClInclude Include="Include\iGraphicsEngineParams.h" />
+    <ClInclude Include="Include\iImage.h" />
+    <ClInclude Include="Include\iLight.h" />
+    <ClInclude Include="Include\iMesh.h" />
+    <ClInclude Include="Include\iPhysicsEngine.h" />
+    <ClInclude Include="Include\iTerrain.h" />
+    <ClInclude Include="Include\iText.h" />
+    <ClInclude Include="Include\iWaterPlane.h" />
+    <ClInclude Include="Include\Matrix.h" />
+    <ClInclude Include="Include\Vector.h" />
+    <ClInclude Include="Source\BoundingSphere.h" />
+    <ClInclude Include="Source\AnimatedMesh.h" />
+    <ClInclude Include="Source\Array.h" />
+    <ClInclude Include="Source\Buffer.h" />
+    <ClInclude Include="Source\BufferResource.h" />
+    <ClInclude Include="Source\Camera.h" />
+    <ClInclude Include="Source\CamRecording.h" />
+    <ClInclude Include="Source\CascadedShadowMap.h" />
+    <ClInclude Include="Source\CursorControl.h" />
+    <ClInclude Include="Source\DirectX.h" />
+    <ClInclude Include="Source\DxManager.h" />
+    <ClInclude Include="Source\DxManagerDebugging.h" />
+    <ClInclude Include="Source\DxManagerEvents.h" />
+    <ClInclude Include="Source\FPSCamera.h" />
+    <ClInclude Include="Source\FXAA.h" />
+    <ClInclude Include="Source\GraphicsEngineImp.h" />
+    <ClInclude Include="Source\GraphicsEngineParameters.h" />
+    <ClInclude Include="Source\Image.h" />
+    <ClInclude Include="Source\KeyListener.h" />
+    <ClInclude Include="Source\Light.h" />
+    <ClInclude Include="Source\MaloWFileDebug.h" />
+    <ClInclude Include="Source\Material.h" />
+    <ClInclude Include="Source\Mesh.h" />
+    <ClInclude Include="Source\MeshResource.h" />
+    <ClInclude Include="Source\MeshStrip.h" />
+    <ClInclude Include="Source\Object3D.h" />
+    <ClInclude Include="Source\ObjLoader.h" />
+    <ClInclude Include="Source\ParticleShader.h" />
+    <ClInclude Include="Source\ParticleSystem.h" />
+    <ClInclude Include="Source\ParticleSystemHandler.h" />
+    <ClInclude Include="Source\PhysicsEngine.h" />
+    <ClInclude Include="Source\Process.h" />
+    <ClInclude Include="Source\Random.h" />
+    <ClInclude Include="Source\ReferenceCounted.h" />
+    <ClInclude Include="Source\ResourceManager.h" />
+    <ClInclude Include="Source\RTSCamera.h" />
+    <ClInclude Include="Source\Shader.h" />
+    <ClInclude Include="Source\SkyBox.h" />
+    <ClInclude Include="Source\SSAO.h" />
+    <ClInclude Include="Source\StaticMesh.h" />
+    <ClInclude Include="Source\Terrain.h" />
+    <ClInclude Include="Source\Text.h" />
+    <ClInclude Include="Source\TextureResource.h" />
+    <ClInclude Include="Source\TRDCamera.h" />
+    <ClInclude Include="Source\Vertex.h" />
+    <ClInclude Include="Source\WaterPlane.h" />
+    <ClInclude Include="Source\Windows.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\AnimatedMesh.cpp" />
+    <ClCompile Include="Source\Buffer.cpp" />
+    <ClCompile Include="Source\BufferResource.cpp" />
+    <ClCompile Include="Source\Camera.cpp" />
+    <ClCompile Include="Source\CamRecording.cpp" />
+    <ClCompile Include="Source\CascadedShadowMap.cpp" />
+    <ClCompile Include="Source\DxManager.cpp" />
+    <ClCompile Include="Source\DxManagerDeferred.cpp" />
+    <ClCompile Include="Source\DxManagerForwardRendering.cpp" />
+    <ClCompile Include="Source\DxManagerInit.cpp" />
+    <ClCompile Include="Source\DxManagerPostProcess.cpp" />
+    <ClCompile Include="Source\DxManagerRender.cpp" />
+    <ClCompile Include="Source\FPSCamera.cpp" />
+    <ClCompile Include="Source\FXAA.cpp" />
+    <ClCompile Include="Source\GraphicsEngine.cpp" />
+    <ClCompile Include="Source\GraphicsEngineImp.cpp" />
+    <ClCompile Include="Source\GraphicsEngineParameters.cpp" />
+    <ClCompile Include="Source\Image.cpp" />
+    <ClCompile Include="Source\KeyListener.cpp" />
+    <ClCompile Include="Source\Light.cpp" />
+    <ClCompile Include="Source\Mesh.cpp" />
+    <ClCompile Include="Source\MeshResource.cpp" />
+    <ClCompile Include="Source\MeshStrip.cpp" />
+    <ClCompile Include="Source\Object3D.cpp" />
+    <ClCompile Include="Source\ObjLoader.cpp" />
+    <ClCompile Include="Source\ParticleShader.cpp" />
+    <ClCompile Include="Source\ParticleSystem.cpp" />
+    <ClCompile Include="Source\ParticleSystemsHandler.cpp" />
+    <ClCompile Include="Source\PhysicsEngine.cpp" />
+    <ClCompile Include="Source\Process.cpp" />
+    <ClCompile Include="Source\ResourceManager.cpp" />
+    <ClCompile Include="Source\RTSCamera.cpp" />
+    <ClCompile Include="Source\Shader.cpp" />
+    <ClCompile Include="Source\SkyBox.cpp" />
+    <ClCompile Include="Source\SSAO.cpp" />
+    <ClCompile Include="Source\StaticMesh.cpp" />
+    <ClCompile Include="Source\TCBSpline.cpp" />
+    <ClCompile Include="Source\Terrain.cpp" />
+    <ClCompile Include="Source\Text.cpp" />
+    <ClCompile Include="Source\TextureResource.cpp" />
+    <ClCompile Include="Source\TRDCamera.cpp" />
+    <ClCompile Include="Source\WaterPlane.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Include\iKeyListener.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\WorkingDir\Shaders\BTTFBXViewer.fx">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Default.P0</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="..\WorkingDir\Shaders\DebugBoundingSpheres.fx">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">BasicTech</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="..\WorkingDir\Shaders\DebugNormals.fx">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="..\WorkingDir\Shaders\DebugWireframe.fx">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="..\WorkingDir\Shaders\DeferredAnimatedGeometry.fx">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="..\WorkingDir\Shaders\DeferredGeometry.fx">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="..\WorkingDir\Shaders\DeferredLightning.fx">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="..\WorkingDir\Shaders\DeferredQuad.fx">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="..\WorkingDir\Shaders\DeferredTexture.fx">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="..\WorkingDir\Shaders\ForwardRendering.fx">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="..\WorkingDir\Shaders\FXAA.fx">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="..\WorkingDir\Shaders\InvisibilityEffect.fx">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="..\WorkingDir\Shaders\Lines.fx">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="..\WorkingDir\Shaders\PPHighlightArea.fx">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="..\WorkingDir\Shaders\ScreenSpaceBillBoard.fx">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="..\WorkingDir\Shaders\ShadowMap.fx">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="..\WorkingDir\Shaders\ShadowMapAnimated.fx">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="..\WorkingDir\Shaders\SkyBox.fx">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="..\WorkingDir\Shaders\SSAO.fx">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="..\WorkingDir\Shaders\stdafx.fx">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="..\WorkingDir\Shaders\Terrain.fx">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="..\WorkingDir\Shaders\TerrainEditor.fx">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="..\WorkingDir\Shaders\TextRenderer.fx">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
+    </FxCompile>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{16B85208-D199-49A6-838A-8CDB50034E11}</ProjectGuid>
+    <RootNamespace>NDYGFX</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v110</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v110</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)\Build\$(Configuration)\</OutDir>
+    <ExecutablePath>$(SolutionDir)\External\VLD\bin\Win32;$(SolutionDir)\External\D3D\Utilities\bin\x86\;$(ExecutablePath)</ExecutablePath>
+    <IncludePath>$(SolutionDir)\External\D3D\Include\;$(SolutionDir)\External\VLD\include\;$(SolutionDir)\Include\;$(DXSDK_DIR)\Include\;$(SolutionDir)\External\BTHFBX\include\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)\External\VLD\lib\Win32;$(SolutionDir)\External\D3D\Lib\x86\;$(DXSDK_DIR)\Lib\x86\;$(LibraryPath)</LibraryPath>
+    <TargetName>$(ProjectName)D</TargetName>
+    <IntDir>$(ProjectDir)\Obj\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)\Build\$(Configuration)\</OutDir>
+    <ExecutablePath>$(SolutionDir)\External\D3D\Utilities\bin\x86\;$(ExecutablePath)</ExecutablePath>
+    <IncludePath>$(SolutionDir)\External\D3D\Include\;$(SolutionDir)\Include\;$(DXSDK_DIR)\Include\;$(SolutionDir)\External\BTHFBX\include\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)\External\D3D\Lib\x86\;$(DXSDK_DIR)\Lib\x86\;$(LibraryPath)</LibraryPath>
+    <IntDir>$(ProjectDir)\Obj\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(ProjectDir)\Include\</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>DLL_EXPORT;WIN32;_DEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <DisableSpecificWarnings>4250;4099;4290;4239;4238</DisableSpecificWarnings>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
+      <LinkTimeCodeGeneration>
+      </LinkTimeCodeGeneration>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>DLL_EXPORT;WIN32;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir)\Include\</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

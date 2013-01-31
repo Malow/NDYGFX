@@ -1,0 +1,142 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Include\BTHFbx.h" />
+    <ClInclude Include="Include\BTHFbxAnimationController.h" />
+    <ClInclude Include="Include\BTHFbxCommon.h" />
+    <ClInclude Include="Include\BTHFbxCurve.h" />
+    <ClInclude Include="Include\BTHFbxMaterial.h" />
+    <ClInclude Include="Include\BTHFbxModel.h" />
+    <ClInclude Include="Include\BTHFbxModelPart.h" />
+    <ClInclude Include="Include\BTHFbxScene.h" />
+    <ClInclude Include="Include\BTHFbxSkeleton.h" />
+    <ClInclude Include="Include\BTHFbxSkeletonBone.h" />
+    <ClInclude Include="Source\AABB.h" />
+    <ClInclude Include="Source\Animation.h" />
+    <ClInclude Include="Source\AnimationController.h" />
+    <ClInclude Include="Source\AnimationKeyFrames.h" />
+    <ClInclude Include="Source\BoneWeights.h" />
+    <ClInclude Include="Source\Curve.h" />
+    <ClInclude Include="Source\Dictionary.h" />
+    <ClInclude Include="Source\FBXCommon.h" />
+    <ClInclude Include="Source\FBXScene.h" />
+    <ClInclude Include="Source\FBXSceneInstance.h" />
+    <ClInclude Include="Source\FBXSDK.h" />
+    <ClInclude Include="Source\Material.h" />
+    <ClInclude Include="Source\Math.h" />
+    <ClInclude Include="Source\Model.h" />
+    <ClInclude Include="Source\ModelPart.h" />
+    <ClInclude Include="Source\SceneManager.h" />
+    <ClInclude Include="Source\Skeleton.h" />
+    <ClInclude Include="Source\SkeletonBone.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\AABB.cpp" />
+    <ClCompile Include="Source\Animation.cpp" />
+    <ClCompile Include="Source\AnimationController.cpp" />
+    <ClCompile Include="Source\AnimationKeyFrames.cpp" />
+    <ClCompile Include="Source\BoneWeights.cpp" />
+    <ClCompile Include="Source\BTHFbxMain.cpp" />
+    <ClCompile Include="Source\Curve.cpp" />
+    <ClCompile Include="Source\FBXScene.cpp" />
+    <ClCompile Include="Source\FBXSceneInstance.cpp" />
+    <ClCompile Include="Source\Material.cpp" />
+    <ClCompile Include="Source\Math.cpp" />
+    <ClCompile Include="Source\Model.cpp" />
+    <ClCompile Include="Source\ModelPart.cpp" />
+    <ClCompile Include="Source\SceneManager.cpp" />
+    <ClCompile Include="Source\Skeleton.cpp" />
+    <ClCompile Include="Source\SkeletonBone.cpp" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{2665920B-F2B7-438B-BCC1-F4F4EC843366}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>BTHFbx</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v110</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v110</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)/Build/Debug/</OutDir>
+    <IntDir>$(ProjectDir)/Obj/Debug/</IntDir>
+    <TargetName>$(ProjectName)D</TargetName>
+    <ExecutablePath>$(ExecutablePath)</ExecutablePath>
+    <IncludePath>$(SolutionDir)/External/FBX 2014.0/include;$(ProjectDir)/Include;$(DXSDK_DIR)/Include/;$(SolutionDir)/External/D3D/include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)/External/FBX 2014.0/lib/vs2012/x86;$(SolutionDir)/External/D3D/lib/x86;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)/Build/Release/</OutDir>
+    <IntDir>$(ProjectDir)/Obj/Release/</IntDir>
+    <ExecutablePath>$(SolutionDir)/External/D3D/Utilities/bin/x86/;$(ExecutablePath)</ExecutablePath>
+    <IncludePath>$(SolutionDir)/External/FBX 2014.0/include;$(ProjectDir)/Include;$(DXSDK_DIR)/Include/;$(SolutionDir)/External/D3D/include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)/External/FBX 2014.0/lib/vs2012/x86;$(SolutionDir)/External/D3D/lib/x86;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>DLL_EXPORT;WIN32;_DEBUG;_WINDOWS;_USRDLL;BTHFBX_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir)/BTHFBX/Include</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>DLL_EXPORT;WIN32;NDEBUG;_WINDOWS;_USRDLL;BTHFBX_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir)/BTHFBX/Include</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
