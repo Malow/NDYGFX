@@ -158,7 +158,7 @@ public:
 	virtual void UseShadow(bool useShadow);
 	virtual void SetSpecialCircle(float innerRadius, float outerRadius, Vector2& targetPos) const;
 
-	virtual void PreLoadMeshes(unsigned int nrOfMeshes, char const* const* const meshesFileNames);
+	virtual void PreLoadResources(unsigned int nrOfResources, char const* const* const resourcesFileNames);
 
 
 	virtual void SetFPSMax(float maxFPS) { this->dx->SetFPSMAX(maxFPS); }

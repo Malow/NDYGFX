@@ -72,7 +72,12 @@ extern "C"
 		virtual void SetSpecialCircle(float innerRadius, float outerRadius, Vector2& targetPos) const = 0;
 
 		//Resource manager
-		virtual void PreLoadMeshes(unsigned int nrOfMeshes, char const* const* const meshesFileNames) = 0;
+		/*
+			Texture resources are created with the default format (CreateTextureResourceFromFile(..)).
+			Buffer resources are not supported.
+			Supported resources are object data resources(.obj & .ani), Texture resources(default format)(.png && .dds).
+		*/
+		virtual void PreLoadResources(unsigned int nrOfResources, char const* const* const resourcesFileNames) = 0;
 
 		virtual void StartRendering() = 0;
 

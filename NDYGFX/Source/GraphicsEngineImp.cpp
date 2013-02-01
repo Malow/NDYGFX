@@ -517,13 +517,15 @@ void GraphicsEngineImp::SetSpecialCircle(float innerRadius, float outerRadius, V
 	this->dx->SetSpecialCircle(innerRadius, outerRadius, targetPos);
 }
 
-void GraphicsEngineImp::PreLoadMeshes(unsigned int nrOfMeshes, char const* const* const meshesFileNames)
+void GraphicsEngineImp::PreLoadResources(unsigned int nrOfResources, char const* const* const resourcesFileNames)
 {
+	GetResourceManager()->PreLoadResources(nrOfResources, resourcesFileNames);
+	/*
 	for(int i = 0; i < nrOfMeshes; i++) //**TILLMAN - krångligt på annat sätt, dock kommer dessa meshes inte användas.
 	{
 		iMesh* tmpMesh = this->CreateMesh(meshesFileNames[i], Vector3());
 		tmpMesh->SetScale(0.0f); //Never show them (put them in the unused list).
-	}
+	}*/
 }
 
 void GraphicsEngineImp::LoadingScreen(const char* BackgroundTexture, const char* ProgressBarTexture, float FadeBlackInInTime, float FadeBlackInOutTime, float FadeBlackOutInTime, float FadeBlackOutOutTime)

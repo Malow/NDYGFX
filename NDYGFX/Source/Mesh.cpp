@@ -29,21 +29,10 @@ Mesh::~Mesh()
 
 bool Mesh::LoadFromFile(string file)
 {
-	if(file != "")
-	{
-		this->filePath = file;
-	}
-	else
-	{
-		float derp = 1.0f;
-	}
-	
-
-	// if substr of the last 4 = .obj do this:    - else load other format / print error
+	this->filePath = file;
 
 	ObjData* od = GetResourceManager()->LoadObjectDataResourceFromFile(this->filePath.c_str())->GetObjectDataPointer();
 	
-
 	try
 	{
 		if(od)

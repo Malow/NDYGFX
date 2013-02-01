@@ -60,8 +60,8 @@ class ResourceManager
 		/*	Creates a texture resource from file with:
 			BindFlags = D3D11_BIND_SHADER_RESOURCE;
 			Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-			MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
 			and returns a pointer to it.
+			Is the default format used.
 		*/
 		TextureResource* CreateTextureResourceFromFile(const char* filePath);
 		/*	Creates a cube texture resource from file with:
@@ -104,8 +104,13 @@ class ResourceManager
 		void DeleteBufferResource(BufferResource* &bufferResource);
 
 
-		//Preloading ** TILLMAN
-		//void PreloadObjects(unsigned int nrOfObjects, char const* const* const objectFileNames);
+		//Preloading
+		/*
+			Texture resources are created with the default format (CreateTextureResourceFromFile(..)).
+			Buffer resources are not supported.
+			Supported resources are objectDataResources(.obj & .ani), Texture resources(default format)(.png & .dds).
+		*/
+		void PreLoadResources(unsigned int nrOfResources, char const* const* const resourcesFileNames);
 };
 
 bool ResourceManagerInit(ID3D11Device* device, ID3D11DeviceContext* deviceContext);
