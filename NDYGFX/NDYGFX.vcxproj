@@ -28,6 +28,9 @@
     <ClInclude Include="Source\BoundingSphere.h" />
     <ClInclude Include="Source\AnimatedMesh.h" />
     <ClInclude Include="Source\Array.h" />
+    <ClInclude Include="Source\BTHFBX\Include\BTHFbx.h" />
+    <ClInclude Include="Source\BTHFBX\Include\BTHstdafx.h" />
+    <ClInclude Include="Source\BTHFBX\Shared\FBX\FBXSceneD3D.h" />
     <ClInclude Include="Source\Buffer.h" />
     <ClInclude Include="Source\BufferResource.h" />
     <ClInclude Include="Source\Camera.h" />
@@ -38,6 +41,7 @@
     <ClInclude Include="Source\DxManager.h" />
     <ClInclude Include="Source\DxManagerDebugging.h" />
     <ClInclude Include="Source\DxManagerEvents.h" />
+    <ClInclude Include="Source\FBXMesh.h" />
     <ClInclude Include="Source\FPSCamera.h" />
     <ClInclude Include="Source\FXAA.h" />
     <ClInclude Include="Source\GraphicsEngineImp.h" />
@@ -76,6 +80,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\AnimatedMesh.cpp" />
+    <ClCompile Include="Source\BTHFBX\Shared\FBX\FBXSceneD3D.cpp" />
     <ClCompile Include="Source\Buffer.cpp" />
     <ClCompile Include="Source\BufferResource.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
@@ -87,6 +92,7 @@
     <ClCompile Include="Source\DxManagerInit.cpp" />
     <ClCompile Include="Source\DxManagerPostProcess.cpp" />
     <ClCompile Include="Source\DxManagerRender.cpp" />
+    <ClCompile Include="Source\FBXMesh.cpp" />
     <ClCompile Include="Source\FPSCamera.cpp" />
     <ClCompile Include="Source\FXAA.cpp" />
     <ClCompile Include="Source\GraphicsEngine.cpp" />
@@ -302,7 +308,7 @@
     <OutDir>$(SolutionDir)\Build\$(Configuration)\</OutDir>
     <ExecutablePath>$(SolutionDir)\External\VLD\bin\Win32;$(SolutionDir)\External\D3D\Utilities\bin\x86\;$(ExecutablePath)</ExecutablePath>
     <IncludePath>$(SolutionDir)\External\D3D\Include\;$(SolutionDir)\External\VLD\include\;$(SolutionDir)\Include\;$(DXSDK_DIR)\Include\;$(SolutionDir)\External\BTHFBX\include\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)\External\VLD\lib\Win32;$(SolutionDir)\External\D3D\Lib\x86\;$(DXSDK_DIR)\Lib\x86\;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)\External\VLD\lib\Win32;$(SolutionDir)\External\D3D\Lib\x86\;$(DXSDK_DIR)\Lib\x86\;..\NDYGFX\Build\Debug;..\Build\Debug;$(LibraryPath)</LibraryPath>
     <TargetName>$(ProjectName)D</TargetName>
     <IntDir>$(ProjectDir)\Obj\$(Configuration)\</IntDir>
   </PropertyGroup>

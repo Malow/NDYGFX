@@ -22,12 +22,12 @@
 #include "DxManagerEvents.h"
 #include "CascadedShadowMap.h"
 #include "WaterPlane.h"
+#include "FBXMesh.h"
 
 #if defined(DEBUG) || defined(_DEBUG)
 	#include <vld.h>
 	#define INCLUDE_NDYGFX
 #endif
-
 
 class DxManager : public MaloW::Process
 {
@@ -54,6 +54,7 @@ private:
 	MaloW::Array<StaticMesh*> objects;
 	MaloW::Array<AnimatedMesh*> animations;
 	MaloW::Array<WaterPlane*> waterplanes;
+	MaloW::Array<FBXMesh*> FBXMeshes;
 	Shader* Shader_Water;
 
 	MaloW::Array<Image*> images;
@@ -111,6 +112,7 @@ private:
 
 	float Timer;
 	float LastCamUpdate;
+	float LastFBXUpdate;
 	float RendererSleep;
 
 	bool DelayGettingCamera;
@@ -138,6 +140,7 @@ private:
 	void RenderAntiAliasing();
 	void RenderText();
 	void RenderWaterPlanes();
+	void RenderFBXMeshes();
 
 	void SetCamera(SetCameraEvent* ev);
 	void HandleTerrainEvent(TerrainEvent* me);
@@ -146,6 +149,7 @@ private:
 	void HandleImageEvent(ImageEvent* ie);
 	void HandleTextEvent(TextEvent* te);
 	void HandleWaterPlaneEvent(WaterPlaneEvent* ie);
+	void HandleFBXEvent(FBXEvent* fe);
 
 	void CalculateCulling();
 
@@ -176,6 +180,9 @@ public:
 	void CreateText(Text* text, string font);
 	void CreateWaterPlane(WaterPlane* wp, string texture);
 	void CreateSkyBox(string texture);
+	void CreateFBXMesh(FBXMesh* mesh);
+
+
 	void UseShadow(bool useShadow);
 	void SetSpecialCircle(float innerRadius, float outerRadius, Vector2& targetPos);
 
@@ -188,6 +195,7 @@ public:
 	void DeleteImage(Image* image);
 	void DeleteText(Text* text);
 	void DeleteWaterPlane(WaterPlane* wp);
+	void DeleteFBXMesh(FBXMesh* mesh);
 
 	void SetCamera(Camera* cam);
 	Camera* GetCamera() const;

@@ -63,6 +63,7 @@ DxManager::DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam)
 	this->TriangleCount = 0;
 	this->RendererSleep = 0;
 	this->LastCamUpdate = 0;
+	this->LastFBXUpdate = 0;
 
 	this->useSun = false;
 	this->sceneAmbientLight = D3DXVECTOR3(0.2f, 0.2f, 0.2f);
@@ -845,5 +846,17 @@ void DxManager::CreateWaterPlane( WaterPlane* wp, string texture )
 void DxManager::DeleteWaterPlane( WaterPlane* wp )
 {
 	WaterPlaneEvent* re = new WaterPlaneEvent("Delete WaterPlane", wp);
+	this->PutEvent(re);
+}
+
+void DxManager::CreateFBXMesh( FBXMesh* mesh )
+{
+	FBXEvent* re = new FBXEvent("Add FBX", mesh);
+	this->PutEvent(re);
+}
+
+void DxManager::DeleteFBXMesh( FBXMesh* mesh )
+{
+	FBXEvent* re = new FBXEvent("Delete FBX", mesh);
 	this->PutEvent(re);
 }
