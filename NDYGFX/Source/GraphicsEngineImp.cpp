@@ -822,14 +822,17 @@ Vector3 GraphicsEngineImp::GetSunLightColor() const
 float GraphicsEngineImp::GetSunLightIntensity() const
 {
 	return this->dx->GetSunLight().intensity;
-}iWaterPlane* GraphicsEngineImp::CreateWaterPlane( Vector3& pos, const char* texture )
+}
+
+iWaterPlane* GraphicsEngineImp::CreateWaterPlane( Vector3& pos, const char* texture )
 {
 	WaterPlane* plane = new WaterPlane(D3DXVECTOR3(pos.x, pos.y, pos.z));
 	this->dx->CreateWaterPlane(plane, texture);
 	return plane;
 }
 
-void GraphicsEngineImp::DeleteWaterPlane( iWaterPlane*& del )
+void GraphicsEngineImp::DeleteWaterPlane( iWaterPlane* del )
 {
-	this->dx->DeleteWaterPlane(dynamic_cast<WaterPlane*>(del));
+	if(WaterPlane* plane = dynamic_cast<WaterPlane*>(del))
+		this->dx->DeleteWaterPlane(plane);
 }

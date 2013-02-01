@@ -101,7 +101,7 @@ extern "C"
 			float FadeBlackOutOutTime = 0.0f) = 0;
 
 		virtual iWaterPlane* CreateWaterPlane(Vector3& pos, const char* texture) = 0;
-		virtual void DeleteWaterPlane(iWaterPlane*& del) = 0;
+		virtual void DeleteWaterPlane(iWaterPlane* del) = 0;
 	};
 
 	/*
