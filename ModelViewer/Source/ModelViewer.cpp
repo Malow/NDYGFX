@@ -80,17 +80,15 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 
 
 	//Preload testing
-	unsigned int nrOfResources = 3;
+	unsigned int nrOfResources = 6;
 	const char** resourceFileNames = new const char*[nrOfResources];
 	resourceFileNames[0] = "Media/ball.obj";
 	resourceFileNames[1] = "Media/bth.obj";			
-	resourceFileNames[2] = "Media/scale.obj";		//1.1
-	//resourceFileNames[3] = "Media/BallTexture.png";	//1.2
-	/*resourceFileNames[4] = "Media/scale.obj";		//2.1 - tested
-	resourceFileNames[5] = "Media/FlagBlue.ani";	//1.3
-	resourceFileNames[6] = "Media/BallTexture.png";	//2.2
-	resourceFileNames[7] = "Media/FlagBlue.ani";	//2.3
-	*/
+	resourceFileNames[2] = "Media/scale.obj";		//1
+	resourceFileNames[3] = "Media/FlagBlue.ani";		
+	resourceFileNames[4] = "Media/BallTexture.png";	
+	resourceFileNames[5] = "Media/scale.obj";		//2
+
 	//resourceFileNames[10] = "skymap.dds";			//Fail
 	//resourceFileNames[6] = "scale.obj";				//Fail
 	//resourceFileNames[7] = "durp.fileformat";		//Fail

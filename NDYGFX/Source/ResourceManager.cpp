@@ -201,7 +201,7 @@ void ResourceManager::DeleteTextureResource( TextureResource* &textureResource )
 					//textureResource->DecreaseReferenceCount(); //**TILLMAN
 				}
 				MaloW::Debug("WARNING: DETECTED MEMORY LEAK!:");
-				MaloW::Debug("ResourceManager::DeleteTextureResource: Could not find the specified texture:" + textureResource->GetName() + ", references: " + MaloW::convertNrToString(refCount));
+				MaloW::Debug("ResourceManager::DeleteTextureResource: Could not find the specified texture: '" + textureResource->GetName() + "', references: " + MaloW::convertNrToString(refCount));
 			}
 			textureResource = NULL;
 		}
@@ -244,6 +244,8 @@ ObjectDataResource* ResourceManager::LoadObjectDataResourceFromFile(const char* 
 			//Increase reference count.
 			this->zObjectDataResources[filePath]->IncreaseReferenceCount();
 			
+			//Release mutex and return resource.
+			ReleaseMutex(this->mutex);
 			//Return newly created object data resource.
 			return this->zObjectDataResources[filePath];
 		}
@@ -284,7 +286,7 @@ void ResourceManager::UnloadObjectDataResource(const char* filePath)
 	}
 	else
 	{
-		MaloW::Debug("WARNING: ResourceManager::UnloadObjectDataResource(): Could not find the following object data resource to unload: " + string(filePath));
+		MaloW::Debug("WARNING: ResourceManager::UnloadObjectDataResource(): Could not find the following object data resource to unload: '" + string(filePath) + "'.");
 	}
 	
 	ReleaseMutex(this->mutex);
@@ -381,10 +383,7 @@ void ResourceManager::PreLoadResources(unsigned int nrOfResources, char const* c
 							//Decrease reference count since we're Preloading and no object yet has a reference to the resource.
 							this->zObjectDataResources[resourcesFileName]->DecreaseReferenceCount();
 						}
-						else
-						{
-							float temptest = 22.0f * 88.0f;
-						}
+						//else write debug info, this is done by LoadObjectDataResourceFromFile(..).
 					}
 					else
 					{
@@ -434,10 +433,7 @@ void ResourceManager::PreLoadResources(unsigned int nrOfResources, char const* c
 									//Decrease reference count since we're Preloading and no object yet has a reference to the resource.
 									this->zObjectDataResources[tmpResourceFileName.c_str()]->DecreaseReferenceCount();
 								}
-								else
-								{
-									float temptest = 22.0f * 88.0f;
-								}
+								//else write debug info, this is done by LoadObjectDataResourceFromFile(..).
 							}
 							else
 							{
@@ -458,10 +454,7 @@ void ResourceManager::PreLoadResources(unsigned int nrOfResources, char const* c
 							//Decrease reference count since we're Preloading and no object yet has a reference to the resource.
 							this->zTextureResources[resourcesFileName]->DecreaseReferenceCount();
 						}
-						else
-						{
-							float temptest = 22.0f * 88.0f;
-						}
+						//else write debug info, this is done by LoadObjectDataResourceFromFile(..).
 					}
 					else
 					{
