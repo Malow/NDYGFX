@@ -77,6 +77,32 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 
 //*************************************	     PRE TEST       **********************
 #ifdef TEST
+
+
+	//Preload testing
+	unsigned int nrOfResources = 4;
+	const char** resourceFileNames = new const char*[nrOfResources];
+	resourceFileNames[0] = "Media/ball.obj";
+	resourceFileNames[1] = "Media/bth.obj";			
+	resourceFileNames[2] = "Media/scale.obj";		//1.1
+	resourceFileNames[3] = "Media/BallTexture.png";	//1.2
+	/*resourceFileNames[4] = "Media/scale.obj";		//2.1 - tested
+	resourceFileNames[5] = "Media/FlagBlue.ani";	//1.3
+	resourceFileNames[6] = "Media/BallTexture.png";	//2.2
+	resourceFileNames[7] = "Media/FlagBlue.ani";	//2.3
+	*/
+	//resourceFileNames[10] = "skymap.dds";			//Fail
+	//resourceFileNames[6] = "scale.obj";				//Fail
+	//resourceFileNames[7] = "durp.fileformat";		//Fail
+	//resourceFileNames[8] = "skymap.dds";			//fail
+	//resourceFileNames[3] = "BallTexture.png";		//fail
+	//GetGraphics()->PreLoadResources(nrOfResources, resourceFileNames);
+
+
+
+
+
+
 	iWaterPlane* wp = GetGraphics()->CreateWaterPlane(Vector3(0, 10, 0), "Media/WaterTexture.png");
 	wp->SetScale(10.0f);
 	iWaterPlane* wp2 = GetGraphics()->CreateWaterPlane(Vector3(5, 9, 0), "Media/WaterTexture.png");
@@ -389,16 +415,9 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 
 
 
-	//Preload testing
-	/*unsigned int nrOfObjects = 5;
-	const char** meshFileNames = new const char*[nrOfObjects];
-	meshFileNames[0] = "Media/ball.obj";
-	meshFileNames[2] = "Media/bth.obj";
-	meshFileNames[4] = "Media/scale.obj";
-	GetGraphics()->PreLoadMeshes(nrOfObjects, meshFileNames);
 
 	GetGraphics()->CreateMesh("Media/scale.obj", Vector3(30, -300, 30));
-	*/
+	
 #endif
 //*************************************	    END OF PRE TEST       **********************
 
@@ -801,7 +820,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	delete testData[0];
 	delete testData[1];
 	delete [] testData;
-	//delete[] objectFileNames;
+	delete[] resourceFileNames;
 
 	GetGraphics()->DeleteImage(iM);
 	GetGraphics()->DeleteImage(iM2);

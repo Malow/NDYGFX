@@ -20,7 +20,7 @@ ResourceManager::~ResourceManager()
 			//A texture cannot be deleted since it's destructor is private to force correct use of texture creation/deletion.
 			//Instead decrease reference count until it deletes itself.
 			int refCount = texIterator->second->GetReferenceCount();
-			MaloW::Debug("WARNING: Resource manager deleted the texture resource: " + texIterator->second->GetName() + "; missing decrease(s) in reference counter somewhere. Occurrences: " + MaloW::convertNrToString(refCount));
+			MaloW::Debug("WARNING: Resource manager deleted the texture resource: " + texIterator->second->GetName() + "; missing decrease(s) in reference counter somewhere. Occurrences: " + MaloW::convertNrToString(refCount - 1));
 			for(int i = 0; i < refCount; i++)
 			{
 				texIterator->second->DecreaseReferenceCount();
@@ -40,7 +40,7 @@ ResourceManager::~ResourceManager()
 			//An object data cannot be deleted since it's destructor is private to force correct use of texture creation/deletion.
 			//Instead decrease reference count until it deletes itself.
 			int refCount = objDataIterator->second->GetReferenceCount();
-			MaloW::Debug("WARNING: Resource manager deleted the object resource: " + objDataIterator->second->GetName() + "; missing decrease(s) in reference counter somewhere. Occurrences: " + MaloW::convertNrToString(refCount));
+			MaloW::Debug("WARNING: Resource manager deleted the object resource: " + objDataIterator->second->GetName() + "; missing decrease(s) in reference counter somewhere. Occurrences: " + MaloW::convertNrToString(refCount - 1));
 			for(int i = 0; i < refCount; i++)
 			{
 				objDataIterator->second->DecreaseReferenceCount();
@@ -61,7 +61,7 @@ ResourceManager::~ResourceManager()
 			//A buffer resource cannot be deleted since it's destructor is private to force correct use of buffer resource creation/deletion.
 			//Instead decrease reference count until it deletes itself.
 			int refCount = bufferIterator->second->GetReferenceCount();
-			MaloW::Debug("WARNING: Resource manager deleted the buffer resource: " + bufferIterator->second->GetName() + "; missing decrease(s) in reference counter somewhere. Occurrences: " + MaloW::convertNrToString(refCount));
+			MaloW::Debug("WARNING: Resource manager deleted the buffer resource: " + bufferIterator->second->GetName() + "; missing decrease(s) in reference counter somewhere. Occurrences: " + MaloW::convertNrToString(refCount - 1));
 			for(int i = 0; i < refCount; i++)
 			{
 				bufferIterator->second->DecreaseReferenceCount();
@@ -227,7 +227,7 @@ ObjectDataResource* ResourceManager::LoadObjectDataResourceFromFile(const char* 
 		//Create and load object data.
 		ObjData* objectData = NULL;
 		ObjLoader oj;
-		objectData = oj.LoadObjFile(filePath);
+		objectData = oj.LoadObjFile(string(filePath));
 
 		if(objectData == NULL)
 		{
@@ -359,96 +359,124 @@ void ResourceManager::DeleteBufferResource( BufferResource* &bufferResource )
 	}
 }
 
-/* /TILLMAN
-void ResourceManager::PreloadObjects(unsigned int nrOfObjects, char const* const* const objectFileNames)
+void ResourceManager::PreLoadResources(unsigned int nrOfResources, char const* const* const resourcesFileNames)
 {
-	if(objectFileNames != NULL)
+	if(resourcesFileNames != NULL)
 	{
-		ObjData* tmpObjData = NULL;
-		for(unsigned int i = 0; i < nrOfObjects; i++)
+		for(unsigned int i = 0; i < nrOfResources; i++)
 		{
-			if(objectFileNames != NULL)
+			const char* resourcesFileName = resourcesFileNames[i];
+			if(resourcesFileName != NULL)
 			{
-				tmpObjData = this->LoadObjectDataFromFile(objectFileNames[i]);
-				if(tmpObjData == NULL)
+				string tmpFileName = string(resourcesFileName); 
+				if(tmpFileName.substr(tmpFileName.length() - 4) == ".obj") 
 				{
-					/*		CIRCULÄR INCLUDE - TILLMAN					
-					Mesh* tmpMesh = NULL;
-					string tmpFileName = string(objectFileNames[i]);
-					
-					if(tmpFileName.substr(tmpFileName.length() - 4) == ".obj") 
+					//First check if the resource has already been loaded.
+					auto objData = this->zObjectDataResources.find(resourcesFileName);
+					if(objData == this->zObjectDataResources.end())
 					{
-						tmpMesh = new StaticMesh(D3DXVECTOR3());
+						ObjectDataResource* objDataResPtr = this->LoadObjectDataResourceFromFile(resourcesFileName);
+						if(objDataResPtr != NULL)
+						{
+							//Decrease reference count since we're Preloading and no object yet has a reference to the resource.
+							this->zObjectDataResources[resourcesFileName]->DecreaseReferenceCount();
+						}
+						else
+						{
+							float temptest = 22.0f * 88.0f;
+						}
 					}
-					else if(tmpFileName.substr(tmpFileName.length() - 4) == ".ani")
+					else
 					{
-						tmpMesh = new AnimatedMesh(D3DXVECTOR3());
+						MaloW::Debug("INFO: ResourceManager: PreLoadResources(): the resource: '" + string(resourcesFileName) + "' has already been loaded.");
 					}
-
-					//tmp = tmpMesh->GetObjData(); //***TILLMAN
-
-					tmpMesh->LoadFromFile(objectFileNames[i]);
-					
-
-					//todo: load objdata - TILLMAN**
-					string tmpFileName = string(objectFileNames[i]);
-
-					/*if(tmpFileName.substr(tmpFileName.length() - 4) == ".obj") //detta på insidan av ny funktion?
-					{
-						//tmpObjData = GetGraphics()->LoadObjDataFromFile(objectFileNames[i]);
-					}
-					else if(tmpFileName.substr(tmpFileName.length() - 4) == ".ani")  //detta på insidan av ny funktion?
-					{
-						//tmpObjData = GetGraphics()->LoadObjDataFromFile(objectFileNames[i]);
-					}
-					//this->SetObjectData(objectFileNames[i], tmpObjData);
-					//todo: load textures - TILLMAN**
-					//todo: load buffer - TILLMAN**
 				}
-			}
-			else
-			{
-				MaloW::Debug("WARNING: ResourceManager: PreloadObjects(): element to preload was empty.");
+				else if(tmpFileName.substr(tmpFileName.length() - 4) == ".ani")
+				{
+					//Save the path to the folder the resource is in.
+					string tempFilename = resourcesFileName;
+					string pathfolder = "";
+					size_t slashpos = tempFilename.find("/");
+					while(slashpos != string::npos)
+					{
+						slashpos = tempFilename.find("/");
+						pathfolder += tempFilename.substr(0, slashpos + 1);
+						tempFilename = tempFilename.substr(slashpos + 1);
+					}
+
+					//Open the .ani-file.
+					ifstream inputFileAni;
+					inputFileAni.open(resourcesFileName);
+					if(inputFileAni)
+					{
+						string line = "";
+						getline(inputFileAni, line);
+						
+						int nrOfObjects = atoi(line.c_str());
+
+						for(int a = 0; a < nrOfObjects; a++)
+						{
+							string path = "";
+							//We're only interested in the object file name (.obj), so skip key frame time
+							getline(inputFileAni, line);
+							//Extract object file name.
+							getline(inputFileAni, path);
+
+							string tmpResourceFileName = pathfolder + path;
+
+							//First check if the resource has already been loaded.
+							auto objData = this->zObjectDataResources.find(tmpResourceFileName);
+							if(objData == this->zObjectDataResources.end())
+							{
+								ObjectDataResource* objDataResPtr = this->LoadObjectDataResourceFromFile(tmpResourceFileName.c_str());
+								if(objDataResPtr != NULL)
+								{
+									//Decrease reference count since we're Preloading and no object yet has a reference to the resource.
+									this->zObjectDataResources[tmpResourceFileName.c_str()]->DecreaseReferenceCount();
+								}
+								else
+								{
+									float temptest = 22.0f * 88.0f;
+								}
+							}
+							else
+							{
+								MaloW::Debug("INFO: ResourceManager: PreLoadResources(): the resource: '" + string(tmpResourceFileName) + "' has already been loaded.");
+							}
+						}
+					}
+				}
+				else if (tmpFileName.substr(tmpFileName.length() - 4) == ".png" || ".dds")
+				{
+					//First check if the resource has already been loaded.
+					auto tex = this->zTextureResources.find(resourcesFileName);
+					if(tex == this->zTextureResources.end())
+					{
+						TextureResource* texResPtr = this->CreateTextureResourceFromFile(resourcesFileName);
+						if(texResPtr != NULL)
+						{
+							//Decrease reference count since we're Preloading and no object yet has a reference to the resource.
+							this->zTextureResources[resourcesFileName]->DecreaseReferenceCount();
+						}
+						else
+						{
+							float temptest = 22.0f * 88.0f;
+						}
+					}
+					else
+					{
+						MaloW::Debug("INFO: ResourceManager: PreLoadResources(): the resource: '" + string(resourcesFileName) + "' has already been loaded.");
+					}
+				}
+				else
+				{
+					MaloW::Debug("WARNING: ResourceManager: PreLoadResources(): the resource file format: '" + tmpFileName.substr(tmpFileName.length() - 4) + "' was not recognized/supported. (Filename: '" + tmpFileName + "'.");
+				}
 			}
 		}
 	}
-	else
-	{
-		MaloW::Debug("WARNING: ResourceManager: PreloadObjects(): array of objects to preload was empty.");
-	}
-
-
-
-
-
-	/* buffer & texture
-	string resourceNameVertices = mesh->GetFilePath() + string("Strip") + MaloW::convertNrToString(i) + string("Vertices");
-	BufferResource* verts = GetResourceManager()->CreateBufferResource(resourceNameVertices.c_str(), bufferDesc);
-
-	BufferResource* inds = NULL; 
-	if(strip->getIndicies())
-	{
-		BUFFER_INIT_DESC bufferInds;
-		bufferInds.ElementSize = sizeof(int);
-		bufferInds.InitData = strip->getIndicies();
-		bufferInds.NumElements = strip->getNrOfIndicies();
-		bufferInds.Type = INDEX_BUFFER;
-		bufferInds.Usage = BUFFER_DEFAULT;
-
-
-		string resourceNameIndices = mesh->GetFilePath() + string("Strip") + MaloW::convertNrToString(i) + string("Indices");
-		inds = GetResourceManager()->CreateBufferResource(resourceNameIndices.c_str(), bufferInds);
-	}
-
-	TextureResource* texture = NULL;
-	if(strip->GetTexturePath() != "")
-	{
-		texture = GetResourceManager()->CreateTextureResourceFromFile(strip->GetTexturePath().c_str());
-	}
 }
 
-
-*/
 
 
 

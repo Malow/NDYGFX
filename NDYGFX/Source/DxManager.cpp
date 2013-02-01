@@ -201,6 +201,8 @@ DxManager::~DxManager()
 
 void DxManager::CreateTerrain(Terrain* terrain)
 {
+	//OBS! Do not use resource manager to create buffers since they are (most likely) unique for every terrain.
+
 	//Create vertex buffer
 	BUFFER_INIT_DESC vertexBufferDesc;
 	vertexBufferDesc.ElementSize = sizeof(Vertex);
