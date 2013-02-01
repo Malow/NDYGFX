@@ -446,7 +446,7 @@ void ResourceManager::PreLoadResources(unsigned int nrOfResources, char const* c
 						}
 					}
 				}
-				else if (tmpFileName.substr(tmpFileName.length() - 4) == ".png" || ".dds")
+				else if (tmpFileName.substr(tmpFileName.length() - 4) == ".png" || tmpFileName.substr(tmpFileName.length() - 4) == ".dds")
 				{
 					//First check if the resource has already been loaded.
 					auto tex = this->zTextureResources.find(resourcesFileName);
