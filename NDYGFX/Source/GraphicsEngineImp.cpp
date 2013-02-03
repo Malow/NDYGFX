@@ -488,6 +488,14 @@ void GraphicsEngineImp::Life()
 						delete mesh;
 					}
 				}
+				else if(FBXMesh* mesh = LME->GetFBXMesh())
+				{
+					bool success = mesh->LoadFromFile(filename);
+					if(success)
+					{
+						this->dx->CreateFBXMesh(mesh);
+					}
+				}
 			}
 
 			delete ev;
@@ -684,8 +692,7 @@ iMesh* GraphicsEngineImp::CreateMesh( const char* filename, const Vector3& pos )
 	}
 	else if (tmp.substr(tmp.length() - 4) == ".fbx")
 	{
-		// TODO: FBX
-		return 0;
+		return this->CreateFBXMesh(filename, pos);
 	}
 	else
 	{
@@ -739,7 +746,7 @@ void GraphicsEngineImp::DeleteMesh( iMesh* &delMesh )
 			}
 			else if(fileName.substr(fileName.length() - 4) == ".fbx")
 			{
-				// TODO: FBX
+				this->DeleteFBXMesh(dynamic_cast<FBXMesh*>(delMesh));
 			}
 			delMesh = NULL;
 		}
@@ -839,4 +846,18 @@ void GraphicsEngineImp::DeleteWaterPlane( iWaterPlane* del )
 {
 	if(WaterPlane* plane = dynamic_cast<WaterPlane*>(del))
 		this->dx->DeleteWaterPlane(plane);
+}
+
+iFBXMesh* GraphicsEngineImp::CreateFBXMesh( const char* filename, Vector3 pos )
+{
+	FBXMesh* mesh = new FBXMesh(D3DXVECTOR3(pos.x, pos.y, pos.z));
+	LoadMeshEvent* re = new LoadMeshEvent(filename, mesh);
+	this->PutEvent(re);
+	return mesh;
+}
+
+void GraphicsEngineImp::DeleteFBXMesh( iFBXMesh* mesh )
+{
+	if(FBXMesh* fmesh = dynamic_cast<FBXMesh*>(mesh))
+		this->dx->DeleteFBXMesh(fmesh);
 }

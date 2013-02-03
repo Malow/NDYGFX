@@ -103,6 +103,29 @@ void DxManager::HandleMeshEvent(MeshEvent* me)
 	}
 }
 
+
+void DxManager::HandleFBXEvent(FBXEvent* me)
+{
+	string msg = me->getMessage();
+	if(msg == "Add FBX")
+	{
+		this->FBXMeshes.add(me->GetFBXMesh());
+	}
+	else if(msg == "Delete FBX")
+	{
+		FBXMesh* mesh = me->GetFBXMesh();
+		for(int i = 0; i < this->FBXMeshes.size(); i++)
+		{
+			if(this->FBXMeshes[i] == mesh)
+			{
+				delete this->FBXMeshes.getAndRemove(i);
+				mesh = NULL;
+				break;
+			}
+		}
+	}
+}
+
 void DxManager::HandleLightEvent(LightEvent* le)
 {
 	string msg = le->getMessage();
@@ -1108,6 +1131,21 @@ void DxManager::RenderWaterPlanes()
 	this->Shader_Water->Apply(0);
 }
 
+void DxManager::RenderFBXMeshes()
+{
+	D3DXMATRIX proj = this->camera->GetProjectionMatrix();
+	D3DXMATRIX view = this->camera->GetViewMatrix();
+	for(int i = 0; i < this->FBXMeshes.size(); i++)
+	{
+		float dt = this->Timer - this->LastFBXUpdate;
+		this->FBXMeshes[i]->Update(dt);
+		this->FBXMeshes[i]->Render(dt, proj, view);
+	}
+
+
+	this->LastFBXUpdate = this->Timer;
+}
+
 HRESULT DxManager::Render()
 {
 	if(this->RendererSleep > 0)
@@ -1154,6 +1192,9 @@ HRESULT DxManager::Render()
 	this->RenderText();
 
 	this->RenderAntiAliasing();
+
+
+	this->RenderFBXMeshes();
 
 	// Debugging:
 	// Debug: Render Normals

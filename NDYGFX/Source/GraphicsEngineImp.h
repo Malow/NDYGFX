@@ -27,6 +27,7 @@ private:
 	StaticMesh* mesh;
 	AnimatedMesh* ani;
 	Material* mat;
+	FBXMesh* fbx;
 	bool selfdelete;
 
 public:
@@ -36,6 +37,16 @@ public:
 		this->mesh = mesh; 
 		this->mat = mat;
 		this->ani = ani;
+		this->fbx = NULL;
+		this->selfdelete = true;
+	}
+	LoadMeshEvent(string fileName, FBXMesh* fbx) 
+	{ 
+		this->fileName = fileName; 
+		this->mesh = NULL; 
+		this->mat = NULL;
+		this->ani = NULL;
+		this->fbx = fbx;
 		this->selfdelete = true;
 	}
 	virtual ~LoadMeshEvent() 
@@ -48,11 +59,14 @@ public:
 				delete this->mat;
 			if(this->ani)
 				delete this->ani;
+			if(this->fbx)
+				delete this->fbx;
 		}
 	}
 	string GetFileName() { return this->fileName; }
 	StaticMesh* GetStaticMesh() { this->selfdelete = false; return this->mesh; }
 	AnimatedMesh* GetAnimatedMesh() { this->selfdelete = false; return this->ani; }
+	FBXMesh* GetFBXMesh() { this->selfdelete = false; return this->fbx; }
 	Material* GetMaterial() { this->selfdelete = false; return this->mat; }
 };
 
@@ -115,6 +129,10 @@ public:
 	// Text
 	virtual iText* CreateText(const char* text, Vector2 pos, float size, const char* fontTexturePath);
 	virtual void DeleteText(iText* &deltxt);
+
+
+	virtual iFBXMesh* CreateFBXMesh(const char* filename, Vector3 pos);
+	virtual void DeleteFBXMesh(iFBXMesh* mesh);
 
 	// Skybox
 	virtual void CreateSkyBox(const char* texture);

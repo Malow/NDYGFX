@@ -22,6 +22,7 @@
 #include "iGraphicsEngineParams.h"
 #include "iPhysicsEngine.h"
 #include "iWaterPlane.h"
+#include "iFBXMesh.h"
 
 extern "C"
 {
@@ -48,6 +49,9 @@ extern "C"
 
 		virtual iTerrain* CreateTerrain(const Vector3& pos, const Vector3& scale, const unsigned int& size) = 0;
 		virtual void DeleteTerrain( iTerrain*& terrain ) = 0;
+
+		virtual iFBXMesh* CreateFBXMesh(const char* filename, Vector3 pos) = 0;
+		virtual void DeleteFBXMesh(iFBXMesh* mesh) = 0;
 
 		virtual iCamera* GetCamera() const = 0;
 

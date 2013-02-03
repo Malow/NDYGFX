@@ -2,6 +2,7 @@
 
 #include "Process.h"
 #include "WaterPlane.h"
+#include "FBXMesh.h"
 
 /* Process events for adding to rendering */
 
@@ -195,4 +196,28 @@ public:
 		}
 	}
 	WaterPlane* GetWaterPlane() { this->deleteSelf = false; return this->wp; }
+};
+
+
+class FBXEvent : public RendererEvent
+{
+private:
+	FBXMesh* mesh;
+	AnimatedMesh* ani;
+
+public:
+	FBXEvent(string message, FBXMesh* mesh) : RendererEvent(message)
+	{
+		this->mesh = mesh; 
+	}
+	virtual ~FBXEvent() 
+	{
+		if(this->deleteSelf && this->message.substr(0, 6) != "Delete")
+		{
+			if(this->mesh)
+				delete this->mesh;
+		}
+	}
+
+	FBXMesh* GetFBXMesh() { this->deleteSelf = false; return this->mesh; }
 };

@@ -26,6 +26,12 @@
     <Filter Include="Source Files\Engine\Other\ParticleSystem">
       <UniqueIdentifier>{5c147af9-15dc-4a9d-92e0-d08c7bff6c0d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Engine\Objects and Entities\FBX">
+      <UniqueIdentifier>{6d7bc0bb-8778-4913-af64-4d2459c83f8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Objects and Entities\FBX\Include">
+      <UniqueIdentifier>{4ec1175b-ef94-4167-8577-3a6c4c0e8223}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\GraphicsEngineImp.h">
@@ -214,6 +220,18 @@
     <ClInclude Include="Source\ObjectDataResource.h">
       <Filter>Source Files\Engine\DxMan and Techs</Filter>
     </ClInclude>
+    <ClInclude Include="Source\FBXMesh.h">
+      <Filter>Source Files\Engine\Objects and Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\BTHFBX\Shared\FBX\FBXSceneD3D.h">
+      <Filter>Source Files\Engine\Objects and Entities\FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\BTHFBX\Include\BTHFbx.h">
+      <Filter>Source Files\Engine\Objects and Entities\FBX\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\BTHFBX\Include\BTHstdafx.h">
+      <Filter>Source Files\Engine\Objects and Entities\FBX\Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\GraphicsEngineImp.cpp">
@@ -344,6 +362,12 @@
     </ClCompile>
     <ClCompile Include="Source\ObjectDataResource.cpp">
       <Filter>Source Files\Engine\DxMan and Techs</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\FBXMesh.cpp">
+      <Filter>Source Files\Engine\Objects and Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\BTHFBX\Shared\FBX\FBXSceneD3D.cpp">
+      <Filter>Source Files\Engine\Objects and Entities\FBX</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
