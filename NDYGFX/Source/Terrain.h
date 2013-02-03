@@ -72,6 +72,7 @@ class Terrain : public iTerrain
 
 		//Collision
 		bool						zIsCulled;
+		bool						zIsShadowCulled;
 		bool						zRecreateBoundingSphere;
 		BoundingSphere				zBoundingSphere;
 
@@ -124,6 +125,7 @@ class Terrain : public iTerrain
 
 		//Collision
 		bool IsCulled() const { return this->zIsCulled; }
+		bool IsShadowCulled() const { return this->zIsShadowCulled; }
 		
 		//Editor
 		unsigned int GetNrOfAINodesPerSide() const { return this->zNrOfAINodesPerSide; }
@@ -145,7 +147,8 @@ class Terrain : public iTerrain
 		void SetTextureResourceToLoadFileName(unsigned int index, string fileName) { this->zTextureResourceToLoadFileName[index] = ""; }
 		
 		//Collision
-		void SetCulled(bool cull) { this->zIsCulled = cull; }
+		void SetCulled(bool flag) { this->zIsCulled = flag; }
+		void SetShadowCulled(bool flag) { this->zIsShadowCulled = flag; }
 		BoundingSphere GetBoundingSphere() { if(this->zRecreateBoundingSphere) { RecreateBoundingSphere(); } return this->zBoundingSphere; }
 
 		//Editor

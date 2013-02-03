@@ -193,6 +193,7 @@ Terrain::Terrain()
 
 	//Collision
 	this->zIsCulled = false;
+	this->zIsShadowCulled = false;
 	this->zRecreateBoundingSphere = false;
 	this->zBoundingSphere = BoundingSphere();
 	
@@ -250,6 +251,7 @@ Terrain::Terrain(D3DXVECTOR3 pos, D3DXVECTOR3 scale, unsigned int size)
 
 	//Collision
 	this->zIsCulled = false;
+	this->zIsShadowCulled = false;
 	this->zRecreateBoundingSphere = true;
 	this->zBoundingSphere = BoundingSphere();
 

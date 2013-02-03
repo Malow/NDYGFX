@@ -427,7 +427,11 @@ float GraphicsEngineImp::Update()
 		MaloW::convertNrToString(this->dx->GetMeshCount()) + "    -    Rendered Meshes: " + 
 		MaloW::convertNrToString(this->dx->GetRenderedMeshCount()) + "   -    Terrain Count: " +
 		MaloW::convertNrToString(this->dx->GetTerrainCount()) + "   -   Rendered Terrains: " +
-		MaloW::convertNrToString(this->dx->GetRenderedTerrainCount());
+		MaloW::convertNrToString(this->dx->GetRenderedTerrainCount()) + "   -   Mesh shadows: " +
+		MaloW::convertNrToString(this->dx->GetRenderedMeshShadowCount() / 4) + "   -  Terrain shadows: " +
+		MaloW::convertNrToString(this->dx->GetRenderedTerrainShadowCount() / 4); //** / 4 = temp**
+
+		
 
 		SetWindowText(this->hWnd, txt.c_str());
 	}

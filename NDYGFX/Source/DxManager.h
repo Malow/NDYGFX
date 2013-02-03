@@ -116,6 +116,8 @@ private:
 	bool DelayGettingCamera;
 	int RenderedMeshes;
 	int RenderedTerrains;
+	int renderedTerrainShadows;
+	int renderedMeshShadows;
 
 	// Needed for frustrum culling
 	PhysicsEngine pe;
@@ -197,6 +199,10 @@ public:
 	int GetRenderedMeshCount() const;
 	inline int GetTerrainCount() const { return this->terrains.size(); }
 	int GetRenderedTerrainCount() const; 
+
+	int GetRenderedMeshShadowCount() const;
+	int GetRenderedTerrainShadowCount() const; 
+
 	void SetFPSMAX( float maxFPS );
 	void SetSunLightProperties(Vector3 direction, Vector3 lightColor, float intensity);
 	void SetSunLightDisabled();

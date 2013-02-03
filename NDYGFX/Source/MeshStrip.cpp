@@ -3,6 +3,7 @@
 MeshStrip::MeshStrip()
 {
 	this->culled = false;
+	this->shadowCulled = false;
 	this->RenderObject = NULL;
 	this->indicies = NULL;
 	this->mesh = NULL;

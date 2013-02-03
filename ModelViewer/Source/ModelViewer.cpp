@@ -81,7 +81,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 
 	//Preload testing
 	unsigned int nrOfResources = 6;
-	const char** resourceFileNames = new const char*[nrOfResources];
+	const char* resourceFileNames[6];
 	resourceFileNames[0] = "Media/ball.obj";
 	resourceFileNames[1] = "Media/bth.obj";			
 	resourceFileNames[2] = "Media/scale.obj";		//1
@@ -207,10 +207,10 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	iT->SetBlendMaps(nrOfBlendMaps, sizes, testData);
 
 
-	fileNames[0] = "Media/BallTexture.png";
-	fileNames[1] = "Media/BallTexture.png";
-	fileNames[2] = "Media/BallTexture.png";
-	fileNames[3] = "Media/BallTexture.png";
+	fileNames[0] = "Media/TerrainTexture.png";
+	fileNames[1] = "Media/TerrainTexture.png";
+	fileNames[2] = "Media/TerrainTexture.png";
+	fileNames[3] = "Media/TerrainTexture.png";
 	fileNames[4] = "Media/TerrainTexture.png";
 	fileNames[5] = "Media/TerrainTexture.png";
 	fileNames[6] = "Media/TerrainTexture.png";
@@ -218,15 +218,19 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	iT2->SetTextures(fileNames);
 	iT2->SetBlendMaps(nrOfBlendMaps, sizes, testData);
 
-	int klerp = 2;
-	iTerrain** iTs = new iTerrain*[klerp];
+	int klerp = 3;
+	iTerrain** iTs = new iTerrain*[klerp*klerp];
 	for(int i = 0; i < klerp; i++)
 	{
-		iTs[i] = GetGraphics()->CreateTerrain(Vector3((testSize * 2) + (i * testSize), 0, 0), Vector3(testSize, 0.0f, testSize), vertSize);
-		iTs[i]->SetTextures(fileNames);
-		iTs[i]->SetBlendMaps(nrOfBlendMaps, sizes, testData);
-		iTs[i]->SetTextureScale(10);
+		for(int j = 0; j < klerp; j++)
+		{
+			iTs[i * klerp + j] = GetGraphics()->CreateTerrain(Vector3((testSize * 2) + (i * testSize), 0, (testSize * 2) + (j * testSize)), Vector3(testSize, 0.0f, testSize), vertSize);
+			iTs[i * klerp + j]->SetTextures(fileNames);
+			iTs[i * klerp + j]->SetBlendMaps(nrOfBlendMaps, sizes, testData);
+			//iTs[i * klerp + j]->SetTextureScale(10);
+		}
 	}
+	
 	
 	// test fps
 	/*
@@ -818,7 +822,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	delete testData[0];
 	delete testData[1];
 	delete [] testData;
-	delete[] resourceFileNames;
+	//delete[] resourceFileNames;
 
 	GetGraphics()->DeleteImage(iM);
 	GetGraphics()->DeleteImage(iM2);

@@ -24,6 +24,8 @@ private:
 	D3DXMATRIX viewProj[SHADOW_MAP_CASCADE_COUNT];
 
 	float shadowMappingSplitDepths[SHADOW_MAP_CASCADE_COUNT + 1];
+	D3DXPLANE** cascadePlanes; //**TILLMAN - alt. ta min & max och skapa OBB och göra OBBVSSphere i PE.
+
 
 	void CalcShadowMappingSplitDepths();
 	void CalcShadowMapMatrices(D3DXVECTOR3 sunLight, Camera* cam, int i, float nearPlaneDistanceCloserToSun);
@@ -46,6 +48,8 @@ public:
 	ID3D11Texture2D* GetShadowMap(int i) const { return this->shadowMap[i]; }
 	D3DXMATRIX GetViewProjMatrix(int i);
 	float GetSplitDepth(int i) { return this->shadowMappingSplitDepths[i]; }
-
+	D3DXPLANE GetCascadePlane(unsigned int cascadeIndex, unsigned int planeIndex) { return this->cascadePlanes[cascadeIndex][planeIndex]; } 
+	D3DXPLANE* GetCascadePlanes(unsigned int cascadeIndex) { return this->cascadePlanes[cascadeIndex]; } 
+	void CalcCascadePlanes(); 
 	float SetBlendDistance(float blendDist) { this->blendDistance = blendDist; }
 };
