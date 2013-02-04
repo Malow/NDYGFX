@@ -419,6 +419,7 @@ float GraphicsEngineImp::Update()
 	}
 	
 	this->dx->Update(diff);
+	this->fbx->UpdateScenes(diff, true);
 
 	if(this->isManagingMyOwnWindow)
 	{
@@ -492,7 +493,7 @@ void GraphicsEngineImp::Life()
 				}
 				else if(FBXMesh* mesh = LME->GetFBXMesh())
 				{
-					bool success = mesh->LoadFromFile(filename, this->fbx);
+					bool success = mesh->LoadFromFile(filename, this->fbx, this->dx->GetDevice(), this->dx->GetContextDevice());
 					if(success)
 					{
 						this->dx->CreateFBXMesh(mesh);
@@ -730,7 +731,7 @@ const iGraphicsEngineParams& GraphicsEngineImp::GetEngineParameters() const
 	return this->GetEngineParams();
 }
 
-void GraphicsEngineImp::DeleteMesh( iMesh* &delMesh )
+void GraphicsEngineImp::DeleteMesh( iMesh* delMesh )
 {
 	Mesh* tmpMesh = dynamic_cast<Mesh*>(delMesh);
 	if( tmpMesh != NULL )
@@ -753,6 +754,8 @@ void GraphicsEngineImp::DeleteMesh( iMesh* &delMesh )
 			delMesh = NULL;
 		}
 	}
+	if(WaterPlane* wp = dynamic_cast<WaterPlane*>(tmpMesh))
+		this->DeleteWaterPlane(wp);
 }
 
 const char* GraphicsEngineImp::GetSpecialString()

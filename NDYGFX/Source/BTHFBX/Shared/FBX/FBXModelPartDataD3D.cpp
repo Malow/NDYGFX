@@ -1,7 +1,7 @@
 #include "FBXModelPartDataD3D.h"
 
 #include "FBXModelD3D.h"
-#include "..\Source\BTHFBX\Shared\Helpers\ResourceManager.h"
+#include "..\Helpers\BTHResourceManager.h"
 
 FBXModelPartDataD3D::FBXModelPartDataD3D()
 {
@@ -35,20 +35,20 @@ inline std::string GetFileName(std::string str)
 	return str;
 }
 
-void FBXModelPartDataD3D::Init(FBXModelD3D* parentModel, IBTHFbxModelPart* modelPart, Device3D* device3D)
+void FBXModelPartDataD3D::Init(FBXModelD3D* parentModel, IBTHFbxModelPart* modelPart, ID3D11Device* dev, ID3D11DeviceContext* devCont)
 {
-	mDiffuseTexture = ResourceManager::GetInstance(device3D)->GetTexture(modelPart->GetMaterial()->GetDiffuseTextureFilename());
+	mDiffuseTexture = BTHResourceManager::GetInstance()->GetTexture(modelPart->GetMaterial()->GetDiffuseTextureFilename(), dev, devCont);
 	if(!mDiffuseTexture)
 	{
 		std::string filename = "../Meshes/" + GetFileName(modelPart->GetMaterial()->GetDiffuseTextureFilename());
-		mDiffuseTexture = ResourceManager::GetInstance(device3D)->GetTexture(filename.c_str());
+		mDiffuseTexture = BTHResourceManager::GetInstance()->GetTexture(filename.c_str(), dev, devCont);
 	}
 
-	mNormalTexture = ResourceManager::GetInstance(device3D)->GetTexture(modelPart->GetMaterial()->GetNormalTextureFilename());
+	mNormalTexture = BTHResourceManager::GetInstance()->GetTexture(modelPart->GetMaterial()->GetNormalTextureFilename(), dev, devCont);
 	if(!mNormalTexture)
 	{
 		std::string filename = "../Meshes/" + GetFileName(modelPart->GetMaterial()->GetNormalTextureFilename());
-		mNormalTexture = ResourceManager::GetInstance(device3D)->GetTexture(filename.c_str());
+		mNormalTexture = BTHResourceManager::GetInstance()->GetTexture(filename.c_str(), dev, devCont);
 	}
 
 	BUFFER_INIT_DESC bufferDesc;
@@ -58,8 +58,8 @@ void FBXModelPartDataD3D::Init(FBXModelD3D* parentModel, IBTHFbxModelPart* model
 	bufferDesc.Type = VERTEX_BUFFER;
 	bufferDesc.Usage = BUFFER_DEFAULT;
 
-	mVB_Position = myNew Buffer();
-	if(FAILED(mVB_Position->Init(device3D, bufferDesc)))
+	mVB_Position = new Buffer();
+	if(FAILED(mVB_Position->Init(dev, devCont, bufferDesc)))
 	{
 		return;
 	}
@@ -71,8 +71,8 @@ void FBXModelPartDataD3D::Init(FBXModelD3D* parentModel, IBTHFbxModelPart* model
 	bufferDesc.Type = VERTEX_BUFFER;
 	bufferDesc.Usage = BUFFER_DEFAULT;
 
-	mVB_Normal = myNew Buffer();
-	if(FAILED(mVB_Normal->Init(device3D, bufferDesc)))
+	mVB_Normal = new Buffer();
+	if(FAILED(mVB_Normal->Init(dev, devCont, bufferDesc)))
 	{
 		return;
 	}
@@ -87,8 +87,8 @@ void FBXModelPartDataD3D::Init(FBXModelD3D* parentModel, IBTHFbxModelPart* model
 		bufferDesc.Type = VERTEX_BUFFER;
 		bufferDesc.Usage = BUFFER_DEFAULT;
 
-		mVB_Tangent = myNew Buffer();
-		if(FAILED(mVB_Tangent->Init(device3D, bufferDesc)))
+		mVB_Tangent = new Buffer();
+		if(FAILED(mVB_Tangent->Init(dev, devCont, bufferDesc)))
 		{
 			return;
 		}
@@ -102,8 +102,8 @@ void FBXModelPartDataD3D::Init(FBXModelD3D* parentModel, IBTHFbxModelPart* model
 	bufferDesc.Type = VERTEX_BUFFER;
 	bufferDesc.Usage = BUFFER_DEFAULT;
 
-	mVB_TexCoord = myNew Buffer();
-	if(FAILED(mVB_TexCoord->Init(device3D, bufferDesc)))
+	mVB_TexCoord = new Buffer();
+	if(FAILED(mVB_TexCoord->Init(dev, devCont, bufferDesc)))
 	{
 		return;
 	}
@@ -115,8 +115,8 @@ void FBXModelPartDataD3D::Init(FBXModelD3D* parentModel, IBTHFbxModelPart* model
 	bufferDesc.Type = VERTEX_BUFFER;
 	bufferDesc.Usage = BUFFER_DEFAULT;
 
-	mVB_BlendWeights = myNew Buffer();
-	if(FAILED(mVB_BlendWeights->Init(device3D, bufferDesc)))
+	mVB_BlendWeights = new Buffer();
+	if(FAILED(mVB_BlendWeights->Init(dev, devCont, bufferDesc)))
 	{
 		return;
 	}
@@ -128,8 +128,8 @@ void FBXModelPartDataD3D::Init(FBXModelD3D* parentModel, IBTHFbxModelPart* model
 	bufferDesc.Type = INDEX_BUFFER;
 	bufferDesc.Usage = BUFFER_DEFAULT;
 
-	mIB = myNew Buffer();
-	if(FAILED(mIB->Init(device3D, bufferDesc)))
+	mIB = new Buffer();
+	if(FAILED(mIB->Init(dev, devCont, bufferDesc)))
 	{
 		return;
 	}
@@ -140,7 +140,7 @@ FBXModelPartDataD3DManager* FBXModelPartDataD3DManager::instance = NULL;
 FBXModelPartDataD3DManager* FBXModelPartDataD3DManager::GetInstance()
 {
 	if(!instance)
-		instance = myNew FBXModelPartDataD3DManager();
+		instance = new FBXModelPartDataD3DManager();
 
 	return instance;
 }
@@ -148,7 +148,7 @@ FBXModelPartDataD3DManager* FBXModelPartDataD3DManager::GetInstance()
 void FBXModelPartDataD3DManager::DeleteInstance()
 {
 	if(instance)
-		SAFE_DELETE(instance);
+		delete instance;
 }
 
 FBXModelPartDataD3DManager::~FBXModelPartDataD3DManager()
@@ -156,7 +156,7 @@ FBXModelPartDataD3DManager::~FBXModelPartDataD3DManager()
 	Cleanup();
 }
 
-FBXModelPartDataD3D* FBXModelPartDataD3DManager::GetModelData(class FBXModelD3D* parentModel, IBTHFbxModelPart* modelPart, Device3D* device3D, int partIndex)
+FBXModelPartDataD3D* FBXModelPartDataD3DManager::GetModelData(class FBXModelD3D* parentModel, IBTHFbxModelPart* modelPart, int partIndex, ID3D11Device* dev, ID3D11DeviceContext* devCont)
 {
 	char toFind[255];
 	sprintf_s(toFind, sizeof(toFind), "%s_%d", parentModel->GetName(), partIndex);
@@ -167,8 +167,8 @@ FBXModelPartDataD3D* FBXModelPartDataD3DManager::GetModelData(class FBXModelD3D*
 		return i->second;
 	}
 
-	FBXModelPartDataD3D* data = myNew FBXModelPartDataD3D();
-	data->Init(parentModel, modelPart, device3D);
+	FBXModelPartDataD3D* data = new FBXModelPartDataD3D();
+	data->Init(parentModel, modelPart, dev, devCont);
 
 	mModelParts[toFind] = data;
 

@@ -14,7 +14,7 @@ FBXSceneD3D::~FBXSceneD3D()
 	}
 }
 
-void FBXSceneD3D::Init(const char* filename, IBTHFbx* bthFBX)
+void FBXSceneD3D::Init(const char* filename, IBTHFbx* bthFBX, ID3D11Device* dev, ID3D11DeviceContext* devCont)
 {
 	mFBXScene = bthFBX->GetScene(filename);
 	if(mFBXScene)
@@ -28,7 +28,7 @@ void FBXSceneD3D::Init(const char* filename, IBTHFbx* bthFBX)
 	{
 		FBXModelD3D* model = new FBXModelD3D();
 		
-		model->Init(mFBXScene->GetModel(i));
+		model->Init(mFBXScene->GetModel(i), dev, devCont);
 		
 		mModels.push_back(model);
 	}
@@ -78,7 +78,7 @@ void FBXSceneD3D::Render(float dt, D3DXMATRIX world, D3DXMATRIX camProj, D3DXMAT
 
 	for(int i = 0; i < (int)mModels.size(); i++)
 	{
-		mModels[i]->Render(dt, mShader, vp, mFBXSkeleton != NULL ? true : false);
+		mModels[i]->Render(dt, mShader, vp, mFBXSkeleton != NULL ? true : false, devCont);
 	}
 }
 

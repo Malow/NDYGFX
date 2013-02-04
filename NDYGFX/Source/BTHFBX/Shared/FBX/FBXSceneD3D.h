@@ -3,17 +3,16 @@
 #include "..\..\..\..\Source\Shader.h"
 #include "..\..\..\..\Source\Buffer.h"
 #include "..\..\Include\BTHFbx.h"
-#include <stdlib.h>
 
-/*
 #include "FBXModelD3D.h"
 
+/*
 struct ShadowData
 {
 	class BTHCamera* lightCamera;
 	ID3D11ShaderResourceView* shadowRV;
 };
-
+*/
 class FBXSceneD3D
 {
 	std::vector<FBXModelD3D*>	mModels;
@@ -29,7 +28,7 @@ public:
 	FBXSceneD3D();
 	~FBXSceneD3D();
 
-	void Init(const char* filename, IBTHFbx* bthFBX);
+	void Init(const char* filename, IBTHFbx* bthFBX, ID3D11Device* dev, ID3D11DeviceContext* devCont);
 
 	void Update(float dt);
 	void Render(float dt, D3DXMATRIX world, D3DXMATRIX camProj, D3DXMATRIX camView, Shader* mShader, ID3D11DeviceContext* devCont);
@@ -39,11 +38,11 @@ public:
 
 	BTHFBX_RAY_BOX_RESULT RayVsScene(const BTHFBX_RAY& ray, BTHFBX_MATRIX* worldMatrix);
 };
-*/
 
 
 
 
+/*
 class FBXSceneD3D
 {	
 public:
@@ -56,3 +55,4 @@ public:
 	void Render(float dt, D3DXMATRIX world, D3DXMATRIX camProj, D3DXMATRIX camView, Shader* mShader, ID3D11DeviceContext* devCont) {}
 };
 
+*/
