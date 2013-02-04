@@ -651,13 +651,12 @@ void DxManager::RenderCascadedShadowMap()
 {
 	//EDIT 2013-01-23 by Tillman - Added transparency.
 
+	//Reset counters
+	int currentRenderedTerrainShadows = 0;
+	int currentRenderedMeshShadows = 0;
+
 	if(this->useSun && this->useShadow) //* TILLMAN - sun ska också inte ligga här?*
 	{
-		// Set sun-settings
-		this->Shader_DeferredLightning->SetStructMemberAsFloat4("sun", "Direction", D3DXVECTOR4(this->sun.direction, 0.0f));
-		this->Shader_DeferredLightning->SetStructMemberAsFloat4("sun", "LightColor", D3DXVECTOR4(this->sun.lightColor, 0.0f));
-		this->Shader_DeferredLightning->SetStructMemberAsFloat("sun", "LightIntensity", this->sun.intensity);
-
 		D3DXMATRIX wvp;
 		D3DXMatrixIdentity(&wvp);
 
@@ -671,38 +670,42 @@ void DxManager::RenderCascadedShadowMap()
 			//Terrain
 			for(int i = 0; i < this->terrains.size(); i++)
 			{
-				//Matrices
-				wvp = this->terrains[i]->GetWorldMatrix() * this->csm->GetViewProjMatrix(l);
-				this->Shader_ShadowMap->SetMatrix("lightWVP", wvp);
+				//If the terrain has not been culled for shadowing, render it to shadow map.
+				if(!terrains[i]->IsShadowCulled())
+				{
+					currentRenderedTerrainShadows++;
+
+					//Matrices
+					wvp = this->terrains[i]->GetWorldMatrix() * this->csm->GetViewProjMatrix(l);
+					this->Shader_ShadowMap->SetMatrix("lightWVP", wvp);
 			
-				//Input Assembler
-				this->Dx_DeviceContext->IASetPrimitiveTopology(this->terrains[i]->GetTopology());
+					//Input Assembler
+					this->Dx_DeviceContext->IASetPrimitiveTopology(this->terrains[i]->GetTopology());
 
-				//Vertex data
-				Buffer* verts = this->terrains[i]->GetVertexBufferPointer();
-				Buffer* inds = this->terrains[i]->GetIndexBufferPointer();
-				if(verts)
-				{
-					inds->Apply();
-				}
-				if(inds)
-				{
-					verts->Apply();
-				}
+					//Vertex data
+					Buffer* verts = this->terrains[i]->GetVertexBufferPointer();
+					Buffer* inds = this->terrains[i]->GetIndexBufferPointer();
+					if(verts)
+					{
+						inds->Apply();
+					}
+					if(inds)
+					{
+						verts->Apply();
+					}
 
-				//**TILLMAN EV TODO: (TEXTURE)TRANSPARANCY.
+					//Apply Shader
+					this->Shader_ShadowMap->Apply(0);
 
-				//Apply Shader
-				this->Shader_ShadowMap->Apply(0);
-
-				//Draw
-				if(inds)
-				{
-					this->Dx_DeviceContext->DrawIndexed(inds->GetElementCount(), 0, 0);
-				}
-				else
-				{
-					this->Dx_DeviceContext->Draw(verts->GetElementCount(), 0);
+					//Draw
+					if(inds)
+					{
+						this->Dx_DeviceContext->DrawIndexed(inds->GetElementCount(), 0, 0);
+					}
+					else
+					{
+						this->Dx_DeviceContext->Draw(verts->GetElementCount(), 0);
+					}
 				}
 			}
 
@@ -715,54 +718,66 @@ void DxManager::RenderCascadedShadowMap()
 					wvp = this->objects[i]->GetWorldMatrix() * this->csm->GetViewProjMatrix(l);
 					this->Shader_ShadowMap->SetMatrix("lightWVP", wvp);
 
+					bool hasBeenCounted = false;
+
 					for(int u = 0; u < strips->size(); u++)
 					{
-						Object3D* obj = strips->get(u)->GetRenderObject();
-
-						//Vertex data
-						this->Dx_DeviceContext->IASetPrimitiveTopology(obj->GetTopology());
-						Buffer* verts = obj->GetVertBuff();
-						Buffer* inds = obj->GetIndsBuff();
-						if(verts)
+						//Render strip to shadow map if it has not been shadow culled
+						if(!strips->get(u)->IsShadowCulled())
 						{
-							verts->Apply();
-						}
-						if(inds)
-						{
-							inds->Apply();
-						}
-						
-						//Texture
-						if(obj->GetTextureResource() != NULL)
-						{
-							if(obj->GetTextureResource()->GetSRVPointer() != NULL)
+							if(!hasBeenCounted) //only count per mesh, not strip.
 							{
-								this->Shader_ShadowMap->SetResource("diffuseMap", obj->GetTextureResource()->GetSRVPointer());
-								this->Shader_ShadowMap->SetBool("textured", true);
+								currentRenderedMeshShadows++;
+								hasBeenCounted = true;
+							}
+
+							Object3D* obj = strips->get(u)->GetRenderObject();
+
+							//Vertex data
+							this->Dx_DeviceContext->IASetPrimitiveTopology(obj->GetTopology());
+							Buffer* verts = obj->GetVertBuff();
+							Buffer* inds = obj->GetIndsBuff();
+							if(verts)
+							{
+								verts->Apply();
+							}
+							if(inds)
+							{
+								inds->Apply();
+							}
+						
+							//Texture
+							if(obj->GetTextureResource() != NULL)
+							{
+								if(obj->GetTextureResource()->GetSRVPointer() != NULL)
+								{
+									this->Shader_ShadowMap->SetResource("diffuseMap", obj->GetTextureResource()->GetSRVPointer());
+									this->Shader_ShadowMap->SetBool("textured", true);
+								}
+								else
+								{
+									this->Shader_ShadowMap->SetResource("diffuseMap", NULL);
+									this->Shader_ShadowMap->SetBool("textured", false);
+								}
 							}
 							else
 							{
 								this->Shader_ShadowMap->SetResource("diffuseMap", NULL);
 								this->Shader_ShadowMap->SetBool("textured", false);
 							}
-						}
-						else
-						{
-							this->Shader_ShadowMap->SetResource("diffuseMap", NULL);
-							this->Shader_ShadowMap->SetBool("textured", false);
-						}
 
-						//Apply Shader
-						this->Shader_ShadowMap->Apply(0);
+							//Apply Shader
+							this->Shader_ShadowMap->Apply(0);
 
-						//Draw
-						if(inds)
-						{
-							Dx_DeviceContext->DrawIndexed(inds->GetElementCount(), 0, 0);
-						}
-						else
-						{
-							Dx_DeviceContext->Draw(verts->GetElementCount(), 0);
+							//Draw
+							if(inds)
+							{
+								Dx_DeviceContext->DrawIndexed(inds->GetElementCount(), 0, 0);
+							}
+							else
+							{
+								Dx_DeviceContext->Draw(verts->GetElementCount(), 0);
+							}
 						}
 					}
 				}
@@ -775,42 +790,53 @@ void DxManager::RenderCascadedShadowMap()
 			{
 				if(!this->animations[i]->IsUsingInvisibility())
 				{
-					KeyFrame* one = NULL;
-					KeyFrame* two = NULL;
-					float t = 0.0f;
-					this->animations[i]->SetCurrentTime(this->Timer * 1000.0f); //Timer is in seconds.
-					this->animations[i]->GetCurrentKeyFrames(&one, &two, t);
-					MaloW::Array<MeshStrip*>* stripsOne = one->strips;
-					MaloW::Array<MeshStrip*>* stripsTwo = two->strips;
-
-					//Set shader data (per object)
-					this->Shader_ShadowMapAnimated->SetFloat("t", t);
-					D3DXMATRIX wvp = this->animations[i]->GetWorldMatrix() * this->csm->GetViewProjMatrix(l);
-					this->Shader_ShadowMapAnimated->SetMatrix("lightWVP", wvp); 
-
-					for(int u = 0; u < stripsOne->size(); u++)  //**Tillman todo - indices?**
+					if(!animations[i]->GetKeyFrames()->get(0)->strips->get(0)->GetCulled())
 					{
-						//Set shader data per strip
-						Object3D* objOne = stripsOne->get(u)->GetRenderObject();
-						Object3D* objTwo = stripsTwo->get(u)->GetRenderObject();
+						currentRenderedMeshShadows++;
 
-						//Vertex data
-						this->Dx_DeviceContext->IASetPrimitiveTopology(objOne->GetTopology()); 
-						Buffer* vertsOne = objOne->GetVertBuff();
-						Buffer* vertsTwo = objTwo->GetVertBuff();
-						ID3D11Buffer* vertexBuffers [] = {vertsOne->GetBufferPointer(), vertsTwo->GetBufferPointer()};
-						UINT strides [] = {sizeof(Vertex), sizeof(Vertex)};
-						UINT offsets [] = {0, 0};
-						this->Dx_DeviceContext->IASetVertexBuffers(0, 2, vertexBuffers, strides, offsets);
+						KeyFrame* one = NULL;
+						KeyFrame* two = NULL;
+						float t = 0.0f;
+						this->animations[i]->SetCurrentTime(this->Timer * 1000.0f); //Timer is in seconds.
+						this->animations[i]->GetCurrentKeyFrames(&one, &two, t);
+						MaloW::Array<MeshStrip*>* stripsOne = one->strips;
+						MaloW::Array<MeshStrip*>* stripsTwo = two->strips;
 
-						//Textures
-						if(objOne->GetTextureResource() != NULL && objTwo->GetTextureResource() != NULL)
+						//Set shader data (per object)
+						this->Shader_ShadowMapAnimated->SetFloat("t", t);
+						D3DXMATRIX wvp = this->animations[i]->GetWorldMatrix() * this->csm->GetViewProjMatrix(l);
+						this->Shader_ShadowMapAnimated->SetMatrix("lightWVP", wvp); 
+
+						for(int u = 0; u < stripsOne->size(); u++)  //**Tillman todo - indices?**
 						{
-							if(objOne->GetTextureResource()->GetSRVPointer() != NULL && objTwo->GetTextureResource()->GetSRVPointer() != NULL)
+							//Set shader data per strip
+							Object3D* objOne = stripsOne->get(u)->GetRenderObject();
+							Object3D* objTwo = stripsTwo->get(u)->GetRenderObject();
+
+							//Vertex data
+							this->Dx_DeviceContext->IASetPrimitiveTopology(objOne->GetTopology()); 
+							Buffer* vertsOne = objOne->GetVertBuff();
+							Buffer* vertsTwo = objTwo->GetVertBuff();
+							ID3D11Buffer* vertexBuffers [] = {vertsOne->GetBufferPointer(), vertsTwo->GetBufferPointer()};
+							UINT strides [] = {sizeof(Vertex), sizeof(Vertex)};
+							UINT offsets [] = {0, 0};
+							this->Dx_DeviceContext->IASetVertexBuffers(0, 2, vertexBuffers, strides, offsets);
+
+							//Textures
+							if(objOne->GetTextureResource() != NULL && objTwo->GetTextureResource() != NULL)
 							{
-								this->Shader_ShadowMapAnimated->SetResource("diffuseMap0", objOne->GetTextureResource()->GetSRVPointer());
-								this->Shader_ShadowMapAnimated->SetResource("diffuseMap1", objTwo->GetTextureResource()->GetSRVPointer());
-								this->Shader_ShadowMapAnimated->SetBool("textured", true);
+								if(objOne->GetTextureResource()->GetSRVPointer() != NULL && objTwo->GetTextureResource()->GetSRVPointer() != NULL)
+								{
+									this->Shader_ShadowMapAnimated->SetResource("diffuseMap0", objOne->GetTextureResource()->GetSRVPointer());
+									this->Shader_ShadowMapAnimated->SetResource("diffuseMap1", objTwo->GetTextureResource()->GetSRVPointer());
+									this->Shader_ShadowMapAnimated->SetBool("textured", true);
+								}
+								else
+								{
+									this->Shader_ShadowMapAnimated->SetResource("diffuseMap0", NULL);
+									this->Shader_ShadowMapAnimated->SetResource("diffuseMap1", NULL);
+									this->Shader_ShadowMapAnimated->SetBool("textured", false);
+								}
 							}
 							else
 							{
@@ -818,19 +844,13 @@ void DxManager::RenderCascadedShadowMap()
 								this->Shader_ShadowMapAnimated->SetResource("diffuseMap1", NULL);
 								this->Shader_ShadowMapAnimated->SetBool("textured", false);
 							}
-						}
-						else
-						{
-							this->Shader_ShadowMapAnimated->SetResource("diffuseMap0", NULL);
-							this->Shader_ShadowMapAnimated->SetResource("diffuseMap1", NULL);
-							this->Shader_ShadowMapAnimated->SetBool("textured", false);
-						}
 
-						//Apply
-						this->Shader_ShadowMapAnimated->Apply(0);
+							//Apply
+							this->Shader_ShadowMapAnimated->Apply(0);
 
-						//Draw
-						//this->Dx_DeviceContext->Draw(vertsOne->GetElementCount(), 0);
+							//Draw
+							this->Dx_DeviceContext->Draw(vertsOne->GetElementCount(), 0); 
+						}
 					}
 				}
 			}
@@ -879,10 +899,14 @@ void DxManager::RenderCascadedShadowMap()
 
 	//Always tell the shader whether to use shadows or not.
 	this->Shader_DeferredLightning->SetBool("useShadow", this->useShadow);
+
+	this->renderedMeshShadows = currentRenderedMeshShadows;
+	this->renderedTerrainShadows = currentRenderedTerrainShadows;
 }
 
 void DxManager::CalculateCulling()
 {
+	//CAMERA:
 	D3DXMATRIX view = this->camera->GetViewMatrix();
 	D3DXMATRIX proj = this->camera->GetProjectionMatrix();
 
@@ -948,10 +972,14 @@ void DxManager::CalculateCulling()
 		if(pe.FrustrumVsSphere(this->FrustrumPlanes, terr->GetBoundingSphere(), terr->GetWorldMatrix(), scale))
 		{
 			terr->SetCulled(false);
+			//If the object is inside the frustum, it can cast a shadow
+			terr->SetShadowCulled(false);
 		}
 		else
 		{
 			terr->SetCulled(true);
+			//However, the opposite may not be true for shadowing.
+			//terr->SetShadowCulled(true); ///TEST**
 		}
 	}
 
@@ -967,10 +995,14 @@ void DxManager::CalculateCulling()
 			if(pe.FrustrumVsSphere(this->FrustrumPlanes, s->GetBoundingSphere(), ms->GetWorldMatrix(), scale))
 			{
 				s->SetCulled(false);
+				//If the object is inside the frustum, it can cast a shadow
+				s->SetShadowCulled(false);
 			}
 			else
 			{
 				s->SetCulled(true);
+				//However, the opposite may not be true for shadowing.
+				//s->SetShadowCulled(true); ///TEST**
 			}
 		}
 	}
@@ -987,12 +1019,58 @@ void DxManager::CalculateCulling()
 			if(pe.FrustrumVsSphere(this->FrustrumPlanes, s->GetBoundingSphere(), ms->GetWorldMatrix(), scale))
 			{
 				s->SetCulled(false);
+				//If the object is inside the frustum, it can cast a shadow
+				s->SetShadowCulled(false);
 			}
 			else
 			{
 				s->SetCulled(true);
+				//However, the opposite may not be true for shadowing.
+				//s->SetShadowCulled(true); ///TEST**
 			}
 		}
+	}
+
+
+	//SHADOW CULLING - determine if an object is inside a cascade.
+	if(this->csm != NULL)
+	{
+		//Calculate frustums - the frustum in this case i an OBB (the cascade). 
+		this->csm->CalcCascadePlanes();
+
+		//Static meshes
+		for(int i = 0; i < this->objects.size(); i++)
+		{
+			StaticMesh* staticMesh = this->objects.get(i);
+			float scale = max(staticMesh->GetScaling().x, max(staticMesh->GetScaling().y, staticMesh->GetScaling().z));
+
+			//Objects already in the cameras view frustum does not need to be checked.
+			MaloW::Array<MeshStrip*>* strips = staticMesh->GetStrips();
+			for(int j = 0; j < strips->size(); j++)
+			{
+				//so only check the strips that have been culled by the camera
+				MeshStrip* strip = strips->get(j);
+				if(strip->GetCulled())
+				{
+					//See if the bounding box for the strip is inside or intersects one of the cascades.
+					for(int k = 0; k < this->csm->GetNrOfCascadeLevels(); k++)
+					{
+						if(pe.FrustrumVsSphere(csm->GetCascadePlanes(k), strip->GetBoundingSphere(), staticMesh->GetWorldMatrix(), scale))
+						{
+							strip->SetShadowCulled(false); //TILLMAN OPT: sturnta i ifsatsen, göra direkt på return**
+							//as long as the object is inside ONE of the cascades, it needs to be drawn to the shadow map.
+							break;
+						}
+						else
+						{
+							strip->SetShadowCulled(true);
+						}
+					}
+				}
+			}
+		}
+
+
 	}
 }
 

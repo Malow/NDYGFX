@@ -1136,7 +1136,7 @@ bool PhysicsEngine::DoCollisionTriangleVsTriangle(Vector3 v00, Vector3 v01, Vect
 
 
 // Original Content: http://www.chadvernon.com/blog/resources/directx9/frustum-culling/
-bool PhysicsEngine::FrustrumVsSphere( D3DXPLANE planes[], BoundingSphere bs, D3DXMATRIX world, float scale )
+bool PhysicsEngine::FrustrumVsSphere( D3DXPLANE planes[], BoundingSphere bs, D3DXMATRIX world, float scale ) //**TILLMAN OPT, pekare**
 {
 	// various distances
 	float fDistance;

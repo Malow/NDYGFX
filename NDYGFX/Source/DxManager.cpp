@@ -28,6 +28,8 @@ DxManager::DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam)
 
 	this->RenderedMeshes = 0;
 	this->RenderedTerrains = 0;
+	this->renderedMeshShadows = 0;
+	this->renderedTerrainShadows = 0;
 
 	this->Shader_BillBoard = NULL;
 
@@ -799,6 +801,14 @@ int DxManager::GetRenderedMeshCount() const
 int DxManager::GetRenderedTerrainCount() const
 {
 	return this->RenderedTerrains;
+}
+int DxManager::GetRenderedTerrainShadowCount() const
+{
+	return this->renderedTerrainShadows;
+}
+int DxManager::GetRenderedMeshShadowCount() const
+{
+	return this->renderedMeshShadows;
 }
 
 void DxManager::SetCamera( Camera* cam )

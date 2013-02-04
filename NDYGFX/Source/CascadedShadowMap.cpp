@@ -7,12 +7,14 @@
 CascadedShadowMap::CascadedShadowMap()
 {
 	this->quality = 0;
-	this->blendDistance = 0.1f; //**Tmp, ska vara 0.0f;**
+	this->blendDistance = 0.1f; //**tillman Tmp, ska vara 0.0f;**
+	this->cascadePlanes = new D3DXPLANE*[SHADOW_MAP_CASCADE_COUNT];
 	for(int i = 0; i < SHADOW_MAP_CASCADE_COUNT; i++)
 	{
 		this->shadowMap[i] = NULL;
 		this->shadowMapDepthView[i] = NULL;
 		this->shadowMapSRView[i] = NULL;
+		this->cascadePlanes[i] = new D3DXPLANE[6];
 	}
 }
 
@@ -26,7 +28,9 @@ CascadedShadowMap::~CascadedShadowMap()
 			this->shadowMap[i]->Release();
 		if(this->shadowMapDepthView[i])
 			this->shadowMapDepthView[i]->Release();
+		if(this->cascadePlanes[i]) delete[] this->cascadePlanes[i]; this->cascadePlanes[i] = NULL;
 	}
+	if(this->cascadePlanes) delete[] this->cascadePlanes; this->cascadePlanes = NULL;
 }
 
 void CascadedShadowMap::CalcShadowMapMatrices(D3DXVECTOR3 sunLight, Camera* cam, int i, float nearPlaneDistanceCloserToSun)
@@ -71,7 +75,7 @@ void CascadedShadowMap::CalcShadowMapMatrices(D3DXVECTOR3 sunLight, Camera* cam,
 
 
 	//Calculate the light's view matrix.
-	D3DXVECTOR3 lightPos = D3DXVECTOR3(-1000, 1000, -1000); //**tillman**
+	D3DXVECTOR3 lightPos = D3DXVECTOR3(-1000, 1000, -1000); //**tillman - för sol/sun, ersätta med variabel**
 	D3DXVECTOR3 lightLookAt = lightPos + sunLight; //sunlight = the direction the sun is "looking at".
 	D3DXVECTOR3 lightUp = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 	D3DXMATRIX lightViewMatrix;
@@ -156,6 +160,53 @@ void CascadedShadowMap::CalcShadowMappingSplitDepths()
 	}
 	this->shadowMappingSplitDepths[SHADOW_MAP_CASCADE_COUNT] = camFar;
 	*/
+}
+void CascadedShadowMap::CalcCascadePlanes()
+{
+	// Calculate near plane of frustum.
+	for(int i = 0; i < SHADOW_MAP_CASCADE_COUNT; i++)
+	{
+		this->cascadePlanes[i][0].a = this->viewProj[i]._14 + this->viewProj[i]._13;
+		this->cascadePlanes[i][0].b = this->viewProj[i]._24 + this->viewProj[i]._23;
+		this->cascadePlanes[i][0].c = this->viewProj[i]._34 + this->viewProj[i]._33;
+		this->cascadePlanes[i][0].d = this->viewProj[i]._44 + this->viewProj[i]._43;
+		D3DXPlaneNormalize(&this->cascadePlanes[i][0], &this->cascadePlanes[i][0]);
+
+		// Calculate far plane of frustum.
+		this->cascadePlanes[i][1].a = this->viewProj[i]._14 - this->viewProj[i]._13; 
+		this->cascadePlanes[i][1].b = this->viewProj[i]._24 - this->viewProj[i]._23;
+		this->cascadePlanes[i][1].c = this->viewProj[i]._34 - this->viewProj[i]._33;
+		this->cascadePlanes[i][1].d = this->viewProj[i]._44 - this->viewProj[i]._43;
+		D3DXPlaneNormalize(&this->cascadePlanes[i][1], &this->cascadePlanes[i][1]);
+
+		// Calculate left plane of frustum.
+		this->cascadePlanes[i][2].a = this->viewProj[i]._14 + this->viewProj[i]._11; 
+		this->cascadePlanes[i][2].b = this->viewProj[i]._24 + this->viewProj[i]._21;
+		this->cascadePlanes[i][2].c = this->viewProj[i]._34 + this->viewProj[i]._31;
+		this->cascadePlanes[i][2].d = this->viewProj[i]._44 + this->viewProj[i]._41;
+		D3DXPlaneNormalize(&this->cascadePlanes[i][2], &this->cascadePlanes[i][2]);
+
+		// Calculate right plane of frustum.
+		this->cascadePlanes[i][3].a = this->viewProj[i]._14 - this->viewProj[i]._11; 
+		this->cascadePlanes[i][3].b = this->viewProj[i]._24 - this->viewProj[i]._21;
+		this->cascadePlanes[i][3].c = this->viewProj[i]._34 - this->viewProj[i]._31;
+		this->cascadePlanes[i][3].d = this->viewProj[i]._44 - this->viewProj[i]._41;
+		D3DXPlaneNormalize(&this->cascadePlanes[i][3], &this->cascadePlanes[i][3]);
+
+		// Calculate top plane of frustum.
+		this->cascadePlanes[i][4].a = this->viewProj[i]._14 - this->viewProj[i]._12; 
+		this->cascadePlanes[i][4].b = this->viewProj[i]._24 - this->viewProj[i]._22;
+		this->cascadePlanes[i][4].c = this->viewProj[i]._34 - this->viewProj[i]._32;
+		this->cascadePlanes[i][4].d = this->viewProj[i]._44 - this->viewProj[i]._42;
+		D3DXPlaneNormalize(&this->cascadePlanes[i][4], &this->cascadePlanes[i][4]);
+
+		// Calculate bottom plane of frustum.
+		this->cascadePlanes[i][5].a = this->viewProj[i]._14 + this->viewProj[i]._12;
+		this->cascadePlanes[i][5].b = this->viewProj[i]._24 + this->viewProj[i]._22;
+		this->cascadePlanes[i][5].c = this->viewProj[i]._34 + this->viewProj[i]._32;
+		this->cascadePlanes[i][5].d = this->viewProj[i]._44 + this->viewProj[i]._42;
+		D3DXPlaneNormalize(&this->cascadePlanes[i][5], &this->cascadePlanes[i][5]);
+	}
 }
 
 void CascadedShadowMap::Init(ID3D11Device* g_Device, int quality)
