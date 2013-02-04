@@ -33,7 +33,7 @@ public:
 
 	virtual MaloW::Array<MeshStrip*>* GetStrips();
 
-	virtual bool LoadFromFile(string file, IBTHFbx* fbx );
+	virtual bool LoadFromFile(string file, IBTHFbx* fbx, ID3D11Device* dev, ID3D11DeviceContext* devCont );
 
 	void Update(float dt);
 	void Render(float dt, D3DXMATRIX camProj, D3DXMATRIX camView, Shader* shad, ID3D11DeviceContext* devCont);

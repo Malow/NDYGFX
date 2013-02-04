@@ -14,7 +14,7 @@ FBXModelD3D::~FBXModelD3D()
 	}
 }
 
-void FBXModelD3D::Init(IBTHFbxModel* model)
+void FBXModelD3D::Init(IBTHFbxModel* model, ID3D11Device* dev, ID3D11DeviceContext* devCont)
 {
 	mBTHFBXModel = model;
 
@@ -22,9 +22,9 @@ void FBXModelD3D::Init(IBTHFbxModel* model)
 
 	for(int i = 0; i < model->GetModelPartCount(); i++)
 	{
-		FBXModelPartD3D* part = myNew FBXModelPartD3D();
+		FBXModelPartD3D* part = new FBXModelPartD3D();
 		
-		part->Init(this, model->GetModelPart(i), i);
+		part->Init(this, model->GetModelPart(i), i, dev, devCont);
 
 		mParts.push_back(part);
 	}
@@ -35,14 +35,14 @@ void FBXModelD3D::Update(float dt)
 
 }
 
-void FBXModelD3D::Render(float dt, Shader* shader, D3DXMATRIX viewProj, bool enableAnimation)
+void FBXModelD3D::Render(float dt, Shader* shader, D3DXMATRIX viewProj, bool enableAnimation, ID3D11DeviceContext* devCont)
 {
 	mGeometricOffset = *(D3DXMATRIX*)mBTHFBXModel->GetGeometricOffset();
 	mAnimationTransform = *(D3DXMATRIX*)mBTHFBXModel->GetAnimationTransform();
 
 	for(int i = 0; i < (int)mParts.size(); i++)
 	{
-		mParts[i]->Render(dt, shader, viewProj, enableAnimation);
+		mParts[i]->Render(dt, shader, viewProj, enableAnimation, devCont);
 	}
 }
 

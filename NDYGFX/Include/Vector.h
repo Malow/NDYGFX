@@ -166,6 +166,11 @@ public:
 		return Vector2( x + scalar, y + scalar );
 	}
 
+	inline bool operator==( const Vector2& v) const
+	{
+		return ( x == v.x && y == v.y );
+	}
+
 	inline float& operator[]( unsigned int i ) throw(...)
 	{
 		if(i > 1)

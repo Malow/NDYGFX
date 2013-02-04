@@ -33,7 +33,7 @@ extern "C"
 		virtual ~GraphicsEngine() { };
 
 		virtual iMesh* CreateMesh(const char* filename, const Vector3& pos) = 0;
-		virtual void DeleteMesh(iMesh* &delMesh) = 0;
+		virtual void DeleteMesh(iMesh* delMesh) = 0;
 		virtual iMesh* CreateStaticMesh(const char* filename, const Vector3& pos) = 0;
 		virtual iAnimatedMesh* CreateAnimatedMesh(const char* filename, const Vector3& pos) = 0;
 

@@ -187,7 +187,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	unsigned int channels = 4;
 	
 	testData[0] = new float[sizes[0]*sizes[0]*channels];
-	for(int i = 0; i < sizes[0]*sizes[0]; i++)
+	for(unsigned int i = 0; i < sizes[0]*sizes[0]; i++)
 	{
 		testData[0][ i * channels + 0 ] = 0.0f;
 		testData[0][ i * channels + 1 ] = 0.0f;
@@ -195,7 +195,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		testData[0][ i * channels + 3 ] = 0.0f;
 	}
 	testData[1] = new float[sizes[1]*sizes[1]*channels];
-	for(int i = 0; i < sizes[1]*sizes[1]; i++)
+	for(unsigned int i = 0; i < sizes[1]*sizes[1]; i++)
 	{
 		testData[1][ i * channels + 0 ] = 0.0f;
 		testData[1][ i * channels + 1 ] = 0.0f;
@@ -415,8 +415,10 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	iMesh* temp = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(50, 0, 0));
 	temp->SetScale(0.05f);
 
+	//iMesh* temp2 = GetGraphics()->CreateMesh("Media/Soldier_animated_jump.fbx", Vector3(-10, 3, 0));
+	
 
-	float navArrowsScale = 0.25f;
+float navArrowsScale = 0.25f;
 	iMesh* navArrowX = GetGraphics()->CreateMesh("Media/RedArrow.obj", Vector3(0, 0, 0));
 	iMesh* navArrowZ = GetGraphics()->CreateMesh("Media/BlueArrow.obj", Vector3(-7.5f * navArrowsScale, 0, 7.5f * navArrowsScale));
 	iMesh* navArrowSpawn = GetGraphics()->CreateMesh("Media/BlackArrow.obj", Vector3(0, 0, 0));
@@ -426,8 +428,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	navArrowX->Scale(navArrowsScale);
 	navArrowZ->Scale(navArrowsScale);
 	navArrowSpawn->Scale(navArrowsScale);
-	
-	GetGraphics()->CreateMesh("Media/scale.obj", Vector3(30, -300, 30));
+		GetGraphics()->CreateMesh("Media/scale.obj", Vector3(30, -300, 30));
 	
 #endif
 //*************************************	    END OF PRE TEST       **********************
@@ -510,13 +511,13 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		//MaloW::Debug("Normal: " + MaloW::convertNrToString(diff));
 		//diff = GetGraphics()->Update();
 		cd = GetGraphics()->GetPhysicsEngine()->GetSpecialCollisionRayTerrain(
-			GetGraphics()->GetCamera()->GetPosition(), GetGraphics()->GetCamera()->GetForward(), iT, testSize / (vertSize - 1));
+			GetGraphics()->GetCamera()->GetPosition(), GetGraphics()->GetCamera()->Get3DPickingRay(), iT, testSize / (vertSize - 1));
 		//diff = GetGraphics()->Update();
 		//MaloW::Debug("Special: " + MaloW::convertNrToString(diff));
 		//MaloW::Debug(" ");
 		//diff = 100.0f;
-		cd = GetGraphics()->GetPhysicsEngine()->GetCollisionRayMesh(GetGraphics()->GetCamera()->GetPosition(), 
-			GetGraphics()->GetCamera()->GetForward(), wp);
+		/*cd = GetGraphics()->GetPhysicsEngine()->GetCollisionRayMesh(GetGraphics()->GetCamera()->GetPosition(), 
+			GetGraphics()->GetCamera()->GetForward(), wp);*/
 		
 		if(cd.BoundingSphereCollision)
 		{
@@ -761,6 +762,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 					scaleHuman->SetPosition(Vector3(15, 20, 25));
 				showscale = !showscale;
 				toggleScale = false;
+				GetGraphics()->DeleteMesh(wp);
 			}
 		}
 		else

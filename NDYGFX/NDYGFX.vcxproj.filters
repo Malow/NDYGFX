@@ -375,6 +375,15 @@
     <ClCompile Include="Source\BTHFBX\Shared\FBX\FBXModelPartD3D.cpp">
       <Filter>Source Files\Engine\Objects and Entities\FBX</Filter>
     </ClCompile>
+    <ClCompile Include="Source\BTHFBX\Shared\FBX\FBXModelPartDataD3D.cpp">
+      <Filter>Source Files\Engine\Objects and Entities\FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\BTHFBX\Shared\Helpers\BTHResourceManager.cpp">
+      <Filter>Source Files\Engine\Objects and Entities\FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\BTHFBX\Shared\D3D\BTHTexture.cpp">
+      <Filter>Source Files\Engine\Objects and Entities\FBX</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Include\iKeyListener.h">

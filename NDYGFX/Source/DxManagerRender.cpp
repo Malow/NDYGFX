@@ -219,6 +219,12 @@ void DxManager::Life()
 				string msg = ((RendererEvent*)ev)->getMessage();
 				
 				//WaterPlaneEvent
+				if(dynamic_cast<FBXEvent*>(ev) != NULL)
+				{
+					this->HandleFBXEvent((FBXEvent*)ev);
+				}
+
+				//WaterPlaneEvent
 				if(dynamic_cast<WaterPlaneEvent*>(ev) != NULL)
 				{
 					this->HandleWaterPlaneEvent((WaterPlaneEvent*)ev);

@@ -4,12 +4,12 @@
 #include "..\..\..\..\Source\Buffer.h"
 #include "..\..\Include\BTHFbxModel.h"
 #include "FBXModelPartD3D.h"
-#include <stdlib.h>
+#include "..\..\..\Array.h"
+#include <Vector>
 
 
 class FBXModelD3D
 {
-
 	std::vector<FBXModelPartD3D*> mParts;
 
 	D3DXMATRIX					mGeometricOffset;
@@ -23,10 +23,10 @@ public:
 	FBXModelD3D();
 	~FBXModelD3D();
 
-	void Init(IBTHFbxModel* model);
+	void Init(IBTHFbxModel* model, ID3D11Device* dev, ID3D11DeviceContext* devCont);
 
 	void Update(float dt);
-	void Render(float dt, Shader* shader, D3DXMATRIX viewProj, bool enableAnimation);
+	void Render(float dt, Shader* shader, D3DXMATRIX viewProj, bool enableAnimation, ID3D11DeviceContext* devCont);
 
 	const D3DXMATRIX& GetGeometricOffset();
 	const D3DXMATRIX& GetAnimationTransform();

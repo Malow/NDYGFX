@@ -30,9 +30,7 @@
     <ClInclude Include="Source\Array.h" />
     <ClInclude Include="Source\BTHFBX\Include\BTHFbx.h" />
     <ClInclude Include="Source\BTHFBX\Include\BTHstdafx.h" />
-    <ClInclude Include="Source\BTHFBX\Shared\FBX\FBXSceneD3D.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
+    <ClInclude Include="Source\BTHFBX\Shared\FBX\FBXSceneD3D.h"/>
     <ClInclude Include="Source\Buffer.h" />
     <ClInclude Include="Source\BufferResource.h" />
     <ClInclude Include="Source\Camera.h" />
@@ -82,15 +80,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\AnimatedMesh.cpp" />
-    <ClCompile Include="Source\BTHFBX\Shared\FBX\FBXModelD3D.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="Source\BTHFBX\Shared\FBX\FBXModelPartD3D.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="Source\BTHFBX\Shared\FBX\FBXSceneD3D.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="Source\BTHFBX\Shared\D3D\BTHTexture.cpp" />
+    <ClCompile Include="Source\BTHFBX\Shared\FBX\FBXModelD3D.cpp"/>
+    <ClCompile Include="Source\BTHFBX\Shared\FBX\FBXModelPartD3D.cpp"/>
+    <ClCompile Include="Source\BTHFBX\Shared\FBX\FBXModelPartDataD3D.cpp" />
+    <ClCompile Include="Source\BTHFBX\Shared\FBX\FBXSceneD3D.cpp"/>
+    <ClCompile Include="Source\BTHFBX\Shared\Helpers\BTHResourceManager.cpp" />
     <ClCompile Include="Source\Buffer.cpp" />
     <ClCompile Include="Source\BufferResource.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
@@ -284,6 +279,8 @@
       </EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
     </FxCompile>
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -318,7 +315,7 @@
     <OutDir>$(SolutionDir)\Build\$(Configuration)\</OutDir>
     <ExecutablePath>$(SolutionDir)\External\VLD\bin\Win32;$(SolutionDir)\External\D3D\Utilities\bin\x86\;$(ExecutablePath)</ExecutablePath>
     <IncludePath>$(SolutionDir)\External\D3D\Include\;$(SolutionDir)\External\VLD\include\;$(SolutionDir)\Include\;$(DXSDK_DIR)\Include\;$(SolutionDir)\External\BTHFBX\include\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)\External\VLD\lib\Win32;$(SolutionDir)\External\D3D\Lib\x86\;$(DXSDK_DIR)\Lib\x86\;..\NDYGFX\Build\Debug;..\Build\Debug;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)\External\VLD\lib\Win32;$(SolutionDir)\External\D3D\Lib\x86\;$(DXSDK_DIR)\Lib\x86\;$(SolutionDir)\Build\Debug;$(LibraryPath)</LibraryPath>
     <TargetName>$(ProjectName)D</TargetName>
     <IntDir>$(ProjectDir)\Obj\$(Configuration)\</IntDir>
   </PropertyGroup>
@@ -326,7 +323,7 @@
     <OutDir>$(SolutionDir)\Build\$(Configuration)\</OutDir>
     <ExecutablePath>$(SolutionDir)\External\D3D\Utilities\bin\x86\;$(ExecutablePath)</ExecutablePath>
     <IncludePath>$(SolutionDir)\External\D3D\Include\;$(SolutionDir)\Include\;$(DXSDK_DIR)\Include\;$(SolutionDir)\External\BTHFBX\include\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)\External\D3D\Lib\x86\;$(DXSDK_DIR)\Lib\x86\;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)\External\D3D\Lib\x86\;$(DXSDK_DIR)\Lib\x86\;$(SolutionDir)\Build\Release;$(LibraryPath)</LibraryPath>
     <IntDir>$(ProjectDir)\Obj\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
