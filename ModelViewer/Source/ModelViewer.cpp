@@ -416,7 +416,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	temp->SetScale(0.05f);
 
 	//iMesh* temp2 = GetGraphics()->CreateMesh("Media/Soldier_animated_jump.fbx", Vector3(-10, 3, 0));
-	
+	//temp2->SetScale(0.05f);
 
 	GetGraphics()->CreateMesh("Media/scale.obj", Vector3(30, -300, 30));
 	
@@ -734,7 +734,6 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 					scaleHuman->SetPosition(Vector3(15, 20, 25));
 				showscale = !showscale;
 				toggleScale = false;
-				GetGraphics()->DeleteMesh(wp);
 			}
 		}
 		else

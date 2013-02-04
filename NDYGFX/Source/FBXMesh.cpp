@@ -29,7 +29,9 @@ void FBXMesh::Update( float dt )
 
 void FBXMesh::Render(float dt, D3DXMATRIX camProj, D3DXMATRIX camView, Shader* shad, ID3D11DeviceContext* devCont)
 {
-	this->scene->Render(dt, this->worldMatrix, camProj, camView, shad, devCont );
+	this->RecreateWorldMatrix();
+	D3DXMATRIX world = this->GetWorldMatrix();
+	this->scene->Render(dt, world, camProj, camView, shad, devCont );
 }
 
 bool FBXMesh::LoadFromFile( string file, IBTHFbx* fbx, ID3D11Device* dev, ID3D11DeviceContext* devCont )
