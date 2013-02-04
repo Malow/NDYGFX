@@ -416,14 +416,21 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	temp->SetScale(0.05f);
 
 
-
-
+	float navArrowsScale = 0.25f;
+	iMesh* navArrowX = GetGraphics()->CreateMesh("Media/RedArrow.obj", Vector3(0, 0, 0));
+	iMesh* navArrowZ = GetGraphics()->CreateMesh("Media/BlueArrow.obj", Vector3(-7.5f * navArrowsScale, 0, 7.5f * navArrowsScale));
+	iMesh* navArrowSpawn = GetGraphics()->CreateMesh("Media/BlackArrow.obj", Vector3(0, 0, 0));
+	navArrowX->RotateAxis(Vector3(0, 0, 1), 3.14159265359 * 0.5f); //Point down x-axis
+	navArrowZ->RotateAxis(Vector3(1, 0, 0), -3.14159265359 * 0.5f); //Point down z-axis
+	navArrowSpawn->RotateAxis(Vector3(0, 0, 1), 3.14159265359 * 0.5f); //Point down x-axis
+	navArrowX->Scale(navArrowsScale);
+	navArrowZ->Scale(navArrowsScale);
+	navArrowSpawn->Scale(navArrowsScale);
+	
 	GetGraphics()->CreateMesh("Media/scale.obj", Vector3(30, -300, 30));
 	
 #endif
 //*************************************	    END OF PRE TEST       **********************
-
-	
 
 	iMesh* scaleHuman = GetGraphics()->CreateMesh("Media/scale.obj", Vector3(30, -300, 30));
 	iMesh* model = GetGraphics()->CreateMesh("Media/bth.obj", Vector3(15, 20, 20));
@@ -473,6 +480,25 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 
 //*************************************	     RUN TESTS       **********************
 #ifdef TEST
+
+		Vector3 spawnPoint = Vector3(0.0f, 0.0f, 0.0f);
+		Vector3 camPosOffset = GetGraphics()->GetCamera()->GetPosition();
+		Vector3 camForwardoffset = GetGraphics()->GetCamera()->GetForward() * 2.0f;
+		Vector3 arrowOffset = Vector3(-7.5f * navArrowsScale, 0, 7.5f * navArrowsScale);
+		Vector3 cameraOffset = Vector3(7.5f * navArrowsScale, -1.0f, 0.0f); 
+		navArrowX->SetPosition(camPosOffset + camForwardoffset + cameraOffset);
+		navArrowZ->SetPosition(camPosOffset + camForwardoffset + cameraOffset + arrowOffset);
+		
+		navArrowSpawn->SetPosition(camPosOffset + camForwardoffset + cameraOffset);
+		Vector3 vecBetweenSpawnAndArrow = spawnPoint - navArrowSpawn->GetPosition();
+		vecBetweenSpawnAndArrow.Normalize();
+		navArrowSpawn->ResetRotation();
+		Vector3 vec = Vector3(0, -1, 0);
+		Vector3 around = vec.GetCrossProduct(vecBetweenSpawnAndArrow);
+		float angle = acos(vec.GetDotProduct(vecBetweenSpawnAndArrow) / (vec.GetLength() * vecBetweenSpawnAndArrow.GetLength()));
+		navArrowSpawn->RotateAxis(around, angle);
+
+
 		CollisionData cd;
 		//cd = GetGraphics()->GetPhysicsEngine()->GetCollisionRayMesh(
 			//GetGraphics()->GetCamera()->GetPosition(), GetGraphics()->GetCamera()->Get3DPickingRay(), iAM);
@@ -548,6 +574,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		static float debugCSMScale = 1.0f;
 		if(GetGraphics()->GetKeyListener()->IsPressed('Q'))
 		{
+
 			debugCSMScale += diff * 0.001f;
 			model->Scale(1 + diff * 0.01f);
 			fileNames[0] = "Media/TerrainTexture.png";
