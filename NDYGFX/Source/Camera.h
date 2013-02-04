@@ -33,7 +33,7 @@ protected:
 	float sensitivity;
 	float DistanceFromTarget;
 
-	GraphicsEngineParams params;
+	GraphicsEngineParams &params;
 
 	D3DXVECTOR3 minBoundries;
 	D3DXVECTOR3 maxBoundries;
@@ -46,7 +46,7 @@ protected:
 	D3DXVECTOR3 NormalizeVector(D3DXVECTOR3 vec);
 
 public:
-	Camera(HWND g_hWnd, GraphicsEngineParams params);
+	Camera(HWND g_hWnd, GraphicsEngineParams &params);
 	virtual ~Camera();
 
 

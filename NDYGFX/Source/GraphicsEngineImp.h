@@ -73,6 +73,7 @@ public:
 class GraphicsEngineImp : public MaloW::Process, public GraphicsEngine
 {
 private:
+	GraphicsEngineParams parameters;
 	DxManager* dx;
 	HINSTANCE hInstance;
 	HWND hWnd;
@@ -88,8 +89,6 @@ private:
 	bool keepRunning;
 	bool loading;
 
-	GraphicsEngineParams parameters;
-
 	HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow);
 	void InitObjects();
 
@@ -101,8 +100,8 @@ private:
 
 
 public:
-	GraphicsEngineImp(GraphicsEngineParams params, HINSTANCE hInstance, int nCmdShow);
-	GraphicsEngineImp(GraphicsEngineParams params, HWND hWnd);
+	GraphicsEngineImp(const GraphicsEngineParams &params, HINSTANCE hInstance, int nCmdShow);
+	GraphicsEngineImp(const GraphicsEngineParams &params, HWND hWnd);
 	virtual ~GraphicsEngineImp();
 
 	// Special String Used For File Drops
@@ -213,9 +212,8 @@ public:
 	void SetManagingWindow(bool manage) { this->isManagingMyOwnWindow = manage; }
 	bool GetManagingWindow() const { return this->isManagingMyOwnWindow; }
 
-	const GraphicsEngineParams& GetEngineParams() const { return this->parameters; }
-
 	// Get's
+	const GraphicsEngineParams& GetEngineParams() const { return parameters; }
 	Camera* GetCam() const { return this->cam; } //{ return this->dx->GetCamera(); }
 	KeyListener* GetKeyList() const { return this->kl; }
 	HWND GetWindowHandle() const { return this->hWnd; }

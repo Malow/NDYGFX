@@ -6,7 +6,7 @@
 class RTSCamera : public Camera
 {
 public:
-	RTSCamera(HWND g_hWnd, GraphicsEngineParams params);
+	RTSCamera(HWND g_hWnd, GraphicsEngineParams &params);
 	virtual ~RTSCamera();
 
 	virtual void UpdateSpecific(float delta);

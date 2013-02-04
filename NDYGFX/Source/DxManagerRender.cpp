@@ -1039,7 +1039,7 @@ void DxManager::CalculateCulling()
 
 
 	//SHADOW CULLING - determine if an object is inside a cascade.
-	if(this->csm != NULL)
+	if(this->csm != NULL && this->useShadow) //**TILLMAN TODO, kolla att OBB blir rätt, verkar inte så...**
 	{
 		//Calculate frustums - the frustum in this case i an OBB (the cascade). 
 		this->csm->CalcCascadePlanes();
@@ -1050,22 +1050,24 @@ void DxManager::CalculateCulling()
 			StaticMesh* staticMesh = this->objects.get(i);
 			float scale = max(staticMesh->GetScaling().x, max(staticMesh->GetScaling().y, staticMesh->GetScaling().z));
 
-			//Objects already in the cameras view frustum does not need to be checked.
 			MaloW::Array<MeshStrip*>* strips = staticMesh->GetStrips();
 			for(int j = 0; j < strips->size(); j++)
 			{
-				//so only check the strips that have been culled by the camera
 				MeshStrip* strip = strips->get(j);
+
+				//Objects already in the cameras view frustum does not need to be checked,
+				//so only check the ones that are outside of it. (The ones that have already been culled
 				if(strip->GetCulled())
 				{
-					//See if the bounding box for the strip is inside or intersects one of the cascades.
-					for(int k = 0; k < this->csm->GetNrOfCascadeLevels(); k++)
+					//See if the strip is inside the bounding boxes(cascades) or intersects.
+					bool notDone = true;
+					for(int k = 0; k < this->csm->GetNrOfCascadeLevels() && notDone; k++)
 					{
 						if(pe.FrustrumVsSphere(csm->GetCascadePlanes(k), strip->GetBoundingSphere(), staticMesh->GetWorldMatrix(), scale))
 						{
+							//as long as the strip is inside ONE of the cascades, it needs to be drawn to the shadow map.
 							strip->SetShadowCulled(false); //TILLMAN OPT: sturnta i ifsatsen, göra direkt på return**
-							//as long as the object is inside ONE of the cascades, it needs to be drawn to the shadow map.
-							break;
+							notDone = false;
 						}
 						else
 						{
