@@ -187,7 +187,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	unsigned int channels = 4;
 	
 	testData[0] = new float[sizes[0]*sizes[0]*channels];
-	for(int i = 0; i < sizes[0]*sizes[0]; i++)
+	for(unsigned int i = 0; i < sizes[0]*sizes[0]; i++)
 	{
 		testData[0][ i * channels + 0 ] = 0.0f;
 		testData[0][ i * channels + 1 ] = 0.0f;
@@ -195,7 +195,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		testData[0][ i * channels + 3 ] = 0.0f;
 	}
 	testData[1] = new float[sizes[1]*sizes[1]*channels];
-	for(int i = 0; i < sizes[1]*sizes[1]; i++)
+	for(unsigned int i = 0; i < sizes[1]*sizes[1]; i++)
 	{
 		testData[1][ i * channels + 0 ] = 0.0f;
 		testData[1][ i * channels + 1 ] = 0.0f;
