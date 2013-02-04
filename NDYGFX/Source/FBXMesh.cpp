@@ -5,12 +5,13 @@
 
 FBXMesh::FBXMesh( D3DXVECTOR3 pos ) : Mesh(pos)
 {
-
+	this->scene = new FBXSceneD3D();
 }
 
 FBXMesh::~FBXMesh()
 {
-
+	if(this->scene)
+		delete this->scene;
 }
 
 
@@ -31,8 +32,10 @@ void FBXMesh::Render(float dt, D3DXMATRIX camProj, D3DXMATRIX camView, Shader* s
 	this->scene->Render(dt, this->worldMatrix, camProj, camView, shad, devCont );
 }
 
-bool FBXMesh::LoadFromFile( string file, IBTHFbx* fbx )
+bool FBXMesh::LoadFromFile( string file, IBTHFbx* fbx, ID3D11Device* dev, ID3D11DeviceContext* devCont )
 {
-	this->scene->Init(file.c_str(), fbx);
+	this->scene->Init(file.c_str(), fbx, dev, devCont);
+	this->scene->GetAnimationController()->SetCurrentAnimation(0);
+	this->scene->GetAnimationController()->Play();
 	return true;
 }

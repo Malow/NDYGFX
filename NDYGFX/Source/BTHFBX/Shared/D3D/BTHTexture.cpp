@@ -1,8 +1,6 @@
-#include "Texture.h"
+#include "BTHTexture.h"
 
-#include "Device3D.h"
-
-Texture::Texture()
+BTHTexture::BTHTexture()
 {
 	m_pTexture = 0;
 	m_pTextureView = 0;
@@ -15,16 +13,14 @@ Texture::Texture()
 	mDeviceContextUsedToLock = NULL;
 }
 
-Texture::~Texture()
+BTHTexture::~BTHTexture()
 {
 	Release();
 }
 
-HRESULT Texture::Init(Device3D* device, int width, int height, bool mappable, void* initData)
+HRESULT BTHTexture::Init(ID3D11Device* dev, ID3D11DeviceContext* devCont, int width, int height, bool mappable, void* initData)
 {
 	HRESULT hr = S_OK;
-
-	mDevice3D = device;
 
 	// Create depth stencil texture and since we don't
 	// need a stencil buffer we take 32-bits for depth buffer
@@ -45,7 +41,7 @@ HRESULT Texture::Init(Device3D* device, int width, int height, bool mappable, vo
 	data.pSysMem = initData;
 	data.SysMemPitch = width * 4;
 
-	hr = mDevice3D->GetDevice()->CreateTexture2D( &desc, initData ? &data : NULL, &m_pTexture );
+	hr = dev->CreateTexture2D( &desc, initData ? &data : NULL, &m_pTexture );
 	if( FAILED( hr ) )
 	{
 		MessageBox(NULL, "Unable to create texture.", "Texture::Init(...) Error", MB_ICONERROR | MB_OK);
@@ -60,7 +56,7 @@ HRESULT Texture::Init(Device3D* device, int width, int height, bool mappable, vo
 	viewDesc.ViewDimension			= D3D11_SRV_DIMENSION_TEXTURE2D;
 	viewDesc.Texture2D.MipLevels	= desc.MipLevels;
 
-	if(FAILED(hr = device->GetDevice()->CreateShaderResourceView( m_pTexture, &viewDesc, &m_pTextureView )))
+	if(FAILED(hr = dev->CreateShaderResourceView( m_pTexture, &viewDesc, &m_pTextureView )))
 	{
 		MessageBox(0, "Unable to create shader resource view", "Error!", 0);
 	}
@@ -73,7 +69,7 @@ HRESULT Texture::Init(Device3D* device, int width, int height, bool mappable, vo
 	return hr;
 }
 
-void Texture::UpdateData(void* data, ID3D11DeviceContext* deviceContext, D3D11_BOX* pDestRegion )
+void BTHTexture::UpdateData(void* data, ID3D11DeviceContext* deviceContext, D3D11_BOX* pDestRegion )
 {
 	D3D11_BOX destRegion;
 	if(pDestRegion == NULL)
@@ -91,20 +87,16 @@ void Texture::UpdateData(void* data, ID3D11DeviceContext* deviceContext, D3D11_B
 
 	if(deviceContext)
 		deviceContext->UpdateSubresource(m_pTexture, 0, pDestRegion, data, pDestRegion->right * 4, 0);
-	else
-		mDevice3D->GetDeviceContext()->UpdateSubresource(m_pTexture, 0, pDestRegion, data, pDestRegion->right * 4, 0);
 }
 
-HRESULT Texture::Init(Device3D* device, const char* filename)
+HRESULT BTHTexture::Init(const char* filename, ID3D11Device* dev, ID3D11DeviceContext* devCont)
 {
 	HRESULT hr = S_OK;
-
-	mDevice3D = device;
 
 	strcpy_s(m_cFilename, sizeof(m_cFilename), filename);
 
 	ID3D11Resource* resource;
-	if(FAILED(hr = D3DX11CreateTextureFromFile(device->GetDevice(), filename, 0, 0, &resource, &hr)))
+	if(FAILED(hr = D3DX11CreateTextureFromFile(dev, filename, 0, 0, &resource, &hr)))
 	{
 		if(hr == D3D11_ERROR_FILE_NOT_FOUND)
 		{
@@ -133,7 +125,7 @@ HRESULT Texture::Init(Device3D* device, const char* filename)
 	viewDesc.ViewDimension			= D3D11_SRV_DIMENSION_TEXTURE2D;
 	viewDesc.Texture2D.MipLevels	= desc.MipLevels;
 
-	if(FAILED(hr = device->GetDevice()->CreateShaderResourceView( m_pTexture, &viewDesc, &m_pTextureView )))
+	if(FAILED(hr = dev->CreateShaderResourceView( m_pTexture, &viewDesc, &m_pTextureView )))
 	{
 		MessageBox(0, "Unable to create shader resource view", "Error!", 0);
 	}
@@ -150,14 +142,14 @@ HRESULT Texture::Init(Device3D* device, const char* filename)
 	return hr;
 }
 
-void* Texture::Map(ID3D11DeviceContext* deviceContext)
+void* BTHTexture::Map(ID3D11DeviceContext* deviceContext)
 {
 	void* ret = NULL;
 	D3D11_MAPPED_SUBRESOURCE MappedResource;
 
 	HRESULT hr = S_OK;
 
-	mDeviceContextUsedToLock = deviceContext != NULL ? deviceContext : mDevice3D->GetDeviceContext();
+	mDeviceContextUsedToLock = deviceContext;
 	if(FAILED(hr = mDeviceContextUsedToLock->Map(
 		m_pTexture,
 		0,
@@ -175,7 +167,7 @@ void* Texture::Map(ID3D11DeviceContext* deviceContext)
 	return ret;
 }
 
-void Texture::Unmap()
+void BTHTexture::Unmap()
 {
 	if(mDeviceContextUsedToLock)
 	{
@@ -184,7 +176,7 @@ void Texture::Unmap()
 	}
 }
 
-void Texture::Release()
+void BTHTexture::Release()
 {
 	//release memory
 	if(m_pTextureView)
@@ -200,22 +192,22 @@ void Texture::Release()
 	}
 }
 
-ID3D11ShaderResourceView* Texture::GetResource()
+ID3D11ShaderResourceView* BTHTexture::GetResource()
 {
 	return m_pTextureView;
 }
 
-float Texture::GetWidth()
+float BTHTexture::GetWidth()
 {
 	return m_iTextureWidth;
 }
 
-float Texture::GetHeight()
+float BTHTexture::GetHeight()
 {
 	return m_iTextureHeight;
 }
 
-const char* Texture::GetFilename()
+const char* BTHTexture::GetFilename()
 {
 	return m_cFilename;
 }

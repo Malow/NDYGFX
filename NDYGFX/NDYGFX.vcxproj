@@ -31,7 +31,7 @@
     <ClInclude Include="Source\BTHFBX\Include\BTHFbx.h" />
     <ClInclude Include="Source\BTHFBX\Include\BTHstdafx.h" />
     <ClInclude Include="Source\BTHFBX\Shared\FBX\FBXSceneD3D.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="Source\Buffer.h" />
     <ClInclude Include="Source\BufferResource.h" />
@@ -82,15 +82,18 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\AnimatedMesh.cpp" />
+    <ClCompile Include="Source\BTHFBX\Shared\D3D\BTHTexture.cpp" />
     <ClCompile Include="Source\BTHFBX\Shared\FBX\FBXModelD3D.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Source\BTHFBX\Shared\FBX\FBXModelPartD3D.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="Source\BTHFBX\Shared\FBX\FBXModelPartDataD3D.cpp" />
     <ClCompile Include="Source\BTHFBX\Shared\FBX\FBXSceneD3D.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="Source\BTHFBX\Shared\Helpers\BTHResourceManager.cpp" />
     <ClCompile Include="Source\Buffer.cpp" />
     <ClCompile Include="Source\BufferResource.cpp" />
     <ClCompile Include="Source\Camera.cpp" />

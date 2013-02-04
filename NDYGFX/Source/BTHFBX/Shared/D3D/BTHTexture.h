@@ -1,14 +1,16 @@
 #ifndef _TEXTURE__H
 #define _TEXTURE__H
 
-class Texture
+#include "..\..\..\DirectX.h"
+
+class BTHTexture
 {
 public:
-	Texture();
-	~Texture();
+	BTHTexture();
+	~BTHTexture();
 
-	HRESULT Init(class Device3D* device, const char* filename);
-	HRESULT Init(class Device3D* device, int width, int height, bool mappable = false, void* initData = NULL);
+	HRESULT Init(const char* filename, ID3D11Device* dev, ID3D11DeviceContext* devCont);
+	HRESULT Init(ID3D11Device* dev, ID3D11DeviceContext* devCont, int width, int height, bool mappable = false, void* initData = NULL);
 	void Release();
 	ID3D11ShaderResourceView* GetResource();
 

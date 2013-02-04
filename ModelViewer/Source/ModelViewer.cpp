@@ -415,8 +415,8 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	iMesh* temp = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(50, 0, 0));
 	temp->SetScale(0.05f);
 
-
-
+	//iMesh* temp2 = GetGraphics()->CreateMesh("Media/Soldier_animated_jump.fbx", Vector3(-10, 3, 0));
+	
 
 	GetGraphics()->CreateMesh("Media/scale.obj", Vector3(30, -300, 30));
 	
@@ -484,13 +484,13 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		//MaloW::Debug("Normal: " + MaloW::convertNrToString(diff));
 		//diff = GetGraphics()->Update();
 		cd = GetGraphics()->GetPhysicsEngine()->GetSpecialCollisionRayTerrain(
-			GetGraphics()->GetCamera()->GetPosition(), GetGraphics()->GetCamera()->GetForward(), iT, testSize / (vertSize - 1));
+			GetGraphics()->GetCamera()->GetPosition(), GetGraphics()->GetCamera()->Get3DPickingRay(), iT, testSize / (vertSize - 1));
 		//diff = GetGraphics()->Update();
 		//MaloW::Debug("Special: " + MaloW::convertNrToString(diff));
 		//MaloW::Debug(" ");
 		//diff = 100.0f;
-		cd = GetGraphics()->GetPhysicsEngine()->GetCollisionRayMesh(GetGraphics()->GetCamera()->GetPosition(), 
-			GetGraphics()->GetCamera()->GetForward(), wp);
+		/*cd = GetGraphics()->GetPhysicsEngine()->GetCollisionRayMesh(GetGraphics()->GetCamera()->GetPosition(), 
+			GetGraphics()->GetCamera()->GetForward(), wp);*/
 		
 		if(cd.BoundingSphereCollision)
 		{

@@ -2,7 +2,7 @@
 
 #include "FBXModelD3D.h"
 
-#include "..\Source\BTHFBX\Shared\Helpers\ResourceManager.h"
+#include "..\Helpers\BTHResourceManager.h"
 
 #include "FBXModelPartDataD3D.h"
 
@@ -16,13 +16,13 @@ FBXModelPartD3D::~FBXModelPartD3D()
 
 }
 
-void FBXModelPartD3D::Init( FBXModelD3D* parentModel, IBTHFbxModelPart* modelPart, int partIndex)
+void FBXModelPartD3D::Init( FBXModelD3D* parentModel, IBTHFbxModelPart* modelPart, int partIndex, ID3D11Device* dev, ID3D11DeviceContext* devCont)
 {
 	mParentModel = parentModel;
 
 	m_bSkinnedModel = modelPart->IsSkinnedModel();
 
-	mModelData = FBXModelPartDataD3DManager::GetInstance()->GetModelData(parentModel, modelPart, partIndex);
+	mModelData = FBXModelPartDataD3DManager::GetInstance()->GetModelData(parentModel, modelPart, partIndex, dev, devCont);
 
 	mVB_Position = mModelData->mVB_Position;
 	mVB_Normal = mModelData->mVB_Normal;
