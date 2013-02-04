@@ -2,7 +2,7 @@
 
 #define PI (3.14159265358979323846f)
 
-FPSCamera::FPSCamera(HWND g_hWnd, GraphicsEngineParams params) : Camera(g_hWnd, params)
+FPSCamera::FPSCamera(HWND g_hWnd, GraphicsEngineParams &params) : Camera(g_hWnd, params)
 {
 	this->up = D3DXVECTOR3(0, 1, 0);
 	this->forward = D3DXVECTOR3(0, 0, 1);

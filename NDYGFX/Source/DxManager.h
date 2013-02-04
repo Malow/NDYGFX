@@ -219,6 +219,7 @@ public:
 	SunLight GetSunLight() const { return this->sun; }
 	D3DXVECTOR3 GetSceneAmbientLight() const { return this->sceneAmbientLight; }
 	void ResizeEngine(unsigned int width, unsigned int height);
+	const GraphicsEngineParams& GetParams() const;
 };
 
 #endif

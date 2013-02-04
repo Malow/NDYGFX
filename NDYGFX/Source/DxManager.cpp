@@ -876,3 +876,8 @@ void DxManager::DeleteFBXMesh( FBXMesh* mesh )
 	FBXEvent* re = new FBXEvent("Delete FBX", mesh);
 	this->PutEvent(re);
 }
+
+const GraphicsEngineParams& DxManager::GetParams() const
+{
+	return params;
+}

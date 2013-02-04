@@ -1,6 +1,6 @@
 #include "RTSCamera.h"
 
-RTSCamera::RTSCamera(HWND g_hWnd, GraphicsEngineParams params) : Camera(g_hWnd, params)
+RTSCamera::RTSCamera(HWND g_hWnd, GraphicsEngineParams &params) : Camera(g_hWnd, params)
 {
 	this->up = D3DXVECTOR3(0, 1, 0);
 	this->DistanceFromTarget = 75.0f;

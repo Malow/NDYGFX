@@ -6,7 +6,7 @@
 class FPSCamera : public Camera
 {
 public:
-	FPSCamera(HWND g_hWnd, GraphicsEngineParams params);
+	FPSCamera(HWND g_hWnd, GraphicsEngineParams &params);
 	virtual ~FPSCamera();
 
 	virtual void UpdateSpecific(float delta);
