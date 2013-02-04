@@ -734,6 +734,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 					scaleHuman->SetPosition(Vector3(15, 20, 25));
 				showscale = !showscale;
 				toggleScale = false;
+				GetGraphics()->DeleteMesh(wp);
 			}
 		}
 		else

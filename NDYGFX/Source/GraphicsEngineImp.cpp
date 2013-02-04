@@ -732,7 +732,7 @@ const iGraphicsEngineParams& GraphicsEngineImp::GetEngineParameters() const
 	return this->GetEngineParams();
 }
 
-void GraphicsEngineImp::DeleteMesh( iMesh* &delMesh )
+void GraphicsEngineImp::DeleteMesh( iMesh* delMesh )
 {
 	Mesh* tmpMesh = dynamic_cast<Mesh*>(delMesh);
 	if( tmpMesh != NULL )
@@ -755,6 +755,8 @@ void GraphicsEngineImp::DeleteMesh( iMesh* &delMesh )
 			delMesh = NULL;
 		}
 	}
+	if(WaterPlane* wp = dynamic_cast<WaterPlane*>(tmpMesh))
+		this->DeleteWaterPlane(wp);
 }
 
 const char* GraphicsEngineImp::GetSpecialString()
