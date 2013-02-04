@@ -1,10 +1,10 @@
 #include "Camera.h"
 
-Camera::Camera(HWND g_hWnd, GraphicsEngineParams params)
+Camera::Camera(HWND g_hWnd, GraphicsEngineParams &params) : 
+	params(params)
 {
 	this->forceBoundries = false;
 	this->g_hWnd = g_hWnd;
-	this->params = params;
 	this->pos = D3DXVECTOR3(0, 0, 0);
 	this->terrain = NULL;
 	this->followTarget = NULL;

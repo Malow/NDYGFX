@@ -2,9 +2,9 @@
 
 bool CursorControl::visable = true;
 
-GraphicsEngineImp::GraphicsEngineImp(GraphicsEngineParams params, HINSTANCE hInstance, int nCmdShow)
+GraphicsEngineImp::GraphicsEngineImp(const GraphicsEngineParams &params, HINSTANCE hInstance, int nCmdShow) :
+	parameters(params)
 {
-	this->parameters = params;
 	this->cam = NULL;
 	this->dx = NULL;
 	this->hInstance = NULL;
@@ -34,10 +34,9 @@ GraphicsEngineImp::GraphicsEngineImp(GraphicsEngineParams params, HINSTANCE hIns
 	this->Start();
 }
 
-GraphicsEngineImp::GraphicsEngineImp(GraphicsEngineParams params, HWND hWnd) :
-	GraphicsEngine()
+GraphicsEngineImp::GraphicsEngineImp(const GraphicsEngineParams &params, HWND hWnd) :
+	parameters(params)
 {
-	this->parameters = params;
 	this->cam = NULL;
 	this->dx = NULL;
 	this->hInstance = NULL;
@@ -804,6 +803,8 @@ void GraphicsEngineImp::ResizeGraphicsEngine( unsigned int width, unsigned int h
 	if(this->isManagingMyOwnWindow)
 		SetWindowPos(this->hWnd, 0 , 0 , 0, width, height, SWP_NOMOVE|SWP_NOZORDER|SWP_NOACTIVATE);
 
+	this->parameters.WindowWidth = width;
+	this->parameters.WindowHeight = height;
 	this->dx->ResizeEngine(width, height);
 }
 
