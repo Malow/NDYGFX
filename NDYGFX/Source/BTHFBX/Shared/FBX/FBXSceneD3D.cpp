@@ -1,4 +1,3 @@
-/*
 #include "FBXSceneD3D.h"
 
 FBXSceneD3D::FBXSceneD3D()
@@ -15,7 +14,7 @@ FBXSceneD3D::~FBXSceneD3D()
 	}
 }
 
-void FBXSceneD3D::Init(const char* filename, IBTHFbx* bthFBX, char* shaderFilename)
+void FBXSceneD3D::Init(const char* filename, IBTHFbx* bthFBX)
 {
 	mFBXScene = bthFBX->GetScene(filename);
 	if(mFBXScene)
@@ -96,4 +95,4 @@ IBTHFbxSkeleton* FBXSceneD3D::GetSkeleton()
 BTHFBX_RAY_BOX_RESULT FBXSceneD3D::RayVsScene(const BTHFBX_RAY& ray, BTHFBX_MATRIX* worldMatrix)
 {
 	return mFBXScene->RayVsScene(ray, worldMatrix);
-}*/
+}

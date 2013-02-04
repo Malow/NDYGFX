@@ -55,6 +55,7 @@ private:
 	MaloW::Array<AnimatedMesh*> animations;
 	MaloW::Array<WaterPlane*> waterplanes;
 	MaloW::Array<FBXMesh*> FBXMeshes;
+	Shader* Shader_FBX;
 	Shader* Shader_Water;
 
 	MaloW::Array<Image*> images;

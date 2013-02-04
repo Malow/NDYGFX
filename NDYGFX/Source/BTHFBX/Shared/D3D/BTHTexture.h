@@ -1,8 +1,6 @@
 #ifndef _TEXTURE__H
 #define _TEXTURE__H
 
-#include "..\..\Include\BTHstdafx.h"
-
 class Texture
 {
 public:

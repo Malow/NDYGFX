@@ -79,6 +79,7 @@ private:
 	KeyListener* kl;
 	Camera* cam;
 	PhysicsEngine* physx;
+	IBTHFbx* fbx;
 
 	int fpsLast;
 	int prevFrameCount;

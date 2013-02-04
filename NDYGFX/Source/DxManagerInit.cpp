@@ -300,6 +300,26 @@ HRESULT DxManager::Init()
 	}
 
 
+
+	//Create input layout for the FBX scene
+	const D3D11_INPUT_ELEMENT_DESC inputDescFBX[] =
+	{
+		{ "SV_POSITION",		  0, DXGI_FORMAT_R32G32B32_FLOAT,    0,  0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORMAL",				  0, DXGI_FORMAT_R32G32B32_FLOAT,    1,  0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TANGENT",			  0, DXGI_FORMAT_R32G32B32_FLOAT,    2,  0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD",			  0, DXGI_FORMAT_R32G32_FLOAT,       3,  0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "BLENDINDICES",		  0, DXGI_FORMAT_R32G32B32A32_FLOAT, 4,  0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "BLENDWEIGHT",		  0, DXGI_FORMAT_R32G32B32A32_FLOAT, 4, 16,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	};
+	this->Shader_FBX = new Shader();
+	if(FAILED(this->Shader_FBX->Init(Dx_Device, Dx_DeviceContext, "Shaders/BTTFBXViewer.fx", inputDescFBX, 6)))	// + on last if added above
+	{
+		MaloW::Debug("Failed to open BTTFBXViewer.fx");
+		return E_FAIL;
+	}
+
+
+
 	/*
 	// Deferred Quad pass
 	D3D11_INPUT_ELEMENT_DESC DeferredQuadDesc[] = {
@@ -465,27 +485,3 @@ HRESULT DxManager::Init()
 
 	return S_OK;
 }
-
-
-
-
-/*
-FOR FBX:
-desc:
-
-
-//Create input layout for the FBX scene
-const D3D11_INPUT_ELEMENT_DESC inputDesc[] =
-{
-{ "SV_POSITION",		  0, DXGI_FORMAT_R32G32B32_FLOAT,    0,  0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-{ "NORMAL",				  0, DXGI_FORMAT_R32G32B32_FLOAT,    1,  0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-{ "TANGENT",			  0, DXGI_FORMAT_R32G32B32_FLOAT,    2,  0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-{ "TEXCOORD",			  0, DXGI_FORMAT_R32G32_FLOAT,       3,  0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-{ "BLENDINDICES",		  0, DXGI_FORMAT_R32G32B32A32_FLOAT, 4,  0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-{ "BLENDWEIGHT",		  0, DXGI_FORMAT_R32G32B32A32_FLOAT, 4, 16,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-};
-
-int iNumElements = sizeof(inputDesc)/sizeof(D3D10_INPUT_ELEMENT_DESC);
-
-
-*/

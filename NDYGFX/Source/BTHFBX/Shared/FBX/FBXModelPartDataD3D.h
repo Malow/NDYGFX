@@ -1,12 +1,6 @@
 #pragma once
 
-#include <..\Source\BTHFBX\Include\stdafx.h>
-#include <..\Source\BTHFBX\Include\BTHFbx.h>
-
-#include "..\Source\BTHFBX\Shared\D3D\Shader.h"
-#include "..\Source\BTHFBX\Shared\D3D\Buffer.h"
-#include "..\Source\BTHFBX\Shared\D3D\Texture.h"
-#include "..\Source\BTHFBX\Shared\D3D\Device3D.h"
+#include "FBXModelPartD3D.h"
 
 class FBXModelPartDataD3D
 {
@@ -39,7 +33,7 @@ public:
 	static FBXModelPartDataD3DManager* GetInstance();
 	static void DeleteInstance();
 
-	FBXModelPartDataD3D* GetModelData(class FBXModelD3D* parentModel, IBTHFbxModelPart* modelPart, Device3D* device3D, int partIndex);
+	FBXModelPartDataD3D* GetModelData(class FBXModelD3D* parentModel, IBTHFbxModelPart* modelPart, int partIndex);
 
 	void Cleanup();
 };

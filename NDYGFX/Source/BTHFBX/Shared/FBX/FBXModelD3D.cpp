@@ -14,9 +14,8 @@ FBXModelD3D::~FBXModelD3D()
 	}
 }
 
-void FBXModelD3D::Init(IBTHFbxModel* model, Device3D* device3D)
+void FBXModelD3D::Init(IBTHFbxModel* model)
 {
-	mDevice3D = device3D;
 	mBTHFBXModel = model;
 
 	mName = model->GetName();
@@ -25,7 +24,7 @@ void FBXModelD3D::Init(IBTHFbxModel* model, Device3D* device3D)
 	{
 		FBXModelPartD3D* part = myNew FBXModelPartD3D();
 		
-		part->Init(this, model->GetModelPart(i), mDevice3D, i);
+		part->Init(this, model->GetModelPart(i), i);
 
 		mParts.push_back(part);
 	}

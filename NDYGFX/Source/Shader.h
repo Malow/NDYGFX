@@ -46,6 +46,9 @@ public:
 	void SetFloat3(char* variable, D3DXVECTOR3 value);
 	void SetFloatVectorArray(char* variable, D3DXVECTOR3* values, unsigned int nrOfElements);
 	void SetStructMemberAsFloat(char* structVariable, char* memberVariable, float value);
+
+	// Stefan for FBX
+	void SetMatrixArray(char* variable, const float* data, unsigned int offset, unsigned int count);
 };
 
 #endif

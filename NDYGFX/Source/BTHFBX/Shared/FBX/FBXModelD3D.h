@@ -1,13 +1,11 @@
 #pragma once
 
-#include "..\..\Include\BTHstdafx.h"
-#include "..\..\Include\BTHFbx.h"
-
 #include "..\..\..\..\Source\Shader.h"
 #include "..\..\..\..\Source\Buffer.h"
-//#include "BTHFBX\Shared\D3D\Device3D.h"
-
+#include "..\..\Include\BTHFbxModel.h"
 #include "FBXModelPartD3D.h"
+#include <stdlib.h>
+
 
 class FBXModelD3D
 {

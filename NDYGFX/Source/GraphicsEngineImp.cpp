@@ -9,6 +9,7 @@ GraphicsEngineImp::GraphicsEngineImp(GraphicsEngineParams params, HINSTANCE hIns
 	this->dx = NULL;
 	this->hInstance = NULL;
 	this->hWnd = NULL;
+	this->fbx = NULL;
 
 	this->keepRunning = true;
 	this->loading = false;
@@ -83,6 +84,7 @@ GraphicsEngineImp::~GraphicsEngineImp()
 		delete this->physx;
 		this->physx = NULL;
 	}
+	DestroyBTHFbx();
 
 	// DestroyWindow(this->hWnd); // Why is this commented out, Alex
 }
@@ -280,6 +282,7 @@ void GraphicsEngineImp::InitObjects()
 	this->dx->SetCamera(this->cam);
 	this->dx->SetFPSMAX(this->parameters.MaxFPS);
 	this->dx->Start();
+	this->fbx = InitBTHFbx();
 }
 
 StaticMesh* GraphicsEngineImp::CreateStaticMesh(string filename, D3DXVECTOR3 pos)
@@ -486,7 +489,7 @@ void GraphicsEngineImp::Life()
 				}
 				else if(FBXMesh* mesh = LME->GetFBXMesh())
 				{
-					bool success = mesh->LoadFromFile(filename);
+					bool success = mesh->LoadFromFile(filename, this->fbx);
 					if(success)
 					{
 						this->dx->CreateFBXMesh(mesh);

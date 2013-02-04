@@ -7,6 +7,7 @@
 #include "AnimatedMesh.h"
 #include "MaloW.h"
 #include "MaloWFileDebug.h"
+#include "WaterPlane.h"
 
 class PhysicsEngine : public iPhysicsEngine
 {
@@ -30,7 +31,7 @@ private:
 	bool DoCollisionSphereVsSphere(BoundingSphere bs1, D3DXMATRIX world1, float scale1, BoundingSphere bs2, D3DXMATRIX world2, float scale2);
 	CollisionData DoCollisionSphereVsRayDetailed(BoundingSphere bs, D3DXMATRIX world, float scale, Vector3 rayOrigin, Vector3 rayDirection);
 	CollisionData DoCollisionSphereVsSphereDetailed(BoundingSphere bs1, D3DXMATRIX world1, float scale1, BoundingSphere bs2, D3DXMATRIX world2, float scale2);
-	
+
 	void DoSpecialCollisionRayVsTerrainTriangles(Vector3 rayOrigin, Vector3 rayDirection, Vertex* vertices,
 		int nrOfVertices, int* indices, int nrOfIndices, D3DXMATRIX worldMat, CollisionData& cd);
 

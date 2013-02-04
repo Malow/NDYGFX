@@ -1,12 +1,9 @@
 #pragma once
 
-#include "..\..\Include\BTHstdafx.h"
-#include "..\..\Include\BTHFbx.h"
-
 #include "..\..\..\..\Source\Shader.h"
 #include "..\..\..\..\Source\Buffer.h"
 #include "..\D3D\BTHTexture.h"
-//#include "..\Source\BTHFBX\Shared\D3D\Device3D.h"
+#include "..\..\Include\BTHFbxModelPart.h"
 
 class FBXModelPartD3D
 {
@@ -34,5 +31,5 @@ public:
 	void Init(class FBXModelD3D* parentModel, IBTHFbxModelPart* modelPart, int partIndex);
 
 	void Update(float dt);
-	void Render(float dt, Shader* shader, D3DXMATRIX viewProj, bool enableAnimation);
+	void Render(float dt, Shader* shader, D3DXMATRIX viewProj, bool enableAnimation, ID3D11DeviceContext* devCont);
 };

@@ -62,7 +62,11 @@ CollisionData PhysicsEngine::GetCollisionRayMesh( Vector3 rayOrigin, Vector3 ray
 	
 	if(Mesh* mesh = dynamic_cast<Mesh*>(imesh))
 	{
-		this->DoCollisionRayVsMesh(rayOrigin, rayDirection, mesh, cd);
+		if(WaterPlane* wp = dynamic_cast<WaterPlane*>(mesh))
+			this->DoCollisionRayVsTriangles(rayOrigin, rayDirection, 
+				wp->GetVerts(), wp->GetNrOfVerts(), NULL, 0, wp->GetWorldMatrix(), cd);
+		else
+			this->DoCollisionRayVsMesh(rayOrigin, rayDirection, mesh, cd);
 	}
 	else
 		MaloW::Debug("Failed to cast iMesh to Mesh in PhysicsEngine.cpp in RayMesh");
