@@ -1139,7 +1139,7 @@ void DxManager::RenderFBXMeshes()
 	{
 		float dt = this->Timer - this->LastFBXUpdate;
 		this->FBXMeshes[i]->Update(dt);
-		this->FBXMeshes[i]->Render(dt, proj, view);
+		this->FBXMeshes[i]->Render(dt, proj, view, this->Shader_FBX, this->Dx_DeviceContext);
 	}
 
 

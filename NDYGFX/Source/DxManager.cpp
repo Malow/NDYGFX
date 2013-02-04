@@ -24,6 +24,7 @@ DxManager::DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam)
 	this->Shader_ShadowMap = NULL;
 	this->Shader_Text = NULL;
 	this->Shader_ShadowMapAnimated = NULL;
+	this->Shader_FBX = NULL;
 
 	this->RenderedMeshes = 0;
 	this->RenderedTerrains = 0;
@@ -125,6 +126,9 @@ DxManager::~DxManager()
 
 	if(this->Shader_Water)
 		delete this->Shader_Water;
+
+	if(this->Shader_FBX)
+		delete this->Shader_FBX;
 
 	/*
 	if(this->Dx_DeferredTexture)

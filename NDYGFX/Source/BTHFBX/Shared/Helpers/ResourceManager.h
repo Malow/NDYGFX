@@ -1,6 +1,6 @@
-#pragma once
+/*#pragma once
 
-#include <..\Source\BTHFBX\Include\stdafx.h>
+#include <stdlib.h>
 
 class Shader;
 class Texture;
@@ -30,4 +30,4 @@ public:
 	Shader* GetShader(const char* filename, const D3D11_INPUT_ELEMENT_DESC* inputElementDesc, unsigned int numElements);
 
 	void Cleanup();
-};
+};*/

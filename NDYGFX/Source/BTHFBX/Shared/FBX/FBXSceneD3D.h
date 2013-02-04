@@ -1,11 +1,11 @@
 #pragma once
 
-#include "..\..\Include\BTHstdafx.h"
-#include "..\..\Include\BTHFbx.h"
-
 #include "..\..\..\..\Source\Shader.h"
 #include "..\..\..\..\Source\Buffer.h"
+#include "..\..\Include\BTHFbx.h"
+#include <stdlib.h>
 
+/*
 #include "FBXModelD3D.h"
 
 struct ShadowData
@@ -29,7 +29,7 @@ public:
 	FBXSceneD3D();
 	~FBXSceneD3D();
 
-	void Init(const char* filename, IBTHFbx* bthFBX, char* shaderFilename);
+	void Init(const char* filename, IBTHFbx* bthFBX);
 
 	void Update(float dt);
 	void Render(float dt, D3DXMATRIX world, D3DXMATRIX camProj, D3DXMATRIX camView, Shader* mShader, ID3D11DeviceContext* devCont);
@@ -39,3 +39,20 @@ public:
 
 	BTHFBX_RAY_BOX_RESULT RayVsScene(const BTHFBX_RAY& ray, BTHFBX_MATRIX* worldMatrix);
 };
+*/
+
+
+
+
+class FBXSceneD3D
+{	
+public:
+	FBXSceneD3D();
+	~FBXSceneD3D();
+
+	void Init(const char* filename, IBTHFbx* bthFBX) {}
+
+	void Update(float dt) {}
+	void Render(float dt, D3DXMATRIX world, D3DXMATRIX camProj, D3DXMATRIX camView, Shader* mShader, ID3D11DeviceContext* devCont) {}
+};
+

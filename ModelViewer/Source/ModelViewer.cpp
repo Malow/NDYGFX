@@ -489,6 +489,8 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		//MaloW::Debug("Special: " + MaloW::convertNrToString(diff));
 		//MaloW::Debug(" ");
 		//diff = 100.0f;
+		cd = GetGraphics()->GetPhysicsEngine()->GetCollisionRayMesh(GetGraphics()->GetCamera()->GetPosition(), 
+			GetGraphics()->GetCamera()->GetForward(), wp);
 		
 		if(cd.BoundingSphereCollision)
 		{

@@ -16,15 +16,13 @@ FBXModelPartD3D::~FBXModelPartD3D()
 
 }
 
-void FBXModelPartD3D::Init( FBXModelD3D* parentModel, IBTHFbxModelPart* modelPart, Device3D* device3D, int partIndex)
+void FBXModelPartD3D::Init( FBXModelD3D* parentModel, IBTHFbxModelPart* modelPart, int partIndex)
 {
-	mDevice3D = device3D;
-
 	mParentModel = parentModel;
 
 	m_bSkinnedModel = modelPart->IsSkinnedModel();
 
-	mModelData = FBXModelPartDataD3DManager::GetInstance()->GetModelData(parentModel, modelPart, device3D, partIndex);
+	mModelData = FBXModelPartDataD3DManager::GetInstance()->GetModelData(parentModel, modelPart, partIndex);
 
 	mVB_Position = mModelData->mVB_Position;
 	mVB_Normal = mModelData->mVB_Normal;
@@ -42,7 +40,7 @@ void FBXModelPartD3D::Update(float dt)
 
 }
 
-void FBXModelPartD3D::Render(float dt, Shader* shader, D3DXMATRIX viewProj, bool enableAnimation)
+void FBXModelPartD3D::Render(float dt, Shader* shader, D3DXMATRIX viewProj, bool enableAnimation, ID3D11DeviceContext* devCont)
 {
 	#define EFFECTVARIABLENAME_WORLDMATRIX			"gWorld"
 	#define EFFECTVARIABLENAME_DIFFUSETEXTURE		"txDiffuse"
@@ -55,12 +53,21 @@ void FBXModelPartD3D::Render(float dt, Shader* shader, D3DXMATRIX viewProj, bool
 	
 	if( enableAnimation )
 	{
-		if( m_bSkinnedModel )	shader->SetMatrix(EFFECTVARIABLENAME_WORLDMATRIX, mParentModel->GetGeometricOffset() );
-		else					shader->SetMatrix(EFFECTVARIABLENAME_WORLDMATRIX, mParentModel->GetGeometricOffset() * mParentModel->GetAnimationTransform() );
+		if( m_bSkinnedModel )	
+		{
+			D3DXMATRIX temp = mParentModel->GetGeometricOffset();
+			shader->SetMatrix(EFFECTVARIABLENAME_WORLDMATRIX, temp );
+		}
+		else	
+		{
+			D3DXMATRIX temp = mParentModel->GetGeometricOffset() * mParentModel->GetAnimationTransform();
+			shader->SetMatrix(EFFECTVARIABLENAME_WORLDMATRIX, temp);
+		}
 	}
 	else
 	{
-								shader->SetMatrix(EFFECTVARIABLENAME_WORLDMATRIX, mParentModel->GetGeometricOffset() );
+		D3DXMATRIX temp = mParentModel->GetGeometricOffset();
+		shader->SetMatrix(EFFECTVARIABLENAME_WORLDMATRIX, temp );
 	}
 
 
@@ -68,12 +75,12 @@ void FBXModelPartD3D::Render(float dt, Shader* shader, D3DXMATRIX viewProj, bool
 	UINT aStrides[5] = { sizeof(D3DXVECTOR3), sizeof(D3DXVECTOR3), sizeof(D3DXVECTOR3), sizeof(D3DXVECTOR2), sizeof(BTHFBX_BLEND_WEIGHT_DATA) };
 	UINT aOffsets[5] = {0, 0, 0, 0, 0};
 
-	mDevice3D->GetDeviceContext()->IASetVertexBuffers( 0, 5, aVB, aStrides, aOffsets );
-	mDevice3D->GetDeviceContext()->IASetIndexBuffer( mIB->GetBufferPointer(), DXGI_FORMAT_R32_UINT, 0 );
+	devCont->IASetVertexBuffers( 0, 5, aVB, aStrides, aOffsets );
+	devCont->IASetIndexBuffer( mIB->GetBufferPointer(), DXGI_FORMAT_R32_UINT, 0 );
 
-	for(unsigned int pass = 0; pass < shader->PassCount(); pass++)
-	{
-		shader->Apply(pass);
-		mDevice3D->GetDeviceContext()->DrawIndexed((unsigned int)mIB->GetElementCount(),0,0);
-	}
+	//for(unsigned int pass = 0; pass < shader->PassCount(); pass++)
+	//{
+		//shader->Apply(pass);
+		devCont->DrawIndexed((unsigned int)mIB->GetElementCount(),0,0);
+	//}
 }
