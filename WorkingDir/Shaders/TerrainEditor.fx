@@ -2,7 +2,8 @@
 //
 //	Written by Markus Tillman for project "Not dead yet" at Blekinge Tekniska Högskola.
 //	
-//	This shader renders geometry (deferred with 4 GBuffers) with up to 4 textures(blendmap).
+//	This shader renders geometry (deferred with 4 GBuffers) with up to 8 textures with
+//	2 blendmaps.
 //-----------------------------------------------------------------------------------------
 #include "stdafx.fx"
 
