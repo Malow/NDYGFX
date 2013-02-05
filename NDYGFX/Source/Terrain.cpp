@@ -164,6 +164,7 @@ Terrain::Terrain()
 
 	//Vertex data
 	this->zHeightMapHasChanged = false;
+	this->zNormalsHaveChanged = false;
 	this->zNrOfVertices = 0;
 	this->zVertices = NULL;
 	this->zVertexBuffer = NULL;
@@ -220,6 +221,7 @@ Terrain::Terrain(D3DXVECTOR3 pos, D3DXVECTOR3 scale, unsigned int size)
 
 	//Vertex data
 	this->zHeightMapHasChanged = false;
+	this->zNormalsHaveChanged = false;
 	this->zNrOfVertices = 0;
 	this->zVertices = NULL;
 	this->zVertexBuffer = NULL;
@@ -425,7 +427,16 @@ void Terrain::SetHeightMap(float const* const data)
 	this->CalculateNormals();
 
 	this->zHeightMapHasChanged = true;
-	this->zRecreateBoundingSphere = true; //Bounding sphere needs to be recreated (done when calling GetBoundingSphere()).
+	this->zRecreateBoundingSphere = true; //Bounding sphere needs to be recreated (this is done when GetBoundingSphere() is called).
+}
+void Terrain::SetNormals(float const* const data)
+{
+	//Update/set normals of vertices
+	for(unsigned int i = 0; i < this->zSize * this->zSize * 3; i+=3)
+	{
+		this->zVertices[i / 3].normal = D3DXVECTOR3(data[i], data[i + 1], data[i + 2]);
+	}
+	this->zNormalsHaveChanged = true;
 }
 
 

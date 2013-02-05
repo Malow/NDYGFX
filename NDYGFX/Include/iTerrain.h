@@ -39,6 +39,8 @@ extern "C"
 			//Vertex data
 			/* Data = array of floats containing y-values for each vertex. */
 			virtual void SetHeightMap(float const* const data) = 0;
+			/* Data = array of floats containing normals (x,y,z) for each vertex. */
+			virtual void SetNormals(float const* const data) = 0;
 
 			//Texture data
 			/*	

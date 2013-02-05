@@ -215,8 +215,17 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	fileNames[5] = "Media/TerrainTexture.png";
 	fileNames[6] = "Media/TerrainTexture.png";
 	fileNames[7] = "Media/TerrainTexture.png";
+
+	float normals[64 * 64 * 3]; //vertSize = 64;
+	for(int i = 0; i < 64 * 64 * 3; i+=3)
+	{
+		normals[i] = 0.577350259f;		//x
+		normals[i + 1] = 0.577350259f;	//y
+		normals[i + 2] = 0.577350259f;	//z
+	}
 	iT2->SetTextures(fileNames);
 	iT2->SetBlendMaps(nrOfBlendMaps, sizes, testData);
+	iT2->SetNormals(normals);
 
 	int klerp = 3;
 	iTerrain** iTs = new iTerrain*[klerp*klerp];

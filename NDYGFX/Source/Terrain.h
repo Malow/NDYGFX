@@ -51,6 +51,7 @@ class Terrain : public iTerrain
 
 		//Vertex data
 		bool						zHeightMapHasChanged;
+		bool						zNormalsHaveChanged;
 		int							zNrOfVertices;
 		Vertex*						zVertices;	
 		Buffer*						zVertexBuffer;
@@ -104,6 +105,7 @@ class Terrain : public iTerrain
 
 		//Vertex data
 		bool HasHeightMapChanged() const { return this->zHeightMapHasChanged; }
+		bool HaveNormalsChanged() const { return this->zNormalsHaveChanged; }
 		int GetNrOfVertices() const { return this->zNrOfVertices; }
 		Vertex* GetVerticesPointer() const { return this->zVertices; }
 		Buffer* GetVertexBufferPointer() const { return this->zVertexBuffer; }
@@ -138,7 +140,8 @@ class Terrain : public iTerrain
 		void SetScale(D3DXVECTOR3 scale) { this->zScale = scale; }
 
 		//Vertex data
-		void HeightMapHasChanged(bool has) { this->zHeightMapHasChanged = has; }
+		void HeightMapHasChanged(bool flag) { this->zHeightMapHasChanged = flag; }
+		void NormalsHaveChanged(bool flag) { this->zNormalsHaveChanged = flag; }
 		void SetVertexBuffer(Buffer* vertexBuffer) { this->zVertexBuffer = vertexBuffer; }
 		void SetIndexBuffer(Buffer* indexBuffer) { this->zIndexBuffer = indexBuffer; }
 
@@ -181,6 +184,7 @@ class Terrain : public iTerrain
 		
 		//Vertex data
 		virtual void SetHeightMap(float const* const data); 
+		virtual void SetNormals(float const* const data);
 		
 		//Texture
 		virtual void SetTextureScale(float textureScale) { this->zTextureScale = textureScale; }

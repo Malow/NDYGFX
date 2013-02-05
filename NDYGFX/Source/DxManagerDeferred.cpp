@@ -103,7 +103,7 @@ void DxManager::RenderDeferredGeometry()
 			this->Shader_TerrainEditor->SetMatrix("worldMatrixInverseTranspose", worldInverseTranspose);
 
 			//Update vertex buffer if y-value for vertices (height map) have changed
-			if(terrPtr->HasHeightMapChanged()) //**TILLMAN LOADTHREAD**
+			if(terrPtr->HasHeightMapChanged() || terrPtr->HaveNormalsChanged()) //**TILLMAN LOADTHREAD**
 			{
 				//**OPT(OBS! Ev. only for editor): should be replaced with an update function ** TILLMAN
 					//this->Dx_DeviceContext->UpdateSubresource()
@@ -138,6 +138,8 @@ void DxManager::RenderDeferredGeometry()
 
 				//Set that the height map shall not be changed anymore.
 				terrPtr->HeightMapHasChanged(false);
+				//Same for normals
+				terrPtr->NormalsHaveChanged(false);
 			}
 
 			//Set Textures
