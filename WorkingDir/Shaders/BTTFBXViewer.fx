@@ -111,7 +111,6 @@ VS_OUTPUT DefaultVS( float3 vPos	     : SV_POSITION,
 		position = mul(position, gWorld);
 		normal = mul(vNormal, gWorld);
 		tangent = mul(vTangent, gWorld);
-
 	}
 
 	position = mul(position, g_mScale);

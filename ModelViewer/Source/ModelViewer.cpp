@@ -418,7 +418,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	temp->SetScale(0.05f);
 
 	//iMesh* temp2 = GetGraphics()->CreateMesh("Media/Soldier_animated_jump.fbx", Vector3(-10, 3, 0));
-	
+	//temp2->SetScale(0.05f);
 
 	/*float navArrowsScale = 0.25f;
 	iMesh* navArrowX = GetGraphics()->CreateMesh("Media/RedArrow.obj", Vector3(0, 0, 0));
@@ -770,7 +770,6 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 					scaleHuman->SetPosition(Vector3(15, 20, 25));
 				showscale = !showscale;
 				toggleScale = false;
-				GetGraphics()->DeleteMesh(wp);
 			}
 		}
 		else
