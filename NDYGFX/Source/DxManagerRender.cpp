@@ -700,12 +700,24 @@ void DxManager::RenderCascadedShadowMap()
 						verts->Apply();
 					}
 
+					//Texture - tell the shader to not use texture(s), as this will generate a warning if set to true. **TILLMAN - fortfarande samma problem, se nedan.
+					this->Shader_ShadowMap->SetResource("diffuseMap", NULL);
+					this->Shader_ShadowMap->SetBool("textured", false);
+
 					//Apply Shader
 					this->Shader_ShadowMap->Apply(0);
 
 					//Draw
 					if(inds)
 					{
+						//** TILLMAN - detta händer endast för cascade 0 (första drawcall i RenderCascadedShadowMap()).
+						//D3D11 WARNING: ID3D11DeviceContext::DrawIndexed: The Pixel Shader expects a Render Target View bound to slot 0,
+						//but none is bound. This is OK, as writes of an unbound Render Target View are discarded. 
+						//It is also possible the developer knows the data will not be used anyway. 
+						//This is only a problem if the developer actually intended to bind a Render Target View here. 
+						//[ EXECUTION WARNING #3146081: DEVICE_DRAW_RENDERTARGETVIEW_NOT_SET]
+						//** TILLMAN
+
 						this->Dx_DeviceContext->DrawIndexed(inds->GetElementCount(), 0, 0);
 					}
 					else
@@ -714,6 +726,8 @@ void DxManager::RenderCascadedShadowMap()
 					}
 				}
 			}
+
+			float test = 1.0f;
 
 			//Static meshes
 			for(int i = 0; i < this->objects.size(); i++)

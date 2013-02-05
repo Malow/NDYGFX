@@ -129,7 +129,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	int vertSize = 64;
 	float testSize = 25.0f;
 	
-	iTerrain* iT = GetGraphics()->CreateTerrain(Vector3(0, 0, 0), Vector3(testSize, 0.0f, testSize), vertSize);
+	iTerrain* iT = GetGraphics()->CreateTerrain(Vector3(0, 0, 0), Vector3(testSize, 1.0f, testSize), vertSize);
 	iTerrain* iT2 = GetGraphics()->CreateTerrain(Vector3(testSize, 0, 0), Vector3(testSize, 0.0f, testSize), vertSize);
 	iAnimatedMesh* iAM = GetGraphics()->CreateAnimatedMesh("Media/FlagBlue.ani", Vector3(30, 30, 30));
 	//iImage* iM = GetGraphics()->CreateImage(Vector2(100, 100), Vector2(100, 100), "Media/BallTexture.png");
@@ -153,6 +153,14 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		hmData[1] = 0.0f;
 		hmData[2] = 2.0f;
 		hmData[3] = 0.0f;*/
+		/*if(i % vertSize > 16 && i % vertSize < 48)
+		{
+			hmData[i] = 10.0f;
+		}
+		else
+		{
+			hmData[i] = 0.0f;
+		}*/
 		hmData[i] = 0.0f;
 	}
 	iT->SetHeightMap(hmData);
@@ -166,7 +174,6 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	fileNames[6] = "Media/TerrainTexture.png";
 	fileNames[7] = "Media/TerrainTexture.png";
 	iT->SetTextures(fileNames);
-	iT->SetHeightMap(hmData);
 	iT->SetTextureScale(-4);
 
 	float testF = 0.0f;
