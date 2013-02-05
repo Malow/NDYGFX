@@ -145,7 +145,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 
 	float inner = 1.0f;
 	float outer = inner * 2;
-	GetGraphics()->SetSpecialCircle(inner, outer, Vector2(0, 0));
+	//GetGraphics()->SetSpecialCircle(inner, outer, Vector2(0, 0));
 	float hmData[65 * 65];
 	for(int i = 0; i < vertSize * vertSize; i++)
 	{
@@ -165,14 +165,14 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	}
 	iT->SetHeightMap(hmData);
 	const char* fileNames[8];
-	fileNames[0] = "Media/TerrainTexture.png";
-	fileNames[1] = "Media/TerrainTexture.png";
-	fileNames[2] = "Media/TerrainTexture.png";
-	fileNames[3] = "Media/TerrainTexture.png";
-	fileNames[4] = "Media/TerrainTexture.png";
-	fileNames[5] = "Media/TerrainTexture.png";
-	fileNames[6] = "Media/TerrainTexture.png";
-	fileNames[7] = "Media/TerrainTexture.png";
+	fileNames[0] = "Media/01_v02-Moss.png";
+	fileNames[1] = "Media/01_v02-Moss.png";
+	fileNames[2] = "Media/01_v02-Moss.png";
+	fileNames[3] = "Media/01_v02-Moss.png";
+	fileNames[4] = "Media/01_v02-Moss.png";
+	fileNames[5] = "Media/01_v02-Moss.png";
+	fileNames[6] = "Media/01_v02-Moss.png";
+	fileNames[7] = "Media/01_v02-Moss.png";
 	iT->SetTextures(fileNames);
 	iT->SetTextureScale(-4);
 
@@ -234,7 +234,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	iT2->SetBlendMaps(nrOfBlendMaps, sizes, testData);
 	iT2->SetNormals(normals);
 
-	int klerp = 3;
+	/*int klerp = 3;
 	iTerrain** iTs = new iTerrain*[klerp*klerp];
 	for(int i = 0; i < klerp; i++)
 	{
@@ -245,7 +245,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 			iTs[i * klerp + j]->SetBlendMaps(nrOfBlendMaps, sizes, testData);
 			//iTs[i * klerp + j]->SetTextureScale(10);
 		}
-	}
+	}*/
 	
 	
 	// test fps
@@ -430,7 +430,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	iMesh* mmm = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(0,2,0));
 
 
-	iMesh* temp = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(50, 0, 0));
+	iMesh* temp = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(0, 0, 0));
 	temp->SetScale(0.05f);
 
 	//iMesh* temp2 = GetGraphics()->CreateMesh("Media/Soldier_animated_jump.fbx", Vector3(-10, 3, 0));
@@ -446,6 +446,18 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	navArrowX->Scale(navArrowsScale);
 	navArrowZ->Scale(navArrowsScale);
 	navArrowSpawn->Scale(navArrowsScale);*/
+
+
+	//GRASS
+	for(int i = 0; i < 25; i++)
+	{
+		for(int j = 0; j < 25; j++)
+		{
+			iMesh* tmp = GetGraphics()->CreateMesh("Media/ShrubberyGrass_01_v01.obj", Vector3(i - 12.5f, 0, j - 12.5f));
+			tmp->SetScale(0.05f);
+		}
+	}
+
 	
 	GetGraphics()->CreateMesh("Media/scale.obj", Vector3(30, -300, 30));
 	
@@ -871,7 +883,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 
 	//*************************************	     POST TEST       **********************
 #ifdef TEST
-	delete[] iTs;
+	//delete[] iTs;
 	delete [] sizes;
 	delete testData[0];
 	delete testData[1];
