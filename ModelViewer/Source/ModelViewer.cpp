@@ -449,14 +449,17 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 
 
 	//GRASS
-	for(int i = 0; i < 25; i++)
+	/*for(int i = 0; i < 25; i++)
 	{
 		for(int j = 0; j < 25; j++)
 		{
 			iMesh* tmp = GetGraphics()->CreateMesh("Media/ShrubberyGrass_01_v01.obj", Vector3(i - 12.5f, 0, j - 12.5f));
 			tmp->SetScale(0.05f);
 		}
-	}
+	}*/
+	//BILLBOARD(TREE)
+	iMesh* billboardTree = GetGraphics()->CreateMesh("Media/BillboardTreeTest.obj", Vector3(-5, 0, 0));
+	billboardTree->SetScale(0.05f);
 
 	
 	GetGraphics()->CreateMesh("Media/scale.obj", Vector3(30, -300, 30));

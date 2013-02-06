@@ -537,27 +537,53 @@ void DxManager::RenderImages()
 	{
 		Image* img = this->images[i];
 		// if Convert from screenspace is needed, which it isnt.
-		this->Shader_BillBoard->SetFloat("posx", (img->GetPosition().x / this->params.WindowWidth) * 2 - 1);
-		this->Shader_BillBoard->SetFloat("posy", 2 - (img->GetPosition().y / this->params.WindowHeight) * 2 - 1);
-		this->Shader_BillBoard->SetFloat("dimx", (img->GetDimensions().x / this->params.WindowWidth) * 2);
-		this->Shader_BillBoard->SetFloat("dimy", -(img->GetDimensions().y / this->params.WindowHeight) * 2);
-		this->Shader_BillBoard->SetFloat("opacity", img->GetOpacity());
+		this->Shader_Image->SetFloat("posx", (img->GetPosition().x / this->params.WindowWidth) * 2 - 1);
+		this->Shader_Image->SetFloat("posy", 2 - (img->GetPosition().y / this->params.WindowHeight) * 2 - 1);
+		this->Shader_Image->SetFloat("dimx", (img->GetDimensions().x / this->params.WindowWidth) * 2);
+		this->Shader_Image->SetFloat("dimy", -(img->GetDimensions().y / this->params.WindowHeight) * 2);
+		this->Shader_Image->SetFloat("opacity", img->GetOpacity());
 		
 		/*// if -1 to 1
-		this->Shader_BillBoard->SetFloat("posx", img->GetPosition().x);
-		this->Shader_BillBoard->SetFloat("posy", img->GetPosition().y);
-		this->Shader_BillBoard->SetFloat("dimx", img->GetDimensions().x);
-		this->Shader_BillBoard->SetFloat("dimy", img->GetDimensions().y);
+		this->Shader_Image->SetFloat("posx", img->GetPosition().x);
+		this->Shader_Image->SetFloat("posy", img->GetPosition().y);
+		this->Shader_Image->SetFloat("dimx", img->GetDimensions().x);
+		this->Shader_Image->SetFloat("dimy", img->GetDimensions().y);
 		*/
 		if(img->GetTexture() != NULL)
 		{
-			this->Shader_BillBoard->SetResource("tex2D", img->GetTexture()->GetSRVPointer());
+			this->Shader_Image->SetResource("tex2D", img->GetTexture()->GetSRVPointer());
 		}
-		this->Shader_BillBoard->Apply(0);
+		this->Shader_Image->Apply(0);
 		this->Dx_DeviceContext->Draw(1, 0);
 	}
-	this->Shader_BillBoard->SetResource("tex2D", NULL);
-	this->Shader_BillBoard->Apply(0);
+	this->Shader_Image->SetResource("tex2D", NULL);
+	this->Shader_Image->Apply(0);
+}
+void DxManager::RenderBillboards()
+{
+	/*this->Dx_DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+	
+	for(int i = 0; i < this->billboards.size(); i++)
+	{
+		Billboard* img = this->images[i];
+		// if Convert from screenspace is needed, which it isnt.
+		this->Shader_Image->SetFloat("posx", (img->GetPosition().x / this->params.WindowWidth) * 2 - 1);
+		this->Shader_Image->SetFloat("posy", 2 - (img->GetPosition().y / this->params.WindowHeight) * 2 - 1);
+		this->Shader_Image->SetFloat("dimx", (img->GetDimensions().x / this->params.WindowWidth) * 2);
+		this->Shader_Image->SetFloat("dimy", -(img->GetDimensions().y / this->params.WindowHeight) * 2);
+		this->Shader_Image->SetFloat("opacity", img->GetOpacity());
+		
+		
+		if(img->GetTexture() != NULL)
+		{
+			this->Shader_Image->SetResource("tex2D", img->GetTexture()->GetSRVPointer());
+		}
+		this->Shader_Image->Apply(0);
+		this->Dx_DeviceContext->Draw(1, 0);
+	}
+	this->Shader_Image->SetResource("tex2D", NULL);
+	this->Shader_Image->Apply(0);
+	*/
 }
 
 void DxManager::RenderText()
@@ -681,12 +707,12 @@ void DxManager::RenderCascadedShadowMap()
 				{
 					currentRenderedTerrainShadows++;
 
+					//Input Assembler
+					this->Dx_DeviceContext->IASetPrimitiveTopology(this->terrains[i]->GetTopology());
+
 					//Matrices
 					wvp = this->terrains[i]->GetWorldMatrix() * this->csm->GetViewProjMatrix(l);
 					this->Shader_ShadowMap->SetMatrix("lightWVP", wvp);
-			
-					//Input Assembler
-					this->Dx_DeviceContext->IASetPrimitiveTopology(this->terrains[i]->GetTopology());
 
 					//Vertex data
 					Buffer* verts = this->terrains[i]->GetVertexBufferPointer();
@@ -726,8 +752,6 @@ void DxManager::RenderCascadedShadowMap()
 					}
 				}
 			}
-
-			float test = 1.0f;
 
 			//Static meshes
 			for(int i = 0; i < this->objects.size(); i++)
@@ -804,6 +828,7 @@ void DxManager::RenderCascadedShadowMap()
 			}
 			//Unbind shader resources
 			this->Shader_ShadowMap->SetResource("diffuseMap", NULL);
+			this->Shader_ShadowMap->Apply(0);
 			
 			//Animated meshes
 			for(int i = 0; i < this->animations.size(); i++)
@@ -848,20 +873,23 @@ void DxManager::RenderCascadedShadowMap()
 								if(objOne->GetTextureResource()->GetSRVPointer() != NULL && objTwo->GetTextureResource()->GetSRVPointer() != NULL)
 								{
 									this->Shader_ShadowMapAnimated->SetResource("diffuseMap0", objOne->GetTextureResource()->GetSRVPointer());
-									this->Shader_ShadowMapAnimated->SetResource("diffuseMap1", objTwo->GetTextureResource()->GetSRVPointer());
+									//Only need one diffuse map since no blending between maps is done.
+									//this->Shader_ShadowMapAnimated->SetResource("diffuseMap1", objTwo->GetTextureResource()->GetSRVPointer());
 									this->Shader_ShadowMapAnimated->SetBool("textured", true);
 								}
 								else
 								{
 									this->Shader_ShadowMapAnimated->SetResource("diffuseMap0", NULL);
-									this->Shader_ShadowMapAnimated->SetResource("diffuseMap1", NULL);
+									//Only need one diffuse map since no blending between maps is done.
+									//this->Shader_ShadowMapAnimated->SetResource("diffuseMap1", NULL);
 									this->Shader_ShadowMapAnimated->SetBool("textured", false);
 								}
 							}
 							else
 							{
 								this->Shader_ShadowMapAnimated->SetResource("diffuseMap0", NULL);
-								this->Shader_ShadowMapAnimated->SetResource("diffuseMap1", NULL);
+								//Only need one diffuse map since no blending between maps is done.
+								//this->Shader_ShadowMapAnimated->SetResource("diffuseMap1", NULL);
 								this->Shader_ShadowMapAnimated->SetBool("textured", false);
 							}
 
@@ -878,7 +906,9 @@ void DxManager::RenderCascadedShadowMap()
 
 			//Unbind shader resources
 			this->Shader_ShadowMapAnimated->SetResource("diffuseMap0", NULL);
-			this->Shader_ShadowMapAnimated->SetResource("diffuseMap1", NULL);
+			this->Shader_ShadowMapAnimated->Apply(0);
+			//Only need one diffuse map since no blending between maps is done.
+			//this->Shader_ShadowMapAnimated->SetResource("diffuseMap1", NULL);
 
 		
 			D3DXMATRIX lvp = this->csm->GetViewProjMatrix(l);
@@ -1238,15 +1268,15 @@ HRESULT DxManager::Render()
 	// Render RTs pictures
 	this->Dx_DeviceContext->ClearDepthStencilView(this->Dx_DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);	
 	for(int q = 0; q < this->NrOfRenderTargets; q++)
-		DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_BillBoard, this->Dx_GbufferSRVs[q], q); 
+		DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_Image, this->Dx_GbufferSRVs[q], q); 
 	*/
 	
 	
 	// Render shadowmap pictures:
 	//for(int q = 0; q < this->lights.size(); q++)
-		//DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_BillBoard, this->lights[q]->GetShadowMapSRV(), q); 
+		//DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_Image, this->lights[q]->GetShadowMapSRV(), q); 
 	//for(int q = 0; q < this->csm->GetNrOfCascadeLevels(); q++)
-	//	DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_BillBoard, this->csm->GetShadowMapSRV(q), q); 
+	//	DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_Image, this->csm->GetShadowMapSRV(q), q); 
 
 	
 	

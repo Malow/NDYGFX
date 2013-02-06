@@ -71,10 +71,12 @@ private:
 	SunLight sun;
 	bool useSun;
 
+	Shader* Shader_Image;
+	//Shader* Shader_Billboard;
+	Shader* Shader_Text;
+
 	// Shadow map:
 	Shader* Shader_ShadowMap;
-	Shader* Shader_BillBoard;
-	Shader* Shader_Text;
 	Shader* Shader_ShadowMapAnimated;
 
 	
@@ -137,6 +139,7 @@ private:
 	void RenderShadowMap();
 	void RenderCascadedShadowMap();
 	void RenderImages();
+	void RenderBillboards();
 	void RenderQuadDeferred();
 	void RenderDeferredTexture();
 	void RenderDeferredSkybox();

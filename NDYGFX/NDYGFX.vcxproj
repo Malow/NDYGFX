@@ -13,6 +13,7 @@
   <ItemGroup>
     <ClInclude Include="Include\GraphicsEngine.h" />
     <ClInclude Include="Include\iAnimatedMesh.h" />
+    <ClInclude Include="Include\iBillboard.h" />
     <ClInclude Include="Include\iCamera.h" />
     <ClInclude Include="Include\iFBXMesh.h" />
     <ClInclude Include="Include\iGraphicsEngineParams.h" />
@@ -25,12 +26,13 @@
     <ClInclude Include="Include\iWaterPlane.h" />
     <ClInclude Include="Include\Matrix.h" />
     <ClInclude Include="Include\Vector.h" />
+    <ClInclude Include="Source\Billboard.h" />
     <ClInclude Include="Source\BoundingSphere.h" />
     <ClInclude Include="Source\AnimatedMesh.h" />
     <ClInclude Include="Source\Array.h" />
     <ClInclude Include="Source\BTHFBX\Include\BTHFbx.h" />
     <ClInclude Include="Source\BTHFBX\Include\BTHstdafx.h" />
-    <ClInclude Include="Source\BTHFBX\Shared\FBX\FBXSceneD3D.h"/>
+    <ClInclude Include="Source\BTHFBX\Shared\FBX\FBXSceneD3D.h" />
     <ClInclude Include="Source\Buffer.h" />
     <ClInclude Include="Source\BufferResource.h" />
     <ClInclude Include="Source\Camera.h" />
@@ -80,11 +82,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\AnimatedMesh.cpp" />
+    <ClCompile Include="Source\Billboard.cpp" />
     <ClCompile Include="Source\BTHFBX\Shared\D3D\BTHTexture.cpp" />
-    <ClCompile Include="Source\BTHFBX\Shared\FBX\FBXModelD3D.cpp"/>
-    <ClCompile Include="Source\BTHFBX\Shared\FBX\FBXModelPartD3D.cpp"/>
+    <ClCompile Include="Source\BTHFBX\Shared\FBX\FBXModelD3D.cpp" />
+    <ClCompile Include="Source\BTHFBX\Shared\FBX\FBXModelPartD3D.cpp" />
     <ClCompile Include="Source\BTHFBX\Shared\FBX\FBXModelPartDataD3D.cpp" />
-    <ClCompile Include="Source\BTHFBX\Shared\FBX\FBXSceneD3D.cpp"/>
+    <ClCompile Include="Source\BTHFBX\Shared\FBX\FBXSceneD3D.cpp" />
     <ClCompile Include="Source\BTHFBX\Shared\Helpers\BTHResourceManager.cpp" />
     <ClCompile Include="Source\Buffer.cpp" />
     <ClCompile Include="Source\BufferResource.cpp" />
@@ -134,6 +137,11 @@
     <Text Include="Include\iKeyListener.h" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="..\WorkingDir\Shaders\Billboard.fx">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">DrawBillboard</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+    </FxCompile>
     <FxCompile Include="..\WorkingDir\Shaders\BTTFBXViewer.fx">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Default.P0</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
@@ -220,7 +228,7 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
     </FxCompile>
-    <FxCompile Include="..\WorkingDir\Shaders\ScreenSpaceBillBoard.fx">
+    <FxCompile Include="..\WorkingDir\Shaders\Image.fx">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>

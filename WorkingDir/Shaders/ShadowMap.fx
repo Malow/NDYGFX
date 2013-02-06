@@ -9,7 +9,7 @@ cbuffer PerObject
 cbuffer PerStrip
 {
 	bool textured;
-}
+};
 
 struct VSIn
 {
@@ -33,6 +33,7 @@ PSIn VS(VSIn input)
 
 	return output;
 }
+
 float4 PS(PSIn input) : SV_TARGET
 {
 	if(textured)
