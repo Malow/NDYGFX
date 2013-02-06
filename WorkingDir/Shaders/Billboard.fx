@@ -19,7 +19,7 @@
 //-----------------------------------------------------------------------------------------
 // Global variables
 //-----------------------------------------------------------------------------------------
-Texture2D		g_DiffuseMap; 
+Texture2D		g_bb_DiffuseMap; 
 //**TILLMAN
 float2 g_TexCoords[4] = 
 {
@@ -39,48 +39,61 @@ cbuffer PerFrame
 };
 cbuffer PerBillBoard
 {
-	float2		g_BillboardSize;
-	bool		g_IsTextured;
+	float3		g_bb_Position; //input for Geometry shader
+	float2		g_bb_BillboardSize;
+	float3		g_bb_Color;
+	bool		g_bb_IsTextured;
 };
 
 //-----------------------------------------------------------------------------------------
 // Input and Output Structures
 //-----------------------------------------------------------------------------------------
-struct VSIn
+
+struct DummyIn
 {
-	float3 posW		: POSITION; //world space
+
+};
+/*struct VSIn
+{
+	//float3 posW		: POSITION; //world space
 	//float2 dummy1	: TEXCOORD;//unused TILLMAN
 	//float3 dummy2	: NORMAL; //unused TILLMAN
-	float3 color	: COLOR;
-};
+	//float3 color	: COLOR;
+};*/
 
 struct GSIn 
 {
 	float3 posW		: POSITION;
-	float3 color	: COLOR;	
+	//float3 color	: COLOR;	
 };
 
 struct PSIn 
 {
 	float4	posH		: SV_Position;	//homogenous clip space
+	float3	normal		: NORMAL;
 	float2	texCoords	: TEXCOORD;
 	float3	color		: COLOR; //TILLMAN opt, def struct, if(!textured)
 };
 
-
+struct PSOut			
+{
+	float4 Texture			: SV_TARGET0;	//Texture XYZ, unused W
+	float4 NormalAndDepth	: SV_TARGET1;	//Normal XYZ, depth W
+	float4 Position			: SV_TARGET2;	//Position XYZ, unused W
+	float4 Specular			: SV_TARGET3;	//Specular XYZ, specular power W
+};
 
 //-----------------------------------------------------------------------------------------
 // Vertex shader
 //-----------------------------------------------------------------------------------------
-GSIn VS(VSIn input)
+GSIn VS(DummyIn input)
 {
-	//GSIn output = (GSIn)0;
+	GSIn output = (GSIn)0;
 
-	//output.posW = input.posW;
-	//output.color = input.color;
+	output.posW = g_bb_Position;
 
-	//return output;
-	return (GSIn)input;
+	return output;
+	//return (GSIn)input;
 }
 
 
@@ -94,9 +107,9 @@ GSIn VS(VSIn input)
 void GS(point GSIn input[1], inout TriangleStream<PSIn> triStream)
 {	
 	//Create world matrix to make the billboard face the camera.
-	float3 forward = normalize(g_CameraPos - input[0].posW);
+	float3 forward = normalize(g_CameraPos - input[0].posW); //Also the normal
 	float3 right = normalize(cross(float3(0.0f, 1.0f, 0.0f), forward));
-	float3 up = cross(forward, right);
+	float3 up = float3(0.0f, 1.0f, 0.0f);//cross(forward, right);
 	float4x4 W;
 	W[0] = float4(right, 0.0f);
 	W[1] = float4(up, 0.0f);
@@ -105,8 +118,8 @@ void GS(point GSIn input[1], inout TriangleStream<PSIn> triStream)
 	float4x4 WVP = mul(W, g_CamViewProj); 
 		
 	//Create a quad in local space (facing down the z-axis)
-	float halfWidth  = g_BillboardSize.x * 0.5f;
-	float halfHeight = g_BillboardSize.y * 0.5f;
+	float halfWidth  = g_bb_BillboardSize.x * 0.5f;
+	float halfHeight = g_bb_BillboardSize.y * 0.5f;
 	float4 positions[4];
 	positions[0] = float4(-halfWidth, -halfHeight, 0.0f, 1.0f); //Top left
 	positions[1] = float4(+halfWidth, -halfHeight, 0.0f, 1.0f);	//Top right
@@ -118,44 +131,66 @@ void GS(point GSIn input[1], inout TriangleStream<PSIn> triStream)
 	PSIn output = (PSIn)0;
 	
 	output.posH = mul(positions[0], WVP); //Transform positions to clip space [-w,-w]
+	output.normal = forward;
 	output.texCoords = g_TexCoords[0];
-	output.color = input[0].color;
+	output.color = g_bb_Color;
 	triStream.Append(output); 
 
 	output.posH = mul(positions[1], WVP); //Transform positions to clip space [-w,-w]
+	output.normal = forward;
 	output.texCoords = g_TexCoords[1];
-	output.color = input[0].color;
+	output.color = g_bb_Color;
 	triStream.Append(output); 
 
 	output.posH = mul(positions[2], WVP); //Transform positions to clip space [-w,-w]
+	output.normal = forward;
 	output.texCoords = g_TexCoords[2];
-	output.color = input[0].color;
+	output.color = g_bb_Color;
 	triStream.Append(output); 
 
 	output.posH = mul(positions[3], WVP); //Transform positions to clip space [-w,-w]
+	output.normal = forward;
 	output.texCoords = g_TexCoords[3];
-	output.color = input[0].color;
+	output.color = g_bb_Color;
 	triStream.Append(output); 
 }
 //-----------------------------------------------------------------------------------------
-// Pixel shader (draw)
+// Pixel shader 
 //-----------------------------------------------------------------------------------------
-float4 PS(PSIn input) : SV_TARGET
+PSOut PS(PSIn input) : SV_TARGET
 {
-	if(g_IsTextured)
+	PSOut output = (PSOut)0; 
+
+	//Texture RT
+	if(g_bb_IsTextured)
 	{
-		float4 finalColor = g_DiffuseMap.Sample(LinearWrapSampler, input.texCoords);
+		float4 finalColor = g_bb_DiffuseMap.Sample(LinearWrapSampler, input.texCoords);
 		if(finalColor.a < 0.5f)
 		{
 			discard;
 		}
 
-		return finalColor;
+		output.Texture = finalColor;
+		//return finalColor;
 	}
 	else
 	{
-		return float4(input.color, 1.0f);
+		//return float4(input.color, 1.0f);
+		output.Texture = float4(input.color, 1.0f);
 	}
+
+	//Normal and depth RT
+	output.NormalAndDepth = float4(input.normal, input.posH.z / input.posH.w);	
+	float depth = length(g_CameraPos - g_bb_Position) / 200.0f;		// Haxfix**tillman
+	output.NormalAndDepth.w = depth;
+
+	//Position RT
+	output.Position = float4(g_bb_Position, 1.0f);
+	
+	//Specular RT
+	output.Specular.xyzw = 0.0f;
+
+	return output;
 }
 
 technique10 DrawBillboard
@@ -169,7 +204,7 @@ technique10 DrawBillboard
         
 		SetDepthStencilState( EnableDepth, 0 ); //Disabeldepthwrite?**TILLMAN test
 	    SetRasterizerState( BackCulling );
+		SetBlendState(NoBlend, float4( 0.0f, 0.0f, 0.0f, 0.0f ), 0xFFFFFFFF );
 		//SetBlendState( SrcAlphaBlendingAdd, float4( 0.0f, 0.0f, 0.0f, 0.0f ), 0xFFFFFFFF );
     }
 }
-

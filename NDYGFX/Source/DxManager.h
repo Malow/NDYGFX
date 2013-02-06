@@ -12,6 +12,7 @@
 #include "Light.h"
 #include "Process.h"
 #include "Image.h"
+#include "Billboard.h"
 #include "SSAO.h"
 #include "Text.h"
 #include "SkyBox.h"
@@ -19,10 +20,10 @@
 #include "StaticMesh.h"
 #include "AnimatedMesh.h"
 #include "PhysicsEngine.h"
-#include "DxManagerEvents.h"
-#include "CascadedShadowMap.h"
 #include "WaterPlane.h"
 #include "FBXMesh.h"
+#include "DxManagerEvents.h"
+#include "CascadedShadowMap.h"
 
 #if defined(DEBUG) || defined(_DEBUG)
 	#include <vld.h>
@@ -59,6 +60,7 @@ private:
 	Shader* Shader_Water;
 
 	MaloW::Array<Image*> images;
+	MaloW::Array<Billboard*> billboards;
 	MaloW::Array<Text*> texts;
 
 	float LavaWavesOuterRadius;
@@ -72,7 +74,7 @@ private:
 	bool useSun;
 
 	Shader* Shader_Image;
-	//Shader* Shader_Billboard;
+	Shader* Shader_Billboard;
 	Shader* Shader_Text;
 
 	// Shadow map:
@@ -139,7 +141,10 @@ private:
 	void RenderShadowMap();
 	void RenderCascadedShadowMap();
 	void RenderImages();
+
 	void RenderBillboards();
+	void RenderBillboard(Billboard* billboard);
+
 	void RenderQuadDeferred();
 	void RenderDeferredTexture();
 	void RenderDeferredSkybox();
@@ -153,6 +158,7 @@ private:
 	void HandleMeshEvent(MeshEvent* me);
 	void HandleLightEvent(LightEvent* le);
 	void HandleImageEvent(ImageEvent* ie);
+	void HandleBillboardEvent(BillboardEvent* ie);
 	void HandleTextEvent(TextEvent* te);
 	void HandleWaterPlaneEvent(WaterPlaneEvent* ie);
 	void HandleFBXEvent(FBXEvent* fe);
@@ -183,6 +189,7 @@ public:
 	Object3D* createParticleObject(ParticleMesh* mesh);
 	Light* CreateLight(D3DXVECTOR3 pos, bool UseShadowMap);
 	void CreateImage(Image* image, string texture);
+	void CreateBillboard(Billboard* billboard, string texture);
 	void CreateText(Text* text, string font);
 	void CreateWaterPlane(WaterPlane* wp, string texture);
 	void CreateSkyBox(string texture);
@@ -199,6 +206,7 @@ public:
 	void DeleteAnimatedMesh(AnimatedMesh* mesh);
 	void DeleteLight(Light* light);
 	void DeleteImage(Image* image);
+	void DeleteBillboard(Billboard* billboard);
 	void DeleteText(Text* text);
 	void DeleteWaterPlane(WaterPlane* wp);
 	void DeleteFBXMesh(FBXMesh* mesh);

@@ -1,4 +1,4 @@
-/*#pragma once
+#pragma once
 
 #if defined DLL_EXPORT
 #define DECLDIR __declspec(dllexport)
@@ -22,4 +22,4 @@ extern "C"
 			virtual void SetSize(Vector2 size) = 0;
 
 	};
-}*/
+}

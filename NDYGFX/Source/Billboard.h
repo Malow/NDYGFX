@@ -5,7 +5,7 @@
 //	Texture-resource class. Used by the ResourceManager.
 //  Requirements: ReferenceCounted.h.
 //--------------------------------------------------------------------------------------------------
-/*
+
 #pragma once
 
 #include "DirectX.h"
@@ -18,11 +18,18 @@ class Billboard : public iBillboard
 	private:
 		D3DXVECTOR3			zPosition;
 		D3DXVECTOR2			zSize;
+		D3DXVECTOR4			zColor;
 		TextureResource*	zTextureResource;
 
 	public:
-		Billboard(D3DXVECTOR3 position, D3DXVECTOR2 size);
+		Billboard();
+		Billboard(D3DXVECTOR3 position, D3DXVECTOR2 size, D3DXVECTOR4 color = D3DXVECTOR4(0.0f, 0.0f, 0.0f, 0.0f));
 		virtual ~Billboard();
+
+
+		D3DXVECTOR3 GetPositionD3DX() const { return this->zPosition; }
+		D3DXVECTOR2 GetSizeD3DX() const { return this->zSize; }
+		D3DXVECTOR4 GetColorD3DX() const { return this->zColor; }
 
 		TextureResource* GetTextureResource() const { return this->zTextureResource; }
 		void SetTextureResource(TextureResource* textureResource) { this->zTextureResource = textureResource; }
@@ -30,8 +37,10 @@ class Billboard : public iBillboard
 		//** iBillboard interface functions **
 		virtual Vector3 GetPosition() const;
 		virtual Vector2 GetSize() const;
+		virtual Vector4 GetColor() const;
 		virtual void SetPosition(Vector3 position);
 		virtual void SetSize(Vector2 size);
+		virtual void SetColor(Vector4 color);
+
 
 };
-		*/

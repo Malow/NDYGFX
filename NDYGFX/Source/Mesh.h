@@ -9,6 +9,7 @@
 #include "MeshStrip.h"//**tillman
 #include "iMesh.h"
 #include "Vector.h"
+#include "Billboard.h"
 //#include "MeshCounted.h"
 
 /*
@@ -38,6 +39,9 @@ protected:
 	//float transparency; //default 0.0f (full visibility)
 
 	MaloW::Array<MeshStrip*>* strips;//**tillman
+	string billboardFilePath;
+	Billboard* billboard;
+	float distanceToSwapToBillboard;
 	//MeshCounted* strips;
 
 	D3D_PRIMITIVE_TOPOLOGY topology;
@@ -48,11 +52,16 @@ protected:
 	D3DXMATRIX worldMatrix;
 	
 public:
-	Mesh(D3DXVECTOR3 pos);
+	Mesh(D3DXVECTOR3 pos, string billboardFilePath = "", float distanceToSwapToBillboard = -1);
 	virtual ~Mesh();
 	
 	// ID
 	string GetFilePath() { return this->filePath; }
+
+	// Billboard
+	string GetBillboardFilePath() { return this->billboardFilePath; }
+	Billboard* GetBillboardGFX() { return this->billboard; }
+	float GetDistanceToSwapToBillboard() { return this->distanceToSwapToBillboard; }
 
 	// Mesh Color Overlay
 	virtual void SetSpecialColor(COLOR specialColor);
@@ -87,7 +96,7 @@ public:
 	virtual Vector4 GetRotationQuaternion() const;
 	virtual Vector3 GetScaling() const;
 	virtual void ResetRotation();
-
+	virtual iBillboard* GetBillboard() { return this->billboard; }
 	
 	D3DXMATRIX GetWorldMatrix() { return this->worldMatrix; }
 	void ResetRotationAndScale();

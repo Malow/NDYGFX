@@ -444,35 +444,118 @@ void DxManager::RenderDeferredGeometry()
 
 
 
-	//Normal geometry
+	//Static meshes
 	this->Shader_DeferredGeometry->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetPositionD3DX(), 1));
 	this->Shader_DeferredGeometry->SetFloat("NearClip", this->params.NearClip);
 	this->Shader_DeferredGeometry->SetFloat("FarClip", this->params.FarClip);
 
 	for(int i = 0; i < this->objects.size(); i++)
 	{
-		if(!this->objects[i]->IsUsingInvisibility())
+		StaticMesh* staticMesh = this->objects[i];
+		if(!staticMesh->IsUsingInvisibility())
 		{
-			MaloW::Array<MeshStrip*>* strips = this->objects[i]->GetStrips();
-		
-			// Per object
-			this->Shader_DeferredGeometry->SetInt("specialColor", this->objects[i]->GetSpecialColor());
-
-			// Set matrices
-			world = this->objects[i]->GetWorldMatrix();
-			wvp = world * view * proj;
-			D3DXMatrixInverse(&worldInverseTranspose, NULL, &world);
-			D3DXMatrixTranspose(&worldInverseTranspose, &worldInverseTranspose);
-
-			this->Shader_DeferredGeometry->SetMatrix("WVP", wvp);
-			this->Shader_DeferredGeometry->SetMatrix("worldMatrix", world);
-			this->Shader_DeferredGeometry->SetMatrix("worldMatrixInverseTranspose", worldInverseTranspose);
-
-			bool hasBeenCounted = false;
+			D3DXVECTOR3 distance = staticMesh->GetBillboardGFX()->GetPositionD3DX() - this->camera->GetPositionD3DX();
 			
-			for(int u = 0; u < strips->size(); u++)
+			//If the mesh has a billboard AND is inside the billboard range, render the mesh
+			float billboardRange = 0.0f;
+			//If no billboard range has been set for the mesh, use the default value
+			if(staticMesh->GetDistanceToSwapToBillboard() <= 0.0f)
 			{
-				if(!strips->get(u)->GetCulled())
+				billboardRange = this->params.FarClip * this->params.BillboardRange;
+			}
+			else
+			{
+				billboardRange = staticMesh->GetDistanceToSwapToBillboard();
+			}
+
+			if(D3DXVec3Length(&distance) < billboardRange || staticMesh->GetBillboardFilePath() == "")
+			{
+				MaloW::Array<MeshStrip*>* strips = staticMesh->GetStrips();
+		
+				// Per object
+				this->Shader_DeferredGeometry->SetInt("specialColor", staticMesh->GetSpecialColor());
+
+				// Set matrices
+				world = this->objects[i]->GetWorldMatrix();
+				wvp = world * view * proj;
+				D3DXMatrixInverse(&worldInverseTranspose, NULL, &world);
+				D3DXMatrixTranspose(&worldInverseTranspose, &worldInverseTranspose);
+
+				this->Shader_DeferredGeometry->SetMatrix("WVP", wvp);
+				this->Shader_DeferredGeometry->SetMatrix("worldMatrix", world);
+				this->Shader_DeferredGeometry->SetMatrix("worldMatrixInverseTranspose", worldInverseTranspose);
+
+				bool hasBeenCounted = false;
+			
+				for(int u = 0; u < strips->size(); u++)
+				{
+					if(!strips->get(u)->GetCulled())
+					{
+						if(!hasBeenCounted)
+						{
+							CurrentRenderedMeshes++;
+							hasBeenCounted = true;
+						}
+
+						Object3D* obj = strips->get(u)->GetRenderObject();
+						this->Dx_DeviceContext->IASetPrimitiveTopology(obj->GetTopology());
+
+						// Setting lightning from material
+						this->Shader_DeferredGeometry->SetFloat4("SpecularColor", D3DXVECTOR4(strips->get(u)->GetMaterial()->SpecularColor, 1));
+						this->Shader_DeferredGeometry->SetFloat("SpecularPower", strips->get(u)->GetMaterial()->SpecularPower);
+						this->Shader_DeferredGeometry->SetFloat4("AmbientLight", D3DXVECTOR4(strips->get(u)->GetMaterial()->AmbientColor, 1));
+						this->Shader_DeferredGeometry->SetFloat4("DiffuseColor", D3DXVECTOR4(strips->get(u)->GetMaterial()->DiffuseColor, 1));
+
+						Buffer* verts = obj->GetVertBuff();
+						if(verts)
+							verts->Apply();
+
+						//Check if the mesh uses a texture resource.
+						if(obj->GetTextureResource() != NULL)
+						{
+							//Then check if it actually has a shader resource view.
+							if(ID3D11ShaderResourceView* texture = obj->GetTextureResource()->GetSRVPointer())///**TILLMAN
+							{
+								this->Shader_DeferredGeometry->SetBool("textured", true);
+								this->Shader_DeferredGeometry->SetResource("tex2D", texture);
+							}
+							else //else set texture variables to not be used
+							{
+								this->Shader_DeferredGeometry->SetBool("textured", false);
+								this->Shader_DeferredGeometry->SetResource("tex2D", NULL);
+							}
+						}
+						else //else set texture variables to not be used
+						{
+							this->Shader_DeferredGeometry->SetBool("textured", false);
+							this->Shader_DeferredGeometry->SetResource("tex2D", NULL);
+						}
+						Buffer* inds = obj->GetIndsBuff();
+						if(inds)
+							inds->Apply();
+			
+						this->Shader_DeferredGeometry->Apply(0);
+
+						// draw
+						if(inds)
+							this->Dx_DeviceContext->DrawIndexed(inds->GetElementCount(), 0, 0);
+						else
+							this->Dx_DeviceContext->Draw(verts->GetElementCount(), 0);
+					}
+				}
+			}
+			else
+			{
+				//set variables used per frame
+				this->Dx_DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+				this->Shader_Billboard->SetFloat3("g_CameraPos", this->camera->GetPositionD3DX());
+				this->Shader_Billboard->SetMatrix("g_CamViewProj", this->camera->GetViewMatrix() * this->camera->GetProjectionMatrix());
+
+				//**CULLING _ TILLMAN**
+				bool hasBeenCounted = false;
+				MaloW::Array<MeshStrip*>* strips = this->objects[i]->GetStrips();
+				//Just check the first strip if it is culled. 
+				if(!strips->get(0)->GetCulled())
 				{
 					if(!hasBeenCounted)
 					{
@@ -480,51 +563,14 @@ void DxManager::RenderDeferredGeometry()
 						hasBeenCounted = true;
 					}
 
-					Object3D* obj = strips->get(u)->GetRenderObject();
-					this->Dx_DeviceContext->IASetPrimitiveTopology(obj->GetTopology());
-
-					// Setting lightning from material
-					this->Shader_DeferredGeometry->SetFloat4("SpecularColor", D3DXVECTOR4(strips->get(u)->GetMaterial()->SpecularColor, 1));
-					this->Shader_DeferredGeometry->SetFloat("SpecularPower", strips->get(u)->GetMaterial()->SpecularPower);
-					this->Shader_DeferredGeometry->SetFloat4("AmbientLight", D3DXVECTOR4(strips->get(u)->GetMaterial()->AmbientColor, 1));
-					this->Shader_DeferredGeometry->SetFloat4("DiffuseColor", D3DXVECTOR4(strips->get(u)->GetMaterial()->DiffuseColor, 1));
-
-					Buffer* verts = obj->GetVertBuff();
-					if(verts)
-						verts->Apply();
-
-					//Check if the mesh uses a texture resource.
-					if(obj->GetTextureResource() != NULL)
-					{
-						//Then check if it actually has a shader resource view.
-						if(ID3D11ShaderResourceView* texture = obj->GetTextureResource()->GetSRVPointer())///**TILLMAN
-						{
-							this->Shader_DeferredGeometry->SetBool("textured", true);
-							this->Shader_DeferredGeometry->SetResource("tex2D", texture);
-						}
-						else //else set texture variables to not be used
-						{
-							this->Shader_DeferredGeometry->SetBool("textured", false);
-							this->Shader_DeferredGeometry->SetResource("tex2D", NULL);
-						}
-					}
-					else //else set texture variables to not be used
-					{
-						this->Shader_DeferredGeometry->SetBool("textured", false);
-						this->Shader_DeferredGeometry->SetResource("tex2D", NULL);
-					}
-					Buffer* inds = obj->GetIndsBuff();
-					if(inds)
-						inds->Apply();
-			
-					this->Shader_DeferredGeometry->Apply(0);
-
-					// draw
-					if(inds)
-						this->Dx_DeviceContext->DrawIndexed(inds->GetElementCount(), 0, 0);
-					else
-						this->Dx_DeviceContext->Draw(verts->GetElementCount(), 0);
+					//Render billboards
+					this->RenderBillboard(this->objects[i]->GetBillboardGFX());
 				}
+
+
+				//Unbind resources ** TILLMAN
+				this->Shader_Billboard->SetResource("g_bb_DiffuseMap", NULL);
+				this->Shader_Billboard->Apply(0);
 			}
 		}
 		else
@@ -544,84 +590,129 @@ void DxManager::RenderDeferredGeometry()
 	this->Shader_DeferredAnimatedGeometry->SetFloat("FarClip", this->params.FarClip);
 	for(int i = 0; i < this->animations.size(); i++)
 	{
-		AnimatedMesh* ani = this->animations[i];
-		if(!ani->IsUsingInvisibility())
+		AnimatedMesh* animatedMesh = this->animations[i];
+		if(!animatedMesh->IsUsingInvisibility())
 		{
-			if(!ani->GetKeyFrames()->get(0)->strips->get(0)->GetCulled())
+			D3DXVECTOR3 distance = animatedMesh->GetBillboardGFX()->GetPositionD3DX() - this->camera->GetPositionD3DX();
+
+			//If the mesh has a billboard AND is inside the billboard range, render the mesh
+			float billboardRange = 0.0f;
+			//If no billboard range has been set for the mesh, use the default value
+			if(animatedMesh->GetDistanceToSwapToBillboard() <= 0.0f)
 			{
-				CurrentRenderedMeshes++;			
+				billboardRange = this->params.FarClip * this->params.BillboardRange;
+			}
+			else
+			{
+				billboardRange = animatedMesh->GetDistanceToSwapToBillboard();
+			}
 
-				KeyFrame* one = NULL;
-				KeyFrame* two = NULL;
-				float t = 0.0f;
-				ani->SetCurrentTime(this->Timer * 1000.0f); //Timer is in seconds.
-				ani->GetCurrentKeyFrames(&one, &two, t);
+			if(D3DXVec3Length(&distance) < billboardRange || animatedMesh->GetBillboardFilePath() == "")
+			{
 
-				MaloW::Array<MeshStrip*>* stripsOne = one->strips;
-				MaloW::Array<MeshStrip*>* stripsTwo = two->strips;
-		
-				// Set matrixes
-				world = ani->GetWorldMatrix();
-				wvp = world * view * proj;
-				D3DXMatrixInverse(&worldInverseTranspose, NULL, &world);
-				D3DXMatrixTranspose(&worldInverseTranspose, &worldInverseTranspose);
-		
-				this->Shader_DeferredAnimatedGeometry->SetMatrix("WVP", wvp);
-				this->Shader_DeferredAnimatedGeometry->SetMatrix("worldMatrix", world);
-				this->Shader_DeferredAnimatedGeometry->SetMatrix("worldMatrixInverseTranspose", worldInverseTranspose);
-				this->Shader_DeferredAnimatedGeometry->SetFloat("t", t);
-
-				this->Shader_DeferredAnimatedGeometry->SetInt("specialColor", ani->GetSpecialColor()); //*Tillman old: kraschar för att antalet animationer > antalet object
-
-				for(int u = 0; u < stripsOne->size(); u++)
+				if(!animatedMesh->GetKeyFrames()->get(0)->strips->get(0)->GetCulled())
 				{
+					CurrentRenderedMeshes++;			
 
-					Object3D* objOne = stripsOne->get(u)->GetRenderObject();
-					Object3D* objTwo = stripsTwo->get(u)->GetRenderObject();
+					KeyFrame* one = NULL;
+					KeyFrame* two = NULL;
+					float t = 0.0f;
+					animatedMesh->SetCurrentTime(this->Timer * 1000.0f); //Timer is in seconds.
+					animatedMesh->GetCurrentKeyFrames(&one, &two, t);
 
-					this->Dx_DeviceContext->IASetPrimitiveTopology(objOne->GetTopology());
+					MaloW::Array<MeshStrip*>* stripsOne = one->strips;
+					MaloW::Array<MeshStrip*>* stripsTwo = two->strips;
+		
+					// Set matrixes
+					world = animatedMesh->GetWorldMatrix();
+					wvp = world * view * proj;
+					D3DXMatrixInverse(&worldInverseTranspose, NULL, &world);
+					D3DXMatrixTranspose(&worldInverseTranspose, &worldInverseTranspose);
+		
+					this->Shader_DeferredAnimatedGeometry->SetMatrix("WVP", wvp);
+					this->Shader_DeferredAnimatedGeometry->SetMatrix("worldMatrix", world);
+					this->Shader_DeferredAnimatedGeometry->SetMatrix("worldMatrixInverseTranspose", worldInverseTranspose);
+					this->Shader_DeferredAnimatedGeometry->SetFloat("t", t);
 
-					// Setting lightning from material
-					this->Shader_DeferredAnimatedGeometry->SetFloat4("SpecularColor", D3DXVECTOR4(stripsOne->get(u)->GetMaterial()->SpecularColor, 1));
-					this->Shader_DeferredAnimatedGeometry->SetFloat("SpecularPower", stripsOne->get(u)->GetMaterial()->SpecularPower);
-					this->Shader_DeferredAnimatedGeometry->SetFloat4("AmbientLight", D3DXVECTOR4(stripsOne->get(u)->GetMaterial()->AmbientColor, 1));
-					this->Shader_DeferredAnimatedGeometry->SetFloat4("DiffuseColor", D3DXVECTOR4(stripsOne->get(u)->GetMaterial()->DiffuseColor, 1));
+					this->Shader_DeferredAnimatedGeometry->SetInt("specialColor", animatedMesh->GetSpecialColor()); //*Tillman old: kraschar för att antalet animationer > antalet object
 
-					Buffer* vertsOne = objOne->GetVertBuff();
-					Buffer* vertsTwo = objTwo->GetVertBuff();
-
-					ID3D11Buffer* vertexBuffers [] = {vertsOne->GetBufferPointer(), vertsTwo->GetBufferPointer()};
-					UINT strides [] = {sizeof(Vertex), sizeof(Vertex)};
-					UINT offsets [] = {0, 0};
-
-					this->Dx_DeviceContext->IASetVertexBuffers(0, 2, vertexBuffers, strides, offsets);
-				
-					//Check if the mesh(es) uses a texture resource.
-					if(objOne->GetTextureResource() != NULL)
+					for(int u = 0; u < stripsOne->size(); u++)
 					{
-						//Then check if it actually has a shader resource view.
-						if(ID3D11ShaderResourceView* texture = objOne->GetTextureResource()->GetSRVPointer())//**TILLMAN
+
+						Object3D* objOne = stripsOne->get(u)->GetRenderObject();
+						Object3D* objTwo = stripsTwo->get(u)->GetRenderObject();
+
+						this->Dx_DeviceContext->IASetPrimitiveTopology(objOne->GetTopology());
+
+						// Setting lightning from material
+						this->Shader_DeferredAnimatedGeometry->SetFloat4("SpecularColor", D3DXVECTOR4(stripsOne->get(u)->GetMaterial()->SpecularColor, 1));
+						this->Shader_DeferredAnimatedGeometry->SetFloat("SpecularPower", stripsOne->get(u)->GetMaterial()->SpecularPower);
+						this->Shader_DeferredAnimatedGeometry->SetFloat4("AmbientLight", D3DXVECTOR4(stripsOne->get(u)->GetMaterial()->AmbientColor, 1));
+						this->Shader_DeferredAnimatedGeometry->SetFloat4("DiffuseColor", D3DXVECTOR4(stripsOne->get(u)->GetMaterial()->DiffuseColor, 1));
+
+						Buffer* vertsOne = objOne->GetVertBuff();
+						Buffer* vertsTwo = objTwo->GetVertBuff();
+
+						ID3D11Buffer* vertexBuffers [] = {vertsOne->GetBufferPointer(), vertsTwo->GetBufferPointer()};
+						UINT strides [] = {sizeof(Vertex), sizeof(Vertex)};
+						UINT offsets [] = {0, 0};
+
+						this->Dx_DeviceContext->IASetVertexBuffers(0, 2, vertexBuffers, strides, offsets);
+				
+						//Check if the mesh(es) uses a texture resource.
+						if(objOne->GetTextureResource() != NULL)
 						{
-							this->Shader_DeferredAnimatedGeometry->SetBool("textured", true);
-							this->Shader_DeferredAnimatedGeometry->SetResource("tex2D", texture);
+							//Then check if it actually has a shader resource view.
+							if(ID3D11ShaderResourceView* texture = objOne->GetTextureResource()->GetSRVPointer())//**TILLMAN
+							{
+								this->Shader_DeferredAnimatedGeometry->SetBool("textured", true);
+								this->Shader_DeferredAnimatedGeometry->SetResource("tex2D", texture);
+							}
+							else //else set texture variables to not be used
+							{
+								this->Shader_DeferredAnimatedGeometry->SetBool("textured", false);
+								this->Shader_DeferredAnimatedGeometry->SetResource("tex2D", NULL);
+							}
 						}
 						else //else set texture variables to not be used
 						{
 							this->Shader_DeferredAnimatedGeometry->SetBool("textured", false);
 							this->Shader_DeferredAnimatedGeometry->SetResource("tex2D", NULL);
 						}
-					}
-					else //else set texture variables to not be used
-					{
-						this->Shader_DeferredAnimatedGeometry->SetBool("textured", false);
-						this->Shader_DeferredAnimatedGeometry->SetResource("tex2D", NULL);
-					}
 
-					this->Shader_DeferredAnimatedGeometry->Apply(0);
+						this->Shader_DeferredAnimatedGeometry->Apply(0);
 
-					// draw
-					this->Dx_DeviceContext->Draw(vertsOne->GetElementCount(), 0);
+						// draw
+						this->Dx_DeviceContext->Draw(vertsOne->GetElementCount(), 0);
+					}
 				}
+			}
+			else
+			{
+				//set variables used per frame
+				this->Dx_DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+				this->Shader_Billboard->SetFloat3("g_CameraPos", this->camera->GetPositionD3DX());
+				this->Shader_Billboard->SetMatrix("g_CamViewProj", this->camera->GetViewMatrix() * this->camera->GetProjectionMatrix());
+
+				//**CULLING _ TILLMAN**
+				bool hasBeenCounted = false;
+				//Just check the first strip if it is culled. 
+				if(!animatedMesh->GetKeyFrames()->get(0)->strips->get(0)->GetCulled())
+				{
+					if(!hasBeenCounted)
+					{
+						CurrentRenderedMeshes++;
+						hasBeenCounted = true;
+					}
+
+					//Render billboards
+					this->RenderBillboard(animatedMesh->GetBillboardGFX());
+				}
+
+
+				//Unbind resources ** TILLMAN
+				this->Shader_Billboard->SetResource("g_bb_DiffuseMap", NULL);
+				this->Shader_Billboard->Apply(0);
 			}
 		}
 		else

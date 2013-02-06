@@ -43,6 +43,7 @@ public:
 	void SetMatrixAtIndex(int index, char* variable, D3DXMATRIX& mat);
 	void SetStructMemberAtIndexAsMatrix(int index, char* structVariable, char* memberVariable, D3DXMATRIX& mat);
 
+	void SetFloat2(char* variable, D3DXVECTOR2 value);
 	void SetFloat3(char* variable, D3DXVECTOR3 value);
 	void SetFloatVectorArray(char* variable, D3DXVECTOR3* values, unsigned int nrOfElements);
 	void SetStructMemberAsFloat(char* structVariable, char* memberVariable, float value);

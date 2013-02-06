@@ -34,6 +34,7 @@ extern "C"
 		int RefreshRate;
 		int MaxFPS;
 		int ShadowFit;
+		float BillboardRange;
 
 		virtual void LoadFromFile(const char* file) = 0;
 		virtual void SaveToFile(const char* file) = 0;

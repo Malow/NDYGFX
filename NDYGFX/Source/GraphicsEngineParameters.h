@@ -22,6 +22,7 @@ public:
 		RefreshRate = 60;
 		MaxFPS = 0;
 		ShadowFit = 50;
+		BillboardRange = 0.75f;
 	};
 
 	virtual ~GraphicsEngineParams() {}

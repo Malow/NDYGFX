@@ -7,6 +7,7 @@
 #endif
 
 #include "Vector.h"
+#include "iBillboard.h"
 
 enum COLOR
 {
@@ -48,5 +49,6 @@ extern "C"
 		virtual Vector4 GetRotationQuaternion() const = 0;
 		virtual Vector3 GetScaling() const = 0;
 		virtual void ResetRotation() = 0;
+		virtual iBillboard* GetBillboard() = 0;
 	};
 }

@@ -109,7 +109,7 @@ public:
 	virtual const char* GetSpecialString();
 
 	/*  Inherited from interface  */
-	virtual iMesh* CreateMesh(const char* filename, const Vector3& pos);
+	virtual iMesh* CreateMesh(const char* filename, const Vector3& pos, const char* billboardFilePath = "", float distanceToSwapToBillboard = -1.0f);
 	virtual void DeleteMesh(iMesh* delMesh);
 	virtual iMesh* CreateStaticMesh(const char* filename, const Vector3& pos);
 	virtual iAnimatedMesh* CreateAnimatedMesh(const char* filename, const Vector3& pos);
@@ -125,6 +125,10 @@ public:
 	// Images
 	virtual iImage* CreateImage(Vector2 pos, Vector2 dimensions, const char* texture);
 	virtual void DeleteImage(iImage* &delImg);
+
+	// Billboards
+	virtual iBillboard* CreateBillboard(Vector3 pos, Vector2 size, const char* texture);
+	virtual void DeleteBillboard(iBillboard* &delBillboard);
 
 	// Text
 	virtual iText* CreateText(const char* text, Vector2 pos, float size, const char* fontTexturePath);
@@ -186,9 +190,10 @@ public:
 	/*! Creates a Mesh and starts rendering it every frame. Return is a pointer to the Mesh created. To stop rendering it call DeleteMesh on the engine with the Mesh as parameter. */
 	StaticMesh* CreateStaticMesh(string filename, D3DXVECTOR3 pos, MaterialType material);
 	StaticMesh* CreateStaticMesh(string filename, D3DXVECTOR3 pos, Material* material);
-	StaticMesh* CreateStaticMesh(string filename, D3DXVECTOR3 pos);
+	StaticMesh* CreateStaticMesh(string filename, D3DXVECTOR3 pos, const char* billboardFilePath = "", float distanceToSwapToBillboard = -1.0f);
 
-	AnimatedMesh* CreateAnimatedMesh(string filename, D3DXVECTOR3 pos);
+
+	AnimatedMesh* CreateAnimatedMesh(string filename, D3DXVECTOR3 pos, const char* billboardFilePath = "", float distanceToSwapToBillboard = -1.0f);
 	void DeleteAnimatedMesh(AnimatedMesh* mesh) { this->dx->DeleteAnimatedMesh(mesh); }
 
 	Light* CreateLight(D3DXVECTOR3 pos, bool UseShadowMap = true);
@@ -204,6 +209,9 @@ public:
 
 	/*! Stops rendering the Image and internally deletes it and the pointer will become NULL. Return depends on if the Image was sucessfully removed. */
 	bool DeleteImage(Image* delImage);
+
+	Billboard* CreateBillboard(D3DXVECTOR3 position, D3DXVECTOR2 size, string texture);
+	bool DeleteBillboard(Billboard* delBillboard);
 
 	Text* CreateText(string text, D3DXVECTOR2 position, float size, string fontTexturePath);
 	bool DeleteText(Text* delText);

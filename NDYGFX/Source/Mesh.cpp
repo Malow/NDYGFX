@@ -1,6 +1,6 @@
 #include "Mesh.h"	
 
-Mesh::Mesh(D3DXVECTOR3 pos)
+Mesh::Mesh(D3DXVECTOR3 pos, string billboardFilePath, float distanceToSwapToBillboard)
 {
 	this->filePath = "";
 	this->specialColor = NULL_COLOR;
@@ -8,6 +8,9 @@ Mesh::Mesh(D3DXVECTOR3 pos)
 	//this->transparency = 0.0f;
 
 	this->strips = new MaloW::Array<MeshStrip*>();
+	this->billboardFilePath = billboardFilePath;
+	this->billboard = new Billboard();
+	this->distanceToSwapToBillboard = distanceToSwapToBillboard;
 
 	this->topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	this->pos = pos;
@@ -15,7 +18,6 @@ Mesh::Mesh(D3DXVECTOR3 pos)
 	this->rotQuat = D3DXQUATERNION(0, 0, 0, 1);
 	this->scale = D3DXVECTOR3(1, 1, 1);
 }
-
 Mesh::~Mesh() 
 {
 	if(this->strips)
@@ -25,6 +27,7 @@ Mesh::~Mesh()
 
 		delete this->strips;
 	}
+	if(this->billboard) delete this->billboard; this->billboard = NULL;
 }
 
 bool Mesh::LoadFromFile(string file)
@@ -310,8 +313,6 @@ void Mesh::ResetRotation()
 {
 	this->rotQuat = D3DXQUATERNION(0, 0, 0, 1);
 }
-
-
 
 //**TILLMAN**
 /*

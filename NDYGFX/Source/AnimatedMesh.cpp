@@ -2,7 +2,7 @@
 #include "MaloWFileDebug.h"
 
 
-AnimatedMesh::AnimatedMesh(D3DXVECTOR3 pos) : Mesh(pos)
+AnimatedMesh::AnimatedMesh(D3DXVECTOR3 pos, string billboardFilePath, float distanceToSwapToBillboard) : Mesh(pos, billboardFilePath, distanceToSwapToBillboard)
 {
 	this->mNrOfTimesLooped = 0;
 	this->mLoopNormal = false;
