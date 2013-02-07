@@ -485,6 +485,10 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		treeWithBillboard->GetBillboard()->SetSize(Vector2(10, 10));
 	}*/
 
+	//Scale animation
+	iMesh* viking = GetGraphics()->CreateMesh("Media/Scale.ani", Vector3(-20,0,0));
+	viking->SetScale(0.05f);
+
 	GetGraphics()->CreateMesh("Media/scale.obj", Vector3(30, -300, 30));
 	
 #endif

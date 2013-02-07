@@ -475,5 +475,8 @@
     <FxCompile Include="..\WorkingDir\Shaders\Image.fx">
       <Filter>Source Files\Engine\Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="..\WorkingDir\Shaders\Grass.fx">
+      <Filter>Source Files\Engine\Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
