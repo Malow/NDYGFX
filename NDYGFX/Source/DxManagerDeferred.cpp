@@ -452,7 +452,7 @@ void DxManager::RenderDeferredGeometry()
 	for(int i = 0; i < this->objects.size(); i++)
 	{
 		StaticMesh* staticMesh = this->objects[i];
-		if(!staticMesh->IsUsingInvisibility())
+		if(!staticMesh->IsUsingInvisibility() && !staticMesh->GetDontRenderFlag())
 		{
 			D3DXVECTOR3 distance = staticMesh->GetBillboardGFX()->GetPositionD3DX() - this->camera->GetPositionD3DX();
 			
@@ -591,7 +591,7 @@ void DxManager::RenderDeferredGeometry()
 	for(int i = 0; i < this->animations.size(); i++)
 	{
 		AnimatedMesh* animatedMesh = this->animations[i];
-		if(!animatedMesh->IsUsingInvisibility())
+		if(!animatedMesh->IsUsingInvisibility() && !animatedMesh->GetDontRenderFlag())
 		{
 			D3DXVECTOR3 distance = animatedMesh->GetBillboardGFX()->GetPositionD3DX() - this->camera->GetPositionD3DX();
 
@@ -777,6 +777,60 @@ void DxManager::RenderDeferredPerPixel()
 	this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_RenderTargetView, ClearColor);
 
 	this->Dx_DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+
+
+
+
+
+
+	//Always tell the shader whether to use shadows or not.
+	this->Shader_DeferredLightning->SetBool("useShadow", this->useShadow);
+	if ( useShadow )
+	{
+		float PCF_SIZE = (float)this->params.ShadowMapSettings + 1;
+		float PCF_SQUARED = 1 / (PCF_SIZE * PCF_SIZE);
+
+		this->Shader_DeferredLightning->SetFloat("SMAP_DX", 1.0f / (256.0f * pow(2.0f, this->params.ShadowMapSettings / 2.0f)));
+
+		this->Shader_DeferredLightning->SetFloat("PCF_SIZE", PCF_SIZE);
+		this->Shader_DeferredLightning->SetFloat("PCF_SIZE_SQUARED", PCF_SQUARED);
+
+		this->Shader_DeferredLightning->SetBool("blendCascades", true); //** TILLMAN CSM VARIABLE**
+		this->Shader_DeferredLightning->SetFloat("blendDistance", this->csm->GetBlendDistance()); 
+		this->Shader_DeferredLightning->SetFloat("blendStrength", 0.0f); //** TILLMAN CSM VARIABLE**
+
+		this->Shader_DeferredLightning->SetInt("nrOfCascades", this->csm->GetNrOfCascadeLevels());
+		D3DXVECTOR4 cascadeFarPlanes = D3DXVECTOR4(-1.0f, -1.0f, -1.0f, -1.0f);
+		for(int i = 0; i < this->csm->GetNrOfCascadeLevels(); i++)
+		{
+			cascadeFarPlanes[i] = this->csm->GetSplitDepth(i + 1);
+		}
+		this->Shader_DeferredLightning->SetFloat4("cascadeFarPlanes", cascadeFarPlanes);
+		this->Shader_DeferredLightning->SetMatrix("cameraViewMatrix", this->camera->GetViewMatrix()); //Send camera view matrix to determine what frustum slice to use.
+	
+		for (int l = 0; l < this->csm->GetNrOfCascadeLevels(); l++)
+		{
+
+			D3DXMATRIX lvp = this->csm->GetViewProjMatrix(l);
+			this->Shader_DeferredLightning->SetResourceAtIndex(l, "CascadedShadowMap", this->csm->GetShadowMapSRV(l));
+			this->Shader_DeferredLightning->SetStructMemberAtIndexAsMatrix(l, "cascades", "viewProj", lvp);
+
+		}
+
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
 	
 	// Set sun-settings
 	if(this->useSun) 
@@ -804,8 +858,22 @@ void DxManager::RenderDeferredPerPixel()
 	this->Shader_DeferredLightning->SetInt("windowWidth", this->params.WindowWidth);
 	this->Shader_DeferredLightning->SetInt("windowHeight", this->params.WindowHeight);
 		
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
 	//ssao.fx:
-	this->ssao->PreRender(this->Shader_DeferredLightning, this->params, this->camera);
+	// this->ssao->PreRender(this->Shader_DeferredLightning, this->params, this->camera);
 
 	this->Shader_DeferredLightning->Apply(0);
 	
@@ -894,7 +962,7 @@ void DxManager::RenderInvisibilityEffect()
 	D3DXMATRIX wvp;
 	for(int i = 0; i < this->objects.size(); i++)
 	{
-		if(this->objects[i]->IsUsingInvisibility())
+		if(this->objects[i]->IsUsingInvisibility() && !this->objects[i]->GetDontRenderFlag())
 		{
 			MaloW::Array<MeshStrip*>* strips = this->objects[i]->GetStrips();
 		

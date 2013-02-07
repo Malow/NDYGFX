@@ -387,7 +387,7 @@ void DxManager::RenderShadowMap()
 			//Static meshes
 			for(int i = 0; i < this->objects.size(); i++)
 			{
-				if(!this->objects[i]->IsUsingInvisibility())
+				if(!this->objects[i]->IsUsingInvisibility() && !this->objects[i]->GetDontRenderFlag())
 				{
 					MaloW::Array<MeshStrip*>* strips = this->objects[i]->GetStrips();
 					D3DXMATRIX wvp = this->objects[i]->GetWorldMatrix() * this->lights[l]->GetViewProjMatrix();
@@ -449,7 +449,7 @@ void DxManager::RenderShadowMap()
 			//Animated meshes
 			for(int i = 0; i < this->animations.size(); i++)
 			{
-				if(!this->animations[i]->IsUsingInvisibility())
+				if(!this->animations[i]->IsUsingInvisibility() && !this->animations[i]->GetDontRenderFlag())
 				{
 					KeyFrame* one = NULL;
 					KeyFrame* two = NULL;
@@ -745,6 +745,7 @@ void DxManager::RenderCascadedShadowMap()
 		D3DXMATRIX wvp;
 		D3DXMatrixIdentity(&wvp);
 
+		//**TILLMAN TODO: check what cascade the object is in, object->IsIncascade(s)(indices)**
 		for (int l = 0; l < this->csm->GetNrOfCascadeLevels(); l++)
 		{
 			this->Dx_DeviceContext->OMSetRenderTargets(0, 0, this->csm->GetShadowMapDSV(l));
@@ -810,7 +811,7 @@ void DxManager::RenderCascadedShadowMap()
 			for(int i = 0; i < this->objects.size(); i++)
 			{
 				StaticMesh* staticMesh = this->objects[i];
-				if(!staticMesh->IsUsingInvisibility())
+				if(!staticMesh->IsUsingInvisibility() && !staticMesh->GetDontRenderFlag())
 				{
 					D3DXVECTOR3 distance = staticMesh->GetBillboardGFX()->GetPositionD3DX() - this->camera->GetPositionD3DX();
 
@@ -908,7 +909,7 @@ void DxManager::RenderCascadedShadowMap()
 			for(int i = 0; i < this->animations.size(); i++)
 			{
 				AnimatedMesh* animatedMesh = this->animations[i];
-				if(!animatedMesh->IsUsingInvisibility())
+				if(!animatedMesh->IsUsingInvisibility() && !animatedMesh->GetDontRenderFlag())
 				{
 					D3DXVECTOR3 distance = animatedMesh->GetBillboardGFX()->GetPositionD3DX() - this->camera->GetPositionD3DX();
 
@@ -1006,36 +1007,7 @@ void DxManager::RenderCascadedShadowMap()
 			this->Shader_ShadowMapAnimated->Apply(0);
 			//Only need one diffuse map since no blending between maps is done.
 			//this->Shader_ShadowMapAnimated->SetResource("diffuseMap1", NULL);
-
-		
-			D3DXMATRIX lvp = this->csm->GetViewProjMatrix(l);
-
-			// For deferred:
-			this->Shader_DeferredLightning->SetResourceAtIndex(l, "CascadedShadowMap", this->csm->GetShadowMapSRV(l));
-			this->Shader_DeferredLightning->SetStructMemberAtIndexAsMatrix(l, "cascades", "viewProj", lvp);
 		}
-	
-			
-		float PCF_SIZE = (float)this->params.ShadowMapSettings + 1;
-		float PCF_SQUARED = 1 / (PCF_SIZE * PCF_SIZE);
-
-		this->Shader_DeferredLightning->SetFloat("SMAP_DX", 1.0f / (256.0f * pow(2.0f, this->params.ShadowMapSettings / 2.0f)));
-		
-		this->Shader_DeferredLightning->SetFloat("PCF_SIZE", PCF_SIZE);
-		this->Shader_DeferredLightning->SetFloat("PCF_SIZE_SQUARED", PCF_SQUARED);
-		
-		this->Shader_DeferredLightning->SetBool("blendCascades", true); //** TILLMAN CSM VARIABLE**
-		this->Shader_DeferredLightning->SetFloat("blendDistance", this->csm->GetBlendDistance()); 
-		this->Shader_DeferredLightning->SetFloat("blendStrength", 0.0f); //** TILLMAN CSM VARIABLE**
-
-		this->Shader_DeferredLightning->SetInt("nrOfCascades", this->csm->GetNrOfCascadeLevels());
-		D3DXVECTOR4 cascadeFarPlanes = D3DXVECTOR4(-1.0f, -1.0f, -1.0f, -1.0f);
-		for(int i = 0; i < this->csm->GetNrOfCascadeLevels(); i++)
-		{
-			cascadeFarPlanes[i] = this->csm->GetSplitDepth(i + 1);
-		}
-		this->Shader_DeferredLightning->SetFloat4("cascadeFarPlanes", cascadeFarPlanes);
-		this->Shader_DeferredLightning->SetMatrix("cameraViewMatrix", this->camera->GetViewMatrix()); //Send camera view matrix to determine what frustum slice to use.
 	}
 	else
 	{
@@ -1043,9 +1015,6 @@ void DxManager::RenderCascadedShadowMap()
 		//** min gissning är att någon variabel (som ligger i stdafx.fx) sätts av denna shader
 		//och används en en ANNAN shader och måste därmed applyas. **
 	}
-
-	//Always tell the shader whether to use shadows or not.
-	this->Shader_DeferredLightning->SetBool("useShadow", this->useShadow);
 
 	this->renderedMeshShadows = currentRenderedMeshShadows;
 	this->renderedTerrainShadows = currentRenderedTerrainShadows;
@@ -1126,7 +1095,6 @@ void DxManager::CalculateCulling()
 		{
 			terr->SetCulled(true);
 			//However, the opposite may not be true for shadowing.
-			//terr->SetShadowCulled(true); ///TEST**
 		}
 	}
 
@@ -1149,7 +1117,6 @@ void DxManager::CalculateCulling()
 			{
 				s->SetCulled(true);
 				//However, the opposite may not be true for shadowing.
-				//s->SetShadowCulled(true); ///TEST**
 			}
 		}
 	}
@@ -1173,7 +1140,6 @@ void DxManager::CalculateCulling()
 			{
 				s->SetCulled(true);
 				//However, the opposite may not be true for shadowing.
-				//s->SetShadowCulled(true); ///TEST**
 			}
 		}
 	}
@@ -1184,6 +1150,38 @@ void DxManager::CalculateCulling()
 	{
 		//Calculate frustums - the frustum in this case i an OBB (the cascade). 
 		this->csm->CalcCascadePlanes();
+
+
+
+		//Terrain
+		for(int i = 0; i < this->terrains.size(); i++)
+		{
+			Terrain* terrain = this->terrains.get(i);
+			float scale = max(terrain->GetScale().x, max(terrain->GetScale().y, terrain->GetScale().z));
+
+			//Terrain already in the cameras view frustum does not need to be checked,
+			//so only check the ones that are outside of it. (The ones that have already been culled)
+			if(terrain->IsCulled())
+			{
+				//See if the terrain is inside or intersects the bounding boxes(cascades).
+				bool notDone = true;
+				for(int k = 0; k < this->csm->GetNrOfCascadeLevels() && notDone; k++)
+				{
+					if(pe.FrustrumVsSphere(csm->GetCascadePlanes(k), terrain->GetBoundingSphere(), terrain->GetWorldMatrix(), scale))
+					{
+						//As long as the terrain is inside ONE of the cascades, it needs to be drawn to the shadow map.
+						terrain->SetShadowCulled(false); 
+						notDone = false;
+					}
+					else
+					{
+						terrain->SetShadowCulled(true);
+					}
+				}
+			}
+		}
+
+
 
 		//Static meshes
 		for(int i = 0; i < this->objects.size(); i++)
@@ -1197,7 +1195,7 @@ void DxManager::CalculateCulling()
 				MeshStrip* strip = strips->get(j);
 
 				//Objects already in the cameras view frustum does not need to be checked,
-				//so only check the ones that are outside of it. (The ones that have already been culled
+				//so only check the ones that are outside of it. (The ones that have already been culled)
 				if(strip->GetCulled())
 				{
 					//See if the strip is inside the bounding boxes(cascades) or intersects.
@@ -1206,8 +1204,8 @@ void DxManager::CalculateCulling()
 					{
 						if(pe.FrustrumVsSphere(csm->GetCascadePlanes(k), strip->GetBoundingSphere(), staticMesh->GetWorldMatrix(), scale))
 						{
-							//as long as the strip is inside ONE of the cascades, it needs to be drawn to the shadow map.
-							strip->SetShadowCulled(false); //TILLMAN OPT: sturnta i ifsatsen, göra direkt på return**
+							//As long as the strip is inside ONE of the cascades, it needs to be drawn to the shadow map.
+							strip->SetShadowCulled(false); 
 							notDone = false;
 						}
 						else
@@ -1220,6 +1218,40 @@ void DxManager::CalculateCulling()
 		}
 
 
+
+		//Animated meshes
+		for(int i = 0; i < this->animations.size(); i++)
+		{
+			AnimatedMesh* animatedMesh = this->animations.get(i);
+
+			if ( !animatedMesh->GetKeyFrames()->get(0)->strips->isEmpty() )
+			{
+				//Just check with the first strip
+				MeshStrip* meshStrip = animatedMesh->GetKeyFrames()->get(0)->strips->get(0);
+				float scale = max(animatedMesh->GetScaling().x, max(animatedMesh->GetScaling().y, animatedMesh->GetScaling().z));
+				
+				//Animations already in the cameras view frustum does not need to be checked,
+				//so only check the ones that are outside of it. (The ones that have already been culled)
+				if(meshStrip->GetCulled())
+				{
+					//See if the strip is inside the bounding boxes(cascades) or intersects.
+					bool notDone = true;
+					for(int k = 0; k < this->csm->GetNrOfCascadeLevels() && notDone; k++)
+					{
+						if(pe.FrustrumVsSphere(csm->GetCascadePlanes(k), meshStrip->GetBoundingSphere(), animatedMesh->GetWorldMatrix(), scale))
+						{
+							//As long as the strip is inside ONE of the cascades, it needs to be drawn to the shadow map.
+							meshStrip->SetShadowCulled(false); 
+							notDone = false;
+						}
+						else
+						{
+							meshStrip->SetShadowCulled(true);
+						}
+					}
+				}
+			}
+		}
 	}
 }
 

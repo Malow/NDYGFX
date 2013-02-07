@@ -450,12 +450,12 @@ float GraphicsEngineImp::Update()
 		std::string txt = "FPS: " + MaloW::convertNrToString((float)this->fpsLast) + " - "; 
 		txt += "Camera Pos: " + MaloW::convertNrToString(this->cam->GetPosition().x) + " " + 
 		MaloW::convertNrToString(this->cam->GetPosition().y) + " " + 
-		MaloW::convertNrToString(this->cam->GetPosition().z) + "    -    Mesh Count: " + 
-		MaloW::convertNrToString(this->dx->GetMeshCount()) + "    -    Rendered Meshes: " + 
-		MaloW::convertNrToString(this->dx->GetRenderedMeshCount()) + "   -    Terrain Count: " +
-		MaloW::convertNrToString(this->dx->GetTerrainCount()) + "   -   Rendered Terrains: " +
-		MaloW::convertNrToString(this->dx->GetRenderedTerrainCount()) + "   -   Mesh shadows: " +
-		MaloW::convertNrToString(this->dx->GetRenderedMeshShadowCount() / 4) + "   -  Terrain shadows: " +
+		MaloW::convertNrToString(this->cam->GetPosition().z) + "  -  Mesh Count: " + 
+		MaloW::convertNrToString(this->dx->GetMeshCount()) + "  - Ren. Meshes: " + 
+		MaloW::convertNrToString(this->dx->GetRenderedMeshCount()) + "  -  Ter. Count: " +
+		MaloW::convertNrToString(this->dx->GetTerrainCount()) + "  -  Ren. Ters: " +
+		MaloW::convertNrToString(this->dx->GetRenderedTerrainCount()) + "  -  Mesh shad: " +
+		MaloW::convertNrToString(this->dx->GetRenderedMeshShadowCount() / 4) + "  -  Terr shad: " +
 		MaloW::convertNrToString(this->dx->GetRenderedTerrainShadowCount() / 4); //** / 4 = temp**
 
 		

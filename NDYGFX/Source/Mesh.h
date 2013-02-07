@@ -3,10 +3,10 @@
 
 #include "Buffer.h"
 #include "Vertex.h"
-#include "ObjLoader.h" //**tillman
-#include "Object3D.h"//**tillman
-#include "Material.h"//**tillman
-#include "MeshStrip.h"//**tillman
+#include "ObjLoader.h" 
+#include "Object3D.h"
+#include "Material.h"
+#include "MeshStrip.h"
 #include "iMesh.h"
 #include "Vector.h"
 #include "Billboard.h"
@@ -36,13 +36,15 @@ protected:
 	string filePath; 
 	COLOR specialColor;
 	bool usingInvisibilityEffect;
-	//float transparency; //default 0.0f (full visibility)
 
-	MaloW::Array<MeshStrip*>* strips;//**tillman
+	MaloW::Array<MeshStrip*>* strips;
+
+	bool dontRender;
+
+	float height;
 	string billboardFilePath;
 	Billboard* billboard;
 	float distanceToSwapToBillboard;
-	//MeshCounted* strips;
 
 	D3D_PRIMITIVE_TOPOLOGY topology;
 
@@ -59,6 +61,7 @@ public:
 	string GetFilePath() { return this->filePath; }
 
 	// Billboard
+	float GetHeight() { return this->height; }
 	string GetBillboardFilePath() { return this->billboardFilePath; }
 	Billboard* GetBillboardGFX() { return this->billboard; }
 	float GetDistanceToSwapToBillboard() { return this->distanceToSwapToBillboard; }
@@ -67,10 +70,7 @@ public:
 	virtual void SetSpecialColor(COLOR specialColor);
 	virtual COLOR GetSpecialColor() const { return this->specialColor; }
 
-	// Invisibility
-	void UseInvisibilityEffect(bool use);
-	bool IsUsingInvisibility() const { return this->usingInvisibilityEffect; }
-
+	
 	// Transformation
 	void SetPosition(D3DXVECTOR3 pos);
 	void SetQuaternion(D3DXQUATERNION quat);
@@ -97,6 +97,12 @@ public:
 	virtual Vector3 GetScaling() const;
 	virtual void ResetRotation();
 	virtual iBillboard* GetBillboard() { return this->billboard; }
+	virtual bool GetDontRenderFlag() { return this->dontRender; }
+	virtual void DontRender(bool flag) { this->dontRender = flag; }
+	// Invisibility
+	virtual bool IsUsingInvisibility() const { return this->usingInvisibilityEffect; }
+	virtual void UseInvisibilityEffect(bool flag);
+
 	
 	D3DXMATRIX GetWorldMatrix() { return this->worldMatrix; }
 	void ResetRotationAndScale();

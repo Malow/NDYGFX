@@ -91,28 +91,22 @@ void CascadedShadowMap::CalcShadowMapMatrices(D3DXVECTOR3 sunLight, Camera* cam,
 	}
 	
 
-	//Calculate the min and max values for the orthographic projection.*A*
-	//**tillman, find the near and far plane *A*
+	//Calculate the min(near plane) and max(far plane) values for the orthographic projection.
 	float infinity = std::numeric_limits<float>::infinity();
 	D3DXVECTOR3 minValue = D3DXVECTOR3(infinity, infinity, infinity);
 	D3DXVECTOR3 maxValue = D3DXVECTOR3(-infinity, -infinity, -infinity);
-	D3DXVECTOR3 vLightCameraOrthographicMin = D3DXVECTOR3(infinity, infinity, infinity); //**tillman pot opt, samma som minValue
-	D3DXVECTOR3 vLightCameraOrthographicMax = D3DXVECTOR3(-infinity, -infinity, -infinity);//**tillman pot opt, samma som maxValue
 	for(int index = 0; index < 8; index++)
 	{
 		D3DXVECTOR3 vec3 = D3DXVECTOR3(frustumPoints[index].x, frustumPoints[index].y, frustumPoints[index].z);
-
+		
+		//Find the min & max points.
 		D3DXVec3Minimize(&minValue, &minValue, &vec3);
 		D3DXVec3Maximize(&maxValue, &maxValue, &vec3);
-
-		// Find the closest point.
-		D3DXVec3Minimize (&vLightCameraOrthographicMin, &vec3, &vLightCameraOrthographicMin );
-		D3DXVec3Maximize (&vLightCameraOrthographicMax, &vec3, &vLightCameraOrthographicMax );
 	}
 	
 	D3DXVECTOR3 tmpNearPlanePoint = minValue;
 	//Set the near plane to be closer to the light to include more potential occluders.
-	tmpNearPlanePoint -= sunLight * nearPlaneDistanceCloserToSun * (i + 1); 
+	tmpNearPlanePoint -= sunLight * nearPlaneDistanceCloserToSun * (i + 1); //TILLMAN** sätta near plane till samma för alla.
 	float nearPlane = tmpNearPlanePoint.z; 
 	float farPlane = maxValue.z;
 
@@ -120,11 +114,13 @@ void CascadedShadowMap::CalcShadowMapMatrices(D3DXVECTOR3 sunLight, Camera* cam,
 	// Add the blend distance to make the projections overlap each other for blending between the shadow maps.
 	D3DXMATRIX lightProjMatrix;
 	D3DXMatrixIdentity(&lightProjMatrix);
+	//Blend distance makes the projections overlap**tillman
+	//This overlap is used to smooth/blur the edges where the cascades meet.
 	D3DXMatrixOrthoOffCenterLH( &lightProjMatrix, 
-		vLightCameraOrthographicMin.x - this->blendDistance, 
-		vLightCameraOrthographicMax.x + this->blendDistance, 
-		vLightCameraOrthographicMin.y - this->blendDistance, 
-		vLightCameraOrthographicMax.y + this->blendDistance, 
+		minValue.x - this->blendDistance, 
+		maxValue.x + this->blendDistance, 
+		minValue.y - this->blendDistance, 
+		maxValue.y + this->blendDistance, 
 		nearPlane, farPlane);
 
 	this->viewProj[i] = lightViewMatrix * lightProjMatrix;

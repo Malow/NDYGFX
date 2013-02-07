@@ -2,7 +2,7 @@
 //
 //	Written by Markus Tillman for project "Not dead yet" at Blekinge Tekniska Högskola.
 //	
-//	This shader renders billboards (deferred with 4 GBuffers).
+//	This shader renders grass (deferred with 4 GBuffers).
 //	Requirement(s): 
 //		World position of camera.
 //		Camera view & projection matrices.
@@ -12,7 +12,7 @@
 //		Diffuse map (texture).
 //		Color of billboard.
 //-----------------------------------------------------------------------------------------
-
+/*
 #include "stdafx.fx"
 
 
@@ -53,13 +53,6 @@ struct DummyIn
 {
 
 };
-/*struct VSIn
-{
-	//float3 posW		: POSITION; //world space
-	//float2 dummy1	: TEXCOORD;//unused TILLMAN
-	//float3 dummy2	: NORMAL; //unused TILLMAN
-	//float3 color	: COLOR;
-};*/
 
 struct GSIn 
 {
@@ -192,9 +185,9 @@ PSOut PS(PSIn input) : SV_TARGET
 	return output;
 }
 
-technique10 DrawBillboard
+technique10 DrawGrass
 {
-    pass P0
+    pass GenerateCanopy
     { 
         SetVertexShader( CompileShader( vs_4_0, VS() ) );
         SetGeometryShader( CompileShader( gs_4_0, GS() ) );
@@ -206,4 +199,5 @@ technique10 DrawBillboard
 		SetBlendState(NoBlend, float4( 0.0f, 0.0f, 0.0f, 0.0f ), 0xFFFFFFFF );
 		//SetBlendState( SrcAlphaBlendingAdd, float4( 0.0f, 0.0f, 0.0f, 0.0f ), 0xFFFFFFFF );
     }
-}
+	pass GenerateGrass
+}*/

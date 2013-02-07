@@ -29,10 +29,14 @@ class Billboard : public iBillboard
 
 		D3DXVECTOR3 GetPositionD3DX() const { return this->zPosition; }
 		D3DXVECTOR2 GetSizeD3DX() const { return this->zSize; }
-		D3DXVECTOR4 GetColorD3DX() const { return this->zColor; }
-
 		TextureResource* GetTextureResource() const { return this->zTextureResource; }
+		D3DXVECTOR4 GetColorD3DX() const { return this->zColor; }
+		void SetPosition(D3DXVECTOR3 position) { this->zPosition = position; }
+		void SetSize(D3DXVECTOR2 size) { this->zSize = size; }
+		void SetColor(D3DXVECTOR4 color) { this->zColor = color; }
 		void SetTextureResource(TextureResource* textureResource) { this->zTextureResource = textureResource; }
+
+
 
 		//** iBillboard interface functions **
 		virtual Vector3 GetPosition() const;

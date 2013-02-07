@@ -36,13 +36,13 @@ PSIn VS(VSIn input)
 
 float4 PS(PSIn input) : SV_TARGET
 {
-	if(textured)
+	/*if(textured)
 	{
 		if(diffuseMap.Sample(PointWrapSampler, input.Tex).a < 0.5f)
 		{
 			discard;
 		}
-	}
+	}*/
 
 	return input.Pos;
 }

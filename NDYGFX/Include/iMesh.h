@@ -50,5 +50,9 @@ extern "C"
 		virtual Vector3 GetScaling() const = 0;
 		virtual void ResetRotation() = 0;
 		virtual iBillboard* GetBillboard() = 0;
+		virtual bool GetDontRenderFlag() = 0;
+		virtual void DontRender(bool flag) = 0;
+		virtual bool IsUsingInvisibility() const = 0;
+		virtual void UseInvisibilityEffect(bool flag) = 0;
 	};
 }

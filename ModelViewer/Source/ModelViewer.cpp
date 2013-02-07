@@ -430,9 +430,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	iMesh* mmm = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(0,2,0));
 
 
-	iMesh* temp = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(0, 0, 0));
-	temp->SetScale(0.05f);
-
+	
 	//iFBXMesh* temp2 = GetGraphics()->CreateFBXMesh("Media/token_wip_few_animx.fbx", Vector3(-10, 10, 0));
 	//temp2->SetScale(0.05f);
 
@@ -457,21 +455,38 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 			tmp->SetScale(0.05f);
 		}
 	}*/
-	//BILLBOARD(TREE)
-	//iMesh* billboardTree = GetGraphics()->CreateMesh("Media/BillboardTreeTest.obj", Vector3(-5, 0, 0));
-	//billboardTree->SetScale(0.05f);
-	//Vector2 bbSize = Vector2(10, 10);
-	//iBillboard* realBillboardTree = GetGraphics()->CreateBillboard(Vector3(-10, bbSize.y * 0.5f, 0), bbSize, "Media/TreeBillboard.png");
+	//BILLBOARD && DONTRENDER & INVISIBILITY
+	iMesh* temp = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(0, 0, 0));
+	temp->SetScale(0.05f);
+	temp->UseInvisibilityEffect(true);
+	//temp->DontRender(true);
 
-	iMesh* treeWithBillboard = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(-10, 0, 0), "Media/TreeBillboard.png", 25.0f);
+	iMesh* treeWithBillboard = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(-10, 0, 0), "Media/TreeBillboard.png", 25.5f);
 	treeWithBillboard->SetScale(0.05f);
-	treeWithBillboard->GetBillboard()->SetPosition(Vector3(-10, 5, 0));
-	treeWithBillboard->GetBillboard()->SetSize(Vector2(10, 10));
+	treeWithBillboard->DontRender(true);
 
-	iMesh* flagWithBillboard = GetGraphics()->CreateMesh("Media/FlagBlue.ani", Vector3(-15, 0, -5), "Media/TreeBillboard.png", 25.0f);
-	//flagWithBillboard->SetScale(0.05f);
-	flagWithBillboard->GetBillboard()->SetPosition(Vector3(-15, 0, -5));
-	flagWithBillboard->GetBillboard()->SetSize(Vector2(10, 10));
+	iMesh* flagWithBillboard = GetGraphics()->CreateMesh("Media/FlagBlue.ani", Vector3(-15, 0, -5), "Media/TreeBillboard.png", 25.5f);
+
+	/*
+	int klerp23 = 10;
+	for(int i = 0; i < klerp23; i++)
+	{
+		iTerrain* itt = GetGraphics()->CreateTerrain(Vector3(i * 10, 0, 0), Vector3(10, 10, 10), 2);
+		iTerrain* itt2 = GetGraphics()->CreateTerrain(Vector3(i * 10, 0, 10), Vector3(10, 10, 10), 2);
+		itt->SetTextures(fileNames);
+		itt2->SetTextures(fileNames);
+	}
+	for(int i = 0; i < klerp23 * 2; i++)
+	{
+		iMesh* treeWithBillboard = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(i * 5, 0, 0), "Media/TreeBillboard.png", 500.0f);
+		treeWithBillboard->SetScale(0.05f);
+		treeWithBillboard->GetBillboard()->SetPosition(Vector3(i * 5, 5, 0));
+		treeWithBillboard->GetBillboard()->SetSize(Vector2(10, 10));
+	}*/
+
+	//Scale animation
+	iMesh* viking = GetGraphics()->CreateMesh("Media/Scale.ani", Vector3(-20,0,0));
+	viking->SetScale(0.05f);
 
 	GetGraphics()->CreateMesh("Media/scale.obj", Vector3(30, -300, 30));
 	
