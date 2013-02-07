@@ -745,6 +745,7 @@ void DxManager::RenderCascadedShadowMap()
 		D3DXMATRIX wvp;
 		D3DXMatrixIdentity(&wvp);
 
+		//**TILLMAN TODO: check what cascade the object is in, object->IsIncascade(s)(indices)**
 		for (int l = 0; l < this->csm->GetNrOfCascadeLevels(); l++)
 		{
 			this->Dx_DeviceContext->OMSetRenderTargets(0, 0, this->csm->GetShadowMapDSV(l));
@@ -1006,36 +1007,7 @@ void DxManager::RenderCascadedShadowMap()
 			this->Shader_ShadowMapAnimated->Apply(0);
 			//Only need one diffuse map since no blending between maps is done.
 			//this->Shader_ShadowMapAnimated->SetResource("diffuseMap1", NULL);
-
-		
-			D3DXMATRIX lvp = this->csm->GetViewProjMatrix(l);
-
-			// For deferred:
-			this->Shader_DeferredLightning->SetResourceAtIndex(l, "CascadedShadowMap", this->csm->GetShadowMapSRV(l));
-			this->Shader_DeferredLightning->SetStructMemberAtIndexAsMatrix(l, "cascades", "viewProj", lvp);
 		}
-	
-			
-		float PCF_SIZE = (float)this->params.ShadowMapSettings + 1;
-		float PCF_SQUARED = 1 / (PCF_SIZE * PCF_SIZE);
-
-		this->Shader_DeferredLightning->SetFloat("SMAP_DX", 1.0f / (256.0f * pow(2.0f, this->params.ShadowMapSettings / 2.0f)));
-		
-		this->Shader_DeferredLightning->SetFloat("PCF_SIZE", PCF_SIZE);
-		this->Shader_DeferredLightning->SetFloat("PCF_SIZE_SQUARED", PCF_SQUARED);
-		
-		this->Shader_DeferredLightning->SetBool("blendCascades", true); //** TILLMAN CSM VARIABLE**
-		this->Shader_DeferredLightning->SetFloat("blendDistance", this->csm->GetBlendDistance()); 
-		this->Shader_DeferredLightning->SetFloat("blendStrength", 0.0f); //** TILLMAN CSM VARIABLE**
-
-		this->Shader_DeferredLightning->SetInt("nrOfCascades", this->csm->GetNrOfCascadeLevels());
-		D3DXVECTOR4 cascadeFarPlanes = D3DXVECTOR4(-1.0f, -1.0f, -1.0f, -1.0f);
-		for(int i = 0; i < this->csm->GetNrOfCascadeLevels(); i++)
-		{
-			cascadeFarPlanes[i] = this->csm->GetSplitDepth(i + 1);
-		}
-		this->Shader_DeferredLightning->SetFloat4("cascadeFarPlanes", cascadeFarPlanes);
-		this->Shader_DeferredLightning->SetMatrix("cameraViewMatrix", this->camera->GetViewMatrix()); //Send camera view matrix to determine what frustum slice to use.
 	}
 	else
 	{
@@ -1043,9 +1015,6 @@ void DxManager::RenderCascadedShadowMap()
 		//** min gissning är att någon variabel (som ligger i stdafx.fx) sätts av denna shader
 		//och används en en ANNAN shader och måste därmed applyas. **
 	}
-
-	//Always tell the shader whether to use shadows or not.
-	this->Shader_DeferredLightning->SetBool("useShadow", this->useShadow);
 
 	this->renderedMeshShadows = currentRenderedMeshShadows;
 	this->renderedTerrainShadows = currentRenderedTerrainShadows;
