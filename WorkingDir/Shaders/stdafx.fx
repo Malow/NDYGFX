@@ -133,7 +133,10 @@ RasterizerState SolidFrontCulling
 	FillMode = Solid;
 	CullMode = Front;
 };
-
+RasterizerState NoCulling
+{
+	CullMode = None;
+};
 
 //------------------------------------------------------------------------------------------------------
 //	RasterizerStates

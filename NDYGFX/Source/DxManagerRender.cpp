@@ -1126,7 +1126,6 @@ void DxManager::CalculateCulling()
 		{
 			terr->SetCulled(true);
 			//However, the opposite may not be true for shadowing.
-			//terr->SetShadowCulled(true); ///TEST**
 		}
 	}
 
@@ -1149,7 +1148,6 @@ void DxManager::CalculateCulling()
 			{
 				s->SetCulled(true);
 				//However, the opposite may not be true for shadowing.
-				//s->SetShadowCulled(true); ///TEST**
 			}
 		}
 	}
@@ -1173,7 +1171,6 @@ void DxManager::CalculateCulling()
 			{
 				s->SetCulled(true);
 				//However, the opposite may not be true for shadowing.
-				//s->SetShadowCulled(true); ///TEST**
 			}
 		}
 	}
@@ -1184,6 +1181,38 @@ void DxManager::CalculateCulling()
 	{
 		//Calculate frustums - the frustum in this case i an OBB (the cascade). 
 		this->csm->CalcCascadePlanes();
+
+
+
+		//Terrain
+		for(int i = 0; i < this->terrains.size(); i++)
+		{
+			Terrain* terrain = this->terrains.get(i);
+			float scale = max(terrain->GetScale().x, max(terrain->GetScale().y, terrain->GetScale().z));
+
+			//Terrain already in the cameras view frustum does not need to be checked,
+			//so only check the ones that are outside of it. (The ones that have already been culled)
+			if(terrain->IsCulled())
+			{
+				//See if the terrain is inside or intersects the bounding boxes(cascades).
+				bool notDone = true;
+				for(int k = 0; k < this->csm->GetNrOfCascadeLevels() && notDone; k++)
+				{
+					if(pe.FrustrumVsSphere(csm->GetCascadePlanes(k), terrain->GetBoundingSphere(), terrain->GetWorldMatrix(), scale))
+					{
+						//As long as the terrain is inside ONE of the cascades, it needs to be drawn to the shadow map.
+						terrain->SetShadowCulled(false); 
+						notDone = false;
+					}
+					else
+					{
+						terrain->SetShadowCulled(true);
+					}
+				}
+			}
+		}
+
+
 
 		//Static meshes
 		for(int i = 0; i < this->objects.size(); i++)
@@ -1197,7 +1226,7 @@ void DxManager::CalculateCulling()
 				MeshStrip* strip = strips->get(j);
 
 				//Objects already in the cameras view frustum does not need to be checked,
-				//so only check the ones that are outside of it. (The ones that have already been culled
+				//so only check the ones that are outside of it. (The ones that have already been culled)
 				if(strip->GetCulled())
 				{
 					//See if the strip is inside the bounding boxes(cascades) or intersects.
@@ -1206,8 +1235,8 @@ void DxManager::CalculateCulling()
 					{
 						if(pe.FrustrumVsSphere(csm->GetCascadePlanes(k), strip->GetBoundingSphere(), staticMesh->GetWorldMatrix(), scale))
 						{
-							//as long as the strip is inside ONE of the cascades, it needs to be drawn to the shadow map.
-							strip->SetShadowCulled(false); //TILLMAN OPT: sturnta i ifsatsen, göra direkt på return**
+							//As long as the strip is inside ONE of the cascades, it needs to be drawn to the shadow map.
+							strip->SetShadowCulled(false); 
 							notDone = false;
 						}
 						else
@@ -1220,6 +1249,40 @@ void DxManager::CalculateCulling()
 		}
 
 
+
+		//Animated meshes
+		for(int i = 0; i < this->animations.size(); i++)
+		{
+			AnimatedMesh* animatedMesh = this->animations.get(i);
+
+			if ( !animatedMesh->GetKeyFrames()->get(0)->strips->isEmpty() )
+			{
+				//Just check with the first strip
+				MeshStrip* meshStrip = animatedMesh->GetKeyFrames()->get(0)->strips->get(0);
+				float scale = max(animatedMesh->GetScaling().x, max(animatedMesh->GetScaling().y, animatedMesh->GetScaling().z));
+				
+				//Animations already in the cameras view frustum does not need to be checked,
+				//so only check the ones that are outside of it. (The ones that have already been culled)
+				if(meshStrip->GetCulled())
+				{
+					//See if the strip is inside the bounding boxes(cascades) or intersects.
+					bool notDone = true;
+					for(int k = 0; k < this->csm->GetNrOfCascadeLevels() && notDone; k++)
+					{
+						if(pe.FrustrumVsSphere(csm->GetCascadePlanes(k), meshStrip->GetBoundingSphere(), animatedMesh->GetWorldMatrix(), scale))
+						{
+							//As long as the strip is inside ONE of the cascades, it needs to be drawn to the shadow map.
+							meshStrip->SetShadowCulled(false); 
+							notDone = false;
+						}
+						else
+						{
+							meshStrip->SetShadowCulled(true);
+						}
+					}
+				}
+			}
+		}
 	}
 }
 

@@ -463,15 +463,32 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	//Vector2 bbSize = Vector2(10, 10);
 	//iBillboard* realBillboardTree = GetGraphics()->CreateBillboard(Vector3(-10, bbSize.y * 0.5f, 0), bbSize, "Media/TreeBillboard.png");
 
-	iMesh* treeWithBillboard = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(-10, 0, 0), "Media/TreeBillboard.png", 25.0f);
+	iMesh* treeWithBillboard = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(-10, 0, 0), "Media/TreeBillboard.png", 0.5f);
 	treeWithBillboard->SetScale(0.05f);
-	treeWithBillboard->GetBillboard()->SetPosition(Vector3(-10, 5, 0));
-	treeWithBillboard->GetBillboard()->SetSize(Vector2(10, 10));
+	//treeWithBillboard->get
+	//treeWithBillboard->GetBillboard()->SetPosition(Vector3(-10, 4.65f, 0));
+	//treeWithBillboard->GetBillboard()->SetSize(Vector2(9.3f, 9.3f));
 
-	iMesh* flagWithBillboard = GetGraphics()->CreateMesh("Media/FlagBlue.ani", Vector3(-15, 0, -5), "Media/TreeBillboard.png", 25.0f);
+	iMesh* flagWithBillboard = GetGraphics()->CreateMesh("Media/FlagBlue.ani", Vector3(-15, 0, -5), "Media/TreeBillboard.png", 0.5f);
 	//flagWithBillboard->SetScale(0.05f);
 	flagWithBillboard->GetBillboard()->SetPosition(Vector3(-15, 0, -5));
 	flagWithBillboard->GetBillboard()->SetSize(Vector2(10, 10));
+	/*
+	int klerp23 = 10;
+	for(int i = 0; i < klerp23; i++)
+	{
+		iTerrain* itt = GetGraphics()->CreateTerrain(Vector3(i * 10, 0, 0), Vector3(10, 10, 10), 2);
+		iTerrain* itt2 = GetGraphics()->CreateTerrain(Vector3(i * 10, 0, 10), Vector3(10, 10, 10), 2);
+		itt->SetTextures(fileNames);
+		itt2->SetTextures(fileNames);
+	}
+	for(int i = 0; i < klerp23 * 2; i++)
+	{
+		iMesh* treeWithBillboard = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(i * 5, 0, 0), "Media/TreeBillboard.png", 500.0f);
+		treeWithBillboard->SetScale(0.05f);
+		treeWithBillboard->GetBillboard()->SetPosition(Vector3(i * 5, 5, 0));
+		treeWithBillboard->GetBillboard()->SetSize(Vector2(10, 10));
+	}*/
 
 	GetGraphics()->CreateMesh("Media/scale.obj", Vector3(30, -300, 30));
 	

@@ -36,10 +36,6 @@ DepthStencilState DisableDepth
     DepthEnable = FALSE;
     DepthWriteMask = ZERO;
 };
-RasterizerState NoCulling
-{
-	CullMode = NONE;
-};
 BlendState NoBlending
 {
     AlphaToCoverageEnable = FALSE;
