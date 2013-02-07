@@ -95,6 +95,14 @@ VS_OUTPUT DefaultVS( float3 vPos	     : SV_POSITION,
 	float3 normal = 0, tangent = 0;
 	position = float4(vPos,1.0f);
 
+	/*
+	float4x4 inv;
+	inv[0] = float4(-1, 0, 0, 0);
+	inv[1] = float4(0, -1, 0, 0);
+	inv[2] = float4(0, 0, -1, 0);
+	inv[3] = float4(0, 0, 0, 0);
+	position = mul(position, inv);
+	*/
 	if( g_bSkinning )
 	{
 		float4x4 skinTransform = 0;
@@ -105,6 +113,15 @@ VS_OUTPUT DefaultVS( float3 vPos	     : SV_POSITION,
 		position = mul(position, skinTransform);
 		normal = normalize(mul(vNormal, (float3x3)skinTransform));
 		tangent = normalize(mul(vTangent, (float3x3)skinTransform));
+
+		/* // Solves inverted, adds other problems.
+		position.x *= -1.0f;
+		position.y *= -1.0f;
+		position.z *= -1.0f;
+
+		vTexCoord.x *= -1.0f;
+		vTexCoord.y *= -1.0f;
+		*/
 	}
 	else
 	{
@@ -114,6 +131,8 @@ VS_OUTPUT DefaultVS( float3 vPos	     : SV_POSITION,
 	}
 
 	position = mul(position, g_mScale);
+
+
 
 	Output.PosW = position.xyz;
 	Output.Position = mul(position, gViewProj);

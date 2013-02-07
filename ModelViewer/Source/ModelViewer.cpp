@@ -433,7 +433,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	iMesh* temp = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(0, 0, 0));
 	temp->SetScale(0.05f);
 
-	//iMesh* temp2 = GetGraphics()->CreateMesh("Media/Soldier_animated_jump.fbx", Vector3(-10, 3, 0));
+	//iMesh* temp2 = GetGraphics()->CreateMesh("Media/token_wip_one_anim.fbx", Vector3(-10, 3, 0));
 	//temp2->SetScale(0.05f);
 
 	/*float navArrowsScale = 0.25f;
