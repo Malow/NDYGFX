@@ -430,9 +430,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	iMesh* mmm = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(0,2,0));
 
 
-	iMesh* temp = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(0, 0, 0));
-	temp->SetScale(0.05f);
-
+	
 	//iMesh* temp2 = GetGraphics()->CreateMesh("Media/token_wip_one_anim.fbx", Vector3(-10, 3, 0));
 	//temp2->SetScale(0.05f);
 
@@ -457,14 +455,15 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 			tmp->SetScale(0.05f);
 		}
 	}*/
-	//BILLBOARD(TREE)
-	//iMesh* billboardTree = GetGraphics()->CreateMesh("Media/BillboardTreeTest.obj", Vector3(-5, 0, 0));
-	//billboardTree->SetScale(0.05f);
-	//Vector2 bbSize = Vector2(10, 10);
-	//iBillboard* realBillboardTree = GetGraphics()->CreateBillboard(Vector3(-10, bbSize.y * 0.5f, 0), bbSize, "Media/TreeBillboard.png");
+	//BILLBOARD && DONTRENDER & INVISIBILITY
+	iMesh* temp = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(0, 0, 0));
+	temp->SetScale(0.05f);
+	temp->UseInvisibilityEffect(true);
+	//temp->DontRender(true);
 
 	iMesh* treeWithBillboard = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(-10, 0, 0), "Media/TreeBillboard.png", 25.5f);
 	treeWithBillboard->SetScale(0.05f);
+	treeWithBillboard->DontRender(true);
 
 	iMesh* flagWithBillboard = GetGraphics()->CreateMesh("Media/FlagBlue.ani", Vector3(-15, 0, -5), "Media/TreeBillboard.png", 25.5f);
 

@@ -387,7 +387,7 @@ void DxManager::RenderShadowMap()
 			//Static meshes
 			for(int i = 0; i < this->objects.size(); i++)
 			{
-				if(!this->objects[i]->IsUsingInvisibility())
+				if(!this->objects[i]->IsUsingInvisibility() && !this->objects[i]->GetDontRenderFlag())
 				{
 					MaloW::Array<MeshStrip*>* strips = this->objects[i]->GetStrips();
 					D3DXMATRIX wvp = this->objects[i]->GetWorldMatrix() * this->lights[l]->GetViewProjMatrix();
@@ -449,7 +449,7 @@ void DxManager::RenderShadowMap()
 			//Animated meshes
 			for(int i = 0; i < this->animations.size(); i++)
 			{
-				if(!this->animations[i]->IsUsingInvisibility())
+				if(!this->animations[i]->IsUsingInvisibility() && !this->animations[i]->GetDontRenderFlag())
 				{
 					KeyFrame* one = NULL;
 					KeyFrame* two = NULL;
@@ -811,7 +811,7 @@ void DxManager::RenderCascadedShadowMap()
 			for(int i = 0; i < this->objects.size(); i++)
 			{
 				StaticMesh* staticMesh = this->objects[i];
-				if(!staticMesh->IsUsingInvisibility())
+				if(!staticMesh->IsUsingInvisibility() && !staticMesh->GetDontRenderFlag())
 				{
 					D3DXVECTOR3 distance = staticMesh->GetBillboardGFX()->GetPositionD3DX() - this->camera->GetPositionD3DX();
 
@@ -909,7 +909,7 @@ void DxManager::RenderCascadedShadowMap()
 			for(int i = 0; i < this->animations.size(); i++)
 			{
 				AnimatedMesh* animatedMesh = this->animations[i];
-				if(!animatedMesh->IsUsingInvisibility())
+				if(!animatedMesh->IsUsingInvisibility() && !animatedMesh->GetDontRenderFlag())
 				{
 					D3DXVECTOR3 distance = animatedMesh->GetBillboardGFX()->GetPositionD3DX() - this->camera->GetPositionD3DX();
 

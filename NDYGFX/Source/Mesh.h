@@ -39,6 +39,8 @@ protected:
 
 	MaloW::Array<MeshStrip*>* strips;
 
+	bool dontRender;
+
 	float height;
 	string billboardFilePath;
 	Billboard* billboard;
@@ -68,10 +70,7 @@ public:
 	virtual void SetSpecialColor(COLOR specialColor);
 	virtual COLOR GetSpecialColor() const { return this->specialColor; }
 
-	// Invisibility
-	void UseInvisibilityEffect(bool use);
-	bool IsUsingInvisibility() const { return this->usingInvisibilityEffect; }
-
+	
 	// Transformation
 	void SetPosition(D3DXVECTOR3 pos);
 	void SetQuaternion(D3DXQUATERNION quat);
@@ -98,6 +97,12 @@ public:
 	virtual Vector3 GetScaling() const;
 	virtual void ResetRotation();
 	virtual iBillboard* GetBillboard() { return this->billboard; }
+	virtual bool GetDontRenderFlag() { return this->dontRender; }
+	virtual void DontRender(bool flag) { this->dontRender = flag; }
+	// Invisibility
+	virtual bool IsUsingInvisibility() const { return this->usingInvisibilityEffect; }
+	virtual void UseInvisibilityEffect(bool flag);
+
 	
 	D3DXMATRIX GetWorldMatrix() { return this->worldMatrix; }
 	void ResetRotationAndScale();

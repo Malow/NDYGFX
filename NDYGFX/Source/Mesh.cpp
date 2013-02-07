@@ -8,6 +8,9 @@ Mesh::Mesh(D3DXVECTOR3 pos, string billboardFilePath, float distanceToSwapToBill
 	//this->transparency = 0.0f;
 
 	this->strips = new MaloW::Array<MeshStrip*>();
+
+	this->dontRender = false;
+
 	this->height = -1.0f;
 	this->billboardFilePath = billboardFilePath;
 	this->billboard = new Billboard();
@@ -165,9 +168,9 @@ void Mesh::SetSpecialColor(COLOR specialColor)
 	this->specialColor = specialColor;
 }
 
-void Mesh::UseInvisibilityEffect(bool use)
+void Mesh::UseInvisibilityEffect(bool flag)
 {
-	this->usingInvisibilityEffect = use;
+	this->usingInvisibilityEffect = flag;
 }
 
 void Mesh::SetPosition(D3DXVECTOR3 pos)

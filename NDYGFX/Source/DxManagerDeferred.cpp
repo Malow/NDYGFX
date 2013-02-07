@@ -452,7 +452,7 @@ void DxManager::RenderDeferredGeometry()
 	for(int i = 0; i < this->objects.size(); i++)
 	{
 		StaticMesh* staticMesh = this->objects[i];
-		if(!staticMesh->IsUsingInvisibility())
+		if(!staticMesh->IsUsingInvisibility() && !staticMesh->GetDontRenderFlag())
 		{
 			D3DXVECTOR3 distance = staticMesh->GetBillboardGFX()->GetPositionD3DX() - this->camera->GetPositionD3DX();
 			
@@ -591,7 +591,7 @@ void DxManager::RenderDeferredGeometry()
 	for(int i = 0; i < this->animations.size(); i++)
 	{
 		AnimatedMesh* animatedMesh = this->animations[i];
-		if(!animatedMesh->IsUsingInvisibility())
+		if(!animatedMesh->IsUsingInvisibility() && !animatedMesh->GetDontRenderFlag())
 		{
 			D3DXVECTOR3 distance = animatedMesh->GetBillboardGFX()->GetPositionD3DX() - this->camera->GetPositionD3DX();
 
@@ -962,7 +962,7 @@ void DxManager::RenderInvisibilityEffect()
 	D3DXMATRIX wvp;
 	for(int i = 0; i < this->objects.size(); i++)
 	{
-		if(this->objects[i]->IsUsingInvisibility())
+		if(this->objects[i]->IsUsingInvisibility() && !this->objects[i]->GetDontRenderFlag())
 		{
 			MaloW::Array<MeshStrip*>* strips = this->objects[i]->GetStrips();
 		
