@@ -223,7 +223,11 @@ public:
 	int GetRenderedMeshShadowCount() const;
 	int GetRenderedTerrainShadowCount() const; 
 
-	void SetFPSMAX( float maxFPS );
+	void SetMaxFPS(float maxFPS);
+	float GetMaxFPS() const;
+	void SetRendererSleep(float sleep);
+	float GetRendererSleep() const;
+
 	void SetSunLightProperties(Vector3 direction, Vector3 lightColor, float intensity);
 	void SetSunLightDisabled();
 	void SetSceneAmbientLight(D3DXVECTOR3 amb) { this->sceneAmbientLight = amb; }

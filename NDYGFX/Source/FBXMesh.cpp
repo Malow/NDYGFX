@@ -41,3 +41,17 @@ bool FBXMesh::LoadFromFile( string file, IBTHFbx* fbx, ID3D11Device* dev, ID3D11
 	this->scene->GetAnimationController()->Play();
 	return true;
 }
+
+void FBXMesh::SetAnimation( int ani )
+{
+	if(ani < this->scene->GetAnimationController()->GetAnimationCount())
+	{
+		this->scene->GetAnimationController()->SetCurrentAnimation(ani);
+		this->scene->GetAnimationController()->Play();
+	}
+	else
+	{
+		MaloW::Debug("Tried to apply animation at index " + MaloW::convertNrToString(ani) + " to an FBX mesh that only has "	+ 
+			MaloW::convertNrToString(this->scene->GetAnimationController()->GetAnimationCount()) + " animations.");
+	}
+}

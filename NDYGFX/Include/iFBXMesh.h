@@ -15,5 +15,8 @@ extern "C"
 	protected:
 		iFBXMesh() {};
 		virtual ~iFBXMesh() {};
+
+	public:
+		virtual void SetAnimation(int ani) = 0;
 	};
 }

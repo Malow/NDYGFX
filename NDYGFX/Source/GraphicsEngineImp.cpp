@@ -279,7 +279,7 @@ void GraphicsEngineImp::InitObjects()
 	}
 	*/
 	this->dx->SetCamera(this->cam);
-	this->dx->SetFPSMAX(this->parameters.MaxFPS);
+	this->dx->SetMaxFPS(this->parameters.MaxFPS);
 	this->dx->Start();
 	this->fbx = InitBTHFbx();
 }
@@ -559,6 +559,10 @@ void GraphicsEngineImp::LoadingScreen(const char* BackgroundTexture, const char*
 	this->cam->SetUpdateCamera(false);
 	this->Update();
 
+	// Set MaxFPS during loading screen
+	float prevRendSleep = this->dx->GetRendererSleep();
+	this->dx->SetMaxFPS(30.0f);
+
 	Image* bg = NULL;
 	if( strcmp(BackgroundTexture, "") != 0 )
 		bg = this->CreateImage(D3DXVECTOR2(0.0f, 0.0f), D3DXVECTOR2(0.0f, 0.0f), BackgroundTexture);
@@ -689,15 +693,20 @@ void GraphicsEngineImp::LoadingScreen(const char* BackgroundTexture, const char*
 				else
 					pb->SetDimensions(Vector2(dx * 0.5f, y));
 			}
+
+		// Sleep for a bit
+		Sleep(15);
 	}
 
 	if(fade)
 	{
 		this->DeleteImage(fade);
 	}
+
 	if(this->cam->GetCameraType() == FPS)
 		this->GetKeyList()->SetMousePosition(Vector2(this->parameters.WindowWidth / 2.0f, this->parameters.WindowHeight / 2.0f));
 	this->cam->SetUpdateCamera(updateCam);
+	this->dx->SetRendererSleep(prevRendSleep);
 }
 
 iMesh* GraphicsEngineImp::CreateMesh( const char* filename, const Vector3& pos, const char* billboardFilePath, float distanceToSwapToBillboard)

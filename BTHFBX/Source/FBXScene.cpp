@@ -117,7 +117,7 @@ bool FBXScene::LoadScene(const char* filename)
             printf("\n");
         }
     }
-
+	
     // Import the scene.
     lStatus = pFBXImporter->Import(mScene);
 
@@ -150,8 +150,8 @@ void FBXScene::ProcessScene(FbxScene* pScene)
 
 	ProcessMaterials(pScene);
 	ProcessNode(pScene->GetRootNode(), FbxNodeAttribute::eSkeleton);
-	ProcessNode(pScene->GetRootNode(), FbxNodeAttribute::eMesh);
-	ProcessNode(pScene->GetRootNode(), FbxNodeAttribute::eNurbsCurve);
+	ProcessNode(pScene->GetRootNode(), FbxNodeAttribute::eMesh);	// takes time, guesstimate 50% of it
+	ProcessNode(pScene->GetRootNode(), FbxNodeAttribute::eNurbsCurve); 
 
 	if(m_pSkeleton)
 		m_pSkeleton->BuildBoneHierarchy();
@@ -159,8 +159,8 @@ void FBXScene::ProcessScene(FbxScene* pScene)
 	ProcessBlendWeights();
 	ProcessSkeleteonBoundingBoxes();
 
-	ProcessAnimations(pScene);
-
+	ProcessAnimations(pScene);	// takes time too, other 50%
+	int asd = 0;
 	/*
 	KFbxExporter* lExporter = KFbxExporter::Create(mSdkManager, "");
 
@@ -244,6 +244,7 @@ void FBXScene::ProcessNode(FbxNode* pNode, FbxNodeAttribute::EType attributeType
 	{
 		ProcessNode(pNode->GetChild(i), attributeType);
 	}
+	int asd = 0;
 }
 
 void FBXScene::ProcessCurve(FbxNode* pNode)
@@ -281,7 +282,7 @@ void FBXScene::ProcessAnimations(FbxScene* pScene)
 	FbxArray<FbxString*> takeArray;	
 	FbxDocument* pDocument = FbxCast<FbxDocument>(pScene); // dynamic_cast<FbxDocument*>(pScene);
 	if( pDocument )
-		pDocument->FillAnimStackNameArray(takeArray);
+		pDocument->FillAnimStackNameArray(takeArray);		// MALOW: BETWEEN HERE AND....
 
 	for( int i = 0; i < takeArray.GetCount(); ++i )
 	{
@@ -328,7 +329,7 @@ void FBXScene::ProcessAnimations(FbxScene* pScene)
 		delete takeName;
 		//takeName->Destroy();
 	}
-
+		// MALOW: AND HERE TAKES 100% of the time.
 	takeArray.Clear();
 }
 
@@ -482,7 +483,7 @@ void FBXScene::ProcessMesh(FbxNode* pNode)
 	
 	Model* pModel = new Model(pNode->GetName(), m_Models.GetCount(), false);
 	FbxVector4* aControlPoints = pFBXMesh->GetControlPoints();
-	for( int pi = 0; pi < pFBXMesh->GetPolygonCount(); ++pi )
+	for( int pi = 0; pi < pFBXMesh->GetPolygonCount(); ++pi )	// Whole for-loop takes some time too, investigate further.
 	{
 		Material* pMaterial = NULL;
 

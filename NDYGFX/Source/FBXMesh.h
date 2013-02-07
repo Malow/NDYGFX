@@ -7,15 +7,12 @@
 // FBX
 #include "BTHFBX\Shared\FBX\FBXSceneD3D.h"
 
+
 #ifdef _DEBUG
 #pragma comment(lib, "BTHFbxD.lib")
 #else
 #pragma comment(lib, "BTHFbx.lib")
 #endif
-
-
-
-
 
 
 
@@ -38,6 +35,7 @@ public:
 	void Update(float dt);
 	void Render(float dt, D3DXMATRIX camProj, D3DXMATRIX camView, Shader* shad, ID3D11DeviceContext* devCont);
 
+	virtual void SetAnimation(int ani);
 
 	//BTHFBX_RAY_BOX_RESULT RayVsScene(const BTHFBX_RAY& ray, BTHFBX_MATRIX* worldMatrix);
 };

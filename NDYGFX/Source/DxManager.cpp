@@ -673,14 +673,6 @@ void DxManager::SetSpecialCircle(float innerRadius, float outerRadius, Vector2& 
 	this->specialCircleParams.w = targetPos.y; //z
 }
 
-void DxManager::SetFPSMAX( float maxFPS )
-{
-	if(maxFPS == 0)
-		this->RendererSleep = 0.0f;
-	else
-		this->RendererSleep = 1000.0f / maxFPS;
-}
-
 void DxManager::SetSunLightProperties( Vector3 direction, Vector3 lightColor, float intensity )
 {
 	this->sun.direction = direction;
@@ -924,4 +916,28 @@ void DxManager::DeleteFBXMesh( FBXMesh* mesh )
 const GraphicsEngineParams& DxManager::GetParams() const
 {
 	return params;
+}
+
+
+void DxManager::SetMaxFPS( float maxFPS )
+{
+	if(maxFPS == 0)
+		this->RendererSleep = 0.0f;
+	else
+		this->RendererSleep = 1000.0f / maxFPS;
+}
+
+float DxManager::GetMaxFPS() const
+{
+	return 1000.0f / this->RendererSleep;
+}
+
+void DxManager::SetRendererSleep( float sleep )
+{
+	this->RendererSleep = sleep;
+}
+
+float DxManager::GetRendererSleep() const
+{
+	return this->RendererSleep;
 }

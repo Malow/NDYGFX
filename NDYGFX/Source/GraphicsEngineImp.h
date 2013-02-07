@@ -165,7 +165,7 @@ public:
 	virtual void PreLoadResources(unsigned int nrOfResources, char const* const* const resourcesFileNames);
 
 
-	virtual void SetFPSMax(float maxFPS) { this->dx->SetFPSMAX(maxFPS); }
+	virtual void SetFPSMax(float maxFPS) { this->dx->SetMaxFPS(maxFPS); }
 	virtual void SetSunLightProperties(Vector3 direction, Vector3 lightColor = Vector3(1.0f, 1.0f, 1.0f), float intensity = 1.0f);
 	virtual Vector3 GetSunLightDirection() const;
 	virtual Vector3 GetSunLightColor() const;

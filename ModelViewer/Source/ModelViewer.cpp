@@ -433,7 +433,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	iMesh* temp = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(0, 0, 0));
 	temp->SetScale(0.05f);
 
-	//iMesh* temp2 = GetGraphics()->CreateMesh("Media/token_wip_one_anim.fbx", Vector3(-10, 3, 0));
+	//iFBXMesh* temp2 = GetGraphics()->CreateFBXMesh("Media/token_wip_few_animx.fbx", Vector3(-10, 10, 0));
 	//temp2->SetScale(0.05f);
 
 	/*float navArrowsScale = 0.25f;
@@ -606,6 +606,28 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		if(GetGraphics()->GetKeyListener()->IsPressed('J'))
 			GetGraphics()->SetSceneAmbientLight(Vector3(1.0f, 0.0f, 0.0f));
 
+		/*
+		if(GetGraphics()->GetKeyListener()->IsPressed('0'))
+			temp2->SetAnimation(0);
+		if(GetGraphics()->GetKeyListener()->IsPressed('1'))
+			temp2->SetAnimation(1);
+		if(GetGraphics()->GetKeyListener()->IsPressed('2'))
+			temp2->SetAnimation(2);
+		if(GetGraphics()->GetKeyListener()->IsPressed('3'))
+			temp2->SetAnimation(3);
+		if(GetGraphics()->GetKeyListener()->IsPressed('4'))
+			temp2->SetAnimation(4);
+		if(GetGraphics()->GetKeyListener()->IsPressed('5'))
+			temp2->SetAnimation(5);
+		if(GetGraphics()->GetKeyListener()->IsPressed('6'))
+			temp2->SetAnimation(6);
+		if(GetGraphics()->GetKeyListener()->IsPressed('7'))
+			temp2->SetAnimation(7);
+		if(GetGraphics()->GetKeyListener()->IsPressed('8'))
+			temp2->SetAnimation(8);
+		if(GetGraphics()->GetKeyListener()->IsPressed('9'))
+			temp2->SetAnimation(9);
+			*/
 
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_UP))
 			secModel->MoveBy(Vector3(1, 0, 0) * diff * 0.1f);
