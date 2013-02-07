@@ -47,6 +47,7 @@ void FBXModelPartD3D::Render(float dt, Shader* shader, D3DXMATRIX viewProj, bool
 	#define EFFECTVARIABLENAME_NORMALTEXTURE		"txNormal"
 	#define EFFECTVARIABLENAME_SKINNING				"g_bSkinning"
 
+
 	shader->SetResource(EFFECTVARIABLENAME_DIFFUSETEXTURE, mDiffuseTexture ? mDiffuseTexture->GetResource() : NULL);
 	shader->SetResource(EFFECTVARIABLENAME_NORMALTEXTURE, mNormalTexture ? mNormalTexture->GetResource() : NULL);
 	shader->SetBool(EFFECTVARIABLENAME_SKINNING, enableAnimation ? m_bSkinnedModel : false);
@@ -77,10 +78,11 @@ void FBXModelPartD3D::Render(float dt, Shader* shader, D3DXMATRIX viewProj, bool
 
 	devCont->IASetVertexBuffers( 0, 5, aVB, aStrides, aOffsets );
 	devCont->IASetIndexBuffer( mIB->GetBufferPointer(), DXGI_FORMAT_R32_UINT, 0 );
-
+	shader->Apply(0);
 	//for(unsigned int pass = 0; pass < shader->PassCount(); pass++)
 	//{
 		//shader->Apply(pass);
 		devCont->DrawIndexed((unsigned int)mIB->GetElementCount(),0,0);
 	//}
+	//shader->SetResource(EFFECTVARIABLENAME_DIFFUSETEXTURE, NULL);
 }

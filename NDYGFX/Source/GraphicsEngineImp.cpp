@@ -443,7 +443,7 @@ float GraphicsEngineImp::Update()
 	}
 	
 	this->dx->Update(diff);
-	this->fbx->UpdateScenes(diff, true);
+	this->fbx->UpdateScenes(diff * 0.001f, true);
 
 	if(this->isManagingMyOwnWindow)
 	{
