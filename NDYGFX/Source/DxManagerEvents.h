@@ -1,8 +1,6 @@
 #pragma once
 
 #include "Process.h"
-#include "WaterPlane.h"
-#include "FBXMesh.h"
 
 /* Process events for adding to rendering */
 
@@ -113,6 +111,27 @@ public:
 		}
 	}
 	Image* GetImage() { this->deleteSelf = false; return this->img; }
+};
+
+class BillboardEvent : public RendererEvent
+{
+private:
+	Billboard* billboard;
+
+public:
+	BillboardEvent(string msg, Billboard* billboard) : RendererEvent(msg)
+	{
+		this->billboard = billboard;
+	}
+	virtual ~BillboardEvent() 
+	{
+		if(this->deleteSelf && this->message.substr(0, 6) != "Delete")
+		{
+			if(this->billboard)
+				delete this->billboard;
+		}
+	}
+	Billboard* GetBillboard() { this->deleteSelf = false; return this->billboard; }
 };
 
 class TextEvent : public RendererEvent

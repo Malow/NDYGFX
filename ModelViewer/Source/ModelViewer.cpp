@@ -449,16 +449,30 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 
 
 	//GRASS
-	for(int i = 0; i < 25; i++)
+	/*for(int i = 0; i < 25; i++)
 	{
 		for(int j = 0; j < 25; j++)
 		{
 			iMesh* tmp = GetGraphics()->CreateMesh("Media/ShrubberyGrass_01_v01.obj", Vector3(i - 12.5f, 0, j - 12.5f));
 			tmp->SetScale(0.05f);
 		}
-	}
+	}*/
+	//BILLBOARD(TREE)
+	//iMesh* billboardTree = GetGraphics()->CreateMesh("Media/BillboardTreeTest.obj", Vector3(-5, 0, 0));
+	//billboardTree->SetScale(0.05f);
+	//Vector2 bbSize = Vector2(10, 10);
+	//iBillboard* realBillboardTree = GetGraphics()->CreateBillboard(Vector3(-10, bbSize.y * 0.5f, 0), bbSize, "Media/TreeBillboard.png");
 
-	
+	iMesh* treeWithBillboard = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(-10, 0, 0), "Media/TreeBillboard.png", 25.0f);
+	treeWithBillboard->SetScale(0.05f);
+	treeWithBillboard->GetBillboard()->SetPosition(Vector3(-10, 5, 0));
+	treeWithBillboard->GetBillboard()->SetSize(Vector2(10, 10));
+
+	iMesh* flagWithBillboard = GetGraphics()->CreateMesh("Media/FlagBlue.ani", Vector3(-15, 0, -5), "Media/TreeBillboard.png", 25.0f);
+	//flagWithBillboard->SetScale(0.05f);
+	flagWithBillboard->GetBillboard()->SetPosition(Vector3(-15, 0, -5));
+	flagWithBillboard->GetBillboard()->SetSize(Vector2(10, 10));
+
 	GetGraphics()->CreateMesh("Media/scale.obj", Vector3(30, -300, 30));
 	
 #endif
@@ -606,7 +620,6 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		static float debugCSMScale = 1.0f;
 		if(GetGraphics()->GetKeyListener()->IsPressed('Q'))
 		{
-
 			debugCSMScale += diff * 0.001f;
 			model->Scale(1 + diff * 0.01f);
 			fileNames[0] = "Media/TerrainTexture.png";

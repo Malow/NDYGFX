@@ -13,6 +13,7 @@
 #include "iMesh.h"
 #include "iLight.h"
 #include "iImage.h"
+#include "iBillboard.h"
 #include "iText.h"
 #include "iAnimatedMesh.h"
 #include "iCamera.h"
@@ -32,7 +33,7 @@ extern "C"
 		GraphicsEngine() { };
 		virtual ~GraphicsEngine() { };
 
-		virtual iMesh* CreateMesh(const char* filename, const Vector3& pos) = 0;
+		virtual iMesh* CreateMesh(const char* filename, const Vector3& pos, const char* billboardFilePath = "", float distanceToSwapToBillboard = -1) = 0;
 		virtual void DeleteMesh(iMesh* delMesh) = 0;
 		virtual iMesh* CreateStaticMesh(const char* filename, const Vector3& pos) = 0;
 		virtual iAnimatedMesh* CreateAnimatedMesh(const char* filename, const Vector3& pos) = 0;
@@ -42,6 +43,9 @@ extern "C"
 
 		virtual iImage* CreateImage(Vector2 pos, Vector2 dimensions, const char* texture) = 0;
 		virtual void DeleteImage(iImage* &delImg) = 0;
+
+		virtual iBillboard* CreateBillboard(Vector3 pos, Vector2 size, const char* texture) = 0;
+		virtual void DeleteBillboard(iBillboard* &delBillboard) = 0;
 
 		/*! fontTexturePath shall not contain the file type. */
 		virtual iText* CreateText(const char* text, Vector2 pos, float size, const char* fontTexturePath) = 0;

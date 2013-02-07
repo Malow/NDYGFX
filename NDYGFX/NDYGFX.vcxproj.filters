@@ -232,6 +232,12 @@
     <ClInclude Include="Source\BTHFBX\Include\BTHstdafx.h">
       <Filter>Source Files\Engine\Objects and Entities\FBX\Include</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Billboard.h">
+      <Filter>Source Files\Engine\Objects and Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\iBillboard.h">
+      <Filter>Source Files\Wrapper</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\GraphicsEngineImp.cpp">
@@ -384,6 +390,9 @@
     <ClCompile Include="Source\BTHFBX\Shared\D3D\BTHTexture.cpp">
       <Filter>Source Files\Engine\Objects and Entities\FBX</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Billboard.cpp">
+      <Filter>Source Files\Engine\Objects and Entities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Include\iKeyListener.h">
@@ -433,9 +442,6 @@
     <FxCompile Include="..\WorkingDir\Shaders\PPHighlightArea.fx">
       <Filter>Source Files\Engine\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="..\WorkingDir\Shaders\ScreenSpaceBillBoard.fx">
-      <Filter>Source Files\Engine\Shaders</Filter>
-    </FxCompile>
     <FxCompile Include="..\WorkingDir\Shaders\ShadowMap.fx">
       <Filter>Source Files\Engine\Shaders</Filter>
     </FxCompile>
@@ -461,6 +467,12 @@
       <Filter>Source Files\Engine\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\WorkingDir\Shaders\WaterPlane.fx">
+      <Filter>Source Files\Engine\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\WorkingDir\Shaders\Billboard.fx">
+      <Filter>Source Files\Engine\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\WorkingDir\Shaders\Image.fx">
       <Filter>Source Files\Engine\Shaders</Filter>
     </FxCompile>
   </ItemGroup>

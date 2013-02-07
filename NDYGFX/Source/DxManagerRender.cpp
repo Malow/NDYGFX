@@ -171,6 +171,25 @@ void DxManager::HandleImageEvent(ImageEvent* ie)
 	}
 }
 
+void DxManager::HandleBillboardEvent(BillboardEvent* ie)
+{
+	string msg = ie->getMessage();
+	if(msg == "Add Billboard")
+		this->billboards.add(ie->GetBillboard());
+	else if(msg == "Delete Billboard")
+	{
+		Billboard* billboard = ie->GetBillboard();
+		for(int i = 0; i < this->billboards.size(); i++)
+		{
+			if(this->billboards[i] == billboard)
+			{
+				delete this->billboards.getAndRemoveStaySorted(i);
+				billboard = NULL;
+			}
+		}
+	}
+}
+
 void DxManager::HandleTextEvent(TextEvent* te)
 {
 	string msg = te->getMessage();
@@ -264,6 +283,12 @@ void DxManager::Life()
 				else if(dynamic_cast<ImageEvent*>(ev) != NULL)
 				{
 					this->HandleImageEvent((ImageEvent*)ev);
+				}
+
+				// BillboardEvent
+				else if(dynamic_cast<BillboardEvent*>(ev) != NULL)
+				{
+					this->HandleBillboardEvent((BillboardEvent*)ev);
 				}
 
 				// TextEvent
@@ -537,27 +562,81 @@ void DxManager::RenderImages()
 	{
 		Image* img = this->images[i];
 		// if Convert from screenspace is needed, which it isnt.
-		this->Shader_BillBoard->SetFloat("posx", (img->GetPosition().x / this->params.WindowWidth) * 2 - 1);
-		this->Shader_BillBoard->SetFloat("posy", 2 - (img->GetPosition().y / this->params.WindowHeight) * 2 - 1);
-		this->Shader_BillBoard->SetFloat("dimx", (img->GetDimensions().x / this->params.WindowWidth) * 2);
-		this->Shader_BillBoard->SetFloat("dimy", -(img->GetDimensions().y / this->params.WindowHeight) * 2);
-		this->Shader_BillBoard->SetFloat("opacity", img->GetOpacity());
+		this->Shader_Image->SetFloat("posx", (img->GetPosition().x / this->params.WindowWidth) * 2 - 1);
+		this->Shader_Image->SetFloat("posy", 2 - (img->GetPosition().y / this->params.WindowHeight) * 2 - 1);
+		this->Shader_Image->SetFloat("dimx", (img->GetDimensions().x / this->params.WindowWidth) * 2);
+		this->Shader_Image->SetFloat("dimy", -(img->GetDimensions().y / this->params.WindowHeight) * 2);
+		this->Shader_Image->SetFloat("opacity", img->GetOpacity());
 		
 		/*// if -1 to 1
-		this->Shader_BillBoard->SetFloat("posx", img->GetPosition().x);
-		this->Shader_BillBoard->SetFloat("posy", img->GetPosition().y);
-		this->Shader_BillBoard->SetFloat("dimx", img->GetDimensions().x);
-		this->Shader_BillBoard->SetFloat("dimy", img->GetDimensions().y);
+		this->Shader_Image->SetFloat("posx", img->GetPosition().x);
+		this->Shader_Image->SetFloat("posy", img->GetPosition().y);
+		this->Shader_Image->SetFloat("dimx", img->GetDimensions().x);
+		this->Shader_Image->SetFloat("dimy", img->GetDimensions().y);
 		*/
 		if(img->GetTexture() != NULL)
 		{
-			this->Shader_BillBoard->SetResource("tex2D", img->GetTexture()->GetSRVPointer());
+			this->Shader_Image->SetResource("tex2D", img->GetTexture()->GetSRVPointer());
 		}
-		this->Shader_BillBoard->Apply(0);
+		this->Shader_Image->Apply(0);
 		this->Dx_DeviceContext->Draw(1, 0);
 	}
-	this->Shader_BillBoard->SetResource("tex2D", NULL);
-	this->Shader_BillBoard->Apply(0);
+	this->Shader_Image->SetResource("tex2D", NULL);
+	this->Shader_Image->Apply(0);
+}
+void DxManager::RenderBillboards()
+{
+	if(this->billboards.size() != 0)
+	{
+		this->Dx_DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+	
+		this->Shader_Billboard->SetFloat3("g_CameraPos", this->camera->GetPositionD3DX());
+		this->Shader_Billboard->SetMatrix("g_CamViewProj", this->camera->GetViewMatrix() * this->camera->GetProjectionMatrix());
+
+		for(int i = 0; i < this->billboards.size(); i++)
+		{
+			Billboard* billboard = this->billboards[i];
+		
+			this->RenderBillboard(billboard);
+		}
+
+		//Unbind resources
+		this->Shader_Billboard->SetResource("g_bb_DiffuseMap", NULL);
+		this->Shader_Billboard->Apply(0);
+	}
+}
+void DxManager::RenderBillboard(Billboard* billboard)
+{
+	//Set bill board variables
+	this->Shader_Billboard->SetFloat3("g_bb_Position", billboard->GetPositionD3DX()); 
+	this->Shader_Billboard->SetFloat2("g_bb_BillboardSize", billboard->GetSizeD3DX());
+	this->Shader_Billboard->SetFloat4("g_bb_Color", billboard->GetColorD3DX());
+
+	if(billboard->GetTextureResource() != NULL)
+	{
+		if(billboard->GetTextureResource()->GetSRVPointer())
+		{
+			this->Shader_Billboard->SetResource("g_bb_DiffuseMap", billboard->GetTextureResource()->GetSRVPointer());
+			this->Shader_Billboard->SetBool("g_bb_IsTextured", true);
+		}
+		else
+		{
+			this->Shader_Billboard->SetResource("g_bb_DiffuseMap", NULL);
+			this->Shader_Billboard->SetBool("g_bb_IsTextured", false);
+		}
+	}
+	else
+	{
+		this->Shader_Billboard->SetResource("g_bb_DiffuseMap", NULL);
+		this->Shader_Billboard->SetBool("g_bb_IsTextured", false);
+	}
+	//Apply them
+	this->Shader_Billboard->Apply(0);
+
+	//Ignore vertex input
+
+	//Draw one vertex
+	this->Dx_DeviceContext->Draw(1, 0);
 }
 
 void DxManager::RenderText()
@@ -681,12 +760,12 @@ void DxManager::RenderCascadedShadowMap()
 				{
 					currentRenderedTerrainShadows++;
 
+					//Input Assembler
+					this->Dx_DeviceContext->IASetPrimitiveTopology(this->terrains[i]->GetTopology());
+
 					//Matrices
 					wvp = this->terrains[i]->GetWorldMatrix() * this->csm->GetViewProjMatrix(l);
 					this->Shader_ShadowMap->SetMatrix("lightWVP", wvp);
-			
-					//Input Assembler
-					this->Dx_DeviceContext->IASetPrimitiveTopology(this->terrains[i]->GetTopology());
 
 					//Vertex data
 					Buffer* verts = this->terrains[i]->GetVertexBufferPointer();
@@ -727,150 +806,196 @@ void DxManager::RenderCascadedShadowMap()
 				}
 			}
 
-			float test = 1.0f;
-
 			//Static meshes
 			for(int i = 0; i < this->objects.size(); i++)
 			{
-				if(!this->objects[i]->IsUsingInvisibility())
+				StaticMesh* staticMesh = this->objects[i];
+				if(!staticMesh->IsUsingInvisibility())
 				{
-					MaloW::Array<MeshStrip*>* strips = this->objects[i]->GetStrips();
-					wvp = this->objects[i]->GetWorldMatrix() * this->csm->GetViewProjMatrix(l);
-					this->Shader_ShadowMap->SetMatrix("lightWVP", wvp);
+					D3DXVECTOR3 distance = staticMesh->GetBillboardGFX()->GetPositionD3DX() - this->camera->GetPositionD3DX();
 
-					bool hasBeenCounted = false;
-
-					for(int u = 0; u < strips->size(); u++)
+					//If the mesh has a billboard AND is inside the billboard range, render the mesh
+					float billboardRange = 0.0f;
+					//If no billboard range has been set for the mesh, use the default value
+					if(staticMesh->GetDistanceToSwapToBillboard() <= 0.0f)
 					{
-						//Render strip to shadow map if it has not been shadow culled
-						if(!strips->get(u)->IsShadowCulled())
+						billboardRange = this->params.FarClip * this->params.BillboardRange;
+					}
+					else
+					{
+						billboardRange = staticMesh->GetDistanceToSwapToBillboard();
+					}
+					if(D3DXVec3Length(&distance) < billboardRange || staticMesh->GetBillboardFilePath() == "")
+					{
+						MaloW::Array<MeshStrip*>* strips = staticMesh->GetStrips();
+						wvp = staticMesh->GetWorldMatrix() * this->csm->GetViewProjMatrix(l);
+						this->Shader_ShadowMap->SetMatrix("lightWVP", wvp);
+
+						bool hasBeenCounted = false;
+
+						for(int u = 0; u < strips->size(); u++)
 						{
-							if(!hasBeenCounted) //only count per mesh, not strip.
+							//Render strip to shadow map if it has not been shadow culled
+							if(!strips->get(u)->IsShadowCulled())
 							{
-								currentRenderedMeshShadows++;
-								hasBeenCounted = true;
-							}
-
-							Object3D* obj = strips->get(u)->GetRenderObject();
-
-							//Vertex data
-							this->Dx_DeviceContext->IASetPrimitiveTopology(obj->GetTopology());
-							Buffer* verts = obj->GetVertBuff();
-							Buffer* inds = obj->GetIndsBuff();
-							if(verts)
-							{
-								verts->Apply();
-							}
-							if(inds)
-							{
-								inds->Apply();
-							}
-						
-							//Texture
-							if(obj->GetTextureResource() != NULL)
-							{
-								if(obj->GetTextureResource()->GetSRVPointer() != NULL)
+								if(!hasBeenCounted) //only count per mesh, not strip.
 								{
-									this->Shader_ShadowMap->SetResource("diffuseMap", obj->GetTextureResource()->GetSRVPointer());
-									this->Shader_ShadowMap->SetBool("textured", true);
+									currentRenderedMeshShadows++;
+									hasBeenCounted = true;
+								}
+
+								Object3D* obj = strips->get(u)->GetRenderObject();
+
+								//Vertex data
+								this->Dx_DeviceContext->IASetPrimitiveTopology(obj->GetTopology());
+								Buffer* verts = obj->GetVertBuff();
+								Buffer* inds = obj->GetIndsBuff();
+								if(verts)
+								{
+									verts->Apply();
+								}
+								if(inds)
+								{
+									inds->Apply();
+								}
+						
+								//Texture
+								if(obj->GetTextureResource() != NULL)
+								{
+									if(obj->GetTextureResource()->GetSRVPointer() != NULL)
+									{
+										this->Shader_ShadowMap->SetResource("diffuseMap", obj->GetTextureResource()->GetSRVPointer());
+										this->Shader_ShadowMap->SetBool("textured", true);
+									}
+									else
+									{
+										this->Shader_ShadowMap->SetResource("diffuseMap", NULL);
+										this->Shader_ShadowMap->SetBool("textured", false);
+									}
 								}
 								else
 								{
 									this->Shader_ShadowMap->SetResource("diffuseMap", NULL);
 									this->Shader_ShadowMap->SetBool("textured", false);
 								}
-							}
-							else
-							{
-								this->Shader_ShadowMap->SetResource("diffuseMap", NULL);
-								this->Shader_ShadowMap->SetBool("textured", false);
-							}
 
-							//Apply Shader
-							this->Shader_ShadowMap->Apply(0);
+								//Apply Shader
+								this->Shader_ShadowMap->Apply(0);
 
-							//Draw
-							if(inds)
-							{
-								Dx_DeviceContext->DrawIndexed(inds->GetElementCount(), 0, 0);
-							}
-							else
-							{
-								Dx_DeviceContext->Draw(verts->GetElementCount(), 0);
+								//Draw
+								if(inds)
+								{
+									Dx_DeviceContext->DrawIndexed(inds->GetElementCount(), 0, 0);
+								}
+								else
+								{
+									Dx_DeviceContext->Draw(verts->GetElementCount(), 0);
+								}
 							}
 						}
+					}
+					else
+					{
+						//**TILLMAN - ADD CODE TO CREATE SHADOWS OF BILLBOARDS IF WANTED**
 					}
 				}
 			}
 			//Unbind shader resources
 			this->Shader_ShadowMap->SetResource("diffuseMap", NULL);
+			this->Shader_ShadowMap->Apply(0);
 			
 			//Animated meshes
 			for(int i = 0; i < this->animations.size(); i++)
 			{
-				if(!this->animations[i]->IsUsingInvisibility())
+				AnimatedMesh* animatedMesh = this->animations[i];
+				if(!animatedMesh->IsUsingInvisibility())
 				{
-					if(!animations[i]->GetKeyFrames()->get(0)->strips->get(0)->GetCulled())
+					D3DXVECTOR3 distance = animatedMesh->GetBillboardGFX()->GetPositionD3DX() - this->camera->GetPositionD3DX();
+
+					//If the mesh has a billboard AND is inside the billboard range, render the mesh
+					float billboardRange = 0.0f;
+					//If no billboard range has been set for the mesh, use the default value
+					if(animatedMesh->GetDistanceToSwapToBillboard() <= 0.0f)
 					{
-						currentRenderedMeshShadows++;
+						billboardRange = this->params.FarClip * this->params.BillboardRange;
+					}
+					else
+					{
+						billboardRange = animatedMesh->GetDistanceToSwapToBillboard();
+					}
 
-						KeyFrame* one = NULL;
-						KeyFrame* two = NULL;
-						float t = 0.0f;
-						this->animations[i]->SetCurrentTime(this->Timer * 1000.0f); //Timer is in seconds.
-						this->animations[i]->GetCurrentKeyFrames(&one, &two, t);
-						MaloW::Array<MeshStrip*>* stripsOne = one->strips;
-						MaloW::Array<MeshStrip*>* stripsTwo = two->strips;
+					if(D3DXVec3Length(&distance) < billboardRange || animatedMesh->GetBillboardFilePath() == "")
+					{
 
-						//Set shader data (per object)
-						this->Shader_ShadowMapAnimated->SetFloat("t", t);
-						D3DXMATRIX wvp = this->animations[i]->GetWorldMatrix() * this->csm->GetViewProjMatrix(l);
-						this->Shader_ShadowMapAnimated->SetMatrix("lightWVP", wvp); 
-
-						for(int u = 0; u < stripsOne->size(); u++)  //**Tillman todo - indices?**
+						if(!animatedMesh->GetKeyFrames()->get(0)->strips->get(0)->GetCulled())
 						{
-							//Set shader data per strip
-							Object3D* objOne = stripsOne->get(u)->GetRenderObject();
-							Object3D* objTwo = stripsTwo->get(u)->GetRenderObject();
+							currentRenderedMeshShadows++;
 
-							//Vertex data
-							this->Dx_DeviceContext->IASetPrimitiveTopology(objOne->GetTopology()); 
-							Buffer* vertsOne = objOne->GetVertBuff();
-							Buffer* vertsTwo = objTwo->GetVertBuff();
-							ID3D11Buffer* vertexBuffers [] = {vertsOne->GetBufferPointer(), vertsTwo->GetBufferPointer()};
-							UINT strides [] = {sizeof(Vertex), sizeof(Vertex)};
-							UINT offsets [] = {0, 0};
-							this->Dx_DeviceContext->IASetVertexBuffers(0, 2, vertexBuffers, strides, offsets);
+							KeyFrame* one = NULL;
+							KeyFrame* two = NULL;
+							float t = 0.0f;
+							animatedMesh->SetCurrentTime(this->Timer * 1000.0f); //Timer is in seconds.
+							animatedMesh->GetCurrentKeyFrames(&one, &two, t);
+							MaloW::Array<MeshStrip*>* stripsOne = one->strips;
+							MaloW::Array<MeshStrip*>* stripsTwo = two->strips;
 
-							//Textures
-							if(objOne->GetTextureResource() != NULL && objTwo->GetTextureResource() != NULL)
+							//Set shader data (per object)
+							this->Shader_ShadowMapAnimated->SetFloat("t", t);
+							D3DXMATRIX wvp = animatedMesh->GetWorldMatrix() * this->csm->GetViewProjMatrix(l);
+							this->Shader_ShadowMapAnimated->SetMatrix("lightWVP", wvp); 
+
+							for(int u = 0; u < stripsOne->size(); u++)  //**Tillman todo - indices?**
 							{
-								if(objOne->GetTextureResource()->GetSRVPointer() != NULL && objTwo->GetTextureResource()->GetSRVPointer() != NULL)
+								//Set shader data per strip
+								Object3D* objOne = stripsOne->get(u)->GetRenderObject();
+								Object3D* objTwo = stripsTwo->get(u)->GetRenderObject();
+
+								//Vertex data
+								this->Dx_DeviceContext->IASetPrimitiveTopology(objOne->GetTopology()); 
+								Buffer* vertsOne = objOne->GetVertBuff();
+								Buffer* vertsTwo = objTwo->GetVertBuff();
+								ID3D11Buffer* vertexBuffers [] = {vertsOne->GetBufferPointer(), vertsTwo->GetBufferPointer()};
+								UINT strides [] = {sizeof(Vertex), sizeof(Vertex)};
+								UINT offsets [] = {0, 0};
+								this->Dx_DeviceContext->IASetVertexBuffers(0, 2, vertexBuffers, strides, offsets);
+
+								//Textures
+								if(objOne->GetTextureResource() != NULL && objTwo->GetTextureResource() != NULL)
 								{
-									this->Shader_ShadowMapAnimated->SetResource("diffuseMap0", objOne->GetTextureResource()->GetSRVPointer());
-									this->Shader_ShadowMapAnimated->SetResource("diffuseMap1", objTwo->GetTextureResource()->GetSRVPointer());
-									this->Shader_ShadowMapAnimated->SetBool("textured", true);
+									if(objOne->GetTextureResource()->GetSRVPointer() != NULL && objTwo->GetTextureResource()->GetSRVPointer() != NULL)
+									{
+										this->Shader_ShadowMapAnimated->SetResource("diffuseMap0", objOne->GetTextureResource()->GetSRVPointer());
+										//Only need one diffuse map since no blending between maps is done.
+										//this->Shader_ShadowMapAnimated->SetResource("diffuseMap1", objTwo->GetTextureResource()->GetSRVPointer());
+										this->Shader_ShadowMapAnimated->SetBool("textured", true);
+									}
+									else
+									{
+										this->Shader_ShadowMapAnimated->SetResource("diffuseMap0", NULL);
+										//Only need one diffuse map since no blending between maps is done.
+										//this->Shader_ShadowMapAnimated->SetResource("diffuseMap1", NULL);
+										this->Shader_ShadowMapAnimated->SetBool("textured", false);
+									}
 								}
 								else
 								{
 									this->Shader_ShadowMapAnimated->SetResource("diffuseMap0", NULL);
-									this->Shader_ShadowMapAnimated->SetResource("diffuseMap1", NULL);
+									//Only need one diffuse map since no blending between maps is done.
+									//this->Shader_ShadowMapAnimated->SetResource("diffuseMap1", NULL);
 									this->Shader_ShadowMapAnimated->SetBool("textured", false);
 								}
-							}
-							else
-							{
-								this->Shader_ShadowMapAnimated->SetResource("diffuseMap0", NULL);
-								this->Shader_ShadowMapAnimated->SetResource("diffuseMap1", NULL);
-								this->Shader_ShadowMapAnimated->SetBool("textured", false);
-							}
 
-							//Apply
-							this->Shader_ShadowMapAnimated->Apply(0);
+								//Apply
+								this->Shader_ShadowMapAnimated->Apply(0);
 
-							//Draw
-							this->Dx_DeviceContext->Draw(vertsOne->GetElementCount(), 0); 
+								//Draw
+								this->Dx_DeviceContext->Draw(vertsOne->GetElementCount(), 0); 
+							}
 						}
+					}
+					else
+					{
+						//**TILLMAN - ADD CODE TO CREATE SHADOWS OF BILLBOARDS IF WANTED**
 					}
 				}
 			}
@@ -878,7 +1003,9 @@ void DxManager::RenderCascadedShadowMap()
 
 			//Unbind shader resources
 			this->Shader_ShadowMapAnimated->SetResource("diffuseMap0", NULL);
-			this->Shader_ShadowMapAnimated->SetResource("diffuseMap1", NULL);
+			this->Shader_ShadowMapAnimated->Apply(0);
+			//Only need one diffuse map since no blending between maps is done.
+			//this->Shader_ShadowMapAnimated->SetResource("diffuseMap1", NULL);
 
 		
 			D3DXMATRIX lvp = this->csm->GetViewProjMatrix(l);
@@ -1194,6 +1321,7 @@ HRESULT DxManager::Render()
 
 	this->RenderDeferredGeometry();
 
+	this->RenderBillboards();
 	
 	//this->RenderQuadDeferred();
 	//this->RenderDeferredTexture();
@@ -1238,15 +1366,15 @@ HRESULT DxManager::Render()
 	// Render RTs pictures
 	this->Dx_DeviceContext->ClearDepthStencilView(this->Dx_DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);	
 	for(int q = 0; q < this->NrOfRenderTargets; q++)
-		DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_BillBoard, this->Dx_GbufferSRVs[q], q); 
+		DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_Image, this->Dx_GbufferSRVs[q], q); 
 	*/
 	
 	
 	// Render shadowmap pictures:
 	//for(int q = 0; q < this->lights.size(); q++)
-		//DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_BillBoard, this->lights[q]->GetShadowMapSRV(), q); 
+		//DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_Image, this->lights[q]->GetShadowMapSRV(), q); 
 	//for(int q = 0; q < this->csm->GetNrOfCascadeLevels(); q++)
-	//	DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_BillBoard, this->csm->GetShadowMapSRV(q), q); 
+	//	DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_Image, this->csm->GetShadowMapSRV(q), q); 
 
 	
 	

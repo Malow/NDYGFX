@@ -194,21 +194,32 @@ HRESULT DxManager::Init()
 		return E_FAIL;
 	}	
 
-	// For billboards
-	D3D11_INPUT_ELEMENT_DESC inputDescBillboard[] = {
+	// For images
+	D3D11_INPUT_ELEMENT_DESC inputDescImage[] = {
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "DIMENSIONS", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{ "OPACITY", 0, DXGI_FORMAT_R32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
 	};
-	this->Shader_BillBoard = new Shader();
-	if(FAILED(this->Shader_BillBoard->Init(Dx_Device, Dx_DeviceContext, "Shaders/ScreenSpaceBillBoard.fx", inputDescBillboard, 3)))	// + on last if added above
+	this->Shader_Image = new Shader();
+	if(FAILED(this->Shader_Image->Init(Dx_Device, Dx_DeviceContext, "Shaders/Image.fx", inputDescImage, 3)))	// + on last if added above
 	{
-		MaloW::Debug("Failed to open ScreenSpaceBillBoard.fx");
+		MaloW::Debug("Failed to open Image.fx");
 		return E_FAIL;
 	}
 
+	// For billboards  - **TILLMAN detta används inte**
+	D3D11_INPUT_ELEMENT_DESC inputDescBillBoard[] = {
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
+	};
+	this->Shader_Billboard = new Shader();
+	if(FAILED(this->Shader_Billboard->Init(Dx_Device, Dx_DeviceContext, "Shaders/Billboard.fx", inputDescBillBoard, 2)))	// + on last if added above
+	{
+		MaloW::Debug("Failed to open Billboard.fx");
+		return E_FAIL;
+	}
 
-	// For billboards
+	// For text
 	D3D11_INPUT_ELEMENT_DESC inputDescText[] = {
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "DIMENSIONS", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},

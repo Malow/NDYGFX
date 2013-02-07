@@ -31,7 +31,8 @@ DxManager::DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam)
 	this->renderedMeshShadows = 0;
 	this->renderedTerrainShadows = 0;
 
-	this->Shader_BillBoard = NULL;
+	this->Shader_Image = NULL;
+	this->Shader_Billboard = NULL;
 
 	for(int i = 0; i < NrOfRenderTargets; i++)
 	{
@@ -101,8 +102,14 @@ DxManager::~DxManager()
 
 	if ( this->Shader_ShadowMapAnimated ) delete this->Shader_ShadowMapAnimated, this->Shader_ShadowMapAnimated=0;
 
-	if(this->Shader_BillBoard)
-		delete this->Shader_BillBoard;
+	if(this->Shader_Image)
+		delete this->Shader_Image;
+
+	if(this->Shader_Billboard)
+	{
+		delete this->Shader_Billboard;
+		this->Shader_Billboard = NULL;
+	}
 
 	if(this->Shader_DeferredGeometry)
 		delete this->Shader_DeferredGeometry;
@@ -181,6 +188,9 @@ DxManager::~DxManager()
 
 	while(0 < this->images.size())
 		delete this->images.getAndRemove(0);
+
+	while(0 < this->billboards.size())
+		delete this->billboards.getAndRemove(0);
 
 	while(0 < this-> terrains.size())
 		delete this-> terrains.getAndRemove(0);
@@ -297,6 +307,13 @@ void DxManager::CreateStaticMesh(StaticMesh* mesh)
 			texture = GetResourceManager()->CreateTextureResourceFromFile(strip->GetTexturePath().c_str());
 		}
 
+		TextureResource* billboardTexture = NULL;
+		if(mesh->GetBillboardFilePath() != "")
+		{
+			billboardTexture = GetResourceManager()->CreateTextureResourceFromFile(mesh->GetBillboardFilePath().c_str());
+		}
+		mesh->GetBillboardGFX()->SetTextureResource(billboardTexture);
+
 		Object3D* obj = new Object3D(verts, inds, texture, mesh->GetTopology()); 
 		strip->SetRenderObject(obj);
 	}
@@ -353,10 +370,14 @@ void DxManager::CreateAnimatedMesh(AnimatedMesh* mesh)
 			{
 				texture = GetResourceManager()->CreateTextureResourceFromFile(strip->GetTexturePath().c_str());
 			}
-			else
+
+			TextureResource* billboardTexture = NULL;
+			if(mesh->GetBillboardFilePath() != "")
 			{
-				texture = NULL; 
+				billboardTexture = GetResourceManager()->CreateTextureResourceFromFile(mesh->GetBillboardFilePath().c_str());
 			}
+			mesh->GetBillboardGFX()->SetTextureResource(billboardTexture);
+
 
 			Object3D* obj = new Object3D(verts, inds, texture, mesh->GetTopology()); 
 			strip->SetRenderObject(obj);
@@ -507,6 +528,26 @@ void DxManager::CreateImage(Image* image, string texture)
 void DxManager::DeleteImage(Image* image)
 {
 	ImageEvent* re = new ImageEvent("Delete Image", image);
+	this->PutEvent(re);
+}
+
+
+void DxManager::CreateBillboard(Billboard* billboard, string texture)
+{
+	TextureResource* tex = NULL;
+	if(texture != "")
+	{
+		tex = GetResourceManager()->CreateTextureResourceFromFile(texture.c_str());
+	}
+
+	billboard->SetTextureResource(tex);
+
+	BillboardEvent* re = new BillboardEvent("Add Billboard", billboard);
+	this->PutEvent(re);
+}
+void DxManager::DeleteBillboard(Billboard* billboard)
+{
+	BillboardEvent* re = new BillboardEvent("Delete Billboard", billboard);
 	this->PutEvent(re);
 }
 

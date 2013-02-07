@@ -1,7 +1,7 @@
 // EDIT 2013-01-23 by Tillman: Added transparency.
 #include "stdafx.fx"
 Texture2D diffuseMap0;
-Texture2D diffuseMap1;
+//Texture2D diffuseMap1; //Only need one diffuse map if no blending is one.
 
 cbuffer PerObject
 {

@@ -284,9 +284,9 @@ void GraphicsEngineImp::InitObjects()
 	this->fbx = InitBTHFbx();
 }
 
-StaticMesh* GraphicsEngineImp::CreateStaticMesh(string filename, D3DXVECTOR3 pos)
+StaticMesh* GraphicsEngineImp::CreateStaticMesh(string filename, D3DXVECTOR3 pos, const char* billboardFilePath, float distanceToSwapToBillboard)
 {
-	StaticMesh* mesh = new StaticMesh(pos);
+	StaticMesh* mesh = new StaticMesh(pos, billboardFilePath, distanceToSwapToBillboard);
 	LoadMeshEvent* re = new LoadMeshEvent(filename, mesh, NULL, NULL);
 	this->PutEvent(re);
 
@@ -314,9 +314,9 @@ iMesh* GraphicsEngineImp::CreateStaticMesh( const char* filename, const Vector3&
 	return CreateStaticMesh( std::string(filename), D3DXVECTOR3(pos.x,pos.y,pos.z) );
 }
 
-AnimatedMesh* GraphicsEngineImp::CreateAnimatedMesh(string filename, D3DXVECTOR3 pos)
+AnimatedMesh* GraphicsEngineImp::CreateAnimatedMesh(string filename, D3DXVECTOR3 pos, const char* billboardFilePath, float distanceToSwapToBillboard)
 {
-	AnimatedMesh* mesh = new AnimatedMesh(pos);
+	AnimatedMesh* mesh = new AnimatedMesh(pos, billboardFilePath, distanceToSwapToBillboard);
 
 	LoadMeshEvent* re = new LoadMeshEvent(filename, NULL, mesh, NULL);
 	this->PutEvent(re);
@@ -365,6 +365,30 @@ void GraphicsEngineImp::DeleteImage( iImage* &delImg )
 {
 	this->DeleteImage(dynamic_cast<Image*>(delImg));
 	delImg = NULL;
+}
+
+Billboard* GraphicsEngineImp::CreateBillboard(D3DXVECTOR3 position, D3DXVECTOR2 size, string texture)
+{
+	Billboard* billboard = new Billboard(position, size);
+	this->dx->CreateBillboard(billboard, texture);
+	return billboard;
+}
+
+iBillboard* GraphicsEngineImp::CreateBillboard( Vector3 pos, Vector2 size, const char* texture )
+{
+	return this->CreateBillboard(D3DXVECTOR3(pos.x, pos.y, pos.z), D3DXVECTOR2(size.x, size.y), string(texture));
+}
+
+bool GraphicsEngineImp::DeleteBillboard(Billboard* delBillboard)
+{
+	this->dx->DeleteBillboard(delBillboard);
+	return true;
+}
+
+void GraphicsEngineImp::DeleteBillboard( iBillboard* &delbillboard )
+{
+	this->DeleteBillboard(dynamic_cast<Billboard*>(delbillboard));
+	delbillboard = NULL;
 }
 
 Text* GraphicsEngineImp::CreateText(string text, D3DXVECTOR2 position, float size, string fontTexturePath)
@@ -527,12 +551,6 @@ void GraphicsEngineImp::SetSpecialCircle(float innerRadius, float outerRadius, V
 void GraphicsEngineImp::PreLoadResources(unsigned int nrOfResources, char const* const* const resourcesFileNames)
 {
 	GetResourceManager()->PreLoadResources(nrOfResources, resourcesFileNames);
-	/*
-	for(int i = 0; i < nrOfMeshes; i++) //**TILLMAN - krångligt på annat sätt, dock kommer dessa meshes inte användas.
-	{
-		iMesh* tmpMesh = this->CreateMesh(meshesFileNames[i], Vector3());
-		tmpMesh->SetScale(0.0f); //Never show them (put them in the unused list).
-	}*/
 }
 
 void GraphicsEngineImp::LoadingScreen(const char* BackgroundTexture, const char* ProgressBarTexture, float FadeBlackInInTime, float FadeBlackInOutTime, float FadeBlackOutInTime, float FadeBlackOutOutTime)
@@ -682,16 +700,16 @@ void GraphicsEngineImp::LoadingScreen(const char* BackgroundTexture, const char*
 	this->cam->SetUpdateCamera(updateCam);
 }
 
-iMesh* GraphicsEngineImp::CreateMesh( const char* filename, const Vector3& pos )
+iMesh* GraphicsEngineImp::CreateMesh( const char* filename, const Vector3& pos, const char* billboardFilePath, float distanceToSwapToBillboard)
 {
 	string tmp = string(filename); //".fileType"
 	if(tmp.substr(tmp.length() - 4) == ".obj") 
 	{
-		return CreateStaticMesh(filename, D3DXVECTOR3(pos.x,pos.y,pos.z));
+		return CreateStaticMesh(filename, D3DXVECTOR3(pos.x,pos.y,pos.z), billboardFilePath, distanceToSwapToBillboard);
 	}
 	else if(tmp.substr(tmp.length() - 4) == ".ani")
 	{
-		return CreateAnimatedMesh(filename, D3DXVECTOR3(pos.x,pos.y,pos.z));
+		return CreateAnimatedMesh(filename, D3DXVECTOR3(pos.x,pos.y,pos.z), billboardFilePath, distanceToSwapToBillboard);
 	}
 	else if (tmp.substr(tmp.length() - 4) == ".fbx")
 	{
