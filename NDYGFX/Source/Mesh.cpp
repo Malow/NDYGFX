@@ -8,6 +8,7 @@ Mesh::Mesh(D3DXVECTOR3 pos, string billboardFilePath, float distanceToSwapToBill
 	//this->transparency = 0.0f;
 
 	this->strips = new MaloW::Array<MeshStrip*>();
+	this->height = -1.0f;
 	this->billboardFilePath = billboardFilePath;
 	this->billboard = new Billboard();
 	this->distanceToSwapToBillboard = distanceToSwapToBillboard;
@@ -65,6 +66,11 @@ bool Mesh::LoadFromFile(string file)
 						int norm = od->faces->get(i).data[0][2] - 1;
 						tempverts[nrOfVerts] = Vertex(od->vertspos->get(vertpos), od->textcoords->get(textcoord), od->vertsnorms->get(norm));
 						DoMinMax(min, max, tempverts[nrOfVerts].pos);
+						//For billboard
+						if(this->height < tempverts[nrOfVerts].pos.y)
+						{
+							this->height = tempverts[nrOfVerts].pos.y;
+						}
 						nrOfVerts++;
 
 						vertpos = od->faces->get(i).data[2][0] - 1;
@@ -72,6 +78,11 @@ bool Mesh::LoadFromFile(string file)
 						norm = od->faces->get(i).data[2][2] - 1;
 						tempverts[nrOfVerts] = Vertex(od->vertspos->get(vertpos), od->textcoords->get(textcoord), od->vertsnorms->get(norm));
 						DoMinMax(min, max, tempverts[nrOfVerts].pos);
+						//For billboard
+						if(this->height < tempverts[nrOfVerts].pos.y)
+						{
+							this->height = tempverts[nrOfVerts].pos.y;
+						}
 						nrOfVerts++;
 
 						vertpos = od->faces->get(i).data[1][0] - 1;
@@ -79,6 +90,11 @@ bool Mesh::LoadFromFile(string file)
 						norm = od->faces->get(i).data[1][2] - 1;
 						tempverts[nrOfVerts] = Vertex(od->vertspos->get(vertpos), od->textcoords->get(textcoord), od->vertsnorms->get(norm));
 						DoMinMax(min, max, tempverts[nrOfVerts].pos);
+						//For billboard
+						if(this->height < tempverts[nrOfVerts].pos.y)
+						{
+							this->height = tempverts[nrOfVerts].pos.y;
+						}
 						nrOfVerts++;
 
 						hasFace = true;
@@ -121,8 +137,18 @@ bool Mesh::LoadFromFile(string file)
 				}
 			}
 			this->topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-			//delete od;
 
+			//Set Billboard values
+			//Calculate billboard position(this needs to be updated as the mesh position changes).(don't forget to include the scale).
+			float halfHeightScaled = this->height * 0.5f * this->scale.y; //(yOffset)
+			D3DXVECTOR3 billboardPos = this->pos;
+			billboardPos.y += halfHeightScaled;
+			this->billboard->SetPosition(billboardPos);
+			//Calculate the size using Pythagoras theorem (don't forget to include the scale).
+			//Note that this returns the half size, so multiply by 2. **multiply 2 again wut - TILLMAN**
+			float size = sqrtf(powf(halfHeightScaled, 2.0f) * 0.5f) * 4.0f;
+			this->billboard->SetSize(D3DXVECTOR2(size, size));
+			
 			return true;
 		}
 	}

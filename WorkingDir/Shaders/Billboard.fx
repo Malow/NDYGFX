@@ -107,7 +107,7 @@ GSIn VS(DummyIn input)
 void GS(point GSIn input[1], inout TriangleStream<PSIn> triStream)
 {	
 	//Create world matrix to make the billboard face the camera.
-	float3 forward = normalize(g_CameraPos - input[0].posW); 
+	float3 forward = normalize(g_CameraPos - input[0].posW); //Also normal
 	float3 right = normalize(cross(float3(0.0f, 1.0f, 0.0f), forward));
 	float3 up = float3(0.0f, 1.0f, 0.0f);//cross(forward, right);
 	float4x4 W;
@@ -130,25 +130,25 @@ void GS(point GSIn input[1], inout TriangleStream<PSIn> triStream)
 	//Unroll to avoid warning x4715: emitting a system-interpreted value which may not be written in every execution path of the shader
 	PSIn output = (PSIn)0;
 	output.posH = mul(positions[0], WVP); //Transform positions to clip space [-w,-w]
-	output.normal = float3(0, 1, 0);
+	output.normal = forward;
 	output.texCoords = g_TexCoords[0];
 	output.color = g_bb_Color;
 	triStream.Append(output); 
 
 	output.posH = mul(positions[1], WVP); //Transform positions to clip space [-w,-w]
-	output.normal = float3(0, 1, 0);
+	output.normal = forward;
 	output.texCoords = g_TexCoords[1];
 	output.color = g_bb_Color;
 	triStream.Append(output); 
 
 	output.posH = mul(positions[2], WVP); //Transform positions to clip space [-w,-w]
-	output.normal = float3(0, 1, 0);
+	output.normal = forward;
 	output.texCoords = g_TexCoords[2];
 	output.color = g_bb_Color;
 	triStream.Append(output); 
 
 	output.posH = mul(positions[3], WVP); //Transform positions to clip space [-w,-w]
-	output.normal = float3(0, 1, 0);
+	output.normal = forward;
 	output.texCoords = g_TexCoords[3];
 	output.color = g_bb_Color;
 	triStream.Append(output); 

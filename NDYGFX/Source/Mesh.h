@@ -3,10 +3,10 @@
 
 #include "Buffer.h"
 #include "Vertex.h"
-#include "ObjLoader.h" //**tillman
-#include "Object3D.h"//**tillman
-#include "Material.h"//**tillman
-#include "MeshStrip.h"//**tillman
+#include "ObjLoader.h" 
+#include "Object3D.h"
+#include "Material.h"
+#include "MeshStrip.h"
 #include "iMesh.h"
 #include "Vector.h"
 #include "Billboard.h"
@@ -36,13 +36,13 @@ protected:
 	string filePath; 
 	COLOR specialColor;
 	bool usingInvisibilityEffect;
-	//float transparency; //default 0.0f (full visibility)
 
-	MaloW::Array<MeshStrip*>* strips;//**tillman
+	MaloW::Array<MeshStrip*>* strips;
+
+	float height;
 	string billboardFilePath;
 	Billboard* billboard;
 	float distanceToSwapToBillboard;
-	//MeshCounted* strips;
 
 	D3D_PRIMITIVE_TOPOLOGY topology;
 
@@ -59,6 +59,7 @@ public:
 	string GetFilePath() { return this->filePath; }
 
 	// Billboard
+	float GetHeight() { return this->height; }
 	string GetBillboardFilePath() { return this->billboardFilePath; }
 	Billboard* GetBillboardGFX() { return this->billboard; }
 	float GetDistanceToSwapToBillboard() { return this->distanceToSwapToBillboard; }
