@@ -24,5 +24,14 @@
     <ClInclude Include="Source\Windows.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\TestMaloW.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\TestTillman.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\TestOther.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
