@@ -468,6 +468,7 @@ void ResourceManager::PreLoadResources(unsigned int nrOfResources, char const* c
 			}
 		}
 	}
+	int asd = 0;
 }
 
 

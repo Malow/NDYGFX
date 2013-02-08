@@ -20,6 +20,26 @@ Singleton.
 #include "PhysicsEngine.h"
 
 // Class for communication between processes for loading meshes
+class PreLoadEvent : public MaloW::ProcessEvent
+{
+private:
+	unsigned int nrOfResources;
+	char** resourcesFileNames;
+
+public:
+	PreLoadEvent(unsigned int nrOfResources, const char** resourcesFileNames)
+	{
+		this->nrOfResources = nrOfResources;
+		this->resourcesFileNames = (char**)resourcesFileNames;
+	}
+	virtual ~PreLoadEvent() 
+	{
+
+	}
+
+	char** GetResourceFileNames() { return this->resourcesFileNames; }
+	unsigned int GetNrOfResources() { return this->nrOfResources; }
+};
 class LoadMeshEvent : public MaloW::ProcessEvent
 {
 private:
@@ -162,7 +182,7 @@ public:
 	virtual void UseShadow(bool useShadow);
 	virtual void SetSpecialCircle(float innerRadius, float outerRadius, Vector2& targetPos) const;
 
-	virtual void PreLoadResources(unsigned int nrOfResources, char const* const* const resourcesFileNames);
+	virtual void PreLoadResources(unsigned int nrOfResources, const char** resourcesFileNames);
 
 
 	virtual void SetFPSMax(float maxFPS) { this->dx->SetMaxFPS(maxFPS); }

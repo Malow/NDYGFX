@@ -81,7 +81,7 @@ extern "C"
 			Buffer resources are not supported.
 			Supported resources are object data resources(.obj & .ani), Texture resources(default format)(.png && .dds).
 		*/
-		virtual void PreLoadResources(unsigned int nrOfResources, char const* const* const resourcesFileNames) = 0;
+		virtual void PreLoadResources(unsigned int nrOfResources, const char** resourcesFileNames) = 0;
 
 		virtual void StartRendering() = 0;
 

@@ -524,7 +524,10 @@ void GraphicsEngineImp::Life()
 					}
 				}
 			}
-
+			else if(PreLoadEvent* ple = dynamic_cast<PreLoadEvent*>(ev))
+			{
+				GetResourceManager()->PreLoadResources(ple->GetNrOfResources(), ple->GetResourceFileNames());
+			}
 			delete ev;
 
 			if(this->GetEventQueueSize() == 0)
@@ -548,9 +551,11 @@ void GraphicsEngineImp::SetSpecialCircle(float innerRadius, float outerRadius, V
 	this->dx->SetSpecialCircle(innerRadius, outerRadius, targetPos);
 }
 
-void GraphicsEngineImp::PreLoadResources(unsigned int nrOfResources, char const* const* const resourcesFileNames)
+void GraphicsEngineImp::PreLoadResources(unsigned int nrOfResources, const char** resourcesFileNames)
 {
 	GetResourceManager()->PreLoadResources(nrOfResources, resourcesFileNames);
+	//PreLoadEvent* re = new PreLoadEvent(nrOfResources, resourcesFileNames);
+	//this->PutEvent(re);
 }
 
 void GraphicsEngineImp::LoadingScreen(const char* BackgroundTexture, const char* ProgressBarTexture, float FadeBlackInInTime, float FadeBlackInOutTime, float FadeBlackOutInTime, float FadeBlackOutOutTime)
