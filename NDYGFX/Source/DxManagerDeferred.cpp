@@ -738,13 +738,13 @@ void DxManager::RenderDeferredSkybox()
 	D3DXMATRIX world, wvp, view, proj;
 	view = this->camera->GetViewMatrix();
 	proj = this->camera->GetProjectionMatrix();
-	world = this->skybox->GetSkyboxWorldMatrix(this->camera->GetPositionD3DX());
+	world = this->skybox->GetSkyboxWorldMatrix(this->camera->GetPositionD3DX(), this->params.FarClip);
 	wvp = world * view * proj;
 	
 	this->Shader_Skybox->SetMatrix("gWVP", wvp);
 	this->Shader_Skybox->SetMatrix("world", world);
-	this->Shader_Skybox->SetFloat("FogHeight", this->params.FarClip * 2.0f);
-	this->Shader_Skybox->SetFloat("CamY", this->camera->GetPosition().y + this->params.FarClip * 0.5f);
+	this->Shader_Skybox->SetFloat("FogHeight", this->camera->GetPosition().y + this->params.FarClip * 0.1f);
+	this->Shader_Skybox->SetFloat("CamY", this->camera->GetPosition().y);
 
 	MeshStrip* strip = this->skybox->GetStrips()->get(0);
 
@@ -855,8 +855,8 @@ void DxManager::RenderDeferredPerPixel()
 	this->Shader_DeferredLightning->SetFloat4("SceneAmbientLight", D3DXVECTOR4(this->sceneAmbientLight, 1.0f));
 
 	this->Shader_DeferredLightning->SetFloat("timerMillis", this->Timer);
-	this->Shader_DeferredLightning->SetInt("windowWidth", this->params.WindowWidth);
-	this->Shader_DeferredLightning->SetInt("windowHeight", this->params.WindowHeight);
+	this->Shader_DeferredLightning->SetInt("windowWidth", this->params.windowWidth);
+	this->Shader_DeferredLightning->SetInt("windowHeight", this->params.windowHeight);
 		
 
 
@@ -954,8 +954,8 @@ void DxManager::RenderInvisibilityEffect()
 	this->Shader_InvisibilityEffect->SetResource("sceneTex", sceneSRV);
 
 	//Per frame
-	this->Shader_InvisibilityEffect->SetInt("width", this->params.WindowWidth); 
-	this->Shader_InvisibilityEffect->SetInt("height", this->params.WindowHeight); 
+	this->Shader_InvisibilityEffect->SetInt("width", this->params.windowWidth); 
+	this->Shader_InvisibilityEffect->SetInt("height", this->params.windowHeight); 
 	this->Shader_InvisibilityEffect->SetInt("blurSize", 5);
 
 	//Invisible(effect) geometry
@@ -1045,8 +1045,8 @@ void DxManager::RenderQuadDeferred()
 	this->Shader_DeferredQuad->SetMatrix("CameraProj", p);
 	this->Shader_DeferredQuad->SetFloat("CameraFar", this->params.FarClip);
 	this->Shader_DeferredQuad->SetFloat("CameraNear", this->params.NearClip);
-	this->Shader_DeferredQuad->SetFloat("ScreenWidth", (float)this->params.WindowWidth);
-	this->Shader_DeferredQuad->SetFloat("ScreenHeight", (float)this->params.WindowHeight);
+	this->Shader_DeferredQuad->SetFloat("ScreenWidth", (float)this->params.windowWidth);
+	this->Shader_DeferredQuad->SetFloat("ScreenHeight", (float)this->params.windowHeight);
 	this->Shader_DeferredQuad->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetPositionD3DX(), 1));
 	
 	this->Shader_DeferredQuad->Apply(0);

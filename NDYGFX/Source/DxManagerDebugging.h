@@ -309,9 +309,9 @@ inline void DrawBoundingSpheres(MaloW::Array<StaticMesh*>* meshes, ID3D11Device*
 		shadnorm->SetMatrix("worldMatrix", world);
 		shadnorm->SetMatrix("VP", VP);
 		GraphicsEngineParams p;
-		shadnorm->SetFloat("AspectH", (float)p.WindowHeight / (float)p.WindowWidth);
-		shadnorm->SetFloat("width", (float)p.WindowWidth);
-		shadnorm->SetFloat("height", (float)p.WindowHeight);
+		shadnorm->SetFloat("AspectH", (float)p.windowHeight / (float)p.windowWidth);
+		shadnorm->SetFloat("width", (float)p.windowWidth);
+		shadnorm->SetFloat("height", (float)p.windowHeight);
 
 		for(int u = 0; u < strips->size(); u++)
 		{

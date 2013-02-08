@@ -686,8 +686,8 @@ void DxManager::ResizeRenderer(ResizeEvent* ev)
 	unsigned int width = ev->GetWidth();
 	unsigned int height = ev->GetHeight();
 
-	this->params.WindowWidth = width;
-	this->params.WindowHeight = height;
+	this->params.windowWidth = width;
+	this->params.windowHeight = height;
 
 	this->camera->RecreateProjectionMatrix();
 
@@ -912,12 +912,6 @@ void DxManager::DeleteFBXMesh( FBXMesh* mesh )
 	FBXEvent* re = new FBXEvent("Delete FBX", mesh);
 	this->PutEvent(re);
 }
-
-const GraphicsEngineParams& DxManager::GetParams() const
-{
-	return params;
-}
-
 
 void DxManager::SetMaxFPS( float maxFPS )
 {

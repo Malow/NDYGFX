@@ -2,6 +2,20 @@
 
 bool CursorControl::visable = true;
 
+int GraphicsEngineParams::windowWidth = 1024;
+int GraphicsEngineParams::windowHeight = 768;
+bool GraphicsEngineParams::Maximized = false;
+int GraphicsEngineParams::ShadowMapSettings = 0;
+int GraphicsEngineParams::FXAAQuality = 0;
+CameraType GraphicsEngineParams::CamType = FPS;
+float GraphicsEngineParams::FOV = 0.45f;
+float GraphicsEngineParams::NearClip = 0.01f;
+float GraphicsEngineParams::FarClip = 200.0f;
+int GraphicsEngineParams::RefreshRate = 60;
+int GraphicsEngineParams::MaxFPS = 0;
+int GraphicsEngineParams::ShadowFit = 50;
+float GraphicsEngineParams::BillboardRange = 0.75f;
+
 GraphicsEngineImp::GraphicsEngineImp(const GraphicsEngineParams &params, HINSTANCE hInstance, int nCmdShow) :
 	parameters(params)
 {
@@ -232,7 +246,7 @@ HRESULT GraphicsEngineImp::InitWindow(HINSTANCE hInstance, int nCmdShow)
 		return E_FAIL;
 
 	// Create window
-	RECT rc = { 0, 0, this->parameters.WindowWidth, this->parameters.WindowHeight };
+	RECT rc = { 0, 0, this->parameters.windowWidth, this->parameters.windowHeight };
 	if(this->parameters.Maximized)
 	{
 		AdjustWindowRectEx(&rc, WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_POPUP | WS_VISIBLE, FALSE, WS_EX_APPWINDOW | WS_EX_WINDOWEDGE);
@@ -574,17 +588,17 @@ void GraphicsEngineImp::LoadingScreen(const char* BackgroundTexture, const char*
 
 	Image* pb = NULL;
 	if( strcmp(ProgressBarTexture, "") != 0)
-		pb = this->CreateImage(D3DXVECTOR2((this->parameters.WindowWidth / 4.0f), ((this->parameters.WindowHeight * 3.0f) / 4.0f)), 
-			D3DXVECTOR2(0, this->parameters.WindowHeight / 10.0f), ProgressBarTexture);
+		pb = this->CreateImage(D3DXVECTOR2((this->parameters.windowWidth / 4.0f), ((this->parameters.windowHeight * 3.0f) / 4.0f)), 
+			D3DXVECTOR2(0, this->parameters.windowHeight / 10.0f), ProgressBarTexture);
 
 	int TotalItems = this->GetEventQueueSize();
 
-	float dx = (this->parameters.WindowWidth / 2.0f) / TotalItems;
-	float y = this->parameters.WindowHeight / 10.0f;
+	float dx = (this->parameters.windowWidth / 2.0f) / TotalItems;
+	float y = this->parameters.windowHeight / 10.0f;
 
 	Image* fade = NULL;
 	if(FadeBlackInInTime != 0.0f || FadeBlackInOutTime != 0.0f || FadeBlackOutInTime != 0.0f || FadeBlackOutOutTime != 0.0f)
-		fade = this->CreateImage(D3DXVECTOR2(0.0f, 0.0f), D3DXVECTOR2((float)this->parameters.WindowWidth, (float)this->parameters.WindowHeight), "Media/LoadingScreen/FadeTexture.png");
+		fade = this->CreateImage(D3DXVECTOR2(0.0f, 0.0f), D3DXVECTOR2((float)this->parameters.windowWidth, (float)this->parameters.windowHeight), "Media/LoadingScreen/FadeTexture.png");
 
 	int state = 0;
 	/*
@@ -619,7 +633,7 @@ void GraphicsEngineImp::LoadingScreen(const char* BackgroundTexture, const char*
 				timer = 0;
 
 				// Added by Alexivan
-				if ( bg ) bg->SetDimensions(Vector2((float)this->parameters.WindowWidth, (float)this->parameters.WindowHeight));
+				if ( bg ) bg->SetDimensions(Vector2((float)this->parameters.windowWidth, (float)this->parameters.windowHeight));
 			}
 		}
 		else if(state == 1)
@@ -709,7 +723,7 @@ void GraphicsEngineImp::LoadingScreen(const char* BackgroundTexture, const char*
 	}
 
 	if(this->cam->GetCameraType() == FPS)
-		this->GetKeyList()->SetMousePosition(Vector2(this->parameters.WindowWidth / 2.0f, this->parameters.WindowHeight / 2.0f));
+		this->GetKeyList()->SetMousePosition(Vector2(this->parameters.windowWidth / 2.0f, this->parameters.windowHeight / 2.0f));
 	this->cam->SetUpdateCamera(updateCam);
 	this->dx->SetRendererSleep(prevRendSleep);
 }
@@ -758,9 +772,9 @@ iKeyListener* GraphicsEngineImp::GetKeyListener() const
 	return this->GetKeyList();
 }
 
-const iGraphicsEngineParams& GraphicsEngineImp::GetEngineParameters() const
+iGraphicsEngineParams* GraphicsEngineImp::GetEngineParameters() const
 {
-	return this->GetEngineParams();
+	return &this->GetEngineParams();
 }
 
 void GraphicsEngineImp::DeleteMesh( iMesh* delMesh )
@@ -835,8 +849,8 @@ void GraphicsEngineImp::ResizeGraphicsEngine( unsigned int width, unsigned int h
 	if(this->isManagingMyOwnWindow)
 		SetWindowPos(this->hWnd, 0 , 0 , 0, width, height, SWP_NOMOVE|SWP_NOZORDER|SWP_NOACTIVATE);
 
-	this->parameters.WindowWidth = width;
-	this->parameters.WindowHeight = height;
+	this->parameters.windowWidth = width;
+	this->parameters.windowHeight = height;
 	this->dx->ResizeEngine(width, height);
 }
 

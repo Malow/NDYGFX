@@ -119,14 +119,14 @@ SkyBox::~SkyBox()
 	
 }
 
-D3DXMATRIX SkyBox::GetSkyboxWorldMatrix(D3DXVECTOR3 camPos)
+D3DXMATRIX SkyBox::GetSkyboxWorldMatrix(D3DXVECTOR3 camPos, float FarPlane)
 {
 	//Reset sphereWorld
 	D3DXMatrixIdentity(&this->worldMatrix);
 	
 	//Define sphereWorld's world space matrix
 	D3DXMATRIX Scale;
-	D3DXMatrixScaling(&Scale, 1900.0f, 1900.0f, 1900.0f );
+	D3DXMatrixScaling(&Scale, FarPlane, FarPlane, FarPlane );
 	//Make sure the sphere is always centered around camera
 	D3DXMATRIX Translation;
 	D3DXMatrixTranslation(&Translation, camPos.x, camPos.y, camPos.z );

@@ -25,11 +25,11 @@ void RTSCamera::UpdateSpecific(float delta)
 		{
 			if(p.x < 50)
 				this->MoveLeft(delta);
-			if(p.x > this->params.WindowWidth - 50)
+			if(p.x > this->params.windowWidth - 50)
 				this->MoveRight(delta);
 			if(p.y < 50)
 				this->MoveForward(delta);
-			if(p.y > this->params.WindowHeight - 50)
+			if(p.y > this->params.windowHeight - 50)
 				this->MoveBackward(delta);
 		}
 	}

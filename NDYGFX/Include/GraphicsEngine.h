@@ -66,7 +66,7 @@ extern "C"
 
 		virtual bool IsRunning() = 0;
 
-		virtual const iGraphicsEngineParams& GetEngineParameters() const = 0;
+		virtual iGraphicsEngineParams* GetEngineParameters() const = 0;
 
 		virtual void CreateSkyBox(const char* texture) = 0;
 

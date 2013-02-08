@@ -8,27 +8,12 @@
 class GraphicsEngineParams : public iGraphicsEngineParams
 {
 public:
-	GraphicsEngineParams()
-	{
-		WindowWidth = 1024;
-		WindowHeight = 768;
-		Maximized = false;
-		ShadowMapSettings = 0;
-		FXAAQuality = 0;
-		CamType = CameraType::FPS;
-		FOV = 0.45f;
-		NearClip = 0.01f;
-		FarClip = 200.0f;
-		RefreshRate = 60;
-		MaxFPS = 0;
-		ShadowFit = 50;
-		BillboardRange = 0.75f;
-	};
-
+	GraphicsEngineParams() {}
 	virtual ~GraphicsEngineParams() {}
 
-	virtual void LoadFromFile(const char* file);
+	void LoadFromFile(const char* file);
 	virtual void SaveToFile(const char* file);
+	//void SaveToFile(const char* file, int winWidth, int winHeight, int winMax, int shadowMapQual, int FXAAQual);
 };
 
 #endif

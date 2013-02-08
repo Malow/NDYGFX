@@ -759,10 +759,13 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 			GetGraphics()->GetCamera()->SetPosition(cameraPoint);
 			GetGraphics()->GetCamera()->LookAt(cameraLookAt);
 		}
-		if(GetGraphics()->GetKeyListener()->IsPressed('B'))
+		if(GetGraphics()->GetKeyListener()->IsPressed('9'))
 		{
-			GetGraphics()->GetCamera()->SetPosition(cameraPoint2);
-			GetGraphics()->GetCamera()->LookAt(cameraLookAt2);
+			GetGraphics()->GetEngineParameters()->FarClip *= (1.0f + diff * 0.002f);
+		}
+		if(GetGraphics()->GetKeyListener()->IsPressed('8'))
+		{
+			GetGraphics()->GetEngineParameters()->FarClip *= (1.0f - diff * 0.002f);
 		}
 
 		if(GetGraphics()->GetKeyListener()->IsPressed('O'))
@@ -822,8 +825,8 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		if(GetGraphics()->GetKeyListener()->IsPressed('Z'))	
 		{
 			GetGraphics()->GetKeyListener()->SetMousePosition(Vector2(
-				(float)(GetGraphics()->GetEngineParameters().WindowWidth) / 2.0f, 
-				(float)(GetGraphics()->GetEngineParameters().WindowHeight) / 2.0f));
+				(float)(GetGraphics()->GetEngineParameters()->windowWidth) / 2.0f, 
+				(float)(GetGraphics()->GetEngineParameters()->windowHeight) / 2.0f));
 
 			GetGraphics()->GetCamera()->SetUpdateCamera(false);
 			GetGraphics()->GetKeyListener()->SetCursorVisibility(true);
@@ -832,8 +835,8 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		if(GetGraphics()->GetKeyListener()->IsPressed('X'))	
 		{
 			GetGraphics()->GetKeyListener()->SetMousePosition(Vector2(
-				GetGraphics()->GetEngineParameters().WindowWidth / 2.0f, 
-				GetGraphics()->GetEngineParameters().WindowHeight / 2.0f));
+				GetGraphics()->GetEngineParameters()->windowWidth / 2.0f, 
+				GetGraphics()->GetEngineParameters()->windowHeight / 2.0f));
 			GetGraphics()->GetCamera()->SetUpdateCamera(true);
 			GetGraphics()->GetKeyListener()->SetCursorVisibility(false);
 		}
