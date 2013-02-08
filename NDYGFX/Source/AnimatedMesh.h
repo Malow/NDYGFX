@@ -54,6 +54,8 @@ class AnimatedMesh : public Mesh, public virtual iAnimatedMesh
 		float						mCurrentTime;
 		MaloW::Array<KeyFrame*>*	mKeyFrames;
 
+		string*						mSubFileNames;
+
 	public:
 		AnimatedMesh(D3DXVECTOR3 pos, string billboardFilePath = "", float distanceToSwapToBillboard = -1);
 		virtual ~AnimatedMesh();

@@ -4,51 +4,125 @@
 //	
 //	This shader renders grass (deferred with 4 GBuffers).
 //	Requirement(s): 
-//		World position of camera.
-//		Camera view & projection matrices.
-//		Size of billboard (width & height) in **vilket space - tillman?**
-//		World space position of billboard.
-//	Optional:
-//		Diffuse map (texture).
-//		Color of billboard.
+//		TODO
+//		Pass 1
+//		Pass 2
 //-----------------------------------------------------------------------------------------
-/*
+
 #include "stdafx.fx"
 
 
 //-----------------------------------------------------------------------------------------
 // Global variables
 //-----------------------------------------------------------------------------------------
-Texture2D		g_bb_DiffuseMap; 
-//**TILLMAN
-float2 g_TexCoords[4] = 
-{
-	float2(0.0f, 1.0f),
-	float2(1.0f, 1.0f),
-	float2(0.0f, 0.0f),
-	float2(1.0f, 0.0f)
-};
+//Texture2D	g_t_VertexPositions;
+Texture2D	g_t_Texture; //Terrain texture <float3>? ** TILLMAN
+
 
 //-----------------------------------------------------------------------------------------
 // Constant buffers
 //----------------------------------------------------------------------------------------
-cbuffer PerFrame
+/*cbuffer PerFrame
 {
 	float3		g_CameraPos;
 	float4x4	g_CamViewProj;
-};
-cbuffer PerBillBoard
+};*/
+cbuffer PerTerrain
 {
-	float3		g_bb_Position; //input for Geometry shader
-	float2		g_bb_BillboardSize;
-	float3		g_bb_Color;
-	bool		g_bb_IsTextured;
+	float		g_t_MinGrassHeight;
+	float		g_t_MaxGrassHeight;
+	float4x4	g_t_WorldMatrix;
+	//float3		g_t_Size;
 };
+
+
+/*terrain height 
+sample texture
+
+if(greenTexel)
+	grassHeight = fractal value
+	grassColor[index] = greenTexel
+else grassHeight = 0;
+*/
 
 //-----------------------------------------------------------------------------------------
 // Input and Output Structures
 //-----------------------------------------------------------------------------------------
 
+//Pass 1 - GenerateCanopy.
+struct Pass1VSInput
+{
+	float3 posLocal	: POSITION;
+	float2 texCoords: TEXCOORDS;
+	//float3 normal	: NORMAL; //tillman: ev för sluttningar/vertikala
+};
+struct Pass1PSInput 
+{
+	float4 posWorld	: SV_Position;	
+	float2 texCoords: TEXCOORDS;
+	//float3 normal	: NORMAL;//tillman: ev för sluttningar/vertikala
+};
+
+
+struct Pass1PSOutput			
+{
+	float4 terrainWorldPos	: SV_TARGET0;	//Position XYZ, unused W.
+	float4 colorAndHeight	: SV_TARGET1;	//Grass color XYZ, grass height W.
+};
+
+
+
+Pass1PSInput Pass1VS( Pass1VSInput input)
+{
+	Pass1PSInput output = (Pass1PSInput)0;
+
+	output.posWorld = mul(float4(input.posLocal, 1.0f), g_t_WorldMatrix);
+	output.texCoords = input.texCoords; //TILLMAN, ersätta med primitive ID?
+
+	return output;
+}
+
+Pass1PSOutput Pass1PS( Pass1PSInput input)
+{
+	Pass1PSOutput output = (Pass1PSOutput)0;
+
+	float3 terrainColor = g_t_Texture.Sample(PointWrapSampler, input.texCoords).xyz; //**<float3>//3 kanaler
+	float3 grassColor = float3(0.0f, 0.0f, 0.0f);
+	float grassHeight = 0.0f;
+	//Check if texture color is green/-ish.
+	if(terrainColor.g > 0.5f) //**tillman mer**
+	{
+		//**TODO: the less green it is, the lower the grass height should be.**
+
+		//Set grass color
+		grassColor = terrainColor; //**lägga till lite variation**
+
+		//And generate grass height (in meters).
+		grassHeight = 0.2f; //Generera med fraktaler**
+		//g_t_MinGrassHeight;
+		//g_t_MaxGrassHeight; ** noise()??, -1,1 in = float3*/
+
+	}
+
+	//Terrain world position render target.
+	output.terrainWorldPos.xyz = input.posWorld.xyz;
+	output.terrainWorldPos.w = -1.0f;
+	
+	//Grass color and height render target.
+	output.colorAndHeight = float4(grassColor, grassHeight);
+	
+	return output;
+}
+
+
+
+/*
+
+
+
+
+
+/*
 struct DummyIn
 {
 
@@ -183,21 +257,31 @@ PSOut PS(PSIn input) : SV_TARGET
 	output.Specular.xyzw = 0.0f;
 
 	return output;
-}
+}*/
 
 technique10 DrawGrass
 {
-    pass GenerateCanopy
+    pass GenerateCanopy //Pass 1
     { 
-        SetVertexShader( CompileShader( vs_4_0, VS() ) );
+        SetVertexShader( CompileShader( vs_4_0, Pass1VS() )  );
+        SetGeometryShader( NULL );
+        SetPixelShader( CompileShader( ps_4_0, Pass1PS() ) );
+		
+        
+		SetDepthStencilState( EnableDepth, 0 );
+	    SetRasterizerState( BackCulling );
+		SetBlendState(NoBlend, float4( 0.0f, 0.0f, 0.0f, 0.0f ), 0xFFFFFFFF );
+    }
+	/*pass GenerateGrass //Pass 2
+	{
+		SetVertexShader( CompileShader( vs_4_0, VS() ) );
         SetGeometryShader( CompileShader( gs_4_0, GS() ) );
         SetPixelShader( CompileShader( ps_4_0, PS() ) );
 		
         
-		SetDepthStencilState( EnableDepth, 0 ); //Disabeldepthwrite?**TILLMAN test
+		SetDepthStencilState( EnableDepth, 0 );
 	    SetRasterizerState( BackCulling );
 		SetBlendState(NoBlend, float4( 0.0f, 0.0f, 0.0f, 0.0f ), 0xFFFFFFFF );
 		//SetBlendState( SrcAlphaBlendingAdd, float4( 0.0f, 0.0f, 0.0f, 0.0f ), 0xFFFFFFFF );
-    }
-	pass GenerateGrass
-}*/
+	}*/
+}

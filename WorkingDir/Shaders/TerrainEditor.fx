@@ -43,8 +43,6 @@ cbuffer PerObject
 	float	textureScale;
 
 	//Material
-	float	specularPower;
-	float3	specularColor;
 	float3	diffuseColor;
 
 	//AI(editor)
@@ -75,10 +73,10 @@ struct PSSceneIn
 
 struct PSOut			
 {
-	float4 Texture			: SV_TARGET0;	//Texture XYZ, unused W
+	float4 Texture			: SV_TARGET0;	//Texture XYZ, Special Color W(not by this shader)
 	float4 NormalAndDepth	: SV_TARGET1;	//Normal XYZ, depth W
-	float4 Position			: SV_TARGET2;	//Position XYZ, unused W
-	float4 Specular			: SV_TARGET3;	//Specular XYZ, specular power W
+	float4 Position			: SV_TARGET2;	//Position XYZ, Type of object W
+	float4 Specular			: SV_TARGET3;	//Specular XYZ(not by this shader), specular power W(not by this shader)
 };
 
 float3 RenderTextured(float scale, float2 tex, bool useBlendMap)
@@ -261,11 +259,11 @@ PSOut PSScene(PSSceneIn input) : SV_Target
 	output.NormalAndDepth.w = depth;
 
 	//Position RT
-	output.Position = input.posW;
+	output.Position.xyz = input.posW.xyz;
+	output.Position.w = OBJECT_TYPE_TERRAIN; //See stdafx.fx for object types.
 	
 	//Specular RT
-	output.Specular.xyz = specularColor;
-	output.Specular.w = specularPower;
+	output.Specular.xyzw = 0.0f;
 	
 	return output;
 }

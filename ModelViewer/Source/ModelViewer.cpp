@@ -80,14 +80,14 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 
 
 	//Preload testing
-	unsigned int nrOfResources = 6;
-	const char* resourceFileNames[6];
+	unsigned int nrOfResources = 5;
+	const char* resourceFileNames[5];
 	resourceFileNames[0] = "Media/ball.obj";
 	resourceFileNames[1] = "Media/bth.obj";			
 	resourceFileNames[2] = "Media/scale.obj";		//1
 	resourceFileNames[3] = "Media/FlagBlue.ani";		
 	resourceFileNames[4] = "Media/BallTexture.png";	
-	resourceFileNames[5] = "Media/scale.obj";		//2
+	//resourceFileNames[5] = "Media/scale.obj";		//2
 
 	//resourceFileNames[10] = "skymap.dds";			//Fail
 	//resourceFileNames[6] = "scale.obj";				//Fail
@@ -131,7 +131,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	
 	iTerrain* iT = GetGraphics()->CreateTerrain(Vector3(0, 0, 0), Vector3(testSize, 1.0f, testSize), vertSize);
 	iTerrain* iT2 = GetGraphics()->CreateTerrain(Vector3(testSize, 0, 0), Vector3(testSize, 0.0f, testSize), vertSize);
-	iAnimatedMesh* iAM = GetGraphics()->CreateAnimatedMesh("Media/FlagBlue.ani", Vector3(30, 30, 30));
+	//iAnimatedMesh* iAM = GetGraphics()->CreateAnimatedMesh("Media/FlagBlue.ani", Vector3(30, 30, 30));
 	//iImage* iM = GetGraphics()->CreateImage(Vector2(100, 100), Vector2(100, 100), "Media/BallTexture.png");
 	//iText* iTe = GetGraphics()->CreateText("durp", Vector2(300, 100), 1.0f, "Media/Fonts/1");
 	
@@ -278,7 +278,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	//Transparancy:
 	iMesh* bushCSMTest = GetGraphics()->CreateMesh("Media/Bush_01_v04_r.obj", Vector3(10, 2, 0));
 	bushCSMTest->Scale(1.0f * 0.05f);
-	iMesh* flagCSMTest = GetGraphics()->CreateMesh("Media/FlagBlue.ani", Vector3(12, 2, 0));
+	//iMesh* flagCSMTest = GetGraphics()->CreateMesh("Media/FlagBlue.ani", Vector3(12, 2, 0));
 
 	//General shadowing:
 	iMesh* bushScaleBugTest = GetGraphics()->CreateMesh("Media/Bush_01_v04_r.obj", Vector3(0, 0, 0));
@@ -418,7 +418,6 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	aiData[3204] = 0; //blocked = false = 0 = green
 	aiData[3777] = 0; //blocked = false = 0 = green
 	
-	//iMesh* aniFern = GetGraphics()->CreateMesh("Media/Fern_02.ani", Vector3(-1, 0, 0));
 	Vector3 cameraPoint = Vector3(0.0f, 5.0f, 5.0f);
 	Vector3 cameraLookAt = Vector3(100.0f, 0.0f, 0.0f);
 	Vector3 cameraPoint2 = Vector3(25.0f, 5.0f, 25.0f);
@@ -431,7 +430,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 
 
 	
-	//iFBXMesh* temp2 = GetGraphics()->CreateFBXMesh("Media/token_wip_few_animx.fbx", Vector3(-10, 10, 0));
+	//iMesh* temp2 = GetGraphics()->CreateMesh("Media/token_wip_one_anim.fbx", Vector3(-10, 3, 0));
 	//temp2->SetScale(0.05f);
 
 	/*float navArrowsScale = 0.25f;
@@ -465,7 +464,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	treeWithBillboard->SetScale(0.05f);
 	treeWithBillboard->DontRender(true);
 
-	iMesh* flagWithBillboard = GetGraphics()->CreateMesh("Media/FlagBlue.ani", Vector3(-15, 0, -5), "Media/TreeBillboard.png", 25.5f);
+	//iMesh* flagWithBillboard = GetGraphics()->CreateMesh("Media/FlagBlue.ani", Vector3(-15, 0, -5), "Media/TreeBillboard.png", 25.5f);
 
 	/*
 	int klerp23 = 10;
@@ -485,8 +484,12 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	}*/
 
 	//Scale animation
-	iMesh* viking = GetGraphics()->CreateMesh("Media/Scale.ani", Vector3(-20,0,0));
-	viking->SetScale(0.05f);
+	//iMesh* viking = GetGraphics()->CreateMesh("Media/Scale.ani", Vector3(-20,0,0));
+	//viking->SetScale(0.05f);
+
+	//Unload object data resource test.'
+	iMesh* unloadTestAni = GetGraphics()->CreateMesh("Media/Fern_02.ani", Vector3(5, 5, -5));
+	unloadTestAni->SetScale(0.5f);
 
 	GetGraphics()->CreateMesh("Media/scale.obj", Vector3(30, -300, 30));
 	
@@ -621,28 +624,6 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		if(GetGraphics()->GetKeyListener()->IsPressed('J'))
 			GetGraphics()->SetSceneAmbientLight(Vector3(1.0f, 0.0f, 0.0f));
 
-		/*
-		if(GetGraphics()->GetKeyListener()->IsPressed('0'))
-			temp2->SetAnimation(0);
-		if(GetGraphics()->GetKeyListener()->IsPressed('1'))
-			temp2->SetAnimation(1);
-		if(GetGraphics()->GetKeyListener()->IsPressed('2'))
-			temp2->SetAnimation(2);
-		if(GetGraphics()->GetKeyListener()->IsPressed('3'))
-			temp2->SetAnimation(3);
-		if(GetGraphics()->GetKeyListener()->IsPressed('4'))
-			temp2->SetAnimation(4);
-		if(GetGraphics()->GetKeyListener()->IsPressed('5'))
-			temp2->SetAnimation(5);
-		if(GetGraphics()->GetKeyListener()->IsPressed('6'))
-			temp2->SetAnimation(6);
-		if(GetGraphics()->GetKeyListener()->IsPressed('7'))
-			temp2->SetAnimation(7);
-		if(GetGraphics()->GetKeyListener()->IsPressed('8'))
-			temp2->SetAnimation(8);
-		if(GetGraphics()->GetKeyListener()->IsPressed('9'))
-			temp2->SetAnimation(9);
-			*/
 
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_UP))
 			secModel->MoveBy(Vector3(1, 0, 0) * diff * 0.1f);
@@ -690,7 +671,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 			fileNames[6] = "Media/TerrainTexture.png";
 			fileNames[7] = "Media/TerrainTexture.png";
 			iT->SetTextures(fileNames);
-			GetGraphics()->DeleteMesh(flagCSMTest);
+			//GetGraphics()->DeleteMesh(flagCSMTest);
 			GetGraphics()->DeleteMesh(bushCSMTest);
 			iT->UseAIMap(false);
 		}
@@ -912,6 +893,12 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		if(GetGraphics()->GetKeyListener()->IsPressed('B'))
 		{
 			GetGraphics()->SetSceneAmbientLight(GetGraphics()->GetSceneAmbientLight() * (1.0f + diff * 0.002f));
+			static bool oncett = false;
+			if(!oncett)
+			{
+				GetGraphics()->DeleteMesh(unloadTestAni);
+				oncett = true;
+			}
 		}
 		if(GetGraphics()->GetKeyListener()->IsPressed('N'))
 		{

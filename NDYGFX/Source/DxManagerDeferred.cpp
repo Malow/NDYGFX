@@ -382,8 +382,7 @@ void DxManager::RenderDeferredGeometry()
 			}
 			
 			//Set lighting from material
-			this->Shader_TerrainEditor->SetFloat("specularPower", terrPtr->GetMaterial()->SpecularPower);
-			this->Shader_TerrainEditor->SetFloat3("specularColor", terrPtr->GetMaterial()->SpecularColor);
+			//Specular is not used for terrain
 			this->Shader_TerrainEditor->SetFloat3("diffuseColor", terrPtr->GetMaterial()->DiffuseColor);
 
 			//Apply vertices & indices & shader

@@ -78,7 +78,7 @@ struct PSout
 RTs:
 1: Texture XYZ, W Special Color
 2: Normal XYZ, W Depth
-3: Position XYZ, W unused
+3: Position XYZ, W Type of object
 4: Specular XYZ, W Specular Power
 
 
@@ -141,7 +141,9 @@ PSout PSScene(PSSceneIn input) : SV_Target
 	float depth = length(CameraPosition.xyz - input.WorldPos.xyz) / 200.0f;		// Haxfix
 	output.NormalAndDepth.w = depth;
 
-	output.Position = input.WorldPos;
+	output.Position.xyz = input.WorldPos.xyz;
+	output.Position.w = -1.0f;
+
 	output.Specular = SpecularColor;
 	output.Specular.w = SpecularPower;
 
