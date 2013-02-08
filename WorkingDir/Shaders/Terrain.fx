@@ -62,9 +62,9 @@ struct PSSceneIn
 
 struct PSOut			
 {
-	float4 Texture			: SV_TARGET0;	//Texture XYZ, unused W
+	float4 Texture			: SV_TARGET0;	//Texture XYZ, Special color(unused in this shader)
 	float4 NormalAndDepth	: SV_TARGET1;	//Normal XYZ, depth W
-	float4 Position			: SV_TARGET2;	//Position XYZ, unused W
+	float4 Position			: SV_TARGET2;	//Position XYZ, Type of object
 	float4 Specular			: SV_TARGET3;	//Specular XYZ, specular power W
 };
 
@@ -145,7 +145,8 @@ PSOut PSScene(PSSceneIn input) : SV_Target
 	output.NormalAndDepth.w = depth;
 
 	//Position RT
-	output.Position = input.posW;
+	output.Position.xyz = input.posW.xyz;
+	output.Position.w = OBJECT_TYPE_TERRAIN; //See stdafx.fx for object types.
 	
 	//Specular RT
 	output.Specular.xyz = specularColor;

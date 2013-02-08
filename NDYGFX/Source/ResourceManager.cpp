@@ -20,7 +20,10 @@ ResourceManager::~ResourceManager()
 			//A texture cannot be deleted since it's destructor is private to force correct use of texture creation/deletion.
 			//Instead decrease reference count until it deletes itself.
 			int refCount = texIterator->second->GetReferenceCount();
-			MaloW::Debug("WARNING: Resource manager deleted the texture resource: " + texIterator->second->GetName() + "; missing decrease(s) in reference counter somewhere. Occurrences: " + MaloW::convertNrToString(refCount - 1));
+			MaloW::Debug("WARNING: Resource manager deleted the texture resource: '" + texIterator->second->GetName() 
+				+ "'; missing decrease(s) in reference counter somewhere. Occurrences: " 
+				+ MaloW::convertNrToString(refCount - 1) 
+				+ ". Keep in mind that the cause can be PreLoadResources()-function if the resource was loaded but not used.");
 			for(int i = 0; i < refCount; i++)
 			{
 				texIterator->second->DecreaseReferenceCount();
@@ -40,7 +43,11 @@ ResourceManager::~ResourceManager()
 			//An object data cannot be deleted since it's destructor is private to force correct use of texture creation/deletion.
 			//Instead decrease reference count until it deletes itself.
 			int refCount = objDataIterator->second->GetReferenceCount();
-			MaloW::Debug("WARNING: Resource manager deleted the object resource: " + objDataIterator->second->GetName() + "; missing decrease(s) in reference counter somewhere. Occurrences: " + MaloW::convertNrToString(refCount - 1));
+			MaloW::Debug("WARNING: Resource manager deleted the object resource: '" 
+				+ objDataIterator->second->GetName() 
+				+ "'; missing decrease(s) in reference counter somewhere. Occurrences: " 
+				+ MaloW::convertNrToString(refCount - 1)
+				+ ". Keep in mind that the cause can be PreLoadResources()-function if the resource was loaded but not used.");
 			for(int i = 0; i < refCount; i++)
 			{
 				objDataIterator->second->DecreaseReferenceCount();
@@ -61,7 +68,11 @@ ResourceManager::~ResourceManager()
 			//A buffer resource cannot be deleted since it's destructor is private to force correct use of buffer resource creation/deletion.
 			//Instead decrease reference count until it deletes itself.
 			int refCount = bufferIterator->second->GetReferenceCount();
-			MaloW::Debug("WARNING: Resource manager deleted the buffer resource: " + bufferIterator->second->GetName() + "; missing decrease(s) in reference counter somewhere. Occurrences: " + MaloW::convertNrToString(refCount - 1));
+			MaloW::Debug("WARNING: Resource manager deleted the buffer resource: '" 
+				+ bufferIterator->second->GetName() 
+				+ "'; missing decrease(s) in reference counter somewhere. Occurrences: " 
+				+ MaloW::convertNrToString(refCount - 1)
+				+ ". Keep in mind that the cause can be PreLoadResources()-function if the resource was loaded but not used.");
 			for(int i = 0; i < refCount; i++)
 			{
 				bufferIterator->second->DecreaseReferenceCount();
@@ -468,7 +479,6 @@ void ResourceManager::PreLoadResources(unsigned int nrOfResources, char const* c
 			}
 		}
 	}
-	int asd = 0;
 }
 
 

@@ -9,25 +9,23 @@ AnimatedMesh::AnimatedMesh(D3DXVECTOR3 pos, string billboardFilePath, float dist
 	this->mLoopSeamless = true;
 	this->mCurrentTime = 0.0f;
 	this->mKeyFrames = new MaloW::Array<KeyFrame*>();
+	this->mSubFileNames = NULL;
 }
 
 AnimatedMesh::~AnimatedMesh()
 {
 	if(this->mKeyFrames)
 	{
-		int number = 0;
-		string path = string(this->filePath);
-		path.resize(path.size() - 4);
+		unsigned int index = 0;
 		while(this->mKeyFrames->size() > 0)
 		{
-			path += MaloW::convertNrToString(++number) + ".obj";
-			GetResourceManager()->UnloadObjectDataResource(path.c_str());
-			path.resize(path.size() - 5);
+			GetResourceManager()->UnloadObjectDataResource(this->mSubFileNames[index++].c_str());
 
 			delete this->mKeyFrames->getAndRemove(0);
 		}
 
 		delete this->mKeyFrames;
+		delete[] this->mSubFileNames;
 	}
 }
 
@@ -232,6 +230,9 @@ bool AnimatedMesh::LoadFromFile(string file)
 		getline(anifile, line);
 		int nrOfKeyframes = atoi(line.c_str());
 
+		//Create array to hold filenames.
+		this->mSubFileNames = new string[nrOfKeyframes];
+
 		for(int a = 0; a < nrOfKeyframes; a++)
 		{
 			int time = 0;
@@ -239,6 +240,9 @@ bool AnimatedMesh::LoadFromFile(string file)
 			getline(anifile, line);
 			time = atoi(line.c_str());
 			getline(anifile, path);
+
+			//Store the subfilename (with path folder)
+			this->mSubFileNames[a] = pathfolder + path;
 
 			KeyFrame* frame = new KeyFrame();
 			frame->time = time;
