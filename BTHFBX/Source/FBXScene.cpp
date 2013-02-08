@@ -160,7 +160,6 @@ void FBXScene::ProcessScene(FbxScene* pScene)
 	ProcessSkeleteonBoundingBoxes();
 
 	ProcessAnimations(pScene);	// takes time too, other 50%
-	int asd = 0;
 	/*
 	KFbxExporter* lExporter = KFbxExporter::Create(mSdkManager, "");
 
@@ -244,7 +243,6 @@ void FBXScene::ProcessNode(FbxNode* pNode, FbxNodeAttribute::EType attributeType
 	{
 		ProcessNode(pNode->GetChild(i), attributeType);
 	}
-	int asd = 0;
 }
 
 void FBXScene::ProcessCurve(FbxNode* pNode)
@@ -282,7 +280,7 @@ void FBXScene::ProcessAnimations(FbxScene* pScene)
 	FbxArray<FbxString*> takeArray;	
 	FbxDocument* pDocument = FbxCast<FbxDocument>(pScene); // dynamic_cast<FbxDocument*>(pScene);
 	if( pDocument )
-		pDocument->FillAnimStackNameArray(takeArray);		// MALOW: BETWEEN HERE AND....
+		pDocument->FillAnimStackNameArray(takeArray);
 
 	for( int i = 0; i < takeArray.GetCount(); ++i )
 	{
@@ -329,7 +327,6 @@ void FBXScene::ProcessAnimations(FbxScene* pScene)
 		delete takeName;
 		//takeName->Destroy();
 	}
-		// MALOW: AND HERE TAKES 100% of the time.
 	takeArray.Clear();
 }
 
