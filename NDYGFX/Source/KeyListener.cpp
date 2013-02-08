@@ -52,7 +52,7 @@ bool KeyListener::HasBeenPressedSinceLast(char key)
 
 Vector2 KeyListener::GetMousePosition() const
 {
-	D3DXVECTOR2 mp;
+	D3DXVECTOR2 mp = D3DXVECTOR2(-1, -1);
 	POINT p;
 	if(GetCursorPos(&p))
 	{

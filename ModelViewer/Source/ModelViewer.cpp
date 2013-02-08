@@ -233,6 +233,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		if(GetGraphics()->GetKeyListener()->IsPressed('T'))
 		{
 			li->SetIntensity(li->GetIntensity() * (1.0f + diff * 0.002f));
+
 		}
 		if(GetGraphics()->GetKeyListener()->IsPressed('Y'))
 		{
