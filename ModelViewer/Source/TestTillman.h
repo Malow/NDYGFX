@@ -95,15 +95,15 @@ void TillmanTest::PreTest()
 		hmData[1] = 0.0f;
 		hmData[2] = 2.0f;
 		hmData[3] = 0.0f;*/
-		if(i % vertSize > 16 && i % vertSize < 48)
+		/*if(i % vertSize > 16 && i % vertSize < 48)
 		{
 			hmData[i] = 10.0f;
 		}
 		else
 		{
 			hmData[i] = 0.0f;
-		}
-		//hmData[i] = 1.0f;
+		}*/
+		hmData[i] = 1.0f;
 	}
 	iT->SetHeightMap(hmData);
 	fileNames[0] = "Media/01_v02-Moss.png";
