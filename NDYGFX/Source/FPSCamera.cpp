@@ -35,8 +35,8 @@ void FPSCamera::UpdateSpecific(float)
 			float diffX = (this->params.WindowWidth/2) - (float)p.x;
 			float diffY = (this->params.WindowHeight/2) - (float)p.y;
 			
-			this->angleX += diffX * (this->sensitivity * 0.001f);
-			this->angleY += diffY * (this->sensitivity * 0.001f);
+			this->angleX += diffX * (this->params.MouseSensativity * 0.001f);
+			this->angleY += diffY * (this->params.MouseSensativity * 0.001f);
 			
 			fmod(angleX, 2 * PI);
 			fmod(angleY, 2 * PI);

@@ -13,7 +13,6 @@ Camera::Camera(HWND g_hWnd, GraphicsEngineParams &params) :
 	this->angleY = 0;
 	
 	this->speed = 1.0f;
-	this->sensitivity = 1.0f;
 
 	this->updateCamera = true;
 	this->activeWindowDisabling = true;

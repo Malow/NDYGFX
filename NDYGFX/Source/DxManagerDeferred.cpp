@@ -1267,8 +1267,8 @@ void DxManager::RenderDeferredPerPixelTranslucent()
 	this->Shader_DeferredPerPixelTranslucent->SetFloat4("SceneAmbientLight", D3DXVECTOR4(this->sceneAmbientLight, 1.0f));
 
 	this->Shader_DeferredPerPixelTranslucent->SetFloat("timerMillis", this->Timer);
-	this->Shader_DeferredPerPixelTranslucent->SetInt("windowWidth", this->params.windowWidth);
-	this->Shader_DeferredPerPixelTranslucent->SetInt("windowHeight", this->params.windowHeight);
+	this->Shader_DeferredPerPixelTranslucent->SetInt("windowWidth", this->params.WindowWidth);
+	this->Shader_DeferredPerPixelTranslucent->SetInt("windowHeight", this->params.WindowHeight);
 		
 
 
