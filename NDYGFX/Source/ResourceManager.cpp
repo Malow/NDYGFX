@@ -97,6 +97,14 @@ bool ResourceManager::Init(ID3D11Device* device, ID3D11DeviceContext* deviceCont
 
 TextureResource* ResourceManager::CreateTextureResourceFromFile( const char* filePath )
 {
+	if(this->mutex)
+	{
+		WaitForSingleObject(this->mutex, INFINITE);
+	}
+	else 
+		MaloW::Debug("Mutex is broken / hasn't been created / has been closed for Resourcemanager CreateTextureResourceFromFile.");
+
+
 	auto tex = this->zTextureResources.find(filePath);
 	//If the texture resource was not found in the array, create it.
 	if(tex == this->zTextureResources.end())
@@ -119,6 +127,9 @@ TextureResource* ResourceManager::CreateTextureResourceFromFile( const char* fil
 			string dbgStr = "WARNING: Failed to load texture: ";
 			dbgStr += filePath;
 			MaloW::Debug(dbgStr);
+
+			//Release mutex and return
+			ReleaseMutex(this->mutex);
 			return NULL;
 		}
 		else
@@ -127,6 +138,9 @@ TextureResource* ResourceManager::CreateTextureResourceFromFile( const char* fil
 			this->zTextureResources[filePath] = new TextureResource(filePath, SRV);
 			//Increase reference count.
 			this->zTextureResources[filePath]->IncreaseReferenceCount();
+			
+			//Release mutex and return
+			ReleaseMutex(this->mutex);
 			//Return newly created texture.
 			return this->zTextureResources[filePath];
 		}
@@ -135,10 +149,20 @@ TextureResource* ResourceManager::CreateTextureResourceFromFile( const char* fil
 	//If the texture already exists, increase reference counter & return texture.
 	this->zTextureResources[filePath]->IncreaseReferenceCount();
 	
+	//Release mutex and return
+	ReleaseMutex(this->mutex);
 	return tex->second;
 }
 TextureResource* ResourceManager::CreateCubeTextureResourceFromFile( const char* filePath )
 {
+	if(this->mutex)
+	{
+		WaitForSingleObject(this->mutex, INFINITE);
+	}
+	else 
+		MaloW::Debug("Mutex is broken / hasn't been created / has been closed for Resourcemanager CreateCubeTextureReosurceFromFile.");
+
+
 	auto tex = this->zTextureResources.find(filePath);
 	//If the texture was not found in the array, create it.
 	if(tex == this->zTextureResources.end())
@@ -161,6 +185,9 @@ TextureResource* ResourceManager::CreateCubeTextureResourceFromFile( const char*
 			string dbgStr = "WARNING: Failed to load cube texture: ";
 			dbgStr += filePath;
 			MaloW::Debug(dbgStr);
+
+			//Release mutex and return
+			ReleaseMutex(this->mutex);
 			return NULL;
 		}
 		else
@@ -169,6 +196,9 @@ TextureResource* ResourceManager::CreateCubeTextureResourceFromFile( const char*
 			this->zTextureResources[filePath] = new TextureResource(filePath, SRV);
 			//Increase reference count.
 			this->zTextureResources[filePath]->IncreaseReferenceCount();
+
+			//Release mutex and return
+			ReleaseMutex(this->mutex);
 			//Return newly created texture.
 			return this->zTextureResources[filePath];
 		}
@@ -177,11 +207,21 @@ TextureResource* ResourceManager::CreateCubeTextureResourceFromFile( const char*
 	//If the texture already exists, increase reference counter & return texture.
 	this->zTextureResources[filePath]->IncreaseReferenceCount();
 
+	//Release mutex and return
+	ReleaseMutex(this->mutex);
 	return tex->second;
 }
 
 void ResourceManager::DeleteTextureResource( TextureResource* &textureResource )
 {
+	if(this->mutex)
+	{
+		WaitForSingleObject(this->mutex, INFINITE);
+	}
+	else 
+		MaloW::Debug("Mutex is broken / hasn't been created / has been closed for Resourcemanager DeleteTextureResource.");
+
+
 	if(textureResource)
 	{
 		textureResource->DecreaseReferenceCount();
@@ -193,12 +233,6 @@ void ResourceManager::DeleteTextureResource( TextureResource* &textureResource )
 			//If found..
 			if(tex != this->zTextureResources.end())
 			{
-				/*if(textureResource->GetName() == "Media/Bush_leaf_01_v07.png") //**TILLMAN MEM LEAK
-				{
-					float derp = 1.0f;
-
-				}*/
-
 				//Decrease reference counter once more so that the texture will delete itself.
 				tex->second->DecreaseReferenceCount();
 				//Remove texture from table.
@@ -212,11 +246,14 @@ void ResourceManager::DeleteTextureResource( TextureResource* &textureResource )
 					//textureResource->DecreaseReferenceCount(); //**TILLMAN
 				}
 				MaloW::Debug("WARNING: DETECTED MEMORY LEAK!:");
-				MaloW::Debug("ResourceManager::DeleteTextureResource: Could not find the specified texture: '" + textureResource->GetName() + "', references: " + MaloW::convertNrToString(refCount));
+				MaloW::Debug("	ResourceManager::DeleteTextureResource: Could not find the specified texture: '" + textureResource->GetName() + "', references: " + MaloW::convertNrToString(refCount));
 			}
 			textureResource = NULL;
 		}
 	}
+
+	//Release mutex 
+	ReleaseMutex(this->mutex);
 }
 
 
@@ -245,7 +282,9 @@ ObjectDataResource* ResourceManager::LoadObjectDataResourceFromFile(const char* 
 			string dbgStr = "WARNING: Failed to load object data from file: ";
 			dbgStr += filePath;
 			MaloW::Debug(dbgStr);
-
+			
+			//Release mutex and return.
+			ReleaseMutex(this->mutex);
 			return NULL;
 		}
 		else
@@ -264,7 +303,8 @@ ObjectDataResource* ResourceManager::LoadObjectDataResourceFromFile(const char* 
 
 	//If the object data resource already exists, increase reference counter & return it.
 	this->zObjectDataResources[filePath]->IncreaseReferenceCount();
-
+	
+	//Release mutex and return.
 	ReleaseMutex(this->mutex);
 	return objData->second;
 }
@@ -299,12 +339,21 @@ void ResourceManager::UnloadObjectDataResource(const char* filePath)
 	{
 		MaloW::Debug("WARNING: ResourceManager::UnloadObjectDataResource(): Could not find the following object data resource to unload: '" + string(filePath) + "'.");
 	}
-	
+
+	//Release mutex.
 	ReleaseMutex(this->mutex);
 }
 
 BufferResource* ResourceManager::CreateBufferResource(const char* fileName, BUFFER_INIT_DESC bufferInitDesc)
 {
+	if(this->mutex)
+	{
+		WaitForSingleObject(this->mutex, INFINITE);
+	}
+	else 
+		MaloW::Debug("Mutex is broken / hasn't been created / has been closed for Resourcemanager CreateBufferResource.");
+
+
 	auto buff = this->zBufferResources.find(fileName);
 	//If the buffer resource was not found in the array, create it.
 	if(buff == this->zBufferResources.end())
@@ -315,6 +364,9 @@ BufferResource* ResourceManager::CreateBufferResource(const char* fileName, BUFF
 		if(FAILED(buffer->Init(this->gDevice, this->gDeviceContext, bufferInitDesc)))
 		{
 			MaloW::Debug("ERROR: ResourceManager: Could not create buffer:" + string(fileName));
+
+			//Release mutex and return.
+			ReleaseMutex(this->mutex);
 			return NULL;
 		}
 		else
@@ -323,6 +375,9 @@ BufferResource* ResourceManager::CreateBufferResource(const char* fileName, BUFF
 			this->zBufferResources[fileName] = new BufferResource(fileName, buffer);
 			//Increase reference count.
 			this->zBufferResources[fileName]->IncreaseReferenceCount();
+
+			//Release mutex and return.
+			ReleaseMutex(this->mutex);
 			//Return newly created buffer.
 			return this->zBufferResources[fileName];
 		}
@@ -331,8 +386,9 @@ BufferResource* ResourceManager::CreateBufferResource(const char* fileName, BUFF
 	//If the buffer already exists, increase reference counter & return it.
 	this->zBufferResources[fileName]->IncreaseReferenceCount();
 
+	//Release mutex and return.
+	ReleaseMutex(this->mutex);
 	return buff->second;
-
 }
 bool ResourceManager::HasBuffer(const char* fileName)
 {
@@ -351,6 +407,14 @@ bool ResourceManager::HasBuffer(const char* fileName)
 
 void ResourceManager::DeleteBufferResource( BufferResource* &bufferResource )
 {
+	if(this->mutex)
+	{
+		WaitForSingleObject(this->mutex, INFINITE);
+	}
+	else 
+		MaloW::Debug("Mutex is broken / hasn't been created / has been closed for Resourcemanager DeleteBufferResource.");
+
+
 	if(bufferResource)
 	{
 		bufferResource->DecreaseReferenceCount();
@@ -370,6 +434,10 @@ void ResourceManager::DeleteBufferResource( BufferResource* &bufferResource )
 			bufferResource = NULL;
 		}
 	}
+
+
+	//Release mutex and return.
+	ReleaseMutex(this->mutex);
 }
 
 void ResourceManager::PreLoadResources(unsigned int nrOfResources, char const* const* const resourcesFileNames)

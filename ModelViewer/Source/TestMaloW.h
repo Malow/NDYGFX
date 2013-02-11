@@ -156,11 +156,11 @@ void MaloWTest::RunTest(float diff)
 
 	if(GetGraphics()->GetKeyListener()->IsPressed('9'))
 	{
-		GetGraphics()->GetEngineParameters()->FarClip *= (1.0f + diff * 0.002f);
+		GetGraphics()->GetEngineParameters().FarClip *= (1.0f + diff * 0.002f);
 	}
 	if(GetGraphics()->GetKeyListener()->IsPressed('8'))
 	{
-		GetGraphics()->GetEngineParameters()->FarClip *= (1.0f - diff * 0.002f);
+		GetGraphics()->GetEngineParameters().FarClip *= (1.0f - diff * 0.002f);
 	}
 
 	if(GetGraphics()->GetKeyListener()->IsPressed('O'))

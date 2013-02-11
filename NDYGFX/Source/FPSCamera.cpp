@@ -12,8 +12,8 @@ FPSCamera::FPSCamera(HWND g_hWnd, GraphicsEngineParams &params) : Camera(g_hWnd,
 	cc.SetVisibility(false);
 
 	POINT np;
-	np.x = this->params.windowWidth/2;
-	np.y = this->params.windowHeight/2;
+	np.x = this->params.WindowWidth/2;
+	np.y = this->params.WindowHeight/2;
 	if(ClientToScreen(this->g_hWnd, &np))
 	{
 		SetCursorPos(np.x, np.y);
@@ -32,8 +32,8 @@ void FPSCamera::UpdateSpecific(float)
 	{
 		if(ScreenToClient(this->g_hWnd, &p))
 		{
-			float diffX = (this->params.windowWidth/2) - (float)p.x;
-			float diffY = (this->params.windowHeight/2) - (float)p.y;
+			float diffX = (this->params.WindowWidth/2) - (float)p.x;
+			float diffY = (this->params.WindowHeight/2) - (float)p.y;
 			
 			this->angleX += diffX * (this->sensitivity * 0.001f);
 			this->angleY += diffY * (this->sensitivity * 0.001f);
@@ -81,8 +81,8 @@ void FPSCamera::UpdateSpecific(float)
 			this->up = this->NormalizeVector(this->up);
 
 			POINT np;
-			np.x = this->params.windowWidth/2;
-			np.y = this->params.windowHeight/2;
+			np.x = this->params.WindowWidth/2;
+			np.y = this->params.WindowHeight/2;
 			if(ClientToScreen(this->g_hWnd, &np))
 			{
 				SetCursorPos(np.x, np.y);

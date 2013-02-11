@@ -17,11 +17,11 @@ void GraphicsEngineParams::LoadFromFile(const char* file)
 
 	getline(in, line);
 	getline(in, line);
-	this->windowWidth = atoi(line.c_str());
+	this->WindowWidth = atoi(line.c_str());
 	getline(in, line);
 	getline(in, line);
 	getline(in, line);
-	this->windowHeight = atoi(line.c_str());
+	this->WindowHeight = atoi(line.c_str());
 	getline(in, line);
 	getline(in, line);
 	getline(in, line);
@@ -65,7 +65,7 @@ void GraphicsEngineParams::LoadFromFile(const char* file)
 	getline(in, line);
 	getline(in, line);
 	getline(in, line);
-	this->BillboardRange = atoi(line.c_str());
+	this->BillboardRange = atof(line.c_str());
 
 	in.close();
 }
@@ -81,10 +81,10 @@ void GraphicsEngineParams::SaveToFile(const char* file)
 	}
 
 	out << "Window width:		Default: 1024" << endl;
-	out << this->windowWidth << std::endl;
+	out << this->WindowWidth << std::endl;
 	out << endl;
 	out << "Window height:		Default: 768" << endl;
-	out << this->windowHeight << std::endl;
+	out << this->WindowHeight << std::endl;
 	out << endl;
 	out << "Borderless window (0 - 1):		Default: 0" << endl;
 	out << this->Maximized << std::endl;

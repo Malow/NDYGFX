@@ -18,7 +18,7 @@ Camera::Camera(HWND g_hWnd, GraphicsEngineParams &params) :
 	this->updateCamera = true;
 	this->activeWindowDisabling = true;
 
-	D3DXMatrixPerspectiveFovLH(&this->projection, (this->params.FOV * 0.0174532925f), this->params.windowWidth / (float)this->params.windowHeight, this->params.NearClip, this->params.FarClip);
+	D3DXMatrixPerspectiveFovLH(&this->projection, this->params.FOV * (float)D3DX_PI / 180.0f, this->params.WindowWidth / (float)this->params.WindowHeight, this->params.NearClip, this->params.FarClip);
 }
 
 Camera::~Camera()
@@ -35,7 +35,7 @@ D3DXMATRIX Camera::GetViewMatrix()
 
 D3DXMATRIX Camera::GetProjectionMatrix()
 {
-	D3DXMatrixPerspectiveFovLH(&this->projection, (this->params.FOV * 0.0174532925f), this->params.windowWidth / (float)this->params.windowHeight, this->params.NearClip, this->params.FarClip);
+	D3DXMatrixPerspectiveFovLH(&this->projection, this->params.FOV * (float)D3DX_PI / 180.0f, this->params.WindowWidth / (float)this->params.WindowHeight, this->params.NearClip, this->params.FarClip);
 	return this->projection; 
 }
 
@@ -175,8 +175,7 @@ void Camera::FollowMesh( iMesh* target )
 
 void Camera::RecreateProjectionMatrix()
 {
-	D3DXMatrixPerspectiveFovLH(&this->projection, (this->params.FOV * 0.0174532925f), this->params.windowWidth / (float)this->params.windowHeight, this->params.NearClip, this->params.FarClip);
-}
+	D3DXMatrixPerspectiveFovLH(&this->projection, (float)D3DX_PI * this->params.FOV, this->params.WindowWidth / (float)this->params.WindowHeight, this->params.NearClip, this->params.FarClip);}
 D3DXVECTOR3 Camera::GetRightVectorD3DX() const
 {
 	Vector3 right = this->GetRightVector();
@@ -192,8 +191,8 @@ Vector3 Camera::Get3DPickingRay()
 	{
 		if(ScreenToClient(this->g_hWnd, &p))
 		{
-			v.x = (((2.0f * p.x) / this->params.windowWidth) - 1) / this->GetProjectionMatrix()._11;
-			v.y = -(((2.0f * p.y) / this->params.windowHeight) - 1) / this->GetProjectionMatrix()._22;
+			v.x = (((2.0f * p.x) / this->params.WindowWidth) - 1) / this->GetProjectionMatrix()._11;
+			v.y = -(((2.0f * p.y) / this->params.WindowHeight) - 1) / this->GetProjectionMatrix()._22;
 			v.z =  1.0f;
 
 

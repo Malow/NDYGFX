@@ -9,6 +9,9 @@
 #include "MaloW.h"
 #include "MaloWFileDebug.h"
 
+#pragma warning ( push )
+#pragma warning ( disable : 4512 ) // warning C4512: 'Camera' : assignment operator could not be generated
+
 class Camera : public iCamera
 {
 protected:
@@ -110,5 +113,7 @@ public:
 	bool GetUpdatingCamera() const { return this->updateCamera; }
 	virtual CameraType GetCameraType() const = 0;
 };
+
+#pragma warning ( pop )
 
 #endif

@@ -417,14 +417,14 @@ void Terrain::SetDiffuseColor(const Vector3& color )
 
 void Terrain::SetHeightMap(float const* const data)
 {
-	//Update/set y-values of vertices
+	// Update/set y-values of vertices
 	for(unsigned int i = 0; i < this->zSize * this->zSize; i++)
 	{
 		this->zVertices[i].pos.y = data[i];
 	}
 	
-	//Calculate new normals
-	this->CalculateNormals();
+	// Calculate new normals
+	// this->CalculateNormals();
 
 	this->zHeightMapHasChanged = true;
 	this->zRecreateBoundingSphere = true; //Bounding sphere needs to be recreated (this is done when GetBoundingSphere() is called).

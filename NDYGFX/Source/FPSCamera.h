@@ -3,6 +3,10 @@
 
 #include "Camera.h"
 
+#pragma warning ( push )
+#pragma warning ( disable : 4512 ) // warning C4512: 'FPSCamera' : assignment operator could not be generated
+
+
 class FPSCamera : public Camera
 {
 public:
@@ -21,5 +25,6 @@ public:
 	virtual CameraType GetCameraType() const { return FPS; }
 };
 
+#pragma warning ( pop )
 
 #endif

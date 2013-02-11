@@ -21,8 +21,8 @@ extern "C"
 		iGraphicsEngineParams() {};
 		virtual ~iGraphicsEngineParams() {};
 
-		static int windowWidth;
-		static int windowHeight;
+		static int WindowWidth;
+		static int WindowHeight;
 		static bool Maximized;
 		static int ShadowMapSettings;
 		static int FXAAQuality;
