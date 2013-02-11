@@ -98,7 +98,7 @@ void GraphicsEngineParams::SaveToFile(const char* file)
 	out << "Camera Type (0 = FPS, 1 = RTS):		Default: 0" << endl;
 	out << this->CamType << std::endl;
 	out << endl;
-	out << "Field of View:	Default: 0.45" << endl;
+	out << "Field of View:	Default: 75" << endl;
 	out << this->FOV << std::endl;
 	out << endl;
 	out << "NearClip:	Default: 0.01" << endl;

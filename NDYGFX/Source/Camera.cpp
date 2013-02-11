@@ -18,7 +18,7 @@ Camera::Camera(HWND g_hWnd, GraphicsEngineParams &params) :
 	this->updateCamera = true;
 	this->activeWindowDisabling = true;
 
-	D3DXMatrixPerspectiveFovLH(&this->projection, (float)D3DX_PI * this->params.FOV, this->params.windowWidth / (float)this->params.windowHeight, this->params.NearClip, this->params.FarClip);
+	D3DXMatrixPerspectiveFovLH(&this->projection, (this->params.FOV * 0.0174532925f), this->params.windowWidth / (float)this->params.windowHeight, this->params.NearClip, this->params.FarClip);
 }
 
 Camera::~Camera()
@@ -35,7 +35,7 @@ D3DXMATRIX Camera::GetViewMatrix()
 
 D3DXMATRIX Camera::GetProjectionMatrix()
 {
-	D3DXMatrixPerspectiveFovLH(&this->projection, (float)D3DX_PI * this->params.FOV, this->params.windowWidth / (float)this->params.windowHeight, this->params.NearClip, this->params.FarClip);
+	D3DXMatrixPerspectiveFovLH(&this->projection, (this->params.FOV * 0.0174532925f), this->params.windowWidth / (float)this->params.windowHeight, this->params.NearClip, this->params.FarClip);
 	return this->projection; 
 }
 
@@ -175,7 +175,7 @@ void Camera::FollowMesh( iMesh* target )
 
 void Camera::RecreateProjectionMatrix()
 {
-	D3DXMatrixPerspectiveFovLH(&this->projection, (float)D3DX_PI * this->params.FOV, this->params.windowWidth / (float)this->params.windowHeight, this->params.NearClip, this->params.FarClip);
+	D3DXMatrixPerspectiveFovLH(&this->projection, (this->params.FOV * 0.0174532925f), this->params.windowWidth / (float)this->params.windowHeight, this->params.NearClip, this->params.FarClip);
 }
 D3DXVECTOR3 Camera::GetRightVectorD3DX() const
 {
