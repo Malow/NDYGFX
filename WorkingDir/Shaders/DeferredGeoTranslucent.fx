@@ -85,7 +85,10 @@ PSSceneIn VSScene(VSIn input)
 	output.Pos = mul(input.Pos, WVP);
 	output.WorldPos = mul(input.Pos, worldMatrix);
 	output.tex = input.tex;
-	output.norm = normalize(mul(input.norm, (float3x3)worldMatrixInverseTranspose));
+	//output.norm = normalize(mul(input.norm, (float3x3)worldMatrixInverseTranspose));
+	output.norm = input.norm;	// Hardcode the normal to straight up to get rid of lines between planes
+	// Should work decently unless the plane is angled ALOT.
+
 	output.Color = input.Color;
 
 	return output;
@@ -109,7 +112,6 @@ PSout PSScene(PSSceneIn input) : SV_Target
 	PSout output;
 	output.Texture = finalColor;
 	output.NormalAndDepth = float4(input.norm.xyz, input.Pos.z / input.Pos.w);		// pos.z / pos.w should work?
-
 	float depth = length(CameraPosition.xyz - input.WorldPos.xyz) / FarClip;		// Haxfix
 	output.NormalAndDepth.w = depth;
 
