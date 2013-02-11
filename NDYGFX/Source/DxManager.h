@@ -105,6 +105,9 @@ private:
 
 	Shader* Shader_DeferredAnimatedGeometry;
 
+	Shader* Shader_DeferredGeoTranslucent;
+	Shader* Shader_DeferredPerPixelTranslucent;
+
 	SSAO* ssao;
 	FXAA* fxaa;
 	Shader* Shader_Fxaa;
@@ -141,17 +144,20 @@ private:
 	void RenderShadowMap();
 	void RenderCascadedShadowMap();
 	void RenderImages();
-
 	void RenderBillboards();
-	void RenderBillboard(Billboard* billboard);
+	void RenderText();
+	void RenderWaterPlanes();
+	void RenderFBXMeshes();
+	void RenderDeferredGeoTranslucent();
+	void RenderDeferredPerPixelTranslucent();
+
 
 	void RenderQuadDeferred();
 	void RenderDeferredTexture();
 	void RenderDeferredSkybox();
 	void RenderAntiAliasing();
-	void RenderText();
-	void RenderWaterPlanes();
-	void RenderFBXMeshes();
+
+	void RenderBillboard(Billboard* billboard);
 
 	void SetCamera(SetCameraEvent* ev);
 	void HandleTerrainEvent(TerrainEvent* me);

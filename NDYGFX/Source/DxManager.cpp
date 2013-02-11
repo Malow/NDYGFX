@@ -49,6 +49,9 @@ DxManager::DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam)
 	this->Shader_DeferredLightning = NULL;
 	this->Shader_InvisibilityEffect = NULL;
 
+	this->Shader_DeferredGeoTranslucent = NULL;
+	this->Shader_DeferredPerPixelTranslucent = NULL;
+
 	this->Shader_DeferredQuad = NULL;
 	this->Shader_DeferredTexture = NULL;
 	this->Shader_DeferredAnimatedGeometry = NULL;
@@ -119,6 +122,12 @@ DxManager::~DxManager()
 
 	if(this->Shader_DeferredLightning)
 		delete this->Shader_DeferredLightning;
+
+	if(this->Shader_DeferredGeoTranslucent)
+		delete this->Shader_DeferredGeoTranslucent;
+
+	if(this->Shader_DeferredPerPixelTranslucent)
+		delete this->Shader_DeferredPerPixelTranslucent;
 
 	if ( this->Shader_InvisibilityEffect ) delete this->Shader_InvisibilityEffect, this->Shader_InvisibilityEffect=0;
 

@@ -478,5 +478,11 @@
     <FxCompile Include="..\WorkingDir\Shaders\Grass.fx">
       <Filter>Source Files\Engine\Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="..\WorkingDir\Shaders\DeferredGeoTranslucent.fx">
+      <Filter>Source Files\Engine\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\WorkingDir\Shaders\DeferredPerPixelTranslucent.fx">
+      <Filter>Source Files\Engine\Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

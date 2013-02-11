@@ -1335,6 +1335,9 @@ void DxManager::RenderFBXMeshes()
 	this->LastFBXUpdate = this->Timer;
 }
 
+
+
+
 HRESULT DxManager::Render()
 {
 	if(this->RendererSleep > 0)
@@ -1367,11 +1370,17 @@ HRESULT DxManager::Render()
 	//this->RenderDeferredTexture();
 
 	this->RenderDeferredPerPixel();
+
+	this->RenderDeferredGeoTranslucent();
+
+	this->RenderDeferredPerPixelTranslucent();
 	
 	if(this->invisibleGeometry)
 		this->RenderInvisibilityEffect(); 
 
-	this->RenderWaterPlanes();
+	//this->RenderWaterPlanes();
+
+	this->RenderFBXMeshes();
 	
 	this->RenderDeferredSkybox();
 
@@ -1384,7 +1393,7 @@ HRESULT DxManager::Render()
 	this->RenderAntiAliasing();
 
 
-	this->RenderFBXMeshes();
+	
 
 	// Debugging:
 	// Debug: Render Normals
