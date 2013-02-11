@@ -72,7 +72,7 @@ void TillmanTest::PreTest()
 	float testSize = 25.0f;
 	
 	iT = GetGraphics()->CreateTerrain(Vector3(0, 0, 0), Vector3(testSize, 1.0f, testSize), vertSize);
-	iT2 = GetGraphics()->CreateTerrain(Vector3(testSize, 0, 0), Vector3(testSize, 0.0f, testSize), vertSize);
+	iT2 = GetGraphics()->CreateTerrain(Vector3(testSize, 0, 0), Vector3(testSize, 1.0f, testSize), vertSize);
 	//iAnimatedMesh* iAM = GetGraphics()->CreateAnimatedMesh("Media/FlagBlue.ani", Vector3(30, 30, 30));
 	//iImage* iM = GetGraphics()->CreateImage(Vector2(100, 100), Vector2(100, 100), "Media/BallTexture.png");
 	//iText* iTe = GetGraphics()->CreateText("durp", Vector2(300, 100), 1.0f, "Media/Fonts/1");
@@ -95,15 +95,15 @@ void TillmanTest::PreTest()
 		hmData[1] = 0.0f;
 		hmData[2] = 2.0f;
 		hmData[3] = 0.0f;*/
-		/*if(i % vertSize > 16 && i % vertSize < 48)
+		if(i % vertSize > 16 && i % vertSize < 48)
 		{
 			hmData[i] = 10.0f;
 		}
 		else
 		{
 			hmData[i] = 0.0f;
-		}*/
-		hmData[i] = 0.0f;
+		}
+		//hmData[i] = 1.0f;
 	}
 	iT->SetHeightMap(hmData);
 	fileNames[0] = "Media/01_v02-Moss.png";
@@ -115,6 +115,14 @@ void TillmanTest::PreTest()
 	fileNames[6] = "Media/01_v02-Moss.png";
 	fileNames[7] = "Media/01_v02-Moss.png";
 	iT->SetTextures(fileNames);
+	float normals2[64 * 64 * 3]; //vertSize = 64;
+	for(int i = 0; i < 64 * 64 * 3; i+=3)
+	{
+		normals2[i] = 1.0f;	//x
+		normals2[i + 1] = 0.0f;	//y
+		normals2[i + 2] = 0.0f;	//z
+	}
+	iT->SetNormals(normals2);
 	iT->SetTextureScale(-4);
 
 	float testF = 0.0f;
@@ -167,10 +175,17 @@ void TillmanTest::PreTest()
 	float normals[64 * 64 * 3]; //vertSize = 64;
 	for(int i = 0; i < 64 * 64 * 3; i+=3)
 	{
-		normals[i] = 0.577350259f;		//x
-		normals[i + 1] = 0.577350259f;	//y
-		normals[i + 2] = 0.577350259f;	//z
+		normals[i] = 0.57f;		//x
+		normals[i + 1] = 0.57f;	//y
+		normals[i + 2] = 0.57f;	//z
 	}
+	for(int i = 0; i < 64 * 64 * 3; i+=3)
+	{
+		normals[i] = 1.0f;		//x
+		normals[i + 1] = 1.0f;	//y
+		normals[i + 2] = 1.0f;	//z
+	}
+	iT2->SetHeightMap(hmData);
 	iT2->SetTextures(fileNames);
 	iT2->SetBlendMaps(nrOfBlendMaps, sizes, testData);
 	iT2->SetNormals(normals);
@@ -424,8 +439,34 @@ void TillmanTest::RunTest(float diff)
 
 	//CASCADED SHADOW MAPPING
 	static float debugCSMScale = 1.0f;
+	float normals[64 * 64 * 3]; //vertSize = 64;
+	for(int i = 0; i < 64 * 64 * 3; i+=3)
+	{
+		normals[i] = 0.577350259f;		//x
+		normals[i + 1] = 0.577350259f;	//y
+		normals[i + 2] = 0.577350259f;	//z
+	}
+	float hmData[65 * 65];
+	for(int i = 0; i < 64 * 64; i++)
+	{
+		/*hmData[0] = 0.0f;
+		hmData[1] = 0.0f;
+		hmData[2] = 2.0f;
+		hmData[3] = 0.0f;*/
+		/*if(i % vertSize > 16 && i % vertSize < 48)
+		{
+			hmData[i] = 10.0f;
+		}
+		else
+		{
+			hmData[i] = 0.0f;
+		}*/
+		hmData[i] = 1.0f;
+	}
 	if(GetGraphics()->GetKeyListener()->IsPressed('Q'))
 	{
+		//iT2->SetNormals(normals);
+		//iT2->SetHeightMap(hmData);
 		debugCSMScale += diff * 0.001f;
 		fileNames[0] = "Media/TerrainTexture.png";
 		fileNames[1] = "Media/TerrainTexture.png";

@@ -187,7 +187,7 @@ PSSceneIn VSScene(VSIn input)
 	PSSceneIn output = (PSSceneIn)0;
 	output.pos = mul(float4(input.pos, 1.0f), WVP);
 	output.tex = input.tex;
-	output.norm = normalize(mul(input.norm, (float3x3)worldMatrixInverseTranspose));
+	output.norm = normalize(mul(normalize(input.norm), (float3x3)worldMatrixInverseTranspose));
 	output.color = input.color;
 	output.posW = mul(float4(input.pos, 1.0f), worldMatrix);
 
@@ -254,7 +254,10 @@ PSOut PSScene(PSSceneIn input) : SV_Target
 	output.Texture.w = -1.0f;
 
 	//NormalAndDepth RT
-	output.NormalAndDepth = float4(input.norm, input.pos.z / input.pos.w);	
+	//output.NormalAndDepth = float4(input.norm, input.pos.z / input.pos.w);	
+	///** TILLMAN TEST 
+	output.NormalAndDepth.xyz = input.norm;
+	//output.NormalAndDepth.xyz = float3(0.0f, 0.1f, 0.9f);
 	float depth = length(CameraPosition.xyz - input.posW.xyz) / FarClip;		// Haxfix
 	output.NormalAndDepth.w = depth;
 

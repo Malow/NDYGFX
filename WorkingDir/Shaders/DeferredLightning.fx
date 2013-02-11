@@ -397,13 +397,22 @@ float4 PSScene(PSSceneIn input) : SV_Target
 
 	float4 NormsAndDepth = NormalAndDepth.Sample(linearSampler, input.tex);
 	
-	float4 WorldPos = Position.Sample(linearSampler, input.tex);
+	float4 WorldPosAndObjectType = Position.Sample(linearSampler, input.tex);
+	float4 WorldPos = float4(WorldPosAndObjectType.xyz, 1.0f);
 
 	float4 AmbientLight = SceneAmbientLight;
 
-	float SpecularPower = Specular.Sample(linearSampler, input.tex).w;
-	float4 SpecularColor = float4(Specular.Sample(linearSampler, input.tex).xyz, 1.0f);
+	float SpecularPower = 0.0f;
+	float4 SpecularColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
 
+	if(WorldPosAndObjectType.w != OBJECT_TYPE_TERRAIN) //**TILLMAN todo: inte göra spec beräkningar
+	{
+		float4 specularRT = Specular.Sample(linearSampler, input.tex);
+		SpecularPower = specularRT.w;
+		SpecularColor = float4(specularRT.xyz, 1.0f);
+	}
+		
+	
 	float diffuseLighting = 0.0f;
 	float specLighting = 0.0f;
 	
@@ -560,8 +569,8 @@ float4 PSScene(PSSceneIn input) : SV_Target
 
 	float4 finalColor = float4((							
 		AmbientLight.xyz * DiffuseColor + 
-		DiffuseColor * diffuseLighting + 
-		SpecularColor.xyz * specLighting), 
+		DiffuseColor * diffuseLighting /*+ 
+		/*SpecularColor.xyz * specLighting*/), 
 		1.0f);
 
 	if(UseSun)
@@ -628,7 +637,14 @@ float4 PSScene(PSSceneIn input) : SV_Target
 		float fogfactor = (fogDepth - 0.75f) * 4.1f;	// Linear scale the last 25% of farclip, but a little more 
 		finalColor = lerp(finalColor, float4(0.45f, 0.45f, 0.45f, 1.0f), saturate(fogfactor));
 	}
-			
+		
+	//**DEBUG NORMAL TEST**
+	/*if(WorldPosAndObjectType.w == OBJECT_TYPE_TERRAIN)
+	{
+		return float4(1.0f, 1.0f, 0.0f, 1.0f);
+	}*/
+	
+	//return float4(NormsAndDepth.xyz, 1.0f);
 	return saturate(finalColor);
 }
 

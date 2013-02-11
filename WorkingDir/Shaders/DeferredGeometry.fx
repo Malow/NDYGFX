@@ -114,7 +114,9 @@ PSout PSScene(PSSceneIn input) : SV_Target
 	float depth = length(CameraPosition.xyz - input.WorldPos.xyz) / FarClip;		// Haxfix
 	output.NormalAndDepth.w = depth;
 
-	output.Position = input.WorldPos;
+	output.Position.xyz = input.WorldPos.xyz;
+	output.Position.w = -1.0f;
+
 	output.Specular = SpecularColor;
 	output.Specular.w = SpecularPower;
 		
