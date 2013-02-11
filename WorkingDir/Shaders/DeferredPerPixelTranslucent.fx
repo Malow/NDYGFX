@@ -385,6 +385,10 @@ float SampleCascades(uint cascadeIndex, uint otherCascadeIndex, float2 pixelPosT
 
 	return shadow;
 }
+
+
+
+
 		
 
 
@@ -574,7 +578,7 @@ float4 PSScene(PSSceneIn input) : SV_Target
 		discard;
 
 	if(NormsAndDepth.w > 1.0f)		// All pixels that has a greater than 1 depth means that there is no geometry and there is skybox, therefor go without lightcalcs.
-		finalColor = float4(DiffuseColor, 1.0f);
+		discard;
 	
 	
 
@@ -605,7 +609,7 @@ float4 PSScene(PSSceneIn input) : SV_Target
 			finalColor.xyz *= (5.0f / 6.0f);
 		}
 	}
-
+	
 
 		
 	//if(finalColor.a >= 0.00001f && finalColor.a <= 0.9999f) //**tillman - haxlösning?**
@@ -628,8 +632,7 @@ float4 PSScene(PSSceneIn input) : SV_Target
 		float fogfactor = (fogDepth - 0.75f) * 4.1f;	// Linear scale the last 25% of farclip, but a little more 
 		finalColor = lerp(finalColor, float4(0.45f, 0.45f, 0.45f, 1.0f), saturate(fogfactor));
 	}
-	finalColor.rgb = DiffuseColor;
-	finalColor.a = 0.5f;
+	finalColor.a = 0.7f;
 	
 	return saturate(finalColor);
 }

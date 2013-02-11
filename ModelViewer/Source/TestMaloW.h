@@ -24,10 +24,10 @@ public:
 void MaloWTest::PreTest()
 {
 	wp = GetGraphics()->CreateWaterPlane(Vector3(0, 10, 0), "Media/WaterTexture.png");
-	wp->SetScale(10.0f);
+	wp->SetScale(40.0f);
 	iWaterPlane* wp2 = GetGraphics()->CreateWaterPlane(Vector3(5, 10, 0), "Media/WaterTexture.png");
 	wp2->Rotate(Vector3(0.1f, 0.1f, 0.1f));
-	wp2->SetScale(8.0f);
+	wp2->SetScale(30.0f);
 
 	arrow = GetGraphics()->CreateMesh("Media/Arrow_v01.obj", Vector3(30, 10, 30));					//**ORSAKAR minnesläcka om createmesh använder samma texture OCH skapas FÖRE!
 	arrow->Scale(1.0f * 0.05f);

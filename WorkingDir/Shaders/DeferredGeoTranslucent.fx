@@ -99,12 +99,12 @@ PSout PSScene(PSSceneIn input) : SV_Target
 	float4 textureColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
 	if(textured)
 	{
-		textureColor = tex2D.Sample(linearSampler, input.tex);
-		if ( textureColor.a < 0.5f )
-			discard;
+		//textureColor = tex2D.Sample(linearSampler, input.tex);
+		textureColor = tex2D.Sample(linearSampler, float2(input.WorldPos.x, input.WorldPos.z) * 0.1f);
 	}
-	float4 finalColor = (textureColor + input.Color) * DiffuseColor;
-	finalColor.w = (float)specialColor;
+	float4 finalColor = float4((textureColor.xyz + input.Color.xyz) * DiffuseColor.xyz, 1.0f);
+	//finalColor.w = (float)specialColor;	/// Doesnt work, renders the entire plane with clear color
+
 
 	PSout output;
 	output.Texture = finalColor;
@@ -116,7 +116,7 @@ PSout PSScene(PSSceneIn input) : SV_Target
 	output.Position = input.WorldPos;
 	output.Specular = SpecularColor;
 	output.Specular.w = SpecularPower;
-		
+
 	return output;
 }
 
@@ -135,6 +135,6 @@ technique11 BasicTech
 	    
 
 		SetDepthStencilState( EnableDepth, 0 );
-	    SetRasterizerState( BackCulling );
+	    SetRasterizerState( NoCulling );
     }  
 }

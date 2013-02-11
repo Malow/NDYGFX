@@ -1131,6 +1131,7 @@ void DxManager::RenderDeferredTexture()
 void DxManager::RenderDeferredGeoTranslucent()
 {
 	this->Dx_DeviceContext->OMSetRenderTargets(this->NrOfRenderTargets, this->Dx_GbufferRTs, this->Dx_DepthStencilView);
+	this->Dx_DeviceContext->RSSetViewports(1, &this->Dx_Viewport);
 	float ClearColor1[4] = {0.5f, 0.71f, 1.0f, 1};
 	float ClearColor2[4] = {-1.0f, -1.0f, -1.0f, -1.0f};
 	this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_GbufferRTs[0], ClearColor1);
@@ -1169,10 +1170,10 @@ void DxManager::RenderDeferredGeoTranslucent()
 			this->Dx_DeviceContext->IASetPrimitiveTopology(wp->GetTopology());
 
 			// Setting lightning from material
-			this->Shader_DeferredGeoTranslucent->SetFloat4("SpecularColor", D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f));
-			this->Shader_DeferredGeoTranslucent->SetFloat("SpecularPower", 1.0f);
+			this->Shader_DeferredGeoTranslucent->SetFloat4("SpecularColor", D3DXVECTOR4(0.6f, 0.6f, 0.6f, 1.0f));
+			this->Shader_DeferredGeoTranslucent->SetFloat("SpecularPower", 10.0f);
 			this->Shader_DeferredGeoTranslucent->SetFloat4("AmbientLight", D3DXVECTOR4(this->sceneAmbientLight, 1.0f));
-			this->Shader_DeferredGeoTranslucent->SetFloat4("DiffuseColor", D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f));
+			this->Shader_DeferredGeoTranslucent->SetFloat4("DiffuseColor", D3DXVECTOR4(0.5f, 0.5f, 0.5f, 1.0f));
 
 			Buffer* verts = wp->GetVertexBuffer();
 			if(verts)
@@ -1231,11 +1232,9 @@ void DxManager::RenderDeferredPerPixelTranslucent()
 	
 		for (int l = 0; l < this->csm->GetNrOfCascadeLevels(); l++)
 		{
-
 			D3DXMATRIX lvp = this->csm->GetViewProjMatrix(l);
 			this->Shader_DeferredPerPixelTranslucent->SetResourceAtIndex(l, "CascadedShadowMap", this->csm->GetShadowMapSRV(l));
 			this->Shader_DeferredPerPixelTranslucent->SetStructMemberAtIndexAsMatrix(l, "cascades", "viewProj", lvp);
-
 		}
 
 	}
