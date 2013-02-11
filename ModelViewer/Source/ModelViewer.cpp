@@ -153,8 +153,8 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		if(GetGraphics()->GetKeyListener()->IsPressed('Z'))	
 		{
 			GetGraphics()->GetKeyListener()->SetMousePosition(Vector2(
-				(float)(GetGraphics()->GetEngineParameters()->WindowWidth) / 2.0f, 
-				(float)(GetGraphics()->GetEngineParameters()->WindowHeight) / 2.0f));
+				(float)(GetGraphics()->GetEngineParameters().WindowWidth) / 2.0f, 
+				(float)(GetGraphics()->GetEngineParameters().WindowHeight) / 2.0f));
 
 			GetGraphics()->GetCamera()->SetUpdateCamera(false);
 			GetGraphics()->GetKeyListener()->SetCursorVisibility(true);
@@ -163,8 +163,8 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		if(GetGraphics()->GetKeyListener()->IsPressed('X'))	
 		{
 			GetGraphics()->GetKeyListener()->SetMousePosition(Vector2(
-				GetGraphics()->GetEngineParameters()->WindowWidth / 2.0f, 
-				GetGraphics()->GetEngineParameters()->WindowHeight / 2.0f));
+				GetGraphics()->GetEngineParameters().WindowWidth / 2.0f, 
+				GetGraphics()->GetEngineParameters().WindowHeight / 2.0f));
 			GetGraphics()->GetCamera()->SetUpdateCamera(true);
 			GetGraphics()->GetKeyListener()->SetCursorVisibility(false);
 		}

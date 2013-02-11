@@ -772,9 +772,9 @@ iKeyListener* GraphicsEngineImp::GetKeyListener() const
 	return this->GetKeyList();
 }
 
-iGraphicsEngineParams* GraphicsEngineImp::GetEngineParameters() const
+iGraphicsEngineParams& GraphicsEngineImp::GetEngineParameters()
 {
-	return &this->GetEngineParams();
+	return this->GetEngineParams();
 }
 
 void GraphicsEngineImp::DeleteMesh( iMesh* delMesh )

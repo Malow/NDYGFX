@@ -178,7 +178,7 @@ public:
 	virtual void ResizeGraphicsEngine(unsigned int width, unsigned int height);
 
 	// Settings
-	virtual iGraphicsEngineParams* GetEngineParameters() const;
+	virtual iGraphicsEngineParams& GetEngineParameters();
 	virtual void UseShadow(bool useShadow);
 	virtual void SetSpecialCircle(float innerRadius, float outerRadius, Vector2& targetPos) const;
 
@@ -241,7 +241,7 @@ public:
 	bool GetManagingWindow() const { return this->isManagingMyOwnWindow; }
 
 	// Get's
-	GraphicsEngineParams GetEngineParams() const { return parameters; }
+	GraphicsEngineParams& GetEngineParams() { return parameters; }
 	Camera* GetCam() const { return this->cam; } //{ return this->dx->GetCamera(); }
 	KeyListener* GetKeyList() const { return this->kl; }
 	HWND GetWindowHandle() const { return this->hWnd; }
