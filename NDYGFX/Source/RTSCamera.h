@@ -3,6 +3,9 @@
 
 #include "Camera.h"
 
+#pragma warning ( push )
+#pragma warning ( disable : 4512 ) // warning C4512: 'RTSCamera' : assignment operator could not be generated
+
 class RTSCamera : public Camera
 {
 public:
@@ -21,5 +24,6 @@ public:
 	virtual CameraType GetCameraType() const { return RTS; }
 };
 
+#pragma warning ( pop )
 
 #endif

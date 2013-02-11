@@ -686,8 +686,8 @@ void DxManager::ResizeRenderer(ResizeEvent* ev)
 	unsigned int width = ev->GetWidth();
 	unsigned int height = ev->GetHeight();
 
-	this->params.windowWidth = width;
-	this->params.windowHeight = height;
+	this->params.WindowWidth = width;
+	this->params.WindowHeight = height;
 
 	this->camera->RecreateProjectionMatrix();
 

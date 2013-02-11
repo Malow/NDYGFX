@@ -213,7 +213,7 @@ void DxManager::Life()
 {
 	{
 		//Engine Start Splash screen.
-		Image* img = new Image(D3DXVECTOR2(0.0f, 0.0f), D3DXVECTOR2((float)this->params.windowWidth, (float)this->params.windowHeight));
+		Image* img = new Image(D3DXVECTOR2(0.0f, 0.0f), D3DXVECTOR2((float)this->params.WindowWidth, (float)this->params.WindowHeight));
 		TextureResource* tex = NULL;
 		tex = GetResourceManager()->CreateTextureResourceFromFile("Media/LoadingScreen/StartingSplash.png");
 		img->SetTexture(tex);
@@ -562,10 +562,10 @@ void DxManager::RenderImages()
 	{
 		Image* img = this->images[i];
 		// if Convert from screenspace is needed, which it isnt.
-		this->Shader_Image->SetFloat("posx", (img->GetPosition().x / this->params.windowWidth) * 2 - 1);
-		this->Shader_Image->SetFloat("posy", 2 - (img->GetPosition().y / this->params.windowHeight) * 2 - 1);
-		this->Shader_Image->SetFloat("dimx", (img->GetDimensions().x / this->params.windowWidth) * 2);
-		this->Shader_Image->SetFloat("dimy", -(img->GetDimensions().y / this->params.windowHeight) * 2);
+		this->Shader_Image->SetFloat("posx", (img->GetPosition().x / this->params.WindowWidth) * 2 - 1);
+		this->Shader_Image->SetFloat("posy", 2 - (img->GetPosition().y / this->params.WindowHeight) * 2 - 1);
+		this->Shader_Image->SetFloat("dimx", (img->GetDimensions().x / this->params.WindowWidth) * 2);
+		this->Shader_Image->SetFloat("dimy", -(img->GetDimensions().y / this->params.WindowHeight) * 2);
 		this->Shader_Image->SetFloat("opacity", img->GetOpacity());
 		
 		/*// if -1 to 1
@@ -652,12 +652,12 @@ void DxManager::RenderText()
 	{
 		Text* txt = this->texts[i];
 		// if Convert from screen space is needed, which it is
-		this->Shader_Text->SetFloat("posx", (txt->GetPosition().x / this->params.windowWidth) * 2 - 1);
-		this->Shader_Text->SetFloat("posy", 2 - (txt->GetPosition().y / this->params.windowHeight) * 2 - 1);
+		this->Shader_Text->SetFloat("posx", (txt->GetPosition().x / this->params.WindowWidth) * 2 - 1);
+		this->Shader_Text->SetFloat("posy", 2 - (txt->GetPosition().y / this->params.WindowHeight) * 2 - 1);
 
 		this->Shader_Text->SetFloat("size", txt->GetSize());
-		this->Shader_Text->SetFloat("windowWidth", (float)this->params.windowWidth);
-		this->Shader_Text->SetFloat("windowHeight", (float)this->params.windowHeight);
+		this->Shader_Text->SetFloat("windowWidth", (float)this->params.WindowWidth);
+		this->Shader_Text->SetFloat("windowHeight", (float)this->params.WindowHeight);
 		
 		// Im only using ASCI 30 - 100, to reduce data sent I only send those 70 as 0-70. Therefor the t = 30 and t - 30
 		static bool once = true;

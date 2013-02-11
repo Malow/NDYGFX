@@ -40,8 +40,8 @@ void CascadedShadowMap::CalcShadowMapMatrices(D3DXVECTOR3 sunLight, Camera* cam,
 	D3DXVECTOR4 camForward = D3DXVECTOR4(cam->GetForwardD3DX(), 1.0f);
 	D3DXVECTOR4 camRight = D3DXVECTOR4(cam->GetRightVectorD3DX(), 1.0f);
 	D3DXVECTOR4 camUp = D3DXVECTOR4(cam->GetUpVectorD3DX(), 1.0f);
-	float ww = (float)this->params.windowWidth;
-	float hh = (float)this->params.windowHeight;
+	float ww = (float)this->params.WindowWidth;
+	float hh = (float)this->params.WindowHeight;
 	float aspectRatio = ww / hh;
 	float tmp = tan(this->params.FOV) * 2;
 
