@@ -72,6 +72,10 @@ void DxManager::RenderDeferredGeometry()
 
 	int CurrentRenderedMeshes = 0;
 	int CurrentRenderedTerrains = 0;
+
+	int CurrentRenderedNrOfVertices = 0;
+	int CurrentNrOfDrawCalls = 0;
+
 	//Matrices
 	D3DXMATRIX world, view, proj, wvp, worldInverseTranspose;
 	D3DXMatrixIdentity(&worldInverseTranspose); //Needed to calculate correct world inverse matrix
@@ -89,7 +93,10 @@ void DxManager::RenderDeferredGeometry()
 		//Check if the terrain has been culled.
 		if(terrPtr->IsCulled() == false)
 		{
+			//Counting(debug)
 			CurrentRenderedTerrains++;
+			CurrentRenderedNrOfVertices += terrPtr->GetNrOfVertices();
+
 			//Set topology
 			this->Dx_DeviceContext->IASetPrimitiveTopology(terrPtr->GetTopology());
 
@@ -105,6 +112,8 @@ void DxManager::RenderDeferredGeometry()
 			//Update vertex buffer if y-value for vertices (height map) have changed
 			if(terrPtr->HasHeightMapChanged() || terrPtr->HaveNormalsChanged()) //**TILLMAN LOADTHREAD**
 			{
+				bool wasItHeightMap = terrPtr->HasHeightMapChanged(); //true = heightmap, false = normal.
+				
 				//**OPT(OBS! Ev. only for editor): should be replaced with an update function ** TILLMAN
 					//this->Dx_DeviceContext->UpdateSubresource()
 				/*int srcRP = sizeof(float) * terrPtr->GetSize();
@@ -137,9 +146,14 @@ void DxManager::RenderDeferredGeometry()
 				if(oldBuffer) delete oldBuffer;
 
 				//Set that the height map shall not be changed anymore.
-				terrPtr->HeightMapHasChanged(false);
-				//Same for normals
-				terrPtr->NormalsHaveChanged(false);
+				if(wasItHeightMap)
+				{
+					terrPtr->HeightMapHasChanged(false);
+				}
+				else //Same for normals
+				{
+					terrPtr->NormalsHaveChanged(false);
+				}
 			}
 
 			//Set Textures
@@ -419,10 +433,14 @@ void DxManager::RenderDeferredGeometry()
 			if(indices)
 			{
 				this->Dx_DeviceContext->DrawIndexed(indices->GetElementCount(), 0, 0);
+				//Count(debug)
+				CurrentNrOfDrawCalls++;
 			}
 			else
 			{
 				this->Dx_DeviceContext->Draw(vertices->GetElementCount(), 0);
+				//Count(debug)
+				CurrentNrOfDrawCalls++;
 			}
 		}
 	}
@@ -496,6 +514,9 @@ void DxManager::RenderDeferredGeometry()
 							hasBeenCounted = true;
 						}
 
+						//Count vertices(debug) 
+						CurrentRenderedNrOfVertices += strips->get(u)->getNrOfVerts();
+
 						Object3D* obj = strips->get(u)->GetRenderObject();
 						this->Dx_DeviceContext->IASetPrimitiveTopology(obj->GetTopology());
 
@@ -535,11 +556,21 @@ void DxManager::RenderDeferredGeometry()
 			
 						this->Shader_DeferredGeometry->Apply(0);
 
-						// draw
+						//Draw
+						//Count
+
 						if(inds)
+						{
 							this->Dx_DeviceContext->DrawIndexed(inds->GetElementCount(), 0, 0);
+							//Count(debug)
+							CurrentNrOfDrawCalls++;
+						}
 						else
+						{
 							this->Dx_DeviceContext->Draw(verts->GetElementCount(), 0);
+							//Count(debug)
+							CurrentNrOfDrawCalls++;
+						}
 					}
 				}
 			}
@@ -561,9 +592,11 @@ void DxManager::RenderDeferredGeometry()
 						CurrentRenderedMeshes++;
 						hasBeenCounted = true;
 					}
-
-					//Render billboards
+					//Render as billboard.
 					this->RenderBillboard(this->objects[i]->GetBillboardGFX());
+					//Count(debug)
+					CurrentRenderedNrOfVertices += 4;
+					CurrentNrOfDrawCalls++;
 				}
 
 
@@ -611,6 +644,11 @@ void DxManager::RenderDeferredGeometry()
 
 				if(!animatedMesh->GetKeyFrames()->get(0)->strips->get(0)->GetCulled())
 				{
+					//Count(debug)
+					for(int o = 0; o < animatedMesh->GetKeyFrames()->get(0)->strips->size(); ++o)
+					{
+						CurrentRenderedNrOfVertices += animatedMesh->GetKeyFrames()->get(0)->strips->get(o)->getNrOfVerts();
+					}
 					CurrentRenderedMeshes++;			
 
 					KeyFrame* one = NULL;
@@ -681,8 +719,10 @@ void DxManager::RenderDeferredGeometry()
 
 						this->Shader_DeferredAnimatedGeometry->Apply(0);
 
-						// draw
+						//Draw
 						this->Dx_DeviceContext->Draw(vertsOne->GetElementCount(), 0);
+						//Count(debug)
+						CurrentNrOfDrawCalls++;
 					}
 				}
 			}
@@ -706,6 +746,9 @@ void DxManager::RenderDeferredGeometry()
 
 					//Render billboards
 					this->RenderBillboard(animatedMesh->GetBillboardGFX());
+					//Count(debug)
+					CurrentRenderedNrOfVertices += 4;
+					CurrentNrOfDrawCalls++;
 				}
 
 
@@ -725,6 +768,9 @@ void DxManager::RenderDeferredGeometry()
 
 	this->RenderedMeshes = CurrentRenderedMeshes;
 	this->RenderedTerrains = CurrentRenderedTerrains;
+
+	this->NrOfDrawnVertices = CurrentRenderedNrOfVertices;
+	this->NrOfDrawCalls = CurrentNrOfDrawCalls;
 }
 
 

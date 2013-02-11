@@ -30,6 +30,8 @@ DxManager::DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam)
 	this->RenderedTerrains = 0;
 	this->renderedMeshShadows = 0;
 	this->renderedTerrainShadows = 0;
+	this->NrOfDrawnVertices = 0;
+	this->NrOfDrawCalls = 0;
 
 	this->Shader_Image = NULL;
 	this->Shader_Billboard = NULL;
@@ -251,8 +253,16 @@ void DxManager::CreateTerrain(Terrain* terrain)
 		indexBufferDesc.Usage = BUFFER_DEFAULT;
 
 		indexBuffer = new Buffer();
-		if(FAILED(indexBuffer->Init(this->Dx_Device, this->Dx_DeviceContext, indexBufferDesc)))
-			MaloW::Debug("ERROR: Could not create index buffer. REASON: CreateTerrain(Terrain* terrain)");
+		//**tmp testing: creating index buffer sometimes fails and generates slenda error**
+		HRESULT hr;
+		hr = indexBuffer->Init(this->Dx_Device, this->Dx_DeviceContext, indexBufferDesc);
+		if(FAILED(hr))
+		{
+			MaloW::Debug("ERROR: Could not create index buffer. REASON: CreateTerrain(Terrain* terrain)."
+				+ string("ERROR code: '") + MaloW::convertNrToString((int)hr) + "'.");
+			delete indexBuffer; 
+			indexBuffer = NULL;
+		}
 		terrain->SetIndexBuffer(indexBuffer);
 	}
 
@@ -845,6 +855,14 @@ int DxManager::GetRenderedTerrainShadowCount() const
 int DxManager::GetRenderedMeshShadowCount() const
 {
 	return this->renderedMeshShadows;
+}
+int DxManager::GetNrOfDrawnVerticesCount() const
+{
+	return this->NrOfDrawnVertices;
+}
+int DxManager::GetNrOfDrawCallsCount() const
+{
+	return this->NrOfDrawCalls;
 }
 
 void DxManager::SetCamera( Camera* cam )

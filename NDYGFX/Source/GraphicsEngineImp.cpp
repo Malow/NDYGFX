@@ -469,8 +469,10 @@ float GraphicsEngineImp::Update()
 		MaloW::convertNrToString(this->dx->GetRenderedMeshCount()) + "  -  Ter. Count: " +
 		MaloW::convertNrToString(this->dx->GetTerrainCount()) + "  -  Ren. Ters: " +
 		MaloW::convertNrToString(this->dx->GetRenderedTerrainCount()) + "  -  Mesh shad: " +
-		MaloW::convertNrToString(this->dx->GetRenderedMeshShadowCount() / 4) + "  -  Terr shad: " +
-		MaloW::convertNrToString(this->dx->GetRenderedTerrainShadowCount() / 4); //** / 4 = temp**
+		MaloW::convertNrToString(this->dx->GetRenderedMeshShadowCount() / 4) + "  -  Terr shad: " + //** / 4 = temp**
+		MaloW::convertNrToString(this->dx->GetRenderedTerrainShadowCount() / 4) + "  -  Verts: " +
+		MaloW::convertNrToString(this->dx->GetNrOfDrawnVerticesCount()) + "  -  DC: " +
+		MaloW::convertNrToString(this->dx->GetNrOfDrawCallsCount()); 
 
 		
 

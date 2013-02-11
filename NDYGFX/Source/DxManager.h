@@ -125,6 +125,8 @@ private:
 	int RenderedTerrains;
 	int renderedTerrainShadows;
 	int renderedMeshShadows;
+	int NrOfDrawnVertices;
+	int NrOfDrawCalls;
 
 	// Needed for frustrum culling
 	PhysicsEngine pe;
@@ -223,6 +225,9 @@ public:
 	int GetRenderedMeshShadowCount() const;
 	int GetRenderedTerrainShadowCount() const; 
 
+	int GetNrOfDrawnVerticesCount() const;
+	int GetNrOfDrawCallsCount() const;
+	
 	void SetMaxFPS(float maxFPS);
 	float GetMaxFPS() const;
 	void SetRendererSleep(float sleep);
