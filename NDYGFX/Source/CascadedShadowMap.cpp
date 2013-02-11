@@ -43,7 +43,7 @@ void CascadedShadowMap::CalcShadowMapMatrices(D3DXVECTOR3 sunLight, Camera* cam,
 	float ww = (float)this->params.WindowWidth;
 	float hh = (float)this->params.WindowHeight;
 	float aspectRatio = ww / hh;
-	float tmp = tan(this->params.FOV) * 2;
+	float tmp = tan((this->params.FOV * 0.0174532925f) / 3.14159265359f) * 2;
 
 	//Near plane	
 	float halfNearHeight = tmp * this->shadowMappingSplitDepths[i];
