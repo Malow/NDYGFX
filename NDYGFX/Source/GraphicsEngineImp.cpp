@@ -15,6 +15,8 @@ int GraphicsEngineParams::RefreshRate = 60;
 int GraphicsEngineParams::MaxFPS = 0;
 int GraphicsEngineParams::ShadowFit = 50;
 float GraphicsEngineParams::BillboardRange = 0.75f;
+float GraphicsEngineParams::MouseSensativity = 1.0f;
+
 
 GraphicsEngineImp::GraphicsEngineImp(const GraphicsEngineParams &params, HINSTANCE hInstance, int nCmdShow) :
 	parameters(params)

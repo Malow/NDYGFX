@@ -311,6 +311,34 @@ HRESULT DxManager::Init()
 	}
 
 
+	// Translucent passes
+	D3D11_INPUT_ELEMENT_DESC DeferredGeometryTranslucentDesc[] = {
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
+	};
+	this->Shader_DeferredGeoTranslucent = new Shader();
+	if(FAILED(this->Shader_DeferredGeoTranslucent->Init(Dx_Device, Dx_DeviceContext, "Shaders/DeferredGeoTranslucent.fx", DeferredGeometryTranslucentDesc, 4)))	// + on last if added above
+	{
+		MaloW::Debug("Failed to open DeferredGeoTranslucent.fx");
+		return E_FAIL;
+	}
+	
+	D3D11_INPUT_ELEMENT_DESC DeferredLightningTranslucentDesc[] = {
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
+	};
+	this->Shader_DeferredPerPixelTranslucent = new Shader();
+	if(FAILED(this->Shader_DeferredPerPixelTranslucent->Init(Dx_Device, Dx_DeviceContext, "Shaders/DeferredPerPixelTranslucent.fx", DeferredLightningTranslucentDesc, 4)))	// + on last if added above
+	{
+		MaloW::Debug("Failed to open DeferredPerPixelTranslucent.fx");
+		return E_FAIL;
+	}
+
+
 
 	//Create input layout for the FBX scene
 	const D3D11_INPUT_ELEMENT_DESC inputDescFBX[] =

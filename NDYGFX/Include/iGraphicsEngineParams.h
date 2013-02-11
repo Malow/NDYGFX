@@ -34,6 +34,7 @@ extern "C"
 		static int MaxFPS;
 		static int ShadowFit;
 		static float BillboardRange;
+		static float MouseSensativity;
 
 		virtual void SaveToFile(const char* file) = 0;
 	};

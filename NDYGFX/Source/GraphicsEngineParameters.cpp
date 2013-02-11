@@ -66,6 +66,10 @@ void GraphicsEngineParams::LoadFromFile(const char* file)
 	getline(in, line);
 	getline(in, line);
 	this->BillboardRange = atof(line.c_str());
+	getline(in, line);
+	getline(in, line);
+	getline(in, line);
+	this->MouseSensativity = atof(line.c_str());
 
 	in.close();
 }
@@ -118,6 +122,9 @@ void GraphicsEngineParams::SaveToFile(const char* file)
 	out << endl;
 	out << "BillboardRange(%):		Default: 0.75" << endl;
 	out << this->BillboardRange << std::endl;
+	out << endl;
+	out << "Mouse Sensativity:		Default: 1.0" << endl;
+	out << this->MouseSensativity << std::endl;
 	out << endl;
 
 	out.close();

@@ -823,9 +823,6 @@ void DxManager::RenderDeferredPerPixel()
 
 
 
-
-
-
 	//Always tell the shader whether to use shadows or not.
 	this->Shader_DeferredLightning->SetBool("useShadow", this->useShadow);
 	if ( useShadow )
@@ -865,15 +862,6 @@ void DxManager::RenderDeferredPerPixel()
 
 
 
-
-
-
-
-
-
-
-
-
 	
 	// Set sun-settings
 	if(this->useSun) 
@@ -901,17 +889,6 @@ void DxManager::RenderDeferredPerPixel()
 	this->Shader_DeferredLightning->SetInt("windowWidth", this->params.WindowWidth);
 	this->Shader_DeferredLightning->SetInt("windowHeight", this->params.WindowHeight);
 		
-
-
-
-
-
-	
-
-
-
-
-
 
 
 
@@ -1146,4 +1123,176 @@ void DxManager::RenderDeferredTexture()
 	//this->ssao->PostRender(this->Shader_DeferredTexture);
 
 	this->Shader_DeferredTexture->Apply(0);
+}
+
+
+void DxManager::RenderDeferredGeoTranslucent()
+{
+	this->Dx_DeviceContext->OMSetRenderTargets(this->NrOfRenderTargets, this->Dx_GbufferRTs, this->Dx_DepthStencilView);
+	this->Dx_DeviceContext->RSSetViewports(1, &this->Dx_Viewport);
+	float ClearColor1[4] = {0.5f, 0.71f, 1.0f, 1};
+	float ClearColor2[4] = {-1.0f, -1.0f, -1.0f, -1.0f};
+	this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_GbufferRTs[0], ClearColor1);
+	this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_GbufferRTs[1], ClearColor2);
+	this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_GbufferRTs[2], ClearColor2);
+	this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_GbufferRTs[3], ClearColor2);
+
+	//Static meshes
+	this->Shader_DeferredGeoTranslucent->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetPositionD3DX(), 1));
+	this->Shader_DeferredGeoTranslucent->SetFloat("NearClip", this->params.NearClip);
+	this->Shader_DeferredGeoTranslucent->SetFloat("FarClip", this->params.FarClip);
+	D3DXMATRIX world;
+	D3DXMATRIX view = this->camera->GetViewMatrix();
+	D3DXMATRIX proj = this->camera->GetProjectionMatrix();
+	D3DXMATRIX wvp;
+	D3DXMATRIX worldInverseTranspose;
+
+	for(int i = 0; i < this->waterplanes.size(); i++)
+	{
+		WaterPlane* wp = this->waterplanes[i];
+		if(!wp->GetDontRenderFlag())
+		{
+			// Per object
+			this->Shader_DeferredGeoTranslucent->SetInt("specialColor", wp->GetSpecialColor());
+
+			// Set matrices
+			world = wp->GetWorldMatrix();
+			wvp = world * view * proj;
+			D3DXMatrixInverse(&worldInverseTranspose, NULL, &world);
+			D3DXMatrixTranspose(&worldInverseTranspose, &worldInverseTranspose);
+
+			this->Shader_DeferredGeoTranslucent->SetMatrix("WVP", wvp);
+			this->Shader_DeferredGeoTranslucent->SetMatrix("worldMatrix", world);
+			this->Shader_DeferredGeoTranslucent->SetMatrix("worldMatrixInverseTranspose", worldInverseTranspose);
+
+			this->Dx_DeviceContext->IASetPrimitiveTopology(wp->GetTopology());
+
+			// Setting lightning from material
+			this->Shader_DeferredGeoTranslucent->SetFloat4("SpecularColor", D3DXVECTOR4(0.6f, 0.6f, 0.6f, 1.0f));
+			this->Shader_DeferredGeoTranslucent->SetFloat("SpecularPower", 10.0f);
+			this->Shader_DeferredGeoTranslucent->SetFloat4("AmbientLight", D3DXVECTOR4(this->sceneAmbientLight, 1.0f));
+			this->Shader_DeferredGeoTranslucent->SetFloat4("DiffuseColor", D3DXVECTOR4(0.5f, 0.5f, 0.5f, 1.0f));
+
+			Buffer* verts = wp->GetVertexBuffer();
+			if(verts)
+				verts->Apply();
+
+			if(ID3D11ShaderResourceView* texture = wp->GetTextureResource()->GetSRVPointer())//**TILLMAN
+			{
+				this->Shader_DeferredGeoTranslucent->SetBool("textured", true);
+				this->Shader_DeferredGeoTranslucent->SetResource("tex2D", texture);
+			}
+			else
+				this->Shader_DeferredGeoTranslucent->SetBool("textured", false);
+
+			this->Shader_DeferredGeoTranslucent->Apply(0);
+			this->Dx_DeviceContext->Draw(verts->GetElementCount(), 0);
+		}
+	}
+	// Unbind resources static geometry:
+	this->Shader_DeferredGeoTranslucent->SetResource("tex2D", NULL);
+	this->Shader_DeferredGeoTranslucent->Apply(0);
+}
+
+void DxManager::RenderDeferredPerPixelTranslucent()
+{
+	//clear and set render target/depth
+	this->Dx_DeviceContext->OMSetRenderTargets(1, &this->Dx_RenderTargetView, this->Dx_DepthStencilView);
+	this->Dx_DeviceContext->RSSetViewports(1, &this->Dx_Viewport);
+	this->Dx_DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+
+
+
+	//Always tell the shader whether to use shadows or not.
+	this->Shader_DeferredPerPixelTranslucent->SetBool("useShadow", this->useShadow);
+	if ( useShadow )
+	{
+		float PCF_SIZE = (float)this->params.ShadowMapSettings + 1;
+		float PCF_SQUARED = 1 / (PCF_SIZE * PCF_SIZE);
+
+		this->Shader_DeferredPerPixelTranslucent->SetFloat("SMAP_DX", 1.0f / (256.0f * pow(2.0f, this->params.ShadowMapSettings / 2.0f)));
+
+		this->Shader_DeferredPerPixelTranslucent->SetFloat("PCF_SIZE", PCF_SIZE);
+		this->Shader_DeferredPerPixelTranslucent->SetFloat("PCF_SIZE_SQUARED", PCF_SQUARED);
+
+		this->Shader_DeferredPerPixelTranslucent->SetBool("blendCascades", true); //** TILLMAN CSM VARIABLE**
+		this->Shader_DeferredPerPixelTranslucent->SetFloat("blendDistance", this->csm->GetBlendDistance()); 
+		this->Shader_DeferredPerPixelTranslucent->SetFloat("blendStrength", 0.0f); //** TILLMAN CSM VARIABLE**
+
+		this->Shader_DeferredPerPixelTranslucent->SetInt("nrOfCascades", this->csm->GetNrOfCascadeLevels());
+		D3DXVECTOR4 cascadeFarPlanes = D3DXVECTOR4(-1.0f, -1.0f, -1.0f, -1.0f);
+		for(int i = 0; i < this->csm->GetNrOfCascadeLevels(); i++)
+		{
+			cascadeFarPlanes[i] = this->csm->GetSplitDepth(i + 1);
+		}
+		this->Shader_DeferredPerPixelTranslucent->SetFloat4("cascadeFarPlanes", cascadeFarPlanes);
+		this->Shader_DeferredPerPixelTranslucent->SetMatrix("cameraViewMatrix", this->camera->GetViewMatrix()); //Send camera view matrix to determine what frustum slice to use.
+	
+		for (int l = 0; l < this->csm->GetNrOfCascadeLevels(); l++)
+		{
+			D3DXMATRIX lvp = this->csm->GetViewProjMatrix(l);
+			this->Shader_DeferredPerPixelTranslucent->SetResourceAtIndex(l, "CascadedShadowMap", this->csm->GetShadowMapSRV(l));
+			this->Shader_DeferredPerPixelTranslucent->SetStructMemberAtIndexAsMatrix(l, "cascades", "viewProj", lvp);
+		}
+
+	}
+
+
+
+
+	
+	// Set sun-settings
+	if(this->useSun) 
+	{
+		this->Shader_DeferredPerPixelTranslucent->SetStructMemberAsFloat4("sun", "Direction", D3DXVECTOR4(this->sun.direction, 0.0f));
+		this->Shader_DeferredPerPixelTranslucent->SetStructMemberAsFloat4("sun", "LightColor", D3DXVECTOR4(this->sun.lightColor, 0.0f));
+		this->Shader_DeferredPerPixelTranslucent->SetStructMemberAsFloat("sun", "LightIntensity", this->sun.intensity);
+	}
+	//Always tell the shader whether to use sun or not.
+	this->Shader_DeferredPerPixelTranslucent->SetBool("UseSun", this->useSun);
+
+	//DeferredLightning.fx:
+	this->Shader_DeferredPerPixelTranslucent->SetResource("Texture", this->Dx_GbufferSRVs[0]);
+	this->Shader_DeferredPerPixelTranslucent->SetResource("NormalAndDepth", this->Dx_GbufferSRVs[1]);
+	this->Shader_DeferredPerPixelTranslucent->SetResource("Position", this->Dx_GbufferSRVs[2]);
+	this->Shader_DeferredPerPixelTranslucent->SetResource("Specular", this->Dx_GbufferSRVs[3]);
+	D3DXMATRIX vp = this->camera->GetViewMatrix() * this->camera->GetProjectionMatrix();
+	this->Shader_DeferredPerPixelTranslucent->SetMatrix("CameraVP", vp);
+	this->Shader_DeferredPerPixelTranslucent->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetPositionD3DX(), 1));
+	//stdafx.fx:
+	this->Shader_DeferredPerPixelTranslucent->SetFloat("NrOfLights", (float)this->lights.size()); //**tillman - omstrukturering**
+	this->Shader_DeferredPerPixelTranslucent->SetFloat4("SceneAmbientLight", D3DXVECTOR4(this->sceneAmbientLight, 1.0f));
+
+	this->Shader_DeferredPerPixelTranslucent->SetFloat("timerMillis", this->Timer);
+	this->Shader_DeferredPerPixelTranslucent->SetInt("windowWidth", this->params.WindowWidth);
+	this->Shader_DeferredPerPixelTranslucent->SetInt("windowHeight", this->params.WindowHeight);
+		
+
+
+
+	//ssao.fx:
+	// this->ssao->PreRender(this->Shader_DeferredPerPixelTranslucent, this->params, this->camera);
+
+	this->Shader_DeferredPerPixelTranslucent->Apply(0);
+	
+	this->Dx_DeviceContext->Draw(1, 0);
+
+	
+	// Unbind resources:
+	this->Shader_DeferredPerPixelTranslucent->SetResource("Texture", NULL);
+	this->Shader_DeferredPerPixelTranslucent->SetResource("NormalAndDepth", NULL);
+	this->Shader_DeferredPerPixelTranslucent->SetResource("Position", NULL);
+	this->Shader_DeferredPerPixelTranslucent->SetResource("Specular", NULL);
+	this->Shader_DeferredPerPixelTranslucent->SetResource("LavaTexture", NULL);
+	for(int i = 0; i < this->lights.size(); i++)
+	{
+		this->Shader_DeferredPerPixelTranslucent->SetResourceAtIndex(i, "ShadowMap", NULL);
+	}
+	for(int i = 0; i < this->csm->GetNrOfCascadeLevels(); i++)
+		this->Shader_DeferredPerPixelTranslucent->SetResourceAtIndex(i, "CascadedShadowMap", NULL);
+
+	// Unbind SSAO
+	this->ssao->PostRender(this->Shader_DeferredPerPixelTranslucent);
+
+	this->Shader_DeferredPerPixelTranslucent->Apply(0);
 }

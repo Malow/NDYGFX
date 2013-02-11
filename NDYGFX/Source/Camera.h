@@ -33,7 +33,6 @@ protected:
 	void MoveToFollowPosition();
 
 	float speed;
-	float sensitivity;
 	float DistanceFromTarget;
 
 	GraphicsEngineParams &params;
@@ -76,8 +75,8 @@ public:
 
 	virtual void SetSpeed(float speed) { this->speed = speed; }
 	virtual float GetSpeed() const { return this->speed; }
-	virtual void SetSensitivity(float sens) { this->sensitivity = sens; }
-	virtual float GetSensitivity() const { return this->sensitivity; }
+	virtual void SetSensitivity(float sens) { this->params.MouseSensativity = sens; }
+	virtual float GetSensitivity() const { return this->params.MouseSensativity; }
 
 	virtual void SetBoundries(Vector3 minBoundries, Vector3 maxBoundries);
 	virtual void DisableBoundries();
