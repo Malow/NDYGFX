@@ -414,6 +414,10 @@ void TillmanTest::PreTest()
 	unloadTestAni = GetGraphics()->CreateMesh("Media/Fern_02.ani", Vector3(5, 5, -5));
 	unloadTestAni->SetScale(0.5f);
 
+	//new crasch testing
+	iMesh* aniGrassPlantCrasch = GetGraphics()->CreateMesh("Media/GrassPlant_01.ani", Vector3(5, -5, -5));
+
+
 	GetGraphics()->CreateMesh("Media/scale.obj", Vector3(30, -300, 30));
 }
 
