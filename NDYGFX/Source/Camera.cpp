@@ -18,7 +18,8 @@ Camera::Camera(HWND g_hWnd, GraphicsEngineParams &params) :
 	this->updateCamera = true;
 	this->activeWindowDisabling = true;
 
-	D3DXMatrixPerspectiveFovLH(&this->projection, (float)D3DX_PI * this->params.FOV, this->params.WindowWidth / (float)this->params.WindowHeight, this->params.NearClip, this->params.FarClip);}
+	D3DXMatrixPerspectiveFovLH(&this->projection, this->params.FOV * (float)D3DX_PI / 180.0f, this->params.WindowWidth / (float)this->params.WindowHeight, this->params.NearClip, this->params.FarClip);
+}
 
 Camera::~Camera()
 {
@@ -34,7 +35,8 @@ D3DXMATRIX Camera::GetViewMatrix()
 
 D3DXMATRIX Camera::GetProjectionMatrix()
 {
-	D3DXMatrixPerspectiveFovLH(&this->projection, (float)D3DX_PI * this->params.FOV, this->params.WindowWidth / (float)this->params.WindowHeight, this->params.NearClip, this->params.FarClip);	return this->projection; 
+	D3DXMatrixPerspectiveFovLH(&this->projection, this->params.FOV * (float)D3DX_PI / 180.0f, this->params.WindowWidth / (float)this->params.WindowHeight, this->params.NearClip, this->params.FarClip);
+	return this->projection; 
 }
 
 Vector3 Camera::GetPosition()
