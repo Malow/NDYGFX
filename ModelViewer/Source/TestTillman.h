@@ -25,6 +25,7 @@ private:
 	iTerrain* iT;
 	char aiData[64*64];
 	iTerrain* iT2;
+	iTerrain* createTerrainIndexBufferCraschText;
 
 
 public:
@@ -39,21 +40,21 @@ public:
 void TillmanTest::PreTest()
 {
 	//Preload testing
-	unsigned int nrOfResources = 5;
+	/*unsigned int nrOfResources = 5;
 	const char* resourceFileNames[5];
 	resourceFileNames[0] = "Media/ball.obj";
 	resourceFileNames[1] = "Media/bth.obj";			
 	resourceFileNames[2] = "Media/scale.obj";		//1
 	resourceFileNames[3] = "Media/FlagBlue.ani";		
 	resourceFileNames[4] = "Media/BallTexture.png";	
-	//resourceFileNames[5] = "Media/scale.obj";		//2
+	*///resourceFileNames[5] = "Media/scale.obj";		//2
 
 	//resourceFileNames[10] = "skymap.dds";			//Fail
 	//resourceFileNames[6] = "scale.obj";				//Fail
 	//resourceFileNames[7] = "durp.fileformat";		//Fail
 	//resourceFileNames[8] = "skymap.dds";			//fail
 	//resourceFileNames[3] = "BallTexture.png";		//fail
-	GetGraphics()->PreLoadResources(nrOfResources, resourceFileNames);
+	//GetGraphics()->PreLoadResources(nrOfResources, resourceFileNames);
 
 
 	iM = GetGraphics()->CreateImage(Vector2(100, 100), Vector2(100, 100), "Media/BallTexture.png");
@@ -80,8 +81,8 @@ void TillmanTest::PreTest()
 	float test = 0.0f;
 	Vector2 dd = Vector2(0.1f, 0.2f);
 	test = dd[0];
-	Vector3 durp = Vector3(1.0f, 2.0f, 3.0f);
-	test = durp[2];
+	Vector3 darp = Vector3(1.0f, 2.0f, 3.0f);
+	test = darp[2];
 	Vector4 hurp = Vector4(10.0f, 20.0f, 30.0f, 40.0f);
 	test = hurp[3];
 
@@ -418,7 +419,9 @@ void TillmanTest::PreTest()
 	iMesh* aniGrassPlantCrasch = GetGraphics()->CreateMesh("Media/GrassPlant_01.ani", Vector3(5, -5, -5));
 
 
-	GetGraphics()->CreateMesh("Media/scale.obj", Vector3(30, -300, 30));
+	//iMesh* tklerp = GetGraphics()->CreateMesh("Media/scale.obj", Vector3(30, -300, 30));
+
+	createTerrainIndexBufferCraschText = GetGraphics()->CreateTerrain(Vector3(-25, 0, 0), Vector3(25, 0, 25), 32);
 }
 
 void TillmanTest::RunTest(float diff)
@@ -467,6 +470,7 @@ void TillmanTest::RunTest(float diff)
 		}*/
 		hmData[i] = 1.0f;
 	}
+	static bool oncee = false;
 	if(GetGraphics()->GetKeyListener()->IsPressed('Q'))
 	{
 		//iT2->SetNormals(normals);
@@ -483,15 +487,24 @@ void TillmanTest::RunTest(float diff)
 		iT2->SetTextures(fileNames);
 		iT->SetAIGridThickness(0.0005f);
 		iT->UseAIMap(true);
-		static bool oncee = false;
 		if(!oncee)
-		{
+		{	
+			iMesh* loadFromFileTest = NULL;
 			iT->SetAIGrid(64, (void*)&aiData);
 			oncee = true;
+			createTerrainIndexBufferCraschText = GetGraphics()->CreateTerrain(Vector3(-25, 0, 0), Vector3(25, 0, 25), 64);
+			for(int i = 0; i < 1; i++)
+			{
+				iMesh* loadFromFileTest = GetGraphics()->CreateMesh("Media/Bush_01_v04_r.obj", Vector3(-3000, 10, 30));
+
+				//createTerrainIndexBufferCraschText = GetGraphics()->CreateTerrain(Vector3(i * -25.0f, 0, 0), Vector3(25, 0, 25), 64);
+				//testtts = GetGraphics()->CreateMesh()
+			}
 		}
 	}
 	if(GetGraphics()->GetKeyListener()->IsPressed('E'))
 	{
+
 		debugCSMScale -= diff * 0.001f;
 		fileNames[0] = "Media/TerrainTexture.png";
 		fileNames[1] = "Media/TerrainTexture.png";
@@ -503,8 +516,10 @@ void TillmanTest::RunTest(float diff)
 		fileNames[7] = "Media/TerrainTexture.png";
 		iT->SetTextures(fileNames);
 		//GetGraphics()->DeleteMesh(flagCSMTest);
-		GetGraphics()->DeleteMesh(bushCSMTest);
+		//GetGraphics()->DeleteMesh(bushCSMTest);
 		iT->UseAIMap(false);
+		GetGraphics()->DeleteTerrain(createTerrainIndexBufferCraschText);
+		oncee = false;
 	}
 
 		/*for(int i = 0; i < ttte * nrOfFrustumSlices; i++)
