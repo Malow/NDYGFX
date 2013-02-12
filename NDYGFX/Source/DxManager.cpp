@@ -246,8 +246,17 @@ void DxManager::CreateTerrain(Terrain* terrain)
 	vertexBufferDesc.Usage = BUFFER_DEFAULT;
 
 	Buffer* vertexBuffer = new Buffer();
-	if(FAILED(vertexBuffer->Init(this->Dx_Device, this->Dx_DeviceContext, vertexBufferDesc)))
-		MaloW::Debug("ERROR: Could not create vertex buffer. REASON: CreateTerrain(Terrain* terrain)");
+	HRESULT hr;
+	hr = vertexBuffer->Init(this->Dx_Device, this->Dx_DeviceContext, vertexBufferDesc);
+	if(FAILED(hr))
+	{
+		delete vertexBuffer;
+		vertexBuffer = NULL;
+
+		MaloW::Debug("ERROR: Could not create vertex buffer. REASON: DxManager: CreateTerrain(Terrain* terrain)."
+		+ string("ERROR code: '") 
+		+ MaloW::GetHRESULTErrorCodeString(hr));
+	}
 	terrain->SetVertexBuffer(vertexBuffer);
 
 	//Create index buffer
@@ -263,14 +272,16 @@ void DxManager::CreateTerrain(Terrain* terrain)
 
 		indexBuffer = new Buffer();
 		//**tmp testing: creating index buffer sometimes fails and generates slenda error**
-		HRESULT hr;
+		
 		hr = indexBuffer->Init(this->Dx_Device, this->Dx_DeviceContext, indexBufferDesc);
 		if(FAILED(hr))
 		{
-			MaloW::Debug("ERROR: Could not create index buffer. REASON: CreateTerrain(Terrain* terrain)."
-				+ string("ERROR code: '") + MaloW::convertNrToString((int)hr) + "'.");
 			delete indexBuffer; 
 			indexBuffer = NULL;
+
+			MaloW::Debug("ERROR: Could not create index buffer. REASON: DxManager: CreateTerrain(Terrain* terrain)."
+				+ string("ERROR code: '") 
+				+ MaloW::GetHRESULTErrorCodeString(hr));
 		}
 		terrain->SetIndexBuffer(indexBuffer);
 	}
@@ -286,72 +297,9 @@ void DxManager::CreateStaticMesh(StaticMesh* mesh)
 {
 	MaloW::Array<MeshStrip*>* strips = mesh->GetStrips();
 
-	for(int i = 0; i < strips->size(); i++)
+	//Check if a previous mesh already has set data.
+	if(strips->get(0)->GetRenderObject() == NULL)
 	{
-		MeshStrip* strip = strips->get(i);
-
-		BUFFER_INIT_DESC bufferDesc;
-		bufferDesc.ElementSize = sizeof(Vertex);
-		bufferDesc.InitData = strip->getVerts();
-		
-		
-		
-		// Last face black, should +1 this to solve it.
-		bufferDesc.NumElements = strip->getNrOfVerts();
-
-		bufferDesc.Type = VERTEX_BUFFER;
-		bufferDesc.Usage = BUFFER_DEFAULT;
-	
-		string resourceNameVertices = mesh->GetFilePath() + string("Strip") + MaloW::convertNrToString(i) + string("Vertices");
-		BufferResource* verts = GetResourceManager()->CreateBufferResource(resourceNameVertices.c_str(), bufferDesc);
-
-		BufferResource* inds = NULL; 
-		if(strip->getIndicies())
-		{
-			BUFFER_INIT_DESC bufferInds;
-			bufferInds.ElementSize = sizeof(int);
-			bufferInds.InitData = strip->getIndicies();
-			bufferInds.NumElements = strip->getNrOfIndicies();
-			bufferInds.Type = INDEX_BUFFER;
-			bufferInds.Usage = BUFFER_DEFAULT;
-	
-
-			string resourceNameIndices = mesh->GetFilePath() + string("Strip") + MaloW::convertNrToString(i) + string("Indices");
-			inds = GetResourceManager()->CreateBufferResource(resourceNameIndices.c_str(), bufferInds);
-		}
-
-		TextureResource* texture = NULL;
-		if(strip->GetTexturePath() != "")
-		{
-			texture = GetResourceManager()->CreateTextureResourceFromFile(strip->GetTexturePath().c_str());
-		}
-
-		TextureResource* billboardTexture = NULL;
-		if(mesh->GetBillboardFilePath() != "")
-		{
-			billboardTexture = GetResourceManager()->CreateTextureResourceFromFile(mesh->GetBillboardFilePath().c_str());
-		}
-		mesh->GetBillboardGFX()->SetTextureResource(billboardTexture);
-
-		Object3D* obj = new Object3D(verts, inds, texture, mesh->GetTopology()); 
-		strip->SetRenderObject(obj);
-	}
-
-	mesh->RecreateWorldMatrix(); 
-	
-	MeshEvent* re = new MeshEvent("Add Mesh", mesh, NULL);
-	this->PutEvent(re);
-}
-
-
-void DxManager::CreateAnimatedMesh(AnimatedMesh* mesh)
-{
-	MaloW::Array<KeyFrame*>* kfs = mesh->GetKeyFrames();
-	
-	for(int j = 0; j < kfs->size(); j++)
-	{
-		MaloW::Array<MeshStrip*>* strips = kfs->get(j)->strips;
-
 		for(int i = 0; i < strips->size(); i++)
 		{
 			MeshStrip* strip = strips->get(i);
@@ -363,13 +311,14 @@ void DxManager::CreateAnimatedMesh(AnimatedMesh* mesh)
 		
 			// Last face black, should +1 this to solve it.
 			bufferDesc.NumElements = strip->getNrOfVerts();
+
 			bufferDesc.Type = VERTEX_BUFFER;
 			bufferDesc.Usage = BUFFER_DEFAULT;
-			
-			string resourceNameVertices = mesh->GetFilePath() + string("Keyframe") + MaloW::convertNrToString(j) + string("Strip") + MaloW::convertNrToString(i) + string("Vertices");
+	
+			string resourceNameVertices = mesh->GetFilePath() + string("Strip") + MaloW::convertNrToString(i) + string("Vertices");
 			BufferResource* verts = GetResourceManager()->CreateBufferResource(resourceNameVertices.c_str(), bufferDesc);
 
-			BufferResource* inds = NULL;
+			BufferResource* inds = NULL; 
 			if(strip->getIndicies())
 			{
 				BUFFER_INIT_DESC bufferInds;
@@ -378,9 +327,9 @@ void DxManager::CreateAnimatedMesh(AnimatedMesh* mesh)
 				bufferInds.NumElements = strip->getNrOfIndicies();
 				bufferInds.Type = INDEX_BUFFER;
 				bufferInds.Usage = BUFFER_DEFAULT;
-				
-				string resourceNameIndices = mesh->GetFilePath() + string("Keyframe") + MaloW::convertNrToString(j) + string("Strip") + MaloW::convertNrToString(i) + string("Indices");
+	
 
+				string resourceNameIndices = mesh->GetFilePath() + string("Strip") + MaloW::convertNrToString(i) + string("Indices");
 				inds = GetResourceManager()->CreateBufferResource(resourceNameIndices.c_str(), bufferInds);
 			}
 
@@ -397,9 +346,86 @@ void DxManager::CreateAnimatedMesh(AnimatedMesh* mesh)
 			}
 			mesh->GetBillboardGFX()->SetTextureResource(billboardTexture);
 
-
 			Object3D* obj = new Object3D(verts, inds, texture, mesh->GetTopology()); 
 			strip->SetRenderObject(obj);
+		}
+	}
+
+	mesh->RecreateWorldMatrix(); 
+	
+	MeshEvent* re = new MeshEvent("Add Mesh", mesh, NULL);
+	this->PutEvent(re);
+}
+
+
+void DxManager::CreateAnimatedMesh(AnimatedMesh* mesh)
+{
+	MaloW::Array<KeyFrame*>* kfs = mesh->GetKeyFrames();
+	
+	for(int j = 0; j < kfs->size(); j++)
+	{
+		//if(kfs->get(j)->meshStripsResource != NULL)
+		{
+
+			MaloW::Array<MeshStrip*>* strips = kfs->get(j)->meshStripsResource->GetMeshStripsPointer();
+
+			//Check if a previous mesh already has set data.
+			if(strips->get(0)->GetRenderObject() == NULL)
+			{
+				for(int i = 0; i < strips->size(); i++)
+				{
+					MeshStrip* strip = strips->get(i);
+
+					BUFFER_INIT_DESC bufferDesc;
+					bufferDesc.ElementSize = sizeof(Vertex);
+					bufferDesc.InitData = strip->getVerts();
+		
+		
+					// Last face black, should +1 this to solve it.
+					bufferDesc.NumElements = strip->getNrOfVerts();
+					bufferDesc.Type = VERTEX_BUFFER;
+					bufferDesc.Usage = BUFFER_DEFAULT;
+			
+					string resourceNameVertices = mesh->GetFilePath() + string("Keyframe") + MaloW::convertNrToString(j) + string("Strip") + MaloW::convertNrToString(i) + string("Vertices");
+					BufferResource* verts = GetResourceManager()->CreateBufferResource(resourceNameVertices.c_str(), bufferDesc);
+
+					BufferResource* inds = NULL;
+					if(strip->getIndicies())
+					{
+						BUFFER_INIT_DESC bufferInds;
+						bufferInds.ElementSize = sizeof(int);
+						bufferInds.InitData = strip->getIndicies();
+						bufferInds.NumElements = strip->getNrOfIndicies();
+						bufferInds.Type = INDEX_BUFFER;
+						bufferInds.Usage = BUFFER_DEFAULT;
+				
+						string resourceNameIndices = mesh->GetFilePath() + string("Keyframe") + MaloW::convertNrToString(j) + string("Strip") + MaloW::convertNrToString(i) + string("Indices");
+
+						inds = GetResourceManager()->CreateBufferResource(resourceNameIndices.c_str(), bufferInds);
+					}
+
+					TextureResource* texture = NULL;
+					if(strip->GetTexturePath() != "")
+					{
+						texture = GetResourceManager()->CreateTextureResourceFromFile(strip->GetTexturePath().c_str());
+					}
+
+					TextureResource* billboardTexture = NULL;
+					if(mesh->GetBillboardFilePath() != "")
+					{
+						billboardTexture = GetResourceManager()->CreateTextureResourceFromFile(mesh->GetBillboardFilePath().c_str());
+					}
+					mesh->GetBillboardGFX()->SetTextureResource(billboardTexture);
+
+
+					Object3D* obj = new Object3D(verts, inds, texture, mesh->GetTopology()); 
+					strip->SetRenderObject(obj);
+				}
+			}
+		}
+		//else
+		{
+		//	float test = 1.0f;
 		}
 	}
 
@@ -641,7 +667,7 @@ void DxManager::CreateSkyBox(string texture)
 		delete this->skybox;
 		
 	SkyBox* sb = new SkyBox(this->camera->GetPositionD3DX(), 10, 10);
-	MeshStrip* strip = sb->GetStrips()->get(0);
+	MeshStrip* strip = sb->GetStrip();
 
 	// Create the desc for the buffer
 	BUFFER_INIT_DESC BufferDesc;
@@ -913,8 +939,17 @@ void DxManager::CreateWaterPlane( WaterPlane* wp, string texture )
 	vertexBufferDesc.Usage = BUFFER_DEFAULT;
 
 	Buffer* vertexBuffer = new Buffer();
-	if(FAILED(vertexBuffer->Init(this->Dx_Device, this->Dx_DeviceContext, vertexBufferDesc)))
-		MaloW::Debug("ERROR: Could not create vertex buffer. REASON: CreateWaterPlane");
+	HRESULT hr = vertexBuffer->Init(this->Dx_Device, this->Dx_DeviceContext, vertexBufferDesc);
+	if(FAILED(hr))
+	{
+		delete vertexBuffer; 
+		vertexBuffer = NULL;
+
+		MaloW::Debug("ERROR: Could not create vertex buffer. REASON: CreateWaterPlane."
+			+ string("ERROR code: '") 
+			+ MaloW::GetHRESULTErrorCodeString(hr));
+	}
+
 	wp->SetVertexBuffer(vertexBuffer);
 
 	

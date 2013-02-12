@@ -196,9 +196,6 @@
     <ClInclude Include="Source\BoundingSphere.h">
       <Filter>Source Files\Engine\Objects and Entities</Filter>
     </ClInclude>
-    <ClInclude Include="Source\MeshResource.h">
-      <Filter>Source Files\Engine\DxMan and Techs</Filter>
-    </ClInclude>
     <ClInclude Include="Source\TextureResource.h">
       <Filter>Source Files\Engine\DxMan and Techs</Filter>
     </ClInclude>
@@ -237,6 +234,9 @@
     </ClInclude>
     <ClInclude Include="Include\iBillboard.h">
       <Filter>Source Files\Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\MeshStripsResource.h">
+      <Filter>Source Files\Engine\DxMan and Techs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -354,9 +354,6 @@
     <ClCompile Include="Source\PhysicsEngine.cpp">
       <Filter>Source Files\Engine\Other</Filter>
     </ClCompile>
-    <ClCompile Include="Source\MeshResource.cpp">
-      <Filter>Source Files\Engine\DxMan and Techs</Filter>
-    </ClCompile>
     <ClCompile Include="Source\TextureResource.cpp">
       <Filter>Source Files\Engine\DxMan and Techs</Filter>
     </ClCompile>
@@ -392,6 +389,9 @@
     </ClCompile>
     <ClCompile Include="Source\Billboard.cpp">
       <Filter>Source Files\Engine\Objects and Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MeshStripsResource.cpp">
+      <Filter>Source Files\Engine\DxMan and Techs</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

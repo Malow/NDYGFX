@@ -19,7 +19,9 @@ AnimatedMesh::~AnimatedMesh()
 		unsigned int index = 0;
 		while(this->mKeyFrames->size() > 0)
 		{
-			GetResourceManager()->UnloadObjectDataResource(this->mSubFileNames[index++].c_str());
+			//**TILLMAN TEST**
+			//GetResourceManager()->UnloadObjectDataResource(this->mSubFileNames[index++].c_str());
+			
 
 			delete this->mKeyFrames->getAndRemove(0);
 		}
@@ -180,7 +182,8 @@ MaloW::Array<MeshStrip*>* AnimatedMesh::GetStrips()
 	return interpolated->strips;
 	*/
 
-	return two->strips;
+	//return two->strips;
+	return two->meshStripsResource->GetMeshStripsPointer();
 }
 
 void AnimatedMesh::SetCurrentTime(float currentTime)
@@ -250,8 +253,13 @@ bool AnimatedMesh::LoadFromFile(string file)
 			//The code for loading the object(+/data) files
 			{
 				string tmpPath = pathfolder + path;
-				ObjData* od = GetResourceManager()->LoadObjectDataResourceFromFile(tmpPath.c_str())->GetObjectDataPointer();
-			
+				//**TILLMAN TODO**
+				frame->meshStripsResource = GetResourceManager()->CreateMeshStripsResourceFromFile(tmpPath.c_str(), this->height);
+				
+
+				/*ObjData* od = GetResourceManager()->LoadObjectDataResourceFromFile(tmpPath.c_str())->GetObjectDataPointer();
+				
+				
 				if(od)
 				{
 					/////// For hit/bounding boxes
@@ -356,7 +364,7 @@ bool AnimatedMesh::LoadFromFile(string file)
 
 					this->topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 					//delete od;
-				}
+				}*/
 			}
 			this->mKeyFrames->add(frame);
 			

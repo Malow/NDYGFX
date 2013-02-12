@@ -138,8 +138,17 @@ void DxManager::RenderDeferredGeometry()
 				vertexBufferDesc.Usage = BUFFER_DEFAULT;
 
 				Buffer* newBuffer = new Buffer();
-				if(FAILED(newBuffer->Init(this->Dx_Device, this->Dx_DeviceContext, vertexBufferDesc)))
-					MaloW::Debug("ERROR: Could not create new vertex buffer for terrain.");
+				HRESULT hr = newBuffer->Init(this->Dx_Device, this->Dx_DeviceContext, vertexBufferDesc);
+				if(FAILED(hr))
+				{
+					delete newBuffer; 
+					newBuffer = NULL;
+
+					MaloW::Debug("ERROR: Could not create new vertex buffer for terrain."
+						+ string("ERROR code: '") 
+						+ MaloW::GetHRESULTErrorCodeString(hr));
+				}
+
 				//Set it
 				terrPtr->SetVertexBuffer(newBuffer);
 				//Delete old buffer
@@ -640,12 +649,12 @@ void DxManager::RenderDeferredGeometry()
 			if(D3DXVec3Length(&distance) < billboardRange || animatedMesh->GetBillboardFilePath() == "")
 			{
 
-				if(!animatedMesh->GetKeyFrames()->get(0)->strips->get(0)->GetCulled())
+				if(!animatedMesh->GetKeyFrames()->get(0)->meshStripsResource->GetMeshStripsPointer()->get(0)->GetCulled())
 				{
 					//Count(debug)
-					for(int o = 0; o < animatedMesh->GetKeyFrames()->get(0)->strips->size(); ++o)
+					for(int o = 0; o < animatedMesh->GetKeyFrames()->get(0)->meshStripsResource->GetMeshStripsPointer()->size(); ++o)
 					{
-						CurrentRenderedNrOfVertices += animatedMesh->GetKeyFrames()->get(0)->strips->get(o)->getNrOfVerts();
+						CurrentRenderedNrOfVertices += animatedMesh->GetKeyFrames()->get(0)->meshStripsResource->GetMeshStripsPointer()->get(o)->getNrOfVerts();
 					}
 					CurrentRenderedMeshes++;			
 
@@ -655,8 +664,8 @@ void DxManager::RenderDeferredGeometry()
 					animatedMesh->SetCurrentTime(this->Timer * 1000.0f); //Timer is in seconds.
 					animatedMesh->GetCurrentKeyFrames(&one, &two, t);
 
-					MaloW::Array<MeshStrip*>* stripsOne = one->strips;
-					MaloW::Array<MeshStrip*>* stripsTwo = two->strips;
+					MaloW::Array<MeshStrip*>* stripsOne = one->meshStripsResource->GetMeshStripsPointer();
+					MaloW::Array<MeshStrip*>* stripsTwo = two->meshStripsResource->GetMeshStripsPointer();
 		
 					// Set matrixes
 					world = animatedMesh->GetWorldMatrix();
@@ -734,7 +743,7 @@ void DxManager::RenderDeferredGeometry()
 				//**CULLING _ TILLMAN**
 				bool hasBeenCounted = false;
 				//Just check the first strip if it is culled. 
-				if(!animatedMesh->GetKeyFrames()->get(0)->strips->get(0)->GetCulled())
+				if(!animatedMesh->GetKeyFrames()->get(0)->meshStripsResource->GetMeshStripsPointer()->get(0)->GetCulled())
 				{
 					if(!hasBeenCounted)
 					{
@@ -789,7 +798,8 @@ void DxManager::RenderDeferredSkybox()
 	this->Shader_Skybox->SetFloat("FogHeight", this->camera->GetPosition().y + this->params.FarClip * 0.1f);
 	this->Shader_Skybox->SetFloat("CamY", this->camera->GetPosition().y);
 
-	MeshStrip* strip = this->skybox->GetStrips()->get(0);
+	//MeshStrip* strip = this->skybox->GetStrips()->get(0);
+	MeshStrip* strip = this->skybox->GetStrip();
 
 	Object3D* obj = strip->GetRenderObject();
 	this->Dx_DeviceContext->IASetPrimitiveTopology(obj->GetTopology());

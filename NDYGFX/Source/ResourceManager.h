@@ -4,20 +4,16 @@
 // 
 //	Manager for handling resources. 
 //	Resources include:
-//		Mesh(strips) - MeshResource.h.
+//		Mesh strips - MeshStripsResource.h.
 //		Textures - TextureResource.h. //**Tillman**
 //		Buffers - BufferResource.h
 //	Requirements: DirectX device & device context.
 //--------------------------------------------------------------------------------------------------
 #pragma once
 
-//#include "DirectX.h"
 #include "TextureResource.h"
-//#include "MeshResource.h" //**TILLMAN circkulär include - Object3d.h**
-//#include "ObjLoader.h"
 #include "ObjectDataResource.h"
-//#include "StaticMesh.h" //Circulär include - TILLMAN
-//#include "AnimatedMesh.h"
+#include "MeshStripsResource.h" //tillman todo
 
 #include "BufferResource.h"
 #include <string>
@@ -35,27 +31,41 @@ class ResourceManager
 		ID3D11Device*			gDevice;
 		ID3D11DeviceContext*	gDeviceContext;
 
-	private:
-		std::map<std::string, TextureResource*> zTextureResources;
-		std::map<std::string, ObjectDataResource*>			zObjectDataResources;
-		//std::map<std::string, ObjData*>			zObjectDataResources;
-		//std::map<std::string, MeshCounted*>	zMeshResources;
-		std::map<std::string, BufferResource*>	zBufferResources;
-		HANDLE mutex;
+    private:
+	    HANDLE mutex;
+
+		std::map<std::string, ObjectDataResource*>	zObjectDataResources; //Used by meshstripresources
+
+		std::map<std::string, TextureResource*>		zTextureResources;
+		std::map<std::string, BufferResource*>		zBufferResources;
+		std::map<std::string, MeshStripsResource*>	zMeshStripsResources;
 
 	private:
-		//void DoMinMax(D3DXVECTOR3& min, D3DXVECTOR3& max, D3DXVECTOR3 v); //tillman, used by loadmesh
-		//MaloW::Array<MeshStrip*>* LoadMesh(const char* filePath, ObjData* objData); //Helper function for loading the mesh from file.
+		void DoMinMax(D3DXVECTOR3& min, D3DXVECTOR3& max, D3DXVECTOR3 v); //tillman, used by loadmesh
+		MaloW::Array<MeshStrip*>* LoadMeshStrips(const char* filePath, ObjData* objData, float& height); //Helper function for loading the mesh strips from file.
+
+		//Object data
+		ObjectDataResource* LoadObjectDataResourceFromFile(const char* filePath);
+		void UnloadObjectDataResource(const char* filePath);
+
 
 	public:
 		ResourceManager();
 		virtual ~ResourceManager();
 
 		bool Init(ID3D11Device* device, ID3D11DeviceContext* deviceContext);
-
 		
 
-		//CREATE
+		//Preloading
+		/*
+			Texture resources are created with the default format (CreateTextureResourceFromFile(..)).
+			Buffer resources are not supported.
+			Supported resources are objectDataResources(.obj & .ani), Texture resources(default format)(.png & .dds).
+		*/
+		void PreLoadResources(unsigned int nrOfResources, char const* const* const resourcesFileNames);
+		
+
+
 		//Textures
 		/*	Creates a texture resource from file with:
 			BindFlags = D3D11_BIND_SHADER_RESOURCE;
@@ -81,15 +91,6 @@ class ResourceManager
 		void DeleteTextureResource(TextureResource* &textureResource);
 
 
-		//Mesh
-		//MeshCounted* CreateMeshFromFile(const char* filePath);
-		/*	Deletes the mesh resource sent through the parameter. The pointer to the mesh resource sent is automatically set to NULL.	*/
-		//void DeleteMesh(MeshResource* &meshResource);
-
-
-		//Object data
-		ObjectDataResource* LoadObjectDataResourceFromFile(const char* filePath);
-		void UnloadObjectDataResource(const char* filePath);
 
 		//Buffer
 		/*	
@@ -104,13 +105,14 @@ class ResourceManager
 		void DeleteBufferResource(BufferResource* &bufferResource);
 
 
-		//Preloading
-		/*
-			Texture resources are created with the default format (CreateTextureResourceFromFile(..)).
-			Buffer resources are not supported.
-			Supported resources are objectDataResources(.obj & .ani), Texture resources(default format)(.png & .dds).
-		*/
-		void PreLoadResources(unsigned int nrOfResources, char const* const* const resourcesFileNames);
+
+		//MeshStrips
+		/*	Creates and returns a MeshStripResource from an .obj-file. Height of the mesh is returned through the second parameter.	*/
+		MeshStripsResource* CreateMeshStripsResourceFromFile(const char* filePath, float& height);
+		/*	Deletes the MeshStripsResource sent through the parameter. The pointer to MeshStripsResource is automatically set to NULL.	*/
+		void DeleteMeshStripsResource(MeshStripsResource* &meshStripsResource);
+
+
 };
 
 bool ResourceManagerInit(ID3D11Device* device, ID3D11DeviceContext* deviceContext);

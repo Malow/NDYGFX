@@ -866,8 +866,11 @@ Vector3 GraphicsEngineImp::GetSceneAmbientLight() const
 
 void GraphicsEngineImp::DeleteTerrain( iTerrain*& terrain )
 {
-	this->dx->DeleteTerrain(dynamic_cast<Terrain*>(terrain));
-	terrain = 0;
+	if(terrain != NULL)
+	{
+		this->dx->DeleteTerrain(dynamic_cast<Terrain*>(terrain));
+		terrain = 0;
+	}
 }
 
 void GraphicsEngineImp::SetSunLightDisabled()

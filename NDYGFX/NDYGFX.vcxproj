@@ -54,7 +54,7 @@
     <ClInclude Include="Source\MaloWFileDebug.h" />
     <ClInclude Include="Source\Material.h" />
     <ClInclude Include="Source\Mesh.h" />
-    <ClInclude Include="Source\MeshResource.h" />
+    <ClInclude Include="Source\MeshStripsResource.h" />
     <ClInclude Include="Source\MeshStrip.h" />
     <ClInclude Include="Source\Object3D.h" />
     <ClInclude Include="Source\ObjectDataResource.h" />
@@ -110,7 +110,7 @@
     <ClCompile Include="Source\KeyListener.cpp" />
     <ClCompile Include="Source\Light.cpp" />
     <ClCompile Include="Source\Mesh.cpp" />
-    <ClCompile Include="Source\MeshResource.cpp" />
+    <ClCompile Include="Source\MeshStripsResource.cpp" />
     <ClCompile Include="Source\MeshStrip.cpp" />
     <ClCompile Include="Source\Object3D.cpp" />
     <ClCompile Include="Source\ObjectDataResource.cpp" />

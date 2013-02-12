@@ -20,6 +20,23 @@ class KeyFrame
 {
 	public:
 		int time;
+		MeshStripsResource* meshStripsResource;
+
+		KeyFrame() { this->time = 0; this->meshStripsResource = NULL; }
+		virtual ~KeyFrame()
+		{
+			if(this->meshStripsResource)
+			{
+				GetResourceManager()->DeleteMeshStripsResource(this->meshStripsResource);
+			}
+		}
+		KeyFrame(const KeyFrame* origObj)
+		{
+			this->time = origObj->time;
+			this->meshStripsResource = new MeshStripsResource(*origObj->meshStripsResource);
+		}
+
+		/*
 		MaloW::Array<MeshStrip*>* strips;
 
 		KeyFrame() { this->time = 0; this->strips = new MaloW::Array<MeshStrip*>(); }
@@ -41,7 +58,7 @@ class KeyFrame
 			{
 				this->strips->add(new MeshStrip(origObj->strips->get(i)));
 			}
-		}
+		}*/
 };
 
 

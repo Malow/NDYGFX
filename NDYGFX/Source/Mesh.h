@@ -10,7 +10,6 @@
 #include "iMesh.h"
 #include "Vector.h"
 #include "Billboard.h"
-//#include "MeshCounted.h"
 
 /*
 Mesh class that represents a 3d-object on the screen
@@ -37,7 +36,8 @@ protected:
 	COLOR specialColor;
 	bool usingInvisibilityEffect;
 
-	MaloW::Array<MeshStrip*>* strips;
+	//MaloW::Array<MeshStrip*>* strips;
+	MeshStripsResource* meshStripsResource;
 
 	bool dontRender;
 

@@ -7,7 +7,8 @@ Mesh::Mesh(D3DXVECTOR3 pos, string billboardFilePath, float distanceToSwapToBill
 	this->usingInvisibilityEffect = false;
 	//this->transparency = 0.0f;
 
-	this->strips = new MaloW::Array<MeshStrip*>();
+	//this->strips = new MaloW::Array<MeshStrip*>();
+	this->meshStripsResource = NULL;
 
 	this->dontRender = false;
 
@@ -24,13 +25,14 @@ Mesh::Mesh(D3DXVECTOR3 pos, string billboardFilePath, float distanceToSwapToBill
 }
 Mesh::~Mesh() 
 {
-	if(this->strips)
+	/*if(this->strips)
 	{
 		while(this->strips->size() > 0)
 			delete this->strips->getAndRemove(0);
 
 		delete this->strips;
-	}
+	}*/
+	GetResourceManager()->DeleteMeshStripsResource(this->meshStripsResource);
 	if(this->billboard) delete this->billboard; this->billboard = NULL;
 }
 
@@ -38,9 +40,33 @@ bool Mesh::LoadFromFile(string file)
 {
 	this->filePath = file;
 
-	ObjData* od = GetResourceManager()->LoadObjectDataResourceFromFile(this->filePath.c_str())->GetObjectDataPointer();
+	this->meshStripsResource = GetResourceManager()->CreateMeshStripsResourceFromFile(file.c_str(), this->height);
+	if(this->meshStripsResource != NULL)
+	{
+		this->topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+
+		//Set Billboard values
+		//Calculate billboard position(this needs to be updated as the mesh position changes).(don't forget to include the scale).
+		float halfHeightScaled = this->height * 0.5f * this->scale.y; //(yOffset)
+		D3DXVECTOR3 billboardPos = this->pos;
+		billboardPos.y += halfHeightScaled;
+		this->billboard->SetPosition(billboardPos);
+		//Calculate the size using Pythagoras theorem (don't forget to include the scale).
+		//Note that this returns the half size, so multiply by 2. **multiply 2 again wut - TILLMAN**
+		float size = sqrtf(powf(halfHeightScaled, 2.0f) * 0.5f) * 4.0f;
+		this->billboard->SetSize(D3DXVECTOR2(size, size));
+
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 	
-	try
+	/*ObjData* od = GetResourceManager()->LoadObjectDataResourceFromFile(this->filePath.c_str())->GetObjectDataPointer();
+
+	
+	//try
 	{
 		if(od)
 		{
@@ -155,12 +181,40 @@ bool Mesh::LoadFromFile(string file)
 			return true;
 		}
 	}
-	catch (...)
+	/*catch (...)
 	{
-		MaloW::Debug("Warning: Mesh: LoadFromFile(): Failed to set/copy loaded object data.");
+		//tillman debug testing
+		string somethingWasNull = "Unknown.";
+
+		if(od->faces == NULL)
+		{
+			somethingWasNull = "Faces-pointer was not created(NULL).";
+		}
+		if(od->mats == NULL)
+		{
+			somethingWasNull = "Mats-pointer was not created(NULL).";
+		}
+		if(od->textcoords == NULL)
+		{
+			somethingWasNull = "Texcoords-pointer was not created(NULL).";
+		}
+		if(od->vertsnorms == NULL)
+		{
+			somethingWasNull = "Vertsnorms->pointer was not created(NULL).";
+		}
+		if(od->vertspos == NULL)
+		{
+			somethingWasNull = "Vertpos->pointer was not created(NULL).";
+		}
+		if(od->vertsnorms == NULL)
+		{
+			somethingWasNull = "Norms->pointer was not created(NULL).";
+		}
+
+		MaloW::Debug("Warning: Mesh: LoadFromFile(): Failed to set/copy loaded object data, reason: " + somethingWasNull);
 	}
 			
-	return false;
+	return false;*/
 }
 
 void Mesh::SetSpecialColor(COLOR specialColor)

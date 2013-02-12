@@ -109,7 +109,7 @@ SkyBox::SkyBox(D3DXVECTOR3 pos, int latitude, int longitude) : StaticMesh(pos)
 	strip->setNrOfIndicies(m_numSphereFaces * 3);
 	strip->SetIndicies(indices);
 
-	this->strips->add(strip);
+	this->strip = strip;
 	
 
 	this->topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
@@ -117,7 +117,7 @@ SkyBox::SkyBox(D3DXVECTOR3 pos, int latitude, int longitude) : StaticMesh(pos)
 
 SkyBox::~SkyBox()
 {
-	
+	if(this->strip) delete this->strip; this->strip = NULL;
 }
 
 D3DXMATRIX SkyBox::GetSkyboxWorldMatrix(D3DXVECTOR3 camPos, float FarPlane)
@@ -136,4 +136,9 @@ D3DXMATRIX SkyBox::GetSkyboxWorldMatrix(D3DXVECTOR3 camPos, float FarPlane)
 	D3DXMATRIX worldMatrix = Scale * Translation;
 
 	return worldMatrix;
+}
+MeshStrip* SkyBox::GetStrip()
+{
+	//return this->strips->get(0);
+	return this->strip;
 }

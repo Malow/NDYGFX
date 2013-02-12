@@ -456,8 +456,8 @@ void DxManager::RenderShadowMap()
 					float t = 0.0f;
 					this->animations[i]->SetCurrentTime(this->Timer * 1000.0f); //Timer is in seconds.
 					this->animations[i]->GetCurrentKeyFrames(&one, &two, t);
-					MaloW::Array<MeshStrip*>* stripsOne = one->strips;
-					MaloW::Array<MeshStrip*>* stripsTwo = two->strips;
+					MaloW::Array<MeshStrip*>* stripsOne = one->meshStripsResource->GetMeshStripsPointer();
+					MaloW::Array<MeshStrip*>* stripsTwo = two->meshStripsResource->GetMeshStripsPointer();
 
 					//Set shader data (per object)
 					this->Shader_ShadowMapAnimated->SetFloat("t", t);
@@ -800,7 +800,7 @@ void DxManager::RenderCascadedShadowMap()
 
 						this->Dx_DeviceContext->DrawIndexed(inds->GetElementCount(), 0, 0);
 					}
-					else
+					else 
 					{
 						this->Dx_DeviceContext->Draw(verts->GetElementCount(), 0);
 					}
@@ -928,7 +928,7 @@ void DxManager::RenderCascadedShadowMap()
 					if(D3DXVec3Length(&distance) < billboardRange || animatedMesh->GetBillboardFilePath() == "")
 					{
 
-						if(!animatedMesh->GetKeyFrames()->get(0)->strips->get(0)->IsShadowCulled())
+						if(!animatedMesh->GetKeyFrames()->get(0)->meshStripsResource->GetMeshStripsPointer()->get(0)->IsShadowCulled())
 						{
 							currentRenderedMeshShadows++;
 
@@ -937,8 +937,8 @@ void DxManager::RenderCascadedShadowMap()
 							float t = 0.0f;
 							animatedMesh->SetCurrentTime(this->Timer * 1000.0f); //Timer is in seconds.
 							animatedMesh->GetCurrentKeyFrames(&one, &two, t);
-							MaloW::Array<MeshStrip*>* stripsOne = one->strips;
-							MaloW::Array<MeshStrip*>* stripsTwo = two->strips;
+							MaloW::Array<MeshStrip*>* stripsOne = one->meshStripsResource->GetMeshStripsPointer();
+							MaloW::Array<MeshStrip*>* stripsTwo = two->meshStripsResource->GetMeshStripsPointer();
 
 							//Set shader data (per object)
 							this->Shader_ShadowMapAnimated->SetFloat("t", t);
@@ -1125,10 +1125,10 @@ void DxManager::CalculateCulling()
 	for(int i = 0; i < this->animations.size(); i++)
 	{
 		AnimatedMesh* animatedMesh = this->animations.get(i);
-		if ( !animatedMesh->GetKeyFrames()->get(0)->strips->isEmpty() )
+		if ( !animatedMesh->GetKeyFrames()->get(0)->meshStripsResource->GetMeshStripsPointer()->isEmpty() )
 		{
 			float scale = max(animatedMesh->GetScaling().x, max(animatedMesh->GetScaling().y, animatedMesh->GetScaling().z));
-			MaloW::Array<MeshStrip*>* strips = animatedMesh->GetKeyFrames()->get(0)->strips;
+			MaloW::Array<MeshStrip*>* strips = animatedMesh->GetKeyFrames()->get(0)->meshStripsResource->GetMeshStripsPointer();
 			for(int u = 0; u < strips->size(); u++)
 			{
 				MeshStrip* strip = strips->get(u);
@@ -1227,11 +1227,10 @@ void DxManager::CalculateCulling()
 		{
 			AnimatedMesh* animatedMesh = this->animations.get(i);
 
-			if ( !animatedMesh->GetKeyFrames()->get(0)->strips->isEmpty() )
+			if ( !animatedMesh->GetKeyFrames()->get(0)->meshStripsResource->GetMeshStripsPointer()->isEmpty() )
 			{
 				float scale = max(animatedMesh->GetScaling().x, max(animatedMesh->GetScaling().y, animatedMesh->GetScaling().z));
-				MeshStrip* strip = animatedMesh->GetKeyFrames()->get(0)->strips->get(0);
-
+				
 				MaloW::Array<MeshStrip*>* strips = animatedMesh->GetStrips();
 				for(int j = 0; j < strips->size(); j++)
 				{

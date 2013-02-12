@@ -1,4 +1,6 @@
 #include "MeshStrip.h"
+#include "Object3D.h"
+#include "Material.h"
 
 MeshStrip::MeshStrip()
 {

@@ -72,5 +72,26 @@ namespace MaloW
 		writeFile << "Starting program at timer: " << timer << endl;
 		writeFile.close();
 	}
+
+	inline string GetHRESULTErrorCodeString(HRESULT hr)
+	{
+		switch (hr)
+		{
+			case E_OUTOFMEMORY:
+				return "Out of memory.";
+			case E_ACCESSDENIED:
+				return "Access denied.";
+			case E_INVALIDARG:
+				return "Invalid parameter value.";
+			case E_POINTER:
+				return "NULL was passed incorrectly for a pointer value.";
+			case E_UNEXPECTED:
+				return "Unexpected condition.";
+			case E_FAIL:
+				return "Unspecified error.";
+			default:
+				return "Other error.";
+		}	
+	}
 }
 #endif

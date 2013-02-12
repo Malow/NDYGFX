@@ -1,10 +1,13 @@
 #ifndef MESHSTRIP
 #define MESHSTRIP
 
-#include "Object3D.h"
-#include "Material.h"
 #include "BoundingSphere.h"
 #include <string>
+
+//Avoid circular include
+class Object3D;
+class Material;
+class Vertex;
 
 
 class MeshStrip
