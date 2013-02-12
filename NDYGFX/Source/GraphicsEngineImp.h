@@ -212,6 +212,8 @@ public:
 	virtual iWaterPlane* CreateWaterPlane(Vector3& pos, const char* texture);
 	virtual void DeleteWaterPlane(iWaterPlane* del);
 
+	virtual void ChangeShadowQuality(int newQual);
+
 	/*  Non-inherited functions */
 
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
