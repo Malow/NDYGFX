@@ -571,9 +571,14 @@ void GraphicsEngineImp::SetSpecialCircle(float innerRadius, float outerRadius, V
 
 void GraphicsEngineImp::PreLoadResources(unsigned int nrOfResources, const char** resourcesFileNames)
 {
-	GetResourceManager()->PreLoadResources(nrOfResources, resourcesFileNames);
-	//PreLoadEvent* re = new PreLoadEvent(nrOfResources, resourcesFileNames);
-	//this->PutEvent(re);
+	//GetResourceManager()->PreLoadResources(nrOfResources, resourcesFileNames);
+	char** arr = new char*[nrOfResources];
+	for(int i = 0; i < nrOfResources; i++)
+	{
+		arr[i] = new char(*resourcesFileNames[i]);
+	}
+	PreLoadEvent* re = new PreLoadEvent(nrOfResources, arr);
+	this->PutEvent(re);
 }
 
 void GraphicsEngineImp::LoadingScreen(const char* BackgroundTexture, const char* ProgressBarTexture, float FadeBlackInInTime, float FadeBlackInOutTime, float FadeBlackOutInTime, float FadeBlackOutOutTime)

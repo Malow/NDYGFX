@@ -53,7 +53,7 @@ void MaloWTest::PreTest()
 	iMesh* ball2 = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(20, 20, 20));
 	ball2->Scale(0.8f);
 
-	//iMesh* temp2 = GetGraphics()->CreateMesh("Media/token_wip_one_anim.fbx", Vector3(-10, 3, 0));
+	//iMesh* temp2 = GetGraphics()->CreateMesh("Media/temp_guy_supertest_anim.fbx", Vector3(-10, 3, 0));
 	//temp2->SetScale(0.05f);
 }
 
