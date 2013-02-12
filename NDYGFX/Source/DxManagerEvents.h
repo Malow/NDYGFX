@@ -240,3 +240,22 @@ public:
 
 	FBXMesh* GetFBXMesh() { this->deleteSelf = false; return this->mesh; }
 };
+
+
+class ChangeShadowQualityEvent : public RendererEvent
+{
+private:
+	int qual;
+
+public:
+	ChangeShadowQualityEvent(string message, int qual) : RendererEvent(message)
+	{
+		this->qual = qual; 
+	}
+	virtual ~ChangeShadowQualityEvent() 
+	{
+
+	}
+
+	int GetQuality() { return this->qual; }
+};

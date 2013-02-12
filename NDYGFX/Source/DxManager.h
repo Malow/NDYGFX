@@ -239,6 +239,8 @@ public:
 	void SetRendererSleep(float sleep);
 	float GetRendererSleep() const;
 
+	void ChangeShadowQuality(int newQual);
+
 	void SetSunLightProperties(Vector3 direction, Vector3 lightColor, float intensity);
 	void SetSunLightDisabled();
 	void SetSceneAmbientLight(D3DXVECTOR3 amb) { this->sceneAmbientLight = amb; }

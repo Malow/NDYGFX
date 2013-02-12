@@ -237,6 +237,17 @@ void DxManager::Life()
 			{
 				string msg = ((RendererEvent*)ev)->getMessage();
 				
+				//ChangeShadowQualityEvent
+				if(ChangeShadowQualityEvent* csqe = dynamic_cast<ChangeShadowQualityEvent*>(ev))
+				{
+					this->params.ShadowMapSettings = csqe->GetQuality();
+					if(this->csm)
+					{
+						this->useShadow = true;
+						this->csm->ResizeShadowmaps(this->Dx_Device, this->params.ShadowMapSettings);
+					}
+				}
+
 				//WaterPlaneEvent
 				if(dynamic_cast<FBXEvent*>(ev) != NULL)
 				{

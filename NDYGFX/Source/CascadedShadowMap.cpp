@@ -72,10 +72,11 @@ void CascadedShadowMap::CalcShadowMapMatrices(D3DXVECTOR3 sunLight, Camera* cam,
 	
 	
 	
-
+	// Normalize Sunlight
+	D3DXVec3Normalize(&sunLight, &sunLight);
 
 	//Calculate the light's view matrix.
-	D3DXVECTOR3 lightPos = D3DXVECTOR3(-1000, 1000, -1000); //**tillman - för sol/sun, ersätta med variabel**
+	D3DXVECTOR3 lightPos = D3DXVECTOR3(0.0f, 0.0f, 0.0f); //**tillman - för sol/sun, ersätta med variabel**
 	D3DXVECTOR3 lightLookAt = lightPos + sunLight; //sunlight = the direction the sun is "looking at".
 	D3DXVECTOR3 lightUp = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 	D3DXMATRIX lightViewMatrix;
@@ -278,4 +279,77 @@ void CascadedShadowMap::PreRender(D3DXVECTOR3 sunLight, Camera* cam, float nearP
 	{
 		CalcShadowMapMatrices(sunLight, cam, i, nearPlaneDistanceCloserToSun);
 	}
+}
+
+void CascadedShadowMap::ResizeShadowmaps(ID3D11Device* g_Device, int qual )
+{
+	this->quality = qual;
+	int width = (int)(256.0f * pow(2.0f, quality / 2.0f));
+	int height = (int)(256.0f * pow(2.0f, quality / 2.0f));
+
+
+	for(int i = 0; i < SHADOW_MAP_CASCADE_COUNT; i++)
+	{
+		if(this->shadowMapSRView[i])
+			this->shadowMapSRView[i]->Release();
+		if(this->shadowMap[i])
+			this->shadowMap[i]->Release();
+		if(this->shadowMapDepthView[i])
+			this->shadowMapDepthView[i]->Release();
+	}
+
+
+	for(int i = 0; i < SHADOW_MAP_CASCADE_COUNT; i++)
+	{
+		// Shadow Maps
+		//create the depth stencil
+		D3D11_TEXTURE2D_DESC shadowMapDescDepth;
+		ZeroMemory(&shadowMapDescDepth, sizeof(shadowMapDescDepth));
+		shadowMapDescDepth.Width = width;
+		shadowMapDescDepth.Height = height;
+		shadowMapDescDepth.MipLevels = 1;
+		shadowMapDescDepth.ArraySize = 1;
+		shadowMapDescDepth.Format = DXGI_FORMAT_R32_TYPELESS;
+		shadowMapDescDepth.SampleDesc.Count = 1;
+		shadowMapDescDepth.SampleDesc.Quality = 0;
+		shadowMapDescDepth.Usage = D3D11_USAGE_DEFAULT;
+		shadowMapDescDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
+		shadowMapDescDepth.CPUAccessFlags = 0;
+		shadowMapDescDepth.MiscFlags = 0;
+
+		if(FAILED(g_Device->CreateTexture2D(&shadowMapDescDepth, NULL, &shadowMap[i])))
+			MaloW::Debug("Cascaded Smaps failed.");
+
+
+		D3D11_DEPTH_STENCIL_VIEW_DESC descDSVShadowMap;
+		ZeroMemory(&descDSVShadowMap, sizeof(descDSVShadowMap));
+		descDSVShadowMap.Format = DXGI_FORMAT_D32_FLOAT;
+		descDSVShadowMap.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+		descDSVShadowMap.Texture2D.MipSlice = 0;
+
+		if(FAILED(g_Device->CreateDepthStencilView(shadowMap[i], &descDSVShadowMap, &shadowMapDepthView[i])))
+			MaloW::Debug("Cascaded Smaps failed.");
+
+
+		// Create the shader-resource view from the texture
+		D3D11_SHADER_RESOURCE_VIEW_DESC srDesc;
+		ZeroMemory(&srDesc, sizeof(srDesc));
+		srDesc.Format = DXGI_FORMAT_R32_FLOAT;
+		srDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		srDesc.Texture2D.MostDetailedMip = 0;
+		srDesc.Texture2D.MipLevels = 1;
+
+		if(FAILED(g_Device->CreateShaderResourceView(shadowMap[i], &srDesc, &shadowMapSRView[i])))
+			MaloW::Debug("Cascaded Smaps failed.");
+
+
+		ShadowMapViewPort[i].Width = (float)width;
+		ShadowMapViewPort[i].Height = (float)height;
+		ShadowMapViewPort[i].MinDepth = 0.0f;
+		ShadowMapViewPort[i].MaxDepth = 1.0f;
+		ShadowMapViewPort[i].TopLeftX = 0;
+		ShadowMapViewPort[i].TopLeftY = 0;	
+	}
+
+	CalcShadowMappingSplitDepths();	
 }

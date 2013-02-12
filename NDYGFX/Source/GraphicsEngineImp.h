@@ -25,16 +25,25 @@ class PreLoadEvent : public MaloW::ProcessEvent
 private:
 	unsigned int nrOfResources;
 	char** resourcesFileNames;
+	bool selfDelete;
 
 public:
-	PreLoadEvent(unsigned int nrOfResources, const char** resourcesFileNames)
+	PreLoadEvent(unsigned int nrOfResources, char** resourcesFileNames)
 	{
 		this->nrOfResources = nrOfResources;
 		this->resourcesFileNames = (char**)resourcesFileNames;
 	}
 	virtual ~PreLoadEvent() 
 	{
-
+		if(this->resourcesFileNames)
+		{
+			for(int i = 0; i < this->nrOfResources; i++)
+			{
+				if(this->resourcesFileNames[i])
+					delete this->resourcesFileNames[i];
+			}
+			delete this->resourcesFileNames;
+		}
 	}
 
 	char** GetResourceFileNames() { return this->resourcesFileNames; }
@@ -202,6 +211,8 @@ public:
 
 	virtual iWaterPlane* CreateWaterPlane(Vector3& pos, const char* texture);
 	virtual void DeleteWaterPlane(iWaterPlane* del);
+
+	virtual void ChangeShadowQuality(int newQual);
 
 	/*  Non-inherited functions */
 

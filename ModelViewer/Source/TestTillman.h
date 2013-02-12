@@ -25,6 +25,9 @@ private:
 	iTerrain* iT;
 	char aiData[64*64];
 	iTerrain* iT2;
+
+	int vertSize;
+	float testSize;
 	iTerrain* createTerrainIndexBufferCraschText;
 
 
@@ -69,8 +72,8 @@ void TillmanTest::PreTest()
 
 
 
-	int vertSize = 64;
-	float testSize = 25.0f;
+	vertSize = 64;
+	testSize = 25.0f;
 	
 	iT = GetGraphics()->CreateTerrain(Vector3(0, 0, 0), Vector3(testSize, 1.0f, testSize), vertSize);
 	iT2 = GetGraphics()->CreateTerrain(Vector3(testSize, 0, 0), Vector3(testSize, 1.0f, testSize), vertSize);
@@ -106,6 +109,16 @@ void TillmanTest::PreTest()
 		}*/
 		hmData[i] = 1.0f;
 	}
+
+	hmData[2033] = 15.0f;
+	hmData[2034] = 15.0f;
+	hmData[2035] = 15.0f;
+	hmData[2036] = 15.0f;
+	hmData[2097] = 15.0f;
+	hmData[2098] = 15.0f;
+	hmData[2099] = 15.0f;
+	hmData[2100] = 15.0f;
+
 	iT->SetHeightMap(hmData);
 	fileNames[0] = "Media/01_v02-Moss.png";
 	fileNames[1] = "Media/01_v02-Moss.png";
@@ -206,6 +219,7 @@ void TillmanTest::PreTest()
 
 	iMesh* bush = GetGraphics()->CreateMesh("Media/Bush_01_v04_r.obj", Vector3(30, 10, 30));
 	bush->Scale(1.0f * 0.05f);
+
 
 
 
@@ -443,6 +457,15 @@ void TillmanTest::RunTest(float diff)
 		float angle = acos(vec.GetDotProduct(vecBetweenSpawnAndArrow) / (vec.GetLength() * vecBetweenSpawnAndArrow.GetLength()));
 		navArrowSpawn->RotateAxis(around, angle);
 		*/
+
+	CollisionData cd = GetGraphics()->GetPhysicsEngine()->GetSpecialCollisionRayTerrain(GetGraphics()->GetCamera()->GetPosition(),
+		GetGraphics()->GetCamera()->Get3DPickingRay(), iT2, testSize / (vertSize - 1));
+	if(cd.collision)
+		mmm->SetPosition(Vector3(cd.posx, cd.posy, cd.posz));
+	else
+	{
+		mmm->SetPosition(Vector3(0, 0, 0));
+	}
 
 	//CASCADED SHADOW MAPPING
 	static float debugCSMScale = 1.0f;

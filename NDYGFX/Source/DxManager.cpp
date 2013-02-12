@@ -997,3 +997,17 @@ float DxManager::GetRendererSleep() const
 {
 	return this->RendererSleep;
 }
+
+void DxManager::ChangeShadowQuality( int newQual )
+{
+	if(newQual > 0)
+	{
+		ChangeShadowQualityEvent* re = new ChangeShadowQualityEvent("New Qual", newQual);
+		this->PutEvent(re);
+	}
+	else
+	{
+		this->useShadow = false;
+	}
+
+}

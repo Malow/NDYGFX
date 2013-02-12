@@ -52,4 +52,6 @@ public:
 	D3DXPLANE* GetCascadePlanes(unsigned int cascadeIndex) { return this->cascadePlanes[cascadeIndex]; } 
 	void CalcCascadePlanes(); 
 	float SetBlendDistance(float blendDist) { this->blendDistance = blendDist; }
+
+	void ResizeShadowmaps(ID3D11Device* g_Device, int qual);
 };

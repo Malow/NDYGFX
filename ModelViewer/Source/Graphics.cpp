@@ -24,6 +24,7 @@ bool FreeGraphics()
 		return 0;
 
 	delete engine;
+	engine = 0;
 
 	return true;
 }

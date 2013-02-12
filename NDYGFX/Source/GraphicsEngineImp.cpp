@@ -571,9 +571,14 @@ void GraphicsEngineImp::SetSpecialCircle(float innerRadius, float outerRadius, V
 
 void GraphicsEngineImp::PreLoadResources(unsigned int nrOfResources, const char** resourcesFileNames)
 {
-	GetResourceManager()->PreLoadResources(nrOfResources, resourcesFileNames);
-	//PreLoadEvent* re = new PreLoadEvent(nrOfResources, resourcesFileNames);
-	//this->PutEvent(re);
+	//GetResourceManager()->PreLoadResources(nrOfResources, resourcesFileNames);
+	char** arr = new char*[nrOfResources];
+	for(int i = 0; i < nrOfResources; i++)
+	{
+		arr[i] = new char(*resourcesFileNames[i]);
+	}
+	PreLoadEvent* re = new PreLoadEvent(nrOfResources, arr);
+	this->PutEvent(re);
 }
 
 void GraphicsEngineImp::LoadingScreen(const char* BackgroundTexture, const char* ProgressBarTexture, float FadeBlackInInTime, float FadeBlackInOutTime, float FadeBlackOutInTime, float FadeBlackOutOutTime)
@@ -851,7 +856,20 @@ void GraphicsEngineImp::ResizeGraphicsEngine( unsigned int width, unsigned int h
 {
 	MaloW::Debug("Resizing Engine to: " + MaloW::convertNrToString(width) + ", " + MaloW::convertNrToString(height));
 	if(this->isManagingMyOwnWindow)
-		SetWindowPos(this->hWnd, 0 , 0 , 0, width, height, SWP_NOMOVE|SWP_NOZORDER|SWP_NOACTIVATE);
+	{
+		RECT rc = { 0, 0, width, height };
+		if(this->parameters.Maximized)
+		{
+			AdjustWindowRectEx(&rc, WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_POPUP | WS_VISIBLE, FALSE, WS_EX_APPWINDOW | WS_EX_WINDOWEDGE);
+		}
+		else
+		{
+			AdjustWindowRect( &rc, WS_OVERLAPPEDWINDOW, FALSE );
+		}
+		//SetWindowPos(this->hWnd, 0 , 0 , 0, rc.right - rc.left, rc.bottom - rc.top, SWP_NOMOVE|SWP_NOZORDER|SWP_NOACTIVATE);
+		SetWindowPos(this->hWnd, 0 , 0 , 0, rc.right - rc.left, rc.bottom - rc.top, SWP_NOMOVE|SWP_NOZORDER|SWP_NOACTIVATE);
+	}
+
 
 	this->parameters.WindowWidth = width;
 	this->parameters.WindowHeight = height;
@@ -920,4 +938,9 @@ void GraphicsEngineImp::DeleteFBXMesh( iFBXMesh* mesh )
 {
 	if(FBXMesh* fmesh = dynamic_cast<FBXMesh*>(mesh))
 		this->dx->DeleteFBXMesh(fmesh);
+}
+
+void GraphicsEngineImp::ChangeShadowQuality( int newQual )
+{
+	this->dx->ChangeShadowQuality(newQual);
 }

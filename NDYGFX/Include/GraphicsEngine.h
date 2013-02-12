@@ -110,6 +110,8 @@ extern "C"
 
 		virtual iWaterPlane* CreateWaterPlane(Vector3& pos, const char* texture) = 0;
 		virtual void DeleteWaterPlane(iWaterPlane* del) = 0;
+
+		virtual void ChangeShadowQuality(int newQual) = 0;
 	};
 
 	/*
