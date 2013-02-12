@@ -929,6 +929,15 @@ void DxManager::CreateWaterPlane( WaterPlane* wp, string texture )
 	}
 	wp->SetTexture(tex);
 
+	TextureResource* tex2 = NULL;
+	if(texture != "")
+	{
+		texture = texture.substr(0, texture.length() - 4);
+		texture += "2.png";
+		tex2 = GetResourceManager()->CreateTextureResourceFromFile(texture.c_str());
+	}
+	wp->SetTexture2(tex2);
+
 
 	//Create vertex buffer
 	BUFFER_INIT_DESC vertexBufferDesc;

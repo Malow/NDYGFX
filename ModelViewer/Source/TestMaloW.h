@@ -116,9 +116,8 @@ void MaloWTest::RunTest(float diff)
 				//GetGraphics()->ResizeGraphicsEngine(750, 250);
 			}
 			*/
-			//GetGraphics()->ChangeShadowQuality(qual);
-			//qual++;
-			GetGraphics()->ResizeGraphicsEngine(1264, 947);
+			GetGraphics()->ChangeShadowQuality(qual);
+			qual++;
 			fesd = false;
 		}			
 	}

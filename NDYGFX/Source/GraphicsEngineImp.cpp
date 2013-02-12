@@ -866,10 +866,8 @@ void GraphicsEngineImp::ResizeGraphicsEngine( unsigned int width, unsigned int h
 		{
 			AdjustWindowRect( &rc, WS_OVERLAPPEDWINDOW, FALSE );
 		}
-		//SetWindowPos(this->hWnd, 0 , 0 , 0, rc.right - rc.left, rc.bottom - rc.top, SWP_NOMOVE|SWP_NOZORDER|SWP_NOACTIVATE);
 		SetWindowPos(this->hWnd, 0 , 0 , 0, rc.right - rc.left, rc.bottom - rc.top, SWP_NOMOVE|SWP_NOZORDER|SWP_NOACTIVATE);
 	}
-
 
 	this->parameters.WindowWidth = width;
 	this->parameters.WindowHeight = height;
