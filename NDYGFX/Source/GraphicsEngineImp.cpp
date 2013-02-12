@@ -923,3 +923,8 @@ void GraphicsEngineImp::DeleteFBXMesh( iFBXMesh* mesh )
 	if(FBXMesh* fmesh = dynamic_cast<FBXMesh*>(mesh))
 		this->dx->DeleteFBXMesh(fmesh);
 }
+
+void GraphicsEngineImp::ChangeShadowQuality( int newQual )
+{
+	this->dx->ChangeShadowQuality(newQual);
+}

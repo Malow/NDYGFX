@@ -94,10 +94,12 @@ void MaloWTest::RunTest(float diff)
 
 
 	static bool fesd = true;
+	static int qual = 0;
 	if(GetGraphics()->GetKeyListener()->IsPressed('H'))
 	{
 		if(fesd)
 		{
+			/*
 			if(GetGraphics()->GetCamera()->GetCameraType() == RTS)
 			{
 				Vector3 fw = GetGraphics()->GetCamera()->GetForward();
@@ -112,7 +114,10 @@ void MaloWTest::RunTest(float diff)
 				GetGraphics()->GetCamera()->SetForward(fw);
 				//GetGraphics()->ResizeGraphicsEngine(750, 250);
 			}
-			//fesd = false;
+			*/
+			GetGraphics()->ChangeShadowQuality(qual);
+			qual++;
+			fesd = false;
 		}			
 	}
 	else
