@@ -75,8 +75,9 @@ void MaloWTest::RunTest(float diff)
 	//MaloW::Debug("Special: " + MaloW::convertNrToString(diff));
 	//MaloW::Debug(" ");
 	//diff = 100.0f;
-	cd = GetGraphics()->GetPhysicsEngine()->GetCollisionRayMesh(GetGraphics()->GetCamera()->GetPosition(), 
-		GetGraphics()->GetCamera()->GetForward(), wp);
+	for(int i = 0; i < 1500; i++)
+		cd = GetGraphics()->GetPhysicsEngine()->GetCollisionRayMesh(GetGraphics()->GetCamera()->GetPosition(), 
+			GetGraphics()->GetCamera()->GetForward(), wp);
 		
 	if(cd.BoundingSphereCollision)
 	{
@@ -115,8 +116,9 @@ void MaloWTest::RunTest(float diff)
 				//GetGraphics()->ResizeGraphicsEngine(750, 250);
 			}
 			*/
-			GetGraphics()->ChangeShadowQuality(qual);
-			qual++;
+			//GetGraphics()->ChangeShadowQuality(qual);
+			//qual++;
+			GetGraphics()->ResizeGraphicsEngine(1264, 947);
 			fesd = false;
 		}			
 	}

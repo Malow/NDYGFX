@@ -856,7 +856,20 @@ void GraphicsEngineImp::ResizeGraphicsEngine( unsigned int width, unsigned int h
 {
 	MaloW::Debug("Resizing Engine to: " + MaloW::convertNrToString(width) + ", " + MaloW::convertNrToString(height));
 	if(this->isManagingMyOwnWindow)
-		SetWindowPos(this->hWnd, 0 , 0 , 0, width, height, SWP_NOMOVE|SWP_NOZORDER|SWP_NOACTIVATE);
+	{
+		RECT rc = { 0, 0, width, height };
+		if(this->parameters.Maximized)
+		{
+			AdjustWindowRectEx(&rc, WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_POPUP | WS_VISIBLE, FALSE, WS_EX_APPWINDOW | WS_EX_WINDOWEDGE);
+		}
+		else
+		{
+			AdjustWindowRect( &rc, WS_OVERLAPPEDWINDOW, FALSE );
+		}
+		//SetWindowPos(this->hWnd, 0 , 0 , 0, rc.right - rc.left, rc.bottom - rc.top, SWP_NOMOVE|SWP_NOZORDER|SWP_NOACTIVATE);
+		SetWindowPos(this->hWnd, 0 , 0 , 0, rc.right - rc.left, rc.bottom - rc.top, SWP_NOMOVE|SWP_NOZORDER|SWP_NOACTIVATE);
+	}
+
 
 	this->parameters.WindowWidth = width;
 	this->parameters.WindowHeight = height;
