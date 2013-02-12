@@ -251,9 +251,6 @@ PSOut PSScene(PSSceneIn input) : SV_Target
 	//Texture RT
 	output.Texture.xyz = finalColor;
 	output.Texture.w = -1.0f;
-
-	// Probe Normals
-	output.Texture.xyz = input.norm;
 	
 	//NormalAndDepth RT
 	//output.NormalAndDepth = float4(input.norm, input.pos.z / input.pos.w);	
