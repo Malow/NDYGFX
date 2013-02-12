@@ -103,11 +103,10 @@ void DxManager::RenderDeferredGeometry()
 			//Calculate matrices & set them
 			world = terrPtr->GetWorldMatrix();
 			wvp = world * view * proj;
-			D3DXMatrixInverse(&worldInverseTranspose, NULL, &world); //worldInverseTranspose needs to be an identity matrix.
-			D3DXMatrixTranspose(&worldInverseTranspose, &worldInverseTranspose); //Used for calculating right normal
+
+			// Set Shader Variables
 			this->Shader_TerrainEditor->SetMatrix("WVP", wvp);
 			this->Shader_TerrainEditor->SetMatrix("worldMatrix", world);
-			this->Shader_TerrainEditor->SetMatrix("worldMatrixInverseTranspose", worldInverseTranspose);
 
 			//Update vertex buffer if y-value for vertices (height map) have changed
 			if(terrPtr->HasHeightMapChanged() && terrPtr->HaveNormalsChanged()) //**TILLMAN LOADTHREAD**

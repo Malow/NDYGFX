@@ -11,6 +11,8 @@
 #include "TestMaloW.h"
 #include "TestTillman.h"
 #include "TestOther.h"
+#include "TestTerrainNormals.h"
+
 
 void ReplaceSlashes(string& str, char replace, char with)
 {
@@ -69,9 +71,52 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	#endif
 #endif
 
+	// Run As Simple ModelViewer
+	TestCase* activeTestCase = 0;
+
+	// Test Cases
+	// activeTestCase = new TestTerrainNormals();
+
+	if ( activeTestCase )
+	{
+		activeTestCase->PreTest();
+		GetGraphics()->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 1.0f, 1.0f, 1.0f, 1.0f);
+		
+		while(GetGraphics()->IsRunning())
+		{
+			float deltaTime = GetGraphics()->Update();
+			
+			if(GetGraphics()->GetKeyListener()->IsPressed('W'))
+				GetGraphics()->GetCamera()->MoveForward(deltaTime * 10.0f);
+			if(GetGraphics()->GetKeyListener()->IsPressed('A'))
+				GetGraphics()->GetCamera()->MoveLeft(deltaTime * 10.0f);
+			if(GetGraphics()->GetKeyListener()->IsPressed('S'))	
+				GetGraphics()->GetCamera()->MoveBackward(deltaTime * 10.0f);
+			if(GetGraphics()->GetKeyListener()->IsPressed('D'))	
+				GetGraphics()->GetCamera()->MoveRight(deltaTime * 10.0f);
+			
+			// Reload Graphics Engine
+			if( GetGraphics()->GetKeyListener()->IsPressed('R') )
+			{
+				activeTestCase->PostTest();
+				FreeGraphics();
+				if ( !GraphicsInit(hInstance) ) { return 1; }
+				activeTestCase->PreTest();
+				GetGraphics()->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 1.0f, 1.0f, 1.0f, 1.0f);
+			}
+
+			activeTestCase->RunTest(deltaTime);
+		}
+
+		activeTestCase->PostTest();
+		
+		return 0;
+	}
+	
 	GetGraphics()->CreateSkyBox("Media/skymap.dds"); //** TILLMAN
 	GetGraphics()->GetCamera()->SetPosition(Vector3(25, 25, 20));
 	GetGraphics()->GetCamera()->LookAt(Vector3(0, 0, 0));
+
 	iLight* li = GetGraphics()->CreateLight(GetGraphics()->GetCamera()->GetPosition());
 	li->SetIntensity(0.001f);
 	GetGraphics()->SetSunLightProperties(Vector3(1, -1, 1));
@@ -83,14 +128,13 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 
 //*************************************	     PRE TEST       **********************
 #ifdef TEST
-	MaloWTest mt;
-	TillmanTest tt;
-	OtherTest ot;
-	mt.PreTest();
-	tt.PreTest();
-	ot.PreTest();
-	GetGraphics()->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png"
-		, 1.0f, 1.0f, 1.0f, 1.0f);
+		MaloWTest mt;
+		TillmanTest tt;
+		OtherTest ot;
+		mt.PreTest();
+		tt.PreTest();
+		ot.PreTest();
+		GetGraphics()->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 1.0f, 1.0f, 1.0f, 1.0f);
 #endif
 //*************************************	    END OF PRE TEST       **********************
 
