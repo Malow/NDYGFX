@@ -9,6 +9,7 @@
 
 // For textures
 Texture2D tex2D;
+Texture2D tex2D2;
 SamplerState linearSampler
 {
     Filter = MIN_MAG_MIP_LINEAR;
@@ -86,7 +87,9 @@ PSSceneIn VSScene(VSIn input)
 	output.WorldPos = mul(input.Pos, worldMatrix);
 	output.tex = input.tex;
 	//output.norm = normalize(mul(input.norm, (float3x3)worldMatrixInverseTranspose));
-	output.norm = input.norm;	// Hardcode the normal to straight up to get rid of lines between planes
+	output.norm = normalize(mul(input.norm, (float3x3)worldMatrixInverseTranspose));	
+	// Dont, do it in pixel shader cuz normal is used for elevation.
+	// Hardcode the normal to straight up to get rid of lines between planes
 	// Should work decently unless the plane is angled ALOT.
 
 	output.Color = input.Color;
@@ -102,8 +105,10 @@ PSout PSScene(PSSceneIn input) : SV_Target
 	float4 textureColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
 	if(textured)
 	{
-		//textureColor = tex2D.Sample(linearSampler, input.tex);
-		textureColor = tex2D.Sample(linearSampler, float2(input.WorldPos.x, input.WorldPos.z) * 0.1f);
+		textureColor = tex2D.Sample(linearSampler, float2(input.WorldPos.x, input.WorldPos.z) * 0.1f) * 0.65f;
+		textureColor += tex2D2.Sample(linearSampler, 
+			float2(input.WorldPos.x - (input.norm.x * timerMillis * 5.0f + sin(timerMillis) * 0.2f), 
+			input.WorldPos.z - (input.norm.z * timerMillis * 5.0f + cos(timerMillis) * 0.2f)) * 0.2f) * 0.35f;
 	}
 	float4 finalColor = float4((textureColor.xyz + input.Color.xyz) * DiffuseColor.xyz, 1.0f);
 	//finalColor.w = (float)specialColor;	/// Doesnt work, renders the entire plane with clear color
@@ -111,7 +116,7 @@ PSout PSScene(PSSceneIn input) : SV_Target
 
 	PSout output;
 	output.Texture = finalColor;
-	output.NormalAndDepth = float4(input.norm.xyz, input.Pos.z / input.Pos.w);		// pos.z / pos.w should work?
+	output.NormalAndDepth = float4(float3(0.0f, 1.0f, 0.0f), input.Pos.z / input.Pos.w);		// pos.z / pos.w should work?
 	float depth = length(CameraPosition.xyz - input.WorldPos.xyz) / FarClip;		// Haxfix
 	output.NormalAndDepth.w = depth;
 

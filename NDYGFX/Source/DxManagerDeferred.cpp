@@ -1156,6 +1156,7 @@ void DxManager::RenderDeferredGeoTranslucent()
 	this->Shader_DeferredGeoTranslucent->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetPositionD3DX(), 1));
 	this->Shader_DeferredGeoTranslucent->SetFloat("NearClip", this->params.NearClip);
 	this->Shader_DeferredGeoTranslucent->SetFloat("FarClip", this->params.FarClip);
+	this->Shader_DeferredGeoTranslucent->SetFloat("timerMillis", this->Timer);
 	D3DXMATRIX world;
 	D3DXMATRIX view = this->camera->GetViewMatrix();
 	D3DXMATRIX proj = this->camera->GetProjectionMatrix();
@@ -1192,13 +1193,15 @@ void DxManager::RenderDeferredGeoTranslucent()
 			if(verts)
 				verts->Apply();
 
-			if(ID3D11ShaderResourceView* texture = wp->GetTextureResource()->GetSRVPointer())//**TILLMAN
-			{
-				this->Shader_DeferredGeoTranslucent->SetBool("textured", true);
-				this->Shader_DeferredGeoTranslucent->SetResource("tex2D", texture);
-			}
-			else
-				this->Shader_DeferredGeoTranslucent->SetBool("textured", false);
+			if(ID3D11ShaderResourceView* texture = wp->GetTextureResource()->GetSRVPointer())
+				if(ID3D11ShaderResourceView* texture2 = wp->GetTextureResource2()->GetSRVPointer())//**TILLMAN
+				{
+					this->Shader_DeferredGeoTranslucent->SetBool("textured", true);
+					this->Shader_DeferredGeoTranslucent->SetResource("tex2D", texture);
+					this->Shader_DeferredGeoTranslucent->SetResource("tex2D2", texture2);
+				}
+				else
+					this->Shader_DeferredGeoTranslucent->SetBool("textured", false);
 
 			this->Shader_DeferredGeoTranslucent->Apply(0);
 			this->Dx_DeviceContext->Draw(verts->GetElementCount(), 0);
@@ -1206,6 +1209,7 @@ void DxManager::RenderDeferredGeoTranslucent()
 	}
 	// Unbind resources static geometry:
 	this->Shader_DeferredGeoTranslucent->SetResource("tex2D", NULL);
+	this->Shader_DeferredGeoTranslucent->SetResource("tex2D2", NULL);
 	this->Shader_DeferredGeoTranslucent->Apply(0);
 }
 
