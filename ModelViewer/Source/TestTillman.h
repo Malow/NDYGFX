@@ -20,6 +20,11 @@ private:
 	Vector3 cameraLookAt;
 	Vector3 cameraPoint2;
 	Vector3 cameraLookAt2;
+	Vector3 cameraPoint3;
+	Vector3	cameraLookAt3;
+	
+
+
 	iMesh* bushCSMTest;
 	const char* fileNames[8];
 	iTerrain* iT;
@@ -364,7 +369,10 @@ void TillmanTest::PreTest()
 	cameraLookAt = Vector3(100.0f, 0.0f, 0.0f);
 	cameraPoint2 = Vector3(25.0f, 5.0f, 25.0f);
 	cameraLookAt2 = Vector3(100.0f, 0.0f, 100.0f);
+	cameraPoint3 = Vector3(-10.0f, 2.0f, 47.5f);
+	cameraLookAt3 = Vector3(100.0f, 2.0f, 47.5f);
 
+	
 	lll = GetGraphics()->CreateLight(Vector3(0,2,0));
 	lll->SetLookAt(Vector3(1, 0, 1));
 	lll->SetIntensity(1.0f);
@@ -437,19 +445,20 @@ void TillmanTest::PreTest()
 
 	createTerrainIndexBufferCraschText = GetGraphics()->CreateTerrain(Vector3(-25, 0, 0), Vector3(25, 0, 25), 32);
 
+	//Instancing benchmark
 	iTerrain* djurp;
-	for(int i = 0; i < 1; i++)
+	for(int i = 0; i < 2; i++)
 	{
-		
 		djurp = GetGraphics()->CreateTerrain(Vector3(i * 25, 0, 50), Vector3(testSize, 0.0f, testSize), vertSize);
 		djurp->SetTextures(fileNames);
 		djurp->SetBlendMaps(nrOfBlendMaps, sizes, testData);
+	}
 
-		
-
-		iMesh* treeWithBillboard = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(i * 10, 0, 50), "Media/TreeBillboard.png", 25.5f);
+	for(int i = 0; i < 10; i++)
+	{
+		iMesh* treeWithBillboard = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(i * 5, 0, 50), "Media/TreeBillboard.png", 0.5f);
 		treeWithBillboard->SetScale((0.061f));
-		iMesh* fernWithBillboard = GetGraphics()->CreateMesh("Media/Fern_02.ani", Vector3(i * 10, 0, 45), "Media/TreeBillboard.png", 25.5f);
+		iMesh* fernWithBillboard = GetGraphics()->CreateMesh("Media/Fern_02.ani", Vector3(i * 5, 0, 45), "Media/TreeBillboard.png", 0.5f);
 		fernWithBillboard->SetScale((0.15f));
 	}
 	
@@ -527,7 +536,7 @@ void TillmanTest::RunTest(float diff)
 		iT2->SetTextures(fileNames);
 		iT->SetAIGridThickness(0.0005f);
 		iT->UseAIMap(true);
-		if(!oncee)
+		/*if(!oncee)
 		{	
 			iMesh* loadFromFileTest = NULL;
 			iT->SetAIGrid(64, (void*)&aiData);
@@ -540,7 +549,7 @@ void TillmanTest::RunTest(float diff)
 				//createTerrainIndexBufferCraschText = GetGraphics()->CreateTerrain(Vector3(i * -25.0f, 0, 0), Vector3(25, 0, 25), 64);
 				//testtts = GetGraphics()->CreateMesh()
 			}
-		}
+		}*/
 	}
 	if(GetGraphics()->GetKeyListener()->IsPressed('E'))
 	{
@@ -582,6 +591,12 @@ void TillmanTest::RunTest(float diff)
 	{
 		GetGraphics()->GetCamera()->SetPosition(cameraPoint);
 		GetGraphics()->GetCamera()->LookAt(cameraLookAt);
+	}
+	//Camera reset/teleport
+	if(GetGraphics()->GetKeyListener()->IsPressed('B'))
+	{
+		GetGraphics()->GetCamera()->SetPosition(cameraPoint3);
+		GetGraphics()->GetCamera()->LookAt(cameraLookAt3);
 	}
 
 
