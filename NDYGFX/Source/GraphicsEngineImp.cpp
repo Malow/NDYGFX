@@ -228,6 +228,14 @@ LRESULT CALLBACK GraphicsEngineImp::WndProc(HWND hWnd, UINT message, WPARAM wPar
 					screenRect.bottom = screenRect.top + cRect.bottom;
 					ClipCursor(&screenRect);
 					//
+
+					POINT np;
+					np.x = gfx->GetEngineParams().WindowWidth/2;
+					np.y = gfx->GetEngineParams().WindowHeight/2;
+					if(ClientToScreen(hWnd, &np))
+					{
+						SetCursorPos(np.x, np.y);
+					}
 				}
 			}
 			break;
