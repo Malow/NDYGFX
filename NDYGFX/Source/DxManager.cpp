@@ -716,6 +716,7 @@ void DxManager::SetSpecialCircle(float innerRadius, float outerRadius, Vector2& 
 
 void DxManager::SetSunLightProperties( Vector3 direction, Vector3 lightColor, float intensity )
 {
+	direction.Normalize();
 	this->sun.direction = direction;
 	this->sun.lightColor = lightColor;
 	this->sun.intensity = intensity;

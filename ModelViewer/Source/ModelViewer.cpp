@@ -76,7 +76,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 
 	iLight* li = GetGraphics()->CreateLight(GetGraphics()->GetCamera()->GetPosition());
 	li->SetIntensity(0.001f);
-	GetGraphics()->SetSunLightProperties(Vector3(1, -1, 1));
+	GetGraphics()->SetSunLightProperties(Vector3(1, -1, 1), Vector3(1, 1, 1), 1.5f);
 	GetGraphics()->SetSceneAmbientLight(Vector3(0.4f, 0.4f, 0.4f));
 	iMesh* scaleHuman = GetGraphics()->CreateMesh("Media/scale.obj", Vector3(30, -300, 30));
 	iMesh* model = GetGraphics()->CreateMesh("Media/bth.obj", Vector3(15, 20, 20));
@@ -153,7 +153,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	float tempInt = 10.0f;
 	while(GetGraphics()->IsRunning() && go)
 	{
-		Sleep(10);
+		//Sleep(10);
 		string specString = GetGraphics()->GetSpecialString();
 		ReplaceSlashes(specString, '\\', '/');
 		if(specString != lastSpecString)

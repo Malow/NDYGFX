@@ -289,9 +289,9 @@ HRESULT GraphicsEngineImp::InitWindow(HINSTANCE hInstance, int nCmdShow)
 	}
 	else
 	{
-		AdjustWindowRect( &rc, WS_OVERLAPPEDWINDOW, FALSE );
-		this->hWnd = CreateWindow("GraphicsEngine", "GraphicsEngine - Direct3D 11.0", 
-			WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, 
+		AdjustWindowRect( &rc, WS_CAPTION | WS_POPUPWINDOW | WS_VISIBLE, FALSE );
+		this->hWnd = CreateWindowEx(WS_EX_OVERLAPPEDWINDOW, "GraphicsEngine", "GraphicsEngine - Direct3D 11.0", 
+			WS_CAPTION | WS_POPUPWINDOW | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, 
 			NULL, NULL, this->hInstance, this);
 	}
 	if(!this->hWnd)
@@ -300,7 +300,6 @@ HRESULT GraphicsEngineImp::InitWindow(HINSTANCE hInstance, int nCmdShow)
 	ShowWindow(this->hWnd, nCmdShow);
 	MoveWindow(this->hWnd, 0, 0, rc.right - rc.left, rc.bottom - rc.top, false);
 	DragAcceptFiles(hWnd,true);
-
 
 	if(this->isManagingMyOwnWindow)
 	{
@@ -918,12 +917,16 @@ void GraphicsEngineImp::ResizeGraphicsEngine( unsigned int width, unsigned int h
 		if(this->parameters.Maximized)
 		{
 			AdjustWindowRectEx(&rc, WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_POPUP | WS_VISIBLE, FALSE, WS_EX_APPWINDOW | WS_EX_WINDOWEDGE);
+			SetWindowLongPtr(this->hWnd, GWL_EXSTYLE, WS_EX_APPWINDOW | WS_EX_WINDOWEDGE);
+			SetWindowLongPtr(this->hWnd, GWL_STYLE, WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_POPUP | WS_VISIBLE);
 		}
 		else
 		{
-			AdjustWindowRect( &rc, WS_OVERLAPPEDWINDOW, FALSE );
+			AdjustWindowRect( &rc, WS_CAPTION | WS_POPUPWINDOW | WS_VISIBLE, FALSE );
+			SetWindowLongPtr(this->hWnd, GWL_EXSTYLE, WS_EX_OVERLAPPEDWINDOW);
+			//SetWindowLongPtr(this->hWnd, GWL_STYLE, WS_CAPTION | WS_POPUPWINDOW | WS_VISIBLE);
 		}
-		SetWindowPos(this->hWnd, 0 , 0 , 0, rc.right - rc.left, rc.bottom - rc.top, SWP_NOMOVE|SWP_NOZORDER|SWP_NOACTIVATE);
+		SetWindowPos(this->hWnd, 0 , 0 , 0, rc.right - rc.left, rc.bottom - rc.top, SWP_NOMOVE | SWP_NOACTIVATE);
 
 		// Confine cursor within program.
 		RECT cRect;

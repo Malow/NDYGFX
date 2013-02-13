@@ -569,8 +569,8 @@ float4 PSScene(PSSceneIn input) : SV_Target
 
 	float4 finalColor = float4((							
 		AmbientLight.xyz * DiffuseColor + 
-		DiffuseColor * diffuseLighting /*+ 
-		/*SpecularColor.xyz * specLighting*/), 
+		DiffuseColor * diffuseLighting + 
+		SpecularColor.xyz * specLighting), 
 		1.0f);
 
 	if(UseSun)
