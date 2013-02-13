@@ -7,7 +7,6 @@ Mesh::Mesh(D3DXVECTOR3 pos, string billboardFilePath, float distanceToSwapToBill
 	this->usingInvisibilityEffect = false;
 	//this->transparency = 0.0f;
 
-	//this->strips = new MaloW::Array<MeshStrip*>();
 	this->meshStripsResource = NULL;
 	this->isStripCulled = NULL;
 	this->isStripShadowCulled = NULL;
@@ -27,13 +26,6 @@ Mesh::Mesh(D3DXVECTOR3 pos, string billboardFilePath, float distanceToSwapToBill
 }
 Mesh::~Mesh() 
 {
-	/*if(this->strips)
-	{
-		while(this->strips->size() > 0)
-			delete this->strips->getAndRemove(0);
-
-		delete this->strips;
-	}*/
 	GetResourceManager()->DeleteMeshStripsResource(this->meshStripsResource);
 	if(this->isStripCulled) delete[] this->isStripCulled; this->isStripCulled = NULL;
 	if(this->isStripShadowCulled) delete[] this->isStripShadowCulled; this->isStripShadowCulled = NULL;
@@ -75,159 +67,6 @@ bool Mesh::LoadFromFile(string file)
 	{
 		return false;
 	}
-	
-	/*ObjData* od = GetResourceManager()->LoadObjectDataResourceFromFile(this->filePath.c_str())->GetObjectDataPointer();
-
-	
-	//try
-	{
-		if(od)
-		{
-			MaloW::Array<MaterialData>* mats = od->mats;
-			for(int q = 0; q < mats->size(); q++)
-			{
-				bool hasFace = false;
-				MeshStrip* strip = new MeshStrip();
-
-
-				/////// For hit/bounding boxes
-				D3DXVECTOR3 min = D3DXVECTOR3(99999.9f, 99999.9f, 99999.9f);
-				D3DXVECTOR3 max = -min;
-			
-
-				int nrOfVerts = 0;
-			
-				Vertex* tempverts = new Vertex[od->faces->size()*3];
-		
-				for(int i = 0;  i < od->faces->size(); i++)
-				{
-					if(od->faces->get(i).material == mats->get(q).name)
-					{
-						int vertpos = od->faces->get(i).data[0][0] - 1;
-						int textcoord = od->faces->get(i).data[0][1] - 1;
-						int norm = od->faces->get(i).data[0][2] - 1;
-						tempverts[nrOfVerts] = Vertex(od->vertspos->get(vertpos), od->textcoords->get(textcoord), od->vertsnorms->get(norm));
-						DoMinMax(min, max, tempverts[nrOfVerts].pos);
-						//For billboard
-						if(this->height < tempverts[nrOfVerts].pos.y)
-						{
-							this->height = tempverts[nrOfVerts].pos.y;
-						}
-						nrOfVerts++;
-
-						vertpos = od->faces->get(i).data[2][0] - 1;
-						textcoord = od->faces->get(i).data[2][1] - 1;
-						norm = od->faces->get(i).data[2][2] - 1;
-						tempverts[nrOfVerts] = Vertex(od->vertspos->get(vertpos), od->textcoords->get(textcoord), od->vertsnorms->get(norm));
-						DoMinMax(min, max, tempverts[nrOfVerts].pos);
-						//For billboard
-						if(this->height < tempverts[nrOfVerts].pos.y)
-						{
-							this->height = tempverts[nrOfVerts].pos.y;
-						}
-						nrOfVerts++;
-
-						vertpos = od->faces->get(i).data[1][0] - 1;
-						textcoord = od->faces->get(i).data[1][1] - 1;
-						norm = od->faces->get(i).data[1][2] - 1;
-						tempverts[nrOfVerts] = Vertex(od->vertspos->get(vertpos), od->textcoords->get(textcoord), od->vertsnorms->get(norm));
-						DoMinMax(min, max, tempverts[nrOfVerts].pos);
-						//For billboard
-						if(this->height < tempverts[nrOfVerts].pos.y)
-						{
-							this->height = tempverts[nrOfVerts].pos.y;
-						}
-						nrOfVerts++;
-
-						hasFace = true;
-					}
-				}
-
-				if(!hasFace)
-				{
-					delete tempverts;
-					delete strip;
-				}
-				else
-				{
-					strip->setNrOfVerts(nrOfVerts);
-					Vertex* verts = new Vertex[nrOfVerts];
-					for(int z = 0; z < nrOfVerts; z++)
-					{
-						verts[z] = tempverts[z];
-					}
-					delete tempverts;
-					strip->SetVerts(verts);
-
-					strip->SetTexturePath(od->mats->get(q).texture);
-
-					Material* mat = new Material();
-					mat->AmbientColor = od->mats->get(q).ka;
-					if(mat->AmbientColor == D3DXVECTOR3(0.0f, 0.0f, 0.0f))				//////////// MaloW Fix, otherwise completely black with most objs
-						mat->AmbientColor += D3DXVECTOR3(0.2f, 0.2f, 0.2f);			//////////// MaloW Fix, otherwise completely black with most objs
-
-					mat->DiffuseColor = od->mats->get(q).kd;
-					if(mat->DiffuseColor == D3DXVECTOR3(0.0f, 0.0f, 0.0f))				//////////// MaloW Fix, otherwise completely black with most objs
-						mat->DiffuseColor += D3DXVECTOR3(0.6f, 0.6f, 0.6f);			//////////// MaloW Fix, otherwise completely black with most objs
-
-					mat->SpecularColor = od->mats->get(q).ks;
-					strip->SetMaterial(mat);
-
-					strip->SetBoundingSphere(BoundingSphere(min, max));
-
-					this->strips->add(strip);
-				}
-			}
-			this->topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-
-			//Set Billboard values
-			//Calculate billboard position(this needs to be updated as the mesh position changes).(don't forget to include the scale).
-			float halfHeightScaled = this->height * 0.5f * this->scale.y; //(yOffset)
-			D3DXVECTOR3 billboardPos = this->pos;
-			billboardPos.y += halfHeightScaled;
-			this->billboard->SetPosition(billboardPos);
-			//Calculate the size using Pythagoras theorem (don't forget to include the scale).
-			//Note that this returns the half size, so multiply by 2. **multiply 2 again wut - TILLMAN**
-			float size = sqrtf(powf(halfHeightScaled, 2.0f) * 0.5f) * 4.0f;
-			this->billboard->SetSize(D3DXVECTOR2(size, size));
-			
-			return true;
-		}
-	}
-	/*catch (...)
-	{
-		//tillman debug testing
-		string somethingWasNull = "Unknown.";
-
-		if(od->faces == NULL)
-		{
-			somethingWasNull = "Faces-pointer was not created(NULL).";
-		}
-		if(od->mats == NULL)
-		{
-			somethingWasNull = "Mats-pointer was not created(NULL).";
-		}
-		if(od->textcoords == NULL)
-		{
-			somethingWasNull = "Texcoords-pointer was not created(NULL).";
-		}
-		if(od->vertsnorms == NULL)
-		{
-			somethingWasNull = "Vertsnorms->pointer was not created(NULL).";
-		}
-		if(od->vertspos == NULL)
-		{
-			somethingWasNull = "Vertpos->pointer was not created(NULL).";
-		}
-		if(od->vertsnorms == NULL)
-		{
-			somethingWasNull = "Norms->pointer was not created(NULL).";
-		}
-
-		MaloW::Debug("Warning: Mesh: LoadFromFile(): Failed to set/copy loaded object data, reason: " + somethingWasNull);
-	}
-			
-	return false;*/
 }
 
 void Mesh::SetSpecialColor(COLOR specialColor)

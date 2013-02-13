@@ -229,11 +229,12 @@ ResourceManager::~ResourceManager()
 			//An object data cannot be deleted since it's destructor is private to force correct use of texture creation/deletion.
 			//Instead decrease reference count until it deletes itself.
 			int refCount = objDataIterator->second->GetReferenceCount();
-			MaloW::Debug("WARNING: Resource manager deleted the object resource: '" 
+			//**TILLMAN endast preload kan orsaka detta
+			/*MaloW::Debug("WARNING: Resource manager deleted the object resource: '" 
 				+ objDataIterator->second->GetName() 
 				+ "'; missing decrease(s) in reference counter somewhere. Occurrences: " 
 				+ MaloW::convertNrToString(refCount - 1)
-				+ ". Keep in mind that the cause can be PreLoadResources()-function if the resource was loaded but not used.");
+				+ ". Keep in mind that the cause can be PreLoadResources()-function if the resource was loaded but not used.");*/
 			for(int i = 0; i < refCount; i++)
 			{
 				objDataIterator->second->DecreaseReferenceCount();
@@ -340,13 +341,13 @@ bool ResourceManager::Init(ID3D11Device* device, ID3D11DeviceContext* deviceCont
 
 
 
-void ResourceManager::PreLoadResources(unsigned int nrOfResources, char const* const* const resourcesFileNames)
+void ResourceManager::PreLoadResources(unsigned int nrOfResources, std::vector<string> resourcesFileNames)
 {
-	if(resourcesFileNames != NULL)
+	//if(resourcesFileNames != NULL)
 	{
 		for(unsigned int i = 0; i < nrOfResources; i++)
 		{
-			const char* resourcesFileName = resourcesFileNames[i];
+			const char* resourcesFileName = resourcesFileNames.at(i).c_str();
 			if(resourcesFileName != NULL)
 			{
 				string tmpFileName = string(resourcesFileName); 
@@ -730,16 +731,10 @@ MeshStripsResource* ResourceManager::CreateMeshStripsResourceFromFile(const char
 	else 
 		MaloW::Debug("Mutex is broken / hasn't been created / has been closed for ResourceManager: CreateMeshStripsResourceFromFile().");
 
-
 	ObjectDataResource* tmp = this->LoadObjectDataResourceFromFile(filePath);
 
-	MaloW::Debug("INFO: ResourceManager: CreateMeshStripsResourceFromFile(): the resource: '" + string(filePath) + "' was loaded.");
-	
 	if(tmp != NULL)
 	{
-		//Don't forget to decrease the reference pointer since its the resourcemanager loading the object. //**TILLMAN**
-		tmp->DecreaseReferenceCount();
-		
 		ObjData* objData = tmp->GetObjectDataPointer();
 		if(objData != NULL)
 		{
@@ -748,29 +743,29 @@ MeshStripsResource* ResourceManager::CreateMeshStripsResourceFromFile(const char
 			file = file.substr(0, file.length() - 4);
 			file += "Mesh";
 
-			auto findResource = this->zMeshStripsResources.find(filePath);
+			auto findResource = this->zMeshStripsResources.find(file);
 			//Check if the meshStripResource already exists
 			if(findResource == this->zMeshStripsResources.end())
 			{
 				//Create
 				MaloW::Array<MeshStrip*>* meshStrips = NULL;
 				//Load mesh strips
-				meshStrips = this->LoadMeshStrips(filePath, objData, billboardHeight);
+				meshStrips = this->LoadMeshStrips(file.c_str(), objData, billboardHeight);
 				//Create MeshStripsResource with the loaded mesh strips.
-				this->zMeshStripsResources[filePath] = new MeshStripsResource(filePath, meshStrips);
+				this->zMeshStripsResources[file] = new MeshStripsResource(file, meshStrips);
 				//Store billboard/mesh height
-				this->zMeshHeights[filePath] = billboardHeight;
+				this->zMeshHeights[file] = billboardHeight;
 				//Increase reference counter, release mutex, and return.
-				this->zMeshStripsResources[filePath]->IncreaseReferenceCount();
+				this->zMeshStripsResources[file]->IncreaseReferenceCount();
 				ReleaseMutex(this->mutex);
-				return this->zMeshStripsResources[filePath];
+				return this->zMeshStripsResources[file];
 			}
 			else
 			{
 				//If the MeshStripsResource already exists, increase reference counter & return it.
 				findResource->second->IncreaseReferenceCount();
 				//Set billboard/mesh height
-				billboardHeight = this->zMeshHeights.find(filePath)->second;
+				billboardHeight = this->zMeshHeights.find(file)->second;
 				//Release mutex and return.
 				ReleaseMutex(this->mutex);
 				return findResource->second;
@@ -803,6 +798,14 @@ void ResourceManager::DeleteMeshStripsResource(MeshStripsResource* &meshStripsRe
 
 	if(meshStripsResource)
 	{
+		//Decrease the reference counter for the data used to create the mesh strip resource
+		string file = "";
+		file = meshStripsResource->GetName().substr(0, meshStripsResource->GetName().length() - 4);
+		file += ".obj";
+
+		this->UnloadObjectDataResource(file.c_str());
+
+		//Decrease the reference counter for the mesh strip resource.
 		meshStripsResource->DecreaseReferenceCount();
 		//If reference count is 1, no objects other than the resource manager itself has a reference to it.
 		if(meshStripsResource->GetReferenceCount() == 1)

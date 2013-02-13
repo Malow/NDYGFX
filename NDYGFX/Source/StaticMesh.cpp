@@ -8,8 +8,7 @@ StaticMesh::StaticMesh(D3DXVECTOR3 pos, string billboardFilePath, float distance
 
 StaticMesh::~StaticMesh()
 {
-	//**TILLMAN TEST**
-	//GetResourceManager()->UnloadObjectDataResource(this->filePath.c_str());
+
 }
 
 bool StaticMesh::LoadFromFile(string file)
@@ -27,5 +26,4 @@ MaloW::Array<MeshStrip*>* StaticMesh::GetStrips()
 	{
 		return NULL;
 	}
-	//return this->strips;
 }

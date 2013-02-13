@@ -18,6 +18,7 @@
 #include "BufferResource.h"
 #include <string>
 #include <map>
+#include <vector>
 
 #include "Array.h"
 #include "MaloW.h"
@@ -39,10 +40,10 @@ class ResourceManager
 		std::map<std::string, TextureResource*>		zTextureResources;
 		std::map<std::string, BufferResource*>		zBufferResources;
 		std::map<std::string, MeshStripsResource*>	zMeshStripsResources;
-		std::map<std::string, int>					zMeshHeights;
+		std::map<std::string, int>					zMeshHeights; //Used by meshstripresources
 
 	private:
-		void DoMinMax(D3DXVECTOR3& min, D3DXVECTOR3& max, D3DXVECTOR3 v); //tillman, used by loadmesh
+		void DoMinMax(D3DXVECTOR3& min, D3DXVECTOR3& max, D3DXVECTOR3 v); //used by LoadMeshStrips
 		MaloW::Array<MeshStrip*>* LoadMeshStrips(const char* filePath, ObjData* objData, float& height); //Helper function for loading the mesh strips from file.
 
 		//Object data
@@ -63,7 +64,7 @@ class ResourceManager
 			Buffer resources are not supported.
 			Supported resources are objectDataResources(.obj & .ani), Texture resources(default format)(.png & .dds).
 		*/
-		void PreLoadResources(unsigned int nrOfResources, char const* const* const resourcesFileNames);
+		void PreLoadResources(unsigned int nrOfResources, std::vector<string> resourcesFileNames);
 		
 
 

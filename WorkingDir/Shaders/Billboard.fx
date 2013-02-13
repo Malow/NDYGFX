@@ -170,11 +170,9 @@ PSOut PS(PSIn input)
 		}
 
 		output.Texture = finalColor;
-		//return finalColor;
 	}
 	else
 	{
-		//return float4(input.color, 1.0f);
 		output.Texture = float4(input.color, 1.0f);
 	}
 
