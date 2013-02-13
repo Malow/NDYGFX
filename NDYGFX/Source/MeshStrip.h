@@ -7,7 +7,7 @@
 //Avoid circular include
 class Object3D;
 class Material;
-class Vertex;
+struct Vertex;
 
 
 class MeshStrip
