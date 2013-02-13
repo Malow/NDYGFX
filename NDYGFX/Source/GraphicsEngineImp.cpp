@@ -186,6 +186,7 @@ LRESULT CALLBACK GraphicsEngineImp::WndProc(HWND hWnd, UINT message, WPARAM wPar
 					gfx->SetManagingWindow(manage);
 				}
 					*/
+
 				if ( wParam == SIZE_MAXHIDE )
 				{
 
@@ -205,6 +206,28 @@ LRESULT CALLBACK GraphicsEngineImp::WndProc(HWND hWnd, UINT message, WPARAM wPar
 				else if ( wParam == SIZE_RESTORED )
 				{
 
+				}
+			}
+			break;
+
+		case WM_ACTIVATE:
+			{
+				if(wParam != 0)
+				{
+					// Confine cursor within program.
+					RECT cRect;
+					GetClientRect(hWnd, &cRect);
+					POINT topLeft;
+					topLeft.x = 0;
+					topLeft.y = 0;
+					ClientToScreen(hWnd, &topLeft);
+					RECT screenRect;
+					screenRect.left = topLeft.x;
+					screenRect.top = topLeft.y;
+					screenRect.right = screenRect.left + cRect.right;
+					screenRect.bottom = screenRect.top + cRect.bottom;
+					ClipCursor(&screenRect);
+					//
 				}
 			}
 			break;
@@ -269,6 +292,22 @@ HRESULT GraphicsEngineImp::InitWindow(HINSTANCE hInstance, int nCmdShow)
 	ShowWindow(this->hWnd, nCmdShow);
 	MoveWindow(this->hWnd, 0, 0, rc.right - rc.left, rc.bottom - rc.top, false);
 	DragAcceptFiles(hWnd,true);
+
+
+	// Confine cursor within program.
+	RECT cRect;
+	GetClientRect(this->hWnd, &cRect);
+	POINT topLeft;
+	topLeft.x = 0;
+	topLeft.y = 0;
+	ClientToScreen(this->hWnd, &topLeft);
+	RECT screenRect;
+	screenRect.left = topLeft.x;
+	screenRect.top = topLeft.y;
+	screenRect.right = screenRect.left + cRect.right;
+	screenRect.bottom = screenRect.top + cRect.bottom;
+	ClipCursor(&screenRect);
+	//
 
 	this->InitObjects();
 
@@ -872,6 +911,21 @@ void GraphicsEngineImp::ResizeGraphicsEngine( unsigned int width, unsigned int h
 	this->parameters.WindowWidth = width;
 	this->parameters.WindowHeight = height;
 	this->dx->ResizeEngine(width, height);
+
+	// Confine cursor within program.
+	RECT cRect;
+	GetClientRect(this->hWnd, &cRect);
+	POINT topLeft;
+	topLeft.x = 0;
+	topLeft.y = 0;
+	ClientToScreen(this->hWnd, &topLeft);
+	RECT screenRect;
+	screenRect.left = topLeft.x;
+	screenRect.top = topLeft.y;
+	screenRect.right = screenRect.left + cRect.right;
+	screenRect.bottom = screenRect.top + cRect.bottom;
+	ClipCursor(&screenRect);
+	//
 }
 
 Vector3 GraphicsEngineImp::GetSceneAmbientLight() const
