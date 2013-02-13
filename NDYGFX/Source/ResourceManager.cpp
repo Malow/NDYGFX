@@ -322,7 +322,8 @@ ResourceManager::~ResourceManager()
 	}
 	this->zMeshStripsResources.clear();
 
-
+	//Mesh/billboard heights
+	this->zMeshHeights.clear();
 
 	CloseHandle(this->mutex);
 }
@@ -757,6 +758,8 @@ MeshStripsResource* ResourceManager::CreateMeshStripsResourceFromFile(const char
 				meshStrips = this->LoadMeshStrips(filePath, objData, billboardHeight);
 				//Create MeshStripsResource with the loaded mesh strips.
 				this->zMeshStripsResources[filePath] = new MeshStripsResource(filePath, meshStrips);
+				//Store billboard/mesh height
+				this->zMeshHeights[filePath] = billboardHeight;
 				//Increase reference counter, release mutex, and return.
 				this->zMeshStripsResources[filePath]->IncreaseReferenceCount();
 				ReleaseMutex(this->mutex);
@@ -766,6 +769,8 @@ MeshStripsResource* ResourceManager::CreateMeshStripsResourceFromFile(const char
 			{
 				//If the MeshStripsResource already exists, increase reference counter & return it.
 				findResource->second->IncreaseReferenceCount();
+				//Set billboard/mesh height
+				billboardHeight = this->zMeshHeights.find(filePath)->second;
 				//Release mutex and return.
 				ReleaseMutex(this->mutex);
 				return findResource->second;

@@ -295,8 +295,8 @@ void DxManager::CreateTerrain(Terrain* terrain)
 
 void DxManager::CreateStaticMesh(StaticMesh* mesh)
 {
+	//Per Strip data
 	MaloW::Array<MeshStrip*>* strips = mesh->GetStrips();
-
 	//Check if a previous mesh already has set data.
 	if(strips->get(0)->GetRenderObject() == NULL)
 	{
@@ -339,17 +339,19 @@ void DxManager::CreateStaticMesh(StaticMesh* mesh)
 				texture = GetResourceManager()->CreateTextureResourceFromFile(strip->GetTexturePath().c_str());
 			}
 
-			TextureResource* billboardTexture = NULL;
-			if(mesh->GetBillboardFilePath() != "")
-			{
-				billboardTexture = GetResourceManager()->CreateTextureResourceFromFile(mesh->GetBillboardFilePath().c_str());
-			}
-			mesh->GetBillboardGFX()->SetTextureResource(billboardTexture);
-
 			Object3D* obj = new Object3D(verts, inds, texture, mesh->GetTopology()); 
 			strip->SetRenderObject(obj);
 		}
 	}
+
+	//Per Mesh data
+	TextureResource* billboardTexture = NULL;
+	if(mesh->GetBillboardFilePath() != "")
+	{
+		billboardTexture = GetResourceManager()->CreateTextureResourceFromFile(mesh->GetBillboardFilePath().c_str());
+	}
+	mesh->GetBillboardGFX()->SetTextureResource(billboardTexture);
+
 
 	mesh->RecreateWorldMatrix(); 
 	
@@ -364,68 +366,60 @@ void DxManager::CreateAnimatedMesh(AnimatedMesh* mesh)
 	
 	for(int j = 0; j < kfs->size(); j++)
 	{
-		//if(kfs->get(j)->meshStripsResource != NULL)
+		MaloW::Array<MeshStrip*>* strips = kfs->get(j)->meshStripsResource->GetMeshStripsPointer();
+
+		//Check if a previous mesh already has set data.
+		if(strips->get(0)->GetRenderObject() == NULL)
 		{
-
-			MaloW::Array<MeshStrip*>* strips = kfs->get(j)->meshStripsResource->GetMeshStripsPointer();
-
-			//Check if a previous mesh already has set data.
-			if(strips->get(0)->GetRenderObject() == NULL)
+			for(int i = 0; i < strips->size(); i++)
 			{
-				for(int i = 0; i < strips->size(); i++)
-				{
-					MeshStrip* strip = strips->get(i);
+				MeshStrip* strip = strips->get(i);
 
-					BUFFER_INIT_DESC bufferDesc;
-					bufferDesc.ElementSize = sizeof(Vertex);
-					bufferDesc.InitData = strip->getVerts();
+				BUFFER_INIT_DESC bufferDesc;
+				bufferDesc.ElementSize = sizeof(Vertex);
+				bufferDesc.InitData = strip->getVerts();
 		
 		
-					// Last face black, should +1 this to solve it.
-					bufferDesc.NumElements = strip->getNrOfVerts();
-					bufferDesc.Type = VERTEX_BUFFER;
-					bufferDesc.Usage = BUFFER_DEFAULT;
+				// Last face black, should +1 this to solve it.
+				bufferDesc.NumElements = strip->getNrOfVerts();
+				bufferDesc.Type = VERTEX_BUFFER;
+				bufferDesc.Usage = BUFFER_DEFAULT;
 			
-					string resourceNameVertices = mesh->GetFilePath() + string("Keyframe") + MaloW::convertNrToString(j) + string("Strip") + MaloW::convertNrToString(i) + string("Vertices");
-					BufferResource* verts = GetResourceManager()->CreateBufferResource(resourceNameVertices.c_str(), bufferDesc);
+				string resourceNameVertices = mesh->GetFilePath() + string("Keyframe") + MaloW::convertNrToString(j) + string("Strip") + MaloW::convertNrToString(i) + string("Vertices");
+				BufferResource* verts = GetResourceManager()->CreateBufferResource(resourceNameVertices.c_str(), bufferDesc);
 
-					BufferResource* inds = NULL;
-					if(strip->getIndicies())
-					{
-						BUFFER_INIT_DESC bufferInds;
-						bufferInds.ElementSize = sizeof(int);
-						bufferInds.InitData = strip->getIndicies();
-						bufferInds.NumElements = strip->getNrOfIndicies();
-						bufferInds.Type = INDEX_BUFFER;
-						bufferInds.Usage = BUFFER_DEFAULT;
+				BufferResource* inds = NULL;
+				if(strip->getIndicies())
+				{
+					BUFFER_INIT_DESC bufferInds;
+					bufferInds.ElementSize = sizeof(int);
+					bufferInds.InitData = strip->getIndicies();
+					bufferInds.NumElements = strip->getNrOfIndicies();
+					bufferInds.Type = INDEX_BUFFER;
+					bufferInds.Usage = BUFFER_DEFAULT;
 				
-						string resourceNameIndices = mesh->GetFilePath() + string("Keyframe") + MaloW::convertNrToString(j) + string("Strip") + MaloW::convertNrToString(i) + string("Indices");
+					string resourceNameIndices = mesh->GetFilePath() + string("Keyframe") + MaloW::convertNrToString(j) + string("Strip") + MaloW::convertNrToString(i) + string("Indices");
 
-						inds = GetResourceManager()->CreateBufferResource(resourceNameIndices.c_str(), bufferInds);
-					}
-
-					TextureResource* texture = NULL;
-					if(strip->GetTexturePath() != "")
-					{
-						texture = GetResourceManager()->CreateTextureResourceFromFile(strip->GetTexturePath().c_str());
-					}
-
-					TextureResource* billboardTexture = NULL;
-					if(mesh->GetBillboardFilePath() != "")
-					{
-						billboardTexture = GetResourceManager()->CreateTextureResourceFromFile(mesh->GetBillboardFilePath().c_str());
-					}
-					mesh->GetBillboardGFX()->SetTextureResource(billboardTexture);
-
-
-					Object3D* obj = new Object3D(verts, inds, texture, mesh->GetTopology()); 
-					strip->SetRenderObject(obj);
+					inds = GetResourceManager()->CreateBufferResource(resourceNameIndices.c_str(), bufferInds);
 				}
+
+				TextureResource* texture = NULL;
+				if(strip->GetTexturePath() != "")
+				{
+					texture = GetResourceManager()->CreateTextureResourceFromFile(strip->GetTexturePath().c_str());
+				}
+
+				TextureResource* billboardTexture = NULL;
+				if(mesh->GetBillboardFilePath() != "")
+				{
+					billboardTexture = GetResourceManager()->CreateTextureResourceFromFile(mesh->GetBillboardFilePath().c_str());
+				}
+				mesh->GetBillboardGFX()->SetTextureResource(billboardTexture);
+
+
+				Object3D* obj = new Object3D(verts, inds, texture, mesh->GetTopology()); 
+				strip->SetRenderObject(obj);
 			}
-		}
-		//else
-		{
-		//	float test = 1.0f;
 		}
 	}
 

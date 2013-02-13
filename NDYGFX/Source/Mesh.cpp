@@ -9,6 +9,8 @@ Mesh::Mesh(D3DXVECTOR3 pos, string billboardFilePath, float distanceToSwapToBill
 
 	//this->strips = new MaloW::Array<MeshStrip*>();
 	this->meshStripsResource = NULL;
+	this->isStripCulled = NULL;
+	this->isStripShadowCulled = NULL;
 
 	this->dontRender = false;
 
@@ -33,6 +35,8 @@ Mesh::~Mesh()
 		delete this->strips;
 	}*/
 	GetResourceManager()->DeleteMeshStripsResource(this->meshStripsResource);
+	if(this->isStripCulled) delete[] this->isStripCulled; this->isStripCulled = NULL;
+	if(this->isStripShadowCulled) delete[] this->isStripShadowCulled; this->isStripShadowCulled = NULL;
 	if(this->billboard) delete this->billboard; this->billboard = NULL;
 }
 
@@ -43,6 +47,15 @@ bool Mesh::LoadFromFile(string file)
 	this->meshStripsResource = GetResourceManager()->CreateMeshStripsResourceFromFile(file.c_str(), this->height);
 	if(this->meshStripsResource != NULL)
 	{
+		//Create arrays for culling
+		this->isStripCulled = new bool[this->meshStripsResource->GetMeshStripsPointer()->size()];
+		this->isStripShadowCulled = new bool[this->meshStripsResource->GetMeshStripsPointer()->size()];
+		for(int i = 0; i < this->meshStripsResource->GetMeshStripsPointer()->size(); i++)
+		{
+			this->isStripCulled[i] = false;
+			this->isStripShadowCulled[i] = false;
+		}
+
 		this->topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
 		//Set Billboard values
@@ -52,7 +65,7 @@ bool Mesh::LoadFromFile(string file)
 		billboardPos.y += halfHeightScaled;
 		this->billboard->SetPosition(billboardPos);
 		//Calculate the size using Pythagoras theorem (don't forget to include the scale).
-		//Note that this returns the half size, so multiply by 2. **multiply 2 again wut - TILLMAN**
+		//Note that this returns the half of the half size, so multiply by 4.
 		float size = sqrtf(powf(halfHeightScaled, 2.0f) * 0.5f) * 4.0f;
 		this->billboard->SetSize(D3DXVECTOR2(size, size));
 

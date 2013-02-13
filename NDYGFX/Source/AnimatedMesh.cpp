@@ -225,6 +225,9 @@ bool AnimatedMesh::LoadFromFile(string file)
 		tempFilename = tempFilename.substr(slashpos + 1);
 	}
 
+
+	bool doOnce = false;
+
 	ifstream anifile;
 	anifile.open(file);
 	if(anifile)
@@ -253,8 +256,21 @@ bool AnimatedMesh::LoadFromFile(string file)
 			//The code for loading the object(+/data) files
 			{
 				string tmpPath = pathfolder + path;
-				//**TILLMAN TODO**
+			
 				frame->meshStripsResource = GetResourceManager()->CreateMeshStripsResourceFromFile(tmpPath.c_str(), this->height);
+				//TILLMAN - per frame? omstrukturering på meshklasserna?**
+				if(!doOnce)
+				{
+					//Create arrays for culling
+					this->isStripCulled = new bool[frame->meshStripsResource->GetMeshStripsPointer()->size()];
+					this->isStripShadowCulled = new bool[frame->meshStripsResource->GetMeshStripsPointer()->size()];
+					for(int i = 0; i < frame->meshStripsResource->GetMeshStripsPointer()->size(); i++)
+					{
+						this->isStripCulled[i] = false;
+						this->isStripShadowCulled[i] = false;
+					}
+					doOnce = true;
+				}
 				
 
 				/*ObjData* od = GetResourceManager()->LoadObjectDataResourceFromFile(tmpPath.c_str())->GetObjectDataPointer();

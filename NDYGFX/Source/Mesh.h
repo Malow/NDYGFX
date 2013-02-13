@@ -38,6 +38,8 @@ protected:
 
 	//MaloW::Array<MeshStrip*>* strips;
 	MeshStripsResource* meshStripsResource;
+	bool* isStripCulled;
+	bool* isStripShadowCulled;
 
 	bool dontRender;
 
@@ -59,6 +61,14 @@ public:
 	
 	// ID
 	string GetFilePath() { return this->filePath; }
+
+	// Culling
+	bool IsStripCulled(unsigned int index) { return this->isStripCulled[index]; }
+	bool IsStripShadowCulled(unsigned int index) { return this->isStripShadowCulled[index]; }
+	void SetStripCulledFlag(unsigned int index, bool flag) { this->isStripCulled[index] = flag; }
+	void SetStripShadowCulledFlag(unsigned index, bool flag) { this->isStripShadowCulled[index] = flag; }
+
+	MeshStripsResource* GetMeshStripsResourcePointer() { return this->meshStripsResource; }
 
 	// Billboard
 	float GetHeight() { return this->height; }

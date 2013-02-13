@@ -132,8 +132,8 @@ void TillmanTest::PreTest()
 	float normals2[64 * 64 * 3]; //vertSize = 64;
 	for(int i = 0; i < 64 * 64 * 3; i+=3)
 	{
-		normals2[i] = 1.0f;	//x
-		normals2[i + 1] = 0.0f;	//y
+		normals2[i] = 0.0f;	//x
+		normals2[i + 1] = 1.0f;	//y
 		normals2[i + 2] = 0.0f;	//z
 	}
 	iT->SetNormals(normals2);
@@ -187,7 +187,7 @@ void TillmanTest::PreTest()
 	fileNames[7] = "Media/TerrainTexture.png";
 
 	float normals[64 * 64 * 3]; //vertSize = 64;
-	for(int i = 0; i < 64 * 64 * 3; i+=3)
+	/*for(int i = 0; i < 64 * 64 * 3; i+=3)
 	{
 		normals[i] = 0.57f;		//x
 		normals[i + 1] = 0.57f;	//y
@@ -198,11 +198,11 @@ void TillmanTest::PreTest()
 		normals[i] = 1.0f;		//x
 		normals[i + 1] = 1.0f;	//y
 		normals[i + 2] = 1.0f;	//z
-	}
+	}*/
 	iT2->SetHeightMap(hmData);
 	iT2->SetTextures(fileNames);
 	iT2->SetBlendMaps(nrOfBlendMaps, sizes, testData);
-	iT2->SetNormals(normals);
+	iT2->SetNormals(normals2);
 
 	/*int klerp = 3;
 	iTerrain** iTs = new iTerrain*[klerp*klerp];
@@ -398,9 +398,9 @@ void TillmanTest::PreTest()
 	temp->UseInvisibilityEffect(true);
 	//temp->DontRender(true);
 
-	iMesh* treeWithBillboard = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(-10, 0, 0), "Media/TreeBillboard.png", 25.5f);
-	treeWithBillboard->SetScale(0.05f);
-	treeWithBillboard->DontRender(true);
+	//iMesh* treeWithBillboard = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(-10, 0, 0), "Media/TreeBillboard.png", 25.5f);
+	//treeWithBillboard->SetScale(0.05f);
+	//treeWithBillboard->DontRender(true);
 
 	//iMesh* flagWithBillboard = GetGraphics()->CreateMesh("Media/FlagBlue.ani", Vector3(-15, 0, -5), "Media/TreeBillboard.png", 25.5f);
 
@@ -436,6 +436,23 @@ void TillmanTest::PreTest()
 	//iMesh* tklerp = GetGraphics()->CreateMesh("Media/scale.obj", Vector3(30, -300, 30));
 
 	createTerrainIndexBufferCraschText = GetGraphics()->CreateTerrain(Vector3(-25, 0, 0), Vector3(25, 0, 25), 32);
+
+	iTerrain* djurp;
+	for(int i = 0; i < 1; i++)
+	{
+		
+		djurp = GetGraphics()->CreateTerrain(Vector3(i * 25, 0, 50), Vector3(testSize, 0.0f, testSize), vertSize);
+		djurp->SetTextures(fileNames);
+		djurp->SetBlendMaps(nrOfBlendMaps, sizes, testData);
+
+		
+
+		iMesh* treeWithBillboard = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(i * 10, 0, 50), "Media/TreeBillboard.png", 25.5f);
+		treeWithBillboard->SetScale((0.061f));
+		//iMesh* fernWithBillboard = GetGraphics()->CreateMesh("Media/Fern_02.ani", Vector3(i * 10, 0, 45), "Media/TreeBillboard.png", 25.5f);
+		//fernWithBillboard->SetScale((0.05f));
+	}
+	
 }
 
 void TillmanTest::RunTest(float diff)

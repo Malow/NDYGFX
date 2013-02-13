@@ -848,7 +848,8 @@ void DxManager::RenderCascadedShadowMap()
 						for(int u = 0; u < strips->size(); u++)
 						{
 							//Render strip to shadow map if it has not been shadow culled
-							if(!strips->get(u)->IsShadowCulled())
+							//if(!strips->get(u)->IsShadowCulled())
+							if(!staticMesh->IsStripShadowCulled(u))
 							{
 								if(!hasBeenCounted) //only count per mesh, not strip.
 								{
@@ -939,7 +940,9 @@ void DxManager::RenderCascadedShadowMap()
 					if(D3DXVec3Length(&distance) < billboardRange || animatedMesh->GetBillboardFilePath() == "")
 					{
 
-						if(!animatedMesh->GetKeyFrames()->get(0)->meshStripsResource->GetMeshStripsPointer()->get(0)->IsShadowCulled())
+						//**Tillman - tillräckligt att kolla 1??**
+						//if(!animatedMesh->GetKeyFrames()->get(0)->meshStripsResource->GetMeshStripsPointer()->get(0)->IsShadowCulled())
+						if(!animatedMesh->IsStripShadowCulled(0))
 						{
 							currentRenderedMeshShadows++;
 
@@ -1113,21 +1116,27 @@ void DxManager::CalculateCulling()
 	for(int i = 0; i < this->objects.size(); i++)
 	{
 		StaticMesh* ms = this->objects.get(i);
-		MaloW::Array<MeshStrip*>* strips = ms->GetStrips();
-		for(int u = 0; u < strips->size(); u++)
+		if ( ms->GetMeshStripsResourcePointer() != NULL)
 		{
-			MeshStrip* s = strips->get(u);
-			float scale = max(ms->GetScaling().x, max(ms->GetScaling().y, ms->GetScaling().z));
-			if(pe.FrustrumVsSphere(this->FrustrumPlanes, s->GetBoundingSphere(), ms->GetWorldMatrix(), scale))
+			MaloW::Array<MeshStrip*>* strips = ms->GetStrips();
+			for(int u = 0; u < strips->size(); u++)
 			{
-				s->SetCulled(false);
-				//If the object is inside the frustum, it can cast a shadow
-				s->SetShadowCulled(false);
-			}
-			else
-			{
-				s->SetCulled(true);
-				//However, the opposite may not be true for shadowing.
+				MeshStrip* s = strips->get(u);
+				float scale = max(ms->GetScaling().x, max(ms->GetScaling().y, ms->GetScaling().z));
+				if(pe.FrustrumVsSphere(this->FrustrumPlanes, s->GetBoundingSphere(), ms->GetWorldMatrix(), scale))
+				{
+					ms->SetStripCulledFlag(u, false);
+					ms->SetStripShadowCulledFlag(u, false);
+					/*s->SetCulled(false);
+					//If the object is inside the frustum, it can cast a shadow
+					s->SetShadowCulled(false);*/
+				}
+				else
+				{
+					ms->SetStripCulledFlag(u, true);
+					//s->SetCulled(true);
+					//However, the opposite may not be true for shadowing.
+				}
 			}
 		}
 	}
@@ -1136,23 +1145,29 @@ void DxManager::CalculateCulling()
 	for(int i = 0; i < this->animations.size(); i++)
 	{
 		AnimatedMesh* animatedMesh = this->animations.get(i);
-		if ( !animatedMesh->GetKeyFrames()->get(0)->meshStripsResource->GetMeshStripsPointer()->isEmpty() )
+		if ( animatedMesh->GetKeyFrames()->get(0)->meshStripsResource != NULL)
 		{
-			float scale = max(animatedMesh->GetScaling().x, max(animatedMesh->GetScaling().y, animatedMesh->GetScaling().z));
-			MaloW::Array<MeshStrip*>* strips = animatedMesh->GetKeyFrames()->get(0)->meshStripsResource->GetMeshStripsPointer();
-			for(int u = 0; u < strips->size(); u++)
+			if ( !animatedMesh->GetKeyFrames()->get(0)->meshStripsResource->GetMeshStripsPointer()->isEmpty() )
 			{
-				MeshStrip* strip = strips->get(u);
-				if(pe.FrustrumVsSphere(this->FrustrumPlanes, strip->GetBoundingSphere(), animatedMesh->GetWorldMatrix(), scale))
+				float scale = max(animatedMesh->GetScaling().x, max(animatedMesh->GetScaling().y, animatedMesh->GetScaling().z));
+				MaloW::Array<MeshStrip*>* strips = animatedMesh->GetKeyFrames()->get(0)->meshStripsResource->GetMeshStripsPointer();
+				for(int u = 0; u < strips->size(); u++)
 				{
-					strip->SetCulled(false);
-					//If the object is inside the frustum, it can cast a shadow
-					strip->SetShadowCulled(false);
-				}
-				else
-				{
-					strip->SetCulled(true);
-					//However, the opposite may not be true for shadowing.
+					MeshStrip* strip = strips->get(u);
+					if(pe.FrustrumVsSphere(this->FrustrumPlanes, strip->GetBoundingSphere(), animatedMesh->GetWorldMatrix(), scale))
+					{
+						animatedMesh->SetStripCulledFlag(u, false);
+						animatedMesh->SetStripShadowCulledFlag(u, false);
+						/*strip->SetCulled(false);
+						//If the object is inside the frustum, it can cast a shadow
+						strip->SetShadowCulled(false);*/
+					}
+					else
+					{
+						animatedMesh->SetStripCulledFlag(u, true);
+						//strip->SetCulled(true);
+						//However, the opposite may not be true for shadowing.
+					}
 				}
 			}
 		}
@@ -1210,7 +1225,8 @@ void DxManager::CalculateCulling()
 
 				//Objects already in the cameras view frustum does not need to be checked,
 				//so only check the ones that are outside of it. (The ones that have already been culled)
-				if(strip->GetCulled())
+				//if(strip->GetCulled())
+				if(staticMesh->IsStripCulled(j))
 				{
 					//See if the strip is inside the bounding boxes(cascades) or intersects.
 					bool notDone = true;
@@ -1219,12 +1235,14 @@ void DxManager::CalculateCulling()
 						if(pe.FrustrumVsSphere(csm->GetCascadePlanes(k), strip->GetBoundingSphere(), staticMesh->GetWorldMatrix(), scale))
 						{
 							//As long as the strip is inside ONE of the cascades, it needs to be drawn to the shadow map.
-							strip->SetShadowCulled(false); 
+							//strip->SetShadowCulled(false); 
+							staticMesh->SetStripShadowCulledFlag(j, false); //**tillman.b - onödig? görs vid vanlig culling?
 							notDone = false;
 						}
 						else
 						{
-							strip->SetShadowCulled(true);
+							staticMesh->SetStripShadowCulledFlag(j, true); //**tillman.a - onödig? görs vid vanlig culling?
+							//strip->SetShadowCulled(true); 
 						}
 					}
 				}
@@ -1249,7 +1267,8 @@ void DxManager::CalculateCulling()
 				
 					//Animations already in the cameras view frustum does not need to be checked,
 					//so only check the ones that are outside of it. (The ones that have already been culled)
-					if(strip->GetCulled())
+					//if(strip->GetCulled())
+					if(animatedMesh->IsStripCulled(j))
 					{
 						//See if the strip is inside the bounding boxes(cascades) or intersects.
 						bool notDone = true;
@@ -1258,12 +1277,14 @@ void DxManager::CalculateCulling()
 							if(pe.FrustrumVsSphere(csm->GetCascadePlanes(k), strip->GetBoundingSphere(), animatedMesh->GetWorldMatrix(), scale))
 							{
 								//As long as the strip is inside ONE of the cascades, it needs to be drawn to the shadow map.
-								strip->SetShadowCulled(false); 
+								//strip->SetShadowCulled(false);  
+								animatedMesh->SetStripShadowCulledFlag(j, false); //b
 								notDone = false;
 							}
 							else
 							{
-								strip->SetShadowCulled(true);
+								animatedMesh->SetStripShadowCulledFlag(j, true); //b
+								//strip->SetShadowCulled(true); //a
 							}
 						}
 					}
