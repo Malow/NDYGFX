@@ -24,29 +24,21 @@ class PreLoadEvent : public MaloW::ProcessEvent
 {
 private:
 	unsigned int nrOfResources;
-	char** resourcesFileNames;
+	std::vector<string> rsrcFileNames;
 	bool selfDelete;
 
 public:
-	PreLoadEvent(unsigned int nrOfResources, char** resourcesFileNames)
+	PreLoadEvent(unsigned int nrOfResources, std::vector<string> rsrcFileNames)
 	{
 		this->nrOfResources = nrOfResources;
-		this->resourcesFileNames = (char**)resourcesFileNames;
+		this->rsrcFileNames = rsrcFileNames;
 	}
 	virtual ~PreLoadEvent() 
 	{
-		if(this->resourcesFileNames)
-		{
-			for(int i = 0; i < this->nrOfResources; i++)
-			{
-				if(this->resourcesFileNames[i])
-					delete this->resourcesFileNames[i];
-			}
-			delete this->resourcesFileNames;
-		}
+		
 	}
 
-	char** GetResourceFileNames() { return this->resourcesFileNames; }
+	std::vector<string> GetResourceFileNames() { return this->rsrcFileNames; }
 	unsigned int GetNrOfResources() { return this->nrOfResources; }
 };
 class LoadMeshEvent : public MaloW::ProcessEvent

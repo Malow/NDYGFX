@@ -21,8 +21,6 @@ private:
 	std::string texture;
 	Material* material;
 	BoundingSphere bb;
-	//bool culled;
-	//bool shadowCulled;
 
 public:
 	MeshStrip();
@@ -48,12 +46,6 @@ public:
 
 	BoundingSphere GetBoundingSphere() const { return this->bb; }
 	void SetBoundingSphere(BoundingSphere bb) { this->bb = bb; }
-
-	/*void SetCulled(bool cull) { this->culled = cull; }
-	bool GetCulled() const { return this->culled; }
-
-	void SetShadowCulled(bool flag) { this->shadowCulled = flag; }
-	bool IsShadowCulled() const { return this->shadowCulled; }*/
 };
 
 #endif

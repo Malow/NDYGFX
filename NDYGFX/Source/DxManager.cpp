@@ -369,6 +369,7 @@ void DxManager::CreateAnimatedMesh(AnimatedMesh* mesh)
 		MaloW::Array<MeshStrip*>* strips = kfs->get(j)->meshStripsResource->GetMeshStripsPointer();
 
 		//Check if a previous mesh already has set data.
+		//Per strip data
 		if(strips->get(0)->GetRenderObject() == NULL)
 		{
 			for(int i = 0; i < strips->size(); i++)
@@ -409,19 +410,20 @@ void DxManager::CreateAnimatedMesh(AnimatedMesh* mesh)
 					texture = GetResourceManager()->CreateTextureResourceFromFile(strip->GetTexturePath().c_str());
 				}
 
-				TextureResource* billboardTexture = NULL;
-				if(mesh->GetBillboardFilePath() != "")
-				{
-					billboardTexture = GetResourceManager()->CreateTextureResourceFromFile(mesh->GetBillboardFilePath().c_str());
-				}
-				mesh->GetBillboardGFX()->SetTextureResource(billboardTexture);
-
-
+				
 				Object3D* obj = new Object3D(verts, inds, texture, mesh->GetTopology()); 
 				strip->SetRenderObject(obj);
 			}
 		}
 	}
+
+	//Per mesh data
+	TextureResource* billboardTexture = NULL;
+	if(mesh->GetBillboardFilePath() != "")
+	{
+		billboardTexture = GetResourceManager()->CreateTextureResourceFromFile(mesh->GetBillboardFilePath().c_str());
+	}
+	mesh->GetBillboardGFX()->SetTextureResource(billboardTexture);
 
 	mesh->RecreateWorldMatrix(); 
 	

@@ -43,21 +43,21 @@ public:
 void TillmanTest::PreTest()
 {
 	//Preload testing
-	/*unsigned int nrOfResources = 5;
+	unsigned int nrOfResources = 5;
 	const char* resourceFileNames[5];
 	resourceFileNames[0] = "Media/ball.obj";
 	resourceFileNames[1] = "Media/bth.obj";			
 	resourceFileNames[2] = "Media/scale.obj";		//1
 	resourceFileNames[3] = "Media/FlagBlue.ani";		
 	resourceFileNames[4] = "Media/BallTexture.png";	
-	*///resourceFileNames[5] = "Media/scale.obj";		//2
+	//resourceFileNames[5] = "Media/scale.obj";		//2
 
 	//resourceFileNames[10] = "skymap.dds";			//Fail
 	//resourceFileNames[6] = "scale.obj";				//Fail
 	//resourceFileNames[7] = "durp.fileformat";		//Fail
 	//resourceFileNames[8] = "skymap.dds";			//fail
 	//resourceFileNames[3] = "BallTexture.png";		//fail
-	//GetGraphics()->PreLoadResources(nrOfResources, resourceFileNames);
+	GetGraphics()->PreLoadResources(nrOfResources, resourceFileNames);
 
 
 	iM = GetGraphics()->CreateImage(Vector2(100, 100), Vector2(100, 100), "Media/BallTexture.png");
@@ -449,8 +449,8 @@ void TillmanTest::PreTest()
 
 		iMesh* treeWithBillboard = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(i * 10, 0, 50), "Media/TreeBillboard.png", 25.5f);
 		treeWithBillboard->SetScale((0.061f));
-		//iMesh* fernWithBillboard = GetGraphics()->CreateMesh("Media/Fern_02.ani", Vector3(i * 10, 0, 45), "Media/TreeBillboard.png", 25.5f);
-		//fernWithBillboard->SetScale((0.05f));
+		iMesh* fernWithBillboard = GetGraphics()->CreateMesh("Media/Fern_02.ani", Vector3(i * 10, 0, 45), "Media/TreeBillboard.png", 25.5f);
+		fernWithBillboard->SetScale((0.15f));
 	}
 	
 }

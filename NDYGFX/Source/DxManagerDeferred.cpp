@@ -514,7 +514,6 @@ void DxManager::RenderDeferredGeometry()
 			
 				for(int u = 0; u < strips->size(); u++)
 				{
-					//if(!strips->get(u)->GetCulled())
 					if(!staticMesh->IsStripCulled(u))
 					{
 						if(!hasBeenCounted)
@@ -592,8 +591,6 @@ void DxManager::RenderDeferredGeometry()
 				bool hasBeenCounted = false;
 
 				//Just check the first strip if it is culled.  //**TILLMAN**
-				//MaloW::Array<MeshStrip*>* strips = this->objects[i]->GetStrips();
-				//if(!strips->get(0)->GetCulled())
 				if(!staticMesh->IsStripCulled(0))
 				{
 					if(!hasBeenCounted)
@@ -650,8 +647,6 @@ void DxManager::RenderDeferredGeometry()
 
 			if(D3DXVec3Length(&distance) < billboardRange || animatedMesh->GetBillboardFilePath() == "")
 			{
-
-				//if(!animatedMesh->GetKeyFrames()->get(0)->meshStripsResource->GetMeshStripsPointer()->get(0)->GetCulled())
 				if(!animatedMesh->IsStripCulled(0))
 				{
 					//Count(debug)
@@ -747,7 +742,6 @@ void DxManager::RenderDeferredGeometry()
 				bool hasBeenCounted = false;
 				
 				//Just check the first strip if it is culled. //**TILLMAN**
-				//if(!animatedMesh->GetKeyFrames()->get(0)->meshStripsResource->GetMeshStripsPointer()->get(0)->GetCulled())
 				if(!animatedMesh->IsStripCulled(0))
 				{
 					if(!hasBeenCounted)

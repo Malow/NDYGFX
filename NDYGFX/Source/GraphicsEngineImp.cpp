@@ -572,12 +572,19 @@ void GraphicsEngineImp::SetSpecialCircle(float innerRadius, float outerRadius, V
 void GraphicsEngineImp::PreLoadResources(unsigned int nrOfResources, const char** resourcesFileNames)
 {
 	//GetResourceManager()->PreLoadResources(nrOfResources, resourcesFileNames);
-	char** arr = new char*[nrOfResources];
+	/*char** arr = new char*[nrOfResources];
 	for(int i = 0; i < nrOfResources; i++)
 	{
 		arr[i] = new char(*resourcesFileNames[i]);
+	}*/
+	std::vector<string> rsrcFileNames;
+	for(int i = 0; i < nrOfResources; i++)
+	{
+		rsrcFileNames.push_back(string(resourcesFileNames[i]));
 	}
-	PreLoadEvent* re = new PreLoadEvent(nrOfResources, arr);
+	
+
+	PreLoadEvent* re = new PreLoadEvent(nrOfResources, rsrcFileNames);
 	this->PutEvent(re);
 }
 

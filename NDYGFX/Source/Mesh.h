@@ -36,7 +36,6 @@ protected:
 	COLOR specialColor;
 	bool usingInvisibilityEffect;
 
-	//MaloW::Array<MeshStrip*>* strips;
 	MeshStripsResource* meshStripsResource;
 	bool* isStripCulled;
 	bool* isStripShadowCulled;
