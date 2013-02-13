@@ -259,3 +259,22 @@ public:
 
 	int GetQuality() { return this->qual; }
 };
+
+
+class ReloadShaderEvent : public RendererEvent
+{
+private:
+	int shad;
+
+public:
+	ReloadShaderEvent(string message, int shader) : RendererEvent(message)
+	{
+		this->shad = shader; 
+	}
+	virtual ~ReloadShaderEvent() 
+	{
+
+	}
+
+	int GetShader() { return this->shad; }
+};

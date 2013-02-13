@@ -228,6 +228,14 @@ LRESULT CALLBACK GraphicsEngineImp::WndProc(HWND hWnd, UINT message, WPARAM wPar
 					screenRect.bottom = screenRect.top + cRect.bottom;
 					ClipCursor(&screenRect);
 					//
+
+					POINT np;
+					np.x = gfx->GetEngineParams().WindowWidth/2;
+					np.y = gfx->GetEngineParams().WindowHeight/2;
+					if(ClientToScreen(hWnd, &np))
+					{
+						SetCursorPos(np.x, np.y);
+					}
 				}
 			}
 			break;
@@ -1005,4 +1013,9 @@ void GraphicsEngineImp::DeleteFBXMesh( iFBXMesh* mesh )
 void GraphicsEngineImp::ChangeShadowQuality( int newQual )
 {
 	this->dx->ChangeShadowQuality(newQual);
+}
+
+void GraphicsEngineImp::ReloadShaders(int shaderIndex)
+{
+	this->dx->ReloadShaders(shaderIndex);
 }

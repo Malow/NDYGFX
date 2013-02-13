@@ -9,6 +9,9 @@ protected:
 	ID3D11Device*			mDevice;
 	ID3D11DeviceContext*	mImmediateContext;
 	ID3D11InputLayout*		m_pInputLayout;
+	D3D11_INPUT_ELEMENT_DESC* m_inputElementDesc;
+	char*					m_filename;
+	unsigned int			m_numElements;
 
 	ID3DX11Effect*			m_pEffect;
 	ID3DX11EffectTechnique* m_pTechnique;
@@ -19,6 +22,8 @@ public:
 
 	HRESULT Init(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* filename,
 		const D3D11_INPUT_ELEMENT_DESC* inputElementDesc, unsigned int numElements);
+
+	HRESULT Reload();
 
 	HRESULT Apply(unsigned int pass);
 

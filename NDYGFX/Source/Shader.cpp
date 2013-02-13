@@ -1,10 +1,14 @@
 #include "Shader.h"
+#include "MaloWFileDebug.h"
 
 Shader::Shader()
 {
 	m_pEffect = NULL;
 	m_pTechnique = NULL;
 	m_pInputLayout = NULL;
+	this->m_numElements = 0;
+	this->m_filename = NULL;
+	this->m_inputElementDesc = NULL;
 }
 
 Shader::~Shader()
@@ -25,6 +29,9 @@ HRESULT Shader::Init(ID3D11Device* device, ID3D11DeviceContext* deviceContext, c
 {
 	mImmediateContext = deviceContext;
 	mDevice = device;
+	this->m_numElements = numElements;
+	this->m_filename = filename;
+	this->m_inputElementDesc = (D3D11_INPUT_ELEMENT_DESC*)inputElementDesc;
 
 	HRESULT hr = S_OK;
 
@@ -210,4 +217,91 @@ void Shader::SetFloatVectorArray(char* variable, D3DXVECTOR3* values, unsigned i
 void Shader::SetMatrixArray(char* variable, const float* data, unsigned int offset, unsigned int count)
 {
 	m_pEffect->GetVariableByName(variable)->AsMatrix()->SetMatrixArray(data, offset, count);
+}
+
+HRESULT Shader::Reload()
+{
+	HRESULT hr = S_OK;
+	if(this->m_filename)
+	{
+		if ( m_pInputLayout ) m_pInputLayout->Release(), m_pInputLayout = 0;
+
+		//SAFE_RELEASE(m_pEffect);
+
+		if(m_pEffect)
+		{
+			while(m_pEffect->Release());
+			m_pEffect = NULL;
+		}
+
+		ID3DBlob*	pBlobEffect = NULL;
+		ID3DBlob*	pBlobErrors = NULL;
+
+		DWORD dwShaderFlags = D3D10_SHADER_ENABLE_STRICTNESS;
+
+	#if defined(DEBUG) || defined(_DEBUG)
+		dwShaderFlags |= D3D10_SHADER_DEBUG;
+	#endif
+
+		hr = D3DX11CompileFromFile(
+			this->m_filename,
+			NULL,
+			NULL,
+			"",
+			"fx_5_0",
+			dwShaderFlags,
+			NULL,
+			NULL,
+			&pBlobEffect,
+			&pBlobErrors,
+			NULL
+			);
+
+		if( FAILED(hr) )
+		{
+			char msg[20000];
+			strcpy_s(msg, sizeof(msg), (char*)pBlobErrors->GetBufferPointer());
+			OutputDebugString(msg);
+			MessageBox(GetDesktopWindow(), msg, "Effect compilation error", MB_OK | MB_ICONERROR);
+			return hr;
+		}
+
+		if(FAILED(hr = D3DX11CreateEffectFromMemory(
+			pBlobEffect->GetBufferPointer(),
+			pBlobEffect->GetBufferSize(),
+			dwShaderFlags,
+			mDevice,
+			&m_pEffect
+			)))
+		{
+			MessageBox(0, "Cannot create effect from memory.", "D3DX11CreateEffectFromMemory error", MB_OK | MB_ICONERROR);
+			return hr;
+		}
+
+
+		m_pTechnique = m_pEffect->GetTechniqueByIndex(0);
+
+
+		if(this->m_inputElementDesc)
+		{
+			D3DX11_PASS_DESC PassDesc;
+			m_pTechnique->GetPassByIndex(0)->GetDesc(&PassDesc);
+			if(FAILED(hr = mDevice->CreateInputLayout(
+				this->m_inputElementDesc,
+				this->m_numElements,
+				PassDesc.pIAInputSignature,
+				PassDesc.IAInputSignatureSize,
+				&m_pInputLayout
+				)))
+			{
+				MessageBox(0, "Cannot create input layout.", "CreateInputLayout error", MB_OK | MB_ICONERROR);
+				return hr;
+			}
+		}
+	}
+	else
+	{
+		MaloW::Debug("Failed to reload a shader, it was never inited.");
+	}
+	return hr;
 }

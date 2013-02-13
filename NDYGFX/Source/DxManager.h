@@ -33,6 +33,30 @@
 class DxManager : public MaloW::Process
 {
 private:
+	// Shaders
+	Shader*	Shader_ForwardRendering;
+	Shader* Shader_FBX;
+	Shader* Shader_Water;
+	Shader* Shader_Skybox;
+	Shader* Shader_Image;
+	Shader* Shader_Billboard;
+	Shader* Shader_Text;
+	Shader* Shader_ShadowMap;
+	Shader* Shader_ShadowMapAnimated;
+	Shader* Shader_DeferredGeometry;
+	Shader* Shader_TerrainEditor;
+	Shader* Shader_DeferredLightning;
+	Shader* Shader_InvisibilityEffect;
+	Shader* Shader_DeferredQuad;
+	Shader* Shader_DeferredTexture;
+	Shader* Shader_DeferredAnimatedGeometry;
+	Shader* Shader_DeferredGeoTranslucent;
+	Shader* Shader_DeferredPerPixelTranslucent;
+	Shader* Shader_Fxaa;
+
+
+
+
 	// Standard stuff
 	ID3D11DeviceContext* Dx_DeviceContext;
 	ID3D11DepthStencilView* Dx_DepthStencilView;
@@ -40,7 +64,7 @@ private:
 	ID3D11RenderTargetView* Dx_RenderTargetView;
 	IDXGISwapChain* Dx_SwapChain;
 	ID3D11Device* Dx_Device;
-	Shader*	Shader_ForwardRendering;
+	
 	HWND hWnd;
 	D3D11_VIEWPORT Dx_Viewport;
 	
@@ -56,8 +80,7 @@ private:
 	MaloW::Array<AnimatedMesh*> animations;
 	MaloW::Array<WaterPlane*> waterplanes;
 	MaloW::Array<FBXMesh*> FBXMeshes;
-	Shader* Shader_FBX;
-	Shader* Shader_Water;
+
 
 	MaloW::Array<Image*> images;
 	MaloW::Array<Billboard*> billboards;
@@ -65,22 +88,13 @@ private:
 
 	float LavaWavesOuterRadius;
 	SkyBox* skybox;
-	Shader* Shader_Skybox;
+
 
 	// Lightning
 	MaloW::Array<Light*> lights;
 	D3DXVECTOR3 sceneAmbientLight;
 	SunLight sun;
 	bool useSun;
-
-	Shader* Shader_Image;
-	Shader* Shader_Billboard;
-	Shader* Shader_Text;
-
-	// Shadow map:
-	Shader* Shader_ShadowMap;
-	Shader* Shader_ShadowMapAnimated;
-
 	
 
 	bool useShadow;
@@ -92,25 +106,14 @@ private:
 	ID3D11Texture2D* Dx_GbufferTextures[NrOfRenderTargets];
 	ID3D11RenderTargetView* Dx_GbufferRTs[NrOfRenderTargets];
 	ID3D11ShaderResourceView* Dx_GbufferSRVs[NrOfRenderTargets];
-	Shader* Shader_DeferredGeometry;
-	Shader* Shader_TerrainEditor;
-	Shader* Shader_DeferredLightning;
-	Shader* Shader_InvisibilityEffect;
 
-	Shader* Shader_DeferredQuad;
-	Shader* Shader_DeferredTexture;
 	ID3D11Texture2D* Dx_DeferredTexture;
 	ID3D11RenderTargetView* Dx_DeferredQuadRT;
 	ID3D11ShaderResourceView* Dx_DeferredSRV;
 
-	Shader* Shader_DeferredAnimatedGeometry;
-
-	Shader* Shader_DeferredGeoTranslucent;
-	Shader* Shader_DeferredPerPixelTranslucent;
-
 	SSAO* ssao;
 	FXAA* fxaa;
-	Shader* Shader_Fxaa;
+
 
 	bool invisibleGeometry;
 
@@ -170,6 +173,7 @@ private:
 	void HandleTextEvent(TextEvent* te);
 	void HandleWaterPlaneEvent(WaterPlaneEvent* ie);
 	void HandleFBXEvent(FBXEvent* fe);
+	void HandleReloadShaders(int shader);
 
 	void CalculateCulling();
 
@@ -240,6 +244,7 @@ public:
 	float GetRendererSleep() const;
 
 	void ChangeShadowQuality(int newQual);
+	void ReloadShaders(int shader);
 
 	void SetSunLightProperties(Vector3 direction, Vector3 lightColor, float intensity);
 	void SetSunLightDisabled();
@@ -248,6 +253,7 @@ public:
 	D3DXVECTOR3 GetSceneAmbientLight() const { return this->sceneAmbientLight; }
 	void ResizeEngine(unsigned int width, unsigned int height);
 	ID3D11Device* GetDevice() { return this->Dx_Device; }
-	ID3D11DeviceContext* GetContextDevice() { return this->Dx_DeviceContext; }};
+	ID3D11DeviceContext* GetContextDevice() { return this->Dx_DeviceContext; }
+};
 
 #endif
