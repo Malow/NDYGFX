@@ -228,3 +228,8 @@ void Camera::MoveOnlyInXZ( bool DoItOrNotThatIsTheQuestion )
 	this->moveOnlyInXZ = DoItOrNotThatIsTheQuestion;
 }
 
+void Camera::SetUpdateCamera( bool update )
+{
+	this->updateCamera = update;
+}
+

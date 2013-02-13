@@ -89,7 +89,7 @@ public:
 	virtual float GetDistanceFromTarget() const { return this->DistanceFromTarget; }
 
 	virtual void SetActiveWindowDisabling(bool dis) { this->activeWindowDisabling = dis; }
-	virtual void SetUpdateCamera(bool update) { this->updateCamera = update; }
+	virtual void SetUpdateCamera(bool update);
 
 	virtual Vector3 Get3DPickingRay();
 	virtual void MoveOnlyInXZ(bool DoItOrNotThatIsTheQuestion);

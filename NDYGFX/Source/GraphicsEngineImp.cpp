@@ -212,7 +212,7 @@ LRESULT CALLBACK GraphicsEngineImp::WndProc(HWND hWnd, UINT message, WPARAM wPar
 
 		case WM_ACTIVATE:
 			{
-				if(wParam != 0)
+				if(gfx && gfx->GetManagingWindow() && wParam != 0)
 				{
 					// Confine cursor within program.
 					RECT cRect;
@@ -294,20 +294,23 @@ HRESULT GraphicsEngineImp::InitWindow(HINSTANCE hInstance, int nCmdShow)
 	DragAcceptFiles(hWnd,true);
 
 
-	// Confine cursor within program.
-	RECT cRect;
-	GetClientRect(this->hWnd, &cRect);
-	POINT topLeft;
-	topLeft.x = 0;
-	topLeft.y = 0;
-	ClientToScreen(this->hWnd, &topLeft);
-	RECT screenRect;
-	screenRect.left = topLeft.x;
-	screenRect.top = topLeft.y;
-	screenRect.right = screenRect.left + cRect.right;
-	screenRect.bottom = screenRect.top + cRect.bottom;
-	ClipCursor(&screenRect);
-	//
+	if(this->isManagingMyOwnWindow)
+	{
+		// Confine cursor within program.
+		RECT cRect;
+		GetClientRect(this->hWnd, &cRect);
+		POINT topLeft;
+		topLeft.x = 0;
+		topLeft.y = 0;
+		ClientToScreen(this->hWnd, &topLeft);
+		RECT screenRect;
+		screenRect.left = topLeft.x;
+		screenRect.top = topLeft.y;
+		screenRect.right = screenRect.left + cRect.right;
+		screenRect.bottom = screenRect.top + cRect.bottom;
+		ClipCursor(&screenRect);
+		//
+	}
 
 	this->InitObjects();
 
@@ -906,26 +909,26 @@ void GraphicsEngineImp::ResizeGraphicsEngine( unsigned int width, unsigned int h
 			AdjustWindowRect( &rc, WS_OVERLAPPEDWINDOW, FALSE );
 		}
 		SetWindowPos(this->hWnd, 0 , 0 , 0, rc.right - rc.left, rc.bottom - rc.top, SWP_NOMOVE|SWP_NOZORDER|SWP_NOACTIVATE);
+
+		// Confine cursor within program.
+		RECT cRect;
+		GetClientRect(this->hWnd, &cRect);
+		POINT topLeft;
+		topLeft.x = 0;
+		topLeft.y = 0;
+		ClientToScreen(this->hWnd, &topLeft);
+		RECT screenRect;
+		screenRect.left = topLeft.x;
+		screenRect.top = topLeft.y;
+		screenRect.right = screenRect.left + cRect.right;
+		screenRect.bottom = screenRect.top + cRect.bottom;
+		ClipCursor(&screenRect);
+		//
 	}
 
 	this->parameters.WindowWidth = width;
 	this->parameters.WindowHeight = height;
 	this->dx->ResizeEngine(width, height);
-
-	// Confine cursor within program.
-	RECT cRect;
-	GetClientRect(this->hWnd, &cRect);
-	POINT topLeft;
-	topLeft.x = 0;
-	topLeft.y = 0;
-	ClientToScreen(this->hWnd, &topLeft);
-	RECT screenRect;
-	screenRect.left = topLeft.x;
-	screenRect.top = topLeft.y;
-	screenRect.right = screenRect.left + cRect.right;
-	screenRect.bottom = screenRect.top + cRect.bottom;
-	ClipCursor(&screenRect);
-	//
 }
 
 Vector3 GraphicsEngineImp::GetSceneAmbientLight() const
