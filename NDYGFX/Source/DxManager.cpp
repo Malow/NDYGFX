@@ -1014,3 +1014,10 @@ void DxManager::ChangeShadowQuality( int newQual )
 	}
 
 }
+
+void DxManager::ReloadShaders(int shader)
+{
+	ReloadShaderEvent* re = new ReloadShaderEvent("Reload Shaders", shader);
+	this->PutEvent(re);
+}
+

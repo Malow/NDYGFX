@@ -999,3 +999,8 @@ void GraphicsEngineImp::ChangeShadowQuality( int newQual )
 {
 	this->dx->ChangeShadowQuality(newQual);
 }
+
+void GraphicsEngineImp::ReloadShaders(int shaderIndex)
+{
+	this->dx->ReloadShaders(shaderIndex);
+}

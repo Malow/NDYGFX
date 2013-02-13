@@ -104,7 +104,6 @@ PSout PSScene(PSSceneIn input) : SV_Target
 			discard;
 	}
 	float4 finalColor = (textureColor + input.Color) * DiffuseColor;
-	
 	finalColor.w = (float)specialColor;
 
 	PSout output;

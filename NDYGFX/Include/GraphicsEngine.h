@@ -112,6 +112,7 @@ extern "C"
 		virtual void DeleteWaterPlane(iWaterPlane* del) = 0;
 
 		virtual void ChangeShadowQuality(int newQual) = 0;
+		virtual void ReloadShaders(int shaderIndex) = 0;
 	};
 
 	/*

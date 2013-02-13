@@ -213,6 +213,7 @@ public:
 	virtual void DeleteWaterPlane(iWaterPlane* del);
 
 	virtual void ChangeShadowQuality(int newQual);
+	virtual void ReloadShaders(int shaderIndex);
 
 	/*  Non-inherited functions */
 

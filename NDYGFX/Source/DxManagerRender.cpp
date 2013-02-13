@@ -32,6 +32,90 @@ void DxManager::HandleWaterPlaneEvent(WaterPlaneEvent* ie)
 	}
 }
 
+void DxManager::HandleReloadShaders(int shader)
+{
+	switch (shader) 
+	{
+	case 0:
+		if(this->Shader_ForwardRendering)
+			Shader_ForwardRendering->Reload();
+		break;
+	case 1:
+		if(this->Shader_FBX)
+			Shader_FBX->Reload();
+		break;
+	case 2:
+		if(this->Shader_Water)
+			Shader_Water->Reload();
+		break;
+	case 3:
+		if(this->Shader_Skybox)
+			Shader_Skybox->Reload();
+		break;
+	case 4:
+		if(this->Shader_Image)
+			Shader_Image->Reload();
+		break;
+	case 5:
+		if(this->Shader_Billboard)
+			Shader_Billboard->Reload();
+		break;
+	case 6:
+		if(this->Shader_Text)
+			Shader_Text->Reload();
+		break;
+	case 7:
+		if(this->Shader_ShadowMap)
+			Shader_ShadowMap->Reload();
+		break;
+	case 8:
+		if(this->Shader_ShadowMapAnimated)
+			Shader_ShadowMapAnimated->Reload();
+		break;
+	case 9:
+		if(this->Shader_DeferredGeometry)
+			Shader_DeferredGeometry->Reload();
+		break;
+	case 10:
+		if(this->Shader_TerrainEditor)
+			Shader_TerrainEditor->Reload();
+		break;
+	case 11:
+		if(this->Shader_DeferredLightning)
+			Shader_DeferredLightning->Reload();
+		break;
+	case 12:
+		if(this->Shader_InvisibilityEffect)
+			Shader_InvisibilityEffect->Reload();
+		break;
+	case 13:
+		if(this->Shader_DeferredQuad)
+			Shader_DeferredQuad->Reload();
+		break;
+	case 14:
+		if(this->Shader_DeferredTexture)
+			Shader_DeferredTexture->Reload();
+		break;
+	case 15:
+		if(this->Shader_DeferredAnimatedGeometry)
+			Shader_DeferredAnimatedGeometry->Reload();
+		break;
+	case 16:
+		if(this->Shader_DeferredGeoTranslucent)
+			Shader_DeferredGeoTranslucent->Reload();
+		break;
+	case 17:
+		if(this->Shader_DeferredPerPixelTranslucent)
+			Shader_DeferredPerPixelTranslucent->Reload();
+		break;
+	case 18:
+		//if(this->Shader_Fxaa)		 FXAA Shader doesnt like being reloaded :(
+			//Shader_Fxaa->Reload();
+		break;
+	}
+}
+
+
 void DxManager::SetCamera(SetCameraEvent* ev)
 {
 	
@@ -236,6 +320,9 @@ void DxManager::Life()
 			if(dynamic_cast<RendererEvent*>(ev) != NULL)
 			{
 				string msg = ((RendererEvent*)ev)->getMessage();
+
+				if(ReloadShaderEvent* rse = dynamic_cast<ReloadShaderEvent*>(ev))
+					this->HandleReloadShaders(rse->GetShader());
 				
 				//ChangeShadowQualityEvent
 				if(ChangeShadowQualityEvent* csqe = dynamic_cast<ChangeShadowQualityEvent*>(ev))
