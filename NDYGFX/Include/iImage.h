@@ -11,10 +11,12 @@
 extern "C"
 {
 	class DECLDIR iImage
-	{	
-	public:
+	{
+	protected:
 		iImage() {};
 		virtual ~iImage() {};
+
+	public:
 
 		virtual Vector2 GetPosition() const = 0;
 		virtual void SetPosition(Vector2 pos) = 0;
