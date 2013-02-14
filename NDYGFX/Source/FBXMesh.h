@@ -7,16 +7,14 @@
 // FBX
 #include "BTHFBX\Shared\FBX\FBXSceneD3D.h"
 
-
 #ifdef _DEBUG
 #pragma comment(lib, "BTHFbxD.lib")
 #else
 #pragma comment(lib, "BTHFbx.lib")
 #endif
 
-
-
-// FBX
+#pragma warning ( push )
+#pragma warning ( disable : 4250 ) //  warning C4250: 'FBXMesh' : inherits via dominance
 
 class FBXMesh : public Mesh, public virtual iFBXMesh
 {
@@ -40,3 +38,4 @@ public:
 	//BTHFBX_RAY_BOX_RESULT RayVsScene(const BTHFBX_RAY& ray, BTHFBX_MATRIX* worldMatrix);
 };
 
+#pragma warning ( pop )

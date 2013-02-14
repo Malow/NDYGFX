@@ -184,7 +184,7 @@ D3DXVECTOR3 Camera::GetRightVectorD3DX() const
 
 Vector3 Camera::Get3DPickingRay()
 {
-	Vector3 v;
+	Vector3 v = Vector3(1, 0, 0);
 	POINT p;
 	if(GetCursorPos(&p))
 	{

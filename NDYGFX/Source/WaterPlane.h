@@ -4,6 +4,9 @@
 #include "iWaterPlane.h"
 #include "Buffer.h"
 
+#pragma warning ( push )
+#pragma warning ( disable : 4250 ) //  warning C4250: 'WaterPlane' : inherits via dominance
+
 class WaterPlane : public Mesh, public virtual iWaterPlane
 {
 private:
@@ -27,3 +30,5 @@ public:
 	void SetVertexBuffer(Buffer* vertBuffer) { this->vertBuffer = vertBuffer; }
 	Buffer* GetVertexBuffer() const { return this->vertBuffer; }
 };
+
+#pragma warning ( pop )
