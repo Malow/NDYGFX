@@ -145,38 +145,14 @@ HRESULT DxManager::Init()
 	Dx_DeviceContext->RSSetViewports(1, &Dx_Viewport);
 
 
-	// Forward renderer shader:
-	static const D3D11_INPUT_ELEMENT_DESC inputDesc[] = {
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
-	};
-	
-	this->Shader_ForwardRendering = new Shader();
-	if(FAILED(this->Shader_ForwardRendering->Init(Dx_Device, Dx_DeviceContext, "Shaders/ForwardRendering.fx", inputDesc, 4)))	// + on last if added above
-	{
-		MaloW::Debug("Failed to open ForwardRendering.fx");
-		return E_FAIL;
-	}
-	
-	// ShadowMap Shader //**TILLMAN - ta bort normal & color - likadant för animated & ändra ordning, float3 pos**
-	static const D3D11_INPUT_ELEMENT_DESC inputDescShadowMap[] = {
+	static const D3D11_INPUT_ELEMENT_DESC inputDescVertex[] = {
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
 	};
 
-	this->Shader_ShadowMap = new Shader();
-	if(FAILED(this->Shader_ShadowMap->Init(Dx_Device, Dx_DeviceContext, "Shaders/ShadowMap.fx", inputDescShadowMap, 4)))	// + on last if added above
-	{
-		MaloW::Debug("Failed to open ShadowMap.fx");
-		return E_FAIL;
-	}
-
-	// ShadowMapAnimated Shader
-	static const D3D11_INPUT_ELEMENT_DESC inputDescShadowMapAnimated[] =
+	static const D3D11_INPUT_ELEMENT_DESC inputDescAnimatedVertex[] =
 	{
 		{"POSITION",       0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"TEXCOORD",       0, DXGI_FORMAT_R32G32_FLOAT,    0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
@@ -187,33 +163,79 @@ HRESULT DxManager::Init()
 		{"NORMAL_MORPH",   0, DXGI_FORMAT_R32G32B32_FLOAT, 1, 20, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"COLOR_MORPH",	   0, DXGI_FORMAT_R32G32B32_FLOAT, 1, 32, D3D11_INPUT_PER_VERTEX_DATA, 0},
 	};			
+
+	static const D3D11_INPUT_ELEMENT_DESC inputDescFBX[] =
+	{
+		{ "SV_POSITION",		  0, DXGI_FORMAT_R32G32B32_FLOAT,    0,  0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORMAL",				  0, DXGI_FORMAT_R32G32B32_FLOAT,    1,  0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TANGENT",			  0, DXGI_FORMAT_R32G32B32_FLOAT,    2,  0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD",			  0, DXGI_FORMAT_R32G32_FLOAT,       3,  0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "BLENDINDICES",		  0, DXGI_FORMAT_R32G32B32A32_FLOAT, 4,  0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "BLENDWEIGHT",		  0, DXGI_FORMAT_R32G32B32A32_FLOAT, 4, 16,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	};
+
+	static const D3D11_INPUT_ELEMENT_DESC inputDescInvisibilityEffect[] = {
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
+	};
+
+	static const D3D11_INPUT_ELEMENT_DESC inputDescSkybox[] = {
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+	};
+
+	static const D3D11_INPUT_ELEMENT_DESC inputDescBillBoard[] = {
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
+	};
+
+	static const D3D11_INPUT_ELEMENT_DESC inputDescBillBoardInstanced[] = {
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "SIZE", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "DUMMY", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
+		/*//Instance 
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 1},
+		{ "DUMMY", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 1},
+		{ "DUMMY", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 1},
+		{ "DUMMY", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 1}*/
+	};
+
+	
+	// Forward renderer shader:
+	this->Shader_ForwardRendering = new Shader();
+	if(FAILED(this->Shader_ForwardRendering->Init(Dx_Device, Dx_DeviceContext, "Shaders/ForwardRendering.fx", inputDescVertex, 4)))
+	{
+		MaloW::Debug("Failed to open ForwardRendering.fx");
+		return E_FAIL;
+	}
+	
+	// ShadowMap Shader //**TILLMAN - använd egen desc utan normal & color - likadant för animated & ändra ordning, float3 pos**
+	this->Shader_ShadowMap = new Shader();
+	if(FAILED(this->Shader_ShadowMap->Init(Dx_Device, Dx_DeviceContext, "Shaders/ShadowMap.fx", inputDescVertex, 4)))
+	{
+		MaloW::Debug("Failed to open ShadowMap.fx");
+		return E_FAIL;
+	}
+
+	// ShadowMapAnimated Shader
 	this->Shader_ShadowMapAnimated = new Shader();
-	if(FAILED(this->Shader_ShadowMapAnimated->Init(this->Dx_Device, this->Dx_DeviceContext, "Shaders/ShadowMapAnimated.fx", inputDescShadowMapAnimated, 8)))
+	if(FAILED(this->Shader_ShadowMapAnimated->Init(this->Dx_Device, this->Dx_DeviceContext, "Shaders/ShadowMapAnimated.fx", inputDescAnimatedVertex, 8)))
 	{
 		MaloW::Debug("Failed to open ShadowMapAnimated.fx");
 		return E_FAIL;
 	}	
 
 	// For images
-	static const D3D11_INPUT_ELEMENT_DESC inputDescImage[] = {
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "DIMENSIONS", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{ "OPACITY", 0, DXGI_FORMAT_R32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
-	};
 	this->Shader_Image = new Shader();
-	if(FAILED(this->Shader_Image->Init(Dx_Device, Dx_DeviceContext, "Shaders/Image.fx", inputDescImage, 3)))	// + on last if added above
+	if(FAILED(this->Shader_Image->Init(Dx_Device, Dx_DeviceContext, "Shaders/Image.fx", NULL, 0)))
 	{
 		MaloW::Debug("Failed to open Image.fx");
 		return E_FAIL;
 	}
 
 	// For billboards  - **TILLMAN detta används inte**
-	static const D3D11_INPUT_ELEMENT_DESC inputDescBillBoard[] = {
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
-	};
 	this->Shader_Billboard = new Shader();
-	if(FAILED(this->Shader_Billboard->Init(Dx_Device, Dx_DeviceContext, "Shaders/Billboard.fx", inputDescBillBoard, 2)))	// + on last if added above
+	if(FAILED(this->Shader_Billboard->Init(Dx_Device, Dx_DeviceContext, "Shaders/Billboard.fx", inputDescBillBoard, 2)))
 	{
 		MaloW::Debug("Failed to open Billboard.fx");
 		return E_FAIL;
@@ -232,20 +254,9 @@ HRESULT DxManager::Init()
 	
 	//***INSTANCE TILLMAN**
 	
-	static const D3D11_INPUT_ELEMENT_DESC inputDescBillBoardInstanced[] = {
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "SIZE", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{ "DUMMY", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
-		/*//Instance 
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 1},
-		{ "DUMMY", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 1},
-		{ "DUMMY", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 1},
-		{ "DUMMY", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 1}*/
-	};
 
 	this->Shader_BillboardInstanced = new Shader();
-	if(FAILED(this->Shader_BillboardInstanced->Init(Dx_Device, Dx_DeviceContext, "Shaders/BillboardInstanced.fx", inputDescBillBoardInstanced, 4)))	// + on last if added above
+	if(FAILED(this->Shader_BillboardInstanced->Init(Dx_Device, Dx_DeviceContext, "Shaders/BillboardInstanced.fx", inputDescBillBoardInstanced, 4)))
 	{
 		MaloW::Debug("Failed to open BillboardInstanced.fx");
 		return E_FAIL;
@@ -319,14 +330,9 @@ HRESULT DxManager::Init()
 	//this->instanceBufferBillboard->
 
 
-	// For text
-	static const D3D11_INPUT_ELEMENT_DESC inputDescText[] = {
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "DIMENSIONS", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{ "OPACITY", 0, DXGI_FORMAT_R32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
-	};
+	// For text  
 	this->Shader_Text = new Shader();
-	if(FAILED(this->Shader_Text->Init(Dx_Device, Dx_DeviceContext, "Shaders/TextRenderer.fx", inputDescText, 3)))	// + on last if added above
+	if(FAILED(this->Shader_Text->Init(Dx_Device, Dx_DeviceContext, "Shaders/TextRenderer.fx", NULL, 0)))
 	{
 		MaloW::Debug("Failed to open TextRenderer.fx");
 		return E_FAIL;
@@ -334,129 +340,75 @@ HRESULT DxManager::Init()
 
 	
 	// Deferred Rendering Geometry pass
-	static const D3D11_INPUT_ELEMENT_DESC DeferredGeometryDesc[] = {
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
-	};
 	this->Shader_DeferredGeometry = new Shader();
-	if(FAILED(this->Shader_DeferredGeometry->Init(Dx_Device, Dx_DeviceContext, "Shaders/DeferredGeometry.fx", DeferredGeometryDesc, 4)))	// + on last if added above
+	if(FAILED(this->Shader_DeferredGeometry->Init(Dx_Device, Dx_DeviceContext, "Shaders/DeferredGeometry.fx", inputDescVertex, 4)))
 	{
 		MaloW::Debug("Failed to open DeferredGeometry.fx");
 		return E_FAIL;
 	}
 
 	// Deferred Rendering Geometry blend map pass
-	static const D3D11_INPUT_ELEMENT_DESC TerrainEditorDesc[] = {
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
-	};
 	this->Shader_TerrainEditor = new Shader();
-	if(FAILED(this->Shader_TerrainEditor->Init(Dx_Device, Dx_DeviceContext, "Shaders/TerrainEditor.fx", TerrainEditorDesc, 4)))	// + on last if added above
+	if(FAILED(this->Shader_TerrainEditor->Init(Dx_Device, Dx_DeviceContext, "Shaders/TerrainEditor.fx", inputDescVertex, 4)))
 	{
 		MaloW::Debug("Failed to open TerrainEditor.fx");
 		return E_FAIL;
 	}
 
 	// Deferred Rendering Geo pass for animated
-	static const D3D11_INPUT_ELEMENT_DESC DeferredGeometryDescAni[] = 
-	{
-		{"POSITION",       0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"TEXCOORD",       0, DXGI_FORMAT_R32G32_FLOAT,    0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"NORMAL",         0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"COLOR",		   0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"POSITION_MORPH", 0, DXGI_FORMAT_R32G32B32_FLOAT, 1, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"TEXCOORD_MORPH", 0, DXGI_FORMAT_R32G32_FLOAT,    1, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"NORMAL_MORPH",   0, DXGI_FORMAT_R32G32B32_FLOAT, 1, 20, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"COLOR_MORPH",	   0, DXGI_FORMAT_R32G32B32_FLOAT, 1, 32, D3D11_INPUT_PER_VERTEX_DATA, 0},
-	};			
 	this->Shader_DeferredAnimatedGeometry = new Shader();
-	if(FAILED(this->Shader_DeferredAnimatedGeometry->Init(Dx_Device, Dx_DeviceContext, "Shaders/DeferredAnimatedGeometry.fx", DeferredGeometryDescAni, 8)))	// + on last if added above
+	if(FAILED(this->Shader_DeferredAnimatedGeometry->Init(Dx_Device, Dx_DeviceContext, "Shaders/DeferredAnimatedGeometry.fx", inputDescAnimatedVertex, 8)))
 	{
 		MaloW::Debug("Failed to open DeferredAnimatedGeometry.fx");
 		return E_FAIL;
 	}
 
-
-	// Lightning pass
-	static const D3D11_INPUT_ELEMENT_DESC DeferredLightningDesc[] = {
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
-	};
+	// Deferred PerPixel pass
 	this->Shader_DeferredLightning = new Shader();
-	if(FAILED(this->Shader_DeferredLightning->Init(Dx_Device, Dx_DeviceContext, "Shaders/DeferredLightning.fx", DeferredLightningDesc, 4)))	// + on last if added above
+	if(FAILED(this->Shader_DeferredLightning->Init(Dx_Device, Dx_DeviceContext, "Shaders/DeferredLightning.fx", NULL, 0)))
 	{
-		MaloW::Debug("Failed to open DeferredGeometry.fx");
+		MaloW::Debug("Failed to open DeferredLightning.fx");
 		return E_FAIL;
 	}
 
-
-	// Water Shader
-	static const D3D11_INPUT_ELEMENT_DESC WaterDesc[] = {
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
-	};
-	this->Shader_Water = new Shader();
-	if(FAILED(this->Shader_Water->Init(Dx_Device, Dx_DeviceContext, "Shaders/WaterPlane.fx", WaterDesc, 4)))	// + on last if added above
-	{
-		MaloW::Debug("Failed to open DeferredGeometry.fx");
-		return E_FAIL;
-	}
-
-
-	// Translucent passes
-	static const D3D11_INPUT_ELEMENT_DESC DeferredGeometryTranslucentDesc[] = {
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
-	};
+	// Translucent Geometry
 	this->Shader_DeferredGeoTranslucent = new Shader();
-	if(FAILED(this->Shader_DeferredGeoTranslucent->Init(Dx_Device, Dx_DeviceContext, "Shaders/DeferredGeoTranslucent.fx", DeferredGeometryTranslucentDesc, 4)))	// + on last if added above
+	if(FAILED(this->Shader_DeferredGeoTranslucent->Init(Dx_Device, Dx_DeviceContext, "Shaders/DeferredGeoTranslucent.fx", inputDescVertex, 4)))
 	{
 		MaloW::Debug("Failed to open DeferredGeoTranslucent.fx");
 		return E_FAIL;
 	}
 	
-	static const D3D11_INPUT_ELEMENT_DESC DeferredLightningTranslucentDesc[] = {
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
-	};
+	// Translucent PerPixel
 	this->Shader_DeferredPerPixelTranslucent = new Shader();
-	if(FAILED(this->Shader_DeferredPerPixelTranslucent->Init(Dx_Device, Dx_DeviceContext, "Shaders/DeferredPerPixelTranslucent.fx", DeferredLightningTranslucentDesc, 4)))	// + on last if added above
+	if(FAILED(this->Shader_DeferredPerPixelTranslucent->Init(Dx_Device, Dx_DeviceContext, "Shaders/DeferredPerPixelTranslucent.fx", NULL, 0)))
 	{
 		MaloW::Debug("Failed to open DeferredPerPixelTranslucent.fx");
 		return E_FAIL;
 	}
 
-
-
-	//Create input layout for the FBX scene
-	static const D3D11_INPUT_ELEMENT_DESC inputDescFBX[] =
-	{
-		{ "SV_POSITION",		  0, DXGI_FORMAT_R32G32B32_FLOAT,    0,  0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "NORMAL",				  0, DXGI_FORMAT_R32G32B32_FLOAT,    1,  0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TANGENT",			  0, DXGI_FORMAT_R32G32B32_FLOAT,    2,  0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD",			  0, DXGI_FORMAT_R32G32_FLOAT,       3,  0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "BLENDINDICES",		  0, DXGI_FORMAT_R32G32B32A32_FLOAT, 4,  0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "BLENDWEIGHT",		  0, DXGI_FORMAT_R32G32B32A32_FLOAT, 4, 16,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-	};
 	this->Shader_FBX = new Shader();
-	if(FAILED(this->Shader_FBX->Init(Dx_Device, Dx_DeviceContext, "Shaders/BTTFBXViewer.fx", inputDescFBX, 6)))	// + on last if added above
+	if(FAILED(this->Shader_FBX->Init(Dx_Device, Dx_DeviceContext, "Shaders/BTTFBXViewer.fx", inputDescFBX, 6)))
 	{
 		MaloW::Debug("Failed to open BTTFBXViewer.fx");
 		return E_FAIL;
 	}
 
+	// Skybox shader
+	this->Shader_Skybox = new Shader();
+	if(FAILED(this->Shader_Skybox->Init(Dx_Device, Dx_DeviceContext, "Shaders/SkyBox.fx", inputDescSkybox, 1)))	// + on last if added above
+	{
+		MaloW::Debug("Failed to open SkyBox.fx");
+		return E_FAIL;
+	}
+
+	//Invisibility effect shader
+	this->Shader_InvisibilityEffect = new Shader();
+	if(FAILED(this->Shader_InvisibilityEffect->Init(this->Dx_Device, this->Dx_DeviceContext, "Shaders/InvisibilityEffect.fx", inputDescInvisibilityEffect, 2)))
+	{
+		MaloW::Debug("Failed to open InvisibilityEffect.fx");
+		return E_FAIL;
+	}
 
 
 	/*
@@ -468,7 +420,7 @@ HRESULT DxManager::Init()
 		{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
 	};
 	this->Shader_DeferredQuad = new Shader();
-	if(FAILED(this->Shader_DeferredQuad->Init(Dx_Device, Dx_DeviceContext, "Shaders/DeferredQuad.fx", DeferredQuadDesc, 4)))	// + on last if added above
+	if(FAILED(this->Shader_DeferredQuad->Init(Dx_Device, Dx_DeviceContext, "Shaders/DeferredQuad.fx", DeferredQuadDesc, 4)))
 	{
 		MaloW::Debug("Failed to open DeferredQuad.fx");
 		return E_FAIL;
@@ -483,7 +435,7 @@ HRESULT DxManager::Init()
 		{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
 	};
 	this->Shader_DeferredTexture = new Shader();
-	if(FAILED(this->Shader_DeferredTexture->Init(Dx_Device, Dx_DeviceContext, "Shaders/DeferredTexture.fx", DeferredTextureDesc, 4)))	// + on last if added above
+	if(FAILED(this->Shader_DeferredTexture->Init(Dx_Device, Dx_DeviceContext, "Shaders/DeferredTexture.fx", DeferredTextureDesc, 4)))
 	{
 		MaloW::Debug("Failed to open DeferredTexture.fx");
 		return E_FAIL;
@@ -533,9 +485,6 @@ HRESULT DxManager::Init()
 	*/
 
 
-
-
-
 	for(int i = 0; i < this->NrOfRenderTargets; i++)
 	{
 		D3D11_TEXTURE2D_DESC GBufferTextureDesc;
@@ -579,31 +528,6 @@ HRESULT DxManager::Init()
 			MaloW::Debug("Failed to initiate Gbuffer SRV");
 	}
 
-	// Skybox shader
-	static const D3D11_INPUT_ELEMENT_DESC SkyboxTextureDesc[] = {
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
-	};
-	this->Shader_Skybox = new Shader();
-	if(FAILED(this->Shader_Skybox->Init(Dx_Device, Dx_DeviceContext, "Shaders/SkyBox.fx", SkyboxTextureDesc, 1)))	// + on last if added above
-	{
-		MaloW::Debug("Failed to open SkyBox.fx");
-		return E_FAIL;
-	}
-
-
-	//Invisibility effect shader
-	static const D3D11_INPUT_ELEMENT_DESC InvisibilityEffectDesc[] = {
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
-	};
-	this->Shader_InvisibilityEffect = new Shader();
-	if(FAILED(this->Shader_InvisibilityEffect->Init(this->Dx_Device, this->Dx_DeviceContext, "Shaders/InvisibilityEffect.fx", InvisibilityEffectDesc, 2)))
-	{
-		MaloW::Debug("Failed to open InvisibilityEffect.fx");
-		return E_FAIL;
-	}
-
-
 	//Initialize resource manager (before anything that uses it).
 	ResourceManagerInit(this->Dx_Device, this->Dx_DeviceContext);
 
@@ -618,7 +542,6 @@ HRESULT DxManager::Init()
 		this->csm = new CascadedShadowMap();
 		this->csm->Init(this->Dx_Device, this->params.ShadowMapSettings);
 	}
-	
 
 	this->invisibleGeometry = false;
 

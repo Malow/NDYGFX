@@ -74,8 +74,11 @@ cbuffer ef
 	bool useShadow;
 };
 
-
-
+struct PSSceneIn
+{
+	float4 Pos : SV_POSITION;
+	float2 tex : TEXCOORD;
+};
 
 struct VSIn
 {
@@ -85,13 +88,6 @@ struct VSIn
 	float4 Color : COLOR;
 };
 
-struct PSSceneIn
-{
-	float4 Pos : SV_POSITION;
-	float2 tex : TEXCOORD;
-};
-
-
 //-----------------------------------------------------------------------------------------
 // VertexShader: VSScene
 //-----------------------------------------------------------------------------------------
@@ -100,10 +96,9 @@ VSIn VSScene(VSIn input)
 	return input;
 }
 
-
 // GS
 [maxvertexcount(4)]
-void GS( point VSIn input[1], inout TriangleStream<PSSceneIn> triStream )
+void GS(point VSIn dummy[1], inout TriangleStream<PSSceneIn> triStream )
 {
 	PSSceneIn output;
 

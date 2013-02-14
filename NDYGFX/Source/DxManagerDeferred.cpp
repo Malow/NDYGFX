@@ -1265,7 +1265,7 @@ void DxManager::RenderDeferredGeoTranslucent()
 			this->Dx_DeviceContext->IASetPrimitiveTopology(wp->GetTopology());
 
 			// Setting lightning from material
-			this->Shader_DeferredGeoTranslucent->SetFloat4("SpecularColor", D3DXVECTOR4(0.6f, 0.6f, 0.6f, 1.0f));
+			this->Shader_DeferredGeoTranslucent->SetFloat4("SpecularColor", D3DXVECTOR4(0.5f, 0.5f, 0.5f, 1.0f));
 			this->Shader_DeferredGeoTranslucent->SetFloat("SpecularPower", 10.0f);
 			this->Shader_DeferredGeoTranslucent->SetFloat4("AmbientLight", D3DXVECTOR4(this->sceneAmbientLight, 1.0f));
 			this->Shader_DeferredGeoTranslucent->SetFloat4("DiffuseColor", D3DXVECTOR4(0.5f, 0.5f, 0.5f, 1.0f));
