@@ -39,9 +39,6 @@ cbuffer PerFrame
 };
 cbuffer PerBillBoard
 {
-	float3		g_bb_Position; //input for Geometry shader
-	float2		g_bb_BillboardSize;
-	float3		g_bb_Color;
 	bool		g_bb_IsTextured;
 };
 
@@ -49,26 +46,30 @@ cbuffer PerBillBoard
 // Input and Output Structures
 //-----------------------------------------------------------------------------------------
 
-struct DummyIn
-{
 
-};
-/*struct VSIn
+struct VSIn
 {
-	//float3 posW		: POSITION; //world space
-	//float2 dummy1	: TEXCOORD;//unused TILLMAN
-	//float3 dummy2	: NORMAL; //unused TILLMAN
-	//float3 color	: COLOR;
-};*/
+	float3 posW		: POSITION; //input for Geometry shader/TA BORT
+	float2 size		: SIZE;//TA BORT
+	float3 dummy	: DUMMY; //TA BORT
+	float3 color	: COLOR; //TA BORT
+
+	/*float3 posWInstanced	: POSITION; //input for Geometry shader
+	float2 dummy1	: DUMMY;
+	float3 dummy2	: DUMMY;
+	float3 dummy3	: DUMMY;*/
+};
 
 struct GSIn 
 {
 	float3 posW		: POSITION;
-	//float3 color	: COLOR;	
+	float2 size		: SIZE;
+	float3 color	: COLOR;	
 };
 
 struct PSIn 
 {
+	float3	posW		: POSITION;	//homogenous clip space
 	float4	posH		: SV_Position;	//homogenous clip space
 	float3	normal		: NORMAL;
 	float2	texCoords	: TEXCOORD;
@@ -86,14 +87,15 @@ struct PSOut
 //-----------------------------------------------------------------------------------------
 // Vertex shader
 //-----------------------------------------------------------------------------------------
-GSIn VS(DummyIn input)
+GSIn VS(VSIn input)
 {
 	GSIn output = (GSIn)0;
 
-	output.posW = g_bb_Position;
+	output.posW = input.posW;
+	output.size = input.size;
+	output.color = input.color;
 
 	return output;
-	//return (GSIn)input;
 }
 
 
@@ -118,8 +120,8 @@ void GS(point GSIn input[1], inout TriangleStream<PSIn> triStream)
 	float4x4 WVP = mul(W, g_CamViewProj); 
 		
 	//Create a quad in local space (facing down the z-axis)
-	float halfWidth  = g_bb_BillboardSize.x * 0.5f;
-	float halfHeight = g_bb_BillboardSize.y * 0.5f;
+	float halfWidth  = input[0].size.x * 0.5f;
+	float halfHeight = input[0].size.y * 0.5f;
 	float4 positions[4];
 	positions[0] = float4(-halfWidth, -halfHeight, 0.0f, 1.0f); //Top left
 	positions[1] = float4(+halfWidth, -halfHeight, 0.0f, 1.0f);	//Top right
@@ -129,28 +131,32 @@ void GS(point GSIn input[1], inout TriangleStream<PSIn> triStream)
 	//Transform quad to world space
 	//Unroll to avoid warning x4715: emitting a system-interpreted value which may not be written in every execution path of the shader
 	PSIn output = (PSIn)0;
+	output.posW = input[0].posW; 
 	output.posH = mul(positions[0], WVP); //Transform positions to clip space [-w,-w]
-	output.normal = float3(0, 1, 0);
+	output.normal = float3(0.0f, 1.0f, 0.0f);
 	output.texCoords = g_TexCoords[0];
-	output.color = g_bb_Color;
+	output.color = input[0].color;
 	triStream.Append(output); 
-
+	
+	output.posW = input[0].posW; 
 	output.posH = mul(positions[1], WVP); //Transform positions to clip space [-w,-w]
-	output.normal = float3(0, 1, 0);
+	output.normal = float3(0.0f, 1.0f, 0.0f);
 	output.texCoords = g_TexCoords[1];
-	output.color = g_bb_Color;
+	output.color = input[0].color;
 	triStream.Append(output); 
-
+	
+	output.posW = input[0].posW; 
 	output.posH = mul(positions[2], WVP); //Transform positions to clip space [-w,-w]
-	output.normal = float3(0, 1, 0);
+	output.normal = float3(0.0f, 1.0f, 0.0f);
 	output.texCoords = g_TexCoords[2];
-	output.color = g_bb_Color;
+	output.color = input[0].color;
 	triStream.Append(output); 
-
+	
+	output.posW = input[0].posW; 
 	output.posH = mul(positions[3], WVP); //Transform positions to clip space [-w,-w]
-	output.normal = float3(0, 1, 0);
+	output.normal = float3(0.0f, 1.0f, 0.0f);
 	output.texCoords = g_TexCoords[3];
-	output.color = g_bb_Color;
+	output.color = input[0].color;
 	triStream.Append(output); 
 }
 //-----------------------------------------------------------------------------------------
@@ -177,12 +183,12 @@ PSOut PS(PSIn input)
 	}
 
 	//Normal and depth RT
-	output.NormalAndDepth = float4(input.normal, input.posH.z / input.posH.w);	
-	float depth = length(g_CameraPos - g_bb_Position) / 200.0f;		// Haxfix**tillman
+	output.NormalAndDepth = float4(input.normal, input.posH.z / input.posH.w);	//convert z from [0, w] to [0,1]
+	float depth = length(g_CameraPos - input.posW) / 200.0f;		// Haxfix**tillman
 	output.NormalAndDepth.w = depth;
 
-	//Position RT
-	output.Position = float4(g_bb_Position, -1.0f);
+	//Position(world space) RT
+	output.Position = float4(input.posW.xyz, -1.0f);
 	
 	//Specular RT
 	output.Specular.xyzw = 0.0f;
@@ -190,7 +196,7 @@ PSOut PS(PSIn input)
 	return output;
 }
 
-technique10 DrawBillboard
+technique10 DrawBillboardInstanced
 {
     pass P0
     { 

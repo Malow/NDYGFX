@@ -443,7 +443,7 @@ void TillmanTest::PreTest()
 
 	//iMesh* tklerp = GetGraphics()->CreateMesh("Media/scale.obj", Vector3(30, -300, 30));
 
-	createTerrainIndexBufferCraschText = GetGraphics()->CreateTerrain(Vector3(-25, 0, 0), Vector3(25, 0, 25), 32);
+	//createTerrainIndexBufferCraschText = GetGraphics()->CreateTerrain(Vector3(-25, 0, 0), Vector3(25, 0, 25), 32);
 
 	//Instancing benchmark
 	iTerrain* djurp;
