@@ -736,6 +736,49 @@ void DxManager::RenderBillboard(Billboard* billboard)
 	//Draw one vertex
 	this->Dx_DeviceContext->Draw(1, 0);
 }
+void DxManager::RenderInstancedBillboardTest()
+{
+	unsigned int strides[1];
+	unsigned int offsets[1];
+	ID3D11Buffer* bufferPointers[1];
+
+	// Set the buffer strides.
+	strides[0] = sizeof(Vertex); 
+	//strides[1] = sizeof(Vertex); 
+
+	// Set the buffer offsets.
+	offsets[0] = 0;
+	//offsets[1] = 0;
+
+	// Set the array of pointers to the vertex and instance buffers.
+	bufferPointers[0] = this->instanceBufferBillboard->GetBufferPointer();	
+	//bufferPointers[1] = this->vertexBufferBillboard->GetBufferPointer();
+
+	// Set the vertex buffer to active in the input assembler so it can be rendered.
+	this->Dx_DeviceContext->IASetVertexBuffers(0, 1, bufferPointers, strides, offsets);
+	this->Dx_DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+
+	// Set global variables per frame
+	this->Shader_BillboardInstanced->SetFloat3("g_CameraPos", this->camera->GetPositionD3DX());
+	this->Shader_BillboardInstanced->SetMatrix("g_CamViewProj", this->camera->GetViewMatrix() * this->camera->GetProjectionMatrix());
+	
+	// Set global variables (per billboard)** blir per frame nu**TILLMAN
+	this->Shader_BillboardInstanced->SetResource("g_bb_DiffuseMap", NULL);
+	this->Shader_BillboardInstanced->SetBool("g_bb_IsTextured", false);
+
+
+
+	//Apply pass and input layout
+	this->Shader_BillboardInstanced->Apply(0);
+
+
+	//Draw
+	this->Dx_DeviceContext->DrawInstanced(this->instanceCountBillboard, 1, 0, 0); //**TILLMAN, parameters inversed**
+
+
+
+
+}
 
 void DxManager::RenderText()
 {
@@ -1499,6 +1542,7 @@ HRESULT DxManager::Render()
 	this->RenderDeferredGeometry();
 
 	this->RenderBillboards();
+	this->RenderInstancedBillboardTest(); //**TILLMAN TEST
 	
 	//this->RenderQuadDeferred();
 	//this->RenderDeferredTexture();

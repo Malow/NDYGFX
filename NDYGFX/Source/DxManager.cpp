@@ -115,6 +115,12 @@ DxManager::~DxManager()
 		delete this->Shader_Billboard;
 		this->Shader_Billboard = NULL;
 	}
+	//**TILLMAN INSTANCIATING TEST*
+	if(this->Shader_BillboardInstanced)
+	{
+		delete this->Shader_BillboardInstanced;
+		this->Shader_BillboardInstanced = NULL;
+	}
 
 	if(this->Shader_DeferredGeometry)
 		delete this->Shader_DeferredGeometry;
@@ -229,6 +235,10 @@ DxManager::~DxManager()
 	{
 		delete ev;
 	}
+
+
+	//***TILLMAN INSTANCIATING TEST**
+	delete this->instanceBufferBillboard;
 
 	FreeResourceManager();
 }

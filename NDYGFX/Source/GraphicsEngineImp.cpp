@@ -628,7 +628,7 @@ void GraphicsEngineImp::PreLoadResources(unsigned int nrOfResources, const char*
 		arr[i] = new char(*resourcesFileNames[i]);
 	}*/
 	std::vector<string> rsrcFileNames;
-	for(int i = 0; i < nrOfResources; i++)
+	for(unsigned int i = 0; i < nrOfResources; i++)
 	{
 		rsrcFileNames.push_back(string(resourcesFileNames[i]));
 	}

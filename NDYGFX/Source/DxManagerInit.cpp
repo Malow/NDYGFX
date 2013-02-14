@@ -219,6 +219,71 @@ HRESULT DxManager::Init()
 		return E_FAIL;
 	}
 
+	// For billboards(instanced)  - **TILLMAN detta används inte**
+	/*polygonLayout[2].SemanticName = "TEXCOORD";
+	polygonLayout[2].SemanticIndex = 1;
+	polygonLayout[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+	polygonLayout[2].InputSlot = 1;
+	polygonLayout[2].AlignedByteOffset = 0;
+	polygonLayout[2].InputSlotClass = D3D11_INPUT_PER_INSTANCE_DATA;
+	polygonLayout[2].InstanceDataStepRate = 1*/
+		
+	
+	
+	//***INSTANCE TILLMAN**
+	
+	static const D3D11_INPUT_ELEMENT_DESC inputDescBillBoardInstanced[] = {
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "SIZE", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "DUMMY", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
+		/*//Instance 
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 1},
+		{ "DUMMY", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 1},
+		{ "DUMMY", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 1},
+		{ "DUMMY", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 1}*/
+	};
+
+	this->Shader_BillboardInstanced = new Shader();
+	if(FAILED(this->Shader_BillboardInstanced->Init(Dx_Device, Dx_DeviceContext, "Shaders/BillboardInstanced.fx", inputDescBillBoardInstanced, 4)))	// + on last if added above
+	{
+		MaloW::Debug("Failed to open BillboardInstanced.fx");
+		return E_FAIL;
+	}
+
+	//INSTANCE DATA
+	this->instanceCountBillboard = 50;
+
+	int size = 1.0f;
+	float colorValue = 0.0f;
+	this->instancesDataBillboard = new Vertex[this->instanceCountBillboard];
+	for(int i = 0; i < this->instanceCountBillboard; i++)
+	{
+		colorValue = (float)i / (float)this->instanceCountBillboard;
+
+		this->instancesDataBillboard[i] = Vertex(	D3DXVECTOR3(-25, i * size + size / 2.0f, 0),
+													D3DXVECTOR2(size, size), 
+													D3DXVECTOR3(), //dummy
+													D3DXVECTOR3(colorValue, colorValue, colorValue));
+		//**strunta i resten atm**
+	}
+
+	// Create the instance buffer.
+	BUFFER_INIT_DESC bufferInitDesc;
+	bufferInitDesc.ElementSize = sizeof(Vertex);
+	bufferInitDesc.InitData = this->instancesDataBillboard;
+	bufferInitDesc.NumElements = this->instanceCountBillboard;
+	bufferInitDesc.Type = VERTEX_BUFFER;
+	bufferInitDesc.Usage = BUFFER_DEFAULT;
+
+	this->instanceBufferBillboard = new Buffer();
+	this->instanceBufferBillboard->Init(this->Dx_Device, this->Dx_DeviceContext, bufferInitDesc);
+
+	delete [] this->instancesDataBillboard;
+
+	//this->instanceBufferBillboard->
+
+
 	// For text
 	static const D3D11_INPUT_ELEMENT_DESC inputDescText[] = {
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },

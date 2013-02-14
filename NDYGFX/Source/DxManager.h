@@ -40,6 +40,7 @@ private:
 	Shader* Shader_Skybox;
 	Shader* Shader_Image;
 	Shader* Shader_Billboard;
+	Shader* Shader_BillboardInstanced;
 	Shader* Shader_Text;
 	Shader* Shader_ShadowMap;
 	Shader* Shader_ShadowMapAnimated;
@@ -114,6 +115,17 @@ private:
 	SSAO* ssao;
 	FXAA* fxaa;
 
+	// Hardware instancing **TILLMAN TODO/TEST**
+	//Buffer* bill
+	//unsigned int vertexCount; //1 vertis
+	unsigned int instanceCountBillboard; 
+	//Vertex* vertexDataBillboard;
+	Vertex* instancesDataBillboard;
+	//Buffer* vertexBufferBillboard;
+	Buffer* instanceBufferBillboard;
+
+
+
 
 	bool invisibleGeometry;
 
@@ -163,6 +175,7 @@ private:
 	void RenderAntiAliasing();
 
 	void RenderBillboard(Billboard* billboard);
+	void RenderInstancedBillboardTest();
 
 	void SetCamera(SetCameraEvent* ev);
 	void HandleTerrainEvent(TerrainEvent* me);
