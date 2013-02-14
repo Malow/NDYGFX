@@ -919,14 +919,9 @@ void GraphicsEngineImp::ResizeGraphicsEngine( unsigned int width, unsigned int h
 	if(this->isManagingMyOwnWindow)
 	{
 
-		//static long style = 0;
-		//static long ex_style = 0;
 		RECT rc = { 0, 0, width, height };
 		if(this->parameters.Maximized)
 		{
-			//style = GetWindowLong(this->hWnd, GWL_STYLE);
-			//ex_style = GetWindowLong(this->hWnd, GWL_EXSTYLE);
-
 			AdjustWindowRectEx(&rc, WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_POPUP | WS_VISIBLE, FALSE, WS_EX_APPWINDOW | WS_EX_WINDOWEDGE);
 			SetWindowLongPtr(this->hWnd, GWL_EXSTYLE, WS_EX_APPWINDOW | WS_EX_WINDOWEDGE);
 			SetWindowLongPtr(this->hWnd, GWL_STYLE, WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_POPUP | WS_VISIBLE);
@@ -938,12 +933,9 @@ void GraphicsEngineImp::ResizeGraphicsEngine( unsigned int width, unsigned int h
 		else
 		{
 			AdjustWindowRect( &rc, WS_OVERLAPPEDWINDOW, FALSE );
-			//SetWindowLongPtr(this->hWnd, GWL_STYLE, WS_OVERLAPPEDWINDOW);
-			//SetWindowLongPtr(this->hWnd, GWL_EXSTYLE, NULL);
-			
-			//SetWindowLongPtr(this->hWnd, GWL_STYLE, style);
-			//SetWindowLongPtr(this->hWnd, GWL_EXSTYLE, ex_style);
-
+			SetWindowLongPtr(this->hWnd, GWL_STYLE, 349110272);
+			SetWindowLongPtr(this->hWnd, GWL_EXSTYLE, 272);
+			// Hardcoded the numbers needed for making it window since it's fiddely
 		}
 		SetWindowPos(this->hWnd, 0 , 0 , 0, rc.right - rc.left, rc.bottom - rc.top, SWP_NOMOVE | SWP_NOACTIVATE);
 
