@@ -751,7 +751,7 @@ void DxManager::RenderInstancedBillboardTest()
 	//offsets[1] = 0;
 
 	// Set the array of pointers to the vertex and instance buffers.
-	bufferPointers[0] = this->instanceBufferBillboard->GetBufferPointer();	
+	bufferPointers[0] = this->instanceBufferBillboard;	
 	//bufferPointers[1] = this->vertexBufferBillboard->GetBufferPointer();
 
 	// Set the vertex buffer to active in the input assembler so it can be rendered.

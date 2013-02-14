@@ -118,12 +118,13 @@ private:
 	// Hardware instancing **TILLMAN TODO/TEST**
 	//Buffer* bill
 	//unsigned int vertexCount; //1 vertis
+	unsigned int instanceCapacityBillboard;
 	unsigned int instanceCountBillboard; 
 	//Vertex* vertexDataBillboard;
-	Vertex* instancesDataBillboard;
+	std::vector<Vertex> instancesDataBillboard;
 	//Buffer* vertexBufferBillboard;
-	Buffer* instanceBufferBillboard;
-
+	ID3D11Buffer* instanceBufferBillboard;
+	//Buffer* instanceBufferBillboardTest;
 
 
 

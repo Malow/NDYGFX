@@ -251,12 +251,15 @@ HRESULT DxManager::Init()
 		return E_FAIL;
 	}
 
-	//INSTANCE DATA
-	this->instanceCountBillboard = 50;
-
-	int size = 1.0f;
+	//INSTANCE ** TILLMAN
+	//CREATE DATA
+	this->instanceCapacityBillboard = 20; //20 = testvalue(malow debug)**
+	this->instanceCountBillboard = 0;
+	
+	/*int size = 1.0f;
 	float colorValue = 0.0f;
-	this->instancesDataBillboard = new Vertex[this->instanceCountBillboard];
+	//Keep a copy in memory for culling
+	this->instancesDataBillboard.resize(50);// = new Vertex[this->instanceCountBillboard];
 	for(int i = 0; i < this->instanceCountBillboard; i++)
 	{
 		colorValue = (float)i / (float)this->instanceCountBillboard;
@@ -265,9 +268,41 @@ HRESULT DxManager::Init()
 													D3DXVECTOR2(size, size), 
 													D3DXVECTOR3(), //dummy
 													D3DXVECTOR3(colorValue, colorValue, colorValue));
-		//**strunta i resten atm**
+		
+	}*/
+
+	//CREATE BUFFER(EMPTY)
+	D3D11_BUFFER_DESC vbd;
+	vbd.Usage = D3D11_USAGE_DYNAMIC;
+	vbd.ByteWidth = sizeof(Vertex) * instancesDataBillboard.size();
+	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	vbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	vbd.MiscFlags = 0;
+	vbd.StructureByteStride = 0;
+
+	hr = this->Dx_Device->CreateBuffer(&vbd, 0, &this->instanceBufferBillboard);
+	if(FAILED(hr))
+	{
+		float test = 1.0f;
 	}
 
+	//LOAD DATA INTO BUFFER
+	/*D3D11_MAPPED_SUBRESOURCE mappedData; 
+	//map to access data
+	this->Dx_DeviceContext->Map(this->instanceBufferBillboard, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData);
+
+	Vertex* dataView = reinterpret_cast<Vertex*>(mappedData.pData);
+	int instanceCountTest = 0;
+	for(UINT i = 0; i < this->instancesDataBillboard.size(); ++i)
+	{
+		dataView[instanceCountTest++] = this->instancesDataBillboard[i];
+	}
+	//unmap so the GPU can have access
+	this->Dx_DeviceContext->Unmap(this->instanceBufferBillboard, 0);
+	*/
+
+
+	/* old:
 	// Create the instance buffer.
 	BUFFER_INIT_DESC bufferInitDesc;
 	bufferInitDesc.ElementSize = sizeof(Vertex);
@@ -278,8 +313,8 @@ HRESULT DxManager::Init()
 
 	this->instanceBufferBillboard = new Buffer();
 	this->instanceBufferBillboard->Init(this->Dx_Device, this->Dx_DeviceContext, bufferInitDesc);
-
-	delete [] this->instancesDataBillboard;
+	*/
+	//delete [] this->instancesDataBillboard; keep a copy in memory for culling
 
 	//this->instanceBufferBillboard->
 

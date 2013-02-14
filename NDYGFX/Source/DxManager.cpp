@@ -118,6 +118,12 @@ DxManager::~DxManager()
 	//**TILLMAN INSTANCIATING TEST*
 	if(this->Shader_BillboardInstanced)
 	{
+		//delete [] this->instancesDataBillboard; 
+
+		//this->instanceBufferBillboard->Release();
+		
+		if(this->instanceBufferBillboard) this->instanceBufferBillboard->Release(); this->instanceBufferBillboard = NULL;
+
 		delete this->Shader_BillboardInstanced;
 		this->Shader_BillboardInstanced = NULL;
 	}
@@ -235,10 +241,6 @@ DxManager::~DxManager()
 	{
 		delete ev;
 	}
-
-
-	//***TILLMAN INSTANCIATING TEST**
-	delete this->instanceBufferBillboard;
 
 	FreeResourceManager();
 }
