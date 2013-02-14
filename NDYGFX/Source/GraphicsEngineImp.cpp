@@ -287,6 +287,10 @@ HRESULT GraphicsEngineImp::InitWindow(HINSTANCE hInstance, int nCmdShow)
 		this->hWnd = CreateWindowEx(WS_EX_APPWINDOW | WS_EX_WINDOWEDGE, "GraphicsEngine", 
 			"GraphicsEngine - Direct3D 11.0", WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_POPUP | WS_VISIBLE, 
 			CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, NULL, NULL, this->hInstance, this);
+
+		// To make sure taskbar gets hidden.
+		::SendMessage(this->hWnd, WM_SYSCOMMAND, SC_RESTORE, 0);
+		::SendMessage(this->hWnd, WM_SYSCOMMAND, SC_MAXIMIZE, 0);
 	}
 	else
 	{
@@ -914,18 +918,32 @@ void GraphicsEngineImp::ResizeGraphicsEngine( unsigned int width, unsigned int h
 	MaloW::Debug("Resizing Engine to: " + MaloW::convertNrToString(width) + ", " + MaloW::convertNrToString(height));
 	if(this->isManagingMyOwnWindow)
 	{
+
+		//static long style = 0;
+		//static long ex_style = 0;
 		RECT rc = { 0, 0, width, height };
 		if(this->parameters.Maximized)
 		{
+			//style = GetWindowLong(this->hWnd, GWL_STYLE);
+			//ex_style = GetWindowLong(this->hWnd, GWL_EXSTYLE);
+
 			AdjustWindowRectEx(&rc, WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_POPUP | WS_VISIBLE, FALSE, WS_EX_APPWINDOW | WS_EX_WINDOWEDGE);
 			SetWindowLongPtr(this->hWnd, GWL_EXSTYLE, WS_EX_APPWINDOW | WS_EX_WINDOWEDGE);
 			SetWindowLongPtr(this->hWnd, GWL_STYLE, WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_POPUP | WS_VISIBLE);
+
+			// To make sure taskbar gets hidden.
+			::SendMessage(this->hWnd, WM_SYSCOMMAND, SC_RESTORE, 0);
+			::SendMessage(this->hWnd, WM_SYSCOMMAND, SC_MAXIMIZE, 0);
 		}
 		else
 		{
 			AdjustWindowRect( &rc, WS_OVERLAPPEDWINDOW, FALSE );
-			SetWindowLongPtr(this->hWnd, GWL_EXSTYLE, NULL);
 			//SetWindowLongPtr(this->hWnd, GWL_STYLE, WS_OVERLAPPEDWINDOW);
+			//SetWindowLongPtr(this->hWnd, GWL_EXSTYLE, NULL);
+			
+			//SetWindowLongPtr(this->hWnd, GWL_STYLE, style);
+			//SetWindowLongPtr(this->hWnd, GWL_EXSTYLE, ex_style);
+
 		}
 		SetWindowPos(this->hWnd, 0 , 0 , 0, rc.right - rc.left, rc.bottom - rc.top, SWP_NOMOVE | SWP_NOACTIVATE);
 
