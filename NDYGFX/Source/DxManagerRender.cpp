@@ -1421,8 +1421,38 @@ void DxManager::RenderWaterPlanes()
 
 	for(int i = 0; i < this->waterplanes.size(); i++)
 	{
+		WaterPlane* wp = this->waterplanes[i];
+		if(wp->VertexDataHasChanged)
+		{
+			delete wp->GetVertexBuffer();
+
+			// Rebuild vertex buffer
+			//Create vertex buffer
+			BUFFER_INIT_DESC vertexBufferDesc;
+			vertexBufferDesc.ElementSize = sizeof(Vertex);
+			vertexBufferDesc.InitData = wp->GetVerts(); 
+			vertexBufferDesc.NumElements = wp->GetNrOfVerts();
+			vertexBufferDesc.Type = VERTEX_BUFFER;
+			vertexBufferDesc.Usage = BUFFER_DEFAULT;
+
+			Buffer* vertexBuffer = new Buffer();
+			HRESULT hr = vertexBuffer->Init(this->Dx_Device, this->Dx_DeviceContext, vertexBufferDesc);
+			if(FAILED(hr))
+			{
+				delete vertexBuffer; 
+				vertexBuffer = NULL;
+
+				MaloW::Debug("ERROR: Could not create vertex buffer. REASON: RecreateWaterPlane."
+					+ string("ERROR code: '") 
+					+ MaloW::GetHRESULTErrorCodeString(hr));
+			}
+			wp->SetVertexBuffer(vertexBuffer);
+			wp->VertexDataHasChanged = false;
+		}
+
+
 		// Set matrixes
-		world = this->waterplanes[i]->GetWorldMatrix();
+		world = wp->GetWorldMatrix();
 		wvp = world * view * proj;
 		D3DXMatrixInverse(&worldInverseTranspose, NULL, &world);
 		D3DXMatrixTranspose(&worldInverseTranspose, &worldInverseTranspose);
@@ -1431,7 +1461,7 @@ void DxManager::RenderWaterPlanes()
 		this->Shader_Water->SetMatrix("worldMatrix", world);
 		this->Shader_Water->SetMatrix("worldMatrixInverseTranspose", worldInverseTranspose);
 
-		this->Dx_DeviceContext->IASetPrimitiveTopology(this->waterplanes[i]->GetTopology());
+		this->Dx_DeviceContext->IASetPrimitiveTopology(wp->GetTopology());
 
 		// Setting lightning from material
 		this->Shader_Water->SetFloat4("SpecularColor", D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1));
@@ -1439,11 +1469,11 @@ void DxManager::RenderWaterPlanes()
 		this->Shader_Water->SetFloat4("AmbientLight", D3DXVECTOR4(this->sceneAmbientLight, 1.0f));
 		this->Shader_Water->SetFloat4("DiffuseColor", D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1));
 
-		Buffer* verts = this->waterplanes[i]->GetVertexBuffer();
+		Buffer* verts = wp->GetVertexBuffer();
 		if(verts)
 			verts->Apply();
 
-		if(ID3D11ShaderResourceView* texture = this->waterplanes[i]->GetTextureResource()->GetSRVPointer())//**TILLMAN
+		if(ID3D11ShaderResourceView* texture = wp->GetTextureResource()->GetSRVPointer())//**TILLMAN
 		{
 			this->Shader_Water->SetBool("textured", true);
 			this->Shader_Water->SetResource("tex2D", texture);

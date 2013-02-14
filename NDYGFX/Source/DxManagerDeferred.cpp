@@ -1219,6 +1219,34 @@ void DxManager::RenderDeferredGeoTranslucent()
 	for(int i = 0; i < this->waterplanes.size(); i++)
 	{
 		WaterPlane* wp = this->waterplanes[i];
+		if(wp->VertexDataHasChanged)
+		{
+			delete wp->GetVertexBuffer();
+
+			// Rebuild vertex buffer
+			//Create vertex buffer
+			BUFFER_INIT_DESC vertexBufferDesc;
+			vertexBufferDesc.ElementSize = sizeof(Vertex);
+			vertexBufferDesc.InitData = wp->GetVerts(); 
+			vertexBufferDesc.NumElements = wp->GetNrOfVerts();
+			vertexBufferDesc.Type = VERTEX_BUFFER;
+			vertexBufferDesc.Usage = BUFFER_DEFAULT;
+
+			Buffer* vertexBuffer = new Buffer();
+			HRESULT hr = vertexBuffer->Init(this->Dx_Device, this->Dx_DeviceContext, vertexBufferDesc);
+			if(FAILED(hr))
+			{
+				delete vertexBuffer; 
+				vertexBuffer = NULL;
+
+				MaloW::Debug("ERROR: Could not create vertex buffer. REASON: RecreateWaterPlane."
+					+ string("ERROR code: '") 
+					+ MaloW::GetHRESULTErrorCodeString(hr));
+			}
+			wp->SetVertexBuffer(vertexBuffer);
+			wp->VertexDataHasChanged = false;
+		}
+
 		if(!wp->GetDontRenderFlag())
 		{
 			// Per object

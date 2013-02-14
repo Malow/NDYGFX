@@ -1521,8 +1521,10 @@ CollisionData PhysicsEngine::GetSpecialCollisionRayTerrain( Vector3 rayOrigin, V
 				terrain->GetIndicesPointer(), terrain->GetNrOfIndices(), terrain->GetWorldMatrix(), cd);
 		}
 	}
-	else
-		MaloW::Debug("Failed to cast iTerrain to Terrain in PhysicsEngine.cpp in RayTerrain");
+	//else
+		//MaloW::Debug("Failed to cast iTerrain to Terrain in PhysicsEngine.cpp in RayTerrain");
+		// MALOW, TILLMAN, ANYONE!!1!!! Commented this out because Björn lagged when using editor cuz this was
+		// spamming out. Alex: Needs to check how he uses this in the editor, prolly sends a bad pointer.
 
 	return cd;
 }

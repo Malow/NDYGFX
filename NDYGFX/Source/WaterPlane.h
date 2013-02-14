@@ -20,6 +20,8 @@ public:
 	WaterPlane(D3DXVECTOR3 pos);
 	virtual ~WaterPlane();
 
+	bool VertexDataHasChanged;
+
 	void SetTexture(TextureResource* text) { this->textureResource = text; }
 	void SetTexture2(TextureResource* text) { this->textureResource2 = text; }
 	TextureResource* GetTextureResource() const { return this->textureResource; }
@@ -29,6 +31,8 @@ public:
 	int GetNrOfVerts() const { return this->nrOfVerts; }
 	void SetVertexBuffer(Buffer* vertBuffer) { this->vertBuffer = vertBuffer; }
 	Buffer* GetVertexBuffer() const { return this->vertBuffer; }
+
+	virtual void SetVertexPosition(Vector3 pos, int vertexIndex);
 };
 
 #pragma warning ( pop )
