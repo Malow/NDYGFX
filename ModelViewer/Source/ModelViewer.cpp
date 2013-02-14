@@ -153,7 +153,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	float tempInt = 10.0f;
 	while(GetGraphics()->IsRunning() && go)
 	{
-		//Sleep(10);
+		Sleep(10);
 		string specString = GetGraphics()->GetSpecialString();
 		ReplaceSlashes(specString, '\\', '/');
 		if(specString != lastSpecString)

@@ -174,7 +174,9 @@ void Camera::FollowMesh( iMesh* target )
 
 void Camera::RecreateProjectionMatrix()
 {
-	D3DXMatrixPerspectiveFovLH(&this->projection, (float)D3DX_PI * this->params.FOV, this->params.WindowWidth / (float)this->params.WindowHeight, this->params.NearClip, this->params.FarClip);}
+	D3DXMatrixPerspectiveFovLH(&this->projection, (float)D3DX_PI * this->params.FOV, this->params.WindowWidth / (float)this->params.WindowHeight, this->params.NearClip, this->params.FarClip);
+}
+
 D3DXVECTOR3 Camera::GetRightVectorD3DX() const
 {
 	Vector3 right = this->GetRightVector();

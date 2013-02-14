@@ -210,6 +210,7 @@ LRESULT CALLBACK GraphicsEngineImp::WndProc(HWND hWnd, UINT message, WPARAM wPar
 			}
 			break;
 
+			
 		case WM_ACTIVATE:
 			{
 				if(gfx && gfx->GetManagingWindow() && wParam != 0)
@@ -239,7 +240,7 @@ LRESULT CALLBACK GraphicsEngineImp::WndProc(HWND hWnd, UINT message, WPARAM wPar
 				}
 			}
 			break;
-
+			
 			/*
 		case WM_MOVING:
 			break;
@@ -289,10 +290,9 @@ HRESULT GraphicsEngineImp::InitWindow(HINSTANCE hInstance, int nCmdShow)
 	}
 	else
 	{
-		AdjustWindowRect( &rc, WS_CAPTION | WS_POPUPWINDOW | WS_VISIBLE, FALSE );
-		this->hWnd = CreateWindowEx(WS_EX_OVERLAPPEDWINDOW, "GraphicsEngine", "GraphicsEngine - Direct3D 11.0", 
-			WS_CAPTION | WS_POPUPWINDOW | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, 
-			NULL, NULL, this->hInstance, this);
+		AdjustWindowRect( &rc, WS_OVERLAPPEDWINDOW, FALSE );
+		this->hWnd = CreateWindow("GraphicsEngine", "GraphicsEngine - Direct3D 11.0", 
+		WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, NULL, NULL, this->hInstance, this);
 	}
 	if(!this->hWnd)
 		return E_FAIL;
@@ -301,6 +301,7 @@ HRESULT GraphicsEngineImp::InitWindow(HINSTANCE hInstance, int nCmdShow)
 	MoveWindow(this->hWnd, 0, 0, rc.right - rc.left, rc.bottom - rc.top, false);
 	DragAcceptFiles(hWnd,true);
 
+	
 	if(this->isManagingMyOwnWindow)
 	{
 		// Confine cursor within program.
@@ -318,7 +319,7 @@ HRESULT GraphicsEngineImp::InitWindow(HINSTANCE hInstance, int nCmdShow)
 		ClipCursor(&screenRect);
 		//
 	}
-
+	
 	this->InitObjects();
 
 	return S_OK;
@@ -922,9 +923,9 @@ void GraphicsEngineImp::ResizeGraphicsEngine( unsigned int width, unsigned int h
 		}
 		else
 		{
-			AdjustWindowRect( &rc, WS_CAPTION | WS_POPUPWINDOW | WS_VISIBLE, FALSE );
-			SetWindowLongPtr(this->hWnd, GWL_EXSTYLE, WS_EX_OVERLAPPEDWINDOW);
-			//SetWindowLongPtr(this->hWnd, GWL_STYLE, WS_CAPTION | WS_POPUPWINDOW | WS_VISIBLE);
+			AdjustWindowRect( &rc, WS_OVERLAPPEDWINDOW, FALSE );
+			SetWindowLongPtr(this->hWnd, GWL_EXSTYLE, NULL);
+			//SetWindowLongPtr(this->hWnd, GWL_STYLE, WS_OVERLAPPEDWINDOW);
 		}
 		SetWindowPos(this->hWnd, 0 , 0 , 0, rc.right - rc.left, rc.bottom - rc.top, SWP_NOMOVE | SWP_NOACTIVATE);
 

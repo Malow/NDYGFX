@@ -12,9 +12,14 @@ extern "C"
 {
 	class DECLDIR iWaterPlane : public virtual iMesh 
 	{	
+	protected:
+		virtual ~iWaterPlane() {};
+
 	public:
 		iWaterPlane() {};
-		virtual ~iWaterPlane() {};
+		
+		virtual void SetVertexPosition(Vector3 pos, int vertexIndex) = 0;
+
 
 	};
 }
