@@ -13,10 +13,12 @@ private:
 	BufferResource* verts;
 	BufferResource* inds;
 	TextureResource* textureResource;
+	TextureResource* normalMap;
 	D3D_PRIMITIVE_TOPOLOGY topology;
 
 public:
-	Object3D(BufferResource* verts, BufferResource* inds, TextureResource* textureResource, D3D_PRIMITIVE_TOPOLOGY topology);
+	Object3D(BufferResource* verts, BufferResource* inds, TextureResource* textureResource, 
+		TextureResource* normalMap, D3D_PRIMITIVE_TOPOLOGY topology);
 	virtual ~Object3D();
 
 	BufferResource* GetVertexBufferResource() { return this->verts; }
@@ -25,5 +27,6 @@ public:
 	Buffer* GetIndsBuff();
 	D3D_PRIMITIVE_TOPOLOGY GetTopology() { return this->topology; }
 	TextureResource* GetTextureResource() { return this->textureResource; }
+	TextureResource* GetNormalMapResource() { return this->normalMap; }
 
 };

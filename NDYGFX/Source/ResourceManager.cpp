@@ -1,5 +1,170 @@
 #include "ResourceManager.h"
 
+void CalculateNormal(D3DXVECTOR3 tangent, D3DXVECTOR3 binormal, D3DXVECTOR3& normal)
+{
+	float length;
+
+	// Calculate the cross product of the tangent and binormal which will give the normal vector.
+	normal.x = (tangent.y * binormal.z) - (tangent.z * binormal.y);
+	normal.y = (tangent.z * binormal.x) - (tangent.x * binormal.z);
+	normal.z = (tangent.x * binormal.y) - (tangent.y * binormal.x);
+
+	// Calculate the length of the normal.
+	length = sqrt((normal.x * normal.x) + (normal.y * normal.y) + (normal.z * normal.z));
+
+	// Normalize the normal.
+	normal.x = normal.x / length;
+	normal.y = normal.y / length;
+	normal.z = normal.z / length;
+
+	return;
+}
+
+void CalculateTangentBinormal(VertexNormalMap vertex1, VertexNormalMap vertex2, VertexNormalMap vertex3,
+										  D3DXVECTOR3& tangent, D3DXVECTOR3& binormal)
+{
+	float vector1[3], vector2[3];
+	float tuVector[2], tvVector[2];
+	float den;
+	float length;
+
+
+	// Calculate the two vectors for this face.
+	vector1[0] = vertex2.pos.x - vertex1.pos.x;
+	vector1[1] = vertex2.pos.y - vertex1.pos.y;
+	vector1[2] = vertex2.pos.z - vertex1.pos.z;
+
+	vector2[0] = vertex3.pos.x - vertex1.pos.x;
+	vector2[1] = vertex3.pos.y - vertex1.pos.y;
+	vector2[2] = vertex3.pos.z - vertex1.pos.z;
+
+	// Calculate the tu and tv texture space vectors.
+	tuVector[0] = vertex2.texCoord.x - vertex1.texCoord.x;
+	tvVector[0] = vertex2.texCoord.y - vertex1.texCoord.y;
+
+	tuVector[1] = vertex3.texCoord.x - vertex1.texCoord.x;
+	tvVector[1] = vertex3.texCoord.y - vertex1.texCoord.y;
+
+	// Calculate the denominator of the tangent/binormal equation.
+	den = 1.0f / (tuVector[0] * tvVector[1] - tuVector[1] * tvVector[0]);
+
+	// Calculate the cross products and multiply by the coefficient to get the tangent and binormal.
+	tangent.x = (tvVector[1] * vector1[0] - tvVector[0] * vector2[0]) * den;
+	tangent.y = (tvVector[1] * vector1[1] - tvVector[0] * vector2[1]) * den;
+	tangent.z = (tvVector[1] * vector1[2] - tvVector[0] * vector2[2]) * den;
+
+	binormal.x = (tuVector[0] * vector2[0] - tuVector[1] * vector1[0]) * den;
+	binormal.y = (tuVector[0] * vector2[1] - tuVector[1] * vector1[1]) * den;
+	binormal.z = (tuVector[0] * vector2[2] - tuVector[1] * vector1[2]) * den;
+
+	// Calculate the length of this normal.
+	length = sqrt((tangent.x * tangent.x) + (tangent.y * tangent.y) + (tangent.z * tangent.z));
+
+	// Normalize the normal and then store it
+	tangent.x = tangent.x / length;
+	tangent.y = tangent.y / length;
+	tangent.z = tangent.z / length;
+
+	// Calculate the length of this normal.
+	length = sqrt((binormal.x * binormal.x) + (binormal.y * binormal.y) + (binormal.z * binormal.z));
+
+	// Normalize the normal and then store it
+	binormal.x = binormal.x / length;
+	binormal.y = binormal.y / length;
+	binormal.z = binormal.z / length;
+
+	return;
+}
+
+void CalculateModelVectors(VertexNormalMap* verts, int nrOfverts)
+{
+	int faceCount, i, index;
+	VertexNormalMap vertex1, vertex2, vertex3;
+	D3DXVECTOR3 tangent, binormal, normal;
+
+
+	// Calculate the number of faces in the model.
+	faceCount = nrOfverts / 3;
+
+	// Initialize the index to the model data.
+	index = 0;
+
+	// Go through all the faces and calculate the the tangent, binormal, and normal vectors.
+	for(i=0; i<faceCount; i++)
+	{
+		// Get the three vertices for this face from the model.
+		vertex1.pos.x = verts[index].pos.x;
+		vertex1.pos.y = verts[index].pos.y;
+		vertex1.pos.z = verts[index].pos.z;
+		vertex1.texCoord.x = verts[index].texCoord.x;
+		vertex1.texCoord.y = verts[index].texCoord.y;
+		vertex1.normal.x = verts[index].normal.x;
+		vertex1.normal.y = verts[index].normal.y;
+		vertex1.normal.z = verts[index].normal.z;
+		index++;
+
+		vertex2.pos.x = verts[index].pos.x;
+		vertex2.pos.y = verts[index].pos.y;
+		vertex2.pos.z = verts[index].pos.z;
+		vertex2.texCoord.x = verts[index].texCoord.x;
+		vertex2.texCoord.y = verts[index].texCoord.y;
+		vertex2.normal.x = verts[index].normal.x;
+		vertex2.normal.y = verts[index].normal.y;
+		vertex2.normal.z = verts[index].normal.z;
+		index++;
+
+		vertex3.pos.x = verts[index].pos.x;
+		vertex3.pos.y = verts[index].pos.y;
+		vertex3.pos.z = verts[index].pos.z;
+		vertex3.texCoord.x = verts[index].texCoord.x;
+		vertex3.texCoord.y = verts[index].texCoord.y;
+		vertex3.normal.x = verts[index].normal.x;
+		vertex3.normal.y = verts[index].normal.y;
+		vertex3.normal.z = verts[index].normal.z;
+		index++;
+
+		// Calculate the tangent and binormal of that face.
+		CalculateTangentBinormal(vertex1, vertex2, vertex3, tangent, binormal);
+
+		// Calculate the new normal using the tangent and binormal.
+		CalculateNormal(tangent, binormal, normal);
+
+		// Store the normal, tangent, and binormal for this face back in the model structexCoord.xre.
+		/*
+		verts[index-1].normal.x = normal.x;
+		verts[index-1].normal.y = normal.y;
+		verts[index-1].normal.z = normal.z;*/
+		verts[index-1].tangent.x = tangent.x;
+		verts[index-1].tangent.y = tangent.y;
+		verts[index-1].tangent.z = tangent.z;
+		verts[index-1].binormal.x = binormal.x;
+		verts[index-1].binormal.y = binormal.y;
+		verts[index-1].binormal.z = binormal.z;
+		/*
+		verts[index-2].normal.x = normal.x;
+		verts[index-2].normal.y = normal.y;
+		verts[index-2].normal.z = normal.z;*/
+		verts[index-2].tangent.x = tangent.x;
+		verts[index-2].tangent.y = tangent.y;
+		verts[index-2].tangent.z = tangent.z;
+		verts[index-2].binormal.x = binormal.x;
+		verts[index-2].binormal.y = binormal.y;
+		verts[index-2].binormal.z = binormal.z;
+		/*
+		verts[index-3].normal.x = normal.x;
+		verts[index-3].normal.y = normal.y;
+		verts[index-3].normal.z = normal.z;*/
+		verts[index-3].tangent.x = tangent.x;
+		verts[index-3].tangent.y = tangent.y;
+		verts[index-3].tangent.z = tangent.z;
+		verts[index-3].binormal.x = binormal.x;
+		verts[index-3].binormal.y = binormal.y;
+		verts[index-3].binormal.z = binormal.z;
+	}
+
+	return;
+}
+
 //PRIVATE:
 void ResourceManager::DoMinMax(D3DXVECTOR3& min, D3DXVECTOR3& max, D3DXVECTOR3 v)
 {
@@ -29,7 +194,7 @@ MaloW::Array<MeshStrip*>* ResourceManager::LoadMeshStrips(const char* filePath, 
 
 		int nrOfVerts = 0;
 
-		Vertex* tempverts = new Vertex[objData->faces->size()*3];
+		VertexNormalMap* tempverts = new VertexNormalMap[objData->faces->size()*3];
 
 		for(int i = 0;  i < objData->faces->size(); i++)
 		{
@@ -38,7 +203,7 @@ MaloW::Array<MeshStrip*>* ResourceManager::LoadMeshStrips(const char* filePath, 
 				int vertpos = objData->faces->get(i).data[0][0] - 1;
 				int textcoord = objData->faces->get(i).data[0][1] - 1;
 				int norm = objData->faces->get(i).data[0][2] - 1;
-				tempverts[nrOfVerts] = Vertex(objData->vertspos->get(vertpos), objData->textcoords->get(textcoord), objData->vertsnorms->get(norm));
+				tempverts[nrOfVerts] = VertexNormalMap(objData->vertspos->get(vertpos), objData->textcoords->get(textcoord), objData->vertsnorms->get(norm));
 				DoMinMax(min, max, tempverts[nrOfVerts].pos);
 				//For billboard
 				if(billboardHeight < tempverts[nrOfVerts].pos.y)
@@ -50,7 +215,7 @@ MaloW::Array<MeshStrip*>* ResourceManager::LoadMeshStrips(const char* filePath, 
 				vertpos = objData->faces->get(i).data[2][0] - 1;
 				textcoord = objData->faces->get(i).data[2][1] - 1;
 				norm = objData->faces->get(i).data[2][2] - 1;
-				tempverts[nrOfVerts] = Vertex(objData->vertspos->get(vertpos), objData->textcoords->get(textcoord), objData->vertsnorms->get(norm));
+				tempverts[nrOfVerts] = VertexNormalMap(objData->vertspos->get(vertpos), objData->textcoords->get(textcoord), objData->vertsnorms->get(norm));
 				DoMinMax(min, max, tempverts[nrOfVerts].pos);
 				//For billboard
 				if(billboardHeight < tempverts[nrOfVerts].pos.y)
@@ -62,7 +227,7 @@ MaloW::Array<MeshStrip*>* ResourceManager::LoadMeshStrips(const char* filePath, 
 				vertpos = objData->faces->get(i).data[1][0] - 1;
 				textcoord = objData->faces->get(i).data[1][1] - 1;
 				norm = objData->faces->get(i).data[1][2] - 1;
-				tempverts[nrOfVerts] = Vertex(objData->vertspos->get(vertpos), objData->textcoords->get(textcoord), objData->vertsnorms->get(norm));
+				tempverts[nrOfVerts] = VertexNormalMap(objData->vertspos->get(vertpos), objData->textcoords->get(textcoord), objData->vertsnorms->get(norm));
 				DoMinMax(min, max, tempverts[nrOfVerts].pos);
 				//For billboard
 				if(billboardHeight < tempverts[nrOfVerts].pos.y)
@@ -83,12 +248,13 @@ MaloW::Array<MeshStrip*>* ResourceManager::LoadMeshStrips(const char* filePath, 
 		else
 		{
 			strip->setNrOfVerts(nrOfVerts);
-			Vertex* verts = new Vertex[nrOfVerts];
+			VertexNormalMap* verts = new VertexNormalMap[nrOfVerts];
 			for(int z = 0; z < nrOfVerts; z++)
 			{
 				verts[z] = tempverts[z];
 			}
 			delete tempverts;
+			CalculateModelVectors(verts, nrOfVerts);
 			strip->SetVerts(verts);
 
 			strip->SetTexturePath(objData->mats->get(q).texture);

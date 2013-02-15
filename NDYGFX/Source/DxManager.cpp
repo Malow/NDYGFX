@@ -314,7 +314,7 @@ void DxManager::CreateStaticMesh(StaticMesh* mesh)
 			MeshStrip* strip = strips->get(i);
 
 			BUFFER_INIT_DESC bufferDesc;
-			bufferDesc.ElementSize = sizeof(Vertex);
+			bufferDesc.ElementSize = sizeof(VertexNormalMap);
 			bufferDesc.InitData = strip->getVerts();
 		
 		
@@ -343,12 +343,18 @@ void DxManager::CreateStaticMesh(StaticMesh* mesh)
 			}
 
 			TextureResource* texture = NULL;
-			if(strip->GetTexturePath() != "")
+			TextureResource* normalMap = NULL;
+			string texturePath = strip->GetTexturePath();
+			if(texturePath != "")
 			{
-				texture = GetResourceManager()->CreateTextureResourceFromFile(strip->GetTexturePath().c_str());
+				texture = GetResourceManager()->CreateTextureResourceFromFile(texturePath.c_str());
+				string ending = texturePath.substr(texturePath.length()-4);
+				string first = texturePath.substr(0, texturePath.length()-4);
+				string normalTexturePath = first + "NormalMap" + ending;
+				normalMap = GetResourceManager()->CreateTextureResourceFromFile(normalTexturePath.c_str());
 			}
 
-			Object3D* obj = new Object3D(verts, inds, texture, mesh->GetTopology()); 
+			Object3D* obj = new Object3D(verts, inds, texture, normalMap, mesh->GetTopology()); 
 			strip->SetRenderObject(obj);
 		}
 	}
@@ -386,7 +392,7 @@ void DxManager::CreateAnimatedMesh(AnimatedMesh* mesh)
 				MeshStrip* strip = strips->get(i);
 
 				BUFFER_INIT_DESC bufferDesc;
-				bufferDesc.ElementSize = sizeof(Vertex);
+				bufferDesc.ElementSize = sizeof(VertexNormalMap);
 				bufferDesc.InitData = strip->getVerts();
 		
 		
@@ -414,13 +420,18 @@ void DxManager::CreateAnimatedMesh(AnimatedMesh* mesh)
 				}
 
 				TextureResource* texture = NULL;
-				if(strip->GetTexturePath() != "")
+				TextureResource* normalMap = NULL;
+				string texturePath = strip->GetTexturePath();
+				if(texturePath != "")
 				{
-					texture = GetResourceManager()->CreateTextureResourceFromFile(strip->GetTexturePath().c_str());
+					texture = GetResourceManager()->CreateTextureResourceFromFile(texturePath.c_str());
+					string ending = texturePath.substr(texturePath.length()-4);
+					string first = texturePath.substr(0, texturePath.length()-4);
+					string normalTexturePath = first + "NormalMap" + ending;
+					normalMap = GetResourceManager()->CreateTextureResourceFromFile(normalTexturePath.c_str());
 				}
 
-				
-				Object3D* obj = new Object3D(verts, inds, texture, mesh->GetTopology()); 
+				Object3D* obj = new Object3D(verts, inds, texture, normalMap, mesh->GetTopology()); 
 				strip->SetRenderObject(obj);
 			}
 		}
@@ -676,7 +687,7 @@ void DxManager::CreateSkyBox(string texture)
 
 	// Create the desc for the buffer
 	BUFFER_INIT_DESC BufferDesc;
-	BufferDesc.ElementSize = sizeof(Vertex);
+	BufferDesc.ElementSize = sizeof(VertexNormalMap);
 	BufferDesc.InitData = strip->getVerts();
 	BufferDesc.NumElements = strip->getNrOfVerts();
 	BufferDesc.Type = VERTEX_BUFFER;
@@ -701,7 +712,7 @@ void DxManager::CreateSkyBox(string texture)
 		tex = GetResourceManager()->CreateCubeTextureResourceFromFile(texture.c_str());
 	}
 
-	Object3D* ro = new Object3D(VertexBuffer, IndexBuffer, tex, sb->GetTopology());
+	Object3D* ro = new Object3D(VertexBuffer, IndexBuffer, tex, NULL, sb->GetTopology());
 	strip->SetRenderObject(ro);
 
 	this->skybox = sb;

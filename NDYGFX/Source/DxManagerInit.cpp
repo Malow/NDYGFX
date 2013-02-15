@@ -152,6 +152,15 @@ HRESULT DxManager::Init()
 		{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
 	};
 
+	static const D3D11_INPUT_ELEMENT_DESC inputDescVertexNormalMap[] = {
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "BINORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
+	};
+
 	static const D3D11_INPUT_ELEMENT_DESC inputDescAnimatedVertex[] =
 	{
 		{"POSITION",       0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0},
@@ -162,6 +171,23 @@ HRESULT DxManager::Init()
 		{"TEXCOORD_MORPH", 0, DXGI_FORMAT_R32G32_FLOAT,    1, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"NORMAL_MORPH",   0, DXGI_FORMAT_R32G32B32_FLOAT, 1, 20, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"COLOR_MORPH",	   0, DXGI_FORMAT_R32G32B32_FLOAT, 1, 32, D3D11_INPUT_PER_VERTEX_DATA, 0},
+	};			
+
+	static const D3D11_INPUT_ELEMENT_DESC inputDescAnimatedVertexNormalMap[] =
+	{
+		{"POSITION",       0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TEXCOORD",       0, DXGI_FORMAT_R32G32_FLOAT,    0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"NORMAL",         0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"COLOR",		   0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TANGENT",		0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 44, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"BINORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 56, D3D11_INPUT_PER_VERTEX_DATA, 0},
+
+		{"POSITION_MORPH", 0, DXGI_FORMAT_R32G32B32_FLOAT, 1, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TEXCOORD_MORPH", 0, DXGI_FORMAT_R32G32_FLOAT,    1, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"NORMAL_MORPH",   0, DXGI_FORMAT_R32G32B32_FLOAT, 1, 20, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"COLOR_MORPH",	   0, DXGI_FORMAT_R32G32B32_FLOAT, 1, 32, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "TANGENT_MORPH", 0, DXGI_FORMAT_R32G32B32_FLOAT, 1, 44, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "BINORMAL_MORPH", 0, DXGI_FORMAT_R32G32B32_FLOAT, 1, 56, D3D11_INPUT_PER_VERTEX_DATA, 0}
 	};			
 
 	static const D3D11_INPUT_ELEMENT_DESC inputDescFBX[] =
@@ -256,7 +282,7 @@ HRESULT DxManager::Init()
 	
 	// Deferred Rendering Geometry pass
 	this->Shader_DeferredGeometry = new Shader();
-	if(FAILED(this->Shader_DeferredGeometry->Init(Dx_Device, Dx_DeviceContext, "Shaders/DeferredGeometry.fx", inputDescVertex, 4)))
+	if(FAILED(this->Shader_DeferredGeometry->Init(Dx_Device, Dx_DeviceContext, "Shaders/DeferredGeometry.fx", inputDescVertexNormalMap, 6)))
 	{
 		MaloW::Debug("Failed to open DeferredGeometry.fx");
 		return E_FAIL;
@@ -272,7 +298,7 @@ HRESULT DxManager::Init()
 
 	// Deferred Rendering Geo pass for animated
 	this->Shader_DeferredAnimatedGeometry = new Shader();
-	if(FAILED(this->Shader_DeferredAnimatedGeometry->Init(Dx_Device, Dx_DeviceContext, "Shaders/DeferredAnimatedGeometry.fx", inputDescAnimatedVertex, 8)))
+	if(FAILED(this->Shader_DeferredAnimatedGeometry->Init(Dx_Device, Dx_DeviceContext, "Shaders/DeferredAnimatedGeometry.fx", inputDescAnimatedVertexNormalMap, 12)))
 	{
 		MaloW::Debug("Failed to open DeferredAnimatedGeometry.fx");
 		return E_FAIL;

@@ -11,6 +11,9 @@ private:
 	iMesh* ball;
 	iMesh* secModel;
 	iWaterPlane* wp;
+	
+	//int nrofdiffs;
+	//float totDiff;
 
 public:
 	MaloWTest() {};
@@ -23,6 +26,8 @@ public:
 
 void MaloWTest::PreTest()
 {
+	//nrofdiffs = 0;
+	//totDiff = 0;
 	wp = GetGraphics()->CreateWaterPlane(Vector3(0, 15, 0), "Media/WaterTexture.png");
 	wp->SetScale(10.0f);
 	iWaterPlane* wp2 = GetGraphics()->CreateWaterPlane(Vector3(5, 10, 0), "Media/WaterTexture.png");
@@ -55,10 +60,34 @@ void MaloWTest::PreTest()
 
 	//iMesh* temp2 = GetGraphics()->CreateMesh("Media/temp_guy_supertest_anim.fbx", Vector3(-10, 3, 0));
 	//temp2->SetScale(0.05f);
+
+	iMesh* tree = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(30, 20, 30));
+	tree->Scale(0.05f);
+
+	iMesh* tree2 = GetGraphics()->CreateMesh("Media/TreeTest2.obj", Vector3(32, 20, 30));
+	tree2->Scale(0.05f);
+
+	iMesh* fern = GetGraphics()->CreateMesh("Media/Fern_02.ani", Vector3(30, 20, 25));
+	fern->Scale(0.05f);
+
+	iMesh* fern2 = GetGraphics()->CreateMesh("Media/Fern_02 - Copy.ani", Vector3(32, 20, 25));
+	fern2->Scale(0.05f);
+
+	iMesh* ferntest = GetGraphics()->CreateMesh("Media/fernTest.obj", Vector3(25, 20, 25));
+	ferntest->Scale(0.05f);	
 }
 
 void MaloWTest::RunTest(float diff)
 {
+	//nrofdiffs++;
+	//totDiff += diff;
+	/*
+	if(diff > 2.0f)
+	{
+		nrofdiffs = 1;
+		totDiff = diff;
+	}
+	*/
 	CollisionData cd;
 	//cd = GetGraphics()->GetPhysicsEngine()->GetCollisionRayMesh(
 		//GetGraphics()->GetCamera()->GetPosition(), GetGraphics()->GetCamera()->Get3DPickingRay(), iAM);
@@ -76,9 +105,22 @@ void MaloWTest::RunTest(float diff)
 	//MaloW::Debug(" ");
 	//diff = 100.0f;
 
-	cd = GetGraphics()->GetPhysicsEngine()->GetCollisionRayMesh(GetGraphics()->GetCamera()->GetPosition(), 
-		GetGraphics()->GetCamera()->GetForward(), wp);
+
+	/*
+	// Simulate distance checking
+	for(int i = 0; i < 10000; i++)
+	{
+		Vector3 to = GetGraphics()->GetCamera()->GetPosition() - wp->GetPosition();
+		if(to.GetLength() < 10.0f)
+			float asd = to.GetLength();
+	}
+
+	// 1/5'th of the models hits.
+	for(int i = 0; i < 2000; i++)*/
+		cd = GetGraphics()->GetPhysicsEngine()->GetCollisionRayMesh(GetGraphics()->GetCamera()->GetPosition(), 
+			GetGraphics()->GetCamera()->GetForward(), wp);
 		
+
 	if(cd.BoundingSphereCollision)
 	{
 		ball->SetScale(0.2f);
@@ -115,7 +157,7 @@ void MaloWTest::RunTest(float diff)
 				GetGraphics()->GetCamera()->SetForward(fw);
 				//GetGraphics()->ResizeGraphicsEngine(750, 250);
 			}
-			*/
+			*//*
 			if(qual % 2 == 0)
 			{
 				wp->SetVertexPosition(Vector3(1, 0, -0.1), 0);
@@ -133,8 +175,9 @@ void MaloWTest::RunTest(float diff)
 				wp->SetVertexPosition(Vector3(-0.5f, 0, 0.5f), 3);
 				GetGraphics()->GetEngineParameters().Maximized = false;
 				GetGraphics()->ResizeGraphicsEngine(1264, 947);
-			}
-			//GetGraphics()->ReloadShaders(16);
+			}*/
+			GetGraphics()->ReloadShaders(9);
+			//MaloW::Debug("Diff: " + MaloW::convertNrToString(totDiff / nrofdiffs));
 			//GetGraphics()->ChangeShadowQuality(qual);
 			qual++;
 			fesd = false;
