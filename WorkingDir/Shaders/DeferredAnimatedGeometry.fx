@@ -8,6 +8,7 @@
 
 // For textures
 Texture2D tex2D;
+Texture2D normalMap;
 SamplerState linearSampler
 {
     Filter = MIN_MAG_MIP_LINEAR;
@@ -26,6 +27,7 @@ cbuffer EveryStrip
 	matrix worldMatrix;
 	matrix worldMatrixInverseTranspose;
 	bool textured;
+	bool useNormalMap;
 
 	float4 AmbientLight;
 	float SpecularPower;
@@ -48,11 +50,15 @@ struct VSIn
 	float2 tex : TEXCOORD;
 	float3 norm : NORMAL;
 	float4 Color : COLOR;
+	float3 Tangent : TANGENT;
+	float3 Binormal : BINORMAL;
 
 	float4 Pos_Morph : POSITION_MORPH;
 	float2 tex_Morph : TEXCOORD_MORPH;
 	float3 norm_Morph : NORMAL_MORPH;
 	float4 Color_Morph : COLOR_MORPH;
+	float3 Tangent_Morph : TANGENT_MORPH;
+	float3 Binormal_Morph : BINORMAL_MORPH;
 };
 
 
@@ -62,6 +68,8 @@ struct PSSceneIn
 	float2 tex : TEXCOORD;
 	float3 norm : NORMAL;
 	float4 Color : COLOR;
+	float3 Tangent : TANGENT;
+	float3 Binormal : BINORMAL;
 
 	float4 WorldPos : POSITION;
 };
@@ -113,6 +121,8 @@ PSSceneIn VSScene(VSIn input)
 	output.WorldPos = mul(lerp(input.Pos, input.Pos_Morph, t), worldMatrix);
 	output.tex = lerp(input.tex, input.tex_Morph, t);
 	output.norm = normalize(mul(lerp(input.norm, input.norm_Morph, t), (float3x3)worldMatrixInverseTranspose));
+	output.Tangent = normalize(mul(lerp(input.Tangent, input.Tangent_Morph, t), (float3x3)worldMatrixInverseTranspose));
+	output.Binormal = normalize(mul(lerp(input.Binormal, input.Binormal_Morph, t), (float3x3)worldMatrixInverseTranspose));
 	output.Color = lerp(input.Color, input.Color_Morph, t);
 
 	return output;
@@ -146,6 +156,20 @@ PSout PSScene(PSSceneIn input) : SV_Target
 
 	output.Specular = SpecularColor;
 	output.Specular.w = SpecularPower;
+
+	if(useNormalMap)
+	{
+		// NormalMap
+		float4 bumpMap = normalMap.Sample(linearSampler, input.tex);
+		// Expand the range of the normal value from (0, +1) to (-1, +1).
+		bumpMap = (bumpMap * 2.0f) - 1.0f;
+		// Calculate the normal from the data in the bump map.
+		float3 bumpNormal = input.norm + bumpMap.x * input.Tangent + bumpMap.y * input.Binormal;
+		// Normalize the resulting bump normal.
+		bumpNormal = normalize(bumpNormal);
+		output.NormalAndDepth.xyz = bumpNormal.xyz;
+		// NormalMap
+	}
 
 	return output;
 }

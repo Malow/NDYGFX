@@ -546,17 +546,40 @@ void DxManager::RenderDeferredGeometry()
 							{
 								this->Shader_DeferredGeometry->SetBool("textured", true);
 								this->Shader_DeferredGeometry->SetResource("tex2D", texture);
+
+								if(obj->GetNormalMapResource())
+								{
+									if(ID3D11ShaderResourceView* normalMap = obj->GetNormalMapResource()->GetSRVPointer())
+									{
+										this->Shader_DeferredGeometry->SetBool("useNormalMap", true);
+										this->Shader_DeferredGeometry->SetResource("normalMap", normalMap);
+									}
+									else
+									{
+										this->Shader_DeferredGeometry->SetBool("useNormalMap", false);
+										this->Shader_DeferredGeometry->SetResource("normalMap", NULL);
+									}
+								}
+								else
+								{
+									this->Shader_DeferredGeometry->SetBool("useNormalMap", false);
+									this->Shader_DeferredGeometry->SetResource("normalMap", NULL);
+								}
 							}
 							else //else set texture variables to not be used
 							{
 								this->Shader_DeferredGeometry->SetBool("textured", false);
 								this->Shader_DeferredGeometry->SetResource("tex2D", NULL);
+								this->Shader_DeferredGeometry->SetBool("useNormalMap", false);
+								this->Shader_DeferredGeometry->SetResource("normalMap", NULL);
 							}
 						}
 						else //else set texture variables to not be used
 						{
 							this->Shader_DeferredGeometry->SetBool("textured", false);
 							this->Shader_DeferredGeometry->SetResource("tex2D", NULL);
+							this->Shader_DeferredGeometry->SetBool("useNormalMap", false);
+							this->Shader_DeferredGeometry->SetResource("normalMap", NULL);
 						}
 						Buffer* inds = obj->GetIndsBuff();
 						if(inds)
@@ -676,11 +699,12 @@ void DxManager::RenderDeferredGeometry()
 		}
 	}
 	// Unbind resources static geometry:
+	this->Shader_DeferredGeometry->SetResource("normalMap", NULL);
 	this->Shader_DeferredGeometry->SetResource("tex2D", NULL);
 	this->Shader_DeferredGeometry->Apply(0);
 
 
-
+	
 	// Normal Animated meshes
 	this->Shader_DeferredAnimatedGeometry->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetPositionD3DX(), 1));
 	this->Shader_DeferredAnimatedGeometry->SetFloat("NearClip", this->params.NearClip);
@@ -755,7 +779,7 @@ void DxManager::RenderDeferredGeometry()
 						Buffer* vertsTwo = objTwo->GetVertBuff();
 
 						ID3D11Buffer* vertexBuffers [] = {vertsOne->GetBufferPointer(), vertsTwo->GetBufferPointer()};
-						UINT strides [] = {sizeof(Vertex), sizeof(Vertex)};
+						UINT strides [] = {sizeof(VertexNormalMap), sizeof(VertexNormalMap)};
 						UINT offsets [] = {0, 0};
 
 						this->Dx_DeviceContext->IASetVertexBuffers(0, 2, vertexBuffers, strides, offsets);
@@ -768,17 +792,40 @@ void DxManager::RenderDeferredGeometry()
 							{
 								this->Shader_DeferredAnimatedGeometry->SetBool("textured", true);
 								this->Shader_DeferredAnimatedGeometry->SetResource("tex2D", texture);
+
+								if(objOne->GetNormalMapResource())
+								{
+									if(ID3D11ShaderResourceView* normalMap = objOne->GetNormalMapResource()->GetSRVPointer())
+									{
+										this->Shader_DeferredAnimatedGeometry->SetBool("useNormalMap", true);
+										this->Shader_DeferredAnimatedGeometry->SetResource("normalMap", normalMap);
+									}
+									else
+									{
+										this->Shader_DeferredAnimatedGeometry->SetBool("useNormalMap", false);
+										this->Shader_DeferredAnimatedGeometry->SetResource("normalMap", NULL);
+									}
+								}
+								else
+								{
+									this->Shader_DeferredAnimatedGeometry->SetBool("useNormalMap", false);
+									this->Shader_DeferredAnimatedGeometry->SetResource("normalMap", NULL);
+								}
 							}
 							else //else set texture variables to not be used
 							{
 								this->Shader_DeferredAnimatedGeometry->SetBool("textured", false);
 								this->Shader_DeferredAnimatedGeometry->SetResource("tex2D", NULL);
+								this->Shader_DeferredAnimatedGeometry->SetBool("useNormalMap", false);
+								this->Shader_DeferredAnimatedGeometry->SetResource("normalMap", NULL);
 							}
 						}
 						else //else set texture variables to not be used
 						{
 							this->Shader_DeferredAnimatedGeometry->SetBool("textured", false);
 							this->Shader_DeferredAnimatedGeometry->SetResource("tex2D", NULL);
+							this->Shader_DeferredAnimatedGeometry->SetBool("useNormalMap", false);
+							this->Shader_DeferredAnimatedGeometry->SetResource("normalMap", NULL);
 						}
 
 						this->Shader_DeferredAnimatedGeometry->Apply(0);

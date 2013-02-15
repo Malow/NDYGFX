@@ -55,6 +55,21 @@ void MaloWTest::PreTest()
 
 	//iMesh* temp2 = GetGraphics()->CreateMesh("Media/temp_guy_supertest_anim.fbx", Vector3(-10, 3, 0));
 	//temp2->SetScale(0.05f);
+
+	iMesh* tree = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(30, 20, 30));
+	tree->Scale(0.05f);
+
+	iMesh* tree2 = GetGraphics()->CreateMesh("Media/TreeTest2.obj", Vector3(32, 20, 30));
+	tree2->Scale(0.05f);
+
+	iMesh* fern = GetGraphics()->CreateMesh("Media/Fern_02.ani", Vector3(30, 20, 25));
+	fern->Scale(0.05f);
+
+	iMesh* fern2 = GetGraphics()->CreateMesh("Media/Fern_02 - Copy.ani", Vector3(32, 20, 25));
+	fern2->Scale(0.05f);
+
+	iMesh* ferntest = GetGraphics()->CreateMesh("Media/fernTest.obj", Vector3(25, 20, 25));
+	ferntest->Scale(0.05f);	
 }
 
 void MaloWTest::RunTest(float diff)
@@ -115,7 +130,7 @@ void MaloWTest::RunTest(float diff)
 				GetGraphics()->GetCamera()->SetForward(fw);
 				//GetGraphics()->ResizeGraphicsEngine(750, 250);
 			}
-			*/
+			*//*
 			if(qual % 2 == 0)
 			{
 				wp->SetVertexPosition(Vector3(1, 0, -0.1), 0);
@@ -133,8 +148,8 @@ void MaloWTest::RunTest(float diff)
 				wp->SetVertexPosition(Vector3(-0.5f, 0, 0.5f), 3);
 				GetGraphics()->GetEngineParameters().Maximized = false;
 				GetGraphics()->ResizeGraphicsEngine(1264, 947);
-			}
-			//GetGraphics()->ReloadShaders(16);
+			}*/
+			GetGraphics()->ReloadShaders(9);
 			//GetGraphics()->ChangeShadowQuality(qual);
 			qual++;
 			fesd = false;

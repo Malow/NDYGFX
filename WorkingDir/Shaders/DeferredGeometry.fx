@@ -9,6 +9,7 @@
 
 // For textures
 Texture2D tex2D;
+Texture2D normalMap;
 SamplerState linearSampler
 {
     Filter = MIN_MAG_MIP_LINEAR;
@@ -27,12 +28,14 @@ cbuffer EveryStrip
 	matrix worldMatrix;
 	matrix worldMatrixInverseTranspose;
 	bool textured;
+	bool useNormalMap;
 
 	float4 AmbientLight; //**tillman opt - används inte
 	float SpecularPower;
 	float4 SpecularColor;
 	float4 DiffuseColor;
 };
+
 cbuffer EveryMesh
 {
 	uint specialColor;
@@ -43,7 +46,9 @@ struct VSIn
 	float4 Pos : POSITION;
 	float2 tex : TEXCOORD;
 	float3 norm : NORMAL;
-	float4 Color : COLOR;
+	float3 color : COLOR;
+	float3 Tangent : TANGENT;
+	float3 Binormal : BINORMAL;
 };
 
 struct PSSceneIn
@@ -51,7 +56,9 @@ struct PSSceneIn
 	float4 Pos : SV_POSITION;
 	float2 tex : TEXCOORD;
 	float3 norm : NORMAL;
-	float4 Color : COLOR;
+	float3 color : COLOR;
+	float3 Tangent : TANGENT;
+	float3 Binormal : BINORMAL;
 
 	float4 WorldPos : POSITION;
 };
@@ -78,7 +85,6 @@ RTs:
 //-----------------------------------------------------------------------------------------
 PSSceneIn VSScene(VSIn input)
 {
-	input.Color.w = 1.0;
 	input.Pos.w = 1.0;
 
 	PSSceneIn output = (PSSceneIn)0;
@@ -86,8 +92,9 @@ PSSceneIn VSScene(VSIn input)
 	output.WorldPos = mul(input.Pos, worldMatrix);
 	output.tex = input.tex;
 	output.norm = normalize(mul(input.norm, (float3x3)worldMatrixInverseTranspose));
-	output.Color = input.Color;
-
+	output.Tangent = normalize(mul(input.Tangent, (float3x3)worldMatrixInverseTranspose));
+	output.Binormal = normalize(mul(input.Binormal, (float3x3)worldMatrixInverseTranspose));
+	output.color = input.color;
 	return output;
 }
 
@@ -100,11 +107,14 @@ PSout PSScene(PSSceneIn input) : SV_Target
 	if(textured)
 	{
 		textureColor = tex2D.Sample(linearSampler, input.tex);
+		
 		if ( textureColor.a < 0.5f )
 			discard;
 	}
-	float4 finalColor = (textureColor + input.Color) * DiffuseColor;
+	float4 finalColor = (textureColor + float4(input.color, 0.0f)) * DiffuseColor;
 	finalColor.w = (float)specialColor;
+
+
 
 	PSout output;
 	output.Texture = finalColor;
@@ -118,7 +128,21 @@ PSout PSScene(PSSceneIn input) : SV_Target
 
 	output.Specular = SpecularColor;
 	output.Specular.w = SpecularPower;
-		
+	
+	if(useNormalMap)
+	{
+		// NormalMap
+		float4 bumpMap = normalMap.Sample(linearSampler, input.tex);
+		// Expand the range of the normal value from (0, +1) to (-1, +1).
+		bumpMap = (bumpMap * 2.0f) - 1.0f;
+		// Calculate the normal from the data in the bump map.
+		float3 bumpNormal = input.norm + bumpMap.x * input.Tangent + bumpMap.y * input.Binormal;
+		// Normalize the resulting bump normal.
+		bumpNormal = normalize(bumpNormal);
+		output.NormalAndDepth.xyz = bumpNormal.xyz;
+		// NormalMap
+	}
+	
 	return output;
 }
 

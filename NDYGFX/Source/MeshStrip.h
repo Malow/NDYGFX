@@ -7,14 +7,14 @@
 //Avoid circular include
 class Object3D;
 class Material;
-struct Vertex;
+struct VertexNormalMap;
 
 
 class MeshStrip
 {
 private:
 	Object3D* RenderObject;
-	Vertex* mesh;
+	VertexNormalMap* mesh;
 	int nrOfVerts;
 	int nrOfIndicies;
 	int* indicies;
@@ -27,8 +27,8 @@ public:
 	virtual ~MeshStrip();
 	MeshStrip(const MeshStrip* origObj);
 
-	Vertex* getVerts() const { return this->mesh; }
-	void SetVerts(Vertex* verts) { this->mesh = verts; }
+	VertexNormalMap* getVerts() const { return this->mesh; }
+	void SetVerts(VertexNormalMap* verts) { this->mesh = verts; }
 	int getNrOfVerts() const { return this->nrOfVerts; }
 	void setNrOfVerts(int vertno) { this->nrOfVerts = vertno; }
 	int* getIndicies() const { return this->indicies; }

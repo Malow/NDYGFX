@@ -28,7 +28,7 @@ MeshStrip::~MeshStrip()
 MeshStrip::MeshStrip(const MeshStrip* origObj)
 {
 	this->RenderObject = origObj->RenderObject;
-	this->mesh = new Vertex(origObj->mesh);
+	this->mesh = new VertexNormalMap(origObj->mesh);
 	this->nrOfVerts = origObj->nrOfVerts;
 	this->nrOfIndicies = origObj->nrOfIndicies;
 	this->indicies = new int[origObj->nrOfIndicies];
@@ -52,10 +52,11 @@ void MeshStrip::SetMaterial(Material* mat)
 void MeshStrip::SetTexturePath(std::string path)
 { 
 	this->texture = path; 
+	/* Doesnt work without color on the vertex.
 	if(path == "")		// Workaround for obj loading meshes without texture
 	{
 		for(int i = 0; i < this->nrOfVerts; i++)
 			this->mesh[i].color = D3DXVECTOR3(0.5, 0.5, 0.5);
 	}
-
+	*/
 }

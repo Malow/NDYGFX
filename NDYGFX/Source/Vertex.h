@@ -47,6 +47,41 @@ struct Vertex
 	}
 };
 
+
+
+struct VertexNormalMap : public Vertex
+{
+	D3DXVECTOR3 tangent;
+	D3DXVECTOR3 binormal;
+
+	VertexNormalMap(D3DXVECTOR3 _pos, D3DXVECTOR2 _texCoord, D3DXVECTOR3 _norm, D3DXVECTOR3 _tang, D3DXVECTOR3 _binorm) : Vertex(_pos, _texCoord, _norm)
+	{
+		tangent = _tang;
+		binormal = _binorm;
+	}
+	VertexNormalMap(D3DXVECTOR3 _pos, D3DXVECTOR2 _texCoord, D3DXVECTOR3 _norm) : Vertex(_pos, _texCoord, _norm)
+	{
+		tangent = D3DXVECTOR3(0, 0, 0);
+		binormal = D3DXVECTOR3(0, 0, 0);
+	}
+	VertexNormalMap() : Vertex()
+	{
+		tangent = D3DXVECTOR3(0, 0, 0);
+		binormal = D3DXVECTOR3(0, 0, 0);
+	}
+	VertexNormalMap(const VertexNormalMap* origObj)
+	{
+		pos = origObj->pos;
+		texCoord = origObj->texCoord;
+		normal = origObj->normal;
+		tangent = origObj->tangent;
+		binormal = origObj->binormal;
+	}
+};
+
+
+
+
 struct ParticleVertex
 {
 	D3DXVECTOR3 pos;
