@@ -600,7 +600,10 @@ void DxManager::RenderDeferredGeometry()
 
 					//Add billboard info
 					Billboard* bbPtr = this->objects[i]->GetBillboardGFX();
-					if(bbPtr->GetTextureResource() != NULL)
+
+					this->instancingHelper->AddBillboard(bbPtr);
+
+					/*if(bbPtr->GetTextureResource() != NULL)
 					{
 						this->instanceTotalCountBillboard++; //increase instance counter.
 						this->instancesDataBillboard[this->instanceTotalCountBillboard - 1] = 
@@ -610,7 +613,7 @@ void DxManager::RenderDeferredGeometry()
 							D3DXVECTOR3(bbPtr->GetColorD3DX()));
 						
 						this->instanceSRVsBillboard[this->instanceTotalCountBillboard - 1] = bbPtr->GetTextureResource()->GetSRVPointer();
-					}
+					}*/
 					
 
 					/*if(this->instancesDataBillboard.size() <= this->instanceCountBillboard)

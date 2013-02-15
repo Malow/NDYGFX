@@ -732,95 +732,12 @@ void DxManager::RenderBillboard(Billboard* billboard)
 	//Draw one vertex
 	this->Dx_DeviceContext->Draw(1, 0);
 }
-void DxManager::RenderInstancedBillboardTest()
+void DxManager::RenderBillboardsInstanced()
 {
-	
-	if(this->instanceTotalCountBillboard > 0)
+	if(this->instancingHelper->GetNrOfBillboards() > 0)
 	{
-		//Sort the data by shader resource view
-		int counter = 0;
-		ID3D11ShaderResourceView* tempSRV;
-		Vertex tempVertex; //**TILLMAN OPT
-		for(int i = 1; i < this->instanceTotalCountBillboard; i++)
-		{
-			tempSRV = this->instanceSRVsBillboard[i];
-			tempVertex = this->instancesDataBillboard[i];
-			counter = i - 1;
-
-			while(this->instanceSRVsBillboard[counter] > tempSRV && counter >= 0)
-			{
-				this->instanceSRVsBillboard[counter + 1] = this->instanceSRVsBillboard[counter];
-				this->instancesDataBillboard[counter + 1] = this->instancesDataBillboard[counter];
-				counter--;
-				if(counter < 0)
-				{
-					break;
-				}
-			}
-
-			this->instanceSRVsBillboard[counter + 1] = tempSRV;
-			this->instancesDataBillboard[counter + 1] = tempVertex;
-		}
-		
-		//Now that the data is sorted, create instance groups.
-		int groupCounter = 1; //**
-		
-		//Add a NULL-pointer at the end as a separator. //**Onödig, null per default ändå
-		this->instanceSRVsBillboard[this->instanceTotalCountBillboard++] = NULL;
-		
-		//First group's start location/index is always 0.
-		this->instanceGroupStartLocation[0] = 0;
-		for(unsigned int i = 0; i < this->instanceTotalCountBillboard - 1; i++)
-		{
-			//Save current element.
-			tempSRV = this->instanceSRVsBillboard[i];
-
-			//groupCounter++; //**
-
-			//As long as the next element is the same as the current element, increase groupCounter. 
-			//(The number of instances in the current group).
-			if(tempSRV == this->instanceSRVsBillboard[i + 1])
-			{
-				groupCounter++;
-			}
-			//If the next element is NOT the same as the current element, we have found a new instance group.
-			else
-			{
-				//Increase the number of instance groups.
-				this->nrOfInstanceGroupsBillboard++;
-
-				//Wrap up current instance group.
-				//Save groupCounter (instanceGroupCount)(the number of instances in the current group.)
-				this->instanceGroupCount[this->nrOfInstanceGroupsBillboard - 1] = groupCounter;
-				//Save shader resource view for instance group to use.
-				this->instanceGroupSRVBillboard[this->nrOfInstanceGroupsBillboard - 1] = this->instanceSRVsBillboard[i];
-				
-
-				//Start new instance group.
-				//Set group counter to 1.
-				groupCounter = 1; 
-				//groupCounter = 0;  //**
-				//Save index (startLocation) of the NEW group (+1 on indices).
-				this->instanceGroupStartLocation[this->nrOfInstanceGroupsBillboard] = i + 1;
-			}
-		}
-		//There is no need to wrap up last instance group since we put a NULL pointer there.
-
-
-		//Update buffer 
-		D3D11_MAPPED_SUBRESOURCE mappedSubResource; 
-	
-		//Map to access data //**TILLMAN OPTIMERING: uppdatera endast de som lagts till/tagits bort(array med index(i))**
-		this->Dx_DeviceContext->Map(this->instanceBufferBillboard, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubResource);
-
-		Vertex* dataView = reinterpret_cast<Vertex*>(mappedSubResource.pData);
-		for(UINT i = 0; i < this->instanceTotalCountBillboard; ++i)
-		{
-			dataView[i] = this->instancesDataBillboard[i];
-		}
-		//Unmap so the GPU can have access
-		this->Dx_DeviceContext->Unmap(this->instanceBufferBillboard, 0);
-
+		//Sort, create instance groups and update buffer before rendering
+		this->instancingHelper->PreRender();
 
 
 
@@ -829,33 +746,26 @@ void DxManager::RenderInstancedBillboardTest()
 		ID3D11Buffer* bufferPointers[1];
 
 		// Set the buffer strides.
-		strides[0] = sizeof(Vertex); 
-		//strides[1] = sizeof(Vertex); 
-
-		// Set the buffer offsets.
+		strides[0] = sizeof(Vertex);
+		// Set the buffer offset.
 		offsets[0] = 0;
-		//offsets[1] = 0;
-
 		// Set the array of pointers to the vertex and instance buffers.
-		bufferPointers[0] = this->instanceBufferBillboard;	
-		//bufferPointers[1] = this->vertexBufferBillboard->GetBufferPointer();
+		bufferPointers[0] = this->instancingHelper->GetBillboardInstanceBuffer();	
 
 		// Set the vertex buffer to active in the input assembler so it can be rendered.
 		this->Dx_DeviceContext->IASetVertexBuffers(0, 1, bufferPointers, strides, offsets);
 		this->Dx_DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
-		
 
 		// Set global variables per frame
 		this->Shader_BillboardInstanced->SetFloat3("g_CameraPos", this->camera->GetPositionD3DX());
 		this->Shader_BillboardInstanced->SetMatrix("g_CamViewProj", this->camera->GetViewMatrix() * this->camera->GetProjectionMatrix());
-		
-		
+
 		// Set global variables per instance group
-		for(unsigned int i = 0; i < this->nrOfInstanceGroupsBillboard; ++i)
+		for(unsigned int i = 0; i < this->instancingHelper->GetNrOfBillboardInstanceGroups(); ++i)
 		{
-			if(this->instanceGroupSRVBillboard[i] != NULL) 
+			if(this->instancingHelper->GetBillboardInstanceGroup(i).s_SRV != NULL) 
 			{
-				this->Shader_BillboardInstanced->SetResource("g_bb_DiffuseMap", this->instanceGroupSRVBillboard[i]);
+				this->Shader_BillboardInstanced->SetResource("g_bb_DiffuseMap", this->instancingHelper->GetBillboardInstanceGroup(i).s_SRV);
 				this->Shader_BillboardInstanced->SetBool("g_bb_IsTextured", true);
 			}
 			else
@@ -868,19 +778,19 @@ void DxManager::RenderInstancedBillboardTest()
 			this->Shader_BillboardInstanced->Apply(0);
 
 			//Draw
-			this->Dx_DeviceContext->DrawInstanced(this->instanceGroupCount[i], 1, this->instanceGroupStartLocation[i], 0); //**TILLMAN, parameters inversed**
+			int count = this->instancingHelper->GetBillboardInstanceGroup(i).s_Size;
+			int startLoc = this->instancingHelper->GetBillboardInstanceGroup(i).s_StartLocation;
+			this->Dx_DeviceContext->DrawInstanced(count, 1, startLoc, 0); //**TILLMAN, parameters inversed**
 			
 			//Debug data
 			this->NrOfDrawCalls++;
 		}
-
-		//Reset counter to allow data to be overwritten(done each frame)
-		this->nrOfInstanceGroupsBillboard = 0;
-		this->instanceTotalCountBillboard = 0;
 	}
 
 	//Debug data
-	this->NrOfDrawnVertices += 4 * this->instanceTotalCountBillboard;
+	this->NrOfDrawnVertices += 4 * this->instancingHelper->GetNrOfBillboards();
+	//Reset counter (nrofbillboards)
+	this->instancingHelper->PostRender();
 }
 
 void DxManager::RenderText()
@@ -1558,7 +1468,7 @@ HRESULT DxManager::Render()
 	this->RenderDeferredGeometry();
 
 	this->RenderBillboards();
-	this->RenderInstancedBillboardTest(); //**TILLMAN TEST
+	this->RenderBillboardsInstanced(); 
 	
 	//this->RenderQuadDeferred();
 	//this->RenderDeferredTexture();

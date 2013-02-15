@@ -67,6 +67,9 @@ DxManager::DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam)
 	this->ssao = NULL;
 	this->fxaa = NULL;
 
+	//TILLMAN INST*
+	//this->instancingHelper = NULL;
+
 	this->framecount = 0;
 	this->TriangleCount = 0;
 	this->RendererSleep = 0;
@@ -129,7 +132,9 @@ DxManager::~DxManager()
 		//delete [] this->instanceSRVsBillboard;
 		//this->instanceBufferBillboard->Release();
 		//if(this->instanceSRVBillboard) this->instanceSRVBillboard->Release(); this->instanceSRVBillboard = NULL;
-		if(this->instanceBufferBillboard) this->instanceBufferBillboard->Release(); this->instanceBufferBillboard = NULL;
+		//if(this->instanceBufferBillboard) this->instanceBufferBillboard->Release(); this->instanceBufferBillboard = NULL;
+		
+		if(this->instancingHelper) delete this->instancingHelper; this->instancingHelper = NULL;
 
 		delete this->Shader_BillboardInstanced;
 		this->Shader_BillboardInstanced = NULL;
