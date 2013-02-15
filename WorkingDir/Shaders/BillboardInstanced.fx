@@ -80,7 +80,7 @@ struct PSOut
 {
 	float4 Texture			: SV_TARGET0;	//Texture XYZ, Special Color W(unused in this shader)
 	float4 NormalAndDepth	: SV_TARGET1;	//Normal XYZ, depth W
-	float4 Position			: SV_TARGET2;	//Position XYZ, Type of object W(unused in this shader)
+	float4 Position			: SV_TARGET2;	//Position XYZ, Type of object W
 	float4 Specular			: SV_TARGET3;	//Specular XYZ, specular power W
 };
 
@@ -188,7 +188,7 @@ PSOut PS(PSIn input)
 	output.NormalAndDepth.w = depth;
 
 	//Position(world space) RT
-	output.Position = float4(input.posW.xyz, -1.0f);
+	output.Position = float4(input.posW.xyz, OBJECT_TYPE_BILLBOARD);
 	
 	//Specular RT
 	output.Specular.xyzw = 0.0f;

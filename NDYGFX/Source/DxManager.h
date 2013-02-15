@@ -24,6 +24,7 @@
 #include "FBXMesh.h"
 #include "DxManagerEvents.h"
 #include "CascadedShadowMap.h"
+#include "InstancingHelper.h"
 
 #if defined(DEBUG) || defined(_DEBUG)
 	#include <vld.h>
@@ -115,16 +116,7 @@ private:
 	FXAA* fxaa;
 
 	// Hardware instancing **TILLMAN TODO/TEST**
-	//Buffer* bill
-	//unsigned int vertexCount; //1 vertis
-	unsigned int instanceCapacityBillboard;
-	unsigned int instanceCountBillboard; 
-	//Vertex* vertexDataBillboard;
-	std::vector<Vertex> instancesDataBillboard;
-	//Buffer* vertexBufferBillboard;
-	ID3D11Buffer* instanceBufferBillboard;
-	//Buffer* instanceBufferBillboardTest;
-
+	InstancingHelper* instancingHelper;
 
 
 	bool invisibleGeometry;
@@ -174,7 +166,7 @@ private:
 	void RenderAntiAliasing();
 
 	void RenderBillboard(Billboard* billboard);
-	void RenderInstancedBillboardTest();
+	void RenderBillboardsInstanced();
 
 	void SetCamera(SetCameraEvent* ev);
 	void HandleTerrainEvent(TerrainEvent* me);

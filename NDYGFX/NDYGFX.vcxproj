@@ -49,6 +49,7 @@
     <ClInclude Include="Source\GraphicsEngineImp.h" />
     <ClInclude Include="Source\GraphicsEngineParameters.h" />
     <ClInclude Include="Source\Image.h" />
+    <ClInclude Include="Source\InstancingHelper.h" />
     <ClInclude Include="Source\KeyListener.h" />
     <ClInclude Include="Source\Light.h" />
     <ClInclude Include="Source\MaloWFileDebug.h" />
@@ -107,6 +108,7 @@
     <ClCompile Include="Source\GraphicsEngineImp.cpp" />
     <ClCompile Include="Source\GraphicsEngineParameters.cpp" />
     <ClCompile Include="Source\Image.cpp" />
+    <ClCompile Include="Source\InstancingHelper.cpp" />
     <ClCompile Include="Source\KeyListener.cpp" />
     <ClCompile Include="Source\Light.cpp" />
     <ClCompile Include="Source\Mesh.cpp" />

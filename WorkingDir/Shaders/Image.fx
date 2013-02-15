@@ -42,11 +42,9 @@ cbuffer EveryObject
 // Input and Output Structures
 //-----------------------------------------------------------------------------------------
 
-struct VSIn
+struct DummyIn
 {
-	float4 Pos : POSITION;
-	float2 dimensions : DIMENSIONS;
-	float opacity : OPACITY;
+	
 };
 
 struct PSSceneIn
@@ -68,7 +66,7 @@ RasterizerState NoCulling
 //-----------------------------------------------------------------------------------------
 // VertexShader: VSScene
 //-----------------------------------------------------------------------------------------
-VSIn VSScene(VSIn input)
+DummyIn VSScene(DummyIn input)
 {
 	return input;
 }
@@ -76,7 +74,7 @@ VSIn VSScene(VSIn input)
 
 // GS
 [maxvertexcount(4)]
-void GS( point VSIn input[1], inout TriangleStream<PSSceneIn> triStream )
+void GS( point DummyIn input[1], inout TriangleStream<PSSceneIn> triStream )
 {
 	PSSceneIn output;
 	output.opacity = 1.0f;

@@ -289,14 +289,48 @@ HRESULT DxManager::Init()
 	}
 
 	//INSTANCE ** TILLMAN
+	this->instancingHelper = new InstancingHelper();
+	this->instancingHelper->Init(this->Dx_Device, this->Dx_DeviceContext);
 	//CREATE DATA
-	this->instanceCapacityBillboard = 20; //20 = testvalue(malow debug)**
-	this->instanceCountBillboard = 0;
+	/*this->instanceCapacityBillboard = 200; //20 = testvalue(malow debug)**
+	this->instanceTotalCountBillboard = 0;
+	//this->instanceSRVBillboard = NULL;
+
+	this->nrOfInstanceGroupsBillboard = 0;
+
+	//Keep a copy in memory for culling
+	this->instancesDataBillboard.resize(this->instanceCapacityBillboard);// = new Vertex[this->instanceCountBillboard];
+	this->instanceSRVsBillboard.resize(this->instanceCapacityBillboard);
 	
+	this->instanceGroupCount.resize(this->instanceCapacityBillboard); //**STORLEK
+	this->instanceGroupStartLocation.resize(this->instanceCapacityBillboard);//**STORLEK
+	this->instanceGroupSRVBillboard.resize(this->instanceCapacityBillboard);//**STORLEK
+	
+	//CREATE BUFFER(EMPTY)
+	D3D11_BUFFER_DESC vbd;
+	vbd.Usage = D3D11_USAGE_DYNAMIC;
+	vbd.ByteWidth = sizeof(Vertex) * instancesDataBillboard.size(); //**this->instanceCapacityBillboard**^ titta upp på vector
+	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	vbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	vbd.MiscFlags = 0;
+	vbd.StructureByteStride = 0;
+
+	hr = this->Dx_Device->CreateBuffer(&vbd, 0, &this->instanceBufferBillboard);
+	if(FAILED(hr))
+	{
+		float test = 1.0f;
+	}*/
+
+	/*this->instanceSRVsBillboard = new ID3D11ShaderResourceView*[this->instanceCapacityBillboard]; //**EXPAND TILLMAN//**STORLEK
+	for(int i = 0; i < this->instanceCapacityBillboard; i++)
+	{
+		this->instanceSRVsBillboard[i] = NULL;
+	}
+	*/
+
 	/*int size = 1.0f;
 	float colorValue = 0.0f;
-	//Keep a copy in memory for culling
-	this->instancesDataBillboard.resize(50);// = new Vertex[this->instanceCountBillboard];
+	
 	for(int i = 0; i < this->instanceCountBillboard; i++)
 	{
 		colorValue = (float)i / (float)this->instanceCountBillboard;
@@ -308,20 +342,7 @@ HRESULT DxManager::Init()
 		
 	}*/
 
-	//CREATE BUFFER(EMPTY)
-	D3D11_BUFFER_DESC vbd;
-	vbd.Usage = D3D11_USAGE_DYNAMIC;
-	vbd.ByteWidth = sizeof(Vertex) * instancesDataBillboard.size();
-	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	vbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	vbd.MiscFlags = 0;
-	vbd.StructureByteStride = 0;
-
-	hr = this->Dx_Device->CreateBuffer(&vbd, 0, &this->instanceBufferBillboard);
-	if(FAILED(hr))
-	{
-		float test = 1.0f;
-	}
+	
 
 	//LOAD DATA INTO BUFFER
 	/*D3D11_MAPPED_SUBRESOURCE mappedData; 

@@ -21,6 +21,7 @@ Include file for all samplers, rasterizer states, and blend states and constant 
 #define MAGENTA float4(1.0f, 0.0f, 1.0f, 1.0f)
 
 #define OBJECT_TYPE_TERRAIN float(1.0f)
+#define OBJECT_TYPE_BILLBOARD float(2.0f)
 
 //------------------------------------------------------------------------------------------------------
 //	Own structures

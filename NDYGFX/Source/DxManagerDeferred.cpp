@@ -444,11 +444,15 @@ void DxManager::RenderDeferredGeometry()
 				//Count(debug)
 				CurrentNrOfDrawCalls++;
 			}
-			else
+			else if(vertices)
 			{
 				this->Dx_DeviceContext->Draw(vertices->GetElementCount(), 0);
 				//Count(debug)
 				CurrentNrOfDrawCalls++;
+			}
+			else
+			{
+				MaloW::Debug("WARNING: both index and vertex buffers were NULL. DxManagerDeferred: RenderDeferredGeometry(): Terrain.");
 			}
 		}
 	}
@@ -605,11 +609,6 @@ void DxManager::RenderDeferredGeometry()
 			}
 			else
 			{
-				//set variables used per frame
-				this->Dx_DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
-				this->Shader_Billboard->SetFloat3("g_CameraPos", this->camera->GetPositionD3DX());
-				this->Shader_Billboard->SetMatrix("g_CamViewProj", this->camera->GetViewMatrix() * this->camera->GetProjectionMatrix());
-
 				//**CULLING _ TILLMAN**
 				bool hasBeenCounted = false;
 
@@ -622,13 +621,25 @@ void DxManager::RenderDeferredGeometry()
 						hasBeenCounted = true;
 					}
 
-					//**OLD/DEPRECATED - TILLMAN
-					this->RenderBillboard(this->objects[i]->GetBillboardGFX());
-					
-					
 					//Add billboard info
-					/*this->instanceCountBillboard++; //increase instance counter.
-					if(this->instancesDataBillboard.size() <= this->instanceCountBillboard)
+					Billboard* bbPtr = this->objects[i]->GetBillboardGFX();
+
+					this->instancingHelper->AddBillboard(bbPtr);
+
+					/*if(bbPtr->GetTextureResource() != NULL)
+					{
+						this->instanceTotalCountBillboard++; //increase instance counter.
+						this->instancesDataBillboard[this->instanceTotalCountBillboard - 1] = 
+							Vertex(	bbPtr->GetPositionD3DX(),
+							bbPtr->GetSizeD3DX(), 
+							D3DXVECTOR3(), //dummy
+							D3DXVECTOR3(bbPtr->GetColorD3DX()));
+						
+						this->instanceSRVsBillboard[this->instanceTotalCountBillboard - 1] = bbPtr->GetTextureResource()->GetSRVPointer();
+					}*/
+					
+
+					/*if(this->instancesDataBillboard.size() <= this->instanceCountBillboard)
 					{
 						//Resize array with data
 						this->instanceCapacityBillboard *= 2;
@@ -680,17 +691,7 @@ void DxManager::RenderDeferredGeometry()
 						MaloW::Debug("WARNING: Resizing instance data and buffer for billboards. InstanceCount: '" 
 							+ MaloW::convertNrToString(this->instanceCountBillboard) + "'.");
 					}*/
-
-
-					//Count(debug)
-					CurrentRenderedNrOfVertices += 4;
-					CurrentNrOfDrawCalls++;
 				}
-
-
-				//Unbind resources ** TILLMAN
-				this->Shader_Billboard->SetResource("g_bb_DiffuseMap", NULL);
-				this->Shader_Billboard->Apply(0);
 			}
 		}
 		else

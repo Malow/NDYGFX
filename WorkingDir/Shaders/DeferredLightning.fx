@@ -640,6 +640,14 @@ float4 PSScene(PSSceneIn input) : SV_Target
 	}*/
 	
 	//return float4(NormsAndDepth.xyz, 1.0f);
+	
+	//**TILLMAN todo: OPT**
+	if(WorldPosAndObjectType.w == OBJECT_TYPE_BILLBOARD)
+	{
+		return float4(AmbientLight.xyz * DiffuseColor + DiffuseColor * diffuseLighting, 1.0f);// = Texture.Sample(linearSampler, input.tex).xyz;	
+	}
+
+
 	return saturate(finalColor);
 }
 
