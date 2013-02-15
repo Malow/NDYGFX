@@ -57,7 +57,6 @@ DxManager::DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam)
 	this->Shader_DeferredQuad = NULL;
 	this->Shader_DeferredTexture = NULL;
 	this->Shader_DeferredAnimatedGeometry = NULL;
-	this->Shader_Water = NULL;
 
 	this->Dx_DeferredTexture = NULL;
 	this->Dx_DeferredQuadRT = NULL;
@@ -161,9 +160,6 @@ DxManager::~DxManager()
 
 	if(this->Shader_DeferredAnimatedGeometry)
 		delete this->Shader_DeferredAnimatedGeometry;
-
-	if(this->Shader_Water)
-		delete this->Shader_Water;
 
 	if(this->Shader_FBX)
 		delete this->Shader_FBX;

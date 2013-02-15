@@ -36,7 +36,6 @@ private:
 	// Shaders
 	Shader*	Shader_ForwardRendering;
 	Shader* Shader_FBX;
-	Shader* Shader_Water;
 	Shader* Shader_Skybox;
 	Shader* Shader_Image;
 	Shader* Shader_Billboard;
@@ -176,7 +175,6 @@ private:
 	void RenderImages();
 	void RenderBillboards();
 	void RenderText();
-	void RenderWaterPlanes();
 	void RenderFBXMeshes();
 	void RenderDeferredGeoTranslucent();
 	void RenderDeferredPerPixelTranslucent();
