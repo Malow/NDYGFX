@@ -119,9 +119,21 @@ private:
 	//Buffer* bill
 	//unsigned int vertexCount; //1 vertis
 	unsigned int instanceCapacityBillboard;
-	unsigned int instanceCountBillboard; 
+	unsigned int instanceTotalCountBillboard; 
+	//ID3D11ShaderResourceView* instanceSRVBillboard;
+
+	unsigned int nrOfInstanceGroupsBillboard;
+
+	std::vector<Vertex>							instancesDataBillboard;
+	std::vector<ID3D11ShaderResourceView*>		instanceSRVsBillboard;
+
+	std::vector<unsigned int>				instanceGroupCount;
+	std::vector<unsigned int>				instanceGroupStartLocation;
+	std::vector<ID3D11ShaderResourceView*>	instanceGroupSRVBillboard;
+
+
+
 	//Vertex* vertexDataBillboard;
-	std::vector<Vertex> instancesDataBillboard;
 	//Buffer* vertexBufferBillboard;
 	ID3D11Buffer* instanceBufferBillboard;
 	//Buffer* instanceBufferBillboardTest;
