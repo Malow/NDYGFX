@@ -118,24 +118,12 @@ DxManager::~DxManager()
 		this->Shader_Billboard = NULL;
 	}
 	//**TILLMAN INSTANCIATING TEST*
+	if(this->instancingHelper) delete this->instancingHelper; this->instancingHelper = NULL;
+
 	if(this->Shader_BillboardInstanced)
 	{
-		//delete [] this->instancesDataBillboard; 
-		/*while(0 < this->instanceSRVsBillboard.size())
-		{
-			delete this->instanceSRVsBillboard.getAndRemove(0);
-		}*/
-		//for(int i = 0; i < this->instanceCapacityBillboard; i++)
-// 		{
-			//this->instanceSRVsBillboard[i]->Release(); //done by billboard object in mesh.
-	/*	}*/
-		//delete [] this->instanceSRVsBillboard;
-		//this->instanceBufferBillboard->Release();
-		//if(this->instanceSRVBillboard) this->instanceSRVBillboard->Release(); this->instanceSRVBillboard = NULL;
-		//if(this->instanceBufferBillboard) this->instanceBufferBillboard->Release(); this->instanceBufferBillboard = NULL;
 		
-		if(this->instancingHelper) delete this->instancingHelper; this->instancingHelper = NULL;
-
+		
 		delete this->Shader_BillboardInstanced;
 		this->Shader_BillboardInstanced = NULL;
 	}

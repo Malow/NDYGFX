@@ -193,11 +193,6 @@ HRESULT DxManager::Init()
 		{ "SIZE", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{ "DUMMY", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
-		/*//Instance 
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 1},
-		{ "DUMMY", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 1},
-		{ "DUMMY", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 1},
-		{ "DUMMY", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 1}*/
 	};
 
 	
@@ -241,19 +236,6 @@ HRESULT DxManager::Init()
 		return E_FAIL;
 	}
 
-	// For billboards(instanced)  - **TILLMAN detta används inte**
-	/*polygonLayout[2].SemanticName = "TEXCOORD";
-	polygonLayout[2].SemanticIndex = 1;
-	polygonLayout[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
-	polygonLayout[2].InputSlot = 1;
-	polygonLayout[2].AlignedByteOffset = 0;
-	polygonLayout[2].InputSlotClass = D3D11_INPUT_PER_INSTANCE_DATA;
-	polygonLayout[2].InstanceDataStepRate = 1*/
-		
-	
-	
-	//***INSTANCE TILLMAN**
-	
 
 	this->Shader_BillboardInstanced = new Shader();
 	if(FAILED(this->Shader_BillboardInstanced->Init(Dx_Device, Dx_DeviceContext, "Shaders/BillboardInstanced.fx", inputDescBillBoardInstanced, 4)))
@@ -261,94 +243,6 @@ HRESULT DxManager::Init()
 		MaloW::Debug("Failed to open BillboardInstanced.fx");
 		return E_FAIL;
 	}
-
-	//INSTANCE ** TILLMAN
-	this->instancingHelper = new InstancingHelper();
-	this->instancingHelper->Init(this->Dx_Device, this->Dx_DeviceContext);
-	//CREATE DATA
-	/*this->instanceCapacityBillboard = 200; //20 = testvalue(malow debug)**
-	this->instanceTotalCountBillboard = 0;
-	//this->instanceSRVBillboard = NULL;
-
-	this->nrOfInstanceGroupsBillboard = 0;
-
-	//Keep a copy in memory for culling
-	this->instancesDataBillboard.resize(this->instanceCapacityBillboard);// = new Vertex[this->instanceCountBillboard];
-	this->instanceSRVsBillboard.resize(this->instanceCapacityBillboard);
-	
-	this->instanceGroupCount.resize(this->instanceCapacityBillboard); //**STORLEK
-	this->instanceGroupStartLocation.resize(this->instanceCapacityBillboard);//**STORLEK
-	this->instanceGroupSRVBillboard.resize(this->instanceCapacityBillboard);//**STORLEK
-	
-	//CREATE BUFFER(EMPTY)
-	D3D11_BUFFER_DESC vbd;
-	vbd.Usage = D3D11_USAGE_DYNAMIC;
-	vbd.ByteWidth = sizeof(Vertex) * instancesDataBillboard.size(); //**this->instanceCapacityBillboard**^ titta upp på vector
-	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	vbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	vbd.MiscFlags = 0;
-	vbd.StructureByteStride = 0;
-
-	hr = this->Dx_Device->CreateBuffer(&vbd, 0, &this->instanceBufferBillboard);
-	if(FAILED(hr))
-	{
-		float test = 1.0f;
-	}*/
-
-	/*this->instanceSRVsBillboard = new ID3D11ShaderResourceView*[this->instanceCapacityBillboard]; //**EXPAND TILLMAN//**STORLEK
-	for(int i = 0; i < this->instanceCapacityBillboard; i++)
-	{
-		this->instanceSRVsBillboard[i] = NULL;
-	}
-	*/
-
-	/*int size = 1.0f;
-	float colorValue = 0.0f;
-	
-	for(int i = 0; i < this->instanceCountBillboard; i++)
-	{
-		colorValue = (float)i / (float)this->instanceCountBillboard;
-
-		this->instancesDataBillboard[i] = Vertex(	D3DXVECTOR3(-25, i * size + size / 2.0f, 0),
-													D3DXVECTOR2(size, size), 
-													D3DXVECTOR3(), //dummy
-													D3DXVECTOR3(colorValue, colorValue, colorValue));
-		
-	}*/
-
-	
-
-	//LOAD DATA INTO BUFFER
-	/*D3D11_MAPPED_SUBRESOURCE mappedData; 
-	//map to access data
-	this->Dx_DeviceContext->Map(this->instanceBufferBillboard, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData);
-
-	Vertex* dataView = reinterpret_cast<Vertex*>(mappedData.pData);
-	int instanceCountTest = 0;
-	for(UINT i = 0; i < this->instancesDataBillboard.size(); ++i)
-	{
-		dataView[instanceCountTest++] = this->instancesDataBillboard[i];
-	}
-	//unmap so the GPU can have access
-	this->Dx_DeviceContext->Unmap(this->instanceBufferBillboard, 0);
-	*/
-
-
-	/* old:
-	// Create the instance buffer.
-	BUFFER_INIT_DESC bufferInitDesc;
-	bufferInitDesc.ElementSize = sizeof(Vertex);
-	bufferInitDesc.InitData = this->instancesDataBillboard;
-	bufferInitDesc.NumElements = this->instanceCountBillboard;
-	bufferInitDesc.Type = VERTEX_BUFFER;
-	bufferInitDesc.Usage = BUFFER_DEFAULT;
-
-	this->instanceBufferBillboard = new Buffer();
-	this->instanceBufferBillboard->Init(this->Dx_Device, this->Dx_DeviceContext, bufferInitDesc);
-	*/
-	//delete [] this->instancesDataBillboard; keep a copy in memory for culling
-
-	//this->instanceBufferBillboard->
 
 
 	// For text  
@@ -563,6 +457,12 @@ HRESULT DxManager::Init()
 		this->csm = new CascadedShadowMap();
 		this->csm->Init(this->Dx_Device, this->params.ShadowMapSettings);
 	}
+
+	//INSTANCE ** TILLMAN
+	this->instancingHelper = new InstancingHelper();
+	this->instancingHelper->Init(this->Dx_Device, this->Dx_DeviceContext);
+
+
 
 	this->invisibleGeometry = false;
 

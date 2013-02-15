@@ -63,11 +63,6 @@ class InstancingHelper
 		//Buffer
 		ID3D11Buffer* zBillboardInstanceBuffer; //Shall contain vertex data of billboardData.
 
-	private:
-		//void Sort();
-		//void CreateInstanceGroups();
-		//void UpdateBuffer(); 
-
 	public:
 		InstancingHelper();
 		virtual~InstancingHelper();
@@ -94,6 +89,4 @@ class InstancingHelper
 		void PostRender() { this->zNrOfBillboards = 0; }
 		
 
-
-		//void UpdateBuffer(); //DXcont
 };
