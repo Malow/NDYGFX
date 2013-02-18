@@ -249,7 +249,26 @@ LRESULT CALLBACK GraphicsEngineImp::WndProc(HWND hWnd, UINT message, WPARAM wPar
 		case WM_EXITSIZEMOVE:
 			break;
 			*/
-				
+
+		// Dont send SYSKEY to DefWindowProc to stop ALT-disabling.
+		// Alt + keys doesnt work, should be the WM_SYSCHAR thing below...
+		// Keydown -> Alt down -> Key up    fails horribly too.
+		case WM_SYSKEYDOWN:
+			break;
+		case WM_SYSKEYUP:
+			break;
+		case WM_SYSCHAR:
+			if(gfx)
+			{
+				if((lParam >> 31) & 1)
+					gfx->GetKeyList()->KeyUp(wParam);
+				else 
+					gfx->GetKeyList()->KeyDown(wParam);
+			break;
+			}
+		case WM_MENUCHAR:
+			if (gfx) gfx->GetKeyList()->KeyUp(LOWORD(wParam));
+			break;
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);
 	}
