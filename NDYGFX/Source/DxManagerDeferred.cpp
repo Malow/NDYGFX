@@ -936,6 +936,11 @@ void DxManager::RenderDeferredPerPixel()
 	this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_RenderTargetView, ClearColor);
 
 	this->Dx_DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+	//Unbind the vertex buffer since no vertex data is used.
+	ID3D11Buffer* dummyBuffer [] = {NULL};
+	UINT dummyStride [] = {sizeof(VertexNormalMap)};
+	UINT dummyOffset [] = {0};
+	this->Dx_DeviceContext->IASetVertexBuffers(0, 1, dummyBuffer, dummyStride, dummyOffset);
 
 
 

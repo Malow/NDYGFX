@@ -1482,6 +1482,8 @@ HRESULT DxManager::Render()
 	if(this->invisibleGeometry)
 		this->RenderInvisibilityEffect(); 
 
+	//this->RenderWaterPlanes();
+
 	this->RenderFBXMeshes();
 	
 	this->RenderDeferredSkybox();
