@@ -301,6 +301,8 @@ void DxManager::Life()
 
 		while(!this->StartRender)
 		{
+			this->camera->Update(this->Timer - this->LastCamUpdate);
+			this->LastCamUpdate = this->Timer;
 			this->Render();
 			this->framecount++;
 		}

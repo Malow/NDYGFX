@@ -49,10 +49,8 @@ extern "C"
 
 		//virtual void WalkOnTerrain(iTerrain* terrain) = 0;
 		virtual void StopWalkingOnTerrain() = 0;
-		virtual void FollowMesh(iMesh* target) = 0;
-		virtual void StopFollowingMesh() = 0;
-		virtual void SetDistanceFromTarget(float distance) = 0;
-		virtual float GetDistanceFromTarget() const = 0;
+		virtual void SetMesh(iMesh* target, Vector3 distanceFromCamera) = 0;
+		virtual void RemoveMesh() = 0;
 		
 		virtual void SetUpdateCamera(bool update) = 0;
 
