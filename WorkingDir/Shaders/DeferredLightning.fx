@@ -74,33 +74,32 @@ cbuffer ef
 	bool useShadow;
 };
 
-struct PSSceneIn
+struct DummyStruct //VS & GS input (unused)
+{
+	
+};
+
+struct PSIn
 {
 	float4 Pos : SV_POSITION;
 	float2 tex : TEXCOORD;
 };
 
-struct VSIn
-{
-	float4 Pos : POSITION;
-	float2 tex : TEXCOORD;
-	float3 norm : NORMAL;
-	float4 Color : COLOR;
-};
+
 
 //-----------------------------------------------------------------------------------------
 // VertexShader: VSScene
 //-----------------------------------------------------------------------------------------
-VSIn VSScene(VSIn input)
+DummyStruct VSScene(DummyStruct input)
 {
 	return input;
 }
 
 // GS
 [maxvertexcount(4)]
-void GS(point VSIn dummy[1], inout TriangleStream<PSSceneIn> triStream )
+void GS(point DummyStruct dummy[1], inout TriangleStream<PSIn> triStream )
 {
-	PSSceneIn output;
+	PSIn output = (PSIn)0;
 
 	//bottom left
 	output.Pos = float4(-1, -1, 0, 1);
@@ -386,7 +385,7 @@ float SampleCascades(uint cascadeIndex, uint otherCascadeIndex, float2 pixelPosT
 //-----------------------------------------------------------------------------------------
 // PixelShader: PSSceneMain
 //-----------------------------------------------------------------------------------------
-float4 PSScene(PSSceneIn input) : SV_Target
+float4 PSScene(PSIn input) : SV_Target
 {	
 	float3 DiffuseColor = Texture.Sample(linearSampler, input.tex).xyz;	
 
