@@ -623,74 +623,7 @@ void DxManager::RenderDeferredGeometry()
 
 					//Add billboard info
 					Billboard* bbPtr = this->objects[i]->GetBillboardGFX();
-
 					this->instancingHelper->AddBillboard(bbPtr);
-
-					/*if(bbPtr->GetTextureResource() != NULL)
-					{
-						this->instanceTotalCountBillboard++; //increase instance counter.
-						this->instancesDataBillboard[this->instanceTotalCountBillboard - 1] = 
-							Vertex(	bbPtr->GetPositionD3DX(),
-							bbPtr->GetSizeD3DX(), 
-							D3DXVECTOR3(), //dummy
-							D3DXVECTOR3(bbPtr->GetColorD3DX()));
-						
-						this->instanceSRVsBillboard[this->instanceTotalCountBillboard - 1] = bbPtr->GetTextureResource()->GetSRVPointer();
-					}*/
-					
-
-					/*if(this->instancesDataBillboard.size() <= this->instanceCountBillboard)
-					{
-						//Resize array with data
-						this->instanceCapacityBillboard *= 2;
-						this->instancesDataBillboard.resize(this->instanceCapacityBillboard);
-
-						//Resize(recreate) buffer
-						D3D11_BUFFER_DESC vbd;
-						vbd.Usage = D3D11_USAGE_DYNAMIC;
-						vbd.ByteWidth = sizeof(Vertex) * instancesDataBillboard.size();
-						vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-						vbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-						vbd.MiscFlags = 0;
-						vbd.StructureByteStride = 0;
-
-						//Create new, temporary buffer with increased size.
-						ID3D11Buffer* temporaryNewBuffer = NULL;
-						HRESULT hr = this->Dx_Device->CreateBuffer(&vbd, 0, &temporaryNewBuffer);
-						if(FAILED(hr))
-						{
-							MaloW::Debug("ERROR: Failed to create buffer for instance billboard.");
-						}
-						
-						//Copy over data from the old buffer to the new buffer.
-						D3D11_MAPPED_SUBRESOURCE mappedSubResourceNew;
-						D3D11_MAPPED_SUBRESOURCE mappedSubResourceOld;
-
-						this->Dx_DeviceContext->Map(temporaryNewBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubResourceNew);
-						this->Dx_DeviceContext->Map(this->instanceBufferBillboard, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubResourceOld);
-						unsigned int oldSize = this->instanceCapacityBillboard / 2; //**TILLMAN - annat sätt? bör finnas i mappedsubres?
-						Vertex* dataViewNew = reinterpret_cast<Vertex*>(mappedSubResourceNew.pData);
-						Vertex* dataViewOld = reinterpret_cast<Vertex*>(mappedSubResourceOld.pData);
-						for(unsigned int i = 0; i < oldSize; ++i)
-						{
-							dataViewNew[i] = dataViewOld[i];
-						}
-						//unmap so the GPU can have access
-						this->Dx_DeviceContext->Unmap(this->instanceBufferBillboard, 0);
-						//unmap so the GPU can have access
-						this->Dx_DeviceContext->Unmap(temporaryNewBuffer, 0);
-					
-						
-						//Release old buffer.
-						this->instanceBufferBillboard->Release();
-						//Set old buffer to point to the new one.
-						this->instanceBufferBillboard = temporaryNewBuffer;
-						//The temporary pointer is no longer needed, so set to NULL.
-						temporaryNewBuffer = NULL;
-
-						MaloW::Debug("WARNING: Resizing instance data and buffer for billboards. InstanceCount: '" 
-							+ MaloW::convertNrToString(this->instanceCountBillboard) + "'.");
-					}*/
 				}
 			}
 		}
@@ -857,11 +790,9 @@ void DxManager::RenderDeferredGeometry()
 						hasBeenCounted = true;
 					}
 
-					//Render billboards
-					this->RenderBillboard(animatedMesh->GetBillboardGFX());
-					//Count(debug)
-					CurrentRenderedNrOfVertices += 4;
-					CurrentNrOfDrawCalls++;
+					//Add billboard info
+					Billboard* bbPtr = animatedMesh->GetBillboardGFX();
+					this->instancingHelper->AddBillboard(bbPtr);
 				}
 
 

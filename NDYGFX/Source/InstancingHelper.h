@@ -63,6 +63,9 @@ class InstancingHelper
 		//Buffer
 		ID3D11Buffer* zBillboardInstanceBuffer; //Shall contain vertex data of billboardData.
 
+	private:
+		void ExpandBillboardDataAndBuffer();
+
 	public:
 		InstancingHelper();
 		virtual~InstancingHelper();

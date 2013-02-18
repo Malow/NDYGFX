@@ -165,7 +165,6 @@ private:
 	void RenderDeferredSkybox();
 	void RenderAntiAliasing();
 
-	void RenderBillboard(Billboard* billboard);
 	void RenderBillboardsInstanced();
 
 	void SetCamera(SetCameraEvent* ev);

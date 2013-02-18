@@ -691,46 +691,42 @@ void DxManager::RenderBillboards()
 		{
 			Billboard* billboard = this->billboards[i];
 		
-			this->RenderBillboard(billboard);
+			//Set bill board variables
+			this->Shader_Billboard->SetFloat3("g_bb_Position", billboard->GetPositionD3DX()); 
+			this->Shader_Billboard->SetFloat2("g_bb_BillboardSize", billboard->GetSizeD3DX());
+			this->Shader_Billboard->SetFloat4("g_bb_Color", billboard->GetColorD3DX());
+
+			if(billboard->GetTextureResource() != NULL)
+			{
+				if(billboard->GetTextureResource()->GetSRVPointer())
+				{
+					this->Shader_Billboard->SetResource("g_bb_DiffuseMap", billboard->GetTextureResource()->GetSRVPointer());
+					this->Shader_Billboard->SetBool("g_bb_IsTextured", true);
+				}
+				else
+				{
+					this->Shader_Billboard->SetResource("g_bb_DiffuseMap", NULL);
+					this->Shader_Billboard->SetBool("g_bb_IsTextured", false);
+				}
+			}
+			else
+			{
+				this->Shader_Billboard->SetResource("g_bb_DiffuseMap", NULL);
+				this->Shader_Billboard->SetBool("g_bb_IsTextured", false);
+			}
+			//Apply them
+			this->Shader_Billboard->Apply(0);
+
+			//Ignore vertex input
+
+			//Draw one vertex
+			this->Dx_DeviceContext->Draw(1, 0);
 		}
 
 		//Unbind resources
 		this->Shader_Billboard->SetResource("g_bb_DiffuseMap", NULL);
 		this->Shader_Billboard->Apply(0);
 	}
-}
-void DxManager::RenderBillboard(Billboard* billboard)
-{
-	//Set bill board variables
-	this->Shader_Billboard->SetFloat3("g_bb_Position", billboard->GetPositionD3DX()); 
-	this->Shader_Billboard->SetFloat2("g_bb_BillboardSize", billboard->GetSizeD3DX());
-	this->Shader_Billboard->SetFloat4("g_bb_Color", billboard->GetColorD3DX());
-
-	if(billboard->GetTextureResource() != NULL)
-	{
-		if(billboard->GetTextureResource()->GetSRVPointer())
-		{
-			this->Shader_Billboard->SetResource("g_bb_DiffuseMap", billboard->GetTextureResource()->GetSRVPointer());
-			this->Shader_Billboard->SetBool("g_bb_IsTextured", true);
-		}
-		else
-		{
-			this->Shader_Billboard->SetResource("g_bb_DiffuseMap", NULL);
-			this->Shader_Billboard->SetBool("g_bb_IsTextured", false);
-		}
-	}
-	else
-	{
-		this->Shader_Billboard->SetResource("g_bb_DiffuseMap", NULL);
-		this->Shader_Billboard->SetBool("g_bb_IsTextured", false);
-	}
-	//Apply them
-	this->Shader_Billboard->Apply(0);
-
-	//Ignore vertex input
-
-	//Draw one vertex
-	this->Dx_DeviceContext->Draw(1, 0);
 }
 void DxManager::RenderBillboardsInstanced()
 {
