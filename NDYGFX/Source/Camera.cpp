@@ -206,7 +206,7 @@ void Camera::SetMesh(iMesh* target, Vector3 distanceFromCamera, Vector3 defaultM
 
 void Camera::RecreateProjectionMatrix()
 {
-	D3DXMatrixPerspectiveFovLH(&this->projection, (float)D3DX_PI * this->params.FOV, 
+	D3DXMatrixPerspectiveFovLH(&this->projection, this->params.FOV * (float)D3DX_PI / 180.0f, 
 		this->params.WindowWidth / (float)this->params.WindowHeight, this->params.NearClip, this->params.FarClip);
 }
 
@@ -219,21 +219,29 @@ D3DXVECTOR3 Camera::GetRightVectorD3DX() const
 
 Vector3 Camera::Get3DPickingRay()
 {
-	Vector3 v = Vector3(1, 0, 0);
+	D3DXMATRIX tempView;
+	D3DXMATRIX tempProj;
+
+	D3DXVECTOR3 at = this->pos + this->forward;
+	D3DXMatrixLookAtLH(&tempView, &this->pos, &at, &this->up);
+	D3DXMatrixPerspectiveFovLH(&tempProj, this->params.FOV * (float)D3DX_PI / 180.0f, 
+		this->params.WindowWidth / (float)this->params.WindowHeight, this->params.NearClip, this->params.FarClip);
+
+	Vector3 v/* = Vector3(1, 0, 0)*/;
 	POINT p;
 	if(GetCursorPos(&p))
 	{
 		if(ScreenToClient(this->g_hWnd, &p))
 		{
-			v.x = (((2.0f * p.x) / this->params.WindowWidth) - 1) / this->GetProjectionMatrix()._11;
-			v.y = -(((2.0f * p.y) / this->params.WindowHeight) - 1) / this->GetProjectionMatrix()._22;
+			v.x = (((2.0f * p.x) / this->params.WindowWidth) - 1) / tempProj._11;
+			v.y = -(((2.0f * p.y) / this->params.WindowHeight) - 1) / tempProj._22;
 			v.z =  1.0f;
 
 
 			D3DXMATRIX m;
 			D3DXVECTOR3 rayOrigin,rayDir;
 
-			D3DXMatrixInverse(&m, NULL, &this->GetViewMatrix());
+			D3DXMatrixInverse(&m, NULL, &tempView);
 
 			// Transform the screen space pick ray into 3D space
 			rayDir.x = v.x * m._11 + v.y * m._21 + v.z * m._31;
