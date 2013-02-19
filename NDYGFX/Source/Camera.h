@@ -35,6 +35,7 @@ protected:
 
 	float speed;
 	Vector3 distanceFromMesh;
+	Vector3 defaultMeshDirection;
 
 	GraphicsEngineParams &params;
 
@@ -84,7 +85,7 @@ public:
 	
 	//virtual void WalkOnTerrain(iTerrain* terrain) { this->terrain = terrain; }
 	virtual void StopWalkingOnTerrain() { this->terrain = NULL; }
-	virtual void SetMesh(iMesh* target, Vector3 distanceFromCamera);
+	virtual void SetMesh(iMesh* target, Vector3 distanceFromCamera, Vector3 defaultMeshDirection = Vector3(0, 0, -1));
 	virtual void RemoveMesh() { this->followTarget = NULL; }
 
 	virtual void SetActiveWindowDisabling(bool dis) { this->activeWindowDisabling = dis; }

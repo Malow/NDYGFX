@@ -119,6 +119,26 @@ void Camera::MoveFollowingMesh()
 		// If it crashes here it's because the mesh has gotten removed without camera being notified.
 		Vector3 pos = Vector3(this->pos.x, this->pos.y, this->pos.z) - this->distanceFromMesh;
 		this->followTarget->SetPosition(pos);
+
+
+		
+		//Rotate Mesh
+		Vector3 camDir = this->GetForward();
+		Vector3 around;
+		float angle;
+
+		camDir.y = 0;
+		camDir.Normalize();
+		
+
+		around = Vector3(0,1,0);
+		angle = acos(camDir.GetDotProduct(this->defaultMeshDirection));
+
+		if(camDir.x > 0.0f)
+			angle *= -1;
+
+		this->followTarget->ResetRotation();
+		this->followTarget->RotateAxis(around, angle);
 	}
 }
 
@@ -155,13 +175,13 @@ void Camera::Update(float delta)
 			else if(this->pos.z > this->maxBoundries.z)
 				this->pos.z = this->maxBoundries.z;
 		}
-
-		// Update v p matrix.
-		D3DXVECTOR3 at = this->pos + this->forward;
-		D3DXMatrixLookAtLH(&view, &this->pos, &at, &this->up);
-		D3DXMatrixPerspectiveFovLH(&this->projection, this->params.FOV * (float)D3DX_PI / 180.0f, 
-			this->params.WindowWidth / (float)this->params.WindowHeight, this->params.NearClip, this->params.FarClip);
 	}
+
+	// Update v p matrix.
+	D3DXVECTOR3 at = this->pos + this->forward;
+	D3DXMatrixLookAtLH(&view, &this->pos, &at, &this->up);
+	D3DXMatrixPerspectiveFovLH(&this->projection, this->params.FOV * (float)D3DX_PI / 180.0f, 
+		this->params.WindowWidth / (float)this->params.WindowHeight, this->params.NearClip, this->params.FarClip);
 }
 
 void Camera::SetBoundries(Vector3 minBoundries, Vector3 maxBoundries)
@@ -176,10 +196,12 @@ void Camera::DisableBoundries()
 	this->forceBoundries = false;
 }
 
-void Camera::SetMesh( iMesh* target, Vector3 distanceFromCamera )
+void Camera::SetMesh(iMesh* target, Vector3 distanceFromCamera, Vector3 defaultMeshDirection)
 {
 	this->followTarget = dynamic_cast<Mesh*>(target);
 	this->distanceFromMesh = distanceFromCamera;
+	this->defaultMeshDirection = defaultMeshDirection;
+	this->defaultMeshDirection.Normalize();
 }
 
 void Camera::RecreateProjectionMatrix()
