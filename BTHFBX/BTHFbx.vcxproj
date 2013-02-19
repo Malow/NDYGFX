@@ -26,6 +26,7 @@
     <ClInclude Include="Source\AnimationController.h" />
     <ClInclude Include="Source\AnimationKeyFrames.h" />
     <ClInclude Include="Source\BoneWeights.h" />
+    <ClInclude Include="Source\Caching.h" />
     <ClInclude Include="Source\Curve.h" />
     <ClInclude Include="Source\Dictionary.h" />
     <ClInclude Include="Source\FBXCommon.h" />
@@ -47,6 +48,7 @@
     <ClCompile Include="Source\AnimationKeyFrames.cpp" />
     <ClCompile Include="Source\BoneWeights.cpp" />
     <ClCompile Include="Source\BTHFbxMain.cpp" />
+    <ClCompile Include="Source\Caching.cpp" />
     <ClCompile Include="Source\Curve.cpp" />
     <ClCompile Include="Source\FBXScene.cpp" />
     <ClCompile Include="Source\FBXSceneInstance.cpp" />

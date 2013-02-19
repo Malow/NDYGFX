@@ -78,15 +78,6 @@ void Model::ProcessSkeleteonBoundingBoxes(Skeleton* skeleton)
 }
 
 //--------------------------------------------------------------------------------------
-void Model::Optimize()
-{
-	for( size_t i = 0; i < m_ModelParts.size(); ++i )
-	{
-		m_ModelParts[i]->Optimize();
-	}
-}
-
-//--------------------------------------------------------------------------------------
 void Model::AddAnimationKeyFrames(AnimationKeyFrames* pAnimationKeyFrames)
 {
 	m_AnimationKeyFrames.Add( pAnimationKeyFrames->GetAnimationName(), pAnimationKeyFrames );

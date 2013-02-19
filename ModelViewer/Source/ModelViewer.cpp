@@ -12,6 +12,7 @@
 #include "TestTillman.h"
 #include "TestOther.h"
 #include "TestTerrainNormals.h"
+#include "TestAnimations.h"
 
 
 void ReplaceSlashes(string& str, char replace, char with)
@@ -90,6 +91,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 
 	// Test Cases
 	// activeTestCase = new TestTerrainNormals();
+	activeTestCase = new TestAnimations();
 
 	if ( activeTestCase )
 	{

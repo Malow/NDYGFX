@@ -19,6 +19,7 @@ extern "C"
 		SCENE_MAP m_Scenes;
 		SCENE_INSTANCE_VEC m_SceneInstances;
 
+		
 		FBXScene* LoadScene(char* filename);
 
 		bool InitializeFBXSdk();

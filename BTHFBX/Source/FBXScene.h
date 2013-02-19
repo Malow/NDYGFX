@@ -6,6 +6,7 @@
 #include "Skeleton.h"
 #include "BoneWeights.h"
 #include "Curve.h"
+#include <sstream>
 
 class FBXScene
 {
@@ -14,8 +15,7 @@ class FBXScene
 	FbxManager* mSdkManager;
 	FbxScene* mScene;
 
-	bool LoadScene(const char* filename);
-
+	bool LoadScene(const char* filename, std::ostream& output );
 	void DisplayMetaData();
 
 	//FbxNode* mHierarchyRoot;
@@ -41,6 +41,10 @@ public:
 
 	bool Init(const char* filename);
 	
+	// Data Access
+	inline Dictionary<Model*>& getModels() {return m_Models; }
+	inline std::vector<Material*>& getMaterials() {return m_Materials; }
+
 	FbxScene* GetScene() { return mScene; }
 
 	int GetModelCount() { return m_Models.GetCount(); }

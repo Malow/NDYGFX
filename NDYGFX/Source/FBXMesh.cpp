@@ -14,9 +14,6 @@ FBXMesh::~FBXMesh()
 		delete this->scene;
 }
 
-
-
-
 MaloW::Array<MeshStrip*>* FBXMesh::GetStrips()
 {
 	return NULL;

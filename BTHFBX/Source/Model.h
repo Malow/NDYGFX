@@ -10,19 +10,29 @@
 
 class Model : public IBTHFbxModel
 {
+protected:
+	std::string m_strName;
+	int	m_ModelIndex;
+	bool m_IsClone;
+
+	BTHFBX_MATRIX m_matGeometricOffset2;
+	BTHFBX_MATRIX m_matAnimationTransform2;
+	float	m_matAbsoluteTransform2[16];
+
+	Dictionary<AnimationKeyFrames*> m_AnimationKeyFrames;
+	std::vector<ModelPart*> m_ModelParts;
+
 public:
 	Model(const std::string& strName, int modelIndex, bool isClone);
 	Model(Model* srcModel);
-	~Model();
+	virtual ~Model();
 
-
+	// Model Parts
 	virtual int GetModelPartCount() { return (int)m_ModelParts.size(); }
 	virtual IBTHFbxModelPart* GetModelPart(int index) { return m_ModelParts[index]; }
-
+	inline std::vector<ModelPart*>& GetModelParts() { return m_ModelParts; }
 
 	void AddVertex(Material* pMaterial, const BTHFBX_VEC3& vPosition, const BTHFBX_VEC3& vNormal, const BTHFBX_VEC3& vTangent, const BTHFBX_VEC2& vTexCoord, const BoneWeights& boneWeights);
-
-	void Optimize();
 
 	void ProcessBlendWeights();
 
@@ -64,29 +74,4 @@ public:
 	}
 		
 	virtual const char* GetName() { return m_strName.c_str(); }
-
-protected:
-	std::vector<ModelPart*> m_ModelParts;
-
-	Dictionary<AnimationKeyFrames*> m_AnimationKeyFrames;
-
-	std::string m_strName;
-
-	//D3DXMATRIX m_matAbsoluteTransform;
-	//D3DXMATRIX m_matGeometricOffset;
-	//D3DXMATRIX m_matAnimationTransform;
-/*
-	BTHFBX_MATRIX m_matGeometricOffset2;
-	BTHFBX_MATRIX m_matAbsoluteTransform2;
-	BTHFBX_MATRIX m_matAnimationTransform2;
-*/
-
-	BTHFBX_MATRIX m_matGeometricOffset2;
-	BTHFBX_MATRIX m_matAnimationTransform2;
-	//float	m_matGeometricOffset2[16];
-	float	m_matAbsoluteTransform2[16];
-	//float	m_matAnimationTransform2[16];
-
-	int	m_ModelIndex;
-	bool m_IsClone;
 };

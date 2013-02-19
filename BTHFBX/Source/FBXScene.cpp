@@ -1,6 +1,6 @@
 #include "FBXScene.h"
 #include "MinMax.h"
-
+#include "Caching.h"
 
 
 FBXScene::FBXScene(FbxManager* sdkManager)
@@ -32,14 +32,18 @@ bool FBXScene::Init(const char* filename)
     mScene = FbxScene::Create(mSdkManager,"");
 	if(!mScene) return false;
 
-	if(!LoadScene(filename))	return false;
-	/*
-	if(mScene)		mScene->Destroy();
-	if(mSdkManager)	mSdkManager->Destroy();
+	// Cache Scene
+	if ( !LoadCachedScene(filename, this) )
+	{
+		std::stringstream ss;
 
-	mScene = NULL;
-	mSdkManager = NULL;
-	*/
+		if ( !LoadScene(filename, ss) )
+		{
+			return false;
+		}
+
+		CacheScene(filename, this);
+	}
 
 	return true;
 }
@@ -52,7 +56,7 @@ void FBXScene::ProcessBlendWeights()
 	}
 }
 
-bool FBXScene::LoadScene(const char* filename)
+bool FBXScene::LoadScene(const char* filename, std::ostream& output)
 {
     int lFileMajor, lFileMinor, lFileRevision;
 
@@ -72,59 +76,55 @@ bool FBXScene::LoadScene(const char* filename)
 
     if( !lImportStatus )
     {
-        printf("Call to FbxImporter::Initialize() failed.\n");
-		
-        printf("Error returned: %s\n\n", pFBXImporter->GetStatus().GetErrorString());
+		output << "FBX Importer Error: " << pFBXImporter->GetStatus().GetErrorString() << std::endl;
 
         if ( pFBXImporter->GetStatus() == FbxStatus::eInvalidFileVersion )
         {
-			printf("FBX version number for file %s is %d.%d.%d\n\n", filename, lFileMajor, lFileMinor, lFileRevision);
-        }
+			output << "FBX version number for file " << filename << " is " << lFileMajor << " " << lFileMinor << " " << lFileRevision << std::endl;
+		}
 
         return false;
     }
 
     if (pFBXImporter->IsFBX())
     {
-        printf("FBX version number for file %s is %d.%d.%d\n\n", filename, lFileMajor, lFileMinor, lFileRevision);
+		output << "FBX version number for file " << filename << " is " << lFileMajor << " " << lFileMinor << " " << lFileRevision << std::endl;
 
         // From this point, it is possible to access animation stack information without
         // the expense of loading the entire file.
 
-        printf("Animation Stack Information\n");
+		output << "Animation Stack Information" << std::endl;
 
         lAnimStackCount = pFBXImporter->GetAnimStackCount();
 
-        printf("    Number of Animation Stacks: %d\n", lAnimStackCount);
-        printf("    Current Animation Stack: \"%s\"\n", pFBXImporter->GetActiveAnimStackName().Buffer());
-        printf("\n");
-
+		output << "    Number of Animation Stacks: " << lAnimStackCount << std::endl;
+		output << "    Current Animation Stack: " << pFBXImporter->GetActiveAnimStackName().Buffer() << std::endl;
+		
         for(i = 0; i < lAnimStackCount; i++)
         {
             FbxTakeInfo* lTakeInfo = pFBXImporter->GetTakeInfo(i);
 
-            printf("    Animation Stack %d\n", i);
-            printf("         Name: \"%s\"\n", lTakeInfo->mName.Buffer());
-            printf("         Description: \"%s\"\n", lTakeInfo->mDescription.Buffer());
-
-            // Change the value of the import name if the animation stack should be imported 
-            // under a different name.
-            printf("         Import Name: \"%s\"\n", lTakeInfo->mImportName.Buffer());
-
-            // Set the value of the import state to false if the animation stack should be not
-            // be imported. 
-            printf("         Import State: %s\n", lTakeInfo->mSelect ? "true" : "false");
-            printf("\n");
+			output << "    Animation Stack " << i << std::endl;
+			output << "    Name: " << lTakeInfo->mName.Buffer() << std::endl;
+			output << "    Description: " <<  lTakeInfo->mDescription.Buffer() << std::endl;
+			output << "    Import Name: " << lTakeInfo->mImportName.Buffer() << std::endl;
+			output << "    Import State: " << (lTakeInfo->mSelect ? "true" : "false") << std::endl;
         }
     }
 	
     // Import the scene.
     lStatus = pFBXImporter->Import(mScene);
 
-    if(lStatus == false && pFBXImporter->GetStatus() == FbxStatus::ePasswordError)
-    {
-        printf("FBX is password protected");
-    }
+	if ( !lStatus )
+	{
+		output << "Failed Importing FBX!" << std::endl;
+		output << "FBX is password protected!" << std::endl;
+
+		if ( pFBXImporter->GetStatus() == FbxStatus::ePasswordError )
+		{
+			output << "FBX is password protected!" << std::endl;
+		}
+	}
 
 	mFilename = pFBXImporter->GetFileName().Buffer();
 
@@ -204,6 +204,7 @@ void FBXScene::ProcessNode(FbxNode* pNode, FbxNodeAttribute::EType attributeType
 		return;
 
 	FbxNodeAttribute* pNodeAttribute = pNode->GetNodeAttribute();
+
 	if (pNodeAttribute)
 	{
 		if( pNodeAttribute->GetAttributeType() == attributeType )
@@ -228,13 +229,8 @@ void FBXScene::ProcessNode(FbxNode* pNode, FbxNodeAttribute::EType attributeType
 					break;
 				}
 
-			case FbxNodeAttribute::eMarker:
-			case FbxNodeAttribute::eNurbs:
-			case FbxNodeAttribute::ePatch:
-			case FbxNodeAttribute::eCamera:
-			case FbxNodeAttribute::eLight:
-			case FbxNodeAttribute::eNull:
-			break;
+			default:
+				break;
 			};
 		}
 	}
@@ -459,13 +455,16 @@ void FBXScene::ProcessMesh(FbxNode* pNode)
 {
 	bool isAnimated = HasFBXAnimation(pNode);
 
-	FbxGeometryConverter GeometryConverter(pNode->GetFbxManager());
-	if( !GeometryConverter.TriangulateInPlace( pNode ) )
-		return;
-
 	FbxMesh* pFBXMesh = pNode->GetMesh();
 	if( !pFBXMesh )
 		return;
+
+	if ( pFBXMesh->GetPolygonVertexCount() / 3 != pFBXMesh->GetPolygonCount() )
+	{
+		FbxGeometryConverter GeometryConverter(pNode->GetFbxManager());
+		if( !GeometryConverter.TriangulateInPlace( pNode ) )
+		return;
+	}
 
 	pFBXMesh->InitNormals();
 	pFBXMesh->ComputeVertexNormals(); 
@@ -475,7 +474,8 @@ void FBXScene::ProcessMesh(FbxNode* pNode)
 	if( nVertexCount <= 0 )
 		return;
 
-	std::vector<BoneWeights> boneWeights(nVertexCount, BoneWeights());
+	std::vector<BoneWeights> boneWeights(nVertexCount);
+
 	ProcessBoneWeights(pFBXMesh, boneWeights);
 	
 	Model* pModel = new Model(pNode->GetName(), m_Models.GetCount(), false);
@@ -506,7 +506,8 @@ void FBXScene::ProcessMesh(FbxNode* pNode)
 				pFBXMesh->InitNormals();
 				pFBXMesh->ComputeVertexNormals(); 
 			}
-			*/	
+			*/
+
 			pModel->AddVertex(pMaterial, FbxVector4ToBTHFBX_VEC3(fbxPosition),
 										 FbxVector4ToBTHFBX_VEC3(fbxNormal),
 										 FbxVector4ToBTHFBX_VEC3(fbxTangent),
@@ -523,7 +524,6 @@ void FBXScene::ProcessMesh(FbxNode* pNode)
 	pModel->SetAbsoluteTransform2(GetAbsoluteTransformFromCurrentTake2(pNode, FbxTime(0)));
 	pModel->SetGeometricOffset2(GetGeometricOffset2(pNode));
 
-	pModel->Optimize();
 	m_Models.Add(pModel->GetName(), pModel);
 }
 
