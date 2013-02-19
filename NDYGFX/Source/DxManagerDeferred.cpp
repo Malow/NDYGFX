@@ -111,20 +111,9 @@ void DxManager::RenderDeferredGeometry()
 			//Update vertex buffer if y-value for vertices (height map) have changed
 			if(terrPtr->HasHeightMapChanged() && terrPtr->HaveNormalsChanged()) //**TILLMAN LOADTHREAD**
 			{
-				//bool wasItHeightMap = terrPtr->HasHeightMapChanged(); //true = heightmap, false = normal.
+				//**OPT(OBS!  only for editor): should be replaced with an update function ** TILLMAN
 				
-				//**OPT(OBS! Ev. only for editor): should be replaced with an update function ** TILLMAN
-					//this->Dx_DeviceContext->UpdateSubresource()
-				/*int srcRP = sizeof(float) * terrPtr->GetSize();
-				int srcDP = srcRP * terrPtr->GetSize(); 
-				this->Dx_DeviceContext->UpdateSubresource(
-					terrPtr->GetVertexBufferPointer()->GetBufferPointer(),
-					D3D10CalcSubresource(0, 0, 1),
-					NULL,
-					terrPtr->GetVerticesPointer(),
-					srcRP,
-					srcDP);
-				*/
+
 				//Save pointer to buffer
 				Buffer* oldBuffer = terrPtr->GetVertexBufferPointer();
 

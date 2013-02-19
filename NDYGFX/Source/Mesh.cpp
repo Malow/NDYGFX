@@ -82,6 +82,7 @@ void Mesh::SetPosition(D3DXVECTOR3 pos)
 { 
 	this->pos = pos;
 	this->RecreateWorldMatrix();
+	this->RecreateBillboardData();
 }
 
 void Mesh::SetPosition( const Vector3& pos )
@@ -199,6 +200,21 @@ void Mesh::RecreateWorldMatrix()
 
 	this->worldMatrix = world;
 }
+void Mesh::RecreateBillboardData()
+{
+	if(this->billboard != NULL)
+	{
+		//Calculate billboard position.(don't forget to include the scale).
+		float halfHeightScaled = this->height * 0.5f * this->scale.y; //(yOffset)
+		D3DXVECTOR3 billboardPos = this->pos;
+		billboardPos.y += halfHeightScaled;
+		this->billboard->SetPosition(billboardPos);
+		//Calculate the size using Pythagoras theorem (don't forget to include the scale).
+		//Note that this returns the half of the half size, so multiply by 4.
+		float size = sqrtf(powf(halfHeightScaled, 2.0f) * 0.5f) * 4.0f;
+		this->billboard->SetSize(D3DXVECTOR2(size, size));
+	}
+}
 
 void Mesh::ResetRotationAndScale()
 {
@@ -228,6 +244,7 @@ void Mesh::SetScale( float scale )
 	this->scale.y = scale;
 	this->scale.z = scale;
 	this->RecreateWorldMatrix();
+	this->RecreateBillboardData();
 }
 
 void Mesh::SetScale( Vector3 scale )
@@ -236,6 +253,7 @@ void Mesh::SetScale( Vector3 scale )
 	this->scale.y = scale.y;
 	this->scale.z = scale.z;
 	this->RecreateWorldMatrix();
+	this->RecreateBillboardData();
 }
 
 void Mesh::SetScale(D3DXVECTOR3 scale)

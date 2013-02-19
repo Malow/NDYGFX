@@ -733,10 +733,11 @@ void DxManager::RenderBillboardsInstanced()
 	if(this->instancingHelper->GetNrOfBillboards() > 0)
 	{
 		//Sort, create instance groups and update buffer before rendering
-		this->instancingHelper->PreRender();
+		this->instancingHelper->PreRenderBillboards();
 
 
 
+		//Draw billboards
 		unsigned int strides[1];
 		unsigned int offsets[1];
 		ID3D11Buffer* bufferPointers[1];
@@ -783,10 +784,12 @@ void DxManager::RenderBillboardsInstanced()
 		}
 	}
 
+
+
 	//Debug data
 	this->NrOfDrawnVertices += 4 * this->instancingHelper->GetNrOfBillboards();
 	//Reset counter (nrofbillboards)
-	this->instancingHelper->PostRender();
+	this->instancingHelper->PostRenderBillboards();
 }
 
 void DxManager::RenderText()
@@ -1457,7 +1460,7 @@ HRESULT DxManager::Render()
 
 	this->RenderShadowMap();
 	this->RenderCascadedShadowMap();
-	
+
 	//this->RenderForward();
 
 
