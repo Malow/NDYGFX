@@ -17,7 +17,11 @@ Camera::Camera(HWND g_hWnd, GraphicsEngineParams &params) :
 	this->updateCamera = true;
 	this->activeWindowDisabling = true;
 
-	D3DXMatrixPerspectiveFovLH(&this->projection, this->params.FOV * (float)D3DX_PI / 180.0f, this->params.WindowWidth / (float)this->params.WindowHeight, this->params.NearClip, this->params.FarClip);
+	D3DXMatrixPerspectiveFovLH(&this->projection, this->params.FOV * (float)D3DX_PI / 180.0f, 
+		this->params.WindowWidth / (float)this->params.WindowHeight, this->params.NearClip, this->params.FarClip);
+
+	D3DXVECTOR3 at = this->pos + this->forward;
+	D3DXMatrixLookAtLH(&view, &this->pos, &at, &this->up);
 }
 
 Camera::~Camera()
@@ -27,14 +31,11 @@ Camera::~Camera()
 
 D3DXMATRIX Camera::GetViewMatrix()
 {
-	D3DXVECTOR3 at = this->pos + this->forward;
-	D3DXMatrixLookAtLH(&view, &this->pos, &at, &this->up);
 	return this->view; 
 }
 
 D3DXMATRIX Camera::GetProjectionMatrix()
 {
-	D3DXMatrixPerspectiveFovLH(&this->projection, this->params.FOV * (float)D3DX_PI / 180.0f, this->params.WindowWidth / (float)this->params.WindowHeight, this->params.NearClip, this->params.FarClip);
 	return this->projection; 
 }
 
@@ -80,6 +81,7 @@ void Camera::SetUpVector(Vector3 up)
 {
 	this->up = D3DXVECTOR3(up.x, up.y, up.z);
 }
+
 Vector3 Camera::GetRightVector() const
 {
 	D3DXVECTOR3 tmp;
@@ -92,7 +94,7 @@ Vector3 Camera::GetRightVector() const
 void Camera::MoveToTerrain()
 {
 	if(this->terrain)
-		this->pos.y = this->terrain->GetYPositionAt(this->pos.x, this->pos.z) + this->DistanceFromTarget;
+		this->pos.y = this->terrain->GetYPositionAt(this->pos.x, this->pos.z)/* + this->DistanceFromTarget*/;
 }
 
 void Camera::Move(Vector3 moveBy)
@@ -110,12 +112,13 @@ D3DXVECTOR3 Camera::NormalizeVector(D3DXVECTOR3 vec)
 	return vec;
 }
 
-void Camera::MoveToFollowPosition()
+void Camera::MoveFollowingMesh()
 {
 	if(this->followTarget)
 	{
-		Vector3 vec = this->followTarget->GetPosition() - Vector3(0, -5, this->DistanceFromTarget);
-		this->pos = D3DXVECTOR3(vec.x, vec.y, vec.z);
+		// If it crashes here it's because the mesh has gotten removed without camera being notified.
+		Vector3 pos = Vector3(this->pos.x, this->pos.y, this->pos.z) - this->distanceFromMesh;
+		this->followTarget->SetPosition(pos);
 	}
 }
 
@@ -134,7 +137,7 @@ void Camera::Update(float delta)
 		}
 
 		this->MoveToTerrain();
-		this->MoveToFollowPosition();
+		this->MoveFollowingMesh();
 		if(this->forceBoundries)
 		{
 			if(this->pos.x < this->minBoundries.x)
@@ -152,6 +155,12 @@ void Camera::Update(float delta)
 			else if(this->pos.z > this->maxBoundries.z)
 				this->pos.z = this->maxBoundries.z;
 		}
+
+		// Update v p matrix.
+		D3DXVECTOR3 at = this->pos + this->forward;
+		D3DXMatrixLookAtLH(&view, &this->pos, &at, &this->up);
+		D3DXMatrixPerspectiveFovLH(&this->projection, this->params.FOV * (float)D3DX_PI / 180.0f, 
+			this->params.WindowWidth / (float)this->params.WindowHeight, this->params.NearClip, this->params.FarClip);
 	}
 }
 
@@ -167,14 +176,16 @@ void Camera::DisableBoundries()
 	this->forceBoundries = false;
 }
 
-void Camera::FollowMesh( iMesh* target )
+void Camera::SetMesh( iMesh* target, Vector3 distanceFromCamera )
 {
 	this->followTarget = dynamic_cast<Mesh*>(target);
+	this->distanceFromMesh = distanceFromCamera;
 }
 
 void Camera::RecreateProjectionMatrix()
 {
-	D3DXMatrixPerspectiveFovLH(&this->projection, (float)D3DX_PI * this->params.FOV, this->params.WindowWidth / (float)this->params.WindowHeight, this->params.NearClip, this->params.FarClip);
+	D3DXMatrixPerspectiveFovLH(&this->projection, (float)D3DX_PI * this->params.FOV, 
+		this->params.WindowWidth / (float)this->params.WindowHeight, this->params.NearClip, this->params.FarClip);
 }
 
 D3DXVECTOR3 Camera::GetRightVectorD3DX() const

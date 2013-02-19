@@ -3,7 +3,7 @@
 RTSCamera::RTSCamera(HWND g_hWnd, GraphicsEngineParams &params) : Camera(g_hWnd, params)
 {
 	this->up = D3DXVECTOR3(0, 1, 0);
-	this->DistanceFromTarget = 75.0f;
+	this->distanceFromMesh = Vector3(0, 0, 0);
 	this->forward = D3DXVECTOR3(0, -2, 1);
 	this->forward = this->NormalizeVector(this->forward);
 
