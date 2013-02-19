@@ -118,6 +118,7 @@ public:
 
 	// Is used internally when needed, but can be used from the outside for debugging.
 	void RecreateWorldMatrix();
+	void RecreateBillboardData();
 
 	D3D_PRIMITIVE_TOPOLOGY GetTopology() const { return this->topology; }
 	

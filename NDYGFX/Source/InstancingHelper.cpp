@@ -1,19 +1,95 @@
 #include "InstancingHelper.h"
 
+//PRIVATE
+void InstancingHelper::ExpandBillboardDataAndBuffer()
+{
+	this->zBillboardDataCapacity *= 2;
 
+	//Resize vector holding billboard data
+	this->zBillboardData.resize(this->zBillboardDataCapacity);
+
+	//Resize(recreate) buffer
+	D3D11_BUFFER_DESC vbd;
+	vbd.Usage = D3D11_USAGE_DYNAMIC;
+	vbd.ByteWidth = sizeof(Vertex) * this->zBillboardDataCapacity;
+	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	vbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	vbd.MiscFlags = 0;
+	vbd.StructureByteStride = 0;
+
+	//Create new, temporary buffer with increased size.
+	ID3D11Buffer* temporaryNewBuffer = NULL;
+	HRESULT hr = this->g_Device->CreateBuffer(&vbd, 0, &temporaryNewBuffer);
+	if(FAILED(hr))
+	{
+		MaloW::Debug("ERROR: InstancingHelper: ExpandBillboards(): Failed to create buffer for instance billboard.");
+	}
+						
+	//Copy over data from the old buffer to the new buffer.
+	D3D11_MAPPED_SUBRESOURCE mappedSubResourceNew;
+	D3D11_MAPPED_SUBRESOURCE mappedSubResourceOld;
+	this->g_DeviceContext->Map(temporaryNewBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubResourceNew);
+	this->g_DeviceContext->Map(this->zBillboardInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubResourceOld);
+	unsigned int oldSize = this->zBillboardDataCapacity / 2; //**TILLMAN - annat sätt? bör finnas i mappedsubres?
+	Vertex* dataViewNew = reinterpret_cast<Vertex*>(mappedSubResourceNew.pData);
+	Vertex* dataViewOld = reinterpret_cast<Vertex*>(mappedSubResourceOld.pData);
+	for(unsigned int i = 0; i < oldSize; ++i)
+	{
+		dataViewNew[i] = dataViewOld[i];
+	}
+	this->g_DeviceContext->Unmap(this->zBillboardInstanceBuffer, 0);
+	this->g_DeviceContext->Unmap(temporaryNewBuffer, 0);
+					
+						
+	//Release old buffer.
+	this->zBillboardInstanceBuffer->Release();
+	//Set old buffer to point to the new one.
+	this->zBillboardInstanceBuffer = temporaryNewBuffer;
+	//The temporary pointer is no longer needed, so set to NULL.
+	temporaryNewBuffer = NULL;
+
+	MaloW::Debug("INFO: InstancingHelper: ExpandBillboards(): Resizing billboard data and buffer. Number of billboards: '" + MaloW::convertNrToString(this->zNrOfBillboards) + "'."
+		+ "New capacity: '" + MaloW::convertNrToString(this->zBillboardDataCapacity) + "'."
+		);
+}
+
+
+
+//PUBLIC
 InstancingHelper::InstancingHelper()
 {
+	//BILLBOARDS
 	//Counters
 	this->zNrOfBillboards = 0; 
-	this->zNrOfBillboardInstanceGroups = 0;
-	this->zBillboardDataCapacity = 200; //**Testa med 5( för att testa expand()(malowdebug)**TILLMAN
-	this->zBillboardInstanceGroupCapacity = this->zBillboardDataCapacity / 10;
+	this->zNrOfBillboardGroups = 0;
+	this->zBillboardDataCapacity = 200;
+	this->zBillboardGroupCapacity = 10;
 	//Instance data
 	this->zBillboardData.resize(this->zBillboardDataCapacity);
 	//Instance group 
-	this->zBillboardInstanceGroups.resize(this->zBillboardInstanceGroupCapacity);
+	this->zBillboardGroups.resize(this->zBillboardGroupCapacity);
 	//Buffer
 	this->zBillboardInstanceBuffer = NULL; 
+
+
+	//MESHES
+	this->zNrOfMeshes = 0; 
+	this->zNrOfMeshGroups = 0;
+	this->zMeshDataCapacity = 200; 
+	this->zMeshGroupCapacity = 10;
+
+	//Vector containing Mesh data of all meshes (that were added).
+	this->zMeshData.resize(this->zMeshDataCapacity);
+
+	//Instance data (data all meshes share)
+	std::vector<VertexNormalMap> zMeshInstancedData;
+	//Vertex buffer (containing instance data)
+	ID3D11Buffer* zVertexBuffer;
+
+	//Instance group (groups of meshes that share the same texture)
+	std::vector<MeshGroup> zMeshGroups;
+	//Instance Buffer (containing all instances)
+	ID3D11Buffer* zMeshInstanceBuffer; 
 }
 HRESULT InstancingHelper::Init(ID3D11Device* device, ID3D11DeviceContext* deviceContext)
 {
@@ -45,7 +121,12 @@ void InstancingHelper::AddBillboard( const Billboard* const billboard )
 {
 	if(billboard->GetTextureResource() != NULL)
 	{
-		this->zNrOfBillboards++; 
+		this->zNrOfBillboards++;
+		if(this->zNrOfBillboards >= this->zBillboardDataCapacity)
+		{
+			this->ExpandBillboardDataAndBuffer();
+		}
+
 		this->zBillboardData[this->zNrOfBillboards - 1] = 
 			BillboardData(Vertex(	billboard->GetPositionD3DX(),
 									billboard->GetSizeD3DX(), 
@@ -56,11 +137,11 @@ void InstancingHelper::AddBillboard( const Billboard* const billboard )
 	}
 }
 
-void InstancingHelper::PreRender()
+void InstancingHelper::PreRenderBillboards()
 {
 	//Sort the data by shader resource view
 	int counter = 0;
-	Vertex tempVertex; //**TILLMAN OPT
+	Vertex tempVertex; //**TILLMAN OPT sorting algorithm
 	ID3D11ShaderResourceView* tempSRV;
 	for(int i = 1; i < this->zNrOfBillboards; i++)
 	{
@@ -90,12 +171,12 @@ void InstancingHelper::PreRender()
 	if(this->zNrOfBillboards > 1)
 	{
 		//Reset instance counter
-		this->zNrOfBillboardInstanceGroups = 0;
+		this->zNrOfBillboardGroups = 0;
 		int groupCounter = 1; //**
 		//Add a NULL-pointer at the end as a separator. 
 		this->zBillboardData[this->zNrOfBillboards++].s_SRV = NULL;
 		//First group's start location/index is always 0.
-		this->zBillboardInstanceGroups[0].s_StartLocation = 0;
+		this->zBillboardGroups[0].s_StartLocation = 0;
 		for(unsigned int i = 0; i < this->zNrOfBillboards - 1; i++)
 		{
 			//Save current element.
@@ -113,21 +194,29 @@ void InstancingHelper::PreRender()
 			else
 			{
 				//Increase the number of instance groups.
-				this->zNrOfBillboardInstanceGroups++;
+				this->zNrOfBillboardGroups++;
+				//Resize vector if necessary.
+				if(this->zNrOfBillboardGroups >= this->zBillboardGroupCapacity)
+				{
+					this->zBillboardGroupCapacity *= 2;
+					this->zBillboardGroups.resize(this->zBillboardGroupCapacity);
+					MaloW::Debug("INFO: InstancingHelper: PreRender(): Resizing instance group vector. Number of instance groups: '" + MaloW::convertNrToString(this->zNrOfBillboardGroups) + "'."
+						+ "New capacity: '" + MaloW::convertNrToString(this->zBillboardGroupCapacity) + "'."
+						);
+				}
 
 				//Wrap up current instance group.
 				//Save groupCounter (size of group).
-				this->zBillboardInstanceGroups[this->zNrOfBillboardInstanceGroups - 1].s_Size = groupCounter; 
+				this->zBillboardGroups[this->zNrOfBillboardGroups - 1].s_Size = groupCounter; 
 				//Save shader resource view for instance group to use.
-				this->zBillboardInstanceGroups[this->zNrOfBillboardInstanceGroups - 1].s_SRV = this->zBillboardData[i].s_SRV;
-				
+				this->zBillboardGroups[this->zNrOfBillboardGroups - 1].s_SRV = this->zBillboardData[i].s_SRV;
 
 				//Start new instance group.
 				//Set group counter to 1.
 				groupCounter = 1; 
 				//groupCounter = 0;  //**
 				//Save index (startLocation) of the NEW group (+1 on indices).
-				this->zBillboardInstanceGroups[this->zNrOfBillboardInstanceGroups].s_StartLocation = i + 1;
+				this->zBillboardGroups[this->zNrOfBillboardGroups].s_StartLocation = i + 1;
 			}
 		}
 		//There is no need to wrap up last instance group since we put a NULL pointer there.
@@ -136,11 +225,11 @@ void InstancingHelper::PreRender()
 	else if(this->zNrOfBillboards == 1)
 	{
 		//Increase the number of instance groups.
-		this->zNrOfBillboardInstanceGroups = 1;
+		this->zNrOfBillboardGroups = 1;
 		//Set size of group (1)
-		this->zBillboardInstanceGroups[0].s_Size = 1; 
+		this->zBillboardGroups[0].s_Size = 1; 
 		//Save shader resource view for instance group to use.
-		this->zBillboardInstanceGroups[0].s_SRV = this->zBillboardData[0].s_SRV;
+		this->zBillboardGroups[0].s_SRV = this->zBillboardData[0].s_SRV;
 
 	}
 

@@ -280,11 +280,10 @@ bool AnimatedMesh::LoadFromFile(string file)
 		float halfHeightScaled = this->height * 0.5f * this->scale.y; //(yOffset)
 		D3DXVECTOR3 billboardPos = this->pos;
 		billboardPos.y += halfHeightScaled;
-		this->billboard->SetPosition(billboardPos);
 		//Calculate the size using Pythagoras theorem (don't forget to include the scale).
 		//Note that this returns the half size, so multiply by 2.
 		float size = sqrtf(powf(halfHeightScaled, 2.0f) * 0.5f) * 4.0f;
-		this->billboard->SetSize(D3DXVECTOR2(size, size));
+		this->billboard = new Billboard(billboardPos, D3DXVECTOR2(size, size));
 
 		return true;
 	}

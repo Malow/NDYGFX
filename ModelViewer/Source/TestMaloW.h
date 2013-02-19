@@ -75,6 +75,8 @@ void MaloWTest::PreTest()
 
 	iMesh* ferntest = GetGraphics()->CreateMesh("Media/fernTest.obj", Vector3(25, 20, 25));
 	ferntest->Scale(0.05f);	
+
+	GetGraphics()->GetCamera()->SetMesh(secModel, Vector3(1, 3, 1));
 }
 
 void MaloWTest::RunTest(float diff)
@@ -105,6 +107,7 @@ void MaloWTest::RunTest(float diff)
 	//MaloW::Debug(" ");
 	//diff = 100.0f;
 
+	//secModel->MoveBy(Vector3(0.001f, 0.001f, 0.001f) * diff);
 
 	/*
 	// Simulate distance checking
@@ -176,9 +179,11 @@ void MaloWTest::RunTest(float diff)
 				GetGraphics()->GetEngineParameters().Maximized = false;
 				GetGraphics()->ResizeGraphicsEngine(1264, 947);
 			}*/
-			GetGraphics()->ReloadShaders(9);
+			//GetGraphics()->ReloadShaders(9);
 			//MaloW::Debug("Diff: " + MaloW::convertNrToString(totDiff / nrofdiffs));
 			//GetGraphics()->ChangeShadowQuality(qual);
+			secModel->SetPosition(Vector3(10, 10, 10));
+
 			qual++;
 			fesd = false;
 		}			

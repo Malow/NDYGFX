@@ -19,6 +19,7 @@ protected:
 	D3DXMATRIX projection;
 
 	D3DXVECTOR3 pos;
+
 	D3DXVECTOR3 forward;
 	D3DXVECTOR3 up;
 	Terrain* terrain;
@@ -30,10 +31,10 @@ protected:
 	float angleY;
 
 	void MoveToTerrain();
-	void MoveToFollowPosition();
+	void MoveFollowingMesh();
 
 	float speed;
-	float DistanceFromTarget;
+	Vector3 distanceFromMesh;
 
 	GraphicsEngineParams &params;
 
@@ -83,10 +84,8 @@ public:
 	
 	//virtual void WalkOnTerrain(iTerrain* terrain) { this->terrain = terrain; }
 	virtual void StopWalkingOnTerrain() { this->terrain = NULL; }
-	virtual void FollowMesh(iMesh* target);
-	virtual void StopFollowingMesh() { this->followTarget = NULL; }
-	virtual void SetDistanceFromTarget(float distance) { this->DistanceFromTarget = distance; }
-	virtual float GetDistanceFromTarget() const { return this->DistanceFromTarget; }
+	virtual void SetMesh(iMesh* target, Vector3 distanceFromCamera);
+	virtual void RemoveMesh() { this->followTarget = NULL; }
 
 	virtual void SetActiveWindowDisabling(bool dis) { this->activeWindowDisabling = dis; }
 	virtual void SetUpdateCamera(bool update);
