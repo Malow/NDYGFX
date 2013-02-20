@@ -32,7 +32,8 @@ class ResourceManager
 		ID3D11Device*			gDevice;
 		ID3D11DeviceContext*	gDeviceContext;
 
-    private:
+	private:
+		ID3D11DeviceContext*	zDeferredContext;
 	    HANDLE mutex;
 
 		std::map<std::string, ObjectDataResource*>	zObjectDataResources; //Used by meshstripresources
@@ -75,7 +76,7 @@ class ResourceManager
 			and returns a pointer to it.
 			Is the default format used.
 		*/
-		TextureResource* CreateTextureResourceFromFile(const char* filePath);
+		TextureResource* CreateTextureResourceFromFile(const char* filePath, bool generateMipMap = false);
 		/*	Creates a cube texture resource from file with:
 			BindFlags = D3D11_BIND_SHADER_RESOURCE;
 			Format = DXGI_FORMAT_R8G8B8A8_UNORM;

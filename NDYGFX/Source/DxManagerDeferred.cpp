@@ -114,7 +114,21 @@ void DxManager::RenderDeferredGeometry()
 			{
 				//**OPT(OBS!  only for editor): should be replaced with an update function ** TILLMAN
 				//**TILLMAN OPT cont: update a portion & use texture instead of buffer**
-				//this->Dx_DeviceContext->Map()
+				
+
+				/*D3D11_MAPPED_SUBRESOURCE mappedSubResource;
+				//Map to access data //**TILLMAN OPTIMERING: uppdatera endast de som lagts till/tagits bort(array med index(i))**
+				this->g_DeviceContext->Map(this->zMeshInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubResource);
+				MeshData::InstancedDataStruct* dataView = reinterpret_cast<MeshData::InstancedDataStruct*>(mappedSubResource.pData);
+				//Copy over all instance data
+				for(UINT i = 0; i < this->zNrOfMeshes; ++i)
+				{
+					dataView[i] = this->zMeshData[i].InstancedData;
+				}
+				//Unmap so the GPU can have access
+				this->g_DeviceContext->Unmap(this->zMeshInstanceBuffer, 0);
+				*/
+
 				//Save pointer to buffer
 				Buffer* oldBuffer = terrPtr->GetVertexBufferPointer();
 
@@ -178,7 +192,7 @@ void DxManager::RenderDeferredGeometry()
 					}
 					
 					//Create the new one.
-					terrPtr->SetTexture(j, GetResourceManager()->CreateTextureResourceFromFile(terrPtr->GetTextureResourceToLoadFileName(j).c_str()));
+					terrPtr->SetTexture(j, GetResourceManager()->CreateTextureResourceFromFile(terrPtr->GetTextureResourceToLoadFileName(j).c_str(), true));
 					//Set that the texture resource shall not be changed anymore.
 					terrPtr->SetTextureResourceToLoadFileName(j, "");
 				}
@@ -442,7 +456,7 @@ void DxManager::RenderDeferredGeometry()
 			}
 			else
 			{
-				MaloW::Debug("WARNING: both index and vertex buffers were NULL. DxManagerDeferred: RenderDeferredGeometry(): Terrain.");
+				MaloW::Debug("WARNING: DxManagerDeferred: RenderDeferredGeometry(): Both index and vertex buffers were NULL for the terrain.");
 			}
 		}
 	}
@@ -471,6 +485,7 @@ void DxManager::RenderDeferredGeometry()
 	for(int i = 0; i < this->objects.size(); i++)
 	{
 		StaticMesh* staticMesh = this->objects[i];
+
 		if(!staticMesh->IsUsingInvisibility() && !staticMesh->GetDontRenderFlag())
 		{
 			D3DXVECTOR3 distance = staticMesh->GetBillboardGFX()->GetPositionD3DX() - this->camera->GetPositionD3DX();
@@ -588,11 +603,15 @@ void DxManager::RenderDeferredGeometry()
 							//Count(debug)
 							CurrentNrOfDrawCalls++;
 						}
-						else
+						else if(verts)
 						{
 							this->Dx_DeviceContext->Draw(verts->GetElementCount(), 0);
 							//Count(debug)
 							CurrentNrOfDrawCalls++;
+						}
+						else
+						{
+							MaloW::Debug("WARNING: DxManagerDeferred: RenderDeferredGeometry(): Both index and vertex buffers were NULL for static mesh. ");
 						}
 					}
 				}
@@ -1160,13 +1179,22 @@ void DxManager::RenderInvisibilityEffect()
 				Object3D* obj = strips->get(u)->GetRenderObject();
 
 				//Set texture
-				if(ID3D11ShaderResourceView* texture = obj->GetTextureResource()->GetSRVPointer())//**TILLMAN
+				if(obj->GetTextureResource() != NULL)
 				{
-					this->Shader_InvisibilityEffect->SetResource((char*)strips->get(u)->GetTexturePath().c_str(), texture);
-					this->Shader_InvisibilityEffect->SetBool("textured", true);
+					if(ID3D11ShaderResourceView* texture = obj->GetTextureResource()->GetSRVPointer())
+					{
+						this->Shader_InvisibilityEffect->SetResource("ballTex", texture);
+						this->Shader_InvisibilityEffect->SetBool("textured", true);
+					}
+					else
+					{
+						this->Shader_InvisibilityEffect->SetResource("ballTex", NULL);
+						this->Shader_InvisibilityEffect->SetBool("textured", false);
+					}
 				}
 				else
 				{
+					this->Shader_InvisibilityEffect->SetResource("ballTex", NULL);
 					this->Shader_InvisibilityEffect->SetBool("textured", false);
 				}
 

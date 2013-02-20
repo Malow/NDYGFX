@@ -5,8 +5,8 @@
 void Terrain::CreateMesh()
 {
 	//Create vertices
-	this->zNrOfVertices = this->zSize * this->zSize;
-	this->zVertices = new Vertex[this->zSize * this->zSize];
+	//this->zNrOfVertices = this->zSize * this->zSize;
+	//this->zVertices = new Vertex[this->zSize * this->zSize];
 
 	for(unsigned int i = 0; i < this->zSize; i++)
 	{
@@ -23,8 +23,8 @@ void Terrain::CreateMesh()
 
 
 	//Create indices
-	this->zNrOfIndices = (this->zSize - 1) * 2 * (this->zSize - 1) * 3;
-	this->zIndices = new int[this->zNrOfIndices];
+	//this->zNrOfIndices = (this->zSize - 1) * 2 * (this->zSize - 1) * 3;
+	//this->zIndices = new int[this->zNrOfIndices];
 	
 	int offset = 0; 
 	for(unsigned int i = 0; i < this->zSize-1; i++)
@@ -222,11 +222,11 @@ Terrain::Terrain(D3DXVECTOR3 pos, D3DXVECTOR3 scale, unsigned int size)
 	//Vertex data
 	this->zHeightMapHasChanged = false;
 	this->zNormalsHaveChanged = false;
-	this->zNrOfVertices = 0;
-	this->zVertices = NULL;
+	this->zNrOfVertices = this->zSize * this->zSize;
+	this->zVertices = new Vertex[this->zSize * this->zSize];
 	this->zVertexBuffer = NULL;
-	this->zNrOfIndices = 0;
-	this->zIndices = NULL;
+	this->zNrOfIndices = (this->zSize - 1) * 2 * (this->zSize - 1) * 3;
+	this->zIndices = new int[this->zNrOfIndices];
 	this->zIndexBuffer = NULL;
 	this->zTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
