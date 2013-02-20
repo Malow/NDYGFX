@@ -112,7 +112,7 @@ public:
 	virtual bool IsUsingInvisibility() const { return this->usingInvisibilityEffect; }
 	virtual void UseInvisibilityEffect(bool flag);
 
-	
+
 	D3DXMATRIX GetWorldMatrix() { return this->worldMatrix; }
 	void ResetRotationAndScale();
 

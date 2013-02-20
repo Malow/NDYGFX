@@ -41,7 +41,7 @@ PSIn VS(VSIn input)
 
 	return output;
 }
-float4 PS(PSIn input) : SV_TARGET
+float PS(PSIn input) : SV_Depth
 {
 	/*if(textured)
 	{
@@ -51,7 +51,7 @@ float4 PS(PSIn input) : SV_TARGET
 		}
 	}*/
 
-	return input.Pos;
+	return input.Pos.z;
 }
 
 technique11 RenderShadowMap

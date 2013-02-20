@@ -456,6 +456,7 @@ void TillmanTest::PreTest()
 	string billboardFile = "Media/TreeBillboard.png";
 	for(int i = 0; i < 10; i++)
 	{
+		//Billboards
 		if(i == 4)
 		{
 			billboardFile = "Media/BallTexture.png";
@@ -470,17 +471,14 @@ void TillmanTest::PreTest()
 		}
 		iMesh* treeWithBillboard = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(i * 5, 0, 50), billboardFile.c_str(), 0.5f);
 		treeWithBillboard->SetScale((0.061f));
-		/*treeWithBillboard = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(i * 5, 0, 52.5f), billboardFile.c_str(), 0.5f);
-		treeWithBillboard->SetScale((0.061f));
-		treeWithBillboard = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(i * 5, 0, 47.5f), billboardFile.c_str(), 0.5f);
-		treeWithBillboard->SetScale((0.061f));
-		*/
-		
-		
 		iMesh* fernWithBillboard = GetGraphics()->CreateMesh("Media/Fern_02.ani", Vector3(i * 5, 0, 45), billboardFile.c_str(), 0.5f);
 		fernWithBillboard->SetScale((0.15f));
+
+		//Meshes
+		iMesh* treeWithWOBB = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(i * 5, 0, 55));
+		treeWithWOBB->SetScale((0.041f));
+
 	}
-//	GetGraphics()->CreateImage(Vector2(100, 100), Vector2(700, 700), "Media/TreeBillboard.png");
 	
 }
 

@@ -58,6 +58,7 @@ void DxManager::PreRender()
 
 void DxManager::RenderDeferredGeometry()
 {
+	//static bool once = false;
 	//clear and set render target/depth
 	this->Dx_DeviceContext->OMSetRenderTargets(this->NrOfRenderTargets, this->Dx_GbufferRTs, this->Dx_DepthStencilView);
 	this->Dx_DeviceContext->ClearDepthStencilView(this->Dx_DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
@@ -595,6 +596,25 @@ void DxManager::RenderDeferredGeometry()
 						}
 					}
 				}
+					
+				
+				/*bool hasBeenCounted = false;
+				//Just check the first strip if it is culled.  //**TILLMAN**
+				if(!staticMesh->IsStripCulled(0))
+				{
+					if(!hasBeenCounted)
+					{
+						CurrentRenderedMeshes++;
+						hasBeenCounted = true;
+					}
+
+					//Add mesh info to instance helper
+					//if(!once)
+					{
+						this->instancingHelper->AddMesh(staticMesh);
+						//once = true;
+					}
+				}*/
 			}
 			else
 			{
@@ -621,6 +641,7 @@ void DxManager::RenderDeferredGeometry()
 			this->invisibleGeometry = true;
 		}
 	}
+	//once = false;
 	// Unbind resources static geometry:
 	this->Shader_DeferredGeometry->SetResource("normalMap", NULL);
 	this->Shader_DeferredGeometry->SetResource("tex2D", NULL);
@@ -805,7 +826,109 @@ void DxManager::RenderDeferredGeometry()
 	this->NrOfDrawnVertices = CurrentRenderedNrOfVertices;
 	this->NrOfDrawCalls = CurrentNrOfDrawCalls;
 }
+void DxManager::RenderDeferredGeometryInstanced()
+{
+	if(this->instancingHelper->GetNrOfMeshes() > 0)
+	{
+		//Sort, create instance groups and update buffer before rendering
+		this->instancingHelper->PreRenderMeshes();
+	
 
+
+		// Set global variables per frame
+		this->Shader_DeferredGeometryInstanced->SetFloat3("g_CamPos", this->camera->GetPositionD3DX());
+		this->Shader_DeferredGeometryInstanced->SetMatrix("g_CamViewProj", this->camera->GetViewMatrix() * this->camera->GetProjectionMatrix());
+		this->Shader_DeferredGeometryInstanced->SetFloat("g_FarClip", this->params.FarClip);
+		
+		//Set instance buffer
+		ID3D11Buffer* bufferPointers[2];
+		unsigned int strides[2] = {sizeof(VertexNormalMap), sizeof(MeshData::InstancedDataStruct)};
+		unsigned int offsets[2] = {0, 0};
+		bufferPointers[1] = this->instancingHelper->GetMeshInstanceBuffer();	
+
+		//Per mesh group
+		for(unsigned int i = 0; i < this->instancingHelper->GetNrOfMeshGroups(); i++)
+		{
+			MeshGroup meshGroup = this->instancingHelper->GetMeshGroup(i);
+			MaloW::Array<MeshStrip*>* strips = meshGroup.s_MeshStripsResource->GetMeshStripsPointer();
+
+			D3DXMATRIX worldTest;
+			D3DXMatrixIdentity(&worldTest);
+			//this->Shader_DeferredGeometryInstanced->SetMatrix("g_TestW", worldTest);
+			D3D11_MAPPED_SUBRESOURCE mappedSubResource; 
+			//Map to access data //**TILLMAN OPTIMERING: uppdatera endast de som lagts till/tagits bort(array med index(i))**
+			this->Dx_DeviceContext->Map(this->instancingHelper->GetMeshInstanceBuffer(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubResource);
+			MeshData::InstancedDataStruct* dataView = reinterpret_cast<MeshData::InstancedDataStruct*>(mappedSubResource.pData);
+			//Copy over all instance data
+			//for(UINT i = 0; i < this->instancingHelper->GetNrOfMeshes(); ++i)
+			//{
+				this->Shader_DeferredGeometryInstanced->SetMatrix("g_TestW", dataView[0].s_WorldMatrix);
+			
+			//}
+			//Unmap so the GPU can have access
+			this->Dx_DeviceContext->Unmap(this->instancingHelper->GetMeshInstanceBuffer(), 0);
+
+			//this->Shader_DeferredGeometryInstanced->SetMatrix("g_TestW", this->instancingHelper->GetMeshData(0).InstancedData.s_WorldMatrix);
+			//this->Shader_DeferredGeometryInstanced->SetMatrix("g_TestWIT", this->instancingHelper->GetMeshData(0).InstancedData.s_WorldInverseTransposeMatrix);
+			
+			
+			//Per strip
+			for(unsigned int j = 0; j < strips->size(); j++)
+			{
+				MeshStrip* strip = strips->get(j);
+				Object3D* renderObject = strip->GetRenderObject();
+				//Set topology
+				this->Dx_DeviceContext->IASetPrimitiveTopology(renderObject->GetTopology());
+
+				// Setting lightning from material
+				this->Shader_DeferredGeometry->SetFloat4("g_DiffuseColor", D3DXVECTOR4(strips->get(j)->GetMaterial()->DiffuseColor, 1));
+				this->Shader_DeferredGeometry->SetFloat4("g_SpecularColor", D3DXVECTOR4(strips->get(j)->GetMaterial()->SpecularColor, 1));
+				this->Shader_DeferredGeometry->SetFloat("g_SpecularPower", strips->get(j)->GetMaterial()->SpecularPower);
+				
+				//Set buffers
+				bufferPointers[0] = renderObject->GetVertexBufferResource()->GetBufferPointer()->GetBufferPointer();
+				this->Dx_DeviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
+				
+				//Set texture
+				if(renderObject->GetTextureResource() != NULL)
+				{
+					if(renderObject->GetTextureResource()->GetSRVPointer() != NULL)
+					{
+						this->Shader_DeferredGeometryInstanced->SetResource("g_DiffuseMap", renderObject->GetTextureResource()->GetSRVPointer());
+						this->Shader_DeferredGeometryInstanced->SetBool("g_Textured", true);
+					}
+					else
+					{
+						this->Shader_DeferredGeometryInstanced->SetResource("g_DiffuseMap", NULL);
+						this->Shader_DeferredGeometryInstanced->SetBool("g_Textured", false);
+					}
+				}
+				else
+				{
+					this->Shader_DeferredGeometryInstanced->SetResource("g_DiffuseMap", NULL);
+					this->Shader_DeferredGeometryInstanced->SetBool("g_Textured", false);
+				}
+				//**TILLMAN TODO: normalmap**
+
+				//Apply pass and input layout
+				this->Shader_DeferredGeometryInstanced->Apply(0);
+				
+				//Draw
+				unsigned int vertexCount = strip->getNrOfVerts();
+				int instanceCount = this->instancingHelper->GetMeshGroup(i).s_Size;
+				int startLoc = this->instancingHelper->GetMeshGroup(i).s_StartLocation;
+				this->Dx_DeviceContext->DrawInstanced(vertexCount, instanceCount, 0, startLoc); //**TILLMAN, parameters inversed**
+			
+				//Debug data
+				this->NrOfDrawCalls++;
+				this->NrOfDrawnVertices += vertexCount;
+			}
+		}
+
+		//Reset counter (nrofmeshes)
+		this->instancingHelper->PostRenderMeshes();
+	}
+}
 
 void DxManager::RenderDeferredSkybox()
 {

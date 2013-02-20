@@ -47,6 +47,7 @@ DxManager::DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam)
 	this->csm = NULL;
 
 	this->Shader_DeferredGeometry = NULL;
+	this->Shader_DeferredGeometryInstanced = NULL;
 	this->Shader_TerrainEditor = NULL;
 	this->Shader_DeferredLightning = NULL;
 	this->Shader_InvisibilityEffect = NULL;
@@ -131,6 +132,9 @@ DxManager::~DxManager()
 	if(this->Shader_DeferredGeometry)
 		delete this->Shader_DeferredGeometry;
 
+	if(this->Shader_DeferredGeometryInstanced)
+		delete this->Shader_DeferredGeometryInstanced;
+	
 	if(this->Shader_TerrainEditor)
 		delete this->Shader_TerrainEditor;
 

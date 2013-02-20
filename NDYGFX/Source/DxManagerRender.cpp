@@ -301,8 +301,6 @@ void DxManager::Life()
 
 		while(!this->StartRender)
 		{
-			this->camera->Update(this->Timer - this->LastCamUpdate);
-			this->LastCamUpdate = this->Timer;
 			this->Render();
 			this->framecount++;
 		}
@@ -760,11 +758,11 @@ void DxManager::RenderBillboardsInstanced()
 		this->Shader_BillboardInstanced->SetMatrix("g_CamViewProj", this->camera->GetViewMatrix() * this->camera->GetProjectionMatrix());
 
 		// Set global variables per instance group
-		for(unsigned int i = 0; i < this->instancingHelper->GetNrOfBillboardInstanceGroups(); ++i)
+		for(unsigned int i = 0; i < this->instancingHelper->GetNrOfBillboardGroups(); ++i)
 		{
-			if(this->instancingHelper->GetBillboardInstanceGroup(i).s_SRV != NULL) 
+			if(this->instancingHelper->GetBillboardGroup(i).s_SRV != NULL) 
 			{
-				this->Shader_BillboardInstanced->SetResource("g_bb_DiffuseMap", this->instancingHelper->GetBillboardInstanceGroup(i).s_SRV);
+				this->Shader_BillboardInstanced->SetResource("g_bb_DiffuseMap", this->instancingHelper->GetBillboardGroup(i).s_SRV);
 				this->Shader_BillboardInstanced->SetBool("g_bb_IsTextured", true);
 			}
 			else
@@ -777,21 +775,18 @@ void DxManager::RenderBillboardsInstanced()
 			this->Shader_BillboardInstanced->Apply(0);
 
 			//Draw
-			int count = this->instancingHelper->GetBillboardInstanceGroup(i).s_Size;
-			int startLoc = this->instancingHelper->GetBillboardInstanceGroup(i).s_StartLocation;
-			this->Dx_DeviceContext->DrawInstanced(count, 1, startLoc, 0); //**TILLMAN, parameters inversed**
+			int instanceCount = this->instancingHelper->GetBillboardGroup(i).s_Size;
+			int startInstanceLocation = this->instancingHelper->GetBillboardGroup(i).s_StartLocation;
+			this->Dx_DeviceContext->DrawInstanced(instanceCount, 1, startInstanceLocation, 0); //**TILLMAN, parameters inversed**
 			
 			//Debug data
 			this->NrOfDrawCalls++;
 		}
+		//Debug data
+		this->NrOfDrawnVertices += 4 * this->instancingHelper->GetNrOfBillboards();
+		//Reset counter (nrofbillboards)
+		this->instancingHelper->PostRenderBillboards();
 	}
-
-
-
-	//Debug data
-	this->NrOfDrawnVertices += 4 * this->instancingHelper->GetNrOfBillboards();
-	//Reset counter (nrofbillboards)
-	this->instancingHelper->PostRenderBillboards();
 }
 
 void DxManager::RenderText()
@@ -955,9 +950,13 @@ void DxManager::RenderCascadedShadowMap()
 
 						this->Dx_DeviceContext->DrawIndexed(inds->GetElementCount(), 0, 0);
 					}
-					else 
+					else if(verts)
 					{
 						this->Dx_DeviceContext->Draw(verts->GetElementCount(), 0);
+					}
+					else
+					{
+						MaloW::Debug("WARNING: DxManagerRender: RenderCascadedShadowMap(): Both vertex and indexbuffers were NULL.");
 					}
 				}
 			}
@@ -1467,6 +1466,7 @@ HRESULT DxManager::Render()
 
 
 	this->RenderDeferredGeometry();
+	this->RenderDeferredGeometryInstanced();
 
 	this->RenderBillboards();
 	this->RenderBillboardsInstanced(); 
