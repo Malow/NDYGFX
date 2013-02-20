@@ -532,9 +532,13 @@ void DxManager::RenderShadowMap()
 						{
 							Dx_DeviceContext->DrawIndexed(inds->GetElementCount(), 0, 0);
 						}
-						else
+						else if(verts)
 						{
 							Dx_DeviceContext->Draw(verts->GetElementCount(), 0);
+						}
+						else
+						{
+							MaloW::Debug("WARNING: DxManagerRender: RenderShadowMap(): Both vertex and indexbuffers were NULL.");
 						}
 					}
 				}
@@ -956,7 +960,7 @@ void DxManager::RenderCascadedShadowMap()
 					}
 					else
 					{
-						MaloW::Debug("WARNING: DxManagerRender: RenderCascadedShadowMap(): Both vertex and indexbuffers were NULL.");
+						MaloW::Debug("WARNING: DxManagerRender: RenderCascadedShadowMap(): Both vertex and indexbuffers for terrain were NULL.");
 					}
 				}
 			}
@@ -1042,9 +1046,13 @@ void DxManager::RenderCascadedShadowMap()
 								{
 									Dx_DeviceContext->DrawIndexed(inds->GetElementCount(), 0, 0);
 								}
-								else
+								else if(verts)
 								{
 									Dx_DeviceContext->Draw(verts->GetElementCount(), 0);
+								}
+								else
+								{
+									MaloW::Debug("WARNING: DxManagerRender: RenderCascadedShadowMap(): Both vertex and indexbuffers for static mesh were NULL.");
 								}
 							}
 						}
@@ -1113,17 +1121,27 @@ void DxManager::RenderCascadedShadowMap()
 								ID3D11Buffer* vertexBuffers [] = {vertsOne->GetBufferPointer(), vertsTwo->GetBufferPointer()};
 								UINT strides [] = {sizeof(Vertex), sizeof(Vertex)};
 								UINT offsets [] = {0, 0};
-								this->Dx_DeviceContext->IASetVertexBuffers(0, 2, vertexBuffers, strides, offsets);
-
-								//Textures
-								if(objOne->GetTextureResource() != NULL && objTwo->GetTextureResource() != NULL)
+								if(vertsOne != NULL && vertsTwo != NULL)
 								{
-									if(objOne->GetTextureResource()->GetSRVPointer() != NULL && objTwo->GetTextureResource()->GetSRVPointer() != NULL)
+									this->Dx_DeviceContext->IASetVertexBuffers(0, 2, vertexBuffers, strides, offsets);
+									
+									//Textures
+									if(objOne->GetTextureResource() != NULL && objTwo->GetTextureResource() != NULL)
 									{
-										this->Shader_ShadowMapAnimated->SetResource("diffuseMap0", objOne->GetTextureResource()->GetSRVPointer());
-										//Only need one diffuse map since no blending between maps is done.
-										//this->Shader_ShadowMapAnimated->SetResource("diffuseMap1", objTwo->GetTextureResource()->GetSRVPointer());
-										this->Shader_ShadowMapAnimated->SetBool("textured", true);
+										if(objOne->GetTextureResource()->GetSRVPointer() != NULL && objTwo->GetTextureResource()->GetSRVPointer() != NULL)
+										{
+											this->Shader_ShadowMapAnimated->SetResource("diffuseMap0", objOne->GetTextureResource()->GetSRVPointer());
+											//Only need one diffuse map since no blending between maps is done.
+											//this->Shader_ShadowMapAnimated->SetResource("diffuseMap1", objTwo->GetTextureResource()->GetSRVPointer());
+											this->Shader_ShadowMapAnimated->SetBool("textured", true);
+										}
+										else
+										{
+											this->Shader_ShadowMapAnimated->SetResource("diffuseMap0", NULL);
+											//Only need one diffuse map since no blending between maps is done.
+											//this->Shader_ShadowMapAnimated->SetResource("diffuseMap1", NULL);
+											this->Shader_ShadowMapAnimated->SetBool("textured", false);
+										}
 									}
 									else
 									{
@@ -1132,20 +1150,17 @@ void DxManager::RenderCascadedShadowMap()
 										//this->Shader_ShadowMapAnimated->SetResource("diffuseMap1", NULL);
 										this->Shader_ShadowMapAnimated->SetBool("textured", false);
 									}
+
+									//Apply
+									this->Shader_ShadowMapAnimated->Apply(0);
+
+									//Draw
+									this->Dx_DeviceContext->Draw(vertsOne->GetElementCount(), 0); 
 								}
 								else
 								{
-									this->Shader_ShadowMapAnimated->SetResource("diffuseMap0", NULL);
-									//Only need one diffuse map since no blending between maps is done.
-									//this->Shader_ShadowMapAnimated->SetResource("diffuseMap1", NULL);
-									this->Shader_ShadowMapAnimated->SetBool("textured", false);
+									MaloW::Debug("WARNING: DxManagerRender: RenderCascadedShadowMap(): One or both vertex buffers for animated mesh were NULL.");
 								}
-
-								//Apply
-								this->Shader_ShadowMapAnimated->Apply(0);
-
-								//Draw
-								this->Dx_DeviceContext->Draw(vertsOne->GetElementCount(), 0); 
 							}
 						}
 					}

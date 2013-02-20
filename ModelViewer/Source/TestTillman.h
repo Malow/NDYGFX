@@ -379,16 +379,16 @@ void TillmanTest::PreTest()
 	mmm = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(0,2,0));
 
 
-	/*float navArrowsScale = 0.25f;
-	iMesh* navArrowX = GetGraphics()->CreateMesh("Media/RedArrow.obj", Vector3(0, 0, 0));
-	iMesh* navArrowZ = GetGraphics()->CreateMesh("Media/BlueArrow.obj", Vector3(-7.5f * navArrowsScale, 0, 7.5f * navArrowsScale));
-	iMesh* navArrowSpawn = GetGraphics()->CreateMesh("Media/BlackArrow.obj", Vector3(0, 0, 0));
+	float navArrowsScale = 0.25f;
+	iMesh* navArrowX = GetGraphics()->CreateMesh("Media/RedArrow.obj", Vector3(0, 2, 0));
+	iMesh* navArrowZ = GetGraphics()->CreateMesh("Media/BlueArrow.obj", Vector3(-7.5f * navArrowsScale, 2, 7.5f * navArrowsScale));
+	iMesh* navArrowSpawn = GetGraphics()->CreateMesh("Media/BlackArrow.obj", Vector3(0, 2, 0));
 	navArrowX->RotateAxis(Vector3(0, 0, 1), 3.14159265359 * 0.5f); //Point down x-axis
 	navArrowZ->RotateAxis(Vector3(1, 0, 0), -3.14159265359 * 0.5f); //Point down z-axis
 	navArrowSpawn->RotateAxis(Vector3(0, 0, 1), 3.14159265359 * 0.5f); //Point down x-axis
 	navArrowX->Scale(navArrowsScale);
 	navArrowZ->Scale(navArrowsScale);
-	navArrowSpawn->Scale(navArrowsScale);*/
+	navArrowSpawn->Scale(navArrowsScale);
 
 
 	//GRASS

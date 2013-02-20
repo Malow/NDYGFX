@@ -113,8 +113,8 @@ void DxManager::RenderDeferredGeometry()
 			if(terrPtr->HasHeightMapChanged() && terrPtr->HaveNormalsChanged()) //**TILLMAN LOADTHREAD**
 			{
 				//**OPT(OBS!  only for editor): should be replaced with an update function ** TILLMAN
-				
-
+				//**TILLMAN OPT cont: update a portion & use texture instead of buffer**
+				//this->Dx_DeviceContext->Map()
 				//Save pointer to buffer
 				Buffer* oldBuffer = terrPtr->GetVertexBufferPointer();
 
@@ -980,10 +980,10 @@ void DxManager::RenderDeferredPerPixel()
 
 	this->Dx_DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 	//Unbind the vertex buffer since no vertex data is used.
-	ID3D11Buffer* dummyBuffer [] = {NULL};
-	UINT dummyStride [] = {sizeof(VertexNormalMap)};
-	UINT dummyOffset [] = {0};
-	this->Dx_DeviceContext->IASetVertexBuffers(0, 1, dummyBuffer, dummyStride, dummyOffset);
+	ID3D11Buffer* dummyBuffers [] = {NULL, NULL};
+	UINT dummyStrides [] = {0, 0};
+	UINT dummyOffsets [] = {0, 0};
+	this->Dx_DeviceContext->IASetVertexBuffers(0, 2, dummyBuffers, dummyStrides, dummyOffsets);
 
 
 
