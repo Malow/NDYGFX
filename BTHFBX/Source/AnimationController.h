@@ -9,14 +9,28 @@
 
 #include <BTHFbxAnimationController.h>
 
-#pragma warning(disable : 4995)
+#pragma warning ( push )
+#pragma warning ( disable : 4995 )
 
 class AnimationController : public IBTHFbxAnimationController
 {
+	// Settings
+	int m_nCurrentKeyFrame;
+	int m_nNextKeyFrame;
+	float m_fKeyFrameFactor;
+	bool m_bUseQuaternionKeyFrames;
+	BTTANIMATION m_AnimationMode;
+	float m_fFrameTimer;
+	bool m_IsClone;
+
+	Animation* m_pCurrentAnimation;
+	std::map<std::string, Animation*> m_AnimationsStr;
+	std::vector<Animation*> m_AnimationsInt;
+
 public:
 	AnimationController();
 	AnimationController(AnimationController* srcAC);
-	~AnimationController();
+	virtual ~AnimationController();
 
 	void AddAnimation(Animation* pAnimation);
 	void SetCurrentAnimation(const std::string& strAnimationName);
@@ -36,24 +50,11 @@ public:
 	int GetNextKeyFrame()						{ return m_nNextKeyFrame; }
 	float GetKeyFrameFactor()					{ return m_fKeyFrameFactor; }
 
-	BTTANIMATION GetAnimationMode()			{ return m_AnimationMode; }
+	BTTANIMATION GetAnimationMode()				{ return m_AnimationMode; }
 
-	void UseQuaternionKeyFrames(bool bUse)	{ m_bUseQuaternionKeyFrames = bUse; }
+	void UseQuaternionKeyFrames(bool bUse)		{ m_bUseQuaternionKeyFrames = bUse; }
 	bool UseQuaternionKeyFrames()				{ return m_bUseQuaternionKeyFrames; }
 
-protected:
-	std::map<std::string, Animation*> m_AnimationsStr;
-	std::vector<Animation*> m_AnimationsInt;
-
-	Animation* m_pCurrentAnimation;
-	int m_nCurrentKeyFrame;
-	int m_nNextKeyFrame;
-	float m_fKeyFrameFactor;
-	bool m_bUseQuaternionKeyFrames;
-
-	BTTANIMATION m_AnimationMode;
-
-	float m_fFrameTimer;
-
-	bool m_IsClone;
 };
+
+#pragma warning ( pop )

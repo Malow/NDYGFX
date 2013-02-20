@@ -2,7 +2,7 @@
 
 #include "..\..\..\..\Source\Shader.h"
 #include "..\..\..\..\Source\Buffer.h"
-#include "..\..\Include\BTHFbxModel.h"
+#include <BTHFbxModel.h>
 #include "FBXModelPartD3D.h"
 #include "..\..\..\Array.h"
 #include <Vector>

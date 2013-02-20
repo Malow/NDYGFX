@@ -22,7 +22,7 @@ SceneManager::~SceneManager()
 	if(mSdkManager)	mSdkManager->Destroy();
 }
 
-FBXScene* SceneManager::LoadScene(char* filename)
+FBXScene* SceneManager::LoadScene(const char* fileName)
 {
 	if(!mSdkManager)
 	{
@@ -32,24 +32,24 @@ FBXScene* SceneManager::LoadScene(char* filename)
 
 	FBXScene* scene = new FBXScene(mSdkManager);
 
-	if(!scene->Init(filename))
+	if(!scene->Init(fileName))
 	{
 		if ( scene ) delete scene, scene = 0;
 	}
 	else
 	{
-		m_Scenes[filename] = scene;
+		m_Scenes[fileName] = scene;
 	}
 
 	return scene;
 }
 
-IBTHFbxScene* SceneManager::GetScene(char* filename)
+IBTHFbxScene* SceneManager::GetScene(const char* fileName)
 {
 	FBXScene* scene = NULL;
 	FBXSceneInstance* sceneInstance = NULL;
 	
-	SCENE_MAP::iterator i  = m_Scenes.find(filename);
+	SCENE_MAP::iterator i  = m_Scenes.find(fileName);
 	if(i != m_Scenes.end() )
 	{
 		scene = i->second;
@@ -61,9 +61,7 @@ IBTHFbxScene* SceneManager::GetScene(char* filename)
 	}
 	else
 	{
-		scene = LoadScene(filename);
-
-		//mResources.AddModelsFromScene(filename, scene);
+		scene = LoadScene(fileName);
 
 		sceneInstance = new FBXSceneInstance(scene);
 		sceneInstance->InitInstance();

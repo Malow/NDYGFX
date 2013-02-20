@@ -9,7 +9,7 @@ extern "C"
 	class DECLDIR IBTHFbxSkeleton
 	{
 	public:
-		virtual int GetBoneCount() = 0;
+		virtual unsigned int GetBoneCount() const = 0;
 
 		virtual float* GetSkinTransforms() = 0;
 

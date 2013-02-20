@@ -2,9 +2,8 @@
 
 #include "..\..\..\..\Source\Shader.h"
 #include "..\..\..\..\Source\Buffer.h"
-#include "..\..\Include\BTHFbx.h"
-
 #include "FBXModelD3D.h"
+#include <BTHFbx.h>
 
 /*
 struct ShadowData

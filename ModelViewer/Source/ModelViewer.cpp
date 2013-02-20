@@ -75,15 +75,6 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	GetGraphics()->GetCamera()->SetPosition(Vector3(25, 25, 20));
 	GetGraphics()->GetCamera()->LookAt(Vector3(0, 0, 0));
 
-	iLight* li = GetGraphics()->CreateLight(GetGraphics()->GetCamera()->GetPosition());
-	li->SetIntensity(0.001f);
-	GetGraphics()->SetSunLightProperties(Vector3(1, -1, 1), Vector3(1, 1, 1), 1.5f);
-	GetGraphics()->SetSceneAmbientLight(Vector3(0.4f, 0.4f, 0.4f));
-	iMesh* scaleHuman = GetGraphics()->CreateMesh("Media/scale.obj", Vector3(30, -300, 30));
-	iMesh* model = GetGraphics()->CreateMesh("Media/bth.obj", Vector3(15, 20, 20));
-	scaleHuman->Scale(1.0f / 20.0f);
-	model->Scale(1.0f * 0.05f);
-
 //*************************************	     PRE TEST       **********************
 #ifdef TEST
 	// Run As Simple ModelViewer
@@ -129,17 +120,24 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		return 0;
 	}
 
+	iLight* li = GetGraphics()->CreateLight(GetGraphics()->GetCamera()->GetPosition());
+	li->SetIntensity(0.001f);
+	GetGraphics()->SetSunLightProperties(Vector3(1, -1, 1), Vector3(1, 1, 1), 1.5f);
+	GetGraphics()->SetSceneAmbientLight(Vector3(0.4f, 0.4f, 0.4f));
+	iMesh* scaleHuman = GetGraphics()->CreateMesh("Media/scale.obj", Vector3(30, -300, 30));
+	iMesh* model = GetGraphics()->CreateMesh("Media/bth.obj", Vector3(15, 20, 20));
+	scaleHuman->Scale(1.0f / 20.0f);
+	model->Scale(1.0f * 0.05f);
 
-
-
-		MaloWTest mt;
-		TillmanTest tt;
-		OtherTest ot;
-		mt.PreTest();
-		tt.PreTest();
-		ot.PreTest();
-		GetGraphics()->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 1.0f, 1.0f, 1.0f, 1.0f);
+	MaloWTest mt;
+	TillmanTest tt;
+	OtherTest ot;
+	mt.PreTest();
+	tt.PreTest();
+	ot.PreTest();
+	GetGraphics()->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 1.0f, 1.0f, 1.0f, 1.0f);
 #endif
+
 //*************************************	    END OF PRE TEST       **********************
 
 	// To stop the engine rendering a splash image before it has loaded stuff 

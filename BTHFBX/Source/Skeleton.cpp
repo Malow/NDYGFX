@@ -2,28 +2,23 @@
 #include <algorithm>
 
 
-
-//--------------------------------------------------------------------------------------
 Skeleton::Skeleton()
 {
-	//m_SkinTransforms = NULL;
 	m_nBoneCount = 0;
-
 	m_SkinTransforms2 = NULL;
 }
 
-//--------------------------------------------------------------------------------------
 Skeleton::~Skeleton()
 {
 	m_SkeletonBones.RemoveAll(true);
 	if ( m_SkinTransforms2 ) delete [] m_SkinTransforms2, m_SkinTransforms2 = 0;
 }
 
-//--------------------------------------------------------------------------------------
 void Skeleton::AddSkeletonBone(SkeletonBone* pSkeletonBone)
 {
 	std::string name = pSkeletonBone->GetName();
 	std::transform(name.begin(), name.end(), name.begin(), toupper);
+	pSkeletonBone->SetBoneIndex(m_SkeletonBones.GetCount());
 	m_SkeletonBones.Add(name, pSkeletonBone);
 
 	if(pSkeletonBone->GetParentBoneIndex() < 0)
@@ -32,7 +27,6 @@ void Skeleton::AddSkeletonBone(SkeletonBone* pSkeletonBone)
 	m_nBoneCount++;
 }
 
-//--------------------------------------------------------------------------------------
 SkeletonBone* Skeleton::FindBone(const std::string& strBoneName)
 {
 	std::string strBoneToFind = strBoneName;
@@ -54,7 +48,6 @@ IBTHFbxSkeletonBone* Skeleton::GetBone(int index)
 	return dynamic_cast<IBTHFbxSkeletonBone*>(GetSkeletonBone(index));
 }
 
-//--------------------------------------------------------------------------------------
 int Skeleton::FindBoneIndex(const std::string& strBoneName)
 {
 	std::string strBoneToFind = strBoneName;
@@ -67,6 +60,7 @@ void Skeleton::BuildBoneHierarchy()
 {
 	const std::vector<std::pair<std::string,SkeletonBone*>>& skeletonBones = m_SkeletonBones.GetDataArray();
 	std::vector<std::pair<std::string,SkeletonBone*>>::const_iterator it = skeletonBones.begin();
+
 	for(; it != skeletonBones.end(); ++it )
 	{
 		int index = it->second->GetParentBoneIndex();
@@ -80,14 +74,13 @@ void Skeleton::BuildBoneHierarchy()
 		}
 	}
 
-	//if( !m_SkinTransforms )				m_SkinTransforms = new D3DXMATRIX[m_nBoneCount];
-	//memset(m_SkinTransforms, 0, sizeof(D3DMATRIX) * m_nBoneCount);
-
-	if( !m_SkinTransforms2 )				m_SkinTransforms2 = new BTHFBX_MATRIX[m_nBoneCount];
-	memset(m_SkinTransforms2, 0, sizeof(BTHFBX_MATRIX) * m_nBoneCount);
+	if( !m_SkinTransforms2 )
+	{
+		m_SkinTransforms2 = new BTHFBX_MATRIX[m_nBoneCount];
+		memset(m_SkinTransforms2, 0, sizeof(BTHFBX_MATRIX) * m_nBoneCount);
+	}
 }
 
-//--------------------------------------------------------------------------------------
 SkeletonBone* Skeleton::GetSkeletonBone(int nIndex)
 {
 	if(nIndex < 0)
@@ -104,7 +97,6 @@ void Skeleton::UpdateCombinedAABB()
 	m_RootBone->UpdateSceneAABB(m_CombinedAABB);
 }
 
-//--------------------------------------------------------------------------------------
 void Skeleton::UpdateAnimation(AnimationController* pAnimationController)
 {
 	Animation* pCurrentAnimation = pAnimationController->GetCurrentAnimation();
@@ -117,13 +109,6 @@ void Skeleton::UpdateAnimation(AnimationController* pAnimationController)
 
 	UpdateCombinedAABB();
 }
-
-/*
-void Skeleton::SetSkinTransform(int index, D3DXMATRIX& matSkinTransform)
-{
-	m_SkinTransforms[index] = matSkinTransform;
-}
-*/
 
 void Skeleton::SetSkinTransform2(int index, FbxMatrix& matSkinTransform)
 {

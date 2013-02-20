@@ -20,7 +20,7 @@ extern "C"
 		SCENE_INSTANCE_VEC m_SceneInstances;
 
 		
-		FBXScene* LoadScene(char* filename);
+		FBXScene* LoadScene(const char* filename);
 
 		bool InitializeFBXSdk();
 
@@ -28,7 +28,7 @@ extern "C"
 		SceneManager();
 		virtual ~SceneManager();
 		
-		virtual IBTHFbxScene* GetScene(char* filename);
+		virtual IBTHFbxScene* GetScene(const char* filename);
 
 		virtual void UpdateScenes(float deltaTime, bool bEnableAnimation);
 	};

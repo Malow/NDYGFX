@@ -3,7 +3,7 @@
 #include "..\..\..\..\Source\Shader.h"
 #include "..\..\..\..\Source\Buffer.h"
 #include "..\D3D\BTHTexture.h"
-#include "..\..\Include\BTHFbxModelPart.h"
+#include <BTHFbxModelPart.h>
 
 class FBXModelPartD3D
 {

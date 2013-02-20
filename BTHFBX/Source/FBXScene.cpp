@@ -13,7 +13,9 @@ FBXScene::FBXScene(FbxManager* sdkManager)
 FBXScene::~FBXScene()
 {
 	for(auto i = m_FBXMaterials.begin(); i != m_FBXMaterials.end(); i++)
+	{
 		(*i)->Destroy();
+	}
 
 	for(auto i = m_Materials.begin(); i != m_Materials.end(); i++)
 	{
@@ -21,28 +23,33 @@ FBXScene::~FBXScene()
 	}
 
 	m_Models.RemoveAll(true);
+
 	if ( m_pSkeleton ) delete m_pSkeleton, m_pSkeleton = 0;
 	if ( m_pAnimationController ) delete m_pAnimationController, m_pAnimationController = 0;
-	if(mScene) mScene->Destroy();
+	if ( mScene ) mScene->Destroy();
 }
 
-bool FBXScene::Init(const char* filename)
+bool FBXScene::Init(const char* fileName)
 {
     // Create the entity that will hold the scene.
     mScene = FbxScene::Create(mSdkManager,"");
 	if(!mScene) return false;
 
 	// Cache Scene
-	if ( !LoadCachedScene(filename, this) )
+	if ( !LoadCachedScene(fileName, this) )
 	{
 		std::stringstream ss;
 
-		if ( !LoadScene(filename, ss) )
+		if ( !LoadScene(fileName, ss) )
 		{
 			return false;
 		}
 
-		CacheScene(filename, this);
+		CacheScene(fileName, this);
+	}
+	else
+	{
+		mFilename = fileName;
 	}
 
 	return true;
@@ -50,7 +57,7 @@ bool FBXScene::Init(const char* filename)
 
 void FBXScene::ProcessBlendWeights()
 {
-	for( int i = 0; i < m_Models.GetCount(); ++i )
+	for( unsigned int i = 0; i < m_Models.GetCount(); ++i )
 	{
 		m_Models.GetValueAt(i)->ProcessBlendWeights();
 	}
@@ -160,38 +167,13 @@ void FBXScene::ProcessScene(FbxScene* pScene)
 	ProcessSkeleteonBoundingBoxes();
 
 	ProcessAnimations(pScene);	// takes time too, other 50%
-	/*
-	KFbxExporter* lExporter = KFbxExporter::Create(mSdkManager, "");
-
-	int lFileFormat = mSdkManager->GetIOPluginRegistry()->FindWriterIDByExtension("FBX");
-
-
-    //Initialize the file
-    if(lExporter->Initialize("fan.fbx", lFileFormat, mSdkManager->GetIOSettings()) == false)
-    {
-        printf("Call to KFbxExporter::Initialize() failed.\n");
-        printf("Error returned: %s\n\n", lExporter->GetLastErrorString());
-        // Destroy all objects created by the FBX SDK.
-        //DestroySdkObjects(mSdkManager);
-        return;
-    }
-
-	bool lResult = lExporter->Export(mScene); 
-    if(lResult == false)
-    {
-        printf("Error in write of our custom writer\n");
-        // Destroy all objects created by the FBX SDK.
-        //DestroySdkObjects(lSdkManager);
-        return;
-    }
-	*/
 }
 
 void FBXScene::ProcessSkeleteonBoundingBoxes()
 {
 	if(m_pSkeleton)
 	{
-		for( int i = 0; i < m_Models.GetCount(); ++i )
+		for( unsigned int i = 0; i < m_Models.GetCount(); ++i )
 		{
 			m_Models.GetValueAt(i)->ProcessSkeleteonBoundingBoxes(m_pSkeleton);
 		}
@@ -321,7 +303,6 @@ void FBXScene::ProcessAnimations(FbxScene* pScene)
 		}
 
 		delete takeName;
-		//takeName->Destroy();
 	}
 	takeArray.Clear();
 }
@@ -339,7 +320,6 @@ void FBXScene::ProcessAnimation(FbxNode* pNode, const char* strTakeName, float f
 
 				if( pBone )
 				{
-
 					AnimationKeyFrames* pAnimationKeyFrames = new AnimationKeyFrames(strTakeName);
 
 					double fTime = 0;
@@ -348,24 +328,14 @@ void FBXScene::ProcessAnimation(FbxNode* pNode, const char* strTakeName, float f
 						FbxTime takeTime;
 						takeTime.SetSecondDouble(fTime);
 
-						/*
-						D3DXMATRIX matAbsoluteTransform = GetAbsoluteTransformFromCurrentTake(pNode, takeTime);
-						D3DXMATRIX matParentAbsoluteTransform = GetAbsoluteTransformFromCurrentTake(pNode->GetParent(), takeTime);
-						D3DXMATRIX matInvParentAbsoluteTransform;
-						D3DXMatrixInverse(&matInvParentAbsoluteTransform, NULL, &matParentAbsoluteTransform);
-						D3DXMATRIX matTransform = matAbsoluteTransform * matInvParentAbsoluteTransform;
-						*/
-
-
 						FbxMatrix matAbsoluteTransform2 = GetAbsoluteTransformFromCurrentTake2(pNode, takeTime);
 						FbxMatrix matParentAbsoluteTransform2 = GetAbsoluteTransformFromCurrentTake2(pNode->GetParent(), takeTime);
 						FbxMatrix matInvParentAbsoluteTransform2 = matParentAbsoluteTransform2.Inverse();
 						FbxMatrix matTransform2 = matInvParentAbsoluteTransform2 * matAbsoluteTransform2;
 
-						//pAnimationKeyFrames->AddKeyFrame(matTransform, matTransform2);
 						pAnimationKeyFrames->AddKeyFrame(matTransform2);
 
-						fTime += 1.0f/fFrameRate;
+						fTime += 1.0f / fFrameRate;
 					}
 
 					pBone->AddAnimationKeyFrames(pAnimationKeyFrames);
@@ -386,11 +356,8 @@ void FBXScene::ProcessAnimation(FbxNode* pNode, const char* strTakeName, float f
 					FbxTime takeTime;
 					takeTime.SetSecondDouble(fTime);
 
-					//D3DXMATRIX matAbsoluteTransform = GetAbsoluteTransformFromCurrentTake(pNode, takeTime);
-
 					FbxMatrix matAbsoluteTransform2 = GetAbsoluteTransformFromCurrentTake2(pNode, takeTime);
 
-					//pAnimationKeyFrames->AddKeyFrame(matAbsoluteTransform, matAbsoluteTransform2);
 					pAnimationKeyFrames->AddKeyFrame(matAbsoluteTransform2);
 
 					fTime += 1.0f/fFrameRate;
@@ -459,11 +426,14 @@ void FBXScene::ProcessMesh(FbxNode* pNode)
 	if( !pFBXMesh )
 		return;
 
-	if ( pFBXMesh->GetPolygonVertexCount() / 3 != pFBXMesh->GetPolygonCount() )
+	if ( pFBXMesh->GetPolygonVertexCount() != pFBXMesh->GetPolygonCount() * 3 )
 	{
 		FbxGeometryConverter GeometryConverter(pNode->GetFbxManager());
 		if( !GeometryConverter.TriangulateInPlace( pNode ) )
-		return;
+		{
+			return;
+		}
+		pFBXMesh = pNode->GetMesh();
 	}
 
 	pFBXMesh->InitNormals();
@@ -482,6 +452,7 @@ void FBXScene::ProcessMesh(FbxNode* pNode)
 	FbxVector4* aControlPoints = pFBXMesh->GetControlPoints();
 	for( int pi = 0; pi < pFBXMesh->GetPolygonCount(); ++pi )	// Whole for-loop takes some time too, investigate further.
 	{
+		// Material
 		Material* pMaterial = NULL;
 
 		for( int pvi = 0; pvi < 3; ++pvi )
@@ -491,22 +462,17 @@ void FBXScene::ProcessMesh(FbxNode* pNode)
 			if( nVertexIndex < 0 || nVertexIndex >= nVertexCount )
 				continue;
 
+			// Material
 			if( pMaterial == NULL )
 				pMaterial = GetMaterialLinkedWithPolygon(pFBXMesh, 0, pi, 0, nVertexIndex);
 
+			// Position
 			FbxVector4 fbxPosition = aControlPoints[nVertexIndex];
 
+			// Normals And Tangents
 			FbxVector4 fbxNormal, fbxTangent;
 			fbxNormal = GetNormal(pFBXMesh, 0, pi, pvi, nVertexIndex);
 			fbxTangent = GetTangent(pFBXMesh, 0, pi, pvi, nVertexIndex);
-
-			/*
-			if( pFBXMesh->GetLayer(0)->GetNormals() == NULL )
-			{
-				pFBXMesh->InitNormals();
-				pFBXMesh->ComputeVertexNormals(); 
-			}
-			*/
 
 			pModel->AddVertex(pMaterial, FbxVector4ToBTHFBX_VEC3(fbxPosition),
 										 FbxVector4ToBTHFBX_VEC3(fbxNormal),
@@ -518,12 +484,10 @@ void FBXScene::ProcessMesh(FbxNode* pNode)
 		}
 	}
 
-	//pModel->SetAbsoluteTransform(GetAbsoluteTransformFromCurrentTake(pNode, FbxTime(0)));
-	//pModel->SetGeometricOffset(GetGeometricOffset(pNode));
-
-	pModel->SetAbsoluteTransform2(GetAbsoluteTransformFromCurrentTake2(pNode, FbxTime(0)));
+	// Geometric Offset
 	pModel->SetGeometricOffset2(GetGeometricOffset2(pNode));
 
+	// Insert Model
 	m_Models.Add(pModel->GetName(), pModel);
 }
 
@@ -641,7 +605,8 @@ void FBXScene::ProcessMaterials(FbxScene* pScene)
 		FbxProperty diffuseTextureProperty = pFBXMaterial->FindProperty(FbxSurfaceMaterial::sDiffuse);
 		if( diffuseTextureProperty.IsValid() )
 		{
-			FbxFileTexture* pDiffuseTexture = FbxCast<FbxFileTexture>(diffuseTextureProperty.GetSrcObject(FbxTexture::ClassId, 0));
+			//FbxFileTexture* pDiffuseTexture = FbxCast<FbxFileTexture>(diffuseTextureProperty.GetSrcObject(FbxTexture::ClassId, 0));
+			FbxFileTexture* pDiffuseTexture = diffuseTextureProperty.GetSrcObject<FbxFileTexture>(0);
 
 			if( pDiffuseTexture )
 			{
@@ -655,7 +620,8 @@ void FBXScene::ProcessMaterials(FbxScene* pScene)
 		FbxProperty normalTextureProperty = pFBXMaterial->FindProperty(FbxSurfaceMaterial::sNormalMap);
 		if( normalTextureProperty.IsValid() )
 		{
-				FbxFileTexture* pNormalTexture = FbxCast<FbxFileTexture>(normalTextureProperty.GetSrcObject(FbxTexture::ClassId, 0));
+				//FbxFileTexture* pNormalTexture = FbxCast<FbxFileTexture>(normalTextureProperty.GetSrcObject(FbxTexture::ClassId, 0));
+				FbxFileTexture* pNormalTexture = normalTextureProperty.GetSrcObject<FbxFileTexture>(0);
 
 				if( pNormalTexture )
 				{
@@ -726,30 +692,6 @@ void FBXScene::ProcessMaterials(FbxScene* pScene)
 		m_FBXMaterials.push_back(pFBXMaterial);
 	}
 }
-
-/*
-D3DXMATRIX FBXScene::GetGeometricOffset(FbxNode* pNode)
-{
-	if( !pNode )
-	{
-		D3DXMATRIX mat;
-		D3DXMatrixIdentity(&mat);
-		return mat;
-	}
-
-	FbxVector4 T = pNode->GetGeometricTranslation(FbxNode::eSOURCE_SET);
-	FbxVector4 R = pNode->GetGeometricRotation(FbxNode::eSOURCE_SET);
-	FbxVector4 S = pNode->GetGeometricScaling(FbxNode::eSOURCE_SET);
-
-	FbxMatrix matFBXGeometryOffset;
-	matFBXGeometryOffset.SetIdentity();
-	matFBXGeometryOffset.SetT(T);
-	matFBXGeometryOffset.SetR(R);
-	matFBXGeometryOffset.SetS(S);
-
-	return KFbxXMatrixToD3DXMATRIX(matFBXGeometryOffset);
-}
-*/
 
 FbxMatrix FBXScene::GetGeometricOffset2(FbxNode* pNode)
 {
@@ -906,27 +848,6 @@ FbxVector4 FBXScene::GetTangent(FbxMesh* pFBXMesh, int nLayerIndex, int nPolygon
 	return vTangent;
 }
 
-
-/*
-D3DXVECTOR3 FBXScene::GetMaterialColor(KFbxPropertyDouble3 FBXColorProperty, KFbxPropertyDouble1 FBXFactorProperty)
-{
-	D3DXVECTOR3 Color;
-
-	if( FBXColorProperty.IsValid() )
-	{
-		fbxDouble3 FBXColor = FBXColorProperty.Get();
-		Color = D3DXVECTOR3( (float)FBXColor[0], (float)FBXColor[1], (float)FBXColor[2] );
-		
-		if( FBXFactorProperty.IsValid() )
-		{
-			float FBXFactor = (float)FBXFactorProperty.Get();
-			Color *= FBXFactor;
-		}
-	}
-	return Color;
-}
-*/
-
 BTHFBX_VEC3 FBXScene::GetMaterialColor2(FbxPropertyT<FbxDouble3> FBXColorProperty, FbxPropertyT<FbxDouble> FBXFactorProperty)
 {
 	BTHFBX_VEC3 Color;
@@ -1033,22 +954,6 @@ Material* FBXScene::GetMaterial(FbxSurfaceMaterial* pFBXMaterial)
 	return NULL;
 }
 
-/*
-D3DXMATRIX FBXScene::GetAbsoluteTransformFromCurrentTake(FbxNode* pNode, FbxTime time)
-{
-	if( !pNode )
-	{
-		D3DXMATRIX mat;
-		D3DXMatrixIdentity(&mat);
-		return mat;
-	}
-	
-	//FbxMatrix matFBXGlobal = pNode->EvaluateGlobalTransform(time); //pNode->GetGlobalFromCurrentTake(time, FbxNode::eSOURCE_SET, false);
-	FbxMatrix matFBXGlobal = mScene->GetEvaluator()->GetNodeGlobalTransform(pNode, time);
-	return KFbxXMatrixToD3DXMATRIX(matFBXGlobal);
-}
-*/
-
 FbxMatrix FBXScene::GetAbsoluteTransformFromCurrentTake2(FbxNode* pNode, FbxTime time)
 {
 	if( !pNode )
@@ -1058,7 +963,6 @@ FbxMatrix FBXScene::GetAbsoluteTransformFromCurrentTake2(FbxNode* pNode, FbxTime
 		return mat;
 	}
 	
-	//FbxMatrix matFBXGlobal = pNode->EvaluateGlobalTransform(time); //pNode->GetGlobalFromCurrentTake(time, FbxNode::eSOURCE_SET, false);
 	FbxAMatrix matFBXGlobal = mScene->GetEvaluator()->GetNodeGlobalTransform(pNode, time);
 	return matFBXGlobal;
 }

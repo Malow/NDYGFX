@@ -360,7 +360,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(SolutionDir)\Build\$(Configuration)\</OutDir>
     <ExecutablePath>$(SolutionDir)\External\VLD\bin\Win32;$(SolutionDir)\External\D3D\Utilities\bin\x86\;$(ExecutablePath)</ExecutablePath>
-    <IncludePath>$(SolutionDir)\External\D3D\Include\;$(SolutionDir)\External\VLD\include\;$(SolutionDir)\Include\;$(DXSDK_DIR)\Include\;$(SolutionDir)\External\BTHFBX\include\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)\External\D3D\Include\;$(SolutionDir)\External\VLD\include\;$(SolutionDir)\Include\;$(DXSDK_DIR)\Include\;$(SolutionDir)\BTHFBX\include\;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)\External\VLD\lib\Win32;$(SolutionDir)\External\D3D\Lib\x86\;$(DXSDK_DIR)\Lib\x86\;$(SolutionDir)\Build\Debug;$(LibraryPath)</LibraryPath>
     <TargetName>$(ProjectName)D</TargetName>
     <IntDir>$(ProjectDir)\Obj\$(Configuration)\</IntDir>

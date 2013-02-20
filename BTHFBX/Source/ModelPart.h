@@ -2,14 +2,11 @@
 
 #include "Material.h"
 #include "BoneWeights.h"
-
 #include "Skeleton.h"
-
 #include "BTHFbxModelPart.h"
 #include "BTHFbxMaterial.h"
 
 class Model;
-class Effect;
 
 class ModelPart : public IBTHFbxModelPart
 {
@@ -26,15 +23,21 @@ class ModelPart : public IBTHFbxModelPart
 
 public:
 	ModelPart(Model* pModelParent, int pModelParentIndex, Material* pMaterial);
-	~ModelPart();
+	virtual ~ModelPart();
 
-	void AddVertex(const BTHFBX_VEC3& vPosition, const BTHFBX_VEC3& vNormal, const BTHFBX_VEC3& vTangent, const BTHFBX_VEC2& vTexCoord, const BoneWeights& boneWeights);
-
-	//virtual Material* GetMaterial() { return m_pMaterial; }
+	// Settings
 	virtual IBTHFbxMaterial* GetMaterial() { return m_pMaterial; }
+	virtual bool IsSkinnedModel() { return m_bSkinnedModel; }
 
-	void ProcessBlendWeights();
+	// Data Access
+	inline std::vector<BTHFBX_VEC3>& GetPositions() { return m_Positions; }
+	inline std::vector<BTHFBX_VEC3>& GetNormals() { return m_Normals; }
+	inline std::vector<BTHFBX_VEC3>& GetTangents() { return m_Tangents; }
+	inline std::vector<BTHFBX_VEC2>& GetTexCoords() { return m_TexCoords; }
+	inline std::vector<unsigned int>& GetIndices() { return m_VertexIndices; }
+	inline std::vector<BTHFBX_BLEND_WEIGHT_DATA>& GetBoneWeights() { return m_BlendWeights; }	
 
+	// Inherited Data Access
 	virtual int GetVertexCount() { return (int)m_Positions.size(); }
 	virtual BTHFBX_VEC3* GetVertexPositionData() { return &m_Positions[0]; }
 	virtual BTHFBX_VEC3* GetVertexNormalData() { return &m_Normals[0]; }
@@ -44,7 +47,9 @@ public:
 	virtual int GetIndexCount() { return (int)m_VertexIndices.size(); }
 	virtual unsigned int* GetIndexData() { return (unsigned int*)&m_VertexIndices[0]; }
 
-	virtual bool IsSkinnedModel() { return m_bSkinnedModel; }
-
+	// Logic
+	void ProcessBlendWeights();
 	void ProcessSkeleteonBoundingBoxes(Skeleton* skeleton);
+	void AddVertex(const BTHFBX_VEC3& vPosition, const BTHFBX_VEC3& vNormal, const BTHFBX_VEC3& vTangent, const BTHFBX_VEC2& vTexCoord, const BoneWeights& boneWeights);
+
 };

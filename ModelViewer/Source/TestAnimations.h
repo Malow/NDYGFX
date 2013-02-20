@@ -26,6 +26,7 @@ public:
 		GetGraphics()->SetSunLightDisabled();
 
 		mesh = GetGraphics()->CreateMesh("Media/Soldier_animated_jump.fbx", Vector3(0.0f, 0.0f, 0.0f));
+		mesh->SetScale(0.1f);
 	}
 
 	virtual void PostTest()

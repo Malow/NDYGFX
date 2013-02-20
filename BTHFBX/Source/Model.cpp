@@ -103,16 +103,27 @@ void Model::UpdateAnimation(AnimationController* pAnimationController)
 			if( pAnimationKeyFrames )
 			{
 				int nKeyFrame = pAnimationController->GetCurrentKeyFrame();
-				//m_matAnimationTransform = pAnimationKeyFrames->GetKeyFrameTransform(nKeyFrame);
-
 				SetAnimationTransform2(pAnimationKeyFrames->GetKeyFrameTransform2(nKeyFrame));
 				return;
 			}
 		}
 	}
-	//D3DXMatrixIdentity(&m_matAnimationTransform);
 
 	FbxMatrix tmp;
 	tmp.SetIdentity();
 	SetAnimationTransform2(tmp);
+}
+
+void Model::SetGeometricOffset2(const FbxMatrix& matGeometricOffset)
+{
+	for(int y = 0; y < 4; y++)
+		for(int x = 0; x < 4; x++)
+			m_matGeometricOffset2.f[y*4+x] = (float)matGeometricOffset.Get(y, x);
+}
+
+void Model::SetAnimationTransform2(const FbxMatrix& matAnimationTransform)
+{
+	for(int y = 0; y < 4; y++)
+		for(int x = 0; x < 4; x++)
+			m_matAnimationTransform2.f[y*4+x] = (float)matAnimationTransform.Get(y, x);
 }

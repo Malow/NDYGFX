@@ -176,6 +176,45 @@ PS_OUTPUT DefaultPS( VS_OUTPUT In )
 	return Output;
 }
 
+
+
+/*
+struct VS_OUTPUT
+{
+    float4 Position   : SV_POSITION;
+    float3 Normal	  : NORMAL;
+	float3 Tangent	  : TANGENT;
+	float2 TexCoord	  : TEXCOORD;
+};
+*/
+
+[maxvertexcount(8)]
+void NormalGS( triangle VS_OUTPUT Input[3],
+	inout LineStream<VS_OUTPUT> streamOut )
+{	
+	VS_OUTPUT Output = Input[0];
+	
+	for(int i = 0; i < 3; i++)
+	{
+		float3 Normal = normalize(Input[i].Normal);
+		
+		Output.Position = mul( float4(Input[i].PosW, 1.0), gViewProj );
+		streamOut.Append(Output);
+		
+		Output.Position = mul( float4(Input[i].PosW + Normal * 0.15f, 1.0), gViewProj );
+		streamOut.Append(Output);
+		
+		streamOut.RestartStrip();
+	}
+}
+
+PS_OUTPUT NormalPS( VS_OUTPUT In ) 
+{
+	PS_OUTPUT Output;
+	Output.RGBColor = float4(0,0,1,1);
+	return Output;
+}
+
 //--------------------------------------------------------------------------------------
 // D3D10 Techniques
 //--------------------------------------------------------------------------------------
@@ -185,6 +224,7 @@ technique11 Default
     pass P0
     {          
         SetVertexShader( CompileShader( vs_4_0, DefaultVS() ) );
+		SetGeometryShader( NULL );
         SetPixelShader( CompileShader( ps_4_0, DefaultPS() ) );
 
 		SetRasterizerState(DefaultRasterizerState);

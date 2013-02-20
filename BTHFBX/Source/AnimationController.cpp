@@ -23,13 +23,9 @@ AnimationController::AnimationController(AnimationController* srcAC)
 	m_nNextKeyFrame = 0;
 	m_fKeyFrameFactor = 0.0f;
 	m_fFrameTimer = 0.0f;
-
 	m_bUseQuaternionKeyFrames = true;
-
 	m_IsClone = true;
-
 	m_AnimationMode = BTTANIMATION_STOP;
-
 	m_AnimationsStr = srcAC->m_AnimationsStr;
 	m_AnimationsInt = srcAC->m_AnimationsInt;
 }
@@ -47,18 +43,13 @@ AnimationController::~AnimationController()
 			}
 		}
 	}
-	//m_Animations.RemoveAll(true);
-	//m_pCurrentAnimation = NULL;
 }
 
 //--------------------------------------------------------------------------------------
 void AnimationController::AddAnimation(Animation* pAnimation)
 {
-	//m_Animations.Add( pAnimation->GetName(), pAnimation );
-
 	m_AnimationsInt.push_back(pAnimation);
 	m_AnimationsStr[pAnimation->GetName()] = pAnimation;
-
 }
 
 //--------------------------------------------------------------------------------------
@@ -74,14 +65,6 @@ void AnimationController::SetCurrentAnimation(const std::string& strAnimationNam
 	{
 		m_pCurrentAnimation = NULL;
 	}
-	/*
-	std::pair<int,Animation*> pair = m_Animations.Find( strAnimationName );
-
-	if( pair.first >= 0 )
-		m_pCurrentAnimation = pair.second;
-	else
-		m_pCurrentAnimation = NULL;
-	*/
 
 	Stop();
 }
@@ -89,7 +72,6 @@ void AnimationController::SetCurrentAnimation(const std::string& strAnimationNam
 //--------------------------------------------------------------------------------------
 void AnimationController::SetCurrentAnimation(int nIndex)
 {
-	//m_pCurrentAnimation = m_Animations.GetDataArray()[nIndex].second;
 	m_pCurrentAnimation = m_AnimationsInt[nIndex];
 	Stop();
 }
@@ -99,20 +81,19 @@ Animation* AnimationController::GetCurrentAnimation()
 {
 	if( m_pCurrentAnimation )
 		return m_pCurrentAnimation;
+
 	return NULL;
 }
 
 //--------------------------------------------------------------------------------------
 int AnimationController::GetAnimationCount()
 {
-	//return (int)m_Animations.GetDataArray().size();
 	return (int)m_AnimationsInt.size();
 }
 
 //--------------------------------------------------------------------------------------
 Animation* AnimationController::GetAnimation(int nIndex)
 {
-	//return m_Animations.GetDataArray()[nIndex].second;
 	return m_AnimationsInt[nIndex];
 }
 
@@ -135,7 +116,7 @@ void AnimationController::Update(float fElapsedTime)
 	m_fKeyFrameFactor = m_fFrameTimer/fInvFrameRate;
 }
 
-//--------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------- 
 void AnimationController::Play()
 {
 	m_AnimationMode = BTTANIMATION_PLAY;

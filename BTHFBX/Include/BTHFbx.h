@@ -15,7 +15,7 @@ extern "C"
 	class DECLDIR IBTHFbx
 	{
 	public:
-		virtual IBTHFbxScene* GetScene(char* filename) = 0;
+		virtual IBTHFbxScene* GetScene(const char* filename) = 0;
 
 		virtual void UpdateScenes(float deltaTime, bool bEnableAnimation) = 0;
 	};
