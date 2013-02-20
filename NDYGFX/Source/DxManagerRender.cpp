@@ -1460,6 +1460,8 @@ HRESULT DxManager::Render()
 {
 	if(this->RendererSleep > 0)
 		Sleep((DWORD)this->RendererSleep);
+	if(GetForegroundWindow() != this->hWnd)	// Sleep a little if you're alt tabbed out of the game to prevent desktop lag.
+		Sleep((DWORD)10);
 
 	// Timer
 	LARGE_INTEGER li;
