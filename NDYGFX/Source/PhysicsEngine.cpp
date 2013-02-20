@@ -578,12 +578,12 @@ bool PhysicsEngine::DoCollisionRayVsTriangle(Vector3 rayOrigin, Vector3 rayDirec
 
 	collPos = (v0 * w) + (v1 * u) + (v2 * v);
 			
-	float nrOfdirs = 0.0f;
-	if(rayDirection.x > 0.0f)
+	float nrOfdirs = 999999999.0f;
+	if(rayDirection.x != 0.0f)
 		nrOfdirs = (collPos.x - rayOrigin.x) / rayDirection.x;
-	else if(rayDirection.y > 0.0f)
+	else if(rayDirection.y != 0.0f)
 		nrOfdirs = (collPos.y - rayOrigin.y) / rayDirection.y;
-	else
+	else if(rayDirection.z != 0.0f)
 		nrOfdirs = (collPos.z - rayOrigin.z) / rayDirection.z;
 
 

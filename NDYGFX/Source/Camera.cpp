@@ -119,6 +119,26 @@ void Camera::MoveFollowingMesh()
 		// If it crashes here it's because the mesh has gotten removed without camera being notified.
 		Vector3 pos = Vector3(this->pos.x, this->pos.y, this->pos.z) - this->distanceFromMesh;
 		this->followTarget->SetPosition(pos);
+
+
+		
+		//Rotate Mesh
+		Vector3 camDir = this->GetForward();
+		Vector3 around;
+		float angle;
+
+		camDir.y = 0;
+		camDir.Normalize();
+		
+
+		around = Vector3(0,1,0);
+		angle = acos(camDir.GetDotProduct(this->defaultMeshDirection));
+
+		if(camDir.x > 0.0f)
+			angle *= -1;
+
+		this->followTarget->ResetRotation();
+		this->followTarget->RotateAxis(around, angle);
 	}
 }
 
@@ -155,13 +175,13 @@ void Camera::Update(float delta)
 			else if(this->pos.z > this->maxBoundries.z)
 				this->pos.z = this->maxBoundries.z;
 		}
-
-		// Update v p matrix.
-		D3DXVECTOR3 at = this->pos + this->forward;
-		D3DXMatrixLookAtLH(&view, &this->pos, &at, &this->up);
-		D3DXMatrixPerspectiveFovLH(&this->projection, this->params.FOV * (float)D3DX_PI / 180.0f, 
-			this->params.WindowWidth / (float)this->params.WindowHeight, this->params.NearClip, this->params.FarClip);
 	}
+
+	// Update v p matrix.
+	D3DXVECTOR3 at = this->pos + this->forward;
+	D3DXMatrixLookAtLH(&view, &this->pos, &at, &this->up);
+	D3DXMatrixPerspectiveFovLH(&this->projection, this->params.FOV * (float)D3DX_PI / 180.0f, 
+		this->params.WindowWidth / (float)this->params.WindowHeight, this->params.NearClip, this->params.FarClip);
 }
 
 void Camera::SetBoundries(Vector3 minBoundries, Vector3 maxBoundries)
@@ -176,15 +196,17 @@ void Camera::DisableBoundries()
 	this->forceBoundries = false;
 }
 
-void Camera::SetMesh( iMesh* target, Vector3 distanceFromCamera )
+void Camera::SetMesh(iMesh* target, Vector3 distanceFromCamera, Vector3 defaultMeshDirection)
 {
 	this->followTarget = dynamic_cast<Mesh*>(target);
 	this->distanceFromMesh = distanceFromCamera;
+	this->defaultMeshDirection = defaultMeshDirection;
+	this->defaultMeshDirection.Normalize();
 }
 
 void Camera::RecreateProjectionMatrix()
 {
-	D3DXMatrixPerspectiveFovLH(&this->projection, (float)D3DX_PI * this->params.FOV, 
+	D3DXMatrixPerspectiveFovLH(&this->projection, this->params.FOV * (float)D3DX_PI / 180.0f, 
 		this->params.WindowWidth / (float)this->params.WindowHeight, this->params.NearClip, this->params.FarClip);
 }
 
@@ -197,21 +219,29 @@ D3DXVECTOR3 Camera::GetRightVectorD3DX() const
 
 Vector3 Camera::Get3DPickingRay()
 {
-	Vector3 v = Vector3(1, 0, 0);
+	D3DXMATRIX tempView;
+	D3DXMATRIX tempProj;
+
+	D3DXVECTOR3 at = this->pos + this->forward;
+	D3DXMatrixLookAtLH(&tempView, &this->pos, &at, &this->up);
+	D3DXMatrixPerspectiveFovLH(&tempProj, this->params.FOV * (float)D3DX_PI / 180.0f, 
+		this->params.WindowWidth / (float)this->params.WindowHeight, this->params.NearClip, this->params.FarClip);
+
+	Vector3 v/* = Vector3(1, 0, 0)*/;
 	POINT p;
 	if(GetCursorPos(&p))
 	{
 		if(ScreenToClient(this->g_hWnd, &p))
 		{
-			v.x = (((2.0f * p.x) / this->params.WindowWidth) - 1) / this->GetProjectionMatrix()._11;
-			v.y = -(((2.0f * p.y) / this->params.WindowHeight) - 1) / this->GetProjectionMatrix()._22;
+			v.x = (((2.0f * p.x) / this->params.WindowWidth) - 1) / tempProj._11;
+			v.y = -(((2.0f * p.y) / this->params.WindowHeight) - 1) / tempProj._22;
 			v.z =  1.0f;
 
 
 			D3DXMATRIX m;
 			D3DXVECTOR3 rayOrigin,rayDir;
 
-			D3DXMatrixInverse(&m, NULL, &this->GetViewMatrix());
+			D3DXMatrixInverse(&m, NULL, &tempView);
 
 			// Transform the screen space pick ray into 3D space
 			rayDir.x = v.x * m._11 + v.y * m._21 + v.z * m._31;
