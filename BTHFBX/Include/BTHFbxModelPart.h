@@ -18,7 +18,7 @@ extern "C"
 		virtual BTHFBX_VEC2* GetVertexTexCoordData() = 0;
 		virtual BTHFBX_BLEND_WEIGHT_DATA* GetVertexBoneWeightData() = 0;
 		
-		virtual int GetIndexCount() = 0;
+		virtual unsigned int GetIndexCount() = 0;
 		virtual unsigned int* GetIndexData() = 0;
 
 		virtual bool IsSkinnedModel() = 0;

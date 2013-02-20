@@ -17,7 +17,7 @@ bool LoadCachedScene(const std::string& fileName, FBXScene* scene)
 	unsigned int modelCount = 0;
 	file.read(reinterpret_cast<char*>(&modelCount), sizeof(unsigned int));
 	for( unsigned int x=0; x<modelCount; ++x )
-	{		
+	{
 		// Read Model Name
 		unsigned int nameLength = 0;
 		std::string modelName;
@@ -51,7 +51,11 @@ bool LoadCachedScene(const std::string& fileName, FBXScene* scene)
 			AnimationKeyFrames* keyFrames = new AnimationKeyFrames(animationName, numFrames);
 
 			// Read Key Frames
-			file.read(reinterpret_cast<char*>(&keyFrames->GetKeyFrameTransform2(0)), sizeof(FbxMatrix) * numFrames);
+			if ( numFrames )
+			{
+				file.read(reinterpret_cast<char*>(&keyFrames->GetMatrices()[0]), sizeof(FbxMatrix) * numFrames);
+				keyFrames->GenerateQuarternions();
+			}
 
 			// Add Animation To Model
 			model->AddAnimationKeyFrames(keyFrames);
@@ -84,7 +88,6 @@ bool LoadCachedScene(const std::string& fileName, FBXScene* scene)
 			modelPart->GetNormals().resize(numVertices);
 			modelPart->GetTexCoords().resize(numVertices);
 			modelPart->GetTangents().resize(numVertices);
-			modelPart->GetBoneWeights().resize(numVertices);
 
 			// Read Positions
 			file.read(reinterpret_cast<char*>(&modelPart->GetPositions()[0]), sizeof(BTHFBX_VEC3)*numVertices);
@@ -98,8 +101,17 @@ bool LoadCachedScene(const std::string& fileName, FBXScene* scene)
 			// Read Tangents
 			file.read(reinterpret_cast<char*>(&modelPart->GetTangents()[0]), sizeof(BTHFBX_VEC3)*numVertices);
 			
+			// Read If Skinned
+			bool isSkinned;
+			file.read(reinterpret_cast<char*>(&isSkinned), sizeof(bool));
+			modelPart->SetSkinnedModel(isSkinned);
+
 			// Read Bone Weights
-			file.read(reinterpret_cast<char*>(&modelPart->GetBoneWeights()[0]), sizeof(BTHFBX_BLEND_WEIGHT_DATA)*numVertices);
+			if ( isSkinned ) 
+			{
+				modelPart->GetBoneWeights().resize(numVertices);
+				file.read(reinterpret_cast<char*>(&modelPart->GetBoneWeights()[0]), sizeof(BTHFBX_BLEND_WEIGHT_DATA)*numVertices);
+			}
 
 			// Read Index Count
 			unsigned int indexCount;
@@ -116,6 +128,12 @@ bool LoadCachedScene(const std::string& fileName, FBXScene* scene)
 		// Add To Scene
 		scene->getModels().Add( model->GetName(), model );
 	}
+
+	// Material Check
+	const char materialHeader[] = "MATERIAL";
+	char materialCheck[sizeof(materialHeader)];
+	file.read(materialCheck, sizeof(materialHeader));
+	if ( strcmp(materialHeader, materialCheck) ) throw("Cache Out Of Place!");
 
 	// Read Material Count
 	unsigned int numMaterials = 0;
@@ -171,6 +189,11 @@ bool LoadCachedScene(const std::string& fileName, FBXScene* scene)
 		// Insert Material
 		scene->GetMaterials().push_back(i->second);
 	}
+
+	const char skeletonHeader[] = "SKELETON";
+	char skeletonCheck[sizeof(skeletonHeader)];
+	file.read(skeletonCheck, sizeof(skeletonHeader));
+	if ( strcmp(skeletonHeader, skeletonCheck) ) throw("Cache Out Of Place!");
 
 	// Load Skeleton
 	if ( !file.eof() )
@@ -229,8 +252,12 @@ bool LoadCachedScene(const std::string& fileName, FBXScene* scene)
 				AnimationKeyFrames* keyFrames = new AnimationKeyFrames(animationName, numKeyFrames);
 
 				// Read Transformations
-				if ( numKeyFrames ) file.read( reinterpret_cast<char*>(&keyFrames->GetKeyFrameTransform2(0)), sizeof(FbxMatrix) * numKeyFrames );
-				
+				if ( numKeyFrames ) 
+				{
+					file.read(reinterpret_cast<char*>(&keyFrames->GetMatrices()[0]), sizeof(FbxMatrix) * numKeyFrames);
+					keyFrames->GenerateQuarternions();
+				}
+
 				// Animation
 				bone->AddAnimationKeyFrames(keyFrames);
 			}
@@ -244,40 +271,50 @@ bool LoadCachedScene(const std::string& fileName, FBXScene* scene)
 
 		// Set Scene Skeleton
 		scene->SetSkeleton(skeleton);
-
-		// Read Animation Count
-		unsigned int numAnimations;
-		file.read(reinterpret_cast<char*>(&numAnimations), sizeof(unsigned int));
-		if ( numAnimations ) 
-		{
-			// Animation Controller
-			AnimationController* animations = new AnimationController();
-
-			// Read Animations
-			for( unsigned int x=0; x<numAnimations; ++x )
-			{
-				// Read Animation Name
-				unsigned int animationNameLength;
-				file.read(reinterpret_cast<char*>(&animationNameLength), sizeof(unsigned int));
-				std::string animationName;
-				animationName.resize(animationNameLength);
-				if ( animationNameLength ) file.read(&animationName[0], animationNameLength);
-
-				// Read Default Framerate
-				float defaultFrameRate;
-				file.read(reinterpret_cast<char*>(&defaultFrameRate), sizeof(float));
-
-				// Read Animation KeyFrame Length
-				unsigned int numKeyFrames;
-				file.read(reinterpret_cast<char*>(&numKeyFrames), sizeof(unsigned int));
-
-				// Animation
-				animations->AddAnimation(new Animation(animationName, numKeyFrames, defaultFrameRate));
-			}
-
-			scene->SetAnimationController( animations );
-		}
 	}
+
+	const char animationHeader[] = "ANIMATION";
+	char animationCheck[sizeof(animationHeader)];
+	file.read(animationCheck, sizeof(animationHeader));
+	if ( strcmp(animationHeader, animationCheck) ) throw("Cache Out Of Place!");
+
+	// Read Animation Count
+	unsigned int numAnimations;
+	file.read(reinterpret_cast<char*>(&numAnimations), sizeof(unsigned int));
+	if ( numAnimations ) 
+	{
+		// Animation Controller
+		AnimationController* animations = new AnimationController();
+
+		// Read Animations
+		for( unsigned int x=0; x<numAnimations; ++x )
+		{
+			// Read Animation Name
+			unsigned int animationNameLength;
+			file.read(reinterpret_cast<char*>(&animationNameLength), sizeof(unsigned int));
+			std::string animationName;
+			animationName.resize(animationNameLength);
+			if ( animationNameLength ) file.read(&animationName[0], animationNameLength);
+
+			// Read Animation KeyFrame Length
+			unsigned int numKeyFrames;
+			file.read(reinterpret_cast<char*>(&numKeyFrames), sizeof(unsigned int));
+
+			// Read Default Framerate
+			float defaultFrameRate;
+			file.read(reinterpret_cast<char*>(&defaultFrameRate), sizeof(float));
+
+			// Animation
+			animations->AddAnimation(new Animation(animationName, numKeyFrames, defaultFrameRate));
+		}
+
+		scene->SetAnimationController( animations );
+	}
+	
+	const char endHeader[] = "END";
+	char endCheck[sizeof(endHeader)];
+	file.read(endCheck, sizeof(endHeader));
+	if ( strcmp(endHeader, endCheck) ) throw("Cache Out Of Place!");
 
 	// Close File
 	file.close();
@@ -307,7 +344,7 @@ bool CacheScene(const std::string& fileName, FBXScene* scene)
 		// Write Model Name
 		unsigned int nameLength = strlen(model->GetName());
 		file.write(reinterpret_cast<const char*>(&nameLength), sizeof(unsigned int));
-		file.write(model->GetName(), nameLength);
+		if ( nameLength ) file.write(model->GetName(), nameLength);
 
 		// Write Geometric Offset
 		file.write(reinterpret_cast<const char*>(model->GetGeometricOffset()), sizeof(BTHFBX_MATRIX));
@@ -323,12 +360,12 @@ bool CacheScene(const std::string& fileName, FBXScene* scene)
 			// Write Name
 			unsigned int animationNameLength = keyFrames->GetAnimationName().length();
 			file.write(reinterpret_cast<const char*>(&animationNameLength), sizeof(unsigned int));
-			file.write(&keyFrames->GetAnimationName()[0], animationNameLength);
+			if ( animationNameLength ) file.write(&keyFrames->GetAnimationName()[0], animationNameLength);
 
 			// Write Key Frames
 			unsigned int numFrames = keyFrames->GetFrameCount();
 			file.write(reinterpret_cast<const char*>(&numFrames), sizeof(unsigned int));
-			file.write(reinterpret_cast<const char*>(&keyFrames->GetKeyFrameTransform2(0)), sizeof(FbxMatrix) * numFrames);
+			if ( numFrames ) file.write(reinterpret_cast<const char*>(&keyFrames->GetMatrices()[0]), sizeof(FbxMatrix) * numFrames);
 		}
 
 		// Write Model Parts
@@ -359,17 +396,24 @@ bool CacheScene(const std::string& fileName, FBXScene* scene)
 			// Write Tangents
 			file.write(reinterpret_cast<const char*>(mp->GetVertexTangentData()), sizeof(BTHFBX_VEC3) * vertexCount);
 			
+			// Write If Skinned
+			bool isSkinned = mp->IsSkinnedModel();
+			file.write(reinterpret_cast<const char*>(&isSkinned), sizeof(bool));
+
 			// Write Bone Weights
-			file.write(reinterpret_cast<const char*>(mp->GetVertexBoneWeightData()), sizeof(BTHFBX_BLEND_WEIGHT_DATA) * vertexCount);
+			if ( isSkinned ) file.write(reinterpret_cast<const char*>(mp->GetVertexBoneWeightData()), sizeof(BTHFBX_BLEND_WEIGHT_DATA) * vertexCount);
 		
 			// Write Index Count
 			unsigned int indexCount = mp->GetIndexCount();
 			file.write(reinterpret_cast<const char*>(&indexCount), sizeof(unsigned int));
 
 			// Write Indices
-			file.write(reinterpret_cast<const char*>(mp->GetIndexData()), sizeof(unsigned int) * indexCount);
+			if ( indexCount ) file.write(reinterpret_cast<const char*>(mp->GetIndexData()), sizeof(unsigned int) * indexCount);
 		}
 	}
+
+	const char materialHeader[] = "MATERIAL";
+	file.write(materialHeader, sizeof(materialHeader));
 
 	// Write Material Count
 	unsigned int numMaterials = materials.size();
@@ -408,6 +452,9 @@ bool CacheScene(const std::string& fileName, FBXScene* scene)
 		BTHFBX_VEC3 specular = (*i)->GetSpecularColor();
 		file.write(reinterpret_cast<const char*>(&specular), sizeof(BTHFBX_VEC3));
 	}
+
+	const char skeletonHeader[] = "SKELETON";
+	file.write(skeletonHeader, sizeof(skeletonHeader));
 
 	if ( Skeleton* skeleton = scene->GetSkeleton() )
 	{
@@ -459,13 +506,18 @@ bool CacheScene(const std::string& fileName, FBXScene* scene)
 				// Write KeyFrames
 				unsigned int keyFrames = animation->GetFrameCount();
 				file.write(reinterpret_cast<const char*>(&keyFrames), sizeof(unsigned int));
-				if ( keyFrames ) file.write( reinterpret_cast<const char*>(&animation->GetKeyFrameTransform2(0)), sizeof(FbxMatrix) * keyFrames );
+				if ( keyFrames ) file.write( reinterpret_cast<const char*>(&animation->GetMatrices()[0]), sizeof(FbxMatrix) * keyFrames );
 			}
 		}
+	}
+	
+	const char animationsHeader[] = "ANIMATION";
+	file.write(animationsHeader, sizeof(animationsHeader));
 
-		// Animation Controller
-		AnimationController* animations = scene->GetAnimationController();
-
+	// Animation Controller
+	AnimationController* animations = scene->GetAnimationController();
+	if ( animations->GetAnimationCount() > 0 )
+	{
 		// Write Animation Count
 		unsigned int numAnimations = animations->GetAnimationCount();
 		file.write(reinterpret_cast<const char*>(&numAnimations), sizeof(unsigned int));
@@ -481,15 +533,18 @@ bool CacheScene(const std::string& fileName, FBXScene* scene)
 			file.write(reinterpret_cast<const char*>(&nameLength), sizeof(unsigned int));
 			if ( nameLength ) file.write(&animation->GetName()[0], nameLength);
 
-			// Write Default Framerate
-			float defaultFrameRate = animation->GetDefaultFrameRate();
-			file.write(reinterpret_cast<const char*>(&defaultFrameRate), sizeof(float));
-
 			// Write Animation KeyFrame Length
 			unsigned int numKeyFrames = animation->GetKeyFrames();
 			file.write(reinterpret_cast<const char*>(&numKeyFrames), sizeof(unsigned int));
+
+			// Write Default Framerate
+			float defaultFrameRate = animation->GetDefaultFrameRate();
+			file.write(reinterpret_cast<const char*>(&defaultFrameRate), sizeof(float));
 		}
 	}
+
+	const char endHeader[] = "END";
+	file.write(endHeader, sizeof(endHeader));
 
 	// Close File
 	file.close();

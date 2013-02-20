@@ -26,19 +26,21 @@ public:
 class AnimationKeyFrames
 {
 	std::string m_strAnimationName;
-	std::vector<std::pair<FbxMatrix, AnimationQuaternionKeyFrame>> m_Frames;
+	std::vector<FbxMatrix> m_Matrices;
+	std::vector<AnimationQuaternionKeyFrame> m_Quarternions;
 
 public:
 	AnimationKeyFrames(const std::string& strAnimationName, const unsigned int& numFrames=0);
-	~AnimationKeyFrames();
 
 	// Direct Data Access
-	FbxMatrix& GetKeyFrameTransform2(int nKeyFrame) { return m_Frames[nKeyFrame].first; }
-	const FbxMatrix& GetKeyFrameTransform2(int nKeyFrame) const { return m_Frames[nKeyFrame].first; }
+	FbxMatrix& GetKeyFrameTransform2(int nKeyFrame) { return m_Matrices[nKeyFrame]; }
+	const FbxMatrix& GetKeyFrameTransform2(int nKeyFrame) const { return m_Matrices[nKeyFrame]; }
 	inline const std::string& GetAnimationName() const { return m_strAnimationName; }
-	inline unsigned int GetFrameCount() const { return m_Frames.size(); }
+	inline unsigned int GetFrameCount() const { return m_Matrices.size(); }
+	inline std::vector<FbxMatrix>& GetMatrices() { return m_Matrices; }
 
 	// Frames
 	void AddKeyFrame(const FbxMatrix& matTransform2);
 	const AnimationQuaternionKeyFrame& GetKeyFrameQuaternion(int nKeyFrame);
+	void GenerateQuarternions();
 };

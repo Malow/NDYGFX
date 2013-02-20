@@ -52,15 +52,7 @@ void FBXSceneD3D::Render(float dt, D3DXMATRIX world, D3DXMATRIX camProj, D3DXMAT
 		if( bonesArray )
 		{
 			int nBoneCount = mFBXSkeleton->GetBoneCount();
-
 			mShader->SetMatrixArray("g_mBonesArray", bonesArray, 0, nBoneCount < BTHFBX_MAXBONES_PER_MESH ? nBoneCount : BTHFBX_MAXBONES_PER_MESH );
-
-			// ??????????
-			D3DXMATRIX mat;
-			for(int i = 0; i < nBoneCount; i++)
-			{
-				memcpy(&mat, bonesArray + i * 16, sizeof(D3DXMATRIX));
-			}
 		}
 	}
 	mShader->SetMatrix("g_mScale", world);
@@ -75,7 +67,7 @@ void FBXSceneD3D::Render(float dt, D3DXMATRIX world, D3DXMATRIX camProj, D3DXMAT
 	
 	mShader->Apply(0);
 
-	for(int i = 0; i < (int)mModels.size(); i++)
+	for(unsigned int i = 0; i < mModels.size(); i++)
 	{
 		mModels[i]->Render(dt, mShader, vp, mFBXSkeleton != NULL ? true : false, devCont);
 	}

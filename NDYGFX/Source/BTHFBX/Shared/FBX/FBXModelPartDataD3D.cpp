@@ -108,20 +108,23 @@ void FBXModelPartDataD3D::Init(FBXModelD3D* parentModel, IBTHFbxModelPart* model
 		return;
 	}
 
-
-	bufferDesc.ElementSize = sizeof(BTHFBX_BLEND_WEIGHT_DATA);
-	bufferDesc.InitData = modelPart->GetVertexBoneWeightData();
-	bufferDesc.NumElements = modelPart->GetVertexCount();
-	bufferDesc.Type = VERTEX_BUFFER;
-	bufferDesc.Usage = BUFFER_DEFAULT;
-
-	mVB_BlendWeights = new Buffer();
-	if(FAILED(mVB_BlendWeights->Init(dev, devCont, bufferDesc)))
+	// Is Model Skinned?
+	if ( modelPart->IsSkinnedModel() )
 	{
-		return;
+		bufferDesc.ElementSize = sizeof(BTHFBX_BLEND_WEIGHT_DATA);
+		bufferDesc.InitData = modelPart->GetVertexBoneWeightData();
+		bufferDesc.NumElements = modelPart->GetVertexCount();
+		bufferDesc.Type = VERTEX_BUFFER;
+		bufferDesc.Usage = BUFFER_DEFAULT;
+
+		mVB_BlendWeights = new Buffer();
+		if(FAILED(mVB_BlendWeights->Init(dev, devCont, bufferDesc)))
+		{
+			return;
+		}
 	}
 
-
+	// Index Buffer
 	bufferDesc.ElementSize = sizeof(unsigned long);
 	bufferDesc.InitData = modelPart->GetIndexData();
 	bufferDesc.NumElements = modelPart->GetIndexCount();

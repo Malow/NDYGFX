@@ -41,8 +41,8 @@ public:
 	inline Dictionary<Model*>& getModels() {return m_Models; }
 	inline std::vector<Material*>& GetMaterials() {return m_Materials; }
 	inline FbxScene* GetScene() { return mScene; }
-	inline int GetModelCount() { return m_Models.GetCount(); }
-	inline Model* GetModel(int index) { return m_Models.GetValueAt(index); }
+	inline unsigned int GetModelCount() { return m_Models.GetCount(); }
+	inline Model* GetModel(const unsigned int& index) { return m_Models.GetValueAt(index); }
 	inline bool IsSkinned() {return m_pSkeleton != NULL; }
 	inline Skeleton* GetSkeleton() { return m_pSkeleton; }
 	inline AnimationController* GetAnimationController() { return m_pAnimationController; }

@@ -72,17 +72,26 @@ void FBXModelPartD3D::Render(float dt, Shader* shader, D3DXMATRIX viewProj, bool
 	}
 
 
-	ID3D11Buffer* aVB[5] = { mVB_Position->GetBufferPointer(), mVB_Normal->GetBufferPointer(), mVB_Tangent->GetBufferPointer(), mVB_TexCoord->GetBufferPointer(), mVB_BlendWeights->GetBufferPointer() };
-	UINT aStrides[5] = { sizeof(D3DXVECTOR3), sizeof(D3DXVECTOR3), sizeof(D3DXVECTOR3), sizeof(D3DXVECTOR2), sizeof(BTHFBX_BLEND_WEIGHT_DATA) };
+	ID3D11Buffer* aVB[5] = { 
+		mVB_Position->GetBufferPointer(), 
+		mVB_Normal->GetBufferPointer(), 
+		mVB_Tangent->GetBufferPointer(), 
+		mVB_TexCoord->GetBufferPointer(), 
+		(mVB_BlendWeights!=0 ? mVB_BlendWeights->GetBufferPointer() : 0 ) 
+	};
+
+	UINT aStrides[5] = { 
+		sizeof(D3DXVECTOR3), 
+		sizeof(D3DXVECTOR3), 
+		sizeof(D3DXVECTOR3), 
+		sizeof(D3DXVECTOR2), 
+		sizeof(BTHFBX_BLEND_WEIGHT_DATA) 
+	};
+
 	UINT aOffsets[5] = {0, 0, 0, 0, 0};
 
-	devCont->IASetVertexBuffers( 0, 5, aVB, aStrides, aOffsets );
+	devCont->IASetVertexBuffers( 0, 4+(mVB_BlendWeights!=0), aVB, aStrides, aOffsets );
 	devCont->IASetIndexBuffer( mIB->GetBufferPointer(), DXGI_FORMAT_R32_UINT, 0 );
 	shader->Apply(0);
-	//for(unsigned int pass = 0; pass < shader->PassCount(); pass++)
-	//{
-		//shader->Apply(pass);
-		devCont->DrawIndexed((unsigned int)mIB->GetElementCount(),0,0);
-	//}
-	//shader->SetResource(EFFECTVARIABLENAME_DIFFUSETEXTURE, NULL);
+	devCont->DrawIndexed((unsigned int)mIB->GetElementCount(),0,0);
 }

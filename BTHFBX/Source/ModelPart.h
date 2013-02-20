@@ -28,6 +28,7 @@ public:
 	// Settings
 	virtual IBTHFbxMaterial* GetMaterial() { return m_pMaterial; }
 	virtual bool IsSkinnedModel() { return m_bSkinnedModel; }
+	inline void SetSkinnedModel(const bool& flag) { m_bSkinnedModel = flag; }
 
 	// Data Access
 	inline std::vector<BTHFBX_VEC3>& GetPositions() { return m_Positions; }
@@ -44,7 +45,7 @@ public:
 	virtual BTHFBX_VEC3* GetVertexTangentData() { return &m_Tangents[0]; }
 	virtual BTHFBX_VEC2* GetVertexTexCoordData() { return &m_TexCoords[0]; }
 	virtual BTHFBX_BLEND_WEIGHT_DATA* GetVertexBoneWeightData()  { return &m_BlendWeights[0]; }
-	virtual int GetIndexCount() { return (int)m_VertexIndices.size(); }
+	virtual unsigned int GetIndexCount() { return m_VertexIndices.size(); }
 	virtual unsigned int* GetIndexData() { return (unsigned int*)&m_VertexIndices[0]; }
 
 	// Logic

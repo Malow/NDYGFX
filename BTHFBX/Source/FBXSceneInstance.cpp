@@ -34,7 +34,7 @@ void FBXSceneInstance::InitInstance()
 	m_BoundingBox = mScene->m_BoundingBox;
 
 	// Models
-	for(int i = 0; i < mScene->GetModelCount(); i++)
+	for(unsigned int i = 0; i < mScene->GetModelCount(); i++)
 	{
 		Model* srcModel = mScene->GetModel(i);
 		m_Models.Add(srcModel->GetName(), new Model(srcModel));
@@ -49,28 +49,26 @@ void FBXSceneInstance::InitInstance()
 		
 		for( unsigned int x = 0; x < mScene->GetSkeleton()->GetBoneCount(); ++x )
 		{
-			SkeletonBone* bone = new SkeletonBone(
-				mScene->GetSkeleton()->GetBone(x)->GetName(), 
-				mScene->GetSkeleton()->GetSkeletonBone(x)->GetParentBoneIndex(), 
+			SkeletonBone* sourceBone = mScene->GetSkeleton()->GetSkeletonBone(x);
+
+			SkeletonBone* targetBone = new SkeletonBone(
+				sourceBone->GetName(), 
+				sourceBone->GetParentBoneIndex(), 
 				m_pSkeleton);
 
-			m_pSkeleton->AddSkeletonBone( bone );
+			m_pSkeleton->AddSkeletonBone( targetBone );
 		}
 
 		m_pSkeleton->BuildBoneHierarchy();
-	}
 
-	if(m_pSkeleton)
-	{
-		for(unsigned int i = 0; i < m_pSkeleton->GetBoneCount(); i++)
+		for( unsigned int x = 0; x < m_pSkeleton->GetBoneCount(); ++x )
 		{
-			SkeletonBone* boneTarget = m_pSkeleton->GetSkeletonBone(i);
-			SkeletonBone* boneSource = mScene->GetSkeleton()->GetSkeletonBone(i);
-
-			boneTarget->SetBindPoseTransform2(boneSource->GetBindPoseTransform2());
-			boneTarget->SetBoneReferenceTransform2(boneSource->GetBoneReferenceTransform2());
-			boneTarget->m_AnimationKeyFrames = boneSource->m_AnimationKeyFrames;
-			boneTarget->SetBoundingBoxData(boneSource->m_AABB);
+			SkeletonBone* sourceBone = mScene->GetSkeleton()->GetSkeletonBone(x);
+			SkeletonBone* targetBone = m_pSkeleton->GetSkeletonBone(x);
+			targetBone->SetBindPoseTransform2(sourceBone->GetBindPoseTransform2());
+			targetBone->SetBoneReferenceTransform2(sourceBone->GetBoneReferenceTransform2());
+			targetBone->m_AnimationKeyFrames = sourceBone->m_AnimationKeyFrames;
+			targetBone->SetBoundingBoxData(sourceBone->m_AABB);
 		}
 
 		m_pAnimationController = new AnimationController(mScene->m_pAnimationController);
