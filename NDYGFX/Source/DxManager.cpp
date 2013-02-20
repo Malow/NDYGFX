@@ -301,6 +301,8 @@ void DxManager::CreateTerrain(Terrain* terrain)
 
 	//Texture(s) are not set here since they are set afterwards.
 
+	terrain->Init(this->Dx_Device, this->Dx_DeviceContext);
+
 	//Create & put this event
 	TerrainEvent* re = new TerrainEvent("Add Terrain", terrain);
 	this->PutEvent(re);

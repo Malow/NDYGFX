@@ -542,7 +542,10 @@ void TillmanTest::RunTest(float diff)
 	{
 		//iT2->SetNormals(normals);
 		//iT2->SetHeightMap(hmData);
-		debugCSMScale += diff * 0.001f;
+		//debugCSMScale += diff * 0.001f;
+		//iT->SetAIGridThickness(0.0005f);
+		//iT->UseAIMap(true);*/
+
 		fileNames[0] = "Media/TerrainTexture.png";
 		fileNames[1] = "Media/TerrainTexture.png";
 		fileNames[2] = "Media/TerrainTexture.png";
@@ -551,9 +554,27 @@ void TillmanTest::RunTest(float diff)
 		fileNames[5] = "Media/BallTexture.png";
 		fileNames[6] = "Media/BallTexture.png";
 		fileNames[7] = "Media/BallTexture.png";
-		iT2->SetTextures(fileNames);
-		iT->SetAIGridThickness(0.0005f);
-		iT->UseAIMap(true);
+		iT->SetTextures(fileNames);
+		int nrOfBlendMaps = 2;
+		unsigned int size = 32;
+		sizes[0] = size;
+		sizes[1] = size;
+		unsigned int channels = 4;
+		for(unsigned int i = 0; i < sizes[0]*sizes[0]; i++)
+		{
+			testData[0][ i * channels + 0 ] = 0.0f;
+			testData[0][ i * channels + 1 ] = 0.0f;
+			testData[0][ i * channels + 2 ] = 0.0f;
+			testData[0][ i * channels + 3 ] = 0.0f;
+		}
+		for(unsigned int i = 0; i < sizes[1]*sizes[1]; i++)
+		{
+			testData[1][ i * channels + 0 ] = 1.0f;
+			testData[1][ i * channels + 1 ] = 1.0f;
+			testData[1][ i * channels + 2 ] = 1.0f;
+			testData[1][ i * channels + 3 ] = 1.0f;
+		}
+		iT->SetBlendMaps(nrOfBlendMaps, sizes, testData);
 		/*if(!oncee)
 		{	
 			iMesh* loadFromFileTest = NULL;

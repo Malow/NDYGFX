@@ -239,7 +239,6 @@ Terrain::Terrain(D3DXVECTOR3 pos, D3DXVECTOR3 scale, unsigned int size)
 	for(unsigned int i = 0; i < this->zTextureCapacity; i++)
 	{
 		this->zTextureResources[i] = NULL;
-		//this->zTextureResourceHasChanged[i] = false;
 		this->zTextureResourceToLoadFileName[i] = "";
 	}
 	this->zNrOfBlendMaps = 0;
@@ -312,6 +311,26 @@ Terrain::~Terrain()
 	}
 }
 
+
+HRESULT Terrain::Init(ID3D11Device* device, ID3D11DeviceContext* deviceContext)
+{
+	BUFFER_INIT_DESC vertexBufferInitDesc;
+	vertexBufferInitDesc.ElementSize = sizeof(Vertex);
+	vertexBufferInitDesc.InitData = this->zVertices; 
+	vertexBufferInitDesc.NumElements = this->zNrOfVertices;
+	vertexBufferInitDesc.Type = VERTEX_BUFFER;
+	vertexBufferInitDesc.Usage = BUFFER_CPU_WRITE_DISCARD;
+
+	HRESULT hr = this->zVertexBuffer->Init(device, deviceContext, vertexBufferInitDesc);
+	if(FAILED(hr))
+	{
+		MaloW::Debug("ERROR: Could not create new vertex buffer for terrain."
+			+ string("ERROR code: '") 
+			+ MaloW::GetHRESULTErrorCodeString(hr));
+	}
+
+	return hr;
+}
 //OTHER
 void Terrain::RecreateWorldMatrix()
 {
@@ -477,9 +496,14 @@ void Terrain::SetBlendMaps(unsigned int nrOfBlendMaps, unsigned int* sizes, floa
 			{
 				this->zBlendMaps[i] = new BlendMap();
 			}
-			this->zBlendMaps[i]->Size = sizes[i];
-			this->zBlendMaps[i]->Data = data[i];
-			this->zBlendMaps[i]->HasChanged = true;
+			//If the size of the blendmap has changed, the texture has to be recreated.
+			if(this->zBlendMaps[i]->s_Size != sizes[i])
+			{
+				this->zBlendMaps[i]->s_RecreateTexture = true;
+			}
+			this->zBlendMaps[i]->s_Size = sizes[i];
+			this->zBlendMaps[i]->s_Data = data[i];
+			this->zBlendMaps[i]->s_HasChanged = true;
 		}
 	}
 }
