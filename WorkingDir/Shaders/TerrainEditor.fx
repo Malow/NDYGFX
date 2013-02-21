@@ -82,10 +82,10 @@ float3 RenderTextured(float scale, float2 tex, bool useBlendMap)
 {
 	//Sample R,G,B,A textures
 	float2 texCoord = scale * tex;
-	float3 tex0Color = tex0.Sample(LinearWrapSampler, texCoord).rgb; 
-	float3 tex1Color = tex1.Sample(LinearWrapSampler, texCoord).rgb; 
-	float3 tex2Color = tex2.Sample(LinearWrapSampler, texCoord).rgb; 
-	float3 tex3Color = tex3.Sample(LinearWrapSampler, texCoord).rgb; 
+	float3 tex0Color = tex0.Sample(AnisotropicWrapSampler, texCoord).rgb; 
+	float3 tex1Color = tex1.Sample(AnisotropicWrapSampler, texCoord).rgb; 
+	float3 tex2Color = tex2.Sample(AnisotropicWrapSampler, texCoord).rgb; 
+	float3 tex3Color = tex3.Sample(AnisotropicWrapSampler, texCoord).rgb; 
 	
 	if(useBlendMap)
 	{
@@ -109,16 +109,16 @@ float3 RenderTextured(float scale, float2 tex, bool useBlendMap)
 					float4 blendValues1 = blendMap1Color / (blendSum1 + blendSum0); 
 					
 					// Scale color for each texture by the weight in the blendmap.
-					float3 tex0Color = tex0.Sample(LinearWrapSampler, texCoord).rgb * blendValues0.r;
-					float3 tex1Color = tex1.Sample(LinearWrapSampler, texCoord).rgb * blendValues0.g;
-					float3 tex2Color = tex2.Sample(LinearWrapSampler, texCoord).rgb * blendValues0.b;
-					float3 tex3Color = tex3.Sample(LinearWrapSampler, texCoord).rgb * blendValues0.a;
+					float3 tex0Color = tex0.Sample(AnisotropicWrapSampler, texCoord).rgb * blendValues0.r;
+					float3 tex1Color = tex1.Sample(AnisotropicWrapSampler, texCoord).rgb * blendValues0.g;
+					float3 tex2Color = tex2.Sample(AnisotropicWrapSampler, texCoord).rgb * blendValues0.b;
+					float3 tex3Color = tex3.Sample(AnisotropicWrapSampler, texCoord).rgb * blendValues0.a;
 				
 					// Scale color for each texture by the weight in the blendmap.
-					float3 tex4Color = tex4.Sample(LinearWrapSampler, texCoord).rgb * blendValues1.r; 
-					float3 tex5Color = tex5.Sample(LinearWrapSampler, texCoord).rgb * blendValues1.g; 
-					float3 tex6Color = tex6.Sample(LinearWrapSampler, texCoord).rgb * blendValues1.b; 
-					float3 tex7Color = tex7.Sample(LinearWrapSampler, texCoord).rgb * blendValues1.a; 
+					float3 tex4Color = tex4.Sample(AnisotropicWrapSampler, texCoord).rgb * blendValues1.r; 
+					float3 tex5Color = tex5.Sample(AnisotropicWrapSampler, texCoord).rgb * blendValues1.g; 
+					float3 tex6Color = tex6.Sample(AnisotropicWrapSampler, texCoord).rgb * blendValues1.b; 
+					float3 tex7Color = tex7.Sample(AnisotropicWrapSampler, texCoord).rgb * blendValues1.a; 
 		
 					//Blendmapped color 
 					return saturate(tex0Color + tex1Color + tex2Color + tex3Color + tex4Color + tex5Color + tex6Color + tex7Color) * diffuseColor;
@@ -129,10 +129,10 @@ float3 RenderTextured(float scale, float2 tex, bool useBlendMap)
 					float blendSum0 = blendMap0Color.r + blendMap0Color.g + blendMap0Color.b + blendMap0Color.a;
 					float4 blendValues0 = blendMap0Color / blendSum0; 
 			
-					float3 tex0Color = tex0.Sample(LinearWrapSampler, texCoord).rgb * blendValues0.r;
-					float3 tex1Color = tex1.Sample(LinearWrapSampler, texCoord).rgb * blendValues0.g;
-					float3 tex2Color = tex2.Sample(LinearWrapSampler, texCoord).rgb * blendValues0.b;
-					float3 tex3Color = tex3.Sample(LinearWrapSampler, texCoord).rgb * blendValues0.a;
+					float3 tex0Color = tex0.Sample(AnisotropicWrapSampler, texCoord).rgb * blendValues0.r;
+					float3 tex1Color = tex1.Sample(AnisotropicWrapSampler, texCoord).rgb * blendValues0.g;
+					float3 tex2Color = tex2.Sample(AnisotropicWrapSampler, texCoord).rgb * blendValues0.b;
+					float3 tex3Color = tex3.Sample(AnisotropicWrapSampler, texCoord).rgb * blendValues0.a;
 					
 					// Blendmapped color 
 					return saturate(tex0Color + tex1Color + tex2Color + tex3Color) * diffuseColor;
@@ -144,10 +144,10 @@ float3 RenderTextured(float scale, float2 tex, bool useBlendMap)
 				float blendSum0 = blendMap0Color.r + blendMap0Color.g + blendMap0Color.b + blendMap0Color.a;
 				float4 blendValues0 = blendMap0Color / blendSum0;
 			
-				float3 tex0Color = tex0.Sample(LinearWrapSampler, texCoord).rgb * blendValues0.r;
-				float3 tex1Color = tex1.Sample(LinearWrapSampler, texCoord).rgb * blendValues0.g;
-				float3 tex2Color = tex2.Sample(LinearWrapSampler, texCoord).rgb * blendValues0.b;
-				float3 tex3Color = tex3.Sample(LinearWrapSampler, texCoord).rgb * blendValues0.a;
+				float3 tex0Color = tex0.Sample(AnisotropicWrapSampler, texCoord).rgb * blendValues0.r;
+				float3 tex1Color = tex1.Sample(AnisotropicWrapSampler, texCoord).rgb * blendValues0.g;
+				float3 tex2Color = tex2.Sample(AnisotropicWrapSampler, texCoord).rgb * blendValues0.b;
+				float3 tex3Color = tex3.Sample(AnisotropicWrapSampler, texCoord).rgb * blendValues0.a;
 				
 				// Blendmapped color 
 				return saturate(tex0Color + tex1Color + tex2Color + tex3Color) * diffuseColor;
@@ -163,10 +163,10 @@ float3 RenderTextured(float scale, float2 tex, bool useBlendMap)
 				float blendSum1 = blendMap1Color.r + blendMap1Color.g + blendMap1Color.b + blendMap1Color.a;
 				float4 blendValues1 = blendMap1Color / blendSum1; 
 			
-				float3 tex4Color = tex4.Sample(LinearWrapSampler, texCoord).rgb * blendValues1.r;
-				float3 tex5Color = tex5.Sample(LinearWrapSampler, texCoord).rgb * blendValues1.g;
-				float3 tex6Color = tex6.Sample(LinearWrapSampler, texCoord).rgb * blendValues1.b;
-				float3 tex7Color = tex7.Sample(LinearWrapSampler, texCoord).rgb * blendValues1.a;
+				float3 tex4Color = tex4.Sample(AnisotropicWrapSampler, texCoord).rgb * blendValues1.r;
+				float3 tex5Color = tex5.Sample(AnisotropicWrapSampler, texCoord).rgb * blendValues1.g;
+				float3 tex6Color = tex6.Sample(AnisotropicWrapSampler, texCoord).rgb * blendValues1.b;
+				float3 tex7Color = tex7.Sample(AnisotropicWrapSampler, texCoord).rgb * blendValues1.a;
 				
 				// Blendmapped color 
 				return saturate(tex4Color + tex5Color + tex6Color + tex7Color) * diffuseColor;

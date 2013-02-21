@@ -41,7 +41,7 @@ class ResourceManager
 		std::map<std::string, TextureResource*>		zTextureResources;
 		std::map<std::string, BufferResource*>		zBufferResources;
 		std::map<std::string, MeshStripsResource*>	zMeshStripsResources;
-		std::map<std::string, int>					zMeshHeights; //Used by meshstripresources
+		std::map<std::string, float>					zMeshHeights; //Used by meshstripresources
 
 	private:
 		void DoMinMax(D3DXVECTOR3& min, D3DXVECTOR3& max, D3DXVECTOR3 v); //used by LoadMeshStrips

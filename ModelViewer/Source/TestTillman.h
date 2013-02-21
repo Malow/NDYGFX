@@ -22,7 +22,8 @@ private:
 	Vector3 cameraLookAt2;
 	Vector3 cameraPoint3;
 	Vector3	cameraLookAt3;
-	
+	Vector3 cameraPoint4;
+	iBillboard* iBBMemLeak;
 
 
 	iMesh* bushCSMTest;
@@ -182,14 +183,15 @@ void TillmanTest::PreTest()
 	iT->SetBlendMaps(nrOfBlendMaps, sizes, testData);
 
 
-	fileNames[0] = "Media/TerrainTexture.png";
-	fileNames[1] = "Media/TerrainTexture.png";
-	fileNames[2] = "Media/TerrainTexture.png";
-	fileNames[3] = "Media/TerrainTexture.png";
-	fileNames[4] = "Media/TerrainTexture.png";
-	fileNames[5] = "Media/TerrainTexture.png";
-	fileNames[6] = "Media/TerrainTexture.png";
-	fileNames[7] = "Media/TerrainTexture.png";
+
+	fileNames[0] = "Media/01_v02-Moss.png";
+	fileNames[1] = "Media/01_v02-Moss.png";
+	fileNames[2] = "Media/01_v02-Moss.png";
+	fileNames[3] = "Media/01_v02-Moss.png";
+	fileNames[4] = "Media/01_v02-Moss.png";
+	fileNames[5] = "Media/01_v02-Moss.png";
+	fileNames[6] = "Media/01_v02-Moss.png";
+	fileNames[7] = "Media/01_v02-Moss.png";
 
 	float normals[64 * 64 * 3]; //vertSize = 64;
 	/*for(int i = 0; i < 64 * 64 * 3; i+=3)
@@ -371,6 +373,7 @@ void TillmanTest::PreTest()
 	cameraLookAt2 = Vector3(100.0f, 0.0f, 100.0f);
 	cameraPoint3 = Vector3(-10.0f, 2.0f, 47.5f);
 	cameraLookAt3 = Vector3(100.0f, 2.0f, 47.5f);
+	cameraPoint4 = Vector3(-50.0f, 20.0f, 150.0f);
 
 	
 	lll = GetGraphics()->CreateLight(Vector3(0,2,0));
@@ -477,9 +480,8 @@ void TillmanTest::PreTest()
 		//Meshes
 		iMesh* treeWithWOBB = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(i * 5, 0, 55));
 		treeWithWOBB->SetScale((0.041f));
-
 	}
-	
+	iBBMemLeak = GetGraphics()->CreateBillboard(Vector3(0, 10, 0), Vector2(10, 10), "Media/TreeBillboard.png");
 }
 
 void TillmanTest::RunTest(float diff)
@@ -545,7 +547,8 @@ void TillmanTest::RunTest(float diff)
 		//debugCSMScale += diff * 0.001f;
 		//iT->SetAIGridThickness(0.0005f);
 		//iT->UseAIMap(true);*/
-
+		GetGraphics()->DeleteBillboard(iBBMemLeak);
+		
 		fileNames[0] = "Media/TerrainTexture.png";
 		fileNames[1] = "Media/TerrainTexture.png";
 		fileNames[2] = "Media/TerrainTexture.png";
@@ -637,7 +640,12 @@ void TillmanTest::RunTest(float diff)
 		GetGraphics()->GetCamera()->SetPosition(cameraPoint3);
 		GetGraphics()->GetCamera()->LookAt(cameraLookAt3);
 	}
-
+	//Camera reset/teleport
+	if(GetGraphics()->GetKeyListener()->IsPressed('N'))
+	{
+		GetGraphics()->GetCamera()->SetPosition(cameraPoint4);
+		GetGraphics()->GetCamera()->LookAt(cameraLookAt3);
+	}
 
 	//Toggle shadow on/off
 	if(GetGraphics()->GetKeyListener()->IsPressed('M'))
