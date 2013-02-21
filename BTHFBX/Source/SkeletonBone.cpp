@@ -78,7 +78,7 @@ void SkeletonBone::Update(SkeletonBone* parent, AnimationController* pAnimationC
 	m_matSkinTransform = m_matCombinedTransform2 * GetInvBindPoseTransform2() * GetBoneReferenceTransform2();
 	mSkeleton->SetSkinTransform2(GetBoneIndex(), m_matSkinTransform);
 
-	for(unsigned int i = 0; i < 8; i++)
+	for(unsigned int i = 0; i < 8; ++i)
 	{
 		m_OBB_Transformed.Corners[i].x = m_OBB.Corners[i].x * (float)m_matSkinTransform.Get(0, 0) + m_OBB.Corners[i].y * (float)m_matSkinTransform.Get(1, 0) + m_OBB.Corners[i].z * (float)m_matSkinTransform.Get(2, 0) + (float)m_matSkinTransform.Get(3, 0);
 		m_OBB_Transformed.Corners[i].y = m_OBB.Corners[i].x * (float)m_matSkinTransform.Get(0, 1) + m_OBB.Corners[i].y * (float)m_matSkinTransform.Get(1, 1) + m_OBB.Corners[i].z * (float)m_matSkinTransform.Get(2, 1) + (float)m_matSkinTransform.Get(3, 1);

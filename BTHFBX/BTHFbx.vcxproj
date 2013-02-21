@@ -94,8 +94,8 @@
     <IntDir>$(ProjectDir)/Obj/Debug/</IntDir>
     <TargetName>$(ProjectName)D</TargetName>
     <ExecutablePath>$(ExecutablePath)</ExecutablePath>
-    <IncludePath>$(SolutionDir)/External/FBX 2014.0/include;$(ProjectDir)/Include;$(DXSDK_DIR)/Include/;$(SolutionDir)/External/D3D/include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)/External/FBX 2014.0/lib/vs2012/x86;$(SolutionDir)/External/D3D/lib/x86;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)/External/FBX 2014.1/include;$(ProjectDir)/Include;$(DXSDK_DIR)/Include/;$(SolutionDir)/External/D3D/include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)/External/FBX 2014.1/lib/vs2012/x86;$(SolutionDir)/External/D3D/lib/x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>

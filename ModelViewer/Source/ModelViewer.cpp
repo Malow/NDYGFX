@@ -102,16 +102,6 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 			if(GetGraphics()->GetKeyListener()->IsPressed('D'))	
 				GetGraphics()->GetCamera()->MoveRight(deltaTime * 10.0f);
 
-			// Reload Graphics Engine
-			if( GetGraphics()->GetKeyListener()->IsPressed('R') )
-			{
-				activeTestCase->PostTest();
-				FreeGraphics();
-				if ( !GraphicsInit(hInstance) ) { return 1; }
-				activeTestCase->PreTest();
-				GetGraphics()->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 1.0f, 1.0f, 1.0f, 1.0f);
-			}
-
 			activeTestCase->RunTest(deltaTime);
 		}
 

@@ -42,44 +42,31 @@ void FBXModelPartD3D::Update(float dt)
 
 void FBXModelPartD3D::Render(float dt, Shader* shader, D3DXMATRIX viewProj, bool enableAnimation, ID3D11DeviceContext* devCont)
 {
-	#define EFFECTVARIABLENAME_WORLDMATRIX			"gWorld"
-	#define EFFECTVARIABLENAME_DIFFUSETEXTURE		"txDiffuse"
-	#define EFFECTVARIABLENAME_NORMALTEXTURE		"txNormal"
-	#define EFFECTVARIABLENAME_SKINNING				"g_bSkinning"
-
-
-	shader->SetResource(EFFECTVARIABLENAME_DIFFUSETEXTURE, mDiffuseTexture ? mDiffuseTexture->GetResource() : NULL);
-	shader->SetResource(EFFECTVARIABLENAME_NORMALTEXTURE, mNormalTexture ? mNormalTexture->GetResource() : NULL);
-	shader->SetBool(EFFECTVARIABLENAME_SKINNING, enableAnimation ? m_bSkinnedModel : false);
+	shader->SetResource("txDiffuse", mDiffuseTexture ? mDiffuseTexture->GetResource() : NULL);
+	shader->SetResource("txNormal", mNormalTexture ? mNormalTexture->GetResource() : NULL);
+	shader->SetBool("g_bSkinning", enableAnimation ? m_bSkinnedModel : false);
 	
-	if( enableAnimation )
+	if( enableAnimation && !m_bSkinnedModel )
 	{
-		if( m_bSkinnedModel )	
-		{
-			D3DXMATRIX temp = mParentModel->GetGeometricOffset();
-			shader->SetMatrix(EFFECTVARIABLENAME_WORLDMATRIX, temp );
-		}
-		else	
-		{
-			D3DXMATRIX temp = mParentModel->GetGeometricOffset() * mParentModel->GetAnimationTransform();
-			shader->SetMatrix(EFFECTVARIABLENAME_WORLDMATRIX, temp);
-		}
+		D3DXMATRIX temp = mParentModel->GetGeometricOffset() * mParentModel->GetAnimationTransform();
+		shader->SetMatrix("gWorld", temp);
 	}
 	else
 	{
 		D3DXMATRIX temp = mParentModel->GetGeometricOffset();
-		shader->SetMatrix(EFFECTVARIABLENAME_WORLDMATRIX, temp );
+		shader->SetMatrix("gWorld", temp);
 	}
 
-
+	// Buffers
 	ID3D11Buffer* aVB[5] = { 
 		mVB_Position->GetBufferPointer(), 
 		mVB_Normal->GetBufferPointer(), 
 		mVB_Tangent->GetBufferPointer(), 
 		mVB_TexCoord->GetBufferPointer(), 
-		(mVB_BlendWeights!=0 ? mVB_BlendWeights->GetBufferPointer() : 0 ) 
+		(mVB_BlendWeights!=0? mVB_BlendWeights->GetBufferPointer() : 0 ) 
 	};
 
+	// Sizes Of Buffers
 	UINT aStrides[5] = { 
 		sizeof(D3DXVECTOR3), 
 		sizeof(D3DXVECTOR3), 
@@ -90,8 +77,8 @@ void FBXModelPartD3D::Render(float dt, Shader* shader, D3DXMATRIX viewProj, bool
 
 	UINT aOffsets[5] = {0, 0, 0, 0, 0};
 
-	devCont->IASetVertexBuffers( 0, 4+(mVB_BlendWeights!=0), aVB, aStrides, aOffsets );
-	devCont->IASetIndexBuffer( mIB->GetBufferPointer(), DXGI_FORMAT_R32_UINT, 0 );
+	devCont->IASetVertexBuffers(0, 4+(mVB_BlendWeights!=0), aVB, aStrides, aOffsets);
+	devCont->IASetIndexBuffer(mIB->GetBufferPointer(), DXGI_FORMAT_R32_UINT, 0);
 	shader->Apply(0);
-	devCont->DrawIndexed((unsigned int)mIB->GetElementCount(),0,0);
+	devCont->DrawIndexed((unsigned int)mIB->GetElementCount(), 0, 0);
 }

@@ -149,12 +149,13 @@ void FBXScene::ProcessScene(FbxScene* pScene)
 	if ( m_pSkeleton ) delete m_pSkeleton, m_pSkeleton = 0;
 
 	FbxAxisSystem SceneAxisSystem = pScene->GetGlobalSettings().GetAxisSystem();
-	FbxAxisSystem OurAxisSystem(FbxAxisSystem::DirectX) ;
+	FbxAxisSystem OurAxisSystem(FbxAxisSystem::DirectX);
+
 	if( SceneAxisSystem != OurAxisSystem )
 	{
 		OurAxisSystem.ConvertScene(pScene);
 	}
-
+	
 	ProcessMaterials(pScene);
 	ProcessNode(pScene->GetRootNode(), FbxNodeAttribute::eSkeleton);
 	ProcessNode(pScene->GetRootNode(), FbxNodeAttribute::eMesh);	// takes time, guesstimate 50% of it
@@ -437,7 +438,7 @@ void FBXScene::ProcessMesh(FbxNode* pNode)
 	}
 
 	pFBXMesh->InitNormals();
-	pFBXMesh->ComputeVertexNormals(); 
+	pFBXMesh->ComputeVertexNormals(true); 
 	pFBXMesh->GenerateTangentsDataForAllUVSets();
 
 	int nVertexCount = pFBXMesh->GetControlPointsCount();
@@ -474,12 +475,14 @@ void FBXScene::ProcessMesh(FbxNode* pNode)
 			fbxNormal = GetNormal(pFBXMesh, 0, pi, pvi, nVertexIndex);
 			fbxTangent = GetTangent(pFBXMesh, 0, pi, pvi, nVertexIndex);
 
+			// Add Vertex
 			pModel->AddVertex(pMaterial, FbxVector4ToBTHFBX_VEC3(fbxPosition),
 										 FbxVector4ToBTHFBX_VEC3(fbxNormal),
 										 FbxVector4ToBTHFBX_VEC3(fbxTangent),
 										 GetTexCoord(pFBXMesh, 0, pi, pvi, nVertexIndex),
 										 boneWeights[nVertexIndex]);
 
+			// Update Bounding Box
 			UpdateBoundingBoxDataFromVertex(FbxVector4ToBTHFBX_VEC3(fbxPosition));
 		}
 	}
@@ -545,9 +548,6 @@ void FBXScene::ProcessBoneWeights(FbxSkin* pFBXSkin, std::vector<BoneWeights>& m
 		FbxAMatrix matClusterLinkTransformMatrix;
 		pFBXCluster->GetTransformMatrix(matClusterTransformMatrix);
 		pFBXCluster->GetTransformLinkMatrix(matClusterLinkTransformMatrix);
-
-		//pSkeletonBone->SetBindPoseTransform(KFbxXMatrixToD3DXMATRIX(matClusterLinkTransformMatrix));
-		//pSkeletonBone->SetBoneReferenceTransform(KFbxXMatrixToD3DXMATRIX(matClusterTransformMatrix));
 
 		pSkeletonBone->SetBindPoseTransform2(matClusterLinkTransformMatrix);
 		pSkeletonBone->SetBoneReferenceTransform2(matClusterTransformMatrix);
@@ -783,7 +783,7 @@ BTHFBX_VEC2 FBXScene::GetTexCoord(FbxMesh* pFBXMesh, int nLayerIndex, int nPolyg
 
 FbxVector4 FBXScene::GetNormal(FbxMesh* pFBXMesh, int nLayerIndex, int nPolygonIndex, int nPolygonVertexIndex, int nVertexIndex)
 {
-	FbxVector4 vNormal(0,0,0,0);
+	FbxVector4 vNormal(0, 0, 0, 0);
 	int nLayerCount = pFBXMesh->GetLayerCount();
 	if( nLayerIndex < nLayerCount )//for( int i = 0; i < nLayerCount; ++i )
 	{

@@ -7,7 +7,8 @@
 
 class TestAnimations : public TestCase
 {
-	iMesh* mesh;
+	iFBXMesh* copyrightedTempGuy;
+	iFBXMesh* soldier;
 
 public:
 	TestAnimations()
@@ -22,15 +23,39 @@ public:
 
 	virtual void PreTest()
 	{
-		// Disable Sun
-		GetGraphics()->SetSunLightDisabled();
+		copyrightedTempGuy = GetGraphics()->CreateFBXMesh("Media/temp_guy_few_anims.fbx", Vector3(0.0f, 0.0f, 0.0f));	// copyrightedTempGuy = GetGraphics()->CreateFBXMesh("Media/temp_guy_few_anims.fbx", Vector3(0.0f, 0.0f, 0.0f));
+		
+		soldier = GetGraphics()->CreateFBXMesh("Media/Soldier_animated_jump.fbx", Vector3(20.0f, 0.0f, 0.0f));
+		soldier->SetScale(0.1f);
+	}
 
-		mesh = GetGraphics()->CreateMesh("Media/Soldier_animated_jump.fbx", Vector3(0.0f, 0.0f, 0.0f));
-		mesh->SetScale(0.1f);
+	virtual void RunTest(float dt)
+	{
+		if ( GetGraphics()->GetKeyListener()->IsPressed('1') )
+		{
+			copyrightedTempGuy->SetAnimation(0);
+		}
+		else if ( GetGraphics()->GetKeyListener()->IsPressed('2') )
+		{
+			copyrightedTempGuy->SetAnimation(1);
+		}
+		else if ( GetGraphics()->GetKeyListener()->IsPressed('3') )
+		{
+			copyrightedTempGuy->SetAnimation(2);
+		}
+		else if ( GetGraphics()->GetKeyListener()->IsPressed('4') )
+		{
+			copyrightedTempGuy->SetAnimation(3);
+		}
+		else if ( GetGraphics()->GetKeyListener()->IsPressed('R') )
+		{
+			GetGraphics()->ReloadShaders(1);
+		}
 	}
 
 	virtual void PostTest()
 	{
-		GetGraphics()->DeleteMesh(mesh);
+		GetGraphics()->DeleteMesh(copyrightedTempGuy);
+		GetGraphics()->DeleteMesh(soldier);
 	}
 };

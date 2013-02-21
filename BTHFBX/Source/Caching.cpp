@@ -232,6 +232,16 @@ bool LoadCachedScene(const std::string& fileName, FBXScene* scene)
 			// Bone
 			SkeletonBone* bone = new SkeletonBone(boneName, parentIndex, skeleton);
 
+			// Read Bone Bind Pose
+			FbxMatrix bonePose;
+			file.read(reinterpret_cast<char*>(&bonePose), sizeof(FbxMatrix));
+			bone->SetBindPoseTransform2(bonePose);
+			
+			// Read Bone Reference Transformation
+			FbxMatrix boneReferenceTransform;
+			file.read(reinterpret_cast<char*>(&boneReferenceTransform), sizeof(FbxMatrix));
+			bone->SetBoneReferenceTransform2(boneReferenceTransform);
+			
 			// Read Animations
 			unsigned int numAnimations = 0;
 			file.read(reinterpret_cast<char*>(&numAnimations), sizeof(unsigned int));
@@ -488,6 +498,12 @@ bool CacheScene(const std::string& fileName, FBXScene* scene)
 			// Write Bone Parent Name
 			file.write(reinterpret_cast<const char*>(&parentNameLength), sizeof(unsigned int));
 			if ( parentNameLength ) file.write(parentBone->GetName(), parentNameLength);
+
+			// Write Bone Bind Pose
+			file.write(reinterpret_cast<const char*>(&bone->GetBindPoseTransform2()), sizeof(FbxMatrix));
+			
+			// Write Bone Reference Transformation
+			file.write(reinterpret_cast<const char*>(&bone->GetBoneReferenceTransform2()), sizeof(FbxMatrix));
 
 			// Animations
 			auto animations = bone->GetAnimations();

@@ -29,9 +29,6 @@
     <Filter Include="Source Files\Engine\Objects and Entities\FBX">
       <UniqueIdentifier>{6d7bc0bb-8778-4913-af64-4d2459c83f8f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Engine\Objects and Entities\FBX\Include">
-      <UniqueIdentifier>{4ec1175b-ef94-4167-8577-3a6c4c0e8223}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\GraphicsEngineImp.h">
@@ -222,12 +219,6 @@
     </ClInclude>
     <ClInclude Include="Source\BTHFBX\Shared\FBX\FBXSceneD3D.h">
       <Filter>Source Files\Engine\Objects and Entities\FBX</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\BTHFBX\Include\BTHFbx.h">
-      <Filter>Source Files\Engine\Objects and Entities\FBX\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\BTHFBX\Include\BTHstdafx.h">
-      <Filter>Source Files\Engine\Objects and Entities\FBX\Include</Filter>
     </ClInclude>
     <ClInclude Include="Source\Billboard.h">
       <Filter>Source Files\Engine\Objects and Entities</Filter>

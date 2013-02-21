@@ -31,5 +31,5 @@ public:
 	const D3DXMATRIX& GetGeometricOffset();
 	const D3DXMATRIX& GetAnimationTransform();
 
-	const char* GetName() { return mName.c_str(); }
+	inline const char* GetName() { return mName.c_str(); }
 };

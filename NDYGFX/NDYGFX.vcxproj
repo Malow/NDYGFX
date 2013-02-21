@@ -30,8 +30,6 @@
     <ClInclude Include="Source\BoundingSphere.h" />
     <ClInclude Include="Source\AnimatedMesh.h" />
     <ClInclude Include="Source\Array.h" />
-    <ClInclude Include="Source\BTHFBX\Include\BTHFbx.h" />
-    <ClInclude Include="Source\BTHFBX\Include\BTHstdafx.h" />
     <ClInclude Include="Source\BTHFBX\Shared\FBX\FBXSceneD3D.h" />
     <ClInclude Include="Source\Buffer.h" />
     <ClInclude Include="Source\BufferResource.h" />

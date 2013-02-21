@@ -17,14 +17,14 @@ FBXSceneD3D::~FBXSceneD3D()
 void FBXSceneD3D::Init(const char* filename, IBTHFbx* bthFBX, ID3D11Device* dev, ID3D11DeviceContext* devCont)
 {
 	mFBXScene = bthFBX->GetScene(filename);
+
 	if(mFBXScene)
 	{
 		mFBXAnimationController = mFBXScene->GetAnimationController();
 		mFBXSkeleton = mFBXScene->GetSkeleton();
 	}
 
-
-	for(int i = 0; i < mFBXScene->GetModelCount(); i++)
+	for(unsigned int i = 0; i < mFBXScene->GetModelCount(); i++)
 	{
 		FBXModelD3D* model = new FBXModelD3D();
 		
@@ -36,7 +36,7 @@ void FBXSceneD3D::Init(const char* filename, IBTHFbx* bthFBX, ID3D11Device* dev,
 
 void FBXSceneD3D::Update(float dt)
 {
-	for(int i = 0; i < (int)mModels.size(); i++)
+	for(unsigned int i = 0; i < mModels.size(); i++)
 	{
 		mModels[i]->Update(dt);
 	}

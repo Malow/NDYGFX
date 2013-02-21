@@ -32,8 +32,8 @@ public:
 	virtual ~Model();
 
 	// Model Parts
-	virtual int GetModelPartCount() { return (int)m_ModelParts.size(); }
-	virtual IBTHFbxModelPart* GetModelPart(int index) { return m_ModelParts[index]; }
+	virtual unsigned int GetModelPartCount() { return m_ModelParts.size(); }
+	virtual IBTHFbxModelPart* GetModelPart(unsigned int index) { return m_ModelParts[index]; }
 	inline std::vector<ModelPart*>& GetModelParts() { return m_ModelParts; }
 
 	// Logic

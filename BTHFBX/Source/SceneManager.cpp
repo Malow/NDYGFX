@@ -1,5 +1,7 @@
 #include "SceneManager.h"
 #include "FBXScene.h"
+#include <thread>
+
 
 SceneManager::SceneManager()
 	: mSdkManager(0), mSDKMajor(0), mSDKMinor(0), mSDKRevision(0)
@@ -9,17 +11,22 @@ SceneManager::SceneManager()
 
 SceneManager::~SceneManager()
 {
+	m_InstancesMutex.lock();
 	for(auto i = m_SceneInstances.begin(); i != m_SceneInstances.end(); i++)
 	{
 		if ( *i ) delete *i, *i = 0;
 	}
+	m_InstancesMutex.unlock();
 
 	for(auto i = m_Scenes.begin(); i != m_Scenes.end(); i++)
 	{
 		if (i->second) delete i->second, i->second = 0;
 	}
 
-	if(mSdkManager)	mSdkManager->Destroy();
+	if ( mSdkManager ) 
+	{
+		mSdkManager->Destroy();
+	}
 }
 
 FBXScene* SceneManager::LoadScene(const char* fileName)
@@ -57,7 +64,9 @@ IBTHFbxScene* SceneManager::GetScene(const char* fileName)
 		sceneInstance = new FBXSceneInstance(scene);
 		sceneInstance->InitInstance();
 
+		m_InstancesMutex.lock();
 		m_SceneInstances.push_back(sceneInstance);
+		m_InstancesMutex.unlock();
 	}
 	else
 	{
@@ -66,7 +75,10 @@ IBTHFbxScene* SceneManager::GetScene(const char* fileName)
 		sceneInstance = new FBXSceneInstance(scene);
 		sceneInstance->InitInstance();
 
+		m_InstancesMutex.lock();
 		m_SceneInstances.push_back(sceneInstance);
+		m_InstancesMutex.unlock();
+
 	}
 
 	return sceneInstance;
@@ -74,17 +86,12 @@ IBTHFbxScene* SceneManager::GetScene(const char* fileName)
 
 void SceneManager::UpdateScenes(float deltaTime, bool bEnableAnimation)
 {
-	/*
-	for(SCENE_MAP::iterator i = m_Scenes.begin(); i != m_Scenes.end(); i++)
-	{
-		i->second->UpdateScene(deltaTime, bEnableAnimation);
-	}
-	*/
-
+	m_InstancesMutex.lock();
 	for(SCENE_INSTANCE_VEC::iterator i = m_SceneInstances.begin(); i != m_SceneInstances.end(); i++)
 	{
 		(*i)->UpdateScene(deltaTime, bEnableAnimation);
 	}
+	m_InstancesMutex.unlock();
 }
 
 bool SceneManager::InitializeFBXSdk()
