@@ -568,7 +568,7 @@ float4 PSScene(PSIn input) : SV_Target
 		1.0f);
 
 	if(UseSun)
-		finalColor.xyz *= sun.LightColor;
+		finalColor.xyz *= sun.LightColor.xyz;
 
 	
 	

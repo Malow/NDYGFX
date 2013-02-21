@@ -647,7 +647,7 @@ TextureResource* ResourceManager::CreateTextureResourceFromFile( const char* fil
 		loadInfo.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 		if(generateMipMap)
 		{
-			loadInfo.MiscFlags =  D3D11_RESOURCE_MISC_GENERATE_MIPS;
+			//loadInfo.MiscFlags =  D3D11_RESOURCE_MISC_GENERATE_MIPS;
 		}
 		
 		//Create 
@@ -673,7 +673,7 @@ TextureResource* ResourceManager::CreateTextureResourceFromFile( const char* fil
 			//Generate mip maps.
 			if(generateMipMap && this->zDeferredContext != NULL)
 			{
-				this->zDeferredContext->GenerateMips(SRV);
+				//this->zDeferredContext->GenerateMips(SRV);
 			}
 
 			//Create if loading was successful.
@@ -683,7 +683,7 @@ TextureResource* ResourceManager::CreateTextureResourceFromFile( const char* fil
 			
 			//Release mutex and return
 			ReleaseMutex(this->mutex);
-			//Return newly created texture.
+			//Return newly created texture resource.
 			return this->zTextureResources[filePath];
 		}
 	}

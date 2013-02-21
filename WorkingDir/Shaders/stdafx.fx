@@ -77,6 +77,7 @@ float FarClip;
 //------------------------------------------------------------------------------------------------------
 //	SamplersStates
 //------------------------------------------------------------------------------------------------------
+//**TILLMAN ev todo: MaxLOD for all samplers**
 SamplerState LinearWrapSampler
 {
 	Filter = MIN_MAG_MIP_LINEAR; 
@@ -118,6 +119,19 @@ SamplerState AnisotropicClampSampler
 	ComparisonFunc = ALWAYS;
 	MaxLOD = 0.0f;
 	MinLOD = 0.0f;
+};
+SamplerState AnisotropicWrapSampler 
+{
+	Filter = ANISOTROPIC;
+	AddressU = Wrap;
+	AddressV = Wrap;
+	AddressW = Wrap;
+	MipLODBias = 0.0f;//Unused
+	MaxAnisotropy = 16;
+	ComparisonFunc = ALWAYS; 
+	BorderColor = float4(0.0f, 0.0f, 0.0f, 0.0f); //Unused
+	MinLOD = 0.0f;
+	MaxLOD = 16.0f; //Max
 };
 //------------------------------------------------------------------------------------------------------
 //	RasterizerStates
