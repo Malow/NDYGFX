@@ -19,7 +19,7 @@ private:
 		Mesh* mesh, CollisionData& cd);
 	void DoCollisionRayVsTriangles(Vector3 rayOrigin, Vector3 rayDirection, 
 		Vertex* vertices, int nrOfVertices, int* indices, int nrOfIndices, D3DXMATRIX worldMat, CollisionData& cd);
-	void DoCollisionRayVsTriangles(Vector3 rayOrigin, Vector3 rayDirection, 
+	void DoCollisionRayVsTrianglesNM(Vector3 rayOrigin, Vector3 rayDirection, 
 		VertexNormalMap* vertices, int nrOfVertices, int* indices, int nrOfIndices, D3DXMATRIX worldMat, CollisionData& cd);
 	bool DoCollisionRayVsTriangle(Vector3 rayOrigin, Vector3 rayDirection, 
 		Vector3 v0, Vector3 v1, Vector3 v2, CollisionData& tempCD);
@@ -27,7 +27,7 @@ private:
 	void DoCollisionMeshVsMesh(Mesh* m1, Mesh* m2, CollisionData& cd);
 	void DoCollisionTrianglesVsTriangles(Vector3 m1Pos, Vertex* vert1, int nrOfVerts1, int* inds1, int nrOfInds1, D3DXMATRIX worldMat1,
 		Vertex* vert2, int nrOfVerts2, int* inds2, int nrOfInds2, D3DXMATRIX worldMat2, CollisionData& cd);
-	void DoCollisionTrianglesVsTriangles(Vector3 m1Pos, VertexNormalMap* vert1, int nrOfVerts1, int* inds1, int nrOfInds1, D3DXMATRIX worldMat1,
+	void DoCollisionTrianglesVsTrianglesNM(Vector3 m1Pos, VertexNormalMap* vert1, int nrOfVerts1, int* inds1, int nrOfInds1, D3DXMATRIX worldMat1,
 		VertexNormalMap* vert2, int nrOfVerts2, int* inds2, int nrOfInds2, D3DXMATRIX worldMat2, CollisionData& cd);
 	bool DoCollisionTriangleVsTriangle(Vector3 v00, Vector3 v01, Vector3 v02, Vector3 v10, Vector3 v11, Vector3 v12,
 		CollisionData& tempCD);

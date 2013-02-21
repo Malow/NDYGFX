@@ -428,7 +428,7 @@ void PhysicsEngine::DoCollisionRayVsMesh(Vector3 rayOrigin, Vector3 rayDirection
 
 		if(cd.BoundingSphereCollision)
 		{
-			this->DoCollisionRayVsTriangles(rayOrigin, rayDirection, 
+			this->DoCollisionRayVsTrianglesNM(rayOrigin, rayDirection, 
 				strips->get(i)->getVerts(), strips->get(i)->getNrOfVerts(), 
 				strips->get(i)->getIndicies(), strips->get(i)->getNrOfIndicies(), mesh->GetWorldMatrix(), cd);
 		}
@@ -449,7 +449,7 @@ void PhysicsEngine::DoCollisionMeshVsMesh( Mesh* m1, Mesh* m2, CollisionData& cd
 				strips2->get(u)->GetBoundingSphere(), m2->GetWorldMatrix(), scale2))
 			{
 				cd.BoundingSphereCollision = true;
-				this->DoCollisionTrianglesVsTriangles(m1->GetPosition(), strips1->get(i)->getVerts(), strips1->get(i)->getNrOfVerts(),
+				this->DoCollisionTrianglesVsTrianglesNM(m1->GetPosition(), strips1->get(i)->getVerts(), strips1->get(i)->getNrOfVerts(),
 					strips1->get(i)->getIndicies(), strips1->get(i)->getNrOfIndicies(), m1->GetWorldMatrix(), 
 					strips2->get(u)->getVerts(), strips2->get(u)->getNrOfVerts(), strips2->get(u)->getIndicies(),
 					strips2->get(u)->getNrOfIndicies(), m2->GetWorldMatrix(), cd);
@@ -546,7 +546,7 @@ void PhysicsEngine::DoCollisionRayVsTriangles(Vector3 rayOrigin, Vector3 rayDire
 }
 
 
-void PhysicsEngine::DoCollisionRayVsTriangles(Vector3 rayOrigin, Vector3 rayDirection, 
+void PhysicsEngine::DoCollisionRayVsTrianglesNM(Vector3 rayOrigin, Vector3 rayDirection, 
 											  VertexNormalMap* vertices, int nrOfVertices, int* indices, int nrOfIndices, D3DXMATRIX worldMat, CollisionData& cd)
 {
 	if(!indices)
@@ -816,7 +816,7 @@ void PhysicsEngine::DoCollisionTrianglesVsTriangles(Vector3 m1Pos, Vertex* vert1
 }
 
 
-void PhysicsEngine::DoCollisionTrianglesVsTriangles(Vector3 m1Pos, VertexNormalMap* vert1, int nrOfVerts1, int* inds1, int nrOfInds1, 
+void PhysicsEngine::DoCollisionTrianglesVsTrianglesNM(Vector3 m1Pos, VertexNormalMap* vert1, int nrOfVerts1, int* inds1, int nrOfInds1, 
 	D3DXMATRIX worldMat1, VertexNormalMap* vert2, int nrOfVerts2, int* inds2, int nrOfInds2, 
 	D3DXMATRIX worldMat2, CollisionData& cd )
 {

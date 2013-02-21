@@ -503,7 +503,7 @@ void TillmanTest::RunTest(float diff)
 		*/
 
 	CollisionData cd = GetGraphics()->GetPhysicsEngine()->GetSpecialCollisionRayTerrain(GetGraphics()->GetCamera()->GetPosition(),
-		GetGraphics()->GetCamera()->Get3DPickingRay(), iT2, testSize / (vertSize - 1));
+		GetGraphics()->GetCamera()->Get3DPickingRay(), iT2, testSize / (vertSize));	
 	if(cd.collision)
 		mmm->SetPosition(Vector3(cd.posx, cd.posy, cd.posz));
 	else

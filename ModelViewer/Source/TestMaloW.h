@@ -129,8 +129,15 @@ void MaloWTest::RunTest(float diff)
 	//GetGraphics()->GetCamera()->SetPosition(secModel->GetPosition() + Vector3(5, 0, 1));
 	//GetGraphics()->GetCamera()->LookAt(secModel->GetPosition() + Vector3(0, 0, 1));
 	//Vector3 asd = GetGraphics()->GetCamera()->Get3DPickingRay();
+
+	
 	cd = GetGraphics()->GetPhysicsEngine()->GetCollisionRayMesh(GetGraphics()->GetCamera()->GetPosition(), 
-		GetGraphics()->GetCamera()->Get3DPickingRay(), secModel);
+		GetGraphics()->GetCamera()->GetForward(), tempguy);
+
+	if(!cd.collision)
+		cd = GetGraphics()->GetPhysicsEngine()->GetCollisionRayMesh(GetGraphics()->GetCamera()->GetPosition(), 
+		GetGraphics()->GetCamera()->Get3DPickingRay(), deer);
+	
 
 	if(cd.BoundingSphereCollision)
 	{
@@ -145,6 +152,10 @@ void MaloWTest::RunTest(float diff)
 	{
 		ball->SetPosition(Vector3(cd.posx, cd.posy, cd.posz));
 	}
+
+
+
+
 
 
 	static bool fesd = true;
