@@ -15,6 +15,7 @@
     <ClInclude Include="Include\iAnimatedMesh.h" />
     <ClInclude Include="Include\iBillboard.h" />
     <ClInclude Include="Include\iCamera.h" />
+    <ClInclude Include="Include\iDecal.h" />
     <ClInclude Include="Include\iFBXMesh.h" />
     <ClInclude Include="Include\iGraphicsEngineParams.h" />
     <ClInclude Include="Include\iImage.h" />
@@ -39,6 +40,7 @@
     <ClInclude Include="Source\CamRecording.h" />
     <ClInclude Include="Source\CascadedShadowMap.h" />
     <ClInclude Include="Source\CursorControl.h" />
+    <ClInclude Include="Source\Decal.h" />
     <ClInclude Include="Source\DirectX.h" />
     <ClInclude Include="Source\DxManager.h" />
     <ClInclude Include="Source\DxManagerDebugging.h" />
@@ -95,6 +97,7 @@
     <ClCompile Include="Source\Camera.cpp" />
     <ClCompile Include="Source\CamRecording.cpp" />
     <ClCompile Include="Source\CascadedShadowMap.cpp" />
+    <ClCompile Include="Source\Decal.cpp" />
     <ClCompile Include="Source\DxManager.cpp" />
     <ClCompile Include="Source\DxManagerDeferred.cpp" />
     <ClCompile Include="Source\DxManagerForwardRendering.cpp" />

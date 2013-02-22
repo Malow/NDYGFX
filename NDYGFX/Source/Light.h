@@ -56,6 +56,7 @@ public:
 	Vector3 GetColor() const;
 	void SetPosition(Vector3 pos);
 	Vector3 GetPosition() const;
+
 	void Move(Vector3 moveBy);
 	void SetLookAt(Vector3 la);
 	void SetUp(Vector3 up);
@@ -64,6 +65,11 @@ public:
 	bool IsUsingShadowMap() const;
 
 	/* Not accessible from outside */
+	D3DXVECTOR3 GetColorD3DX() const { return this->color; }
+	void SetColorD3DX(D3DXVECTOR3 col) { this->color = col; }
+	D3DXVECTOR3 GetPositionD3DX() const { return this->pos; }
+	void SetPositionD3DX(D3DXVECTOR3 pos) { this->pos = pos; }
+
 	HRESULT InitShadowMap(ID3D11Device* g_Device, int quality);
 	D3DXMATRIX GetViewProjMatrix();
 	void SetViewProjMatrix(D3DXMATRIX vp) { this->ViewProj = vp; }

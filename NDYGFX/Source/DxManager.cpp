@@ -709,8 +709,8 @@ void DxManager::SetSpecialCircle(float innerRadius, float outerRadius, Vector2& 
 void DxManager::SetSunLightProperties( Vector3 direction, Vector3 lightColor, float intensity )
 {
 	direction.Normalize();
-	this->sun.direction = direction;
-	this->sun.lightColor = lightColor;
+	this->sun.direction = D3DXVECTOR3(direction.x, direction.y, direction.z);
+	this->sun.lightColor = D3DXVECTOR3(lightColor.x, lightColor.y, lightColor.z);
 	this->sun.intensity = intensity;
 	this->useSun = true;
 }
@@ -1013,6 +1013,50 @@ void DxManager::ChangeShadowQuality( int newQual )
 void DxManager::ReloadShaders(int shader)
 {
 	ReloadShaderEvent* re = new ReloadShaderEvent("Reload Shaders", shader);
+	this->PutEvent(re);
+}
+
+void DxManager::CreateDecal( Decal* decal, string texture )
+{
+	TextureResource* tex = NULL;
+	if(texture != "")
+	{
+		tex = GetResourceManager()->CreateTextureResourceFromFile(texture.c_str(), true);
+	}
+	decal->SetTexture(tex);
+	
+	// create matrix for it.
+	D3DXMATRIX matrix;
+
+	D3DXMATRIX translate;
+	D3DXMATRIX scale;
+	D3DXMATRIX rotate;
+	D3DXMATRIX translate2;
+
+	D3DXMatrixTranslation(&translate, 0.5f, 0.5f, 0.5f);
+	D3DXMatrixScaling(&scale, 0.5f, 0.5f, 0.5f);
+
+
+	// MALOW : Add random rotation for decals?
+	D3DXMATRIX x, y, z;
+	D3DXMatrixRotationX(&x, 0);
+	D3DXMatrixRotationY(&y, 0);
+	D3DXMatrixRotationZ(&z, 0);
+	rotate = x*y*z;
+
+	Vector3 pos = decal->GetPosition();
+	D3DXMatrixTranslation(&translate2, -pos.x, -pos.y, -pos.z);
+
+	matrix = translate * scale * rotate * translate2;
+	decal->SetMatrix(matrix);
+
+	DecalEvent* re = new DecalEvent("Add Decal", decal);
+	this->PutEvent(re);
+}
+
+void DxManager::DeleteDecal( Decal* decal )
+{
+	DecalEvent* re = new DecalEvent("Delete Decal", decal);
 	this->PutEvent(re);
 }
 

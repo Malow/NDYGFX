@@ -1,6 +1,7 @@
 #ifndef DXMANAGER_H
 #define DXMANAGER_H
 
+#include "Decal.h"
 #include "DirectX.h"
 #include "Camera.h"
 #include "Shader.h"
@@ -25,6 +26,7 @@
 #include "DxManagerEvents.h"
 #include "CascadedShadowMap.h"
 #include "InstancingHelper.h"
+
 
 #if defined(DEBUG) || defined(_DEBUG)
 	#include <vld.h>
@@ -82,11 +84,10 @@ private:
 	MaloW::Array<AnimatedMesh*> animations;
 	MaloW::Array<WaterPlane*> waterplanes;
 	MaloW::Array<FBXMesh*> FBXMeshes;
-
-
 	MaloW::Array<Image*> images;
 	MaloW::Array<Billboard*> billboards;
 	MaloW::Array<Text*> texts;
+	MaloW::Array<Decal*> decals;
 
 	float LavaWavesOuterRadius;
 	SkyBox* skybox;
@@ -160,6 +161,7 @@ private:
 	void RenderFBXMeshes();
 	void RenderDeferredGeoTranslucent();
 	void RenderDeferredPerPixelTranslucent();
+	void RenderDecals();
 
 
 	void RenderQuadDeferred();
@@ -179,6 +181,7 @@ private:
 	void HandleWaterPlaneEvent(WaterPlaneEvent* ie);
 	void HandleFBXEvent(FBXEvent* fe);
 	void HandleReloadShaders(int shader);
+	void HandleDecalEvent(DecalEvent* de);
 
 	void CalculateCulling();
 
@@ -211,6 +214,7 @@ public:
 	void CreateWaterPlane(WaterPlane* wp, string texture);
 	void CreateSkyBox(string texture);
 	void CreateFBXMesh(FBXMesh* mesh);
+	void CreateDecal(Decal* decal, string texture);
 
 
 	void UseShadow(bool useShadow);
@@ -227,6 +231,7 @@ public:
 	void DeleteText(Text* text);
 	void DeleteWaterPlane(WaterPlane* wp);
 	void DeleteFBXMesh(FBXMesh* mesh);
+	void DeleteDecal(Decal* decal);
 
 	void SetCamera(Camera* cam);
 	Camera* GetCamera() const;

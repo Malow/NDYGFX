@@ -1052,3 +1052,16 @@ void GraphicsEngineImp::ReloadShaders(int shaderIndex)
 {
 	this->dx->ReloadShaders(shaderIndex);
 }
+
+iDecal* GraphicsEngineImp::CreateDecal( Vector3 pos, const char* texture )
+{
+	Decal* dec = new Decal(pos);
+	this->dx->CreateDecal(dec, texture);
+	return dec;
+}
+
+void GraphicsEngineImp::DeleteDecal( iDecal* decal )
+{
+	if(Decal* dec = dynamic_cast<Decal*>(decal))
+		this->dx->DeleteDecal(dec);
+}
