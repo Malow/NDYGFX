@@ -242,6 +242,10 @@ HRESULT DxManager::Init()
 		{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
 	};
 
+	static const D3D11_INPUT_ELEMENT_DESC inputDescPosition[] = {
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+	};
+	
 	
 	// Forward renderer shader:
 	this->Shader_ForwardRendering = new Shader();
@@ -384,7 +388,7 @@ HRESULT DxManager::Init()
 
 	// Decal Shader
 	this->Shader_Decal = new Shader();
-	if(FAILED(this->Shader_Decal->Init(Dx_Device, Dx_DeviceContext, "Shaders/Decal.fx", NULL, 0)))
+	if(FAILED(this->Shader_Decal->Init(Dx_Device, Dx_DeviceContext, "Shaders/Decal.fx", inputDescPosition, 1)))
 	{
 		MaloW::Debug("Failed to open Decal.fx");
 		return E_FAIL;
