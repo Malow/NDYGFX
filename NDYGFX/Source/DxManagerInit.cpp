@@ -382,6 +382,14 @@ HRESULT DxManager::Init()
 		return E_FAIL;
 	}
 
+	// Decal Shader
+	this->Shader_Decal = new Shader();
+	if(FAILED(this->Shader_Decal->Init(Dx_Device, Dx_DeviceContext, "Shaders/Decal.fx", NULL, 0)))
+	{
+		MaloW::Debug("Failed to open Decal.fx");
+		return E_FAIL;
+	}
+
 
 	/*
 	// Deferred Quad pass

@@ -1,6 +1,7 @@
 #ifndef DXMANAGER_H
 #define DXMANAGER_H
 
+
 #include "Decal.h"
 #include "DirectX.h"
 #include "Camera.h"
@@ -57,6 +58,7 @@ private:
 	Shader* Shader_DeferredGeoTranslucent;
 	Shader* Shader_DeferredPerPixelTranslucent;
 	Shader* Shader_Fxaa;
+	Shader* Shader_Decal;
 
 
 
@@ -116,6 +118,7 @@ private:
 
 	SSAO* ssao;
 	FXAA* fxaa;
+	IBTHFbx* fbx;
 
 	// Hardware instancing **TILLMAN TODO/TEST**
 	InstancingHelper* instancingHelper;
@@ -215,6 +218,9 @@ public:
 	void CreateSkyBox(string texture);
 	void CreateFBXMesh(FBXMesh* mesh);
 	void CreateDecal(Decal* decal, string texture);
+
+
+	void SetFBXScene(IBTHFbx* fbx) { this->fbx = fbx; };
 
 
 	void UseShadow(bool useShadow);

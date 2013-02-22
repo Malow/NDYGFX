@@ -423,6 +423,11 @@ void DxManager::Life()
 			delete ev;
 		}
 		this->camera->Update(this->Timer - this->LastCamUpdate);
+
+		// Update FBX if it is set.
+		if(this->fbx)
+			this->fbx->UpdateScenes(this->Timer - this->LastCamUpdate, true);
+
 		this->LastCamUpdate = this->Timer;
 		this->Render();
 		this->framecount++;
@@ -1485,24 +1490,24 @@ void DxManager::RenderFBXMeshes()
 
 void DxManager::RenderDecals()
 {
+	D3DXMATRIX proj = this->camera->GetProjectionMatrix();
+	D3DXMATRIX view = this->camera->GetViewMatrix();
+	this->Shader_Decal->SetMatrix("ViewProj", view * proj);
+	this->Shader_Decal->SetFloat2("PixelSize", D3DXVECTOR2(1.0f / this->params.WindowWidth, 1.0f / this->params.WindowHeight));
+
+	ID3D11ShaderResourceView* srv;
+	if(FAILED(this->Dx_Device->CreateShaderResourceView(this->Dx_DepthStencil, 0, &srv)))
+	{
+		MaloW::Debug("ERROR: Failed to create Shader resource view with depth texture in Render Recals.");
+	}
+	this->Shader_Decal->SetResource("Depth", srv);
+	
+
 	/*
-	renderer->reset();
-	renderer->setRasterizerState(cullFront);
-	renderer->setShader(m_Decal);
-	renderer->setShaderConstant4x4f("ViewProj", viewProj);
-	renderer->setShaderConstant2f("PixelSize", float2(1.0f / width, 1.0f / height));
-	renderer->setTexture("Depth", m_DepthRT);
-	renderer->setTexture("Decal", m_DecalTex);
-	renderer->setSamplerState("DepthFilter", m_PointClamp);
-	renderer->setSamplerState("DecalFilter", m_DecalSS);
-	renderer->setDepthState(noDepthTest);
-	renderer->setBlendState(m_BlendDecal);
-	renderer->apply();
-
-
 	const uint decal_count = m_Decals.getCount();
 	for (uint i = 0; i < decal_count; i++)
 	{
+		this->Shader_Decal->SetResource("Decal", )
 		renderer->setShaderConstant3f("Pos", m_Decals[i].position);
 		renderer->setShaderConstant1f("Radius", m_Decals[i].radius);
 		renderer->setShaderConstant3f("Color", m_Decals[i].color);
@@ -1512,6 +1517,8 @@ void DxManager::RenderDecals()
 		m_Sphere->draw(renderer);
 	}
 	*/
+
+	this->Shader_Decal->SetResource("Depth", NULL);
 }
 
 

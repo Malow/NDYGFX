@@ -1,4 +1,45 @@
-/*
+RasterizerState FrontCulling
+{
+	CullMode = Front;
+};
+
+DepthStencilState DisableDepthWrite
+{
+    DepthEnable = FALSE;
+    DepthWriteMask = ZERO;
+};
+
+
+BlendState SrcAlphaBlendingAdd 
+{ 
+	BlendEnable[0] = TRUE; 
+	SrcBlend = SRC_ALPHA; 
+	DestBlend = INV_SRC_ALPHA; 
+	BlendOp = ADD; 
+	SrcBlendAlpha = ZERO; 
+	DestBlendAlpha = ZERO; 
+	BlendOpAlpha = ADD; 
+	RenderTargetWriteMask[0] = 0x0F; 
+}; 
+
+SamplerState DepthFilter
+{
+    Filter = MIN_MAG_MIP_LINEAR;
+    AddressU = Clamp;
+    AddressV = Clamp;
+	AddressW = Clamp;
+};
+
+SamplerState DecalFilter
+{
+    Filter = MIN_MAG_MIP_LINEAR;
+    AddressU = BORDER;
+    AddressV = BORDER;
+	AddressW = BORDER;
+};
+
+
+
 struct VsIn
 {
 	float4 Position : POSITION;
@@ -15,7 +56,7 @@ matrix ViewProj;
 float3 Pos;
 float size;
 
-PsIn main(VsIn In)
+PsIn VSScene(VsIn In)
 {
 	PsIn Out;
 
@@ -31,17 +72,13 @@ PsIn main(VsIn In)
 
 //[Fragment shader]
 
-Texture2D Depth;
-SamplerState DepthFilter;
-
+Texture2D <float> Depth;
 Texture3D <float4> Decal;
-SamplerState DecalFilter;
-
 float4x4 ScreenToLocal;
 float3 Color;
 float2 PixelSize;
 
-float4 main(PsIn In) : SV_Target
+float4 PSScene(PsIn In) : SV_TARGET
 {
     // Compute normalized screen position
 	float2 texCoord = In.Position.xy * PixelSize;
@@ -57,4 +94,20 @@ float4 main(PsIn In) : SV_Target
 
 	return float4(Color, decal);
 }
-*/
+
+
+technique11 BasicTech
+{
+    pass p0
+    {
+		// Set VS, GS, and PS
+        SetVertexShader( CompileShader( vs_4_0, VSScene() ) );
+        SetGeometryShader( NULL );
+        SetPixelShader( CompileShader( ps_4_0, PSScene() ) );
+	    
+
+		SetDepthStencilState( DisableDepthWrite, 0 );
+	    SetRasterizerState( FrontCulling );
+		SetBlendState( SrcAlphaBlendingAdd, float4( 0.0f, 0.0f, 0.0f, 0.0f ), 0xFFFFFFFF );
+    }  
+}
