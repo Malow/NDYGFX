@@ -10,9 +10,9 @@ extern "C"
 	class DECLDIR IBTHFbxModel
 	{
 	public:
-		virtual int GetModelPartCount() = 0;
+		virtual unsigned int GetModelPartCount() = 0;
 
-		virtual IBTHFbxModelPart* GetModelPart(int index) = 0;
+		virtual IBTHFbxModelPart* GetModelPart(unsigned int index) = 0;
 
 		virtual const char* GetName() = 0;
 

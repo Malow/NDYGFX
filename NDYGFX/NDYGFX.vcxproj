@@ -31,9 +31,20 @@
     <ClInclude Include="Source\BoundingSphere.h" />
     <ClInclude Include="Source\AnimatedMesh.h" />
     <ClInclude Include="Source\Array.h" />
-    <ClInclude Include="Source\BTHFBX\Include\BTHFbx.h" />
-    <ClInclude Include="Source\BTHFBX\Include\BTHstdafx.h" />
+    <ClInclude Include="Source\BTHFBX\Shared\D3D\BTHTexture.h" />
+    <ClInclude Include="Source\BTHFBX\Shared\D3D\Buffer.h" />
+    <ClInclude Include="Source\BTHFBX\Shared\D3D\Device3D.h" />
+    <ClInclude Include="Source\BTHFBX\Shared\D3D\RenderTarget.h" />
+    <ClInclude Include="Source\BTHFBX\Shared\D3D\Shader.h" />
+    <ClInclude Include="Source\BTHFBX\Shared\D3D\Utils.h" />
+    <ClInclude Include="Source\BTHFBX\Shared\FBX\FBXModelD3D.h" />
+    <ClInclude Include="Source\BTHFBX\Shared\FBX\FBXModelPartD3D.h" />
+    <ClInclude Include="Source\BTHFBX\Shared\FBX\FBXModelPartDataD3D.h" />
     <ClInclude Include="Source\BTHFBX\Shared\FBX\FBXSceneD3D.h" />
+    <ClInclude Include="Source\BTHFBX\Shared\Helpers\BTHCamera.h" />
+    <ClInclude Include="Source\BTHFBX\Shared\Helpers\BTHResourceManager.h" />
+    <ClInclude Include="Source\BTHFBX\Shared\Helpers\CatmullCurve.h" />
+    <ClInclude Include="Source\BTHFBX\Shared\Helpers\LineDrawer.h" />
     <ClInclude Include="Source\Buffer.h" />
     <ClInclude Include="Source\BufferResource.h" />
     <ClInclude Include="Source\Camera.h" />
@@ -371,7 +382,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(SolutionDir)\Build\$(Configuration)\</OutDir>
     <ExecutablePath>$(SolutionDir)\External\VLD\bin\Win32;$(SolutionDir)\External\D3D\Utilities\bin\x86\;$(ExecutablePath)</ExecutablePath>
-    <IncludePath>$(SolutionDir)\External\D3D\Include\;$(SolutionDir)\External\VLD\include\;$(SolutionDir)\Include\;$(DXSDK_DIR)\Include\;$(SolutionDir)\External\BTHFBX\include\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)\External\D3D\Include\;$(SolutionDir)\External\VLD\include\;$(SolutionDir)\Include\;$(DXSDK_DIR)\Include\;$(SolutionDir)\BTHFBX\include\;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)\External\VLD\lib\Win32;$(SolutionDir)\External\D3D\Lib\x86\;$(DXSDK_DIR)\Lib\x86\;$(SolutionDir)\Build\Debug;$(LibraryPath)</LibraryPath>
     <TargetName>$(ProjectName)D</TargetName>
     <IntDir>$(ProjectDir)\Obj\$(Configuration)\</IntDir>
@@ -379,7 +390,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)\Build\$(Configuration)\</OutDir>
     <ExecutablePath>$(SolutionDir)\External\D3D\Utilities\bin\x86\;$(ExecutablePath)</ExecutablePath>
-    <IncludePath>$(SolutionDir)\External\D3D\Include\;$(SolutionDir)\Include\;$(DXSDK_DIR)\Include\;$(SolutionDir)\External\BTHFBX\include\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)\External\D3D\Include\;$(SolutionDir)\Include\;$(DXSDK_DIR)\Include\;$(SolutionDir)\BTHFBX\include\;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)\External\D3D\Lib\x86\;$(DXSDK_DIR)\Lib\x86\;$(SolutionDir)\Build\Release;$(LibraryPath)</LibraryPath>
     <IntDir>$(ProjectDir)\Obj\$(Configuration)\</IntDir>
   </PropertyGroup>
@@ -402,7 +413,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>

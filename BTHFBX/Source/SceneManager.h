@@ -6,6 +6,8 @@
 #include "BTHFbx.h"
 #include "BTHFbxScene.h"
 
+#include <mutex>
+
 typedef std::map<std::string, FBXScene*> SCENE_MAP;
 typedef std::vector<FBXSceneInstance*> SCENE_INSTANCE_VEC;
 
@@ -18,8 +20,10 @@ extern "C"
 		FbxManager* mSdkManager;
 		SCENE_MAP m_Scenes;
 		SCENE_INSTANCE_VEC m_SceneInstances;
+		std::mutex m_InstancesMutex;
 
-		FBXScene* LoadScene(char* filename);
+		
+		FBXScene* LoadScene(const char* filename);
 
 		bool InitializeFBXSdk();
 
@@ -27,7 +31,7 @@ extern "C"
 		SceneManager();
 		virtual ~SceneManager();
 		
-		virtual IBTHFbxScene* GetScene(char* filename);
+		virtual IBTHFbxScene* GetScene(const char* filename);
 
 		virtual void UpdateScenes(float deltaTime, bool bEnableAnimation);
 	};

@@ -1,7 +1,8 @@
 #include "FBXModelPartDataD3D.h"
-
 #include "FBXModelD3D.h"
 #include "..\Helpers\BTHResourceManager.h"
+#include "FBXSceneD3D.h"
+
 
 FBXModelPartDataD3D::FBXModelPartDataD3D()
 {
@@ -26,30 +27,34 @@ FBXModelPartDataD3D::~FBXModelPartDataD3D()
 	SAFE_DELETE(mIB);
 }
 
-inline std::string GetFileName(std::string str)
+inline std::string GetFileName(const std::string& str)
 {
 	std::string::size_type pos = str.find_last_of("/\\");
 
 	if( pos != std::string::npos )
 		return str.substr( pos+1, std::string::npos );
+
 	return str;
+}
+
+inline std::string GetFilePath(const std::string& str)
+{
+	std::string::size_type pos = str.find_last_of("/\\");
+
+	if ( pos == std::string::npos )
+		return str;
+
+	return str.substr( 0, pos+1 );
 }
 
 void FBXModelPartDataD3D::Init(FBXModelD3D* parentModel, IBTHFbxModelPart* modelPart, ID3D11Device* dev, ID3D11DeviceContext* devCont)
 {
-	mDiffuseTexture = BTHResourceManager::GetInstance()->GetTexture(modelPart->GetMaterial()->GetDiffuseTextureFilename(), dev, devCont);
-	if(!mDiffuseTexture)
-	{
-		std::string filename = "../Meshes/" + GetFileName(modelPart->GetMaterial()->GetDiffuseTextureFilename());
-		mDiffuseTexture = BTHResourceManager::GetInstance()->GetTexture(filename.c_str(), dev, devCont);
-	}
+	// Scene Path
+	std::string scenePath = GetFilePath(parentModel->GetScene()->GetFileName());
 
-	mNormalTexture = BTHResourceManager::GetInstance()->GetTexture(modelPart->GetMaterial()->GetNormalTextureFilename(), dev, devCont);
-	if(!mNormalTexture)
-	{
-		std::string filename = "../Meshes/" + GetFileName(modelPart->GetMaterial()->GetNormalTextureFilename());
-		mNormalTexture = BTHResourceManager::GetInstance()->GetTexture(filename.c_str(), dev, devCont);
-	}
+	// Textures
+	mDiffuseTexture = BTHResourceManager::GetInstance()->GetTexture(scenePath+modelPart->GetMaterial()->GetDiffuseTextureFilename(), dev, devCont);
+	mNormalTexture = BTHResourceManager::GetInstance()->GetTexture(scenePath+modelPart->GetMaterial()->GetNormalTextureFilename(), dev, devCont);
 
 	BUFFER_INIT_DESC bufferDesc;
 	bufferDesc.ElementSize = sizeof(D3DXVECTOR3);
@@ -108,20 +113,23 @@ void FBXModelPartDataD3D::Init(FBXModelD3D* parentModel, IBTHFbxModelPart* model
 		return;
 	}
 
-
-	bufferDesc.ElementSize = sizeof(BTHFBX_BLEND_WEIGHT_DATA);
-	bufferDesc.InitData = modelPart->GetVertexBoneWeightData();
-	bufferDesc.NumElements = modelPart->GetVertexCount();
-	bufferDesc.Type = VERTEX_BUFFER;
-	bufferDesc.Usage = BUFFER_DEFAULT;
-
-	mVB_BlendWeights = new Buffer();
-	if(FAILED(mVB_BlendWeights->Init(dev, devCont, bufferDesc)))
+	// Is Model Skinned?
+	if ( modelPart->IsSkinnedModel() )
 	{
-		return;
+		bufferDesc.ElementSize = sizeof(BTHFBX_BLEND_WEIGHT_DATA);
+		bufferDesc.InitData = modelPart->GetVertexBoneWeightData();
+		bufferDesc.NumElements = modelPart->GetVertexCount();
+		bufferDesc.Type = VERTEX_BUFFER;
+		bufferDesc.Usage = BUFFER_DEFAULT;
+
+		mVB_BlendWeights = new Buffer();
+		if(FAILED(mVB_BlendWeights->Init(dev, devCont, bufferDesc)))
+		{
+			return;
+		}
 	}
 
-
+	// Index Buffer
 	bufferDesc.ElementSize = sizeof(unsigned long);
 	bufferDesc.InitData = modelPart->GetIndexData();
 	bufferDesc.NumElements = modelPart->GetIndexCount();

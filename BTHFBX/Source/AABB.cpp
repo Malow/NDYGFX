@@ -72,7 +72,7 @@ bool ClipSegment(const BTHFBX_AABB_DATA& box, FbxVector4 start, FbxVector4 end, 
 	return true;
 }
 
-float BoxVsRay(FbxVector4 rayOrigin, FbxVector4 rayDir, BTHFBX_AABB_DATA& box)
+float BoxVsRay(FbxVector4 rayOrigin, FbxVector4 rayDir, const BTHFBX_AABB_DATA& box)
 {
 	float d = 1.0f, d2 = 1.0f;
 

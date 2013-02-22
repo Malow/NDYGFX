@@ -1,10 +1,11 @@
 #include "BTHResourceManager.h"
 #include "..\..\..\MaloWFileDebug.h"
-
 #include "..\D3D\BTHTexture.h"
 #include "..\..\..\Shader.h"
 
+
 BTHResourceManager* BTHResourceManager::resourceManagerInstance = NULL;
+
 BTHResourceManager* BTHResourceManager::GetInstance()
 {
 	if(!resourceManagerInstance)
@@ -33,7 +34,7 @@ BTHResourceManager::~BTHResourceManager()
 	Cleanup();
 }
 
-BTHTexture* BTHResourceManager::GetTexture(const char* filename, ID3D11Device* dev, ID3D11DeviceContext* devCont)
+BTHTexture* BTHResourceManager::GetTexture(const std::string& filename, ID3D11Device* dev, ID3D11DeviceContext* devCont)
 {
 	BTHTexture* texture = NULL;
 	TEXTURE_MAP::iterator i  = mTextures.find(filename);
@@ -53,10 +54,10 @@ BTHTexture* BTHResourceManager::GetTexture(const char* filename, ID3D11Device* d
 	return texture;
 }
 
-BTHTexture* BTHResourceManager::LoadTexture(const char* filename, ID3D11Device* dev, ID3D11DeviceContext* devCont)
+BTHTexture* BTHResourceManager::LoadTexture(const std::string& filename, ID3D11Device* dev, ID3D11DeviceContext* devCont)
 {
 	BTHTexture* texture = new BTHTexture();
-	if(FAILED(texture->Init(filename, dev, devCont)))
+	if(FAILED(texture->Init(filename.c_str(), dev, devCont)))
 	{
 		SAFE_DELETE(texture);
 	}

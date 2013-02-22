@@ -1,9 +1,9 @@
 #include "FBXSceneD3D.h"
 
-FBXSceneD3D::FBXSceneD3D()
+FBXSceneD3D::FBXSceneD3D() :
+	mFBXAnimationController(NULL),
+	mFBXSkeleton(NULL)
 {
-	mFBXAnimationController = NULL;
-	mFBXSkeleton = NULL;
 }
 
 FBXSceneD3D::~FBXSceneD3D()
@@ -16,17 +16,19 @@ FBXSceneD3D::~FBXSceneD3D()
 
 void FBXSceneD3D::Init(const char* filename, IBTHFbx* bthFBX, ID3D11Device* dev, ID3D11DeviceContext* devCont)
 {
+	zFileName = filename;
+
 	mFBXScene = bthFBX->GetScene(filename);
+
 	if(mFBXScene)
 	{
 		mFBXAnimationController = mFBXScene->GetAnimationController();
 		mFBXSkeleton = mFBXScene->GetSkeleton();
 	}
 
-
-	for(int i = 0; i < mFBXScene->GetModelCount(); i++)
+	for(unsigned int i = 0; i < mFBXScene->GetModelCount(); i++)
 	{
-		FBXModelD3D* model = new FBXModelD3D();
+		FBXModelD3D* model = new FBXModelD3D(this);
 		
 		model->Init(mFBXScene->GetModel(i), dev, devCont);
 		
@@ -36,7 +38,7 @@ void FBXSceneD3D::Init(const char* filename, IBTHFbx* bthFBX, ID3D11Device* dev,
 
 void FBXSceneD3D::Update(float dt)
 {
-	for(int i = 0; i < (int)mModels.size(); i++)
+	for(unsigned int i = 0; i < mModels.size(); i++)
 	{
 		mModels[i]->Update(dt);
 	}
@@ -52,15 +54,7 @@ void FBXSceneD3D::Render(float dt, D3DXMATRIX world, D3DXMATRIX camProj, D3DXMAT
 		if( bonesArray )
 		{
 			int nBoneCount = mFBXSkeleton->GetBoneCount();
-
 			mShader->SetMatrixArray("g_mBonesArray", bonesArray, 0, nBoneCount < BTHFBX_MAXBONES_PER_MESH ? nBoneCount : BTHFBX_MAXBONES_PER_MESH );
-
-			// ??????????
-			D3DXMATRIX mat;
-			for(int i = 0; i < nBoneCount; i++)
-			{
-				memcpy(&mat, bonesArray + i * 16, sizeof(D3DXMATRIX));
-			}
 		}
 	}
 	mShader->SetMatrix("g_mScale", world);
@@ -75,7 +69,7 @@ void FBXSceneD3D::Render(float dt, D3DXMATRIX world, D3DXMATRIX camProj, D3DXMAT
 	
 	mShader->Apply(0);
 
-	for(int i = 0; i < (int)mModels.size(); i++)
+	for(unsigned int i = 0; i < mModels.size(); i++)
 	{
 		mModels[i]->Render(dt, mShader, vp, mFBXSkeleton != NULL ? true : false, devCont);
 	}

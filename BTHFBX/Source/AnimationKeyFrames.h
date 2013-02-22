@@ -7,48 +7,40 @@
 
 class AnimationQuaternionKeyFrame
 {
+	FbxQuaternion m_Quaternion2;
+	FbxVector4 m_vTranslation2;
+
 public:
-	//AnimationQuaternionKeyFrame(const D3DXMATRIX& matTransform, const FbxMatrix& matTransform2)
-	AnimationQuaternionKeyFrame(const FbxMatrix& matTransform2)
+
+	AnimationQuaternionKeyFrame(const FbxMatrix& matTransform2=FbxMatrix())
 	{
-		//D3DXQuaternionRotationMatrix(&m_Quaternion, &matTransform);
-		//m_vTranslation = D3DXVECTOR3(matTransform._41,matTransform._42,matTransform._43);
-
-
 		FbxVector4 tmp0, tmp1;
 		double tmpD;
 		matTransform2.GetElements(m_vTranslation2, m_Quaternion2, tmp0, tmp1, tmpD);
 	}
 
-	//const D3DXQUATERNION& GetQuaternion() const	{ return m_Quaternion; }
-	//const D3DXVECTOR3& GetTranslation() const	{ return m_vTranslation; }
-
-	const FbxQuaternion& GetQuaternion2() const	{ return m_Quaternion2; }
-	const FbxVector4& GetTranslation2() const	{ return m_vTranslation2; }
-protected:
-	//D3DXQUATERNION m_Quaternion;
-	//D3DXVECTOR3 m_vTranslation;
-
-	FbxQuaternion m_Quaternion2;
-	FbxVector4 m_vTranslation2;
+	inline const FbxQuaternion& GetQuaternion2() const	{ return m_Quaternion2; }
+	inline const FbxVector4& GetTranslation2() const	{ return m_vTranslation2; }
 };
 
 class AnimationKeyFrames
 {
-public:
-	AnimationKeyFrames(const std::string& strAnimationName);
-	~AnimationKeyFrames();
-
-	//void AddKeyFrame(const D3DXMATRIX& matTransform, const FbxMatrix& matTransform2);
-	void AddKeyFrame(const FbxMatrix& matTransform2);
-
-	std::string GetAnimationName();
-
-	//const D3DXMATRIX& GetKeyFrameTransform(int nKeyFrame);
-	const FbxMatrix& GetKeyFrameTransform2(int nKeyFrame);
-	const AnimationQuaternionKeyFrame& GetKeyFrameQuaternion(int nKeyFrame);
-
-protected:
 	std::string m_strAnimationName;
-	std::vector<std::pair<FbxMatrix, AnimationQuaternionKeyFrame>> m_KeyFrames2;
+	std::vector<FbxMatrix> m_Matrices;
+	std::vector<AnimationQuaternionKeyFrame> m_Quarternions;
+
+public:
+	AnimationKeyFrames(const std::string& strAnimationName, const unsigned int& numFrames=0);
+
+	// Direct Data Access
+	FbxMatrix& GetKeyFrameTransform2(int nKeyFrame) { return m_Matrices[nKeyFrame]; }
+	const FbxMatrix& GetKeyFrameTransform2(int nKeyFrame) const { return m_Matrices[nKeyFrame]; }
+	inline const std::string& GetAnimationName() const { return m_strAnimationName; }
+	inline unsigned int GetFrameCount() const { return m_Matrices.size(); }
+	inline std::vector<FbxMatrix>& GetMatrices() { return m_Matrices; }
+
+	// Frames
+	void AddKeyFrame(const FbxMatrix& matTransform2);
+	const AnimationQuaternionKeyFrame& GetKeyFrameQuaternion(int nKeyFrame);
+	void GenerateQuarternions();
 };

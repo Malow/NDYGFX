@@ -17,6 +17,7 @@
   <ItemGroup>
     <ClInclude Include="Source\Graphics.h" />
     <ClInclude Include="Source\MaloW.h" />
+    <ClInclude Include="Source\TestAnimations.h" />
     <ClInclude Include="Source\TestTerrainNormals.h" />
     <ClInclude Include="Source\TestCase.h" />
     <ClInclude Include="Source\TestMaloW.h" />

@@ -16,13 +16,8 @@ AnimatedMesh::~AnimatedMesh()
 {
 	if(this->mKeyFrames)
 	{
-		unsigned int index = 0;
 		while(this->mKeyFrames->size() > 0)
 		{
-			//**TILLMAN TEST**
-			//GetResourceManager()->UnloadObjectDataResource(this->mSubFileNames[index++].c_str());
-			
-
 			delete this->mKeyFrames->getAndRemove(0);
 		}
 

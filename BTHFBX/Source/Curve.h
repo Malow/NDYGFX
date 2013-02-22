@@ -14,11 +14,11 @@ class Curve : public IBTHFbxCurve
 public:
 		virtual const char* GetName();
 
-		virtual int GetNumControlPoints();
+		virtual unsigned int GetNumControlPoints();
 		
-		virtual const BTHFBX_VEC3& GetControlPoint(int index);
+		virtual const BTHFBX_VEC3& GetControlPoint(unsigned int index);
 
 		void SetName(const char* name);
 
-		void AddControlPoint(BTHFBX_VEC3& point);
+		void AddControlPoint(const BTHFBX_VEC3& point);
 };

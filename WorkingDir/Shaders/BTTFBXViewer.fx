@@ -1,20 +1,19 @@
 //--------------------------------------------------------------------------------------
 // File: BTTFBXViewer.fx
-//
 //--------------------------------------------------------------------------------------
-
 #define MaxBones 100
 
 //--------------------------------------------------------------------------------------
 // Global variables
 //--------------------------------------------------------------------------------------
-matrix gWVP;
-matrix gWorld;			   //  World matrix
-matrix gView;
-matrix gProj;
-matrix gViewProj;
-matrix g_mScale;			   //  Scale matrix
+matrix gWVP;					// Model * View * Projection
+matrix gWorld;					// World matrix
+matrix gView;					// View
+matrix gProj;					// Projection
+matrix gViewProj;				// View * Project
+matrix g_mScale;				// Scale matrix
 
+// Bones
 matrix g_mBonesArray[MaxBones];
 bool g_bSkinning = true;
 
@@ -27,7 +26,7 @@ cbuffer cbImmutable
 
 RasterizerState DefaultRasterizerState
 {
-	CullMode = Back;
+	CullMode = Front;
 	FillMode = Solid;
 };
 
@@ -66,11 +65,11 @@ SamplerState samLinear
 //--------------------------------------------------------------------------------------
 struct VS_OUTPUT
 {
-    float4 Position   : SV_POSITION;
-    float3 Normal	  : NORMAL;
-	float3 Tangent	  : TANGENT;
-	float2 TexCoord	  : TEXCOORD;
-	float3 PosW  : POS_WORLD;
+    float4 Position		: SV_POSITION;
+    float3 Normal		: NORMAL;
+	float3 Tangent		: TANGENT;
+	float2 TexCoord		: TEXCOORD;
+	float3 PosW			: POS_WORLD;
 };
 
 struct PS_OUTPUT
@@ -91,18 +90,10 @@ VS_OUTPUT DefaultVS( float3 vPos	     : SV_POSITION,
 {
     VS_OUTPUT Output;
 
-	float4 position = 3;
-	float3 normal = 0, tangent = 0;
-	position = float4(vPos,1.0f);
+	float4 position = float4(vPos, 1.0f);
+	float3 normal = 0;
+	float3 tangent = 0;
 
-	/*
-	float4x4 inv;
-	inv[0] = float4(-1, 0, 0, 0);
-	inv[1] = float4(0, -1, 0, 0);
-	inv[2] = float4(0, 0, -1, 0);
-	inv[3] = float4(0, 0, 0, 0);
-	position = mul(position, inv);
-	*/
 	if( g_bSkinning )
 	{
 		float4x4 skinTransform = 0;
@@ -110,36 +101,33 @@ VS_OUTPUT DefaultVS( float3 vPos	     : SV_POSITION,
 		skinTransform += g_mBonesArray[vBoneIndices.y] * vBoneWeights.y;
 		skinTransform += g_mBonesArray[vBoneIndices.z] * vBoneWeights.z;
 		skinTransform += g_mBonesArray[vBoneIndices.w] * vBoneWeights.w;
+
 		position = mul(position, skinTransform);
 		normal = normalize(mul(vNormal, (float3x3)skinTransform));
 		tangent = normalize(mul(vTangent, (float3x3)skinTransform));
-
-		/* // Solves inverted, adds other problems.
-		position.x *= -1.0f;
-		position.y *= -1.0f;
-		position.z *= -1.0f;
-
-		vTexCoord.x *= -1.0f;
-		vTexCoord.y *= -1.0f;
-		*/
 	}
 	else
 	{
 		position = mul(position, gWorld);
 		normal = mul(vNormal, gWorld);
 		tangent = mul(vTangent, gWorld);
+
+		//vTexCoord.x = ( 1.0f - vTexCoord.x );
 	}
 
+	// Invert X
+	position.x *= -1.0f;
+
+	// Scale Position
 	position = mul(position, g_mScale);
-
-
-
-	Output.PosW = position.xyz;
+	
+	// Output
+	Output.PosW = position;
 	Output.Position = mul(position, gViewProj);
 	Output.Normal = mul(float4(normal, 0), g_mScale);
 	Output.Tangent = mul(float4(tangent, 0), g_mScale);
 	Output.TexCoord = vTexCoord;
-    return Output;    
+    return Output;
 }
 
 //--------------------------------------------------------------------------------------
@@ -198,10 +186,10 @@ void NormalGS( triangle VS_OUTPUT Input[3],
 	{
 		float3 Normal = normalize(Input[i].Normal);
 		
-		Output.Position = mul( float4(Input[i].PosW, 1.0), gViewProj );
+		Output.Position = mul( float4(Input[i].PosW, 1.0), gProj );
 		streamOut.Append(Output);
 		
-		Output.Position = mul( float4(Input[i].PosW + Normal * 0.15f, 1.0), gViewProj );
+		Output.Position = mul( float4(Input[i].PosW + Normal * 0.15f, 1.0), gProj );
 		streamOut.Append(Output);
 		
 		streamOut.RestartStrip();

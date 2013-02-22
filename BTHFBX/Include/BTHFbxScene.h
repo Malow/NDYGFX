@@ -18,11 +18,11 @@ extern "C"
 		virtual IBTHFbxAnimationController* GetAnimationController() = 0;
 		virtual IBTHFbxSkeleton* GetSkeleton() = 0;
 		
-		virtual int GetModelCount() = 0;
-		virtual IBTHFbxModel* GetModel(int index) = 0;
+		virtual unsigned int GetModelCount() = 0;
+		virtual IBTHFbxModel* GetModel(unsigned int index) = 0;
 		
-		virtual int GetCurveCount() = 0;
-		virtual IBTHFbxCurve* GetCurve(int index) = 0;
+		virtual unsigned int GetCurveCount() = 0;
+		virtual IBTHFbxCurve* GetCurve(unsigned int index) = 0;
 
 		virtual BTHFBX_AABB_DATA GetBoundingBoxData() = 0;
 

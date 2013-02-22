@@ -1,6 +1,7 @@
 #pragma once
 
-#pragma warning(disable : 4995)
+#pragma warning( push )
+#pragma warning( disable : 4995 )
 
 #include <vector>
 
@@ -82,9 +83,9 @@ public:
 
 	std::vector<std::pair<std::string,T>>& GetDataArray()	{ return m_data; }
 
-	int GetCount()							{ return (int)m_data.size(); }
-	std::string GetKeyAt(int nIndex)		{ return m_data[nIndex].first; }
-	T GetValueAt(int nIndex)				{ return m_data[nIndex].second; } 
+	inline unsigned int GetCount() const			{ return m_data.size(); }
+	inline std::string GetKeyAt(int nIndex)	const 	{ return m_data[nIndex].first; }
+	inline T GetValueAt(unsigned int nIndex) const	{ return m_data[nIndex].second; } 
 
 
 protected:
@@ -103,3 +104,5 @@ protected:
 	std::vector<int> m_hashTable;
 	std::vector<std::pair<std::string,T>> m_data;
 };
+
+#pragma warning ( pop )

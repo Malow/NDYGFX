@@ -15,12 +15,12 @@ class BTHResourceManager
 
 	TEXTURE_MAP	mTextures;
 
-	BTHTexture* LoadTexture(const char* filename, ID3D11Device* dev, ID3D11DeviceContext* devCont);
+	BTHTexture* LoadTexture(const std::string& filename, ID3D11Device* dev, ID3D11DeviceContext* devCont);
 public:
 	static BTHResourceManager* GetInstance();
 	static void DeleteInstance();
 
-	BTHTexture* GetTexture(const char* filename, ID3D11Device* dev, ID3D11DeviceContext* devCont);
+	BTHTexture* GetTexture(const std::string& filename, ID3D11Device* dev, ID3D11DeviceContext* devCont);
 
 	void Cleanup();
 };
