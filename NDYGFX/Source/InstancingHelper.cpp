@@ -95,8 +95,8 @@ void InstancingHelper::ExpandStripInstanceBuffer()
 	this->g_DeviceContext->Map(temporaryNewBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubResourceNew);
 	this->g_DeviceContext->Map(this->zStripInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubResourceOld);
 	
-	Vertex* dataViewNew = reinterpret_cast<Vertex*>(mappedSubResourceNew.pData);
-	Vertex* dataViewOld = reinterpret_cast<Vertex*>(mappedSubResourceOld.pData);
+	StripData::InstancedDataStruct* dataViewNew = reinterpret_cast<StripData::InstancedDataStruct*>(mappedSubResourceNew.pData);
+	StripData::InstancedDataStruct* dataViewOld = reinterpret_cast<StripData::InstancedDataStruct*>(mappedSubResourceOld.pData);
 	for(unsigned int i = 0; i < oldSize; ++i)
 	{
 		dataViewNew[i] = dataViewOld[i];
@@ -112,7 +112,7 @@ void InstancingHelper::ExpandStripInstanceBuffer()
 	//The temporary pointer is no longer needed, so set to NULL.
 	temporaryNewBuffer = NULL;
 
-	MaloW::Debug("INFO: InstancingHelper: ExpandStripDataAndBuffer(): Resizing Strip instance buffer. Number of Stripes: '" + MaloW::convertNrToString(this->zStripData.size()) + "'."
+	MaloW::Debug("INFO: InstancingHelper: ExpandStripDataAndBuffer(): Resizing Strip instance buffer. Number of Strips: '" + MaloW::convertNrToString(this->zStripData.size()) + "'."
 		+ "New BUFFER size: '" + MaloW::convertNrToString(this->zStripInstanceBufferSize) + "'."
 		);
 }
@@ -285,8 +285,7 @@ void InstancingHelper::AddMesh(Mesh* mesh)
 	//Expand buffer if necessary
 	if(this->zStripData.size() >= this->zStripInstanceBufferSize)
 	{
-		//this->ExpandStripInstanceBuffer();
-		MaloW::Debug("TESTTTT");
+		this->ExpandStripInstanceBuffer();
 	}
 	else
 	{
@@ -302,7 +301,7 @@ void InstancingHelper::AddMesh(Mesh* mesh)
 			StripData StripData;
 
 			StripData.InstancedData.s_WorldMatrix = mesh->GetWorldMatrix();
-			StripData.InstancedData.s_WorldInverseTransposeMatrix = worldInverseTranspose;
+			//StripData.InstancedData.s_WorldInverseTransposeMatrix = worldInverseTranspose;
 			StripData.s_MeshStrip = mesh->GetMeshStripsResourcePointer()->GetMeshStripsPointer()->get(i);
 
 			this->zStripData.push_back(StripData);

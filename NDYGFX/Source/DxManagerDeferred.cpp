@@ -525,6 +525,7 @@ void DxManager::RenderDeferredGeometry()
 
 				bool hasBeenCounted = false;
 				
+				
 				for(int u = 0; u < strips->size(); u++)
 				{
 					if(!staticMesh->IsStripCulled(u))
@@ -617,29 +618,30 @@ void DxManager::RenderDeferredGeometry()
 						{
 							MaloW::Debug("WARNING: DxManagerDeferred: RenderDeferredGeometry(): Both index and vertex buffers were NULL for static mesh. ");
 						}
-
-
 						
-						/*bool hasBeenCounted = false;
-						//Just check the first strip if it is culled.  //**TILLMAN**
-						if(!staticMesh->IsStripCulled(0))
-						{
-							if(!hasBeenCounted)
-							{
-								CurrentRenderedMeshes++;
-								hasBeenCounted = true;
-							}
 
-							//Add mesh info to instance helper
-							//if(!once)
-							{
-								this->instancingHelper->AddMesh(staticMesh);
-								//once = true;
-							}
-						}*/
 
 					}
 				}
+					
+						
+				/*bool hasBeenCounted = false;
+				//Just check the first strip if it is culled.  //**TILLMAN**
+				if(!staticMesh->IsStripCulled(0))
+				{
+					if(!hasBeenCounted)
+					{
+						CurrentRenderedMeshes++;
+						hasBeenCounted = true;
+					}
+
+					//Add mesh info to instance helper
+					//if(!once)
+					{
+						this->instancingHelper->AddMesh(staticMesh);
+						//once = true;
+					}
+				}*/
 			}
 			else
 			{

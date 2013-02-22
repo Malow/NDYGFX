@@ -63,7 +63,7 @@ struct VSIn
 	float3 Binormal : BINORMAL;
 	//instance data
 	float4x4 world					: WORLD;
-	float4x4 worldInverseTranspose	: WIT;
+	//float4x4 worldInverseTranspose	: WIT;
 	
 	//uint InstanceId : SV_InstanceID;
 };

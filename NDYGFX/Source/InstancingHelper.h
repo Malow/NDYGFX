@@ -60,12 +60,12 @@ struct StripData
 	struct InstancedDataStruct
 	{
 		D3DXMATRIX	s_WorldMatrix; //translation, rotation, scale
-		D3DXMATRIX	s_WorldInverseTransposeMatrix; 
+		//D3DXMATRIX	s_WorldInverseTransposeMatrix; 
 
 		InstancedDataStruct() 
 		{
 			D3DXMatrixIdentity(&s_WorldMatrix);
-			s_WorldInverseTransposeMatrix = s_WorldMatrix;
+			//s_WorldInverseTransposeMatrix = s_WorldMatrix;
 		}
 	} InstancedData;
 
@@ -159,7 +159,7 @@ class InstancingHelper
 		void AddBillboard(const Billboard* const billboard);
 		/*	Sorts, creates instance groups and updates the instance buffer.	*/
 		void PreRenderBillboards();
-		void PostRenderBillboards() { this->zBillboardData.clear(); }
+		void PostRenderBillboards() { this->zBillboardData.clear(); this->zBillboardGroups.clear(); }
 		
 
 
@@ -175,6 +175,6 @@ class InstancingHelper
 		void AddMesh(Mesh* mesh);
 		/*	Sorts, creates instance groups and updates the instance buffer.	*/
 		void PreRenderStrips();
-		void PostRenderStrips() { this->zStripData.clear(); }
+		void PostRenderStrips() { this->zStripData.clear(); this->zStripGroups.clear(); }
 
 };
