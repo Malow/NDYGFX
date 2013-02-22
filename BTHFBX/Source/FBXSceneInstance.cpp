@@ -149,22 +149,22 @@ BTHFBX_RAY_BOX_RESULT FBXSceneInstance::RayVsScene(const BTHFBX_RAY& ray, BTHFBX
 	return result;
 }
 
-int FBXSceneInstance::GetModelCount()
+unsigned int FBXSceneInstance::GetModelCount()
 {
 	return m_Models.GetCount();
 }
 
-IBTHFbxModel* FBXSceneInstance::GetModel(int index)
+IBTHFbxModel* FBXSceneInstance::GetModel(unsigned int index)
 {
 	return m_Models.GetValueAt(index);
 }
 
-int FBXSceneInstance::GetCurveCount()
+unsigned int FBXSceneInstance::GetCurveCount()
 {
-	return (int)m_Curves->size();
+	return m_Curves->size();
 }
 
-IBTHFbxCurve* FBXSceneInstance::GetCurve(int index)
+IBTHFbxCurve* FBXSceneInstance::GetCurve(unsigned int index)
 {
 	return &(*m_Curves)[index];
 }

@@ -3,6 +3,21 @@
 #include "Caching.h"
 
 
+inline std::string GetFileFromPath( const std::string& name )
+{
+	std::string tempFileName = name;
+	std::string pathfolder = "";
+	size_t slashpos = tempFileName.find("/");
+	while(slashpos != std::string::npos)
+	{
+		slashpos = tempFileName.find("/");
+		pathfolder += tempFileName.substr(0, slashpos + 1);
+		tempFileName = tempFileName.substr(slashpos + 1);
+	}
+
+	return tempFileName;
+}
+
 FBXScene::FBXScene(FbxManager* sdkManager)
 	: mSdkManager(sdkManager), mScene(NULL), m_pSkeleton(NULL), m_pAnimationController(NULL)
 {
@@ -149,7 +164,7 @@ void FBXScene::ProcessScene(FbxScene* pScene)
 	if ( m_pSkeleton ) delete m_pSkeleton, m_pSkeleton = 0;
 
 	FbxAxisSystem SceneAxisSystem = pScene->GetGlobalSettings().GetAxisSystem();
-	FbxAxisSystem OurAxisSystem(FbxAxisSystem::DirectX);
+	FbxAxisSystem OurAxisSystem(FbxAxisSystem::Motionbuilder);
 
 	if( SceneAxisSystem != OurAxisSystem )
 	{
@@ -456,7 +471,7 @@ void FBXScene::ProcessMesh(FbxNode* pNode)
 		// Material
 		Material* pMaterial = NULL;
 
-		for( int pvi = 0; pvi < 3; ++pvi )
+		for( unsigned int pvi = 0; pvi < 3; ++pvi )
 		{
 			int nVertexIndex = pFBXMesh->GetPolygonVertex(pi, pvi);
 
@@ -524,8 +539,9 @@ void FBXScene::ProcessBoneWeights(FbxSkin* pFBXSkin, std::vector<BoneWeights>& m
 	FbxCluster::ELinkMode linkMode = FbxCluster::eNormalize; //Default link mode
 
 	std::vector<BoneWeights> skinBoneWeights(meshBoneWeights.size(), BoneWeights());
-	int nClusterCount = pFBXSkin->GetClusterCount();
-	for( int i = 0; i < nClusterCount; ++i )
+	unsigned int nClusterCount = pFBXSkin->GetClusterCount();
+
+	for( unsigned int i = 0; i < nClusterCount; ++i )
 	{
 		FbxCluster* pFBXCluster = pFBXSkin->GetCluster(i);
 
@@ -563,8 +579,8 @@ void FBXScene::ProcessBoneWeights(FbxSkin* pFBXSkin, std::vector<BoneWeights>& m
 
 	switch(linkMode)
 	{
-	case FbxCluster::eNormalize:	//Normalize so weight sum is 1.0.
-		for( int i = 0; i < (int)skinBoneWeights.size(); ++i )
+	case FbxCluster::eNormalize: //Normalize so weight sum is 1.0.
+		for( unsigned int i = 0; i < skinBoneWeights.size(); ++i )
 		{
 			skinBoneWeights[i].Normalize();
 		}
@@ -578,18 +594,19 @@ void FBXScene::ProcessBoneWeights(FbxSkin* pFBXSkin, std::vector<BoneWeights>& m
 	break;
 	}
 
-	for( int i = 0; i < (int)meshBoneWeights.size(); ++i )
+	for( unsigned int i = 0; i < meshBoneWeights.size(); ++i )
 	{
 		meshBoneWeights[i].AddBoneWeights(skinBoneWeights[i]);
 	}	
 }
 
-inline std::string GetFilePath(std::string str)
+inline std::string GetFilePath(const std::string& str)
 {
 	std::string::size_type pos = str.find_last_of("/\\");
 
 	if( pos != std::string::npos )
 		return str.substr( 0, pos );
+
 	return str;
 }
 
@@ -605,14 +622,17 @@ void FBXScene::ProcessMaterials(FbxScene* pScene)
 		FbxProperty diffuseTextureProperty = pFBXMaterial->FindProperty(FbxSurfaceMaterial::sDiffuse);
 		if( diffuseTextureProperty.IsValid() )
 		{
-			//FbxFileTexture* pDiffuseTexture = FbxCast<FbxFileTexture>(diffuseTextureProperty.GetSrcObject(FbxTexture::ClassId, 0));
 			FbxFileTexture* pDiffuseTexture = diffuseTextureProperty.GetSrcObject<FbxFileTexture>(0);
 
 			if( pDiffuseTexture )
 			{
 				std::string strFileName = pDiffuseTexture->GetFileName();
+
 				if( strFileName.length() == 0 )
 					strFileName = pDiffuseTexture->GetRelativeFileName();
+
+				strFileName = GetFileFromPath(strFileName);
+
 				pMaterial->SetDiffuseTextureName(strFileName);
 			}
 		}
@@ -620,25 +640,23 @@ void FBXScene::ProcessMaterials(FbxScene* pScene)
 		FbxProperty normalTextureProperty = pFBXMaterial->FindProperty(FbxSurfaceMaterial::sNormalMap);
 		if( normalTextureProperty.IsValid() )
 		{
-				//FbxFileTexture* pNormalTexture = FbxCast<FbxFileTexture>(normalTextureProperty.GetSrcObject(FbxTexture::ClassId, 0));
 				FbxFileTexture* pNormalTexture = normalTextureProperty.GetSrcObject<FbxFileTexture>(0);
 
 				if( pNormalTexture )
 				{
 					std::string strFileName = pNormalTexture->GetFileName();
+
 					if( strFileName.length() == 0 )
 						strFileName = pNormalTexture->GetRelativeFileName();
+					
+					strFileName = GetFileFromPath(strFileName);
+
 					pMaterial->SetNormalTextureName(strFileName);
 				}
 		}
 
-		FbxSurfaceLambert* pLambert = FbxCast<FbxSurfaceLambert>(pFBXMaterial); //dynamic_cast<KFbxSurfaceLambert*>(pFBXMaterial);
-		FbxSurfacePhong* pPhong = FbxCast<FbxSurfacePhong>(pFBXMaterial); //dynamic_cast<KFbxSurfacePhong*>(pFBXMaterial);
-
-		//D3DXVECTOR3 AmbientColor;
-		//D3DXVECTOR3 EmissiveColor;
-		//D3DXVECTOR3 DiffuseColor;
-		//D3DXVECTOR3 SpecularColor;
+		FbxSurfaceLambert* pLambert = FbxCast<FbxSurfaceLambert>(pFBXMaterial);
+		FbxSurfacePhong* pPhong = FbxCast<FbxSurfacePhong>(pFBXMaterial); 
 
 		BTHFBX_VEC3 AmbientColor2;
 		BTHFBX_VEC3 EmissiveColor2;
@@ -650,33 +668,25 @@ void FBXScene::ProcessMaterials(FbxScene* pScene)
 
 		if( pLambert )
 		{
-			//AmbientColor = GetMaterialColor(pLambert->Ambient, pLambert->AmbientFactor);
-			//EmissiveColor = GetMaterialColor(pLambert->Emissive, pLambert->EmissiveFactor);
-			//DiffuseColor = GetMaterialColor(pLambert->Diffuse, pLambert->DiffuseFactor);
-
 			AmbientColor2 = GetMaterialColor2(pLambert->Ambient, pLambert->AmbientFactor);
 			EmissiveColor2 = GetMaterialColor2(pLambert->Emissive, pLambert->EmissiveFactor);
 			DiffuseColor2 = GetMaterialColor2(pLambert->Diffuse, pLambert->DiffuseFactor);
 
 			FbxPropertyT<FbxDouble> FBXTransparencyProperty = pLambert->TransparencyFactor;
+
 			if( FBXTransparencyProperty.IsValid() )
 				fTransparency = (float)FBXTransparencyProperty.Get();
 		}
+
 		if( pPhong )
 		{
-			//SpecularColor = GetMaterialColor(pPhong->Specular, pPhong->SpecularFactor);
 			SpecularColor2 = GetMaterialColor2(pPhong->Specular, pPhong->SpecularFactor);
 
 			FbxPropertyT<FbxDouble> FBXSpecularPowerProperty = pPhong->Shininess;
+
 			if( FBXSpecularPowerProperty.IsValid() )
 				fSpecularPower = (float)FBXSpecularPowerProperty.Get();
 		}
-
-		//pMaterial->SetAmbientColor(AmbientColor);
-		//pMaterial->SetEmissiveColor(EmissiveColor);
-		//pMaterial->SetDiffuseColor(DiffuseColor);
-		//pMaterial->SetSpecularColor(SpecularColor);
-
 
 		pMaterial->SetAmbientColor2(AmbientColor2);
 		pMaterial->SetEmissiveColor2(EmissiveColor2);
@@ -964,6 +974,7 @@ FbxMatrix FBXScene::GetAbsoluteTransformFromCurrentTake2(FbxNode* pNode, FbxTime
 	}
 	
 	FbxAMatrix matFBXGlobal = mScene->GetEvaluator()->GetNodeGlobalTransform(pNode, time);
+
 	return matFBXGlobal;
 }
 

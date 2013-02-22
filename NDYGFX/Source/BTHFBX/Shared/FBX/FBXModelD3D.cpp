@@ -1,7 +1,10 @@
 #include "FBXModelD3D.h"
+#include "FBXSceneD3D.h"
+#include "FBXModelPartD3D.h"
 
 
-FBXModelD3D::FBXModelD3D()
+FBXModelD3D::FBXModelD3D(FBXSceneD3D* scene) : 
+	zScene(scene)
 {
 	D3DXMatrixIdentity(&mGeometricOffset);
 	D3DXMatrixIdentity(&mAnimationTransform);

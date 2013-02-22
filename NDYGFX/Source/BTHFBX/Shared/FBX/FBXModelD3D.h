@@ -3,24 +3,31 @@
 #include "..\..\..\..\Source\Shader.h"
 #include "..\..\..\..\Source\Buffer.h"
 #include <BTHFbxModel.h>
-#include "FBXModelPartD3D.h"
 #include "..\..\..\Array.h"
 #include <Vector>
+
+class FBXSceneD3D;
+class FBXModelPartD3D;
 
 
 class FBXModelD3D
 {
-	std::vector<FBXModelPartD3D*> mParts;
+	// Scene
+	FBXSceneD3D* zScene;
 
-	D3DXMATRIX					mGeometricOffset;
-	D3DXMATRIX					mAnimationTransform;
-
+	// Real Data
 	IBTHFbxModel*				mBTHFBXModel;
 
+	// Properties
+	D3DXMATRIX					mGeometricOffset;
+	D3DXMATRIX					mAnimationTransform;
 	std::string					mName;
 
+	// Parts
+	std::vector<FBXModelPartD3D*> mParts;
+
 public:
-	FBXModelD3D();
+	FBXModelD3D(FBXSceneD3D* scene);
 	~FBXModelD3D();
 
 	void Init(IBTHFbxModel* model, ID3D11Device* dev, ID3D11DeviceContext* devCont);
@@ -32,4 +39,5 @@ public:
 	const D3DXMATRIX& GetAnimationTransform();
 
 	inline const char* GetName() { return mName.c_str(); }
+	inline FBXSceneD3D* GetScene() { return zScene; }
 };

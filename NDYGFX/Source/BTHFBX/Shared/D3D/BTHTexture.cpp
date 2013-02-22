@@ -7,7 +7,6 @@ BTHTexture::BTHTexture()
 
 	m_iTextureWidth = 0;
 	m_iTextureHeight = 0;
-	strcpy_s(m_cFilename, sizeof(m_cFilename), "");
 
 	mDevice3D = NULL;
 	mDeviceContextUsedToLock = NULL;
@@ -89,14 +88,14 @@ void BTHTexture::UpdateData(void* data, ID3D11DeviceContext* deviceContext, D3D1
 		deviceContext->UpdateSubresource(m_pTexture, 0, pDestRegion, data, pDestRegion->right * 4, 0);
 }
 
-HRESULT BTHTexture::Init(const char* filename, ID3D11Device* dev, ID3D11DeviceContext* devCont)
+HRESULT BTHTexture::Init(const std::string& fileName, ID3D11Device* dev, ID3D11DeviceContext* devCont)
 {
+	zFileName = fileName;
+
 	HRESULT hr = S_OK;
 
-	strcpy_s(m_cFilename, sizeof(m_cFilename), filename);
-
 	ID3D11Resource* resource;
-	if(FAILED(hr = D3DX11CreateTextureFromFile(dev, filename, 0, 0, &resource, &hr)))
+	if(FAILED(hr = D3DX11CreateTextureFromFile(dev, zFileName.c_str(), 0, 0, &resource, &hr)))
 	{
 		if(hr == D3D11_ERROR_FILE_NOT_FOUND)
 		{
@@ -205,9 +204,4 @@ float BTHTexture::GetWidth()
 float BTHTexture::GetHeight()
 {
 	return m_iTextureHeight;
-}
-
-const char* BTHTexture::GetFilename()
-{
-	return m_cFilename;
 }

@@ -2,6 +2,20 @@
 #include <fstream>
 #include <set>
 
+inline std::string GetFileFromPath( const std::string& name )
+{
+	std::string tempFileName = name;
+	std::string pathfolder = "";
+	size_t slashpos = tempFileName.find("/");
+	while(slashpos != std::string::npos)
+	{
+		slashpos = tempFileName.find("/");
+		pathfolder += tempFileName.substr(0, slashpos + 1);
+		tempFileName = tempFileName.substr(slashpos + 1);
+	}
+
+	return tempFileName;
+}
 
 bool LoadCachedScene(const std::string& fileName, FBXScene* scene)
 {
@@ -264,7 +278,7 @@ bool LoadCachedScene(const std::string& fileName, FBXScene* scene)
 				// Read Transformations
 				if ( numKeyFrames ) 
 				{
-					file.read(reinterpret_cast<char*>(&keyFrames->GetMatrices()[0]), sizeof(FbxMatrix) * numKeyFrames);
+					file.read(reinterpret_cast<char*>(&keyFrames->GetMatrices()[0]), sizeof(FbxMatrix) * numKeyFrames);					
 					keyFrames->GenerateQuarternions();
 				}
 
@@ -445,18 +459,20 @@ bool CacheScene(const std::string& fileName, FBXScene* scene)
 		file.write(reinterpret_cast<const char*>(&diffuse), sizeof(BTHFBX_VEC3));
 
 		// Write Diffuse Texture
-		unsigned int diffuseNameLength = strlen((*i)->GetDiffuseTextureFilename());
+		std::string diffuseMapFileName = GetFileFromPath((*i)->GetDiffuseTextureFilename());
+		unsigned int diffuseNameLength = diffuseMapFileName.length();
 		file.write(reinterpret_cast<const char*>(&diffuseNameLength), sizeof(unsigned int));
-		file.write((*i)->GetDiffuseTextureFilename(), diffuseNameLength);
+		file.write(&diffuseMapFileName[0], diffuseNameLength);
 
 		// Write Emissive Multiplier
 		BTHFBX_VEC3 emissive = (*i)->GetEmissiveColor();
 		file.write(reinterpret_cast<const char*>(&emissive), sizeof(BTHFBX_VEC3));
 
 		// Write Normal Map
-		unsigned int normalMapLength = strlen((*i)->GetNormalTextureFilename());
+		std::string normalMapFileName = GetFileFromPath((*i)->GetNormalTextureFilename());
+		unsigned int normalMapLength = normalMapFileName.length();
 		file.write(reinterpret_cast<const char*>(&normalMapLength), sizeof(unsigned int));
-		file.write((*i)->GetNormalTextureFilename(), normalMapLength);
+		file.write(&normalMapFileName[0], normalMapLength);
 
 		// Write Specular Multiplier
 		BTHFBX_VEC3 specular = (*i)->GetSpecularColor();

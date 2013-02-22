@@ -11,7 +11,9 @@ class TestAnimations : public TestCase
 	iFBXMesh* soldier;
 
 public:
-	TestAnimations()
+	TestAnimations() :
+		copyrightedTempGuy(0),
+		soldier(0)
 	{
 		
 	}
@@ -31,23 +33,27 @@ public:
 
 	virtual void RunTest(float dt)
 	{
-		if ( GetGraphics()->GetKeyListener()->IsPressed('1') )
+		if ( copyrightedTempGuy )
 		{
-			copyrightedTempGuy->SetAnimation(0);
+			if ( GetGraphics()->GetKeyListener()->IsPressed('1') )
+			{
+				copyrightedTempGuy->SetAnimation(0);
+			}
+			else if ( GetGraphics()->GetKeyListener()->IsPressed('2') )
+			{
+				copyrightedTempGuy->SetAnimation(1);
+			}
+			else if ( GetGraphics()->GetKeyListener()->IsPressed('3') )
+			{
+				copyrightedTempGuy->SetAnimation(2);
+			}
+			else if ( GetGraphics()->GetKeyListener()->IsPressed('4') )
+			{
+				copyrightedTempGuy->SetAnimation(3);
+			}
 		}
-		else if ( GetGraphics()->GetKeyListener()->IsPressed('2') )
-		{
-			copyrightedTempGuy->SetAnimation(1);
-		}
-		else if ( GetGraphics()->GetKeyListener()->IsPressed('3') )
-		{
-			copyrightedTempGuy->SetAnimation(2);
-		}
-		else if ( GetGraphics()->GetKeyListener()->IsPressed('4') )
-		{
-			copyrightedTempGuy->SetAnimation(3);
-		}
-		else if ( GetGraphics()->GetKeyListener()->IsPressed('R') )
+
+		if ( GetGraphics()->GetKeyListener()->IsPressed('R') )
 		{
 			GetGraphics()->ReloadShaders(1);
 		}

@@ -26,7 +26,7 @@ cbuffer cbImmutable
 
 RasterizerState DefaultRasterizerState
 {
-	CullMode = Back;
+	CullMode = Front;
 	FillMode = Solid;
 };
 
@@ -94,16 +94,6 @@ VS_OUTPUT DefaultVS( float3 vPos	     : SV_POSITION,
 	float3 normal = 0;
 	float3 tangent = 0;
 
-	float4x4 stupidFuckingFix = 
-	{
-		1,	0,	0,	0,
-		0,	1,	0,	0,
-		0,	0,	1,	0,
-		0,	0,	0,	1
-	};
-
-	position = mul(position, stupidFuckingFix);
-
 	if( g_bSkinning )
 	{
 		float4x4 skinTransform = 0;
@@ -121,7 +111,12 @@ VS_OUTPUT DefaultVS( float3 vPos	     : SV_POSITION,
 		position = mul(position, gWorld);
 		normal = mul(vNormal, gWorld);
 		tangent = mul(vTangent, gWorld);
+
+		//vTexCoord.x = ( 1.0f - vTexCoord.x );
 	}
+
+	// Invert X
+	position.x *= -1.0f;
 
 	// Scale Position
 	position = mul(position, g_mScale);

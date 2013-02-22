@@ -1,9 +1,9 @@
 #include "FBXSceneD3D.h"
 
-FBXSceneD3D::FBXSceneD3D()
+FBXSceneD3D::FBXSceneD3D() :
+	mFBXAnimationController(NULL),
+	mFBXSkeleton(NULL)
 {
-	mFBXAnimationController = NULL;
-	mFBXSkeleton = NULL;
 }
 
 FBXSceneD3D::~FBXSceneD3D()
@@ -16,6 +16,8 @@ FBXSceneD3D::~FBXSceneD3D()
 
 void FBXSceneD3D::Init(const char* filename, IBTHFbx* bthFBX, ID3D11Device* dev, ID3D11DeviceContext* devCont)
 {
+	zFileName = filename;
+
 	mFBXScene = bthFBX->GetScene(filename);
 
 	if(mFBXScene)
@@ -26,7 +28,7 @@ void FBXSceneD3D::Init(const char* filename, IBTHFbx* bthFBX, ID3D11Device* dev,
 
 	for(unsigned int i = 0; i < mFBXScene->GetModelCount(); i++)
 	{
-		FBXModelD3D* model = new FBXModelD3D();
+		FBXModelD3D* model = new FBXModelD3D(this);
 		
 		model->Init(mFBXScene->GetModel(i), dev, devCont);
 		

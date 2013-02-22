@@ -101,11 +101,14 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 				GetGraphics()->GetCamera()->MoveBackward(deltaTime * 10.0f);
 			if(GetGraphics()->GetKeyListener()->IsPressed('D'))	
 				GetGraphics()->GetCamera()->MoveRight(deltaTime * 10.0f);
+			if(GetGraphics()->GetKeyListener()->IsPressed(VK_ESCAPE))
+				break;
 
 			activeTestCase->RunTest(deltaTime);
 		}
 
 		activeTestCase->PostTest();
+		delete activeTestCase;
 
 		return 0;
 	}
@@ -161,11 +164,6 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		
 
 //*************************************	     RUN TESTS       **********************
-#ifdef TEST
-	mt.RunTest(diff);
-	tt.RunTest(diff);
-	ot.RunTest(diff);
-#endif
 //*************************************	    END OF RUN TESTS       **********************
 
 		li->SetPosition(GetGraphics()->GetCamera()->GetPosition());
@@ -293,11 +291,6 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	
 
 	//*************************************	     POST TEST       **********************
-#ifdef TEST
-	mt.PostTest();
-	tt.PostTest();
-	ot.PostTest();
-#endif
 	//*************************************	   END OF POST TEST       **********************
 
 	FreeGraphics();

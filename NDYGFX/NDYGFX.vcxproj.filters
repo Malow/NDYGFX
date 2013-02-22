@@ -26,7 +26,7 @@
     <Filter Include="Source Files\Engine\Other\ParticleSystem">
       <UniqueIdentifier>{5c147af9-15dc-4a9d-92e0-d08c7bff6c0d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Engine\Objects and Entities\FBX">
+    <Filter Include="Source Files\Engine\FBX">
       <UniqueIdentifier>{6d7bc0bb-8778-4913-af64-4d2459c83f8f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -217,9 +217,6 @@
     <ClInclude Include="Source\FBXMesh.h">
       <Filter>Source Files\Engine\Objects and Entities</Filter>
     </ClInclude>
-    <ClInclude Include="Source\BTHFBX\Shared\FBX\FBXSceneD3D.h">
-      <Filter>Source Files\Engine\Objects and Entities\FBX</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Billboard.h">
       <Filter>Source Files\Engine\Objects and Entities</Filter>
     </ClInclude>
@@ -231,6 +228,48 @@
     </ClInclude>
     <ClInclude Include="Source\InstancingHelper.h">
       <Filter>Source Files\Engine\DxMan and Techs</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\BTHFBX\Shared\FBX\FBXModelD3D.h">
+      <Filter>Source Files\Engine\FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\BTHFBX\Shared\FBX\FBXModelPartD3D.h">
+      <Filter>Source Files\Engine\FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\BTHFBX\Shared\FBX\FBXModelPartDataD3D.h">
+      <Filter>Source Files\Engine\FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\BTHFBX\Shared\FBX\FBXSceneD3D.h">
+      <Filter>Source Files\Engine\FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\BTHFBX\Shared\Helpers\CatmullCurve.h">
+      <Filter>Source Files\Engine\FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\BTHFBX\Shared\Helpers\LineDrawer.h">
+      <Filter>Source Files\Engine\FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\BTHFBX\Shared\Helpers\BTHCamera.h">
+      <Filter>Source Files\Engine\FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\BTHFBX\Shared\Helpers\BTHResourceManager.h">
+      <Filter>Source Files\Engine\FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\BTHFBX\Shared\D3D\Buffer.h">
+      <Filter>Source Files\Engine\FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\BTHFBX\Shared\D3D\Device3D.h">
+      <Filter>Source Files\Engine\FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\BTHFBX\Shared\D3D\RenderTarget.h">
+      <Filter>Source Files\Engine\FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\BTHFBX\Shared\D3D\Shader.h">
+      <Filter>Source Files\Engine\FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\BTHFBX\Shared\D3D\Utils.h">
+      <Filter>Source Files\Engine\FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\BTHFBX\Shared\D3D\BTHTexture.h">
+      <Filter>Source Files\Engine\FBX</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -363,24 +402,6 @@
     <ClCompile Include="Source\FBXMesh.cpp">
       <Filter>Source Files\Engine\Objects and Entities</Filter>
     </ClCompile>
-    <ClCompile Include="Source\BTHFBX\Shared\FBX\FBXSceneD3D.cpp">
-      <Filter>Source Files\Engine\Objects and Entities\FBX</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\BTHFBX\Shared\FBX\FBXModelD3D.cpp">
-      <Filter>Source Files\Engine\Objects and Entities\FBX</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\BTHFBX\Shared\FBX\FBXModelPartD3D.cpp">
-      <Filter>Source Files\Engine\Objects and Entities\FBX</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\BTHFBX\Shared\FBX\FBXModelPartDataD3D.cpp">
-      <Filter>Source Files\Engine\Objects and Entities\FBX</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\BTHFBX\Shared\Helpers\BTHResourceManager.cpp">
-      <Filter>Source Files\Engine\Objects and Entities\FBX</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\BTHFBX\Shared\D3D\BTHTexture.cpp">
-      <Filter>Source Files\Engine\Objects and Entities\FBX</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Billboard.cpp">
       <Filter>Source Files\Engine\Objects and Entities</Filter>
     </ClCompile>
@@ -389,6 +410,24 @@
     </ClCompile>
     <ClCompile Include="Source\InstancingHelper.cpp">
       <Filter>Source Files\Engine\DxMan and Techs</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\BTHFBX\Shared\FBX\FBXModelD3D.cpp">
+      <Filter>Source Files\Engine\FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\BTHFBX\Shared\FBX\FBXModelPartD3D.cpp">
+      <Filter>Source Files\Engine\FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\BTHFBX\Shared\FBX\FBXModelPartDataD3D.cpp">
+      <Filter>Source Files\Engine\FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\BTHFBX\Shared\FBX\FBXSceneD3D.cpp">
+      <Filter>Source Files\Engine\FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\BTHFBX\Shared\Helpers\BTHResourceManager.cpp">
+      <Filter>Source Files\Engine\FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\BTHFBX\Shared\D3D\BTHTexture.cpp">
+      <Filter>Source Files\Engine\FBX</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

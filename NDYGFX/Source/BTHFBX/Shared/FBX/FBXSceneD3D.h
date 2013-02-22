@@ -5,23 +5,22 @@
 #include "FBXModelD3D.h"
 #include <BTHFbx.h>
 
-/*
-struct ShadowData
-{
-	class BTHCamera* lightCamera;
-	ID3D11ShaderResourceView* shadowRV;
-};
-*/
+
 class FBXSceneD3D
 {
-	std::vector<FBXModelD3D*>	mModels;
-
-
+	// BTHFBX Stuff
 	IBTHFbxScene*				mFBXScene;
 	IBTHFbxAnimationController*	mFBXAnimationController;
 	IBTHFbxSkeleton*			mFBXSkeleton;
 
+	// Properties
+	std::string					zFileName;
+
+	// Settings
 	bool						mEnableAnimation;
+
+	// Models
+	std::vector<FBXModelD3D*>	mModels;
 
 public:
 	FBXSceneD3D();
@@ -36,22 +35,7 @@ public:
 	IBTHFbxSkeleton*			GetSkeleton();
 
 	BTHFBX_RAY_BOX_RESULT RayVsScene(const BTHFBX_RAY& ray, BTHFBX_MATRIX* worldMatrix);
+
+	// File Name Of Scene
+	inline const std::string& GetFileName() const { return zFileName; }
 };
-
-
-
-
-/*
-class FBXSceneD3D
-{	
-public:
-	FBXSceneD3D();
-	~FBXSceneD3D();
-
-	void Init(const char* filename, IBTHFbx* bthFBX) {}
-
-	void Update(float dt) {}
-	void Render(float dt, D3DXMATRIX world, D3DXMATRIX camProj, D3DXMATRIX camView, Shader* mShader, ID3D11DeviceContext* devCont) {}
-};
-
-*/

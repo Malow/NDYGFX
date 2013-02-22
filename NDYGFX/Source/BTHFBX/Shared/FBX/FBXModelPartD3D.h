@@ -5,25 +5,29 @@
 #include "..\D3D\BTHTexture.h"
 #include <BTHFbxModelPart.h>
 
+class FBXModelPartDataD3D;
+class FBXModelD3D;
+
 class FBXModelPartD3D
 {
-	class FBXModelPartDataD3D*	mModelData;
+	FBXModelPartDataD3D*	mModelData;
 
 	//// TEMP
-	Buffer*						mVB_Position;
-	Buffer*						mVB_Normal;
-	Buffer*						mVB_Tangent;
-	Buffer*						mVB_TexCoord;
-	Buffer*						mVB_BlendWeights;
-	Buffer*						mIB;
+	Buffer*					mVB_Position;
+	Buffer*					mVB_Normal;
+	Buffer*					mVB_Tangent;
+	Buffer*					mVB_TexCoord;
+	Buffer*					mVB_BlendWeights;
+	Buffer*					mIB;
 
-	BTHTexture*					mDiffuseTexture;
-	BTHTexture*					mNormalTexture;
-	////
+	BTHTexture*				mDiffuseTexture;
+	BTHTexture*				mNormalTexture;
 
-	bool						m_bSkinnedModel;
+	// Does The Model Bind To A Skeleton
+	bool					m_bSkinnedModel;
 
-	class FBXModelD3D*			mParentModel;
+	// Belongs To Model
+	FBXModelD3D*			mParentModel;
 public:
 	FBXModelPartD3D();
 	~FBXModelPartD3D();

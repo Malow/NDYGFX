@@ -1,10 +1,8 @@
 #include "FBXModelPartD3D.h"
-
 #include "FBXModelD3D.h"
-
 #include "..\Helpers\BTHResourceManager.h"
-
 #include "FBXModelPartDataD3D.h"
+
 
 FBXModelPartD3D::FBXModelPartD3D()
 {

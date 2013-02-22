@@ -98,12 +98,12 @@
     <LibraryPath>$(SolutionDir)/External/FBX 2014.1/lib/vs2012/x86;$(SolutionDir)/External/D3D/lib/x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LinkIncremental>false</LinkIncremental>
+    <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)/Build/Release/</OutDir>
     <IntDir>$(ProjectDir)/Obj/Release/</IntDir>
     <ExecutablePath>$(SolutionDir)/External/D3D/Utilities/bin/x86/;$(ExecutablePath)</ExecutablePath>
-    <IncludePath>$(SolutionDir)/External/FBX 2014.0/include;$(ProjectDir)/Include;$(DXSDK_DIR)/Include/;$(SolutionDir)/External/D3D/include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)/External/FBX 2014.0/lib/vs2012/x86;$(SolutionDir)/External/D3D/lib/x86;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)/External/FBX 2014.1/include;$(ProjectDir)/Include;$(DXSDK_DIR)/Include/;$(SolutionDir)/External/D3D/include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)/External/FBX 2014.1/lib/vs2012/x86;$(SolutionDir)/External/D3D/lib/x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -117,7 +117,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <Profile>true</Profile>
+      <Profile>false</Profile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
