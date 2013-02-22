@@ -658,8 +658,7 @@ void DxManager::RenderDeferredGeometry()
 					}
 
 					//Add billboard info
-					Billboard* bbPtr = this->objects[i]->GetBillboardGFX();
-					this->instancingHelper->AddBillboard(bbPtr);
+					this->instancingHelper->AddBillboard(this->objects[i]);
 				}
 			}
 		}
@@ -828,8 +827,7 @@ void DxManager::RenderDeferredGeometry()
 					}
 
 					//Add billboard info
-					Billboard* bbPtr = animatedMesh->GetBillboardGFX();
-					this->instancingHelper->AddBillboard(bbPtr);
+					this->instancingHelper->AddBillboard(animatedMesh);
 				}
 
 
