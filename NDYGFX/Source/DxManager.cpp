@@ -356,7 +356,7 @@ void DxManager::CreateStaticMesh(StaticMesh* mesh)
 				texture = GetResourceManager()->CreateTextureResourceFromFile(texturePath.c_str(), true);
 				string ending = texturePath.substr(texturePath.length()-4);
 				string first = texturePath.substr(0, texturePath.length()-4);
-				string normalTexturePath = first + "NormalMap" + ending;
+				string normalTexturePath = first + "_n" + ending;
 				normalMap = GetResourceManager()->CreateTextureResourceFromFile(normalTexturePath.c_str(), true);
 			}
 
@@ -1034,7 +1034,7 @@ void DxManager::CreateDecal( Decal* decal, string texture )
 	D3DXMATRIX translate2;
 
 	D3DXMatrixTranslation(&translate, 0.5f, 0.5f, 0.5f);
-	D3DXMatrixScaling(&scale, 0.5f, 0.5f, 0.5f);
+	D3DXMatrixScaling(&scale, 1.0f, 1.0f, 1.0f);
 
 
 	// MALOW : Add random rotation for decals?
