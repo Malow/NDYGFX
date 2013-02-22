@@ -195,7 +195,8 @@ MaloW::Array<MeshStrip*>* ResourceManager::LoadMeshStrips(const char* filePath, 
 		int nrOfVerts = 0;
 
 		VertexNormalMap* tempverts = new VertexNormalMap[objData->faces->size()*3];
-
+		bool faceMaterialMisMatch = false;
+		int faceMaterialMisMatchIndex = -1;
 		for(int i = 0;  i < objData->faces->size(); i++)
 		{
 			if(objData->faces->get(i).material == mats->get(q).name)
@@ -238,6 +239,21 @@ MaloW::Array<MeshStrip*>* ResourceManager::LoadMeshStrips(const char* filePath, 
 
 				hasFace = true;
 			}
+			else
+			{
+				faceMaterialMisMatch = true;
+				faceMaterialMisMatchIndex = i;
+			}
+		}
+
+		if(faceMaterialMisMatch)
+		{
+			string faceMaterial = objData->faces->get(faceMaterialMisMatchIndex).material;
+			string material = mats->get(q).name;
+			MaloW::Debug("WARNING: ResourceManager: LoadMeshStrips(): Material mismatch for object: '" + string(filePath) 
+				+ ", Material # " + MaloW::convertNrToString(q) 
+				+ "', Material: '" + material
+				+ ", Face material: '" + faceMaterial + "'.");
 		}
 
 		if(!hasFace)
