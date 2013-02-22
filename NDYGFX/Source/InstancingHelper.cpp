@@ -171,7 +171,7 @@ InstancingHelper::~InstancingHelper()
 	if(this->zBillboardInstanceBuffer) this->zBillboardInstanceBuffer->Release(); this->zBillboardInstanceBuffer = NULL;
 }
 
-void InstancingHelper::AddBillboard( const Billboard* const billboard )
+void InstancingHelper::AddBillboard( Mesh* meshWithBillboard )
 {
 	//Expand buffer if necessary
 	if(this->zBillboardData.size() >= this->zBillboardInstanceBufferSize)
@@ -179,14 +179,24 @@ void InstancingHelper::AddBillboard( const Billboard* const billboard )
 		this->ExpandBillboardInstanceBuffer();
 	}
 
-	//Add billboard data
+	//Calculate billboard data (sometimes it has not been precalculated)**Tillman
+	//Calculate billboard position(this needs to be updated as the mesh position changes).(don't forget to include the scale).
+	float halfHeightScaled = meshWithBillboard->GetHeight() * 0.5f * meshWithBillboard->GetScaling().y; //(yOffset)
+	D3DXVECTOR3 billboardPos = meshWithBillboard->GetPosition();
+	billboardPos.y += halfHeightScaled;
+	//Calculate the size using Pythagoras theorem (don't forget to include the scale).
+	//Note that this returns the half of the half size, so multiply by 4.
+	float billboardSize = sqrtf(powf(halfHeightScaled, 2.0f) * 0.5f) * 4.0f;
 	BillboardData billboardData;
-	billboardData.s_Vertex = Vertex(billboard->GetPositionD3DX(),
-									billboard->GetSizeD3DX(), 
+	D3DXVECTOR3 billboardColor = D3DXVECTOR3(meshWithBillboard->GetBillboardGFX()->GetColorD3DX().x, meshWithBillboard->GetBillboardGFX()->GetColorD3DX().y, meshWithBillboard->GetBillboardGFX()->GetColorD3DX().z);
+	//Set data
+	billboardData.s_Vertex = Vertex(billboardPos,
+									D3DXVECTOR2(billboardSize, billboardSize),
 									D3DXVECTOR3(), //dummy **TILLMAN
-									D3DXVECTOR3(billboard->GetColorD3DX()));
-	billboardData.s_SRV = billboard->GetTextureResource()->GetSRVPointer();				
+									billboardColor);//dummy? **TILLMAN
+	billboardData.s_SRV = meshWithBillboard->GetBillboardGFX()->GetTextureResource()->GetSRVPointer();				
 
+	//Add billboard data
 	this->zBillboardData.push_back(billboardData);
 }
 

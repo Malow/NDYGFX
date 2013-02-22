@@ -318,57 +318,64 @@ void DxManager::CreateStaticMesh(StaticMesh* mesh)
 {
 	//Per Strip data
 	MaloW::Array<MeshStrip*>* strips = mesh->GetStrips();
-	//Check if a previous mesh already has set data.
-	if(strips->get(0)->GetRenderObject() == NULL)
+	if(strips->size() > 0)
 	{
-		for(int i = 0; i < strips->size(); i++)
+		//Check if a previous mesh already has set data.
+		if(strips->get(0)->GetRenderObject() == NULL)
 		{
-			MeshStrip* strip = strips->get(i);
+			for(int i = 0; i < strips->size(); i++)
+			{
+				MeshStrip* strip = strips->get(i);
 
-			BUFFER_INIT_DESC bufferDesc;
-			bufferDesc.ElementSize = sizeof(VertexNormalMap);
-			bufferDesc.InitData = strip->getVerts();
+				BUFFER_INIT_DESC bufferDesc;
+				bufferDesc.ElementSize = sizeof(VertexNormalMap);
+				bufferDesc.InitData = strip->getVerts();
 		
 		
-			// Last face black, should +1 this to solve it.
-			bufferDesc.NumElements = strip->getNrOfVerts();
+				// Last face black, should +1 this to solve it.
+				bufferDesc.NumElements = strip->getNrOfVerts();
 
-			bufferDesc.Type = VERTEX_BUFFER;
-			bufferDesc.Usage = BUFFER_DEFAULT;
+				bufferDesc.Type = VERTEX_BUFFER;
+				bufferDesc.Usage = BUFFER_DEFAULT;
 	
-			string resourceNameVertices = mesh->GetFilePath() + string("Strip") + MaloW::convertNrToString(i) + string("Vertices");
-			BufferResource* verts = GetResourceManager()->CreateBufferResource(resourceNameVertices.c_str(), bufferDesc);
+				string resourceNameVertices = mesh->GetFilePath() + string("Strip") + MaloW::convertNrToString(i) + string("Vertices");
+				BufferResource* verts = GetResourceManager()->CreateBufferResource(resourceNameVertices.c_str(), bufferDesc);
 
-			BufferResource* inds = NULL; 
-			if(strip->getIndicies())
-			{
-				BUFFER_INIT_DESC bufferInds;
-				bufferInds.ElementSize = sizeof(int);
-				bufferInds.InitData = strip->getIndicies();
-				bufferInds.NumElements = strip->getNrOfIndicies();
-				bufferInds.Type = INDEX_BUFFER;
-				bufferInds.Usage = BUFFER_DEFAULT;
+				BufferResource* inds = NULL; 
+				if(strip->getIndicies())
+				{
+					BUFFER_INIT_DESC bufferInds;
+					bufferInds.ElementSize = sizeof(int);
+					bufferInds.InitData = strip->getIndicies();
+					bufferInds.NumElements = strip->getNrOfIndicies();
+					bufferInds.Type = INDEX_BUFFER;
+					bufferInds.Usage = BUFFER_DEFAULT;
 	
 
-				string resourceNameIndices = mesh->GetFilePath() + string("Strip") + MaloW::convertNrToString(i) + string("Indices");
-				inds = GetResourceManager()->CreateBufferResource(resourceNameIndices.c_str(), bufferInds);
-			}
+					string resourceNameIndices = mesh->GetFilePath() + string("Strip") + MaloW::convertNrToString(i) + string("Indices");
+					inds = GetResourceManager()->CreateBufferResource(resourceNameIndices.c_str(), bufferInds);
+				}
 
-			TextureResource* texture = NULL;
-			TextureResource* normalMap = NULL;
-			string texturePath = strip->GetTexturePath();
-			if(texturePath != "")
-			{
-				texture = GetResourceManager()->CreateTextureResourceFromFile(texturePath.c_str(), true);
-				string ending = texturePath.substr(texturePath.length()-4);
-				string first = texturePath.substr(0, texturePath.length()-4);
-				string normalTexturePath = first + "_n" + ending;
-				normalMap = GetResourceManager()->CreateTextureResourceFromFile(normalTexturePath.c_str(), true);
-			}
+				TextureResource* texture = NULL;
+				TextureResource* normalMap = NULL;
+				string texturePath = strip->GetTexturePath();
+				if(texturePath != "")
+				{
+					texture = GetResourceManager()->CreateTextureResourceFromFile(texturePath.c_str(), true);
+					string ending = texturePath.substr(texturePath.length()-4);
+					string first = texturePath.substr(0, texturePath.length()-4);
+					string normalTexturePath = first + "NormalMap" + ending;
+					normalMap = GetResourceManager()->CreateTextureResourceFromFile(normalTexturePath.c_str(), true);
+				}
 
-			Object3D* obj = new Object3D(verts, inds, texture, normalMap, mesh->GetTopology()); 
-			strip->SetRenderObject(obj);
+				Object3D* obj = new Object3D(verts, inds, texture, normalMap, mesh->GetTopology()); 
+				strip->SetRenderObject(obj);
+			}
 		}
+	}
+	else
+	{
+		MaloW::Debug("WARNING: DxManager::CreateStaticMesh(): Strips of mesh has not been set for: '" + mesh->GetFilePath());
 	}
 
 	//Per Mesh data

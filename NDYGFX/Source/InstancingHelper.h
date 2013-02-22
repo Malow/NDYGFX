@@ -156,7 +156,7 @@ class InstancingHelper
 		BillboardGroup GetBillboardGroup(unsigned int index) { return this->zBillboardGroups[index]; }
 		ID3D11Buffer* GetBillboardInstanceBuffer() { return this->zBillboardInstanceBuffer; }  
 
-		void AddBillboard(const Billboard* const billboard);
+		void AddBillboard(Mesh* meshWithBillboard);
 		/*	Sorts, creates instance groups and updates the instance buffer.	*/
 		void PreRenderBillboards();
 		void PostRenderBillboards() { this->zBillboardData.clear(); this->zBillboardGroups.clear(); }

@@ -238,43 +238,44 @@ ObjData* ObjLoader::LoadObjFile(string filepath)
 	{
 		MaloW::Debug("Couldnt open file in ObjLoader: " + filepath);
 	}
-
-	string currentMaterial = "";
-
-	while(!file.eof())
+	else
 	{
-		string line = "";
-		getline(file, line);
-		if(line.size() > 0 && line.substr(0, 2) == "v ")
-		{
-			D3DXVECTOR3 vertpos = this->GetVertPosData(line);
-			vertpos.z *= -1;	// For D3DX
-			returndata->vertspos->add(vertpos);
-		}
-		else if(line.size() > 0 && line.substr(0, 2) == "vt")
-		{
-			returndata->textcoords->add(this->GetTextCoordsData(line));
-		}
-		else if(line.size() > 0 && line.substr(0, 2) == "vn")
-		{
-			D3DXVECTOR3 norm = this->GetVertsNormsData(line);
-			norm.z *= -1;	// For D3DX
-			returndata->vertsnorms->add(norm);
-		}
-		else if(line.size() > 0 && line.at(0) == 'f')
-		{
-			FaceData data = this->GetFaceData(line);
-			data.material = currentMaterial;
-			returndata->faces->add(data);
-		}
-		else if(line.size() > 0 && line.substr(0, 6) == "mtllib")
-			mtlfile = line.substr(7);
+		string currentMaterial = "";
 
-		else if(line.size() > 0 && line.substr(0, 6) == "usemtl")
-			currentMaterial = line.substr(7);
+		while(!file.eof())
+		{
+			string line = "";
+			getline(file, line);
+			if(line.size() > 0 && line.substr(0, 2) == "v ")
+			{
+				D3DXVECTOR3 vertpos = this->GetVertPosData(line);
+				vertpos.z *= -1;	// For D3DX
+				returndata->vertspos->add(vertpos);
+			}
+			else if(line.size() > 0 && line.substr(0, 2) == "vt")
+			{
+				returndata->textcoords->add(this->GetTextCoordsData(line));
+			}
+			else if(line.size() > 0 && line.substr(0, 2) == "vn")
+			{
+				D3DXVECTOR3 norm = this->GetVertsNormsData(line);
+				norm.z *= -1;	// For D3DX
+				returndata->vertsnorms->add(norm);
+			}
+			else if(line.size() > 0 && line.at(0) == 'f')
+			{
+				FaceData data = this->GetFaceData(line);
+				data.material = currentMaterial;
+				returndata->faces->add(data);
+			}
+			else if(line.size() > 0 && line.substr(0, 6) == "mtllib")
+				mtlfile = line.substr(7);
+
+			else if(line.size() > 0 && line.substr(0, 6) == "usemtl")
+				currentMaterial = line.substr(7);
+		}
+		file.close();
 	}
-	file.close();
-
 
 	// mtl file
 	if(mtlfile == "")
