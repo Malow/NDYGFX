@@ -1485,7 +1485,33 @@ void DxManager::RenderFBXMeshes()
 
 void DxManager::RenderDecals()
 {
+	/*
+	renderer->reset();
+	renderer->setRasterizerState(cullFront);
+	renderer->setShader(m_Decal);
+	renderer->setShaderConstant4x4f("ViewProj", viewProj);
+	renderer->setShaderConstant2f("PixelSize", float2(1.0f / width, 1.0f / height));
+	renderer->setTexture("Depth", m_DepthRT);
+	renderer->setTexture("Decal", m_DecalTex);
+	renderer->setSamplerState("DepthFilter", m_PointClamp);
+	renderer->setSamplerState("DecalFilter", m_DecalSS);
+	renderer->setDepthState(noDepthTest);
+	renderer->setBlendState(m_BlendDecal);
+	renderer->apply();
 
+
+	const uint decal_count = m_Decals.getCount();
+	for (uint i = 0; i < decal_count; i++)
+	{
+		renderer->setShaderConstant3f("Pos", m_Decals[i].position);
+		renderer->setShaderConstant1f("Radius", m_Decals[i].radius);
+		renderer->setShaderConstant3f("Color", m_Decals[i].color);
+		renderer->setShaderConstant4x4f("ScreenToLocal", m_Decals[i].matrix * viewProjInv);
+		renderer->applyConstants();
+
+		m_Sphere->draw(renderer);
+	}
+	*/
 }
 
 

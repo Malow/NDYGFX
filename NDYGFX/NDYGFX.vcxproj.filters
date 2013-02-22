@@ -505,5 +505,8 @@
     <FxCompile Include="..\WorkingDir\Shaders\DeferredGeometryInstanced.fx">
       <Filter>Source Files\Engine\Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="..\WorkingDir\Shaders\Decal.fx">
+      <Filter>Source Files\Engine\Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
