@@ -1485,6 +1485,7 @@ void DxManager::RenderFBXMeshes()
 
 void DxManager::RenderDecals()
 {
+	/*
 	renderer->reset();
 	renderer->setRasterizerState(cullFront);
 	renderer->setShader(m_Decal);
@@ -1510,6 +1511,7 @@ void DxManager::RenderDecals()
 
 		m_Sphere->draw(renderer);
 	}
+	*/
 }
 
 

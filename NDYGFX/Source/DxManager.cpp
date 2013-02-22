@@ -433,7 +433,7 @@ void DxManager::CreateAnimatedMesh(AnimatedMesh* mesh)
 					texture = GetResourceManager()->CreateTextureResourceFromFile(texturePath.c_str(), true);
 					string ending = texturePath.substr(texturePath.length()-4);
 					string first = texturePath.substr(0, texturePath.length()-4);
-					string normalTexturePath = first + "NormalMap" + ending;
+					string normalTexturePath = first + "_n" + ending;
 					normalMap = GetResourceManager()->CreateTextureResourceFromFile(normalTexturePath.c_str(), true);
 				}
 
