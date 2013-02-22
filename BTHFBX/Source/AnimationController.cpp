@@ -53,27 +53,29 @@ void AnimationController::AddAnimation(Animation* pAnimation)
 }
 
 //--------------------------------------------------------------------------------------
-void AnimationController::SetCurrentAnimation(const std::string& strAnimationName)
+bool AnimationController::SetCurrentAnimation(const std::string& strAnimationName)
 {
+	// Find Animation
 	auto i = m_AnimationsStr.find(strAnimationName);
 
+	// Check If Found
 	if(i != m_AnimationsStr.end())
 	{
 		m_pCurrentAnimation = i->second;
+		return true;
 	}
 	else
 	{
 		m_pCurrentAnimation = NULL;
+		return false;
 	}
-
-	Stop();
 }
 
 //--------------------------------------------------------------------------------------
-void AnimationController::SetCurrentAnimation(int nIndex)
+bool AnimationController::SetCurrentAnimation(unsigned int nIndex)
 {
-	m_pCurrentAnimation = m_AnimationsInt[nIndex];
-	Stop();
+	if ( nIndex >= m_AnimationsInt.size() ) return false;
+	return SetCurrentAnimation(m_AnimationsInt[nIndex]->GetName());
 }
 
 //--------------------------------------------------------------------------------------

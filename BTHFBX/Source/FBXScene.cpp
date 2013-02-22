@@ -398,8 +398,6 @@ bool FBXScene::HasFBXAnimation(FbxNode *pNode)
 
 void FBXScene::ProcessSkeleton(FbxNode* pNode)
 {
-	bool isAnimated = HasFBXAnimation(pNode);
-
 	FbxSkeleton* pFBXSkeleton = pNode->GetSkeleton();
 	if( !pFBXSkeleton )
 		return;
@@ -436,8 +434,6 @@ void FBXScene::UpdateBoundingBoxDataFromVertex(BTHFBX_VEC3 vertexPosition)
 
 void FBXScene::ProcessMesh(FbxNode* pNode)
 {
-	bool isAnimated = HasFBXAnimation(pNode);
-
 	FbxMesh* pFBXMesh = pNode->GetMesh();
 	if( !pFBXMesh )
 		return;

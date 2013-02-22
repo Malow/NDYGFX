@@ -26,7 +26,7 @@ public:
 	virtual void PreTest()
 	{
 		copyrightedTempGuy = GetGraphics()->CreateFBXMesh("Media/temp_guy_few_anims.fbx", Vector3(0.0f, 0.0f, 0.0f));	// copyrightedTempGuy = GetGraphics()->CreateFBXMesh("Media/temp_guy_few_anims.fbx", Vector3(0.0f, 0.0f, 0.0f));
-		
+
 		soldier = GetGraphics()->CreateFBXMesh("Media/Soldier_animated_jump.fbx", Vector3(20.0f, 0.0f, 0.0f));
 		soldier->SetScale(0.1f);
 	}
@@ -37,7 +37,7 @@ public:
 		{
 			if ( GetGraphics()->GetKeyListener()->IsPressed('1') )
 			{
-				copyrightedTempGuy->SetAnimation(0);
+				copyrightedTempGuy->SetAnimation("idle_01_dance");
 			}
 			else if ( GetGraphics()->GetKeyListener()->IsPressed('2') )
 			{
@@ -50,6 +50,14 @@ public:
 			else if ( GetGraphics()->GetKeyListener()->IsPressed('4') )
 			{
 				copyrightedTempGuy->SetAnimation(3);
+			}
+			else if ( GetGraphics()->GetKeyListener()->IsPressed('5') )
+			{
+				copyrightedTempGuy->SetAnimation(4);
+			}
+			else if ( GetGraphics()->GetKeyListener()->IsPressed('8') )
+			{
+				copyrightedTempGuy->BindMesh("_RightHand", soldier);
 			}
 		}
 

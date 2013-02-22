@@ -33,8 +33,8 @@ public:
 	virtual ~AnimationController();
 
 	void AddAnimation(Animation* pAnimation);
-	void SetCurrentAnimation(const std::string& strAnimationName);
-	void SetCurrentAnimation(int nIndex);
+	bool SetCurrentAnimation(const std::string& strAnimationName);
+	bool SetCurrentAnimation(unsigned int nIndex);
 	Animation* GetCurrentAnimation();
 
 	int GetAnimationCount();

@@ -15,8 +15,8 @@ extern "C"
 	class DECLDIR IBTHFbxAnimationController
 	{
 	public:
-		virtual void SetCurrentAnimation(const std::string& strAnimationName) = 0;
-		virtual void SetCurrentAnimation(int nIndex) = 0;
+		virtual bool SetCurrentAnimation(const std::string& strAnimationName) = 0;
+		virtual bool SetCurrentAnimation(unsigned int nIndex) = 0;
 
 		virtual int GetAnimationCount() = 0;
 
