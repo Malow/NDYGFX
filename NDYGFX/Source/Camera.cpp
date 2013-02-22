@@ -11,6 +11,7 @@ Camera::Camera(HWND g_hWnd, GraphicsEngineParams &params) :
 	this->moveOnlyInXZ = false;
 	this->angleX = 0;
 	this->angleY = 0;
+	this->oldpos = this->pos;
 	
 	this->speed = 1.0f;
 
@@ -179,10 +180,12 @@ void Camera::Update(float delta)
 	}
 
 	// Update v p matrix.
-	D3DXVECTOR3 at = this->pos + this->forward;
-	D3DXMatrixLookAtLH(&view, &this->pos, &at, &this->up);
+	D3DXVECTOR3 curPos = this->pos;
+	D3DXVECTOR3 at = curPos + this->forward;
+	D3DXMatrixLookAtLH(&view, &curPos, &at, &this->up);
 	D3DXMatrixPerspectiveFovLH(&this->projection, this->params.FOV * (float)D3DX_PI / 180.0f, 
 		this->params.WindowWidth / (float)this->params.WindowHeight, this->params.NearClip, this->params.FarClip);
+	this->oldpos = curPos;
 }
 
 void Camera::SetBoundries(Vector3 minBoundries, Vector3 maxBoundries)

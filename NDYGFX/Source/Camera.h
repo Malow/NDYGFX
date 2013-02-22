@@ -19,6 +19,7 @@ protected:
 	D3DXMATRIX projection;
 
 	D3DXVECTOR3 pos;
+	D3DXVECTOR3 oldpos;
 
 	D3DXVECTOR3 forward;
 	D3DXVECTOR3 up;
@@ -103,6 +104,7 @@ public:
 	D3DXVECTOR3 GetForwardD3DX() const { return this->forward; }
 	D3DXVECTOR3 GetRightVectorD3DX() const;
 	D3DXVECTOR3 GetUpVectorD3DX() const { return this->up; }
+	D3DXVECTOR3 GetOldPos() const { return this->oldpos; }
 	void SetPosition(D3DXVECTOR3 pos) { this->pos = pos; }
 	void LookAt(D3DXVECTOR3 at) { this->LookAt(Vector3(at.x, at.y, at.z)); }
 

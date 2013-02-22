@@ -969,13 +969,13 @@ void DxManager::RenderDeferredSkybox()
 	D3DXMATRIX world, wvp, view, proj;
 	view = this->camera->GetViewMatrix();
 	proj = this->camera->GetProjectionMatrix();
-	world = this->skybox->GetSkyboxWorldMatrix(this->camera->GetPositionD3DX(), this->params.FarClip);
+	world = this->skybox->GetSkyboxWorldMatrix(this->camera->GetOldPos(), this->params.FarClip);
 	wvp = world * view * proj;
 	
 	this->Shader_Skybox->SetMatrix("gWVP", wvp);
 	this->Shader_Skybox->SetMatrix("world", world);
-	this->Shader_Skybox->SetFloat("FogHeight", this->camera->GetPosition().y + this->params.FarClip * 0.1f);
-	this->Shader_Skybox->SetFloat("CamY", this->camera->GetPosition().y);
+	this->Shader_Skybox->SetFloat("FogHeight", this->camera->GetOldPos().y + this->params.FarClip * 0.1f);
+	this->Shader_Skybox->SetFloat("CamY", this->camera->GetOldPos().y);
 
 	//MeshStrip* strip = this->skybox->GetStrips()->get(0);
 	MeshStrip* strip = this->skybox->GetStrip();
