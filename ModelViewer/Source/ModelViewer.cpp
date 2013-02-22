@@ -11,7 +11,6 @@
 #include "TestMaloW.h"
 #include "TestTillman.h"
 #include "TestOther.h"
-#include "TestTerrainNormals.h"
 
 
 void ReplaceSlashes(string& str, char replace, char with)
