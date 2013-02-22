@@ -36,6 +36,7 @@ cbuffer PerFrame
 {
 	float3		g_CameraPos;
 	float4x4	g_CamViewProj;
+	float		g_FarClip;
 };
 cbuffer PerBillBoard
 {
@@ -183,9 +184,13 @@ PSOut PS(PSIn input)
 	}
 
 	//Normal and depth RT
-	output.NormalAndDepth = float4(input.normal, input.posH.z / input.posH.w);	//convert z from [0, w] to [0,1]
-	float depth = length(g_CameraPos - input.posW) / 200.0f;		// Haxfix**tillman
+	//output.NormalAndDepth = float4(input.normal, input.posH.z / input.posH.w);	//convert z from [0, w] to [0,1]
+	output.NormalAndDepth.xyz = input.normal;
+	
+	float depth = length(g_CameraPos - input.posW) / g_FarClip;		// Haxfix**tillman
 	output.NormalAndDepth.w = depth;
+	//float depth = length(CameraPosition.xyz - input.WorldPos.xyz) / FarClip;		// Haxfix
+	//output.NormalAndDepth.w = depth;
 
 	//Position(world space) RT
 	output.Position = float4(input.posW.xyz, OBJECT_TYPE_BILLBOARD);

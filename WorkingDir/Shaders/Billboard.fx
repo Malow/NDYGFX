@@ -178,11 +178,11 @@ PSOut PS(PSIn input)
 
 	//Normal and depth RT
 	output.NormalAndDepth = float4(input.normal, input.posH.z / input.posH.w);	
-	float depth = length(g_CameraPos - g_bb_Position) / 200.0f;		// Haxfix**tillman
+	float depth = length(g_CameraPos - g_bb_Position) / FarClip;		// Haxfix**tillman
 	output.NormalAndDepth.w = depth;
 
 	//Position RT
-	output.Position = float4(g_bb_Position, -1.0f);
+	output.Position = float4(g_bb_Position, OBJECT_TYPE_BILLBOARD);
 	
 	//Specular RT
 	output.Specular.xyzw = 0.0f;

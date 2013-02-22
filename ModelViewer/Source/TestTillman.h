@@ -482,7 +482,7 @@ void TillmanTest::PreTest()
 		iMesh* treeWithWOBB = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(i * 5, 0, 55));
 		treeWithWOBB->SetScale((0.041f));
 	}
-	iBBMemLeak = GetGraphics()->CreateBillboard(Vector3(0, 10, 0), Vector2(10, 10), "Media/TreeBillboard.png");
+	iBBMemLeak = GetGraphics()->CreateBillboard(Vector3(0, 20, 0), Vector2(10, 10), "Media/TreeBillboard.png");
 }
 
 void TillmanTest::RunTest(float diff)

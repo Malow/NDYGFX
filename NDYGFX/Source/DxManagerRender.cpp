@@ -719,6 +719,7 @@ void DxManager::RenderBillboards()
 	
 		this->Shader_Billboard->SetFloat3("g_CameraPos", this->camera->GetPositionD3DX());
 		this->Shader_Billboard->SetMatrix("g_CamViewProj", this->camera->GetViewMatrix() * this->camera->GetProjectionMatrix());
+		this->Shader_Billboard->SetFloat("FarClip", this->params.FarClip);
 
 		for(int i = 0; i < this->billboards.size(); i++)
 		{
@@ -789,6 +790,7 @@ void DxManager::RenderBillboardsInstanced()
 		// Set global variables per frame
 		this->Shader_BillboardInstanced->SetFloat3("g_CameraPos", this->camera->GetPositionD3DX());
 		this->Shader_BillboardInstanced->SetMatrix("g_CamViewProj", this->camera->GetViewMatrix() * this->camera->GetProjectionMatrix());
+		this->Shader_BillboardInstanced->SetFloat("g_FarClip", this->params.FarClip);
 
 		// Set global variables per instance group
 		for(unsigned int i = 0; i < this->instancingHelper->GetNrOfBillboardGroups(); ++i)
@@ -1547,7 +1549,7 @@ HRESULT DxManager::Render()
 	this->RenderDeferredGeometryInstanced();
 
 	this->RenderBillboards();
-	this->RenderBillboardsInstanced(); 
+	this->RenderBillboardsInstanced(); //Must be after renderDeferredGeometry()
 
 
 	this->RenderDecals();
