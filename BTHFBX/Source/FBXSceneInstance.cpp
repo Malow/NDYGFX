@@ -5,11 +5,12 @@
 
 
 
-FBXSceneInstance::FBXSceneInstance(class FBXScene* scene)
-	: m_pSkeleton(NULL), m_pAnimationController(NULL)
+FBXSceneInstance::FBXSceneInstance(class FBXScene* scene) :
+	m_pSkeleton(NULL), 
+	m_pAnimationController(NULL),
+	mScene(scene),
+	m_Curves(NULL)
 {
-	mScene = scene;
-	m_Curves = NULL;
 }
 
 FBXSceneInstance::~FBXSceneInstance()
@@ -17,7 +18,7 @@ FBXSceneInstance::~FBXSceneInstance()
 	//since the keyframes are pointers the source instance should delete them
 	if(m_pSkeleton)
 	{
-		for(int i = 0; i < m_pSkeleton->GetBoneCount(); i++)
+		for(unsigned int i = 0; i < m_pSkeleton->GetBoneCount(); i++)
 		{
 			m_pSkeleton->GetSkeletonBone(i)->m_AnimationKeyFrames.clear();
 		}
@@ -32,34 +33,42 @@ void FBXSceneInstance::InitInstance()
 {
 	m_BoundingBox = mScene->m_BoundingBox;
 
-	for(int i = 0; i < mScene->GetModelCount(); i++)
+	// Models
+	for(unsigned int i = 0; i < mScene->GetModelCount(); i++)
 	{
 		Model* srcModel = mScene->GetModel(i);
 		m_Models.Add(srcModel->GetName(), new Model(srcModel));
 	}
 
-	ProcessNode(mScene->GetScene()->GetRootNode(), FbxNodeAttribute::eSkeleton);
-	//ProcessNode(pScene->GetRootNode(), FbxNodeAttribute::eMESH);
+	// ProcessNode(mScene->GetScene()->GetRootNode(), FbxNodeAttribute::eSkeleton);
 
-	if(m_pSkeleton)
+	// Copy Skeleton
+	if ( mScene->GetSkeleton() )
 	{
-		m_pSkeleton->BuildBoneHierarchy();
-		//m_pSkeleton->BuildCollisionBoxes();
-
-		for(int i = 0; i < m_pSkeleton->GetBoneCount(); i++)
+		m_pSkeleton = new Skeleton();
+		
+		for( unsigned int x = 0; x < mScene->GetSkeleton()->GetBoneCount(); ++x )
 		{
-			SkeletonBone* boneTarget = m_pSkeleton->GetSkeletonBone(i);
-			SkeletonBone* boneSource = mScene->GetSkeleton()->GetSkeletonBone(i);
+			SkeletonBone* sourceBone = mScene->GetSkeleton()->GetSkeletonBone(x);
 
-			//boneTarget->SetBindPoseTransform(boneSource->GetBindPoseTransform());
-			boneTarget->SetBindPoseTransform2(boneSource->GetBindPoseTransform2());
+			SkeletonBone* targetBone = new SkeletonBone(
+				sourceBone->GetName(), 
+				sourceBone->GetParentBoneIndex(), 
+				m_pSkeleton);
 
-			//boneTarget->SetBoneReferenceTransform(boneSource->GetBoneReferenceTransform());
-			boneTarget->SetBoneReferenceTransform2(boneSource->GetBoneReferenceTransform2());
+			m_pSkeleton->AddSkeletonBone( targetBone );
+		}
 
-			boneTarget->m_AnimationKeyFrames = boneSource->m_AnimationKeyFrames;
+		m_pSkeleton->BuildBoneHierarchy();
 
-			boneTarget->SetBoundingBoxData(boneSource->m_AABB);
+		for( unsigned int x = 0; x < m_pSkeleton->GetBoneCount(); ++x )
+		{
+			SkeletonBone* sourceBone = mScene->GetSkeleton()->GetSkeletonBone(x);
+			SkeletonBone* targetBone = m_pSkeleton->GetSkeletonBone(x);
+			targetBone->SetBindPoseTransform2(sourceBone->GetBindPoseTransform2());
+			targetBone->SetBoneReferenceTransform2(sourceBone->GetBoneReferenceTransform2());
+			targetBone->m_AnimationKeyFrames = sourceBone->m_AnimationKeyFrames;
+			targetBone->SetBoundingBoxData(sourceBone->m_AABB);
 		}
 
 		m_pAnimationController = new AnimationController(mScene->m_pAnimationController);
@@ -108,7 +117,7 @@ BTHFBX_RAY_BOX_RESULT FBXSceneInstance::RayVsScene(const BTHFBX_RAY& ray, BTHFBX
 			int jointIndex = -1;
 			float tmpDist, closestDist = FLT_MAX;
 
-			for(int i = 0; i < m_pSkeleton->GetBoneCount(); i++)
+			for(unsigned int i = 0; i < m_pSkeleton->GetBoneCount(); i++)
 			{
 				bone = (SkeletonBone*)m_pSkeleton->GetBone(i);
 
@@ -140,22 +149,22 @@ BTHFBX_RAY_BOX_RESULT FBXSceneInstance::RayVsScene(const BTHFBX_RAY& ray, BTHFBX
 	return result;
 }
 
-int FBXSceneInstance::GetModelCount()
+unsigned int FBXSceneInstance::GetModelCount()
 {
 	return m_Models.GetCount();
 }
 
-IBTHFbxModel* FBXSceneInstance::GetModel(int index)
+IBTHFbxModel* FBXSceneInstance::GetModel(unsigned int index)
 {
 	return m_Models.GetValueAt(index);
 }
 
-int FBXSceneInstance::GetCurveCount()
+unsigned int FBXSceneInstance::GetCurveCount()
 {
-	return (int)m_Curves->size();
+	return m_Curves->size();
 }
 
-IBTHFbxCurve* FBXSceneInstance::GetCurve(int index)
+IBTHFbxCurve* FBXSceneInstance::GetCurve(unsigned int index)
 {
 	return &(*m_Curves)[index];
 }
@@ -187,16 +196,16 @@ BTHFBX_AABB_DATA FBXSceneInstance::GetBoundingBoxData()
 
 void FBXSceneInstance::UpdateScene(float fElapsedTime, bool bEnableAnimation)
 {
-	if( m_pAnimationController && bEnableAnimation)
+	if( m_pAnimationController && bEnableAnimation )
 	{
 		m_pAnimationController->Update(fElapsedTime);
 
-		if( m_pSkeleton )
+		if ( m_pSkeleton )
 		{
 			m_pSkeleton->UpdateAnimation(m_pAnimationController);
 		}
 
-		for( int i = 0; i < m_Models.GetCount(); ++i )
+		for( unsigned int i = 0; i < m_Models.GetCount(); ++i )
 		{
 			m_Models.GetValueAt(i)->UpdateAnimation(m_pAnimationController);
 		}
@@ -216,18 +225,12 @@ void FBXSceneInstance::ProcessNode(FbxNode* pNode, FbxNodeAttribute::EType attri
 			switch(pNodeAttribute->GetAttributeType())
 			{
 			case FbxNodeAttribute::EType::eSkeleton:
-				ProcessSkeleton(pNode);
-			break;
-			//case FbxNodeAttribute::eMESH:
-				//ProcessMesh(pNode);
-			//break;
+				{
+					ProcessSkeleton(pNode);
+					break;
+				}
 
-			case FbxNodeAttribute::EType::eMarker:
-			case FbxNodeAttribute::EType::eNurbs:
-			case FbxNodeAttribute::EType::ePatch:
-			case FbxNodeAttribute::EType::eCamera:
-			case FbxNodeAttribute::EType::eLight:
-			case FbxNodeAttribute::EType::eNull:
+			default:
 				break;
 			};
 		}
@@ -241,8 +244,6 @@ void FBXSceneInstance::ProcessNode(FbxNode* pNode, FbxNodeAttribute::EType attri
 
 void FBXSceneInstance::ProcessSkeleton(FbxNode* pNode)
 {
-	bool isAnimated = HasFBXAnimation(pNode);
-
 	FbxSkeleton* pFBXSkeleton = pNode->GetSkeleton();
 	if( !pFBXSkeleton )
 		return;
@@ -254,6 +255,7 @@ void FBXSceneInstance::ProcessSkeleton(FbxNode* pNode)
 
 	int nParentBoneIndex = -1;
 	FbxNode* pParentNode = pNode->GetParent();
+
 	if( pParentNode )
 		nParentBoneIndex = m_pSkeleton->FindBoneIndex(pParentNode->GetName());
 

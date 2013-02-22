@@ -5,42 +5,26 @@
 #include "FBXCommon.h"
 
 
-
-//--------------------------------------------------------------------------------------
-SkeletonBone::SkeletonBone(std::string strName, int nParentBoneIndex, Skeleton* skeleton)
+SkeletonBone::SkeletonBone(const std::string& strName, int nParentBoneIndex, Skeleton* skeleton) :
+	m_strName(strName),
+	m_nParentBoneIndex(nParentBoneIndex),
+	mSkeleton(skeleton)
 {
-	m_strName = strName;
-	m_nParentBoneIndex = nParentBoneIndex;
-	mSkeleton = skeleton;
-
 	SetAccumulateParentTransformation(true);
-
 	m_AABB.Min = BTHFBX_VEC3(FLT_MAX, FLT_MAX, FLT_MAX);
 	m_AABB.Max = BTHFBX_VEC3(-FLT_MAX, -FLT_MAX, -FLT_MAX);
-
-	/*
-	D3DXMatrixIdentity(&m_matBindPoseTransform);
-	D3DXMatrixIdentity(&m_matInvBindPoseTransform);
-	D3DXMatrixIdentity(&m_matBoneReferenceTransform);
-	D3DXMatrixIdentity(&m_matInvBoneReferenceTransform);
-	*/
 }
 
-//--------------------------------------------------------------------------------------
 SkeletonBone::~SkeletonBone()
 {
 	for(auto i = m_AnimationKeyFrames.begin(); i != m_AnimationKeyFrames.end(); i++)
 	{
 		if ( i->second ) delete i->second, i->second = 0;
 	}
-	//m_AnimationKeyFrames.RemoveAll(true);
-	//m_AnimationKeyFrames.clear();
 }
 
-//--------------------------------------------------------------------------------------
 void SkeletonBone::AddAnimationKeyFrames(AnimationKeyFrames* pAnimationKeyFrames)
 {
-	//m_AnimationKeyFrames.Add( pAnimationKeyFrames->GetAnimationName(), pAnimationKeyFrames );
 	m_AnimationKeyFrames[pAnimationKeyFrames->GetAnimationName()] = pAnimationKeyFrames;
 }
 
@@ -58,6 +42,7 @@ void SkeletonBone::Update(SkeletonBone* parent, AnimationController* pAnimationC
 	bool bUseQuaternionKeyFrames = pAnimationController->UseQuaternionKeyFrames();
 
 	AnimationKeyFrames* pAnimationKeyFrames = GetAnimationKeyFrames(strAnimationName);
+	if ( !pAnimationKeyFrames ) return;
 
 	if( bUseQuaternionKeyFrames )
 	{
@@ -75,7 +60,7 @@ void SkeletonBone::Update(SkeletonBone* parent, AnimationController* pAnimationC
 
 		FbxVector4 vTranslation2;
 
-		//lerp
+		// lerp
 		vTranslation2 = tt1 + (tt2 - tt1) * fKeyFrameFactor;
 
 		FbxVector4 s(1,1,1);
@@ -88,26 +73,22 @@ void SkeletonBone::Update(SkeletonBone* parent, AnimationController* pAnimationC
 	}
 
 	m_matCombinedTransform2 = m_matLocalTransform2;
-	if(parent) m_matCombinedTransform2 = parent->GetCombinedTransform2() * m_matLocalTransform2;
+	if (parent) m_matCombinedTransform2 = parent->GetCombinedTransform2() * m_matLocalTransform2;
 
 	m_matSkinTransform = m_matCombinedTransform2 * GetInvBindPoseTransform2() * GetBoneReferenceTransform2();
 	mSkeleton->SetSkinTransform2(GetBoneIndex(), m_matSkinTransform);
 
-	for(int i = 0; i < 8; i++)
+	for(unsigned int i = 0; i < 8; ++i)
 	{
-		//matSkinTransform.SetIdentity();
 		m_OBB_Transformed.Corners[i].x = m_OBB.Corners[i].x * (float)m_matSkinTransform.Get(0, 0) + m_OBB.Corners[i].y * (float)m_matSkinTransform.Get(1, 0) + m_OBB.Corners[i].z * (float)m_matSkinTransform.Get(2, 0) + (float)m_matSkinTransform.Get(3, 0);
 		m_OBB_Transformed.Corners[i].y = m_OBB.Corners[i].x * (float)m_matSkinTransform.Get(0, 1) + m_OBB.Corners[i].y * (float)m_matSkinTransform.Get(1, 1) + m_OBB.Corners[i].z * (float)m_matSkinTransform.Get(2, 1) + (float)m_matSkinTransform.Get(3, 1);
 		m_OBB_Transformed.Corners[i].z = m_OBB.Corners[i].x * (float)m_matSkinTransform.Get(0, 2) + m_OBB.Corners[i].y * (float)m_matSkinTransform.Get(1, 2) + m_OBB.Corners[i].z * (float)m_matSkinTransform.Get(2, 2) + (float)m_matSkinTransform.Get(3, 2);
 	}
 
-	//vWorld.x = vLocal.x * mWorld._11 + vLocal.y * mWorld._21 + vLocal.z * mWorld._31;
-	//vWorld.y = vLocal.x * mWorld._12 + vLocal.y * mWorld._22 + vLocal.z * mWorld._32;
-	//vWorld.z = vLocal.x * mWorld._13 + vLocal.y * mWorld._23 + vLocal.z * mWorld._33;
-
-
 	for(size_t i = 0; i < m_Children.size(); i++)
+	{
 		m_Children[i]->Update(this, pAnimationController, strAnimationName);
+	}
 }
 
 void SkeletonBone::Update(SkeletonBone* parent, const float* matNewCombinedTransform)
@@ -161,7 +142,6 @@ void SkeletonBone::SetTransform(const float* matTransform)
 
 	for(int i = 0; i < 8; i++)
 	{
-		//matSkinTransform.SetIdentity();
 		m_OBB_Transformed.Corners[i].x = m_OBB.Corners[i].x * (float)m_matSkinTransform.Get(0, 0) + m_OBB.Corners[i].y * (float)m_matSkinTransform.Get(1, 0) + m_OBB.Corners[i].z * (float)m_matSkinTransform.Get(2, 0) + (float)m_matSkinTransform.Get(3, 0);
 		m_OBB_Transformed.Corners[i].y = m_OBB.Corners[i].x * (float)m_matSkinTransform.Get(0, 1) + m_OBB.Corners[i].y * (float)m_matSkinTransform.Get(1, 1) + m_OBB.Corners[i].z * (float)m_matSkinTransform.Get(2, 1) + (float)m_matSkinTransform.Get(3, 1);
 		m_OBB_Transformed.Corners[i].z = m_OBB.Corners[i].x * (float)m_matSkinTransform.Get(0, 2) + m_OBB.Corners[i].y * (float)m_matSkinTransform.Get(1, 2) + m_OBB.Corners[i].z * (float)m_matSkinTransform.Get(2, 2) + (float)m_matSkinTransform.Get(3, 2);
@@ -178,34 +158,10 @@ bool SkeletonBone::GetAccumulateParentTransformation()
 	return m_bAccumulateParentTransformation;
 }
 
-/*
-//--------------------------------------------------------------------------------------
-void SkeletonBone::SetBindPoseTransform(const D3DXMATRIX& matBindPoseTransform)
-{
-	m_matBindPoseTransform = matBindPoseTransform;
-	D3DXMatrixInverse(&m_matInvBindPoseTransform, NULL, &m_matBindPoseTransform);
-}
-
-//--------------------------------------------------------------------------------------
-void SkeletonBone::SetBoneReferenceTransform(const D3DXMATRIX& matBoneReferenceTransform)
-{
-	m_matBoneReferenceTransform = matBoneReferenceTransform;
-	D3DXMatrixInverse(&m_matInvBoneReferenceTransform, NULL, &m_matBoneReferenceTransform);
-}
-
-void SkeletonBone::SetLocalTransform(const D3DXMATRIX& matLocalTransform)
-{
-	m_matLocalTransform = matLocalTransform;
-}
-*/
-
-
-
 void SkeletonBone::SetBindPoseTransform2(const FbxMatrix& matBindPoseTransform)
 {
 	m_matBindPoseTransform2 = matBindPoseTransform;
 	m_matInvBindPoseTransform2 = m_matBindPoseTransform2.Inverse();
-	//D3DXMatrixInverse(&m_matInvBindPoseTransform, NULL, &m_matBindPoseTransform);
 }
 
 //--------------------------------------------------------------------------------------
@@ -213,7 +169,6 @@ void SkeletonBone::SetBoneReferenceTransform2(const FbxMatrix& matBoneReferenceT
 {
 	m_matBoneReferenceTransform2 = matBoneReferenceTransform;
 	m_matInvBoneReferenceTransform2 = m_matBoneReferenceTransform2.Inverse();
-	//D3DXMatrixInverse(&m_matInvBoneReferenceTransform, NULL, &m_matBoneReferenceTransform);
 }
 
 void SkeletonBone::SetLocalTransform2(const FbxMatrix& matLocalTransform)

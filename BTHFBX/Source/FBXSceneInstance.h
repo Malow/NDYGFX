@@ -16,34 +16,30 @@
 class FBXSceneInstance : public IBTHFbxScene
 {
 	class FBXScene* mScene;
+	Skeleton* m_pSkeleton;
 
 	Dictionary<Model*> m_Models;
 	std::vector<Curve>* m_Curves;
 
-	Skeleton* m_pSkeleton;
 	AnimationController* m_pAnimationController;
-
 	BTHFBX_AABB_DATA m_BoundingBox;
 
 public:
 	FBXSceneInstance(class FBXScene* scene);
-	~FBXSceneInstance();
+	virtual ~FBXSceneInstance();
 
 	void InitInstance();
 	void UpdateScene(float fElapsedTime, bool bEnableAnimation);
 
-	virtual int GetModelCount();
-	virtual IBTHFbxModel* GetModel(int index);
+	virtual unsigned int GetModelCount();
+	virtual IBTHFbxModel* GetModel(unsigned int index);
 	virtual bool IsAnimated();
 	virtual bool IsSkinned();
 	virtual IBTHFbxAnimationController* GetAnimationController();	
 	virtual IBTHFbxSkeleton* GetSkeleton();
-
-	virtual int GetCurveCount();
-	virtual IBTHFbxCurve* GetCurve(int index);
-
+	virtual unsigned int GetCurveCount();
+	virtual IBTHFbxCurve* GetCurve(unsigned int index);
 	virtual BTHFBX_AABB_DATA GetBoundingBoxData();
-
 	virtual BTHFBX_RAY_BOX_RESULT RayVsScene(const BTHFBX_RAY& ray, BTHFBX_MATRIX* worldMatrix);
 
 private:

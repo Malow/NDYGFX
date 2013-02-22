@@ -1,13 +1,12 @@
 #include "ModelPart.h"
-
 #include "Model.h"
 
+
 //--------------------------------------------------------------------------------------
-ModelPart::ModelPart(Model* pModelParent, int pModelParentIndex, Material* pMaterial) :
+ModelPart::ModelPart(Model* pModelParent, Material* pMaterial) :
 	m_pModelParent(pModelParent),
 	m_pMaterial(pMaterial),
-	m_bSkinnedModel(false),
-	m_ModelParentIndex(pModelParentIndex)
+	m_bSkinnedModel(false)
 {
 }
 
@@ -63,7 +62,7 @@ void ModelPart::ProcessBlendWeights()
 			}
 			*/
 
-			mBlendWeights.push_back(blendData);
+			m_BlendWeights.push_back(blendData);
 		}
 	}
 }
@@ -72,9 +71,9 @@ void ModelPart::ProcessSkeleteonBoundingBoxes(Skeleton* skeleton)
 {
 	SkeletonBone* bone = NULL;
 	BTHFBX_BLEND_WEIGHT_DATA* bw = NULL;
-	for(int i = 0; i < (int)mBlendWeights.size(); i++)
+	for(int i = 0; i < (int)m_BlendWeights.size(); i++)
 	{
-		bw = &mBlendWeights[i];
+		bw = &m_BlendWeights[i];
 		for(int j = 0; j < 4; j++)
 		{
 			if(bw->BlendWeights[j] > 0.0f)
@@ -86,10 +85,4 @@ void ModelPart::ProcessSkeleteonBoundingBoxes(Skeleton* skeleton)
 			}
 		}
 	}
-}
-
-//--------------------------------------------------------------------------------------
-void ModelPart::Optimize()
-{
-
 }

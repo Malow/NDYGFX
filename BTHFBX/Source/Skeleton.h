@@ -8,45 +8,39 @@
 #include <BTHFbxSkeleton.h>
 #include "FBXSDK.h"
 
-class Effect;
 
 class Skeleton : public IBTHFbxSkeleton
 {
+protected:
+	Dictionary<SkeletonBone*>	m_SkeletonBones;		
+	BTHFBX_AABB_DATA			m_CombinedAABB;
+	SkeletonBone*				m_RootBone;
+	BTHFBX_MATRIX*				m_SkinTransforms2;
+	unsigned int				m_nBoneCount;
+
 public:
 	Skeleton();
-	~Skeleton();
+	virtual ~Skeleton();
 
-	void AddSkeletonBone(SkeletonBone* pSkeletonBone);
+	// Procedural Data Access
 	SkeletonBone* FindBone(const std::string& strBoneName);
-
-	virtual IBTHFbxSkeletonBone* GetBone(const char* boneName);
-	virtual IBTHFbxSkeletonBone* GetBone(int index);
-
 	int FindBoneIndex(const std::string& strBoneName);
-
 	SkeletonBone* GetSkeletonBone(int nIndex);
-	const Dictionary<SkeletonBone*>& GetSkeletonBones() { return m_SkeletonBones; }
 
-	//void SetSkinTransform(int index, D3DXMATRIX& matSkinTransform);
-	//D3DXMATRIX* GetSkinTransforms() { return m_SkinTransforms; }
+	// Direct Data Access
+	inline const Dictionary<SkeletonBone*>& GetSkeletonBones() { return m_SkeletonBones; }
+	inline unsigned int GetBoneCount() const { return m_SkeletonBones.GetCount(); }
+	inline virtual float* GetSkinTransforms() { return (float*)m_SkinTransforms2; }
 
+	// Logic
 	void SetSkinTransform2(int index, FbxMatrix& matSkinTransform);
-	virtual float* GetSkinTransforms() { return (float*)m_SkinTransforms2; }
-
-	int GetBoneCount()				{ return m_nBoneCount; }
-
 	void UpdateAnimation(AnimationController* pAnimationController);
 	void UpdateCombinedAABB();
-	virtual BTHFBX_AABB_DATA GetCombinedBoundingBox() { return m_CombinedAABB; }
 	void BuildBoneHierarchy();
+	void AddSkeletonBone(SkeletonBone* pSkeletonBone);
 
-	BTHFBX_MATRIX*	m_SkinTransforms2;
-protected:
-	Dictionary<SkeletonBone*> m_SkeletonBones;
-	//D3DXMATRIX* m_SkinTransforms;
-		
-	BTHFBX_AABB_DATA m_CombinedAABB;
-	SkeletonBone* m_RootBone;
-
-	int m_nBoneCount;
+	// Overriden Functions
+	virtual BTHFBX_AABB_DATA GetCombinedBoundingBox() { return m_CombinedAABB; }
+	virtual IBTHFbxSkeletonBone* GetBone(const char* boneName);
+	virtual IBTHFbxSkeletonBone* GetBone(int index);
 };

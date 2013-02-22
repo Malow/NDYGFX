@@ -2,26 +2,26 @@
 
 #include <BTHFbxCommon.h>
 
-inline void FbxMatrixToBTHFBX_MATRIX(FbxMatrix& srcMatrix, BTHFBX_MATRIX& dstMatrix)
+inline void FbxMatrixToBTHFBX_MATRIX(const FbxMatrix& srcMatrix, BTHFBX_MATRIX& dstMatrix)
 {
 	for(int y = 0; y < 4; y++)
 		for(int x = 0; x < 4; x++)
 			dstMatrix.f[y*4+x] = (float)srcMatrix.Get(y, x);
 }
 
-inline void BTHFBX_MATRIXToFbxMatrix(BTHFBX_MATRIX& srcMatrix, FbxMatrix& dstMatrix)
+inline void BTHFBX_MATRIXToFbxMatrix(const BTHFBX_MATRIX& srcMatrix, FbxMatrix& dstMatrix)
 {
 	for(int y = 0; y < 4; y++)
 		for(int x = 0; x < 4; x++)
 			dstMatrix.Set(y, x, (double)srcMatrix.f[y*4+x]);
 }
 
-inline BTHFBX_VEC2 KFbxVector2ToBTHFBX_VEC2(FbxVector2& vSrcVector)
+inline BTHFBX_VEC2 KFbxVector2ToBTHFBX_VEC2(const FbxVector2& vSrcVector)
 {
 	return BTHFBX_VEC2( (float)vSrcVector[0], (float)vSrcVector[1] );
 }
 
-inline BTHFBX_VEC3 FbxVector4ToBTHFBX_VEC3(FbxVector4& vSrcVector)
+inline BTHFBX_VEC3 FbxVector4ToBTHFBX_VEC3(const FbxVector4& vSrcVector)
 {
 	return BTHFBX_VEC3( (float)vSrcVector[0], (float)vSrcVector[1], (float)vSrcVector[2] );
 }

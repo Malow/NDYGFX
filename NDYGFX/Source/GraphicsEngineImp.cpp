@@ -371,6 +371,7 @@ void GraphicsEngineImp::InitObjects()
 	this->dx->SetMaxFPS(this->parameters.MaxFPS);
 	this->dx->Start();
 	this->fbx = InitBTHFbx();
+	this->dx->SetFBXScene(this->fbx);
 }
 
 StaticMesh* GraphicsEngineImp::CreateStaticMesh(string filename, D3DXVECTOR3 pos, const char* billboardFilePath, float distanceToSwapToBillboard)
@@ -532,7 +533,6 @@ float GraphicsEngineImp::Update()
 	}
 	
 	this->dx->Update(diff);
-	this->fbx->UpdateScenes(diff * 0.001f, true);
 
 	if(this->isManagingMyOwnWindow)
 	{

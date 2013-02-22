@@ -93,6 +93,9 @@
     <ClInclude Include="Source\Animation.h">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Caching.h">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\AnimationController.cpp">
@@ -141,6 +144,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\Animation.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Caching.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

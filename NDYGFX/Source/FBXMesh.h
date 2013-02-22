@@ -19,8 +19,8 @@
 class FBXMesh : public Mesh, public virtual iFBXMesh
 {
 private:
-	FBXSceneD3D* scene;
-
+	FBXSceneD3D* zScene;
+	std::map< iMesh*, std::string > zBoundMeshes;
 
 public:
 	FBXMesh(D3DXVECTOR3 pos);
@@ -33,7 +33,13 @@ public:
 	void Update(float dt);
 	void Render(float dt, D3DXMATRIX camProj, D3DXMATRIX camView, Shader* shad, ID3D11DeviceContext* devCont);
 
-	virtual void SetAnimation(int ani);
+	virtual bool SetAnimation(unsigned int ani);
+	virtual bool SetAnimation(const char* name);
+	bool GetBonePosition(const std::string& name, float& x, float& y, float& z);
+
+	// Mesh Bounds
+	virtual bool BindMesh(const char* boneName, iMesh* mesh);
+	virtual void UnbindMesh(iMesh* mesh);
 
 	//BTHFBX_RAY_BOX_RESULT RayVsScene(const BTHFBX_RAY& ray, BTHFBX_MATRIX* worldMatrix);
 };
