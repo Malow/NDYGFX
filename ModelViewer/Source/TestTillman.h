@@ -70,13 +70,14 @@ void TillmanTest::PreTest()
 	iM2 = GetGraphics()->CreateImage(Vector2(200, 200), Vector2(100, 100), "Media/BallTexture.png");
 
 
-	iM5 = GetGraphics()->CreateImage(Vector2(300, 100), Vector2(100, 100), "Media/Arrow_v01.png");	//**minnesläcka om createmesh använder samma texture som en image OCH skapas FÖRE!
+	iM5 = GetGraphics()->CreateImage(Vector2(300, 100), Vector2(100, 100), "Media/Arrow_v01.png");
 	
 
-	iM3 = GetGraphics()->CreateImage(Vector2(100, 200), Vector2(100, 100), "Media/Bush_leaf_01_v07.png"); //**minnesläcka om arrow mesh & image ligger ovanför och Bush_leaf_01_v07.png finns fortfarande efter den har tagits bort.
+	iM3 = GetGraphics()->CreateImage(Vector2(100, 200), Vector2(100, 100), "Media/Bush_leaf_01_v07.png");
 	iM4 = GetGraphics()->CreateImage(Vector2(200, 100), Vector2(100, 100), "Media/Bush_leaf_01_v07.png");
 
-
+	iMesh* cacheBowCraschTest = GetGraphics()->CreateMesh("Media/Bow_v01.obj", Vector3(0, 2, 0));
+	cacheBowCraschTest->SetScale(5.0f);
 
 	vertSize = 64;
 	testSize = 25.0f;
