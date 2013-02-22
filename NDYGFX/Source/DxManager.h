@@ -45,6 +45,7 @@ private:
 	Shader* Shader_ShadowMap;
 	Shader* Shader_ShadowMapAnimated;
 	Shader* Shader_DeferredGeometry;
+	Shader* Shader_DeferredGeometryInstanced;
 	Shader* Shader_TerrainEditor;
 	Shader* Shader_DeferredLightning;
 	Shader* Shader_InvisibilityEffect;
@@ -147,6 +148,7 @@ private:
 
 	void RenderForward();
 	void RenderDeferredGeometry();
+	void RenderDeferredGeometryInstanced();
 	void RenderDeferredPerPixel();
 	void RenderInvisibilityEffect();
 	void RenderParticles();

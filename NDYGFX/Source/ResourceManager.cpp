@@ -377,7 +377,7 @@ void ResourceManager::UnloadObjectDataResource(const char* filePath)
 
 
 //PUBLIC:
-ResourceManager::ResourceManager() : gDevice(NULL), gDeviceContext(NULL)
+ResourceManager::ResourceManager() : gDevice(NULL), gDeviceContext(NULL), zDeferredContext(NULL)
 {
 	this->mutex = CreateMutex(NULL, false, NULL);
 }
@@ -500,6 +500,12 @@ bool ResourceManager::Init(ID3D11Device* device, ID3D11DeviceContext* deviceCont
 {
 	this->gDevice = device;
 	this->gDeviceContext = deviceContext;
+	HRESULT hr = this->gDevice->CreateDeferredContext(0, &this->zDeferredContext);
+	if(FAILED(hr))
+	{
+		MaloW::Debug("ERROR: Failed to create deferred context, Error code: '" + MaloW::convertNrToString((int)hr) + "'. Error msg: " + MaloW::GetHRESULTErrorCodeString(hr));
+		return false;
+	}
 
 	return true;
 }
@@ -597,7 +603,7 @@ void ResourceManager::PreLoadResources(unsigned int nrOfResources, std::vector<s
 					auto tex = this->zTextureResources.find(resourcesFileName);
 					if(tex == this->zTextureResources.end())
 					{
-						TextureResource* texResPtr = this->CreateTextureResourceFromFile(resourcesFileName);
+						TextureResource* texResPtr = this->CreateTextureResourceFromFile(resourcesFileName, true);
 						if(texResPtr != NULL)
 						{
 							//Decrease reference count since we're Preloading and no object yet has a reference to the resource.
@@ -621,7 +627,7 @@ void ResourceManager::PreLoadResources(unsigned int nrOfResources, std::vector<s
 	}
 }
 
-TextureResource* ResourceManager::CreateTextureResourceFromFile( const char* filePath )
+TextureResource* ResourceManager::CreateTextureResourceFromFile( const char* filePath, bool generateMipMap)
 {
 	if(this->mutex)
 	{
@@ -637,9 +643,13 @@ TextureResource* ResourceManager::CreateTextureResourceFromFile( const char* fil
 	{
 		D3DX11_IMAGE_LOAD_INFO loadInfo;
 		ZeroMemory(&loadInfo, sizeof(D3DX11_IMAGE_LOAD_INFO));
-		loadInfo.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+		loadInfo.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
 		loadInfo.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-
+		if(generateMipMap)
+		{
+			//loadInfo.MiscFlags =  D3D11_RESOURCE_MISC_GENERATE_MIPS;
+		}
+		
 		//Create 
 		ID3D11ShaderResourceView* SRV = NULL;
 		if(FAILED(D3DX11CreateShaderResourceViewFromFile(	
@@ -660,6 +670,12 @@ TextureResource* ResourceManager::CreateTextureResourceFromFile( const char* fil
 		}
 		else
 		{
+			//Generate mip maps.
+			if(generateMipMap && this->zDeferredContext != NULL)
+			{
+				//this->zDeferredContext->GenerateMips(SRV);
+			}
+
 			//Create if loading was successful.
 			this->zTextureResources[filePath] = new TextureResource(filePath, SRV);
 			//Increase reference count.
@@ -667,7 +683,7 @@ TextureResource* ResourceManager::CreateTextureResourceFromFile( const char* fil
 			
 			//Release mutex and return
 			ReleaseMutex(this->mutex);
-			//Return newly created texture.
+			//Return newly created texture resource.
 			return this->zTextureResources[filePath];
 		}
 	}

@@ -301,8 +301,6 @@ void DxManager::Life()
 
 		while(!this->StartRender)
 		{
-			this->camera->Update(this->Timer - this->LastCamUpdate);
-			this->LastCamUpdate = this->Timer;
 			this->Render();
 			this->framecount++;
 		}
@@ -534,9 +532,13 @@ void DxManager::RenderShadowMap()
 						{
 							Dx_DeviceContext->DrawIndexed(inds->GetElementCount(), 0, 0);
 						}
-						else
+						else if(verts)
 						{
 							Dx_DeviceContext->Draw(verts->GetElementCount(), 0);
+						}
+						else
+						{
+							MaloW::Debug("WARNING: DxManagerRender: RenderShadowMap(): Both vertex and indexbuffers were NULL.");
 						}
 					}
 				}
@@ -760,11 +762,11 @@ void DxManager::RenderBillboardsInstanced()
 		this->Shader_BillboardInstanced->SetMatrix("g_CamViewProj", this->camera->GetViewMatrix() * this->camera->GetProjectionMatrix());
 
 		// Set global variables per instance group
-		for(unsigned int i = 0; i < this->instancingHelper->GetNrOfBillboardInstanceGroups(); ++i)
+		for(unsigned int i = 0; i < this->instancingHelper->GetNrOfBillboardGroups(); ++i)
 		{
-			if(this->instancingHelper->GetBillboardInstanceGroup(i).s_SRV != NULL) 
+			if(this->instancingHelper->GetBillboardGroup(i).s_SRV != NULL) 
 			{
-				this->Shader_BillboardInstanced->SetResource("g_bb_DiffuseMap", this->instancingHelper->GetBillboardInstanceGroup(i).s_SRV);
+				this->Shader_BillboardInstanced->SetResource("g_bb_DiffuseMap", this->instancingHelper->GetBillboardGroup(i).s_SRV);
 				this->Shader_BillboardInstanced->SetBool("g_bb_IsTextured", true);
 			}
 			else
@@ -777,21 +779,18 @@ void DxManager::RenderBillboardsInstanced()
 			this->Shader_BillboardInstanced->Apply(0);
 
 			//Draw
-			int count = this->instancingHelper->GetBillboardInstanceGroup(i).s_Size;
-			int startLoc = this->instancingHelper->GetBillboardInstanceGroup(i).s_StartLocation;
-			this->Dx_DeviceContext->DrawInstanced(count, 1, startLoc, 0); //**TILLMAN, parameters inversed**
+			int instanceCount = this->instancingHelper->GetBillboardGroup(i).s_Size;
+			int startInstanceLocation = this->instancingHelper->GetBillboardGroup(i).s_StartLocation;
+			this->Dx_DeviceContext->DrawInstanced(instanceCount, 1, startInstanceLocation, 0); //**TILLMAN, parameters inversed**
 			
 			//Debug data
 			this->NrOfDrawCalls++;
 		}
+		//Debug data
+		this->NrOfDrawnVertices += 4 * this->instancingHelper->GetNrOfBillboards();
+		//Reset counter (nrofbillboards)
+		this->instancingHelper->PostRenderBillboards();
 	}
-
-
-
-	//Debug data
-	this->NrOfDrawnVertices += 4 * this->instancingHelper->GetNrOfBillboards();
-	//Reset counter (nrofbillboards)
-	this->instancingHelper->PostRenderBillboards();
 }
 
 void DxManager::RenderText()
@@ -955,9 +954,13 @@ void DxManager::RenderCascadedShadowMap()
 
 						this->Dx_DeviceContext->DrawIndexed(inds->GetElementCount(), 0, 0);
 					}
-					else 
+					else if(verts)
 					{
 						this->Dx_DeviceContext->Draw(verts->GetElementCount(), 0);
+					}
+					else
+					{
+						MaloW::Debug("WARNING: DxManagerRender: RenderCascadedShadowMap(): Both vertex and indexbuffers for terrain were NULL.");
 					}
 				}
 			}
@@ -1043,9 +1046,13 @@ void DxManager::RenderCascadedShadowMap()
 								{
 									Dx_DeviceContext->DrawIndexed(inds->GetElementCount(), 0, 0);
 								}
-								else
+								else if(verts)
 								{
 									Dx_DeviceContext->Draw(verts->GetElementCount(), 0);
+								}
+								else
+								{
+									MaloW::Debug("WARNING: DxManagerRender: RenderCascadedShadowMap(): Both vertex and indexbuffers for static mesh were NULL.");
 								}
 							}
 						}
@@ -1114,17 +1121,27 @@ void DxManager::RenderCascadedShadowMap()
 								ID3D11Buffer* vertexBuffers [] = {vertsOne->GetBufferPointer(), vertsTwo->GetBufferPointer()};
 								UINT strides [] = {sizeof(Vertex), sizeof(Vertex)};
 								UINT offsets [] = {0, 0};
-								this->Dx_DeviceContext->IASetVertexBuffers(0, 2, vertexBuffers, strides, offsets);
-
-								//Textures
-								if(objOne->GetTextureResource() != NULL && objTwo->GetTextureResource() != NULL)
+								if(vertsOne != NULL && vertsTwo != NULL)
 								{
-									if(objOne->GetTextureResource()->GetSRVPointer() != NULL && objTwo->GetTextureResource()->GetSRVPointer() != NULL)
+									this->Dx_DeviceContext->IASetVertexBuffers(0, 2, vertexBuffers, strides, offsets);
+									
+									//Textures
+									if(objOne->GetTextureResource() != NULL && objTwo->GetTextureResource() != NULL)
 									{
-										this->Shader_ShadowMapAnimated->SetResource("diffuseMap0", objOne->GetTextureResource()->GetSRVPointer());
-										//Only need one diffuse map since no blending between maps is done.
-										//this->Shader_ShadowMapAnimated->SetResource("diffuseMap1", objTwo->GetTextureResource()->GetSRVPointer());
-										this->Shader_ShadowMapAnimated->SetBool("textured", true);
+										if(objOne->GetTextureResource()->GetSRVPointer() != NULL && objTwo->GetTextureResource()->GetSRVPointer() != NULL)
+										{
+											this->Shader_ShadowMapAnimated->SetResource("diffuseMap0", objOne->GetTextureResource()->GetSRVPointer());
+											//Only need one diffuse map since no blending between maps is done.
+											//this->Shader_ShadowMapAnimated->SetResource("diffuseMap1", objTwo->GetTextureResource()->GetSRVPointer());
+											this->Shader_ShadowMapAnimated->SetBool("textured", true);
+										}
+										else
+										{
+											this->Shader_ShadowMapAnimated->SetResource("diffuseMap0", NULL);
+											//Only need one diffuse map since no blending between maps is done.
+											//this->Shader_ShadowMapAnimated->SetResource("diffuseMap1", NULL);
+											this->Shader_ShadowMapAnimated->SetBool("textured", false);
+										}
 									}
 									else
 									{
@@ -1133,20 +1150,17 @@ void DxManager::RenderCascadedShadowMap()
 										//this->Shader_ShadowMapAnimated->SetResource("diffuseMap1", NULL);
 										this->Shader_ShadowMapAnimated->SetBool("textured", false);
 									}
+
+									//Apply
+									this->Shader_ShadowMapAnimated->Apply(0);
+
+									//Draw
+									this->Dx_DeviceContext->Draw(vertsOne->GetElementCount(), 0); 
 								}
 								else
 								{
-									this->Shader_ShadowMapAnimated->SetResource("diffuseMap0", NULL);
-									//Only need one diffuse map since no blending between maps is done.
-									//this->Shader_ShadowMapAnimated->SetResource("diffuseMap1", NULL);
-									this->Shader_ShadowMapAnimated->SetBool("textured", false);
+									MaloW::Debug("WARNING: DxManagerRender: RenderCascadedShadowMap(): One or both vertex buffers for animated mesh were NULL.");
 								}
-
-								//Apply
-								this->Shader_ShadowMapAnimated->Apply(0);
-
-								//Draw
-								this->Dx_DeviceContext->Draw(vertsOne->GetElementCount(), 0); 
 							}
 						}
 					}
@@ -1446,6 +1460,8 @@ HRESULT DxManager::Render()
 {
 	if(this->RendererSleep > 0)
 		Sleep((DWORD)this->RendererSleep);
+	if(GetForegroundWindow() != this->hWnd)	// Sleep a little if you're alt tabbed out of the game to prevent desktop lag.
+		Sleep((DWORD)10);
 
 	// Timer
 	LARGE_INTEGER li;
@@ -1467,6 +1483,7 @@ HRESULT DxManager::Render()
 
 
 	this->RenderDeferredGeometry();
+	this->RenderDeferredGeometryInstanced();
 
 	this->RenderBillboards();
 	this->RenderBillboardsInstanced(); 

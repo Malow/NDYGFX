@@ -568,7 +568,7 @@ float4 PSScene(PSIn input) : SV_Target
 		1.0f);
 
 	if(UseSun)
-		finalColor.xyz *= sun.LightColor;
+		finalColor.xyz *= sun.LightColor.xyz;
 
 	
 	
@@ -632,6 +632,13 @@ float4 PSScene(PSIn input) : SV_Target
 		finalColor = lerp(finalColor, float4(0.45f, 0.45f, 0.45f, 1.0f), saturate(fogfactor));
 	}
 		
+	
+	//**TILLMAN todo: OPT**
+	if(WorldPosAndObjectType.w == OBJECT_TYPE_BILLBOARD)
+	{
+		return float4(AmbientLight.xyz * DiffuseColor + DiffuseColor * diffuseLighting, 1.0f);// = Texture.Sample(linearSampler, input.tex).xyz;	
+	}
+
 	//**DEBUG NORMAL TEST**
 	/*if(WorldPosAndObjectType.w == OBJECT_TYPE_TERRAIN)
 	{
@@ -640,13 +647,6 @@ float4 PSScene(PSIn input) : SV_Target
 	
 	//return float4(NormsAndDepth.xyz, 1.0f);
 	
-	//**TILLMAN todo: OPT**
-	if(WorldPosAndObjectType.w == OBJECT_TYPE_BILLBOARD)
-	{
-		return float4(AmbientLight.xyz * DiffuseColor + DiffuseColor * diffuseLighting, 1.0f);// = Texture.Sample(linearSampler, input.tex).xyz;	
-	}
-
-
 	return saturate(finalColor);
 }
 

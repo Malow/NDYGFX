@@ -22,7 +22,8 @@ private:
 	Vector3 cameraLookAt2;
 	Vector3 cameraPoint3;
 	Vector3	cameraLookAt3;
-	
+	Vector3 cameraPoint4;
+	iBillboard* iBBMemLeak;
 
 
 	iMesh* bushCSMTest;
@@ -182,14 +183,15 @@ void TillmanTest::PreTest()
 	iT->SetBlendMaps(nrOfBlendMaps, sizes, testData);
 
 
-	fileNames[0] = "Media/TerrainTexture.png";
-	fileNames[1] = "Media/TerrainTexture.png";
-	fileNames[2] = "Media/TerrainTexture.png";
-	fileNames[3] = "Media/TerrainTexture.png";
-	fileNames[4] = "Media/TerrainTexture.png";
-	fileNames[5] = "Media/TerrainTexture.png";
-	fileNames[6] = "Media/TerrainTexture.png";
-	fileNames[7] = "Media/TerrainTexture.png";
+
+	fileNames[0] = "Media/01_v02-Moss.png";
+	fileNames[1] = "Media/01_v02-Moss.png";
+	fileNames[2] = "Media/01_v02-Moss.png";
+	fileNames[3] = "Media/01_v02-Moss.png";
+	fileNames[4] = "Media/01_v02-Moss.png";
+	fileNames[5] = "Media/01_v02-Moss.png";
+	fileNames[6] = "Media/01_v02-Moss.png";
+	fileNames[7] = "Media/01_v02-Moss.png";
 
 	float normals[64 * 64 * 3]; //vertSize = 64;
 	/*for(int i = 0; i < 64 * 64 * 3; i+=3)
@@ -371,6 +373,7 @@ void TillmanTest::PreTest()
 	cameraLookAt2 = Vector3(100.0f, 0.0f, 100.0f);
 	cameraPoint3 = Vector3(-10.0f, 2.0f, 47.5f);
 	cameraLookAt3 = Vector3(100.0f, 2.0f, 47.5f);
+	cameraPoint4 = Vector3(-50.0f, 20.0f, 150.0f);
 
 	
 	lll = GetGraphics()->CreateLight(Vector3(0,2,0));
@@ -379,16 +382,16 @@ void TillmanTest::PreTest()
 	mmm = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(0,2,0));
 
 
-	/*float navArrowsScale = 0.25f;
-	iMesh* navArrowX = GetGraphics()->CreateMesh("Media/RedArrow.obj", Vector3(0, 0, 0));
-	iMesh* navArrowZ = GetGraphics()->CreateMesh("Media/BlueArrow.obj", Vector3(-7.5f * navArrowsScale, 0, 7.5f * navArrowsScale));
-	iMesh* navArrowSpawn = GetGraphics()->CreateMesh("Media/BlackArrow.obj", Vector3(0, 0, 0));
+	float navArrowsScale = 0.25f;
+	iMesh* navArrowX = GetGraphics()->CreateMesh("Media/RedArrow.obj", Vector3(0, 2, 0));
+	iMesh* navArrowZ = GetGraphics()->CreateMesh("Media/BlueArrow.obj", Vector3(-7.5f * navArrowsScale, 2, 7.5f * navArrowsScale));
+	iMesh* navArrowSpawn = GetGraphics()->CreateMesh("Media/BlackArrow.obj", Vector3(0, 2, 0));
 	navArrowX->RotateAxis(Vector3(0, 0, 1), 3.14159265359 * 0.5f); //Point down x-axis
 	navArrowZ->RotateAxis(Vector3(1, 0, 0), -3.14159265359 * 0.5f); //Point down z-axis
 	navArrowSpawn->RotateAxis(Vector3(0, 0, 1), 3.14159265359 * 0.5f); //Point down x-axis
 	navArrowX->Scale(navArrowsScale);
 	navArrowZ->Scale(navArrowsScale);
-	navArrowSpawn->Scale(navArrowsScale);*/
+	navArrowSpawn->Scale(navArrowsScale);
 
 
 	//GRASS
@@ -456,6 +459,7 @@ void TillmanTest::PreTest()
 	string billboardFile = "Media/TreeBillboard.png";
 	for(int i = 0; i < 10; i++)
 	{
+		//Billboards
 		if(i == 4)
 		{
 			billboardFile = "Media/BallTexture.png";
@@ -470,18 +474,14 @@ void TillmanTest::PreTest()
 		}
 		iMesh* treeWithBillboard = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(i * 5, 0, 50), billboardFile.c_str(), 0.5f);
 		treeWithBillboard->SetScale((0.061f));
-		/*treeWithBillboard = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(i * 5, 0, 52.5f), billboardFile.c_str(), 0.5f);
-		treeWithBillboard->SetScale((0.061f));
-		treeWithBillboard = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(i * 5, 0, 47.5f), billboardFile.c_str(), 0.5f);
-		treeWithBillboard->SetScale((0.061f));
-		*/
-		
-		
 		iMesh* fernWithBillboard = GetGraphics()->CreateMesh("Media/Fern_02.ani", Vector3(i * 5, 0, 45), billboardFile.c_str(), 0.5f);
 		fernWithBillboard->SetScale((0.15f));
+
+		//Meshes
+		iMesh* treeWithWOBB = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(i * 5, 0, 55));
+		treeWithWOBB->SetScale((0.041f));
 	}
-//	GetGraphics()->CreateImage(Vector2(100, 100), Vector2(700, 700), "Media/TreeBillboard.png");
-	
+	iBBMemLeak = GetGraphics()->CreateBillboard(Vector3(0, 10, 0), Vector2(10, 10), "Media/TreeBillboard.png");
 }
 
 void TillmanTest::RunTest(float diff)
@@ -505,7 +505,7 @@ void TillmanTest::RunTest(float diff)
 		*/
 
 	CollisionData cd = GetGraphics()->GetPhysicsEngine()->GetSpecialCollisionRayTerrain(GetGraphics()->GetCamera()->GetPosition(),
-		GetGraphics()->GetCamera()->Get3DPickingRay(), iT2, testSize / (vertSize - 1));
+		GetGraphics()->GetCamera()->Get3DPickingRay(), iT2, testSize / (vertSize));	
 	if(cd.collision)
 		mmm->SetPosition(Vector3(cd.posx, cd.posy, cd.posz));
 	else
@@ -544,7 +544,11 @@ void TillmanTest::RunTest(float diff)
 	{
 		//iT2->SetNormals(normals);
 		//iT2->SetHeightMap(hmData);
-		debugCSMScale += diff * 0.001f;
+		//debugCSMScale += diff * 0.001f;
+		//iT->SetAIGridThickness(0.0005f);
+		//iT->UseAIMap(true);*/
+		GetGraphics()->DeleteBillboard(iBBMemLeak);
+		
 		fileNames[0] = "Media/TerrainTexture.png";
 		fileNames[1] = "Media/TerrainTexture.png";
 		fileNames[2] = "Media/TerrainTexture.png";
@@ -553,9 +557,27 @@ void TillmanTest::RunTest(float diff)
 		fileNames[5] = "Media/BallTexture.png";
 		fileNames[6] = "Media/BallTexture.png";
 		fileNames[7] = "Media/BallTexture.png";
-		iT2->SetTextures(fileNames);
-		iT->SetAIGridThickness(0.0005f);
-		iT->UseAIMap(true);
+		iT->SetTextures(fileNames);
+		int nrOfBlendMaps = 2;
+		unsigned int size = 32;
+		sizes[0] = size;
+		sizes[1] = size;
+		unsigned int channels = 4;
+		for(unsigned int i = 0; i < sizes[0]*sizes[0]; i++)
+		{
+			testData[0][ i * channels + 0 ] = 0.0f;
+			testData[0][ i * channels + 1 ] = 0.0f;
+			testData[0][ i * channels + 2 ] = 0.0f;
+			testData[0][ i * channels + 3 ] = 0.0f;
+		}
+		for(unsigned int i = 0; i < sizes[1]*sizes[1]; i++)
+		{
+			testData[1][ i * channels + 0 ] = 1.0f;
+			testData[1][ i * channels + 1 ] = 1.0f;
+			testData[1][ i * channels + 2 ] = 1.0f;
+			testData[1][ i * channels + 3 ] = 1.0f;
+		}
+		iT->SetBlendMaps(nrOfBlendMaps, sizes, testData);
 		/*if(!oncee)
 		{	
 			iMesh* loadFromFileTest = NULL;
@@ -618,7 +640,12 @@ void TillmanTest::RunTest(float diff)
 		GetGraphics()->GetCamera()->SetPosition(cameraPoint3);
 		GetGraphics()->GetCamera()->LookAt(cameraLookAt3);
 	}
-
+	//Camera reset/teleport
+	if(GetGraphics()->GetKeyListener()->IsPressed('N'))
+	{
+		GetGraphics()->GetCamera()->SetPosition(cameraPoint4);
+		GetGraphics()->GetCamera()->LookAt(cameraLookAt3);
+	}
 
 	//Toggle shadow on/off
 	if(GetGraphics()->GetKeyListener()->IsPressed('M'))

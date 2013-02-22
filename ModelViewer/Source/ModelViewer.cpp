@@ -119,13 +119,6 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	scaleHuman->Scale(1.0f / 20.0f);
 	model->Scale(1.0f * 0.05f);
 
-	MaloWTest mt;
-	TillmanTest tt;
-	OtherTest ot;
-	mt.PreTest();
-	tt.PreTest();
-	ot.PreTest();
-	GetGraphics()->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 1.0f, 1.0f, 1.0f, 1.0f);
 #endif
 
 //*************************************	    END OF PRE TEST       **********************
@@ -185,7 +178,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 			GetGraphics()->GetCamera()->MoveBackward(diff * 10.0f);
 		if(GetGraphics()->GetKeyListener()->IsPressed('D'))	
 			GetGraphics()->GetCamera()->MoveRight(diff * 10.0f);
-
+		
 		if(GetGraphics()->GetKeyListener()->IsPressed('Z'))	
 		{
 			GetGraphics()->GetKeyListener()->SetMousePosition(Vector2(

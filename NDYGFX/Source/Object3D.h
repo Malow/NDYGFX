@@ -23,7 +23,9 @@ public:
 
 	BufferResource* GetVertexBufferResource() { return this->verts; }
 	BufferResource* GetIndexBufferResource() { return this->inds; }
+	/* DEPRECATED, please use GetVertexBufferResource. */
 	Buffer* GetVertBuff();
+	/* DEPRECATED, please use GetIndexBufferResource. */
 	Buffer* GetIndsBuff();
 	D3D_PRIMITIVE_TOPOLOGY GetTopology() { return this->topology; }
 	TextureResource* GetTextureResource() { return this->textureResource; }

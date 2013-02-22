@@ -58,6 +58,7 @@ void DxManager::PreRender()
 
 void DxManager::RenderDeferredGeometry()
 {
+	//static bool once = false;
 	//clear and set render target/depth
 	this->Dx_DeviceContext->OMSetRenderTargets(this->NrOfRenderTargets, this->Dx_GbufferRTs, this->Dx_DepthStencilView);
 	this->Dx_DeviceContext->ClearDepthStencilView(this->Dx_DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
@@ -111,46 +112,22 @@ void DxManager::RenderDeferredGeometry()
 			//Update vertex buffer if y-value for vertices (height map) have changed
 			if(terrPtr->HasHeightMapChanged() && terrPtr->HaveNormalsChanged()) //**TILLMAN LOADTHREAD**
 			{
-				//**OPT(OBS!  only for editor): should be replaced with an update function ** TILLMAN
+				void* mappedSubResourceData = NULL;
+				//Map to access data in vertex buffer
+				mappedSubResourceData = terrPtr->GetVertexBufferPointer()->Map();
+				Vertex* data = reinterpret_cast<Vertex*>(mappedSubResourceData);
+				//Update data in vertex buffer
+				for(unsigned int i = 0; i < terrPtr->GetNrOfVertices(); ++i)
+				{
+					data[i] = terrPtr->GetVerticesPointer()[i];
+				}
+				//Unmap so the GPU can access
+				terrPtr->GetVertexBufferPointer()->Unmap();
 				
-
-				//Save pointer to buffer
-				Buffer* oldBuffer = terrPtr->GetVertexBufferPointer();
-
-				//Create new vertex buffer
-				BUFFER_INIT_DESC vertexBufferDesc;
-				vertexBufferDesc.ElementSize = sizeof(Vertex);
-				vertexBufferDesc.InitData = terrPtr->GetVerticesPointer(); 
-				vertexBufferDesc.NumElements = terrPtr->GetNrOfVertices();
-				vertexBufferDesc.Type = VERTEX_BUFFER;
-				vertexBufferDesc.Usage = BUFFER_DEFAULT;
-
-				Buffer* newBuffer = new Buffer();
-				HRESULT hr = newBuffer->Init(this->Dx_Device, this->Dx_DeviceContext, vertexBufferDesc);
-				if(FAILED(hr))
-				{
-					delete newBuffer; 
-					newBuffer = NULL;
-
-					MaloW::Debug("ERROR: Could not create new vertex buffer for terrain."
-						+ string("ERROR code: '") 
-						+ MaloW::GetHRESULTErrorCodeString(hr));
-				}
-
-				//Set it
-				terrPtr->SetVertexBuffer(newBuffer);
-				//Delete old buffer
-				if(oldBuffer) delete oldBuffer;
-
 				//Set that the height map shall not be changed anymore.
-				//if(wasItHeightMap)
-				{
-					terrPtr->HeightMapHasChanged(false);
-				}
-				//else //Same for normals
-				{
-					terrPtr->NormalsHaveChanged(false);
-				}
+				terrPtr->HeightMapHasChanged(false);
+				//Same for normals.
+				terrPtr->NormalsHaveChanged(false);
 			}
 
 			//Set Textures
@@ -177,7 +154,7 @@ void DxManager::RenderDeferredGeometry()
 					}
 					
 					//Create the new one.
-					terrPtr->SetTexture(j, GetResourceManager()->CreateTextureResourceFromFile(terrPtr->GetTextureResourceToLoadFileName(j).c_str()));
+					terrPtr->SetTexture(j, GetResourceManager()->CreateTextureResourceFromFile(terrPtr->GetTextureResourceToLoadFileName(j).c_str(), true));
 					//Set that the texture resource shall not be changed anymore.
 					terrPtr->SetTextureResourceToLoadFileName(j, "");
 				}
@@ -234,54 +211,16 @@ void DxManager::RenderDeferredGeometry()
 				BlendMap* bmPtr0 = terrPtr->GetBlendMapPointer(0); 
 				if(bmPtr0 != NULL)
 				{
-					if(bmPtr0->HasChanged)
+					if(bmPtr0->s_HasChanged)
 					{
-						//Release old shader resource view //**TILLMAN LOAD-THREAD**
-						if(bmPtr0->SRV) bmPtr0->SRV->Release();
-
-						//Create texture
-						int widthOrHeight = bmPtr0->Size;
-						D3D11_TEXTURE2D_DESC texDesc;
-						texDesc.Width = widthOrHeight;
-						texDesc.Height = widthOrHeight;
-						texDesc.MipLevels = 1;
-						texDesc.ArraySize = 1;
-						texDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT; 
-						texDesc.SampleDesc.Count = 1;
-						texDesc.SampleDesc.Quality = 0;
-						texDesc.Usage = D3D11_USAGE_IMMUTABLE;
-						texDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-						texDesc.CPUAccessFlags = 0;
-						texDesc.MiscFlags = 0;
-
-						D3D11_SUBRESOURCE_DATA initData = {0};
-						initData.SysMemPitch = widthOrHeight * sizeof(float) * 4;
-						initData.pSysMem = bmPtr0->Data; 
-
-						ID3D11Texture2D* tex = NULL;
-						if(FAILED(this->Dx_Device->CreateTexture2D(&texDesc, &initData, &tex)))
+						//Check if blendmap texture has to be recreated.
+						if(bmPtr0->s_RecreateTexture)
 						{
-							MaloW::Debug("ERROR: Failed to create texture with blend map data.");
-						}
-						//Create shader resource view
-						if(FAILED(this->Dx_Device->CreateShaderResourceView(tex, 0, &bmPtr0->SRV)))
-						{
-							MaloW::Debug("ERROR: Failed to create Shader resource view with blend map texture.");
-						}
-						//Set that the blend map shall not be changed anymore.
-						bmPtr0->HasChanged = false;
-					}
-
-					BlendMap* bmPtr1 = terrPtr->GetBlendMapPointer(1);  //**tillman ändra**
-					if(bmPtr1 != NULL)
-					{
-						if(bmPtr1->HasChanged)
-						{
-							//Release old shader resource view //**TILLMAN LOAD-THREAD**
-							if(bmPtr1->SRV) bmPtr1->SRV->Release();
+							//Release old shader resource view 
+							if(bmPtr0->s_SRV) bmPtr0->s_SRV->Release();
 
 							//Create texture
-							int widthOrHeight = bmPtr1->Size;
+							int widthOrHeight = bmPtr0->s_Size;
 							D3D11_TEXTURE2D_DESC texDesc;
 							texDesc.Width = widthOrHeight;
 							texDesc.Height = widthOrHeight;
@@ -290,37 +229,115 @@ void DxManager::RenderDeferredGeometry()
 							texDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT; 
 							texDesc.SampleDesc.Count = 1;
 							texDesc.SampleDesc.Quality = 0;
-							texDesc.Usage = D3D11_USAGE_IMMUTABLE;
+							texDesc.Usage = D3D11_USAGE_DYNAMIC; //GPU READ, CPU WRITE
 							texDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-							texDesc.CPUAccessFlags = 0;
+							texDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE; //CPU WRITE portion/all
 							texDesc.MiscFlags = 0;
 
 							D3D11_SUBRESOURCE_DATA initData = {0};
 							initData.SysMemPitch = widthOrHeight * sizeof(float) * 4;
-							initData.pSysMem = bmPtr1->Data; 
+							initData.pSysMem = bmPtr0->s_Data; 
 
-							ID3D11Texture2D* tex = NULL;
-							if(FAILED(this->Dx_Device->CreateTexture2D(&texDesc, &initData, &tex)))
+							if(FAILED(this->Dx_Device->CreateTexture2D(&texDesc, &initData, &bmPtr0->s_Texture)))
 							{
 								MaloW::Debug("ERROR: Failed to create texture with blend map data.");
 							}
-							//Create shader resource view
-							if(FAILED(this->Dx_Device->CreateShaderResourceView(tex, 0, &bmPtr1->SRV)))
+							//Set that the blend map's texture shall not be recreated.
+							bmPtr0->s_RecreateTexture = false;
+						}
+						else //otherwise update texture
+						{
+							D3D11_MAPPED_SUBRESOURCE mappedSubResource;
+							this->Dx_DeviceContext->Map(bmPtr0->s_Texture, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubResource);
+							float* data = reinterpret_cast<float*>(mappedSubResource.pData);
+							unsigned int arraySize = bmPtr0->s_Size * bmPtr0->s_Size * 4; //Width * height * 4 floats
+							for(unsigned int i = 0; i < arraySize; ++i)
+							{
+								data[i] = bmPtr0->s_Data[i];
+							}
+							//Unmap so the GPU can have access
+							this->Dx_DeviceContext->Unmap(bmPtr0->s_Texture, 0);
+						}
+
+						//Create shader resource view (always, cannot be updated)
+						if(FAILED(this->Dx_Device->CreateShaderResourceView(bmPtr0->s_Texture, 0, &bmPtr0->s_SRV)))
+						{
+							MaloW::Debug("ERROR: Failed to create Shader resource view with blend map texture.");
+						}
+
+						//Set that the blend map shall not be changed anymore.
+						bmPtr0->s_HasChanged = false;
+					}
+
+					BlendMap* bmPtr1 = terrPtr->GetBlendMapPointer(1);  //**tillman ändra**
+					if(bmPtr1 != NULL)
+					{
+						if(bmPtr1->s_HasChanged)
+						{
+							//Check if blendmap texture has to be recreated.
+							if(bmPtr1->s_RecreateTexture)
+							{
+								//Release old shader resource view 
+								if(bmPtr1->s_SRV) bmPtr1->s_SRV->Release();
+
+								//Create texture
+								int widthOrHeight = bmPtr1->s_Size;
+								D3D11_TEXTURE2D_DESC texDesc;
+								texDesc.Width = widthOrHeight;
+								texDesc.Height = widthOrHeight;
+								texDesc.MipLevels = 1;
+								texDesc.ArraySize = 1;
+								texDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT; 
+								texDesc.SampleDesc.Count = 1;
+								texDesc.SampleDesc.Quality = 0;
+								texDesc.Usage = D3D11_USAGE_DYNAMIC; //GPU READ, CPU WRITE
+								texDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+								texDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE; //CPU WRITE portion/all
+								texDesc.MiscFlags = 0;
+
+								D3D11_SUBRESOURCE_DATA initData = {0};
+								initData.SysMemPitch = widthOrHeight * sizeof(float) * 4;
+								initData.pSysMem = bmPtr1->s_Data; 
+
+								if(FAILED(this->Dx_Device->CreateTexture2D(&texDesc, &initData, &bmPtr1->s_Texture)))
+								{
+									MaloW::Debug("ERROR: Failed to create texture with blend map data.");
+								}
+								//Set that the blend map's texture shall not be recreated.
+								bmPtr1->s_RecreateTexture = false;
+							}
+							else //otherwise update texture
+							{
+								D3D11_MAPPED_SUBRESOURCE mappedSubResource;
+								this->Dx_DeviceContext->Map(bmPtr1->s_Texture, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubResource);
+								float* data = reinterpret_cast<float*>(mappedSubResource.pData);
+								unsigned int arraySize = bmPtr1->s_Size * bmPtr1->s_Size * 4; //Width * height * 4 floats
+								for(unsigned int i = 0; i < arraySize; ++i)
+								{
+									data[i] = bmPtr1->s_Data[i];
+								}
+								//Unmap so the GPU can have access
+								this->Dx_DeviceContext->Unmap(bmPtr1->s_Texture, 0);
+							}
+
+							//Create shader resource view (always, cannot be updated)
+							if(FAILED(this->Dx_Device->CreateShaderResourceView(bmPtr1->s_Texture, 0, &bmPtr1->s_SRV)))
 							{
 								MaloW::Debug("ERROR: Failed to create Shader resource view with blend map texture.");
 							}
+
 							//Set that the blend map shall not be changed anymore.
-							bmPtr1->HasChanged = false;
+							bmPtr1->s_HasChanged = false;
 						}
 
 						//Set blend map variables
-						this->Shader_TerrainEditor->SetResource("blendMap1", bmPtr1->SRV);
+						this->Shader_TerrainEditor->SetResource("blendMap1", bmPtr1->s_SRV);
 					}
 
 					//Set blend map variables
 					this->Shader_TerrainEditor->SetBool("blendMapped", true);
 					this->Shader_TerrainEditor->SetInt("nrOfBlendMaps", terrPtr->GetNrOfBlendMaps());
-					this->Shader_TerrainEditor->SetResource("blendMap0", bmPtr0->SRV);
+					this->Shader_TerrainEditor->SetResource("blendMap0", bmPtr0->s_SRV);
 				}
 				else
 				{
@@ -441,7 +458,7 @@ void DxManager::RenderDeferredGeometry()
 			}
 			else
 			{
-				MaloW::Debug("WARNING: both index and vertex buffers were NULL. DxManagerDeferred: RenderDeferredGeometry(): Terrain.");
+				MaloW::Debug("WARNING: DxManagerDeferred: RenderDeferredGeometry(): Both index and vertex buffers were NULL for the terrain.");
 			}
 		}
 	}
@@ -470,6 +487,7 @@ void DxManager::RenderDeferredGeometry()
 	for(int i = 0; i < this->objects.size(); i++)
 	{
 		StaticMesh* staticMesh = this->objects[i];
+
 		if(!staticMesh->IsUsingInvisibility() && !staticMesh->GetDontRenderFlag())
 		{
 			D3DXVECTOR3 distance = staticMesh->GetBillboardGFX()->GetPositionD3DX() - this->camera->GetPositionD3DX();
@@ -587,14 +605,37 @@ void DxManager::RenderDeferredGeometry()
 							//Count(debug)
 							CurrentNrOfDrawCalls++;
 						}
-						else
+						else if(verts)
 						{
 							this->Dx_DeviceContext->Draw(verts->GetElementCount(), 0);
 							//Count(debug)
 							CurrentNrOfDrawCalls++;
 						}
+						else
+						{
+							MaloW::Debug("WARNING: DxManagerDeferred: RenderDeferredGeometry(): Both index and vertex buffers were NULL for static mesh. ");
+						}
 					}
 				}
+					
+				
+				/*bool hasBeenCounted = false;
+				//Just check the first strip if it is culled.  //**TILLMAN**
+				if(!staticMesh->IsStripCulled(0))
+				{
+					if(!hasBeenCounted)
+					{
+						CurrentRenderedMeshes++;
+						hasBeenCounted = true;
+					}
+
+					//Add mesh info to instance helper
+					//if(!once)
+					{
+						this->instancingHelper->AddMesh(staticMesh);
+						//once = true;
+					}
+				}*/
 			}
 			else
 			{
@@ -621,6 +662,7 @@ void DxManager::RenderDeferredGeometry()
 			this->invisibleGeometry = true;
 		}
 	}
+	//once = false;
 	// Unbind resources static geometry:
 	this->Shader_DeferredGeometry->SetResource("normalMap", NULL);
 	this->Shader_DeferredGeometry->SetResource("tex2D", NULL);
@@ -805,7 +847,109 @@ void DxManager::RenderDeferredGeometry()
 	this->NrOfDrawnVertices = CurrentRenderedNrOfVertices;
 	this->NrOfDrawCalls = CurrentNrOfDrawCalls;
 }
+void DxManager::RenderDeferredGeometryInstanced()
+{
+	if(this->instancingHelper->GetNrOfMeshes() > 0)
+	{
+		//Sort, create instance groups and update buffer before rendering
+		this->instancingHelper->PreRenderMeshes();
+	
 
+
+		// Set global variables per frame
+		this->Shader_DeferredGeometryInstanced->SetFloat3("g_CamPos", this->camera->GetPositionD3DX());
+		this->Shader_DeferredGeometryInstanced->SetMatrix("g_CamViewProj", this->camera->GetViewMatrix() * this->camera->GetProjectionMatrix());
+		this->Shader_DeferredGeometryInstanced->SetFloat("g_FarClip", this->params.FarClip);
+		
+		//Set instance buffer
+		ID3D11Buffer* bufferPointers[2];
+		unsigned int strides[2] = {sizeof(VertexNormalMap), sizeof(MeshData::InstancedDataStruct)};
+		unsigned int offsets[2] = {0, 0};
+		bufferPointers[1] = this->instancingHelper->GetMeshInstanceBuffer();	
+
+		//Per mesh group
+		for(unsigned int i = 0; i < this->instancingHelper->GetNrOfMeshGroups(); i++)
+		{
+			MeshGroup meshGroup = this->instancingHelper->GetMeshGroup(i);
+			MaloW::Array<MeshStrip*>* strips = meshGroup.s_MeshStripsResource->GetMeshStripsPointer();
+
+			D3DXMATRIX worldTest;
+			D3DXMatrixIdentity(&worldTest);
+			//this->Shader_DeferredGeometryInstanced->SetMatrix("g_TestW", worldTest);
+			D3D11_MAPPED_SUBRESOURCE mappedSubResource; 
+			//Map to access data //**TILLMAN OPTIMERING: uppdatera endast de som lagts till/tagits bort(array med index(i))**
+			this->Dx_DeviceContext->Map(this->instancingHelper->GetMeshInstanceBuffer(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubResource);
+			MeshData::InstancedDataStruct* dataView = reinterpret_cast<MeshData::InstancedDataStruct*>(mappedSubResource.pData);
+			//Copy over all instance data
+			//for(UINT i = 0; i < this->instancingHelper->GetNrOfMeshes(); ++i)
+			//{
+				this->Shader_DeferredGeometryInstanced->SetMatrix("g_TestW", dataView[0].s_WorldMatrix);
+			
+			//}
+			//Unmap so the GPU can have access
+			this->Dx_DeviceContext->Unmap(this->instancingHelper->GetMeshInstanceBuffer(), 0);
+
+			//this->Shader_DeferredGeometryInstanced->SetMatrix("g_TestW", this->instancingHelper->GetMeshData(0).InstancedData.s_WorldMatrix);
+			//this->Shader_DeferredGeometryInstanced->SetMatrix("g_TestWIT", this->instancingHelper->GetMeshData(0).InstancedData.s_WorldInverseTransposeMatrix);
+			
+			
+			//Per strip
+			for(unsigned int j = 0; j < strips->size(); j++)
+			{
+				MeshStrip* strip = strips->get(j);
+				Object3D* renderObject = strip->GetRenderObject();
+				//Set topology
+				this->Dx_DeviceContext->IASetPrimitiveTopology(renderObject->GetTopology());
+
+				// Setting lightning from material
+				this->Shader_DeferredGeometry->SetFloat4("g_DiffuseColor", D3DXVECTOR4(strips->get(j)->GetMaterial()->DiffuseColor, 1));
+				this->Shader_DeferredGeometry->SetFloat4("g_SpecularColor", D3DXVECTOR4(strips->get(j)->GetMaterial()->SpecularColor, 1));
+				this->Shader_DeferredGeometry->SetFloat("g_SpecularPower", strips->get(j)->GetMaterial()->SpecularPower);
+				
+				//Set buffers
+				bufferPointers[0] = renderObject->GetVertexBufferResource()->GetBufferPointer()->GetBufferPointer();
+				this->Dx_DeviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
+				
+				//Set texture
+				if(renderObject->GetTextureResource() != NULL)
+				{
+					if(renderObject->GetTextureResource()->GetSRVPointer() != NULL)
+					{
+						this->Shader_DeferredGeometryInstanced->SetResource("g_DiffuseMap", renderObject->GetTextureResource()->GetSRVPointer());
+						this->Shader_DeferredGeometryInstanced->SetBool("g_Textured", true);
+					}
+					else
+					{
+						this->Shader_DeferredGeometryInstanced->SetResource("g_DiffuseMap", NULL);
+						this->Shader_DeferredGeometryInstanced->SetBool("g_Textured", false);
+					}
+				}
+				else
+				{
+					this->Shader_DeferredGeometryInstanced->SetResource("g_DiffuseMap", NULL);
+					this->Shader_DeferredGeometryInstanced->SetBool("g_Textured", false);
+				}
+				//**TILLMAN TODO: normalmap**
+
+				//Apply pass and input layout
+				this->Shader_DeferredGeometryInstanced->Apply(0);
+				
+				//Draw
+				unsigned int vertexCount = strip->getNrOfVerts();
+				int instanceCount = this->instancingHelper->GetMeshGroup(i).s_Size;
+				int startLoc = this->instancingHelper->GetMeshGroup(i).s_StartLocation;
+				this->Dx_DeviceContext->DrawInstanced(vertexCount, instanceCount, 0, startLoc); //**TILLMAN, parameters inversed**
+			
+				//Debug data
+				this->NrOfDrawCalls++;
+				this->NrOfDrawnVertices += vertexCount;
+			}
+		}
+
+		//Reset counter (nrofmeshes)
+		this->instancingHelper->PostRenderMeshes();
+	}
+}
 
 void DxManager::RenderDeferredSkybox()
 {
@@ -857,10 +1001,10 @@ void DxManager::RenderDeferredPerPixel()
 
 	this->Dx_DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 	//Unbind the vertex buffer since no vertex data is used.
-	ID3D11Buffer* dummyBuffer [] = {NULL};
-	UINT dummyStride [] = {sizeof(VertexNormalMap)};
-	UINT dummyOffset [] = {0};
-	this->Dx_DeviceContext->IASetVertexBuffers(0, 1, dummyBuffer, dummyStride, dummyOffset);
+	ID3D11Buffer* dummyBuffers [] = {NULL, NULL};
+	UINT dummyStrides [] = {0, 0};
+	UINT dummyOffsets [] = {0, 0};
+	this->Dx_DeviceContext->IASetVertexBuffers(0, 2, dummyBuffers, dummyStrides, dummyOffsets);
 
 
 
@@ -1037,13 +1181,22 @@ void DxManager::RenderInvisibilityEffect()
 				Object3D* obj = strips->get(u)->GetRenderObject();
 
 				//Set texture
-				if(ID3D11ShaderResourceView* texture = obj->GetTextureResource()->GetSRVPointer())//**TILLMAN
+				if(obj->GetTextureResource() != NULL)
 				{
-					this->Shader_InvisibilityEffect->SetResource((char*)strips->get(u)->GetTexturePath().c_str(), texture);
-					this->Shader_InvisibilityEffect->SetBool("textured", true);
+					if(ID3D11ShaderResourceView* texture = obj->GetTextureResource()->GetSRVPointer())
+					{
+						this->Shader_InvisibilityEffect->SetResource("ballTex", texture);
+						this->Shader_InvisibilityEffect->SetBool("textured", true);
+					}
+					else
+					{
+						this->Shader_InvisibilityEffect->SetResource("ballTex", NULL);
+						this->Shader_InvisibilityEffect->SetBool("textured", false);
+					}
 				}
 				else
 				{
+					this->Shader_InvisibilityEffect->SetResource("ballTex", NULL);
 					this->Shader_InvisibilityEffect->SetBool("textured", false);
 				}
 

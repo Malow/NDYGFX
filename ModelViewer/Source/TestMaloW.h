@@ -11,6 +11,8 @@ private:
 	iMesh* ball;
 	iMesh* secModel;
 	iWaterPlane* wp;
+	iMesh* deer;
+	iMesh* tempguy;
 	
 	//int nrofdiffs;
 	//float totDiff;
@@ -52,7 +54,7 @@ void MaloWTest::PreTest()
 
 	ball = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(0, -100, 0));
 	ball->Scale(0.1f);
-	secModel = GetGraphics()->CreateMesh("Media/bth.obj", Vector3(10, 2, 10));
+	secModel = GetGraphics()->CreateMesh("Media/bth.obj", Vector3(10, 10, 10));
 	secModel->Scale(1.0f * 0.05f);
 
 	iMesh* ball2 = GetGraphics()->CreateMesh("Media/ball.obj", Vector3(20, 20, 20));
@@ -76,7 +78,10 @@ void MaloWTest::PreTest()
 	iMesh* ferntest = GetGraphics()->CreateMesh("Media/fernTest.obj", Vector3(25, 20, 25));
 	ferntest->Scale(0.05f);	
 
-	GetGraphics()->GetCamera()->SetMesh(secModel, Vector3(1, 3, 1));
+	deer = GetGraphics()->CreateMesh("Media/deer_temp.obj", Vector3(10, 20, 25));
+	deer->Scale(0.05f);
+	tempguy = GetGraphics()->CreateMesh("Media/temp_guy.obj", Vector3(15, 20, 25));
+	tempguy->Scale(0.05f);
 }
 
 void MaloWTest::RunTest(float diff)
@@ -120,9 +125,19 @@ void MaloWTest::RunTest(float diff)
 
 	// 1/5'th of the models hits.
 	for(int i = 0; i < 2000; i++)*/
+	//secModel->SetPosition(Vector3(10, 20, 10));
+	//GetGraphics()->GetCamera()->SetPosition(secModel->GetPosition() + Vector3(5, 0, 1));
+	//GetGraphics()->GetCamera()->LookAt(secModel->GetPosition() + Vector3(0, 0, 1));
+	//Vector3 asd = GetGraphics()->GetCamera()->Get3DPickingRay();
+
+	
+	cd = GetGraphics()->GetPhysicsEngine()->GetCollisionRayMesh(GetGraphics()->GetCamera()->GetPosition(), 
+		GetGraphics()->GetCamera()->GetForward(), tempguy);
+
+	if(!cd.collision)
 		cd = GetGraphics()->GetPhysicsEngine()->GetCollisionRayMesh(GetGraphics()->GetCamera()->GetPosition(), 
-			GetGraphics()->GetCamera()->GetForward(), wp);
-		
+		GetGraphics()->GetCamera()->Get3DPickingRay(), deer);
+	
 
 	if(cd.BoundingSphereCollision)
 	{
@@ -139,50 +154,32 @@ void MaloWTest::RunTest(float diff)
 	}
 
 
+
+
+
+
 	static bool fesd = true;
 	static int qual = 0;
 	if(GetGraphics()->GetKeyListener()->IsPressed('H'))
 	{
 		if(fesd)
 		{
-			/*
-			if(GetGraphics()->GetCamera()->GetCameraType() == RTS)
-			{
-				Vector3 fw = GetGraphics()->GetCamera()->GetForward();
-				GetGraphics()->ChangeCamera(FPS);
-				GetGraphics()->GetCamera()->SetForward(fw);
-				//GetGraphics()->ResizeGraphicsEngine(500, 500);
-			}
-			else
-			{
-				Vector3 fw = GetGraphics()->GetCamera()->GetForward();
-				GetGraphics()->ChangeCamera(RTS);
-				GetGraphics()->GetCamera()->SetForward(fw);
-				//GetGraphics()->ResizeGraphicsEngine(750, 250);
-			}
-			*//*
+			
 			if(qual % 2 == 0)
 			{
-				wp->SetVertexPosition(Vector3(1, 0, -0.1), 0);
-				wp->SetVertexPosition(Vector3(0.8f, 0.2f, 0.8f), 1);
-				wp->SetVertexPosition(Vector3(-1, -0.2f, -0.2f), 2);
-				wp->SetVertexPosition(Vector3(-0.8f, 0, 1), 3);
 				GetGraphics()->GetEngineParameters().Maximized = true;
 				GetGraphics()->ResizeGraphicsEngine(1280, 1024);
 			}
 			else
 			{
-				wp->SetVertexPosition(Vector3(0.5f, 0, -0.5f), 0);
-				wp->SetVertexPosition(Vector3(0.5f, 0, 0.5f), 1);
-				wp->SetVertexPosition(Vector3(-0.5f, 0, -0.5f), 2);
-				wp->SetVertexPosition(Vector3(-0.5f, 0, 0.5f), 3);
 				GetGraphics()->GetEngineParameters().Maximized = false;
 				GetGraphics()->ResizeGraphicsEngine(1264, 947);
-			}*/
+			}
 			//GetGraphics()->ReloadShaders(9);
 			//MaloW::Debug("Diff: " + MaloW::convertNrToString(totDiff / nrofdiffs));
 			//GetGraphics()->ChangeShadowQuality(qual);
-			secModel->SetPosition(Vector3(10, 10, 10));
+
+			//secModel->SetPosition(Vector3(10, 10, 10));
 
 			qual++;
 			fesd = false;

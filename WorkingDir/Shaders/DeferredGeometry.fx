@@ -106,7 +106,7 @@ PSout PSScene(PSSceneIn input) : SV_Target
 	float4 textureColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
 	if(textured)
 	{
-		textureColor = tex2D.Sample(linearSampler, input.tex);
+		textureColor = tex2D.Sample(AnisotropicWrapSampler, input.tex);
 		
 		if ( textureColor.a < 0.5f )
 			discard;
@@ -132,7 +132,7 @@ PSout PSScene(PSSceneIn input) : SV_Target
 	if(useNormalMap)
 	{
 		// NormalMap
-		float4 bumpMap = normalMap.Sample(linearSampler, input.tex);
+		float4 bumpMap = normalMap.Sample(AnisotropicWrapSampler, input.tex);
 		// Expand the range of the normal value from (0, +1) to (-1, +1).
 		bumpMap = (bumpMap * 2.0f) - 1.0f;
 		// Calculate the normal from the data in the bump map.

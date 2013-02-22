@@ -47,6 +47,7 @@ DxManager::DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam)
 	this->csm = NULL;
 
 	this->Shader_DeferredGeometry = NULL;
+	this->Shader_DeferredGeometryInstanced = NULL;
 	this->Shader_TerrainEditor = NULL;
 	this->Shader_DeferredLightning = NULL;
 	this->Shader_InvisibilityEffect = NULL;
@@ -131,6 +132,9 @@ DxManager::~DxManager()
 	if(this->Shader_DeferredGeometry)
 		delete this->Shader_DeferredGeometry;
 
+	if(this->Shader_DeferredGeometryInstanced)
+		delete this->Shader_DeferredGeometryInstanced;
+	
 	if(this->Shader_TerrainEditor)
 		delete this->Shader_TerrainEditor;
 
@@ -297,6 +301,8 @@ void DxManager::CreateTerrain(Terrain* terrain)
 
 	//Texture(s) are not set here since they are set afterwards.
 
+	terrain->Init(this->Dx_Device, this->Dx_DeviceContext);
+
 	//Create & put this event
 	TerrainEvent* re = new TerrainEvent("Add Terrain", terrain);
 	this->PutEvent(re);
@@ -347,11 +353,11 @@ void DxManager::CreateStaticMesh(StaticMesh* mesh)
 			string texturePath = strip->GetTexturePath();
 			if(texturePath != "")
 			{
-				texture = GetResourceManager()->CreateTextureResourceFromFile(texturePath.c_str());
+				texture = GetResourceManager()->CreateTextureResourceFromFile(texturePath.c_str(), true);
 				string ending = texturePath.substr(texturePath.length()-4);
 				string first = texturePath.substr(0, texturePath.length()-4);
 				string normalTexturePath = first + "NormalMap" + ending;
-				normalMap = GetResourceManager()->CreateTextureResourceFromFile(normalTexturePath.c_str());
+				normalMap = GetResourceManager()->CreateTextureResourceFromFile(normalTexturePath.c_str(), true);
 			}
 
 			Object3D* obj = new Object3D(verts, inds, texture, normalMap, mesh->GetTopology()); 
@@ -363,7 +369,7 @@ void DxManager::CreateStaticMesh(StaticMesh* mesh)
 	TextureResource* billboardTexture = NULL;
 	if(mesh->GetBillboardFilePath() != "")
 	{
-		billboardTexture = GetResourceManager()->CreateTextureResourceFromFile(mesh->GetBillboardFilePath().c_str());
+		billboardTexture = GetResourceManager()->CreateTextureResourceFromFile(mesh->GetBillboardFilePath().c_str(), true);
 	}
 	mesh->GetBillboardGFX()->SetTextureResource(billboardTexture);
 
@@ -424,11 +430,11 @@ void DxManager::CreateAnimatedMesh(AnimatedMesh* mesh)
 				string texturePath = strip->GetTexturePath();
 				if(texturePath != "")
 				{
-					texture = GetResourceManager()->CreateTextureResourceFromFile(texturePath.c_str());
+					texture = GetResourceManager()->CreateTextureResourceFromFile(texturePath.c_str(), true);
 					string ending = texturePath.substr(texturePath.length()-4);
 					string first = texturePath.substr(0, texturePath.length()-4);
 					string normalTexturePath = first + "NormalMap" + ending;
-					normalMap = GetResourceManager()->CreateTextureResourceFromFile(normalTexturePath.c_str());
+					normalMap = GetResourceManager()->CreateTextureResourceFromFile(normalTexturePath.c_str(), true);
 				}
 
 				Object3D* obj = new Object3D(verts, inds, texture, normalMap, mesh->GetTopology()); 
@@ -441,7 +447,7 @@ void DxManager::CreateAnimatedMesh(AnimatedMesh* mesh)
 	TextureResource* billboardTexture = NULL;
 	if(mesh->GetBillboardFilePath() != "")
 	{
-		billboardTexture = GetResourceManager()->CreateTextureResourceFromFile(mesh->GetBillboardFilePath().c_str());
+		billboardTexture = GetResourceManager()->CreateTextureResourceFromFile(mesh->GetBillboardFilePath().c_str(), true);
 	}
 	mesh->GetBillboardGFX()->SetTextureResource(billboardTexture);
 
@@ -543,40 +549,6 @@ void DxManager::CreateImage(Image* image, string texture)
 	TextureResource* tex = NULL;
 	if(texture != "")
 	{
-		/*** TILLMAN: 
-		//Check if texture resource has already been created.
-		tex = GetResourceManager()->HasTextureResource(texture.c_str());
-		//If not...
-		if(tex == NULL)
-		{
-			//...create it...
-			D3DX11_IMAGE_LOAD_INFO loadInfo;
-			ZeroMemory(&loadInfo, sizeof(D3DX11_IMAGE_LOAD_INFO));
-			loadInfo.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-			loadInfo.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-
-			ID3D11ShaderResourceView* SRV = NULL;
-			HRESULT hr = S_OK;
-			if(D3DX11CreateShaderResourceViewFromFile(	
-				this->Dx_Device, 
-				texture.c_str(),
-				&loadInfo, 
-				NULL, 
-				&SRV,
-				NULL))
-			{
-				string dbgStr = "WARNING: Failed to load texture: ";
-				dbgStr += texture;
-				MaloW::Debug(dbgStr);
-			}
-			else 
-			{
-				tex = new TextureResource(texture, SRV);
-
-				//...and let the resource manager know it has been created.
-				GetResourceManager()->SetTextureResource(tex);
-			}
-		}*/
 		tex = GetResourceManager()->CreateTextureResourceFromFile(texture.c_str());
 	}
 
@@ -598,7 +570,7 @@ void DxManager::CreateBillboard(Billboard* billboard, string texture)
 	TextureResource* tex = NULL;
 	if(texture != "")
 	{
-		tex = GetResourceManager()->CreateTextureResourceFromFile(texture.c_str());
+		tex = GetResourceManager()->CreateTextureResourceFromFile(texture.c_str(), true);
 	}
 
 	billboard->SetTextureResource(tex);
@@ -942,7 +914,7 @@ void DxManager::CreateWaterPlane( WaterPlane* wp, string texture )
 	TextureResource* tex = NULL;
 	if(texture != "")
 	{
-		tex = GetResourceManager()->CreateTextureResourceFromFile(texture.c_str());
+		tex = GetResourceManager()->CreateTextureResourceFromFile(texture.c_str(), true);
 	}
 	wp->SetTexture(tex);
 
@@ -951,7 +923,7 @@ void DxManager::CreateWaterPlane( WaterPlane* wp, string texture )
 	{
 		texture = texture.substr(0, texture.length() - 4);
 		texture += "2.png";
-		tex2 = GetResourceManager()->CreateTextureResourceFromFile(texture.c_str());
+		tex2 = GetResourceManager()->CreateTextureResourceFromFile(texture.c_str(), true);
 	}
 	wp->SetTexture2(tex2);
 
