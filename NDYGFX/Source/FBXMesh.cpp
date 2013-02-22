@@ -119,14 +119,23 @@ bool FBXMesh::GetBonePosition(const std::string& name, float& x, float& y, float
 			const float* matrix;
 			matrix = bone->GetCombinedTransform();
 
-			x = matrix[12];
-			y = matrix[13];
-			z = matrix[14];
+			D3DXVECTOR4 worldPos;
+			worldPos.x = matrix[12] * -1.0f;
+			worldPos.y = matrix[13];
+			worldPos.z = matrix[14];
+			worldPos.w = 1.0;
+
+			D3DXMATRIX worldMat = GetWorldMatrix();
+
+			D3DXVec4Transform(&worldPos, &worldPos, &worldMat);
+
+			x = worldPos.x;
+			y = worldPos.y;
+			z = worldPos.z;
 
 			return true;
 		}
 	}
 
-	// TODO: MAKE ME WORK
 	return false;
 }

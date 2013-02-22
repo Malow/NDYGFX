@@ -25,7 +25,7 @@ public:
 
 	virtual void PreTest()
 	{
-		copyrightedTempGuy = GetGraphics()->CreateFBXMesh("Media/temp_guy_few_anims.fbx", Vector3(0.0f, 0.0f, 0.0f));	// copyrightedTempGuy = GetGraphics()->CreateFBXMesh("Media/temp_guy_few_anims.fbx", Vector3(0.0f, 0.0f, 0.0f));
+		copyrightedTempGuy = GetGraphics()->CreateFBXMesh("Media/temp_guy_few_anims.fbx", Vector3(50.0f, 0.0f, 0.0f));	// copyrightedTempGuy = GetGraphics()->CreateFBXMesh("Media/temp_guy_few_anims.fbx", Vector3(0.0f, 0.0f, 0.0f));
 
 		soldier = GetGraphics()->CreateFBXMesh("Media/Soldier_animated_jump.fbx", Vector3(20.0f, 0.0f, 0.0f));
 		soldier->SetScale(0.1f);
