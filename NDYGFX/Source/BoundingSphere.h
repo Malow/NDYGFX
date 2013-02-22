@@ -17,8 +17,8 @@ public:
 	BoundingSphere(D3DXVECTOR3 minCorner, D3DXVECTOR3 maxCorner)
 	{
 		this->center = (maxCorner + minCorner) / 2.0f;
-		this->radius = D3DXVec3Length(&((maxCorner - minCorner) / 2.0f));
+		this->radius = D3DXVec3Length(&center);
 	}
-	virtual ~BoundingSphere() {}
 
+	virtual ~BoundingSphere() {}
 };

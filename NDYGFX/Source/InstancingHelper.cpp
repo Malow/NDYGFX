@@ -6,25 +6,26 @@ bool SortBillboardData(BillboardData billboardLeft, BillboardData billboardRight
 {
 	return billboardLeft.s_SRV > billboardRight.s_SRV;
 }
-bool SortMeshData(MeshData meshLeft, MeshData meshRight)
+/*bool SortMeshData(MeshData meshLeft, MeshData meshRight)
 {
 	return meshLeft.s_MeshStripsResource > meshRight.s_MeshStripsResource;
+}*/
+bool SortStripData(StripData stripLeft, StripData stripRight)
+{
+	return stripLeft.s_MeshStrip > stripRight.s_MeshStrip;
 }
 
 
-
 //PRIVATE
-void InstancingHelper::ExpandBillboardDataAndBuffer()
+void InstancingHelper::ExpandBillboardInstanceBuffer()
 {
-	this->zBillboardDataCapacity *= 2;
-
-	//Resize vector holding billboard data
-	this->zBillboardData.resize(this->zBillboardDataCapacity);
+	unsigned int oldSize = this->zBillboardInstanceBufferSize;
+	this->zBillboardInstanceBufferSize *= 2;
 
 	//Resize(recreate) instance buffer
 	D3D11_BUFFER_DESC vbd;
 	vbd.Usage = D3D11_USAGE_DYNAMIC;
-	vbd.ByteWidth = sizeof(Vertex) * this->zBillboardDataCapacity;
+	vbd.ByteWidth = sizeof(Vertex) * this->zBillboardInstanceBufferSize;
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	vbd.MiscFlags = 0;
@@ -43,7 +44,7 @@ void InstancingHelper::ExpandBillboardDataAndBuffer()
 	D3D11_MAPPED_SUBRESOURCE mappedSubResourceOld;
 	this->g_DeviceContext->Map(temporaryNewBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubResourceNew);
 	this->g_DeviceContext->Map(this->zBillboardInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubResourceOld);
-	unsigned int oldSize = this->zBillboardDataCapacity / 2; //**TILLMAN - annat sätt? bör finnas i mappedsubres?
+	
 	Vertex* dataViewNew = reinterpret_cast<Vertex*>(mappedSubResourceNew.pData);
 	Vertex* dataViewOld = reinterpret_cast<Vertex*>(mappedSubResourceOld.pData);
 	for(unsigned int i = 0; i < oldSize; ++i)
@@ -61,22 +62,20 @@ void InstancingHelper::ExpandBillboardDataAndBuffer()
 	//The temporary pointer is no longer needed, so set to NULL.
 	temporaryNewBuffer = NULL;
 
-	MaloW::Debug("INFO: InstancingHelper: ExpandBillboardDataAndBuffer(): Resizing billboard data and buffer. Number of billboards: '" + MaloW::convertNrToString(this->zNrOfBillboards) + "'."
-		+ "New capacity: '" + MaloW::convertNrToString(this->zBillboardDataCapacity) + "'."
+	MaloW::Debug("INFO: InstancingHelper: ExpandBillboardDataAndBuffer(): Resizing billboard instance buffer. Number of billboards: '" + MaloW::convertNrToString(this->zBillboardData.size()) + "'."
+		+ "New BUFFER size '" + MaloW::convertNrToString(this->zBillboardInstanceBufferSize) + "'."
 		);
 }
-void InstancingHelper::ExpandMeshDataAndBuffer()
+void InstancingHelper::ExpandStripInstanceBuffer()
 {
-	this->zMeshDataCapacity *= 2;
-	//Resize vector holding billboard data
-	this->zMeshData.resize(this->zBillboardDataCapacity);
-
+	unsigned int oldSize = this->zStripInstanceBufferSize;
+	this->zStripInstanceBufferSize *= 2;
 
 
 	//Resize(recreate) instance buffer
 	D3D11_BUFFER_DESC vbd;
 	vbd.Usage = D3D11_USAGE_DYNAMIC;
-	vbd.ByteWidth = sizeof(MeshData::InstancedDataStruct) * this->zMeshDataCapacity;
+	vbd.ByteWidth = sizeof(StripData::InstancedDataStruct) * this->zStripInstanceBufferSize; 
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	vbd.MiscFlags = 0;
@@ -87,67 +86,48 @@ void InstancingHelper::ExpandMeshDataAndBuffer()
 	HRESULT hr = this->g_Device->CreateBuffer(&vbd, 0, &temporaryNewBuffer);
 	if(FAILED(hr))
 	{
-		MaloW::Debug("ERROR: InstancingHelper: ExpandMeshDataAndBuffer(): Failed to create buffer for instance meshes.");
+		MaloW::Debug("ERROR: InstancingHelper: ExpandStripDataAndBuffer(): Failed to create buffer for instance Strips.");
 	}
 						
 	//Copy over data from the old buffer to the new buffer.
 	D3D11_MAPPED_SUBRESOURCE mappedSubResourceNew;
 	D3D11_MAPPED_SUBRESOURCE mappedSubResourceOld;
 	this->g_DeviceContext->Map(temporaryNewBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubResourceNew);
-	this->g_DeviceContext->Map(this->zMeshInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubResourceOld);
-	unsigned int oldSize = this->zMeshDataCapacity / 2; 
-	Vertex* dataViewNew = reinterpret_cast<Vertex*>(mappedSubResourceNew.pData);
-	Vertex* dataViewOld = reinterpret_cast<Vertex*>(mappedSubResourceOld.pData);
+	this->g_DeviceContext->Map(this->zStripInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubResourceOld);
+	
+	StripData::InstancedDataStruct* dataViewNew = reinterpret_cast<StripData::InstancedDataStruct*>(mappedSubResourceNew.pData);
+	StripData::InstancedDataStruct* dataViewOld = reinterpret_cast<StripData::InstancedDataStruct*>(mappedSubResourceOld.pData);
 	for(unsigned int i = 0; i < oldSize; ++i)
 	{
 		dataViewNew[i] = dataViewOld[i];
 	}
-	this->g_DeviceContext->Unmap(this->zMeshInstanceBuffer, 0);
+	this->g_DeviceContext->Unmap(this->zStripInstanceBuffer, 0);
 	this->g_DeviceContext->Unmap(temporaryNewBuffer, 0);
 					
 						
 	//Release old buffer.
-	this->zMeshInstanceBuffer->Release();
+	this->zStripInstanceBuffer->Release();
 	//Set old buffer to point to the new one.
-	this->zMeshInstanceBuffer = temporaryNewBuffer;
+	this->zStripInstanceBuffer = temporaryNewBuffer;
 	//The temporary pointer is no longer needed, so set to NULL.
 	temporaryNewBuffer = NULL;
 
-	MaloW::Debug("INFO: InstancingHelper: ExpandMeshDataAndBuffer(): Resizing mesh data and buffer. Number of meshes: '" + MaloW::convertNrToString(this->zNrOfMeshes) + "'."
-		+ "New capacity: '" + MaloW::convertNrToString(this->zMeshDataCapacity) + "'."
+	MaloW::Debug("INFO: InstancingHelper: ExpandStripDataAndBuffer(): Resizing Strip instance buffer. Number of Strips: '" + MaloW::convertNrToString(this->zStripData.size()) + "'."
+		+ "New BUFFER size: '" + MaloW::convertNrToString(this->zStripInstanceBufferSize) + "'."
 		);
-
 }
 
 //PUBLIC
 InstancingHelper::InstancingHelper()
 {
 	//BILLBOARDS
-	//Counters
-	this->zNrOfBillboards = 0; 
-	this->zNrOfBillboardGroups = 0;
-	this->zBillboardDataCapacity = 200;
-	this->zBillboardGroupCapacity = 10;
-	//Instance data
-	this->zBillboardData.resize(this->zBillboardDataCapacity);
-	//Instance group 
-	this->zBillboardGroups.resize(this->zBillboardGroupCapacity);
-	//Buffer
+	this->zBillboardInstanceBufferSize = 200;
 	this->zBillboardInstanceBuffer = NULL; 
 
 
-	//MESHES
-	//Counters
-	this->zNrOfMeshes = 0; 
-	this->zNrOfMeshGroups = 0;
-	this->zMeshDataCapacity = 200; 
-	this->zMeshGroupCapacity = 10;
-	//Mesh data (with instance data)
-	this->zMeshData.resize(this->zMeshDataCapacity);
-	//Instance group
-	this->zMeshGroups.resize(this->zMeshGroupCapacity);
-	//Instance Buffer (containing all instanced data)
-	this->zMeshInstanceBuffer = NULL; 
+	//STRIPS
+	this->zStripInstanceBufferSize = 1; //**TEST
+	this->zStripInstanceBuffer = NULL; 
 }
 HRESULT InstancingHelper::Init(ID3D11Device* device, ID3D11DeviceContext* deviceContext)
 {
@@ -157,7 +137,7 @@ HRESULT InstancingHelper::Init(ID3D11Device* device, ID3D11DeviceContext* device
 	//BILLBOARD
 	D3D11_BUFFER_DESC bufferDesc;
 	bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	bufferDesc.ByteWidth = sizeof(Vertex) * this->zBillboardDataCapacity; 
+	bufferDesc.ByteWidth = sizeof(Vertex) * this->zBillboardInstanceBufferSize; 
 	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	bufferDesc.MiscFlags = 0;
@@ -166,22 +146,22 @@ HRESULT InstancingHelper::Init(ID3D11Device* device, ID3D11DeviceContext* device
 	HRESULT hr = this->g_Device->CreateBuffer(&bufferDesc, 0, &this->zBillboardInstanceBuffer);
 	if(FAILED(hr))
 	{
-		MaloW::Debug("ERROR: InstancingHelper: Init(): Failed to create billboard mesh buffer.");
+		MaloW::Debug("ERROR: InstancingHelper: Init(): Failed to create billboard Strip buffer.");
 	}
 	
 	
-	//MESH
+	//Strip
 	bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	bufferDesc.ByteWidth = sizeof(MeshData::InstancedDataStruct) * this->zMeshDataCapacity; 
+	bufferDesc.ByteWidth = sizeof(StripData::InstancedDataStruct) * this->zStripInstanceBufferSize;
 	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	bufferDesc.MiscFlags = 0;
 	bufferDesc.StructureByteStride = 0;
 
-	hr = this->g_Device->CreateBuffer(&bufferDesc, 0, &this->zMeshInstanceBuffer);
+	hr = this->g_Device->CreateBuffer(&bufferDesc, 0, &this->zStripInstanceBuffer);
 	if(FAILED(hr))
 	{
-		MaloW::Debug("ERROR: InstancingHelper: Init(): Failed to create mesh instance buffer.");
+		MaloW::Debug("ERROR: InstancingHelper: Init(): Failed to create Strip instance buffer.");
 	}
 
 	return hr;
@@ -193,20 +173,21 @@ InstancingHelper::~InstancingHelper()
 
 void InstancingHelper::AddBillboard( const Billboard* const billboard )
 {
-	this->zNrOfBillboards++;
-	if(this->zNrOfBillboards >= this->zBillboardDataCapacity)
+	//Expand buffer if necessary
+	if(this->zBillboardData.size() >= this->zBillboardInstanceBufferSize)
 	{
-		this->ExpandBillboardDataAndBuffer();
+		this->ExpandBillboardInstanceBuffer();
 	}
 
-	this->zBillboardData[this->zNrOfBillboards - 1] = 
-		BillboardData(Vertex(	billboard->GetPositionD3DX(),
-								billboard->GetSizeD3DX(), 
-								D3DXVECTOR3(), //dummy **TILLMAN
-								D3DXVECTOR3(billboard->GetColorD3DX())
-							)
-							, billboard->GetTextureResource()->GetSRVPointer());
-	
+	//Add billboard data
+	BillboardData billboardData;
+	billboardData.s_Vertex = Vertex(billboard->GetPositionD3DX(),
+									billboard->GetSizeD3DX(), 
+									D3DXVECTOR3(), //dummy **TILLMAN
+									D3DXVECTOR3(billboard->GetColorD3DX()));
+	billboardData.s_SRV = billboard->GetTextureResource()->GetSRVPointer();				
+
+	this->zBillboardData.push_back(billboardData);
 }
 
 void InstancingHelper::PreRenderBillboards()
@@ -217,17 +198,25 @@ void InstancingHelper::PreRenderBillboards()
 
 
 	//Now that the data is sorted, create instance groups.
-	if(this->zNrOfBillboards > 1)
+	//Clear any old groups
+	this->zBillboardGroups.clear();
+	if(this->zBillboardData.size() > 1)
 	{
 		ID3D11ShaderResourceView* tempSRV;
-		//Reset instance counter
-		this->zNrOfBillboardGroups = 0;
-		int groupCounter = 1; //**
-		//Add a NULL-pointer at the end as a separator. 
-		this->zBillboardData[this->zNrOfBillboards++].s_SRV = NULL;
+
+		int groupCounter = 1; //**TILLMAN
+		unsigned int nrOfGroups = 0;
+		//Add a seperator with an SRV pointing NULL at the end of billboard data.
+		BillboardData seperator;
+		seperator.s_SRV = NULL;
+		this->zBillboardData.push_back(seperator);
+
 		//First group's start location/index is always 0.
-		this->zBillboardGroups[0].s_StartLocation = 0;
-		for(unsigned int i = 0; i < this->zNrOfBillboards - 1; i++)
+		BillboardGroup firstBBGroup;
+		firstBBGroup.s_StartLocation = 0;
+		this->zBillboardGroups.push_back(firstBBGroup);
+		
+		for(unsigned int i = 0; i < this->zBillboardData.size() - 1; i++)
 		{
 			//Save current element.
 			tempSRV = this->zBillboardData[i].s_SRV;
@@ -243,56 +232,46 @@ void InstancingHelper::PreRenderBillboards()
 			//If the next element is NOT the same as the current element, we have found a new instance group.
 			else
 			{
-				//Increase the number of instance groups.
-				this->zNrOfBillboardGroups++;
-				//Resize vector if necessary.
-				if(this->zNrOfBillboardGroups >= this->zBillboardGroupCapacity)
-				{
-					this->zBillboardGroupCapacity *= 2;
-					this->zBillboardGroups.resize(this->zBillboardGroupCapacity);
-					MaloW::Debug("INFO: InstancingHelper: PreRenderBillboards(): Resizing instance group vector. Number of instance groups: '" + MaloW::convertNrToString(this->zNrOfBillboardGroups) + "'."
-						+ "New capacity: '" + MaloW::convertNrToString(this->zBillboardGroupCapacity) + "'."
-						);
-				}
-
 				//Wrap up current instance group.
+				nrOfGroups++;
 				//Save groupCounter (size of group).
-				this->zBillboardGroups[this->zNrOfBillboardGroups - 1].s_Size = groupCounter; 
+				this->zBillboardGroups[nrOfGroups - 1].s_Size = groupCounter; 
 				//Save shader resource view for instance group to use.
-				this->zBillboardGroups[this->zNrOfBillboardGroups - 1].s_SRV = this->zBillboardData[i].s_SRV;
+				this->zBillboardGroups[nrOfGroups - 1].s_SRV = this->zBillboardData[i].s_SRV;
 
 				//Start new instance group.
 				//Set group counter to 1.
 				groupCounter = 1; 
 				//groupCounter = 0;  //**
 				//Save index (startLocation) of the NEW group (+1 on indices).
-				this->zBillboardGroups[this->zNrOfBillboardGroups].s_StartLocation = i + 1;
+				BillboardGroup newBBGroup;
+				newBBGroup.s_StartLocation = i + 1;
+				this->zBillboardGroups.push_back(newBBGroup);
 			}
 		}
-		//There is no need to wrap up last instance group since we put a NULL pointer there.
+		//Remove seperator and last, invalid group
+		this->zBillboardData.pop_back();
+		this->zBillboardGroups.pop_back();
 	}
 	//Handle the special case of 1 billboard.
-	else if(this->zNrOfBillboards == 1)
+	else if(this->zBillboardData.size() == 1)
 	{
-		//Increase the number of instance groups.
-		this->zNrOfBillboardGroups = 1;
-		//Set size of group (1)
-		this->zBillboardGroups[0].s_Size = 1; 
-		//Save shader resource view for instance group to use.
-		this->zBillboardGroups[0].s_SRV = this->zBillboardData[0].s_SRV;
-
+		BillboardGroup singleBB;
+		singleBB.s_StartLocation = 0;
+		singleBB.s_Size = 1;
+		singleBB.s_SRV = this->zBillboardData[0].s_SRV;
+		this->zBillboardGroups.push_back(singleBB);
 	}
+
 
 
 	//Update buffer 
 	D3D11_MAPPED_SUBRESOURCE mappedSubResource; 
-	
-	//Map to access data //**TILLMAN OPTIMERING: uppdatera endast de som lagts till/tagits bort(array med index(i))**
+	//Map to access data 
 	this->g_DeviceContext->Map(this->zBillboardInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubResource);
-
 	Vertex* dataView = reinterpret_cast<Vertex*>(mappedSubResource.pData);
 	//Copy over all vertex data
-	for(UINT i = 0; i < this->zNrOfBillboards; ++i)
+	for(UINT i = 0; i < this->zBillboardData.size(); ++i)
 	{
 		dataView[i] = this->zBillboardData[i].s_Vertex;
 	}
@@ -301,114 +280,120 @@ void InstancingHelper::PreRenderBillboards()
 }
 
 
-
-
-
 void InstancingHelper::AddMesh(Mesh* mesh)
 {
-	//Expand vector and buffer holding mesh(instance data)
-	this->zNrOfMeshes++;
-	if(this->zNrOfMeshes >= this->zMeshDataCapacity)
+	//Expand buffer if necessary
+	if(this->zStripData.size() >= this->zStripInstanceBufferSize)
 	{
-		this->ExpandMeshDataAndBuffer();
+		this->ExpandStripInstanceBuffer();
 	}
+	else
+	{
+		//Mesh & instance data
+		D3DXMATRIX worldInverseTranspose;
+		D3DXMatrixIdentity(&worldInverseTranspose);
+		D3DXMatrixInverse(&worldInverseTranspose, NULL, &mesh->GetWorldMatrix());
+		D3DXMatrixTranspose(&worldInverseTranspose, &worldInverseTranspose);
 
+		//Add/save strips data
+		for(unsigned int i = 0; i < mesh->GetStrips()->size(); ++i)
+		{
+			StripData StripData;
 
-	this->zMeshData[this->zNrOfMeshes - 1].s_MeshStripsResource = mesh->GetMeshStripsResourcePointer();
-	this->zMeshData[this->zNrOfMeshes - 1].InstancedData.s_WorldMatrix = mesh->GetWorldMatrix();
-	D3DXMATRIX worldInverseTranspose;
-	D3DXMatrixIdentity(&worldInverseTranspose);
-	D3DXMatrixInverse(&worldInverseTranspose, NULL, &mesh->GetWorldMatrix());
-	D3DXMatrixTranspose(&worldInverseTranspose, &worldInverseTranspose);
-	this->zMeshData[this->zNrOfMeshes - 1].InstancedData.s_WorldInverseTransposeMatrix = worldInverseTranspose;
+			StripData.InstancedData.s_WorldMatrix = mesh->GetWorldMatrix();
+			//StripData.InstancedData.s_WorldInverseTransposeMatrix = worldInverseTranspose;
+			StripData.s_MeshStrip = mesh->GetMeshStripsResourcePointer()->GetMeshStripsPointer()->get(i);
+
+			this->zStripData.push_back(StripData);
+		}
+	}
 }
-void InstancingHelper::PreRenderMeshes()
+void InstancingHelper::PreRenderStrips()
 {
-	//Sort the data by MeshStripsResource
-	std::sort(this->zMeshData.begin(), this->zMeshData.end(), SortMeshData);
+	//Sort the data by meshStrip
+	std::sort(this->zStripData.begin(), this->zStripData.end(), SortStripData);
 
 
 
 	//Now that the data is sorted, create instance groups.
-	if(this->zNrOfMeshes > 1)
+	//Clear any old groups
+	this->zStripGroups.clear();
+	if(this->zStripData.size() > 1)
 	{
-		MeshStripsResource* tempPtr = NULL;
-		//Reset instance counter
-		this->zNrOfMeshGroups = 0;
-		int groupCounter = 1; //**
-		//Add a NULL-pointer at the end as a separator. 
-		this->zMeshData[this->zNrOfMeshes++].s_MeshStripsResource = NULL;
-		//First group's start location/index is always 0.
-		this->zMeshGroups[0].s_StartLocation = 0;
+		MeshStrip* tempPtr = NULL;
 
-		for(unsigned int i = 0; i < this->zNrOfMeshes - 1; i++)
+		int groupCounter = 1; //**
+		unsigned int nrOfGroups = 0;
+
+		//Add a seperator with an SRV pointing to NULL.
+		StripData seperator;
+		seperator.s_MeshStrip = NULL;
+		this->zStripData.push_back(seperator);
+
+		//First group's start location/index is always 0.
+		StripGroup firstStripGroup;
+		firstStripGroup.s_StartLocation = 0;
+		this->zStripGroups.push_back(firstStripGroup);
+
+		for(unsigned int i = 0; i < this->zStripData.size() - 1; i++)
 		{
 			//Save current element.
-			tempPtr = this->zMeshData[i].s_MeshStripsResource;
+			tempPtr = this->zStripData[i].s_MeshStrip;
 
 			//groupCounter++; //**
 
 			//As long as the next element is the same as the current element, increase groupCounter. 
 			//(The number of instances in the current group).
-			if(tempPtr == this->zMeshData[i + 1].s_MeshStripsResource)
+			if(tempPtr == this->zStripData[i + 1].s_MeshStrip)
 			{
 				groupCounter++;
 			}
 			//If the next element is NOT the same as the current element, we have found a new instance group.
 			else
 			{
-				//Increase the number of instance groups.
-				this->zNrOfMeshGroups++;
-				//Resize vector if necessary.
-				if(this->zNrOfMeshGroups >= this->zMeshGroupCapacity)
-				{
-					this->zMeshGroupCapacity *= 2;
-					this->zMeshGroups.resize(this->zMeshGroupCapacity);
-					MaloW::Debug("INFO: InstancingHelper: PreRenderMeshes(): Resizing instance group vector. Number of instance groups: '" + MaloW::convertNrToString(this->zNrOfMeshGroups) + "'."
-						+ "New capacity: '" + MaloW::convertNrToString(this->zMeshGroupCapacity) + "'."
-						);
-				}
-
 				//Wrap up current instance group.
+				nrOfGroups++;
 				//Save groupCounter (size of group).
-				this->zMeshGroups[this->zNrOfMeshGroups - 1].s_Size = groupCounter; 
-				//Save mesh strip resource for instance group to use.
-				this->zMeshGroups[this->zNrOfMeshGroups - 1].s_MeshStripsResource = this->zMeshData[i].s_MeshStripsResource;
-
+				this->zStripGroups[nrOfGroups - 1].s_Size = groupCounter; 
+				//Save the strip for instance group to use.
+				this->zStripGroups[nrOfGroups - 1].s_MeshStrip = this->zStripData[i].s_MeshStrip;
+				
 				//Start new instance group.
 				//Set group counter to 1.
 				groupCounter = 1; 
 				//groupCounter = 0;  //**
+				StripGroup newStripGroup;
 				//Save index (startLocation) of the NEW group (+1 on indices).
-				this->zMeshGroups[this->zNrOfMeshGroups].s_StartLocation = i + 1;
+				newStripGroup.s_StartLocation = i + 1;
+				this->zStripGroups.push_back(newStripGroup);
 			}
 		}
-		//"Remove" the separator at the end
-		this->zNrOfMeshes--;
-		//There is no need to wrap up last instance group since we put a NULL pointer there.
+		//Remove seperator and last, invalid group
+		this->zStripData.pop_back();
+		this->zStripGroups.pop_back();
 	}
-	//Handle the special case of 1 mesh.
-	else if(this->zNrOfMeshes == 1)
+	//Handle the special case of 1 Strip.
+	else if(this->zStripData.size() == 1)
 	{
-		//Increase the number of instance groups.
-		this->zNrOfMeshGroups = 1;
-		//Set size of group (1)
-		this->zMeshGroups[0].s_Size = 1; 
-		//Save shader resource view for instance group to use.
-		this->zMeshGroups[0].s_MeshStripsResource = this->zMeshData[0].s_MeshStripsResource;
+		StripGroup singleStrip;
+		singleStrip.s_StartLocation = 0;
+		singleStrip.s_Size = 1;
+		singleStrip.s_MeshStrip = this->zStripData[0].s_MeshStrip;
+		this->zStripGroups.push_back(singleStrip);
 	}
 
 
 	//Update buffer 
 	D3D11_MAPPED_SUBRESOURCE mappedSubResource;
 	//Map to access data //**TILLMAN OPTIMERING: uppdatera endast de som lagts till/tagits bort(array med index(i))**
-	this->g_DeviceContext->Map(this->zMeshInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubResource);
-	MeshData::InstancedDataStruct* dataView = reinterpret_cast<MeshData::InstancedDataStruct*>(mappedSubResource.pData);
+	this->g_DeviceContext->Map(this->zStripInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubResource);
+	StripData::InstancedDataStruct* dataView = reinterpret_cast<StripData::InstancedDataStruct*>(mappedSubResource.pData);
 	//Copy over all instance data
-	for(UINT i = 0; i < this->zNrOfMeshes; ++i)
+	for(UINT i = 0; i < this->zStripData.size(); ++i)
 	{
-		dataView[i] = this->zMeshData[i].InstancedData;
+		dataView[i] = this->zStripData[i].InstancedData;
 	}
 	//Unmap so the GPU can have access
-	this->g_DeviceContext->Unmap(this->zMeshInstanceBuffer, 0);
+	this->g_DeviceContext->Unmap(this->zStripInstanceBuffer, 0);
 }
+

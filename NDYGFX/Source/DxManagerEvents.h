@@ -278,3 +278,26 @@ public:
 
 	int GetShader() { return this->shad; }
 };
+
+
+class DecalEvent : public RendererEvent
+{
+private:
+	Decal* dec;
+
+public:
+	DecalEvent(string message, Decal* dec) : RendererEvent(message)
+	{
+		this->dec = dec; 
+	}
+	virtual ~DecalEvent() 
+	{
+		if(this->deleteSelf && this->message.substr(0, 6) != "Delete")
+		{
+			if(this->dec)
+				delete this->dec;
+		}
+	}
+
+	Decal* GetDecal() { this->deleteSelf = false; return this->dec; }
+};

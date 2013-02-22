@@ -93,7 +93,7 @@ bool LoadCachedScene(const std::string& fileName, FBXScene* scene)
 			}
 
 			// Model Part
-			ModelPart* modelPart = new ModelPart(model, x, materialMap[matIdentifier]);
+			ModelPart* modelPart = new ModelPart(model, materialMap[matIdentifier]);
 
 			// Read Number of Vertices
 			unsigned int numVertices;

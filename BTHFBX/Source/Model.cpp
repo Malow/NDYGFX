@@ -1,18 +1,11 @@
 #include "Model.h"
 
 //--------------------------------------------------------------------------------------
-Model::Model(const std::string& strName, int modelIndex, bool isClone)
+Model::Model(const std::string& strName, int modelIndex, bool isClone) :
+	m_strName(strName),
+	m_ModelIndex(modelIndex),
+	m_IsClone(isClone)
 {
-	m_strName = strName;
-	m_ModelIndex = modelIndex;
-
-	m_IsClone = isClone;
-
-	/*
-	D3DXMatrixIdentity(&m_matAbsoluteTransform);
-	D3DXMatrixIdentity(&m_matGeometricOffset);
-	D3DXMatrixIdentity(&m_matAnimationTransform);
-	*/
 }
 
 Model::Model(Model* srcModel)
@@ -55,7 +48,7 @@ void Model::AddVertex(Material* pMaterial, const BTHFBX_VEC3& vPosition, const B
 
 	if( bNewMaterial )
 	{
-		ModelPart* pModelPart = new ModelPart(this, m_ModelIndex, pMaterial);
+		ModelPart* pModelPart = new ModelPart(this, pMaterial);
 		pModelPart->AddVertex(vPosition, vNormal, vTangent, vTexCoord, boneWeights);
 		m_ModelParts.push_back(pModelPart);
 	}

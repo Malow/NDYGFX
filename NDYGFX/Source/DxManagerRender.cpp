@@ -123,6 +123,28 @@ void DxManager::SetCamera(SetCameraEvent* ev)
 	this->DelayGettingCamera = false;
 }
 
+void DxManager::HandleDecalEvent(DecalEvent* de)
+{
+	string msg = de->getMessage();
+	if(msg == "Add Decal")
+	{
+		this->decals.add(de->GetDecal());
+	}
+	else if(msg == "Delete Decal")
+	{
+		Decal* dec = de->GetDecal();
+		for(int i = 0; i < this->decals.size(); i++)
+		{
+			if(this->decals[i] == dec)
+			{
+				delete this->decals.getAndRemove(i);
+				dec = NULL;
+				break;
+			}
+		}
+	}
+}
+
 void DxManager::HandleTerrainEvent(TerrainEvent* me)
 {
 	string msg = me->getMessage();
@@ -317,6 +339,13 @@ void DxManager::Life()
 			{
 				string msg = ((RendererEvent*)ev)->getMessage();
 
+				// DecalEvent
+				if(dynamic_cast<DecalEvent*>(ev) != NULL)
+				{
+					this->HandleDecalEvent((DecalEvent*)ev);
+				}
+
+				// ReloadShaderEvent
 				if(ReloadShaderEvent* rse = dynamic_cast<ReloadShaderEvent*>(ev))
 					this->HandleReloadShaders(rse->GetShader());
 				
@@ -602,8 +631,8 @@ void DxManager::RenderShadowMap()
 			// For deferred:
 			this->Shader_DeferredLightning->SetResourceAtIndex(l, "ShadowMap", this->lights[l]->GetShadowMapSRV());
 			this->Shader_DeferredLightning->SetStructMemberAtIndexAsMatrix(l, "lights", "LightViewProj", lvp);
-			this->Shader_DeferredLightning->SetStructMemberAtIndexAsFloat4(l, "lights", "LightPosition", D3DXVECTOR4(this->lights[l]->GetPosition(), 1));
-			this->Shader_DeferredLightning->SetStructMemberAtIndexAsFloat4(l, "lights", "LightColor", D3DXVECTOR4(this->lights[l]->GetColor(), 1));
+			this->Shader_DeferredLightning->SetStructMemberAtIndexAsFloat4(l, "lights", "LightPosition", D3DXVECTOR4(this->lights[l]->GetPositionD3DX(), 1));
+			this->Shader_DeferredLightning->SetStructMemberAtIndexAsFloat4(l, "lights", "LightColor", D3DXVECTOR4(this->lights[l]->GetColorD3DX(), 1));
 			this->Shader_DeferredLightning->SetStructMemberAtIndexAsFloat(l, "lights", "LightIntensity", this->lights[l]->GetIntensity());
 		
 		
@@ -1454,6 +1483,38 @@ void DxManager::RenderFBXMeshes()
 }
 
 
+void DxManager::RenderDecals()
+{
+	/*
+	renderer->reset();
+	renderer->setRasterizerState(cullFront);
+	renderer->setShader(m_Decal);
+	renderer->setShaderConstant4x4f("ViewProj", viewProj);
+	renderer->setShaderConstant2f("PixelSize", float2(1.0f / width, 1.0f / height));
+	renderer->setTexture("Depth", m_DepthRT);
+	renderer->setTexture("Decal", m_DecalTex);
+	renderer->setSamplerState("DepthFilter", m_PointClamp);
+	renderer->setSamplerState("DecalFilter", m_DecalSS);
+	renderer->setDepthState(noDepthTest);
+	renderer->setBlendState(m_BlendDecal);
+	renderer->apply();
+
+
+	const uint decal_count = m_Decals.getCount();
+	for (uint i = 0; i < decal_count; i++)
+	{
+		renderer->setShaderConstant3f("Pos", m_Decals[i].position);
+		renderer->setShaderConstant1f("Radius", m_Decals[i].radius);
+		renderer->setShaderConstant3f("Color", m_Decals[i].color);
+		renderer->setShaderConstant4x4f("ScreenToLocal", m_Decals[i].matrix * viewProjInv);
+		renderer->applyConstants();
+
+		m_Sphere->draw(renderer);
+	}
+	*/
+}
+
+
 
 
 HRESULT DxManager::Render()
@@ -1487,6 +1548,9 @@ HRESULT DxManager::Render()
 
 	this->RenderBillboards();
 	this->RenderBillboardsInstanced(); 
+
+
+	this->RenderDecals();
 	
 	//this->RenderQuadDeferred();
 	//this->RenderDeferredTexture();

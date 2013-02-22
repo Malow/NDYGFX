@@ -35,31 +35,7 @@ struct BillboardGroup
 		: s_Size(size), s_StartLocation(startLocation), s_SRV(srv) {}
 };
 
-
-/*struct MeshData
-{
-	struct StripData
-	{
-		ID3D11ShaderResourceView*	s_SRV;
-		ID3D11Buffer*				s_VertexBuffer;
-
-		StripData() : s_SRV(NULL), s_VertexBuffer(NULL) {}
-		StripData(ID3D11ShaderResourceView*	srv, ID3D11Buffer* vertexBuffer) : s_SRV(srv), s_VertexBuffer(vertexBuffer) {}
-
-	};
-	
-	struct InstancedData
-	{
-		D3DXMATRIX				s_WorldMatrix; //translation, rotation, scale
-	};
-
-	std::vector<StripData>	s_StripData;
-	InstancedData			s_InstancedData;
-
-	MeshData() : s_StripData(), s_InstancedData() {}
-	MeshData(std::vector<StripData>	stripData, InstancedData instancedData) 
-		: s_StripData(stripData), s_InstancedData(instancedData) {}
-};*/
+/*
 struct MeshData
 {
 	struct InstancedDataStruct
@@ -74,27 +50,60 @@ struct MeshData
 		}
 	} InstancedData;
 
-	
 	MeshStripsResource*	 s_MeshStripsResource;
 
 	MeshData() : s_MeshStripsResource(NULL) {}
 	MeshData(MeshStripsResource* meshStripsResource) : s_MeshStripsResource(meshStripsResource) {}
+};*/
+struct StripData
+{
+	struct InstancedDataStruct
+	{
+		D3DXMATRIX	s_WorldMatrix; //translation, rotation, scale
+		//D3DXMATRIX	s_WorldInverseTransposeMatrix; 
+
+		InstancedDataStruct() 
+		{
+			D3DXMatrixIdentity(&s_WorldMatrix);
+			//s_WorldInverseTransposeMatrix = s_WorldMatrix;
+		}
+	} InstancedData;
+
+	MeshStrip*	 s_MeshStrip;
+
+	StripData() : s_MeshStrip(NULL) {}
+	StripData(MeshStrip* meshStrip) : s_MeshStrip(meshStrip) {}
 };
-
-
+/*
 struct MeshGroup 
 {
-	unsigned int				s_StartLocation;
-	unsigned int				s_Size; 
-	MeshStripsResource*			s_MeshStripsResource;
+	unsigned int		s_StartLocation;
+	unsigned int		s_Size; 
+	//MeshStripsResource*	s_MeshStripsResource;
+	MeshStrip*			s_MeshStrip;
+	MeshGroup() : s_StartLocation(0), s_Size(0), s_MeshStrip(NULL) {}// s_MeshStripsResource(NULL) {}
+	MeshGroup(unsigned int startLocation, unsigned int size, MeshStrip* meshStrip)
+		: s_StartLocation(startLocation), s_Size(size), s_MeshStrip(meshStrip) {}
+};
+*/
 
-	MeshGroup() : s_StartLocation(0), s_Size(0), s_MeshStripsResource(NULL) {}
-	MeshGroup(unsigned int startLocation, unsigned int size, D3DXMATRIX* worldMatrices, MeshStripsResource* meshStripsResource)
-		: s_StartLocation(startLocation), s_Size(size), s_MeshStripsResource(meshStripsResource) {}
+struct StripGroup
+{
+	unsigned int		s_StartLocation;
+	unsigned int		s_Size; 
+	//Buffer*				s_VertexBuffer;
+	//TextureResource*	s_TextureResource;
+	MeshStrip*			s_MeshStrip;
+
+	StripGroup() : s_StartLocation(0), s_Size(0), s_MeshStrip(NULL) {}
+	StripGroup(unsigned int startLocation, unsigned int size, MeshStrip* meshStrip)
+		: s_StartLocation(startLocation), s_Size(size), s_MeshStrip(meshStrip)
+	{}
 };
 
 bool SortBillboardData(BillboardData billboardLeft, BillboardData billboardRight);
-bool SortMeshData(MeshData meshLeft, MeshData meshRight);
+//bool SortMeshData(MeshData meshLeft, MeshData meshRight);
+bool SortStripData(StripData stripLeft, StripData stripRight);
 
 class InstancingHelper
 {
@@ -104,11 +113,8 @@ class InstancingHelper
 
 	private:
 		//BILLBOARD
-		//Counters
-		unsigned int zNrOfBillboards; 
-		unsigned int zNrOfBillboardGroups;
-		unsigned int zBillboardDataCapacity; //Also size of buffer
-		unsigned int zBillboardGroupCapacity;
+		//Counter
+		unsigned int zBillboardInstanceBufferSize;
 		//Billboard data
 		std::vector<BillboardData> zBillboardData;
 		//Instance group 
@@ -120,30 +126,20 @@ class InstancingHelper
 
 		//MESHES(MESHSTRIPS)
 		//Counters
-		unsigned int zNrOfMeshes;
-		unsigned int zNrOfMeshGroups;
-		unsigned int zMeshDataCapacity;
-		unsigned int zMeshGroupCapacity;
+		unsigned int zStripInstanceBufferSize;
 
-		//Vector containing Mesh data of all meshes that are added each frame.
-		std::vector<MeshData> zMeshData;
-		
-		//Vertex buffers containing instance data for each mesh group.
-		//ID3D11Buffer** zVertexBuffers;
+		//Vector containing strip data of all meshes that are added each frame.
+		std::vector<StripData> zStripData;
 
-		//Instance group (groups of meshes that share the same texture)
-		std::vector<MeshGroup> zMeshGroups;
+		//Instance group (groups of strips that share the same texture)
+		std::vector<StripGroup> zStripGroups;
 
 		//Instance Buffer (containing all instanced data)
-		ID3D11Buffer* zMeshInstanceBuffer; 
-
+		ID3D11Buffer* zStripInstanceBuffer; 
 		
-		
-
-
     private:
-	    void ExpandBillboardDataAndBuffer();
-		void ExpandMeshDataAndBuffer();
+	    void ExpandBillboardInstanceBuffer();
+		void ExpandStripInstanceBuffer();
 
 	public:
 		InstancingHelper();
@@ -152,10 +148,10 @@ class InstancingHelper
 		HRESULT Init(ID3D11Device* device, ID3D11DeviceContext* deviceContext);
 
 		//BILLBOARD
-		unsigned int GetNrOfBillboards() { return this->zNrOfBillboards; }
-		unsigned int GetNrOfBillboardGroups() { return this->zNrOfBillboardGroups; }
-		unsigned int GetBillboardDataCapacity() { return this->zBillboardDataCapacity; }
-		unsigned int GetBillboardGroupCapacity() { return this->zBillboardGroupCapacity; }
+		unsigned int GetNrOfBillboards() { return this->zBillboardData.size(); }
+		unsigned int GetNrOfBillboardGroups() { return this->zBillboardGroups.size(); }
+		unsigned int GetBillboardDataCapacity() { return this->zBillboardData.capacity(); }
+		unsigned int GetBillboardGroupCapacity() { return this->zBillboardGroups.capacity(); }
 		BillboardData GetBillboardData(unsigned int index) { return this->zBillboardData[index]; }
 		BillboardGroup GetBillboardGroup(unsigned int index) { return this->zBillboardGroups[index]; }
 		ID3D11Buffer* GetBillboardInstanceBuffer() { return this->zBillboardInstanceBuffer; }  
@@ -163,23 +159,22 @@ class InstancingHelper
 		void AddBillboard(const Billboard* const billboard);
 		/*	Sorts, creates instance groups and updates the instance buffer.	*/
 		void PreRenderBillboards();
-		/*	Reset zNrOfBillboards to allow overwriting of old data.	*/
-		void PostRenderBillboards() { this->zNrOfBillboards = 0; }
+		void PostRenderBillboards() { this->zBillboardData.clear(); this->zBillboardGroups.clear(); }
 		
 
 
 		//MESH
-		unsigned int GetNrOfMeshes() { return this->zNrOfMeshes; }
-		unsigned int GetNrOfMeshGroups() { return this->zNrOfMeshGroups; }
-		unsigned int GetMeshDataCapacity() { return this->zMeshDataCapacity; }
-		unsigned int GetMeshGroupCapacity() { return this->zMeshGroupCapacity; }
-		MeshData GetMeshData(unsigned int index) { return this->zMeshData[index]; }
-		MeshGroup GetMeshGroup(unsigned int index) { return this->zMeshGroups[index]; }
-		ID3D11Buffer* GetMeshInstanceBuffer() { return this->zMeshInstanceBuffer; }  
+		unsigned int GetNrOfStrips() { return this->zStripData.size(); }
+		unsigned int GetNrOfStripGroups() { return this->zStripGroups.size(); }
+		unsigned int GetStripDataCapacity() { return this->zStripData.capacity(); }
+		unsigned int GetStripGroupCapacity() { return this->zStripGroups.capacity(); }
+		StripData GetStripData(unsigned int index) { return this->zStripData[index]; }
+		StripGroup GetStripGroup(unsigned int index) { return this->zStripGroups[index]; }
+		ID3D11Buffer* GetStripInstanceBuffer() { return this->zStripInstanceBuffer; }  
 
 		void AddMesh(Mesh* mesh);
-		void PreRenderMeshes();
-		/*	Reset zNrOfMeshes to allow overwriting of old data.	*/
-		void PostRenderMeshes() { this->zNrOfMeshes = 0; }
+		/*	Sorts, creates instance groups and updates the instance buffer.	*/
+		void PreRenderStrips();
+		void PostRenderStrips() { this->zStripData.clear(); this->zStripGroups.clear(); }
 
 };

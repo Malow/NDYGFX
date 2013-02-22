@@ -22,7 +22,7 @@ class ModelPart : public IBTHFbxModelPart
 	bool									m_bSkinnedModel;
 
 public:
-	ModelPart(Model* pModelParent, int pModelParentIndex, Material* pMaterial);
+	ModelPart(Model* pModelParent, Material* pMaterial);
 	virtual ~ModelPart();
 
 	// Settings

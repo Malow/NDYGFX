@@ -1,9 +1,9 @@
 #include "ModelPart.h"
-
 #include "Model.h"
 
+
 //--------------------------------------------------------------------------------------
-ModelPart::ModelPart(Model* pModelParent, int pModelParentIndex, Material* pMaterial) :
+ModelPart::ModelPart(Model* pModelParent, Material* pMaterial) :
 	m_pModelParent(pModelParent),
 	m_pMaterial(pMaterial),
 	m_bSkinnedModel(false)

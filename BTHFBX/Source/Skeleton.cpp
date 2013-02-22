@@ -100,7 +100,6 @@ void Skeleton::UpdateCombinedAABB()
 void Skeleton::UpdateAnimation(AnimationController* pAnimationController)
 {
 	Animation* pCurrentAnimation = pAnimationController->GetCurrentAnimation();
-	int nKeyFrame = pAnimationController->GetCurrentKeyFrame();
 
 	if( !pCurrentAnimation )
 		return;
