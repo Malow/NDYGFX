@@ -123,6 +123,28 @@ void DxManager::SetCamera(SetCameraEvent* ev)
 	this->DelayGettingCamera = false;
 }
 
+void DxManager::HandleDecalEvent(DecalEvent* de)
+{
+	string msg = de->getMessage();
+	if(msg == "Add Decal")
+	{
+		this->decals.add(de->GetDecal());
+	}
+	else if(msg == "Delete Decal")
+	{
+		Decal* dec = de->GetDecal();
+		for(int i = 0; i < this->decals.size(); i++)
+		{
+			if(this->decals[i] == dec)
+			{
+				delete this->decals.getAndRemove(i);
+				dec = NULL;
+				break;
+			}
+		}
+	}
+}
+
 void DxManager::HandleTerrainEvent(TerrainEvent* me)
 {
 	string msg = me->getMessage();
@@ -317,6 +339,13 @@ void DxManager::Life()
 			{
 				string msg = ((RendererEvent*)ev)->getMessage();
 
+				// DecalEvent
+				if(dynamic_cast<DecalEvent*>(ev) != NULL)
+				{
+					this->HandleDecalEvent((DecalEvent*)ev);
+				}
+
+				// ReloadShaderEvent
 				if(ReloadShaderEvent* rse = dynamic_cast<ReloadShaderEvent*>(ev))
 					this->HandleReloadShaders(rse->GetShader());
 				
@@ -602,8 +631,8 @@ void DxManager::RenderShadowMap()
 			// For deferred:
 			this->Shader_DeferredLightning->SetResourceAtIndex(l, "ShadowMap", this->lights[l]->GetShadowMapSRV());
 			this->Shader_DeferredLightning->SetStructMemberAtIndexAsMatrix(l, "lights", "LightViewProj", lvp);
-			this->Shader_DeferredLightning->SetStructMemberAtIndexAsFloat4(l, "lights", "LightPosition", D3DXVECTOR4(this->lights[l]->GetPosition(), 1));
-			this->Shader_DeferredLightning->SetStructMemberAtIndexAsFloat4(l, "lights", "LightColor", D3DXVECTOR4(this->lights[l]->GetColor(), 1));
+			this->Shader_DeferredLightning->SetStructMemberAtIndexAsFloat4(l, "lights", "LightPosition", D3DXVECTOR4(this->lights[l]->GetPositionD3DX(), 1));
+			this->Shader_DeferredLightning->SetStructMemberAtIndexAsFloat4(l, "lights", "LightColor", D3DXVECTOR4(this->lights[l]->GetColorD3DX(), 1));
 			this->Shader_DeferredLightning->SetStructMemberAtIndexAsFloat(l, "lights", "LightIntensity", this->lights[l]->GetIntensity());
 		
 		
@@ -1454,6 +1483,12 @@ void DxManager::RenderFBXMeshes()
 }
 
 
+void DxManager::RenderDecals()
+{
+
+}
+
+
 
 
 HRESULT DxManager::Render()
@@ -1487,6 +1522,9 @@ HRESULT DxManager::Render()
 
 	this->RenderBillboards();
 	this->RenderBillboardsInstanced(); 
+
+
+	this->RenderDecals();
 	
 	//this->RenderQuadDeferred();
 	//this->RenderDeferredTexture();

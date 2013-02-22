@@ -241,6 +241,12 @@
     <ClInclude Include="Source\InstancingHelper.h">
       <Filter>Source Files\Engine\DxMan and Techs</Filter>
     </ClInclude>
+    <ClInclude Include="Include\iDecal.h">
+      <Filter>Source Files\Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Decal.h">
+      <Filter>Source Files\Engine\Objects and Entities</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\GraphicsEngineImp.cpp">
@@ -398,6 +404,9 @@
     </ClCompile>
     <ClCompile Include="Source\InstancingHelper.cpp">
       <Filter>Source Files\Engine\DxMan and Techs</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Decal.cpp">
+      <Filter>Source Files\Engine\Objects and Entities</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

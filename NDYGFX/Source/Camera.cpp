@@ -144,6 +144,7 @@ void Camera::MoveFollowingMesh()
 
 void Camera::Update(float delta)
 {
+	this->MoveFollowingMesh();
 	if(this->updateCamera)
 	{
 		if(activeWindowDisabling)
@@ -157,7 +158,7 @@ void Camera::Update(float delta)
 		}
 
 		this->MoveToTerrain();
-		this->MoveFollowingMesh();
+		
 		if(this->forceBoundries)
 		{
 			if(this->pos.x < this->minBoundries.x)

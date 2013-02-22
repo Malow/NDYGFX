@@ -159,6 +159,9 @@ public:
 	virtual iFBXMesh* CreateFBXMesh(const char* filename, Vector3 pos);
 	virtual void DeleteFBXMesh(iFBXMesh* mesh);
 
+	virtual iDecal* CreateDecal(Vector3 pos, const char* texture);
+	virtual void DeleteDecal(iDecal* decal);
+
 	// Skybox
 	virtual void CreateSkyBox(const char* texture);
 
