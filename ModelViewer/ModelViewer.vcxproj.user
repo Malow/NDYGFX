@@ -3,7 +3,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LocalDebuggerWorkingDirectory>$(SolutionDir)\WorkingDir\</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerDebuggerType>Auto</LocalDebuggerDebuggerType>
+    <LocalDebuggerDebuggerType>GPUOnly</LocalDebuggerDebuggerType>
     <LocalDebuggerEnvironment>PATH=$(SolutionDir)\WorkingDir;%PATH%
 $(LocalDebuggerEnvironment)</LocalDebuggerEnvironment>
   </PropertyGroup>
