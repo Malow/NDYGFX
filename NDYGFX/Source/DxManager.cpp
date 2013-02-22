@@ -35,6 +35,7 @@ DxManager::DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam)
 
 	this->Shader_Image = NULL;
 	this->Shader_Billboard = NULL;
+	this->Shader_Decal = NULL;
 
 	for(int i = 0; i < NrOfRenderTargets; i++)
 	{
@@ -58,6 +59,8 @@ DxManager::DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam)
 	this->Shader_DeferredQuad = NULL;
 	this->Shader_DeferredTexture = NULL;
 	this->Shader_DeferredAnimatedGeometry = NULL;
+
+	this->fbx = NULL;
 
 	this->Dx_DeferredTexture = NULL;
 	this->Dx_DeferredQuadRT = NULL;
@@ -143,6 +146,9 @@ DxManager::~DxManager()
 
 	if(this->Shader_DeferredGeoTranslucent)
 		delete this->Shader_DeferredGeoTranslucent;
+
+	if(this->Shader_Decal)
+		delete this->Shader_Decal;
 
 	if(this->Shader_DeferredPerPixelTranslucent)
 		delete this->Shader_DeferredPerPixelTranslucent;
