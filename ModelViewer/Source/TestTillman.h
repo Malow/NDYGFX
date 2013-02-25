@@ -76,8 +76,8 @@ void TillmanTest::PreTest()
 	iM3 = GetGraphics()->CreateImage(Vector2(100, 200), Vector2(100, 100), "Media/Bush_leaf_01_v07.png");
 	iM4 = GetGraphics()->CreateImage(Vector2(200, 100), Vector2(100, 100), "Media/Bush_leaf_01_v07.png");
 
-	iMesh* cacheBowCraschTest = GetGraphics()->CreateMesh("Media/Bow_v01.obj", Vector3(0, 2, 0));
-	cacheBowCraschTest->SetScale(5.0f);
+	//iMesh* cacheBowCraschTest = GetGraphics()->CreateMesh("Media/Bow_v01.obj", Vector3(0, 2, 0));
+	//cacheBowCraschTest->SetScale(5.0f);
 
 	vertSize = 64;
 	testSize = 25.0f;
@@ -225,29 +225,29 @@ void TillmanTest::PreTest()
 		}
 	}*/
 
-	iMesh* bush = GetGraphics()->CreateMesh("Media/Bush_01_v04_r.obj", Vector3(30, 10, 30));
-	bush->Scale(1.0f * 0.05f);
+	//iMesh* bush = GetGraphics()->CreateMesh("Media/Bush_01_v04_r.obj", Vector3(30, 10, 30));
+	//bush->Scale(1.0f * 0.05f);
 
 
 
 
 	//CASCADED SHADOWMAP:
 	//Transparancy:
-	bushCSMTest = GetGraphics()->CreateMesh("Media/Bush_01_v04_r.obj", Vector3(10, 2, 0));
-	bushCSMTest->Scale(1.0f * 0.05f);
+	//bushCSMTest = GetGraphics()->CreateMesh("Media/Bush_01_v04_r.obj", Vector3(10, 2, 0));
+	//bushCSMTest->Scale(1.0f * 0.05f);
 	//iMesh* flagCSMTest = GetGraphics()->CreateMesh("Media/FlagBlue.ani", Vector3(12, 2, 0));
 
 	//General shadowing:
-	iMesh* bushScaleBugTest = GetGraphics()->CreateMesh("Media/Bush_01_v04_r.obj", Vector3(0, 0, 0));
+	/*iMesh* bushScaleBugTest = GetGraphics()->CreateMesh("Media/Bush_01_v04_r.obj", Vector3(0, 0, 0));
 	iMesh* scaleBugTest = GetGraphics()->CreateMesh("Media/scale.obj", Vector3(5, 0, 0));
 	iMesh* bushScaleBugTest2 = GetGraphics()->CreateMesh("Media/Bush_01_v04_r.obj", Vector3(2, 0, 0));
 	iMesh* scaleBugTest2 = GetGraphics()->CreateMesh("Media/scale.obj", Vector3(4, 0, 0));
-
+	
 	bushScaleBugTest->Scale(1.0f * 0.05f);
 	scaleBugTest->Scale(1.0f * 0.05f);
 	bushScaleBugTest2->Scale(1.0f * 0.05f);
 	scaleBugTest2->Scale(1.0f * 0.25f);
-	/*
+*/	/*
 	Vector3 lookAt = Vector3(0, 0, 0);
 	Vector3 pos = Vector3(-50, 50, -50);
 	Vector3 posToLookAt = lookAt - pos; //Pos --> lookAt
@@ -442,7 +442,7 @@ void TillmanTest::PreTest()
 	unloadTestAni->SetScale(0.5f);
 
 	//new crasch testing
-	iMesh* aniGrassPlantCrasch = GetGraphics()->CreateMesh("Media/GrassPlant_01.ani", Vector3(5, -5, -5));
+	//iMesh* aniGrassPlantCrasch = GetGraphics()->CreateMesh("Media/GrassPlant_01.ani", Vector3(5, -5, -5));
 
 
 	//iMesh* tklerp = GetGraphics()->CreateMesh("Media/scale.obj", Vector3(30, -300, 30));

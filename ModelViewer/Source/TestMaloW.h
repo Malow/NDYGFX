@@ -80,8 +80,8 @@ void MaloWTest::PreTest()
 
 	deer = GetGraphics()->CreateMesh("Media/deer_temp.obj", Vector3(10, 20, 25));
 	deer->Scale(0.05f);
-	tempguy = GetGraphics()->CreateMesh("Media/temp_guy.obj", Vector3(15, 20, 25));
-	tempguy->Scale(0.05f);
+	//tempguy = GetGraphics()->CreateMesh("Media/temp_guy.obj", Vector3(15, 20, 25));
+	//tempguy->Scale(0.05f);
 }
 
 void MaloWTest::RunTest(float diff)
@@ -131,8 +131,8 @@ void MaloWTest::RunTest(float diff)
 	//Vector3 asd = GetGraphics()->GetCamera()->Get3DPickingRay();
 
 	
-	cd = GetGraphics()->GetPhysicsEngine()->GetCollisionRayMesh(GetGraphics()->GetCamera()->GetPosition(), 
-		GetGraphics()->GetCamera()->GetForward(), tempguy);
+	//cd = GetGraphics()->GetPhysicsEngine()->GetCollisionRayMesh(GetGraphics()->GetCamera()->GetPosition(), 
+	//	GetGraphics()->GetCamera()->GetForward(), tempguy);
 
 	if(!cd.collision)
 		cd = GetGraphics()->GetPhysicsEngine()->GetCollisionRayMesh(GetGraphics()->GetCamera()->GetPosition(), 

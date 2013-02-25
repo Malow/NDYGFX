@@ -30,7 +30,7 @@ cbuffer EveryFrame
 	float		g_FarClip;
 	
 	float4x4 g_TestW;
-	float4x4 g_TestWIT;
+	//float4x4 g_TestWIT;
 	//uint InstanceId : SV_InstanceID; använda för färg? eller använda position & sin()?
 };
 
@@ -62,10 +62,15 @@ struct VSIn
 	float3 Tangent : TANGENT;
 	float3 Binormal : BINORMAL;
 	//instance data
-	float4x4 world					: WORLD;
+	float4 worldx					: WORLDX;
+	float4 worldy					: WORLDY;
+	float4 worldz					: WORLDZ;
+	float4 worldw					: WORLDW;
+	
+	//float4 world					: WORLD;
 	//float4x4 worldInverseTranspose	: WIT;
 	
-	//uint InstanceId : SV_InstanceID;
+	uint InstanceId : SV_InstanceID;
 };
 
 struct PSSceneIn
@@ -118,9 +123,20 @@ PSSceneIn VSScene(VSIn input)
 	output.WorldPos = mul(float4(input.Pos, 1.0f), testW2);
 	
 	*/
+	
+	float4x4 world;
+	world[0] = input.worldx;
+	world[1] = input.worldy;
+	world[2] = input.worldz;
+	world[3] = input.worldw;
 
-	output.Pos = mul(float4(input.Pos, 1.0f), mul(input.world, g_CamViewProj));
-	output.WorldPos = mul(float4(input.Pos, 1.0f), input.world);
+	output.Pos = mul(float4(input.Pos, 1.0f), mul(world, g_CamViewProj));
+	output.WorldPos = mul(float4(input.Pos, 1.0f), world);
+	
+
+	//output.Pos = mul(float4(input.Pos, 1.0f), mul(input.world, g_CamViewProj));
+	//output.WorldPos = mul(float4(input.Pos, 1.0f), input.world);
+
 
 	output.tex = input.tex;
 	output.norm = input.norm;

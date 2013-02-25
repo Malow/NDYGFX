@@ -126,7 +126,7 @@ InstancingHelper::InstancingHelper()
 
 
 	//STRIPS
-	this->zStripInstanceBufferSize = 1; //**TEST
+	this->zStripInstanceBufferSize = 200; 
 	this->zStripInstanceBuffer = NULL; 
 }
 HRESULT InstancingHelper::Init(ID3D11Device* device, ID3D11DeviceContext* deviceContext)
@@ -163,6 +163,9 @@ HRESULT InstancingHelper::Init(ID3D11Device* device, ID3D11DeviceContext* device
 	{
 		MaloW::Debug("ERROR: InstancingHelper: Init(): Failed to create Strip instance buffer.");
 	}
+
+	twice = false;
+	test = false;
 
 	return hr;
 }
@@ -292,6 +295,14 @@ void InstancingHelper::PreRenderBillboards()
 
 void InstancingHelper::AddMesh(Mesh* mesh)
 {
+	if(!twice)
+	{
+
+	
+	//if(!test)
+	{
+
+	
 	//Expand buffer if necessary
 	if(this->zStripData.size() >= this->zStripInstanceBufferSize)
 	{
@@ -311,15 +322,32 @@ void InstancingHelper::AddMesh(Mesh* mesh)
 			StripData StripData;
 
 			StripData.InstancedData.s_WorldMatrix = mesh->GetWorldMatrix();
+			//StripData.InstancedData.x 
 			//StripData.InstancedData.s_WorldInverseTransposeMatrix = worldInverseTranspose;
+			//D3DXMATRIX leWhy = mesh->GetWorldMatrix();
+			//StripData.InstancedData.x = D3DXVECTOR4(leWhy._11, leWhy._12, leWhy._13, leWhy._14);
+			//StripData.InstancedData.y = D3DXVECTOR4(leWhy._21, leWhy._22, leWhy._23, leWhy._24);
+			//StripData.InstancedData.z = D3DXVECTOR4(leWhy._31, leWhy._32, leWhy._33, leWhy._34);
+			//StripData.InstancedData.w = D3DXVECTOR4(leWhy._41, leWhy._42, leWhy._43, leWhy._44);
+				
+
+
 			StripData.s_MeshStrip = mesh->GetMeshStripsResourcePointer()->GetMeshStripsPointer()->get(i);
 
 			this->zStripData.push_back(StripData);
 		}
 	}
+	if(this->zStripData.size() >= 1)
+	{
+
+		twice = true; //**TILLMAN TEST
+	}
+	}
+	}
 }
 void InstancingHelper::PreRenderStrips()
 {
+	twice = false;
 	//Sort the data by meshStrip
 	std::sort(this->zStripData.begin(), this->zStripData.end(), SortStripData);
 
@@ -378,7 +406,7 @@ void InstancingHelper::PreRenderStrips()
 				this->zStripGroups.push_back(newStripGroup);
 			}
 		}
-		//Remove seperator and last, invalid group
+		//Remove seperator and the group it's in
 		this->zStripData.pop_back();
 		this->zStripGroups.pop_back();
 	}
@@ -392,10 +420,9 @@ void InstancingHelper::PreRenderStrips()
 		this->zStripGroups.push_back(singleStrip);
 	}
 
-
 	//Update buffer 
 	D3D11_MAPPED_SUBRESOURCE mappedSubResource;
-	//Map to access data //**TILLMAN OPTIMERING: uppdatera endast de som lagts till/tagits bort(array med index(i))**
+	//Map to access data
 	this->g_DeviceContext->Map(this->zStripInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubResource);
 	StripData::InstancedDataStruct* dataView = reinterpret_cast<StripData::InstancedDataStruct*>(mappedSubResource.pData);
 	//Copy over all instance data

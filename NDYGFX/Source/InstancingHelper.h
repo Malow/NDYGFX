@@ -60,10 +60,18 @@ struct StripData
 	struct InstancedDataStruct
 	{
 		D3DXMATRIX	s_WorldMatrix; //translation, rotation, scale
+		//D3DXVECTOR4 x;
+		//D3DXVECTOR4 y;
+		//D3DXVECTOR4 z;
+		//D3DXVECTOR4 w;
 		//D3DXMATRIX	s_WorldInverseTransposeMatrix; 
 
 		InstancedDataStruct() 
 		{
+			//x = D3DXVECTOR4(1.0f, 0.0f, 0.0f, 0.0f);
+			//y = D3DXVECTOR4(0.0f, 1.0f, 0.0f, 0.0f);
+			//z = D3DXVECTOR4(0.0f, 0.0f, 1.0f, 0.0f);
+			//w = D3DXVECTOR4(0.0f, 0.0f, 0.0f, 1.0f);
 			D3DXMatrixIdentity(&s_WorldMatrix);
 			//s_WorldInverseTransposeMatrix = s_WorldMatrix;
 		}
@@ -74,6 +82,7 @@ struct StripData
 	StripData() : s_MeshStrip(NULL) {}
 	StripData(MeshStrip* meshStrip) : s_MeshStrip(meshStrip) {}
 };
+
 /*
 struct MeshGroup 
 {
@@ -122,6 +131,7 @@ class InstancingHelper
 		//Instance Buffer
 		ID3D11Buffer* zBillboardInstanceBuffer; //Shall contain vertex data of billboardData.
 
+		bool twice;//**TILLMAN
 
 
 		//MESHES(MESHSTRIPS)
@@ -136,6 +146,8 @@ class InstancingHelper
 
 		//Instance Buffer (containing all instanced data)
 		ID3D11Buffer* zStripInstanceBuffer; 
+
+		bool test; //**TILLMAN
 		
     private:
 	    void ExpandBillboardInstanceBuffer();
@@ -176,5 +188,7 @@ class InstancingHelper
 		/*	Sorts, creates instance groups and updates the instance buffer.	*/
 		void PreRenderStrips();
 		void PostRenderStrips() { this->zStripData.clear(); this->zStripGroups.clear(); }
+
+		void SetBoolTest(bool flag) { this->test = flag; }
 
 };

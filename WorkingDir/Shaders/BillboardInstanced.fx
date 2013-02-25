@@ -192,7 +192,7 @@ PSOut PS(PSIn input)
 	//float depth = length(CameraPosition.xyz - input.WorldPos.xyz) / FarClip;		// Haxfix
 	//output.NormalAndDepth.w = depth;
 
-	//Position(world space) RT
+	//Position(world space) & object type RT
 	output.Position = float4(input.posW.xyz, OBJECT_TYPE_BILLBOARD);
 	
 	//Specular RT
