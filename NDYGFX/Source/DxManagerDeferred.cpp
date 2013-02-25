@@ -625,22 +625,13 @@ void DxManager::RenderDeferredGeometry()
 				}
 					
 						
-				/*bool hasBeenCounted = false;
 				//Just check the first strip if it is culled.  //**TILLMAN**
-				if(!staticMesh->IsStripCulled(0))
+				/*if(!staticMesh->IsStripCulled(0))
 				{
-					if(!hasBeenCounted)
-					{
-						CurrentRenderedMeshes++;
-						hasBeenCounted = true;
-					}
+					CurrentRenderedMeshes++;
 
 					//Add mesh info to instance helper
-					//if(!once)
-					{
-						this->instancingHelper->AddMesh(staticMesh);
-						//once = true;
-					}
+					this->instancingHelper->AddMesh(staticMesh);
 				}*/
 			}
 			else
@@ -856,8 +847,15 @@ void DxManager::RenderDeferredGeometryInstanced()
 	if(this->instancingHelper->GetNrOfStrips() > 0)
 	{
 		//Sort, create instance groups and update buffer before rendering
-		this->instancingHelper->PreRenderStrips();
-	
+		//static bool once = false;
+		//if(!once)
+		{
+
+		
+			this->instancingHelper->PreRenderStrips();
+			//once = true;
+		//	this->instancingHelper->SetBoolTest(once);
+		}
 
 
 		// Set global variables per frame
@@ -871,8 +869,13 @@ void DxManager::RenderDeferredGeometryInstanced()
 		unsigned int offsets[2] = {0, 0};
 		bufferPointers[1] = this->instancingHelper->GetStripInstanceBuffer();	
 
-		//Per Strip group
-		for(unsigned int i = 0; i < this->instancingHelper->GetNrOfStripGroups(); i++)
+		//for(unsigned int jj = 0; jj < 3; ++jj)
+		//{
+
+
+			//Per Strip group
+		for(unsigned int i = 0; i < this->instancingHelper->GetNrOfStripGroups(); ++i)//** 1 tillman
+		//for(unsigned int i = 0; i < 1; ++i)
 		{
 			StripGroup stripGroup = this->instancingHelper->GetStripGroup(i);
 			MeshStrip* strip = stripGroup.s_MeshStrip;
@@ -890,8 +893,15 @@ void DxManager::RenderDeferredGeometryInstanced()
 			//Copy over all instance data
 			//for(UINT i = 0; i < this->instancingHelper->GetNrOfMeshes(); ++i)
 			//{
-				this->Shader_DeferredGeometryInstanced->SetMatrix("g_TestW", dataView[i].s_WorldMatrix);
+			/*D3DXMATRIX testW = D3DXMATRIX(
+				dataView[i].x.x, dataView[i].x.y, dataView[i].x.z, dataView[i].x.w, 
+				dataView[i].y.x, dataView[i].y.y, dataView[i].y.z, dataView[i].y.w, 
+				dataView[i].z.x, dataView[i].z.y, dataView[i].z.z, dataView[i].z.w, 
+				dataView[i].w.x, dataView[i].w.y, dataView[i].w.z, dataView[i].w.w);
 			
+				this->Shader_DeferredGeometryInstanced->SetMatrix("g_TestW", testW);
+				*/
+				this->Shader_DeferredGeometryInstanced->SetMatrix("g_TestW", dataView[i].s_WorldMatrix);
 			//}
 			//Unmap so the GPU can have access
 			this->Dx_DeviceContext->Unmap(this->instancingHelper->GetStripInstanceBuffer(), 0);
@@ -946,12 +956,13 @@ void DxManager::RenderDeferredGeometryInstanced()
 			unsigned int vertexCount = strip->getNrOfVerts();
 			int instanceCount = this->instancingHelper->GetStripGroup(i).s_Size;
 			int startLoc = this->instancingHelper->GetStripGroup(i).s_StartLocation;
-			this->Dx_DeviceContext->DrawInstanced(vertexCount, instanceCount, 0, startLoc);
+			this->Dx_DeviceContext->DrawInstanced(vertexCount, instanceCount, 0, startLoc); //**tillman
 			
 			//Debug data
 			this->NrOfDrawCalls++;
 			this->NrOfDrawnVertices += vertexCount;
 		}
+		//}
 
 
 

@@ -229,7 +229,7 @@
     <ClInclude Include="Source\InstancingHelper.h">
       <Filter>Source Files\Engine\DxMan and Techs</Filter>
     </ClInclude>
-	<ClInclude Include="Source\BTHFBX\Shared\FBX\FBXModelD3D.h">
+    <ClInclude Include="Source\BTHFBX\Shared\FBX\FBXModelD3D.h">
       <Filter>Source Files\Engine\FBX</Filter>
     </ClInclude>
     <ClInclude Include="Source\BTHFBX\Shared\FBX\FBXModelPartD3D.h">
@@ -271,7 +271,7 @@
     <ClInclude Include="Source\BTHFBX\Shared\D3D\BTHTexture.h">
       <Filter>Source Files\Engine\FBX</Filter>
     </ClInclude>
-	<ClInclude Include="Include\iDecal.h">
+    <ClInclude Include="Include\iDecal.h">
       <Filter>Source Files\Wrapper</Filter>
     </ClInclude>
     <ClInclude Include="Source\Decal.h">
@@ -534,6 +534,9 @@
       <Filter>Source Files\Engine\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\WorkingDir\Shaders\Decal.fx">
+      <Filter>Source Files\Engine\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\WorkingDir\Shaders\ShadowMapBillboardInstanced.fx">
       <Filter>Source Files\Engine\Shaders</Filter>
     </FxCompile>
   </ItemGroup>
