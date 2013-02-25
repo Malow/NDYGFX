@@ -157,7 +157,11 @@ void MaloWTest::RunTest(float diff)
 
 
 	if(GetGraphics()->GetKeyListener()->IsClicked(1))
-		GetGraphics()->CreateDecal(ball->GetPosition(), "Media/BloodTexture.png");
+	{
+		Vector3 pos = Vector3(cd.posx, cd.posy, cd.posz);
+		GetGraphics()->CreateDecal(pos, "Media/BloodTexture.png");
+		GetGraphics()->CreateImage(Vector2(0, 0), Vector2(100, 100), "Media/BloodTexture.png");
+	}
 
 	static bool fesd = true;
 	static int qual = 0;
@@ -165,7 +169,7 @@ void MaloWTest::RunTest(float diff)
 	{
 		if(fesd)
 		{
-			
+			/*
 			if(qual % 2 == 0)
 			{
 				GetGraphics()->GetEngineParameters().Maximized = true;
@@ -175,8 +179,8 @@ void MaloWTest::RunTest(float diff)
 			{
 				GetGraphics()->GetEngineParameters().Maximized = false;
 				GetGraphics()->ResizeGraphicsEngine(1264, 947);
-			}
-			//GetGraphics()->ReloadShaders(9);
+			}*/
+			GetGraphics()->ReloadShaders(19);
 			//MaloW::Debug("Diff: " + MaloW::convertNrToString(totDiff / nrofdiffs));
 			//GetGraphics()->ChangeShadowQuality(qual);
 

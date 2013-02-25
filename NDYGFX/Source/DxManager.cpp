@@ -1056,8 +1056,8 @@ void DxManager::CreateDecal( Decal* decal, string texture )
 	D3DXMATRIX rotate;
 	D3DXMATRIX translate2;
 
-	D3DXMatrixTranslation(&translate, 0.5f, 0.5f, 0.5f);
-	D3DXMatrixScaling(&scale, 1.0f, 1.0f, 1.0f);
+	translate = D3DXMATRIX(1,0,0,0.5f, 0,1,0,0.5f, 0,0,1,0.5f, 0,0,0,1);
+	scale = D3DXMATRIX(0.5f / decal->GetSize(),0,0,0, 0,0.5f / decal->GetSize(),0,0, 0,0,0.5f / decal->GetSize(),0, 0,0,0,1);
 
 
 	// MALOW : Add random rotation for decals?
@@ -1068,10 +1068,40 @@ void DxManager::CreateDecal( Decal* decal, string texture )
 	rotate = x*y*z;
 
 	Vector3 pos = decal->GetPosition();
-	D3DXMatrixTranslation(&translate2, -pos.x, -pos.y, -pos.z);
+	translate2 = D3DXMATRIX(1,0,0,pos.x, 0,1,0,pos.y, 0,0,1,pos.z, 0,0,0,1);
 
 	matrix = translate * scale * rotate * translate2;
 	decal->SetMatrix(matrix);
+
+
+
+	MeshStrip* strip = decal->GetStrip();
+
+	// Create the desc for the buffer
+	BUFFER_INIT_DESC BufferDesc;
+	BufferDesc.ElementSize = sizeof(VertexNormalMap);
+	BufferDesc.InitData = strip->getVerts();
+	BufferDesc.NumElements = strip->getNrOfVerts();
+	BufferDesc.Type = VERTEX_BUFFER;
+	BufferDesc.Usage = BUFFER_DEFAULT;
+
+	// Create the buffer
+	BufferResource* VertexBuffer = GetResourceManager()->CreateBufferResource("DecalSphereDefault", BufferDesc);
+
+
+	BUFFER_INIT_DESC indiceBufferDesc;
+	indiceBufferDesc.ElementSize = sizeof(int);
+	indiceBufferDesc.InitData = strip->getIndicies();
+	indiceBufferDesc.NumElements = strip->getNrOfIndicies();
+	indiceBufferDesc.Type = INDEX_BUFFER;
+	indiceBufferDesc.Usage = BUFFER_DEFAULT;
+
+	BufferResource* IndexBuffer = GetResourceManager()->CreateBufferResource("DecalSphereDefaultIndex", indiceBufferDesc);
+
+
+	Object3D* ro = new Object3D(VertexBuffer, IndexBuffer, tex, NULL, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	strip->SetRenderObject(ro);
+
 
 	DecalEvent* re = new DecalEvent("Add Decal", decal);
 	this->PutEvent(re);

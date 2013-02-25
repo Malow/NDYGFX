@@ -1055,7 +1055,7 @@ void GraphicsEngineImp::ReloadShaders(int shaderIndex)
 
 iDecal* GraphicsEngineImp::CreateDecal( Vector3 pos, const char* texture )
 {
-	Decal* dec = new Decal(pos);
+	Decal* dec = new Decal(pos, 10, 10);
 	this->dx->CreateDecal(dec, texture);
 	return dec;
 }

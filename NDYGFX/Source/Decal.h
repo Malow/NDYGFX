@@ -12,8 +12,10 @@ private:
 	float size;
 	TextureResource* textureResource;
 
+	MeshStrip* strip;
+
 public:
-	Decal(Vector3 pos);
+	Decal(Vector3 pos, int latitude, int longitude);
 	virtual ~Decal();
 
 	float GetSize() const { return this->size; }
@@ -22,6 +24,9 @@ public:
 	void SetPosition(Vector3 pos) { this->position = pos; }
 	void SetTexture(TextureResource* text) { this->textureResource = text; }
 	TextureResource* GetTextureResource() const { return this->textureResource; }
-	D3DXMATRIX GetMatrix() const { return this->matrix; }
+	D3DXMATRIX GetMatrix() const;
+	D3DXMATRIX GetWorldMatrix();
 	void SetMatrix(D3DXMATRIX mat) { this->matrix = mat; }
+
+	MeshStrip* GetStrip() { return this->strip; }
 };

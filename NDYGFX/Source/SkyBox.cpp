@@ -142,3 +142,4 @@ MeshStrip* SkyBox::GetStrip()
 	//return this->strips->get(0);
 	return this->strip;
 }
+
