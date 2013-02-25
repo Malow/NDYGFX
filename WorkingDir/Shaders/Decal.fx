@@ -22,6 +22,21 @@ BlendState SrcAlphaBlendingAdd
 	RenderTargetWriteMask[0] = 0x0F; 
 }; 
 
+
+BlendState AdditiveBlending
+{
+    AlphaToCoverageEnable = FALSE;
+    BlendEnable[0] = TRUE;
+    SrcBlend = SRC_ALPHA;
+    DestBlend = ONE;
+    BlendOp = ADD;
+    SrcBlendAlpha = ZERO;
+    DestBlendAlpha = ZERO;
+    BlendOpAlpha = ADD;
+    RenderTargetWriteMask[0] = 0x0F;
+};
+
+
 SamplerState DepthFilter
 {
     Filter = MIN_MAG_MIP_LINEAR;
@@ -39,10 +54,22 @@ SamplerState DecalFilter
 };
 
 
+SamplerState linearSampler
+{
+    Filter = MIN_MAG_MIP_LINEAR;
+    AddressU = Wrap;
+    AddressV = Wrap;
+};
+
 
 struct VsIn
 {
-	float4 Position : POSITION;
+	float4 Pos : POSITION;
+	float2 tex : TEXCOORD;
+	float3 norm : NORMAL;
+	float3 color : COLOR;
+	float3 Tangent : TANGENT;
+	float3 Binormal : BINORMAL;
 };
 
 struct PsIn
@@ -52,20 +79,12 @@ struct PsIn
 
 //[Vertex shader]
 
-matrix ViewProj;
-float3 Pos;
-float size;
+matrix WorldViewProj;
 
 PsIn VSScene(VsIn In)
 {
 	PsIn Out;
-
-	float4 position = In.Position;
-	position.xyz *= size;
-	position.xyz += Pos;
-
-	Out.Position = mul(ViewProj, position);
-
+	Out.Position = mul(In.Pos, WorldViewProj);
 	return Out;
 }
 
@@ -73,9 +92,8 @@ PsIn VSScene(VsIn In)
 //[Fragment shader]
 
 Texture2D Depth;
-Texture3D <float4> Decal;
+Texture2D Decal;
 float4x4 ScreenToLocal;
-float3 Color;
 float2 PixelSize;
 
 float4 PSScene(PsIn In) : SV_TARGET
@@ -85,14 +103,16 @@ float4 PSScene(PsIn In) : SV_TARGET
 
     // Compute local position of scene geometry
 	float depth = Depth.Sample(DepthFilter, texCoord).w;
+	float thisDepth = In.Position.z / In.Position.w;
+
 	float4 scrPos = float4(texCoord, depth, 1.0f);
 	float4 wPos = mul(ScreenToLocal, scrPos);
 
     // Sample decal
 	float3 coord = wPos.xyz / wPos.w;
-	float decal = Decal.Sample(DecalFilter, coord).r;
-
-	return float4(Color, decal);
+	float4 decal = Decal.Sample(linearSampler, coord);
+	return float4(1, 0, 0, 1);
+	return decal;
 }
 
 
@@ -109,5 +129,6 @@ technique11 BasicTech
 		SetDepthStencilState( DisableDepthWrite, 0 );
 	    SetRasterizerState( FrontCulling );
 		SetBlendState( SrcAlphaBlendingAdd, float4( 0.0f, 0.0f, 0.0f, 0.0f ), 0xFFFFFFFF );
+		//SetBlendState( AdditiveBlending, float4( 0.0f, 0.0f, 0.0f, 0.0f ), 0xFFFFFFFF );
     }  
 }

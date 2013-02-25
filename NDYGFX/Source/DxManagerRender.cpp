@@ -108,6 +108,10 @@ void DxManager::HandleReloadShaders(int shader)
 		//if(this->Shader_Fxaa)		 FXAA Shader doesnt like being reloaded :(
 			//Shader_Fxaa->Reload();
 		break;
+	case 19:
+		if(this->Shader_Decal)		
+			Shader_Decal->Reload();
+		break;
 	}
 }
 
@@ -1490,28 +1494,33 @@ void DxManager::RenderFBXMeshes()
 
 void DxManager::RenderDecals()
 {
+	this->Dx_DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	this->Dx_DeviceContext->OMSetRenderTargets(1, &this->Dx_GbufferRTs[0], this->Dx_DepthStencilView);
 	D3DXMATRIX proj = this->camera->GetProjectionMatrix();
 	D3DXMATRIX view = this->camera->GetViewMatrix();
 	D3DXMATRIX viewProj = view * proj;
 	D3DXMATRIX viewProjInv;
 	D3DXMatrixInverse(&viewProjInv, NULL, &viewProj);
+	viewProjInv = viewProjInv * D3DXMATRIX(1,0,0,-1, 0,1,0,1, 0,0,1,0, 0,0,0,1) * D3DXMATRIX(2,0,0,0, 0,-2,0,0, 0,0,1,0, 0,0,0,1);
 
-	this->Shader_Decal->SetMatrix("ViewProj", viewProj);
+	
 	this->Shader_Decal->SetFloat2("PixelSize", D3DXVECTOR2(1.0f / this->params.WindowWidth, 1.0f / this->params.WindowHeight));
 
 	this->Shader_Decal->SetResource("Depth", this->Dx_GbufferSRVs[1]);
 	
 	for(int i = 0; i < this->decals.size(); i++)
 	{
+		this->Shader_Decal->SetMatrix("WorldViewProj", this->decals[i]->GetWorldMatrix() * viewProj);
 		this->Shader_Decal->SetResource("Decal", this->decals[i]->GetTextureResource()->GetSRVPointer());
-		Vector3 pos = this->decals[i]->GetPosition();
-		this->Shader_Decal->SetFloat3("Pos", D3DXVECTOR3(pos.x, pos.y, pos.z));
-		this->Shader_Decal->SetFloat("size", this->decals[i]->GetSize());
 		this->Shader_Decal->SetMatrix("ScreenToLocal", this->decals[i]->GetMatrix() * viewProjInv);
 		this->Shader_Decal->Apply(0);
 
-		this->Dx_DeviceContext->Draw(1, 0);
+		Buffer* verts = this->decals[i]->GetStrip()->GetRenderObject()->GetVertBuff();
+		verts->Apply();
+		Buffer* inds = this->decals[i]->GetStrip()->GetRenderObject()->GetIndsBuff();
+		inds->Apply();
+
+		this->Dx_DeviceContext->DrawIndexed(inds->GetElementCount(), 0, 0);
 	}
 
 	this->Shader_Decal->SetResource("Depth", NULL);

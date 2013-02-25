@@ -388,7 +388,7 @@ HRESULT DxManager::Init()
 
 	// Decal Shader
 	this->Shader_Decal = new Shader();
-	if(FAILED(this->Shader_Decal->Init(Dx_Device, Dx_DeviceContext, "Shaders/Decal.fx", inputDescPosition, 1)))
+	if(FAILED(this->Shader_Decal->Init(Dx_Device, Dx_DeviceContext, "Shaders/Decal.fx", inputDescVertexNormalMap, 6)))
 	{
 		MaloW::Debug("Failed to open Decal.fx");
 		return E_FAIL;
