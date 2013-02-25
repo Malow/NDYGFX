@@ -33,14 +33,5 @@
     <ClInclude Include="Source\TestOther.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\TestCase.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\TestTerrainNormals.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\TestAnimations.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

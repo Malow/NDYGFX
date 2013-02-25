@@ -1492,35 +1492,32 @@ void DxManager::RenderFBXMeshes()
 
 void DxManager::RenderDecals()
 {
+	this->Dx_DeviceContext->OMSetRenderTargets(1, &this->Dx_GbufferRTs[0], this->Dx_DepthStencilView);
 	D3DXMATRIX proj = this->camera->GetProjectionMatrix();
 	D3DXMATRIX view = this->camera->GetViewMatrix();
-	this->Shader_Decal->SetMatrix("ViewProj", view * proj);
+	D3DXMATRIX viewProj = view * proj;
+	D3DXMATRIX viewProjInv;
+	D3DXMatrixInverse(&viewProjInv, NULL, &viewProj);
+
+	this->Shader_Decal->SetMatrix("ViewProj", viewProj);
 	this->Shader_Decal->SetFloat2("PixelSize", D3DXVECTOR2(1.0f / this->params.WindowWidth, 1.0f / this->params.WindowHeight));
 
-	ID3D11ShaderResourceView* srv;
-	if(FAILED(this->Dx_Device->CreateShaderResourceView(this->Dx_DepthStencil, 0, &srv)))
-	{
-		MaloW::Debug("ERROR: Failed to create Shader resource view with depth texture in Render Recals.");
-	}
-	this->Shader_Decal->SetResource("Depth", srv);
+	this->Shader_Decal->SetResource("Depth", this->Dx_GbufferSRVs[1]);
 	
-
-	/*
-	const uint decal_count = m_Decals.getCount();
-	for (uint i = 0; i < decal_count; i++)
+	for(int i = 0; i < this->decals.size(); i++)
 	{
-		this->Shader_Decal->SetResource("Decal", )
-		renderer->setShaderConstant3f("Pos", m_Decals[i].position);
-		renderer->setShaderConstant1f("Radius", m_Decals[i].radius);
-		renderer->setShaderConstant3f("Color", m_Decals[i].color);
-		renderer->setShaderConstant4x4f("ScreenToLocal", m_Decals[i].matrix * viewProjInv);
-		renderer->applyConstants();
+		this->Shader_Decal->SetResource("Decal", this->decals[i]->GetTextureResource()->GetSRVPointer());
+		Vector3 pos = this->decals[i]->GetPosition();
+		this->Shader_Decal->SetFloat3("Pos", D3DXVECTOR3(pos.x, pos.y, pos.z));
+		this->Shader_Decal->SetFloat("size", this->decals[i]->GetSize());
+		this->Shader_Decal->SetMatrix("ScreenToLocal", this->decals[i]->GetMatrix() * viewProjInv);
+		this->Shader_Decal->Apply(0);
 
-		m_Sphere->draw(renderer);
+		this->Dx_DeviceContext->Draw(1, 0);
 	}
-	*/
 
 	this->Shader_Decal->SetResource("Depth", NULL);
+	this->Shader_Decal->SetResource("Decal", NULL);
 }
 
 

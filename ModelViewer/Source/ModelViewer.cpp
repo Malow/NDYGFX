@@ -2,8 +2,8 @@
 
 
 #if defined(DEBUG) || defined(_DEBUG)
-	#include <vld.h>
-	#define INCLUDE_MODEL_VIEWER
+#include <vld.h>
+#define INCLUDE_MODEL_VIEWER
 #endif
 
 #include "Graphics.h"
@@ -11,8 +11,6 @@
 #include "TestMaloW.h"
 #include "TestTillman.h"
 #include "TestOther.h"
-#include "TestTerrainNormals.h"
-#include "TestAnimations.h"
 
 
 void ReplaceSlashes(string& str, char replace, char with)
@@ -67,51 +65,13 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 #if defined(DEBUG) || defined(_DEBUG)
 	_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	MaloW::Debug("(DEBUG): ModelViewer: Debug flag set to: _CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF). ");
-	#ifdef INCLUDE_MODEL_VIEWER
-		MaloW::Debug("(DEBUG): ModelViewer: vld.h included.");
-	#endif
-#endif	
+#ifdef INCLUDE_MODEL_VIEWER
+	MaloW::Debug("(DEBUG): ModelViewer: vld.h included.");
+#endif
+#endif
 	GetGraphics()->CreateSkyBox("Media/skymap.dds"); //** TILLMAN
 	GetGraphics()->GetCamera()->SetPosition(Vector3(25, 25, 20));
 	GetGraphics()->GetCamera()->LookAt(Vector3(0, 0, 0));
-
-//*************************************	     PRE TEST       **********************
-#ifdef TEST
-	// Run As Simple ModelViewer
-	TestCase* activeTestCase = 0;
-
-	// Test Cases
-	// activeTestCase = new TestTerrainNormals();
-	activeTestCase = new TestAnimations();
-
-	if ( activeTestCase )
-	{
-		activeTestCase->PreTest();
-		GetGraphics()->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 1.0f, 1.0f, 1.0f, 1.0f);
-
-		while(GetGraphics()->IsRunning())
-		{
-			float deltaTime = GetGraphics()->Update();
-
-			if(GetGraphics()->GetKeyListener()->IsPressed('W'))
-				GetGraphics()->GetCamera()->MoveForward(deltaTime * 10.0f);
-			if(GetGraphics()->GetKeyListener()->IsPressed('A'))
-				GetGraphics()->GetCamera()->MoveLeft(deltaTime * 10.0f);
-			if(GetGraphics()->GetKeyListener()->IsPressed('S'))	
-				GetGraphics()->GetCamera()->MoveBackward(deltaTime * 10.0f);
-			if(GetGraphics()->GetKeyListener()->IsPressed('D'))	
-				GetGraphics()->GetCamera()->MoveRight(deltaTime * 10.0f);
-			if(GetGraphics()->GetKeyListener()->IsPressed(VK_ESCAPE))
-				break;
-
-			activeTestCase->RunTest(deltaTime);
-		}
-
-		activeTestCase->PostTest();
-		delete activeTestCase;
-
-		return 0;
-	}
 
 	iLight* li = GetGraphics()->CreateLight(GetGraphics()->GetCamera()->GetPosition());
 	li->SetIntensity(0.001f);
@@ -122,11 +82,19 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	scaleHuman->Scale(1.0f / 20.0f);
 	model->Scale(1.0f * 0.05f);
 
+	//************************************* PRE TEST **********************
+#ifdef TEST
+	MaloWTest mt;
+	TillmanTest tt;
+	OtherTest ot;
+	mt.PreTest();
+	tt.PreTest();
+	ot.PreTest();
+	GetGraphics()->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 1.0f, 1.0f, 1.0f, 1.0f);
 #endif
+	//************************************* END OF PRE TEST **********************
 
-//*************************************	    END OF PRE TEST       **********************
-
-	// To stop the engine rendering a splash image before it has loaded stuff 
+	// To stop the engine rendering a splash image before it has loaded stuff
 	// to not get a clear-color rendered before skybox is in etc.
 	GetGraphics()->StartRendering();	
 
@@ -161,10 +129,15 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 
 		// Updates camera etc, does NOT render the frame, another process is doing that, so diff should be very low.
 		float diff = GetGraphics()->Update();	
-		
 
-//*************************************	     RUN TESTS       **********************
-//*************************************	    END OF RUN TESTS       **********************
+
+		//************************************* RUN TESTS **********************
+#ifdef TEST
+		mt.RunTest(diff);
+		tt.RunTest(diff);
+		ot.RunTest(diff);
+#endif
+		//************************************* END OF RUN TESTS **********************
 
 		li->SetPosition(GetGraphics()->GetCamera()->GetPosition());
 
@@ -176,11 +149,11 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 			GetGraphics()->GetCamera()->MoveBackward(diff * 10.0f);
 		if(GetGraphics()->GetKeyListener()->IsPressed('D'))	
 			GetGraphics()->GetCamera()->MoveRight(diff * 10.0f);
-		
+
 		if(GetGraphics()->GetKeyListener()->IsPressed('Z'))	
 		{
 			GetGraphics()->GetKeyListener()->SetMousePosition(Vector2(
-				(float)(GetGraphics()->GetEngineParameters().WindowWidth) / 2.0f, 
+				(float)(GetGraphics()->GetEngineParameters().WindowWidth) / 2.0f,
 				(float)(GetGraphics()->GetEngineParameters().WindowHeight) / 2.0f));
 
 			GetGraphics()->GetCamera()->SetUpdateCamera(false);
@@ -190,7 +163,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		if(GetGraphics()->GetKeyListener()->IsPressed('X'))	
 		{
 			GetGraphics()->GetKeyListener()->SetMousePosition(Vector2(
-				GetGraphics()->GetEngineParameters().WindowWidth / 2.0f, 
+				GetGraphics()->GetEngineParameters().WindowWidth / 2.0f,
 				GetGraphics()->GetEngineParameters().WindowHeight / 2.0f));
 			GetGraphics()->GetCamera()->SetUpdateCamera(true);
 			GetGraphics()->GetKeyListener()->SetCursorVisibility(false);
@@ -277,7 +250,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 			GetGraphics()->SetSceneAmbientLight(GetGraphics()->GetSceneAmbientLight() * (1.0f - diff * 0.002f));
 		}
 
-		
+
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_UP))
 			GetGraphics()->SetSunLightProperties(Vector3(1, -1, 1));
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_DOWN))
@@ -286,12 +259,17 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 			GetGraphics()->SetSunLightProperties(Vector3(-1, -1, 1));
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_RIGHT))
 			GetGraphics()->SetSunLightProperties(Vector3(1, -1, -1));
-		
-	}
-	
 
-	//*************************************	     POST TEST       **********************
-	//*************************************	   END OF POST TEST       **********************
+	}
+
+
+	//************************************* POST TEST **********************
+#ifdef TEST
+	mt.PostTest();
+	tt.PostTest();
+	ot.PostTest();
+#endif
+	//************************************* END OF POST TEST **********************
 
 	FreeGraphics();
 	return 0;

@@ -243,6 +243,9 @@ DxManager::~DxManager()
 	while(0 < this->FBXMeshes.size())
 		delete this->FBXMeshes.getAndRemove(0);
 
+	while(0 < this->decals.size())
+		delete this->decals.getAndRemove(0);
+
 	// Empty event queue 
 	while(MaloW::ProcessEvent* ev = this->PeekEvent())
 	{

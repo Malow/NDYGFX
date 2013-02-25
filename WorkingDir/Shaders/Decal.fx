@@ -72,7 +72,7 @@ PsIn VSScene(VsIn In)
 
 //[Fragment shader]
 
-Texture2D <float> Depth;
+Texture2D Depth;
 Texture3D <float4> Decal;
 float4x4 ScreenToLocal;
 float3 Color;
@@ -84,7 +84,7 @@ float4 PSScene(PsIn In) : SV_TARGET
 	float2 texCoord = In.Position.xy * PixelSize;
 
     // Compute local position of scene geometry
-	float depth = Depth.Sample(DepthFilter, texCoord);
+	float depth = Depth.Sample(DepthFilter, texCoord).w;
 	float4 scrPos = float4(texCoord, depth, 1.0f);
 	float4 wPos = mul(ScreenToLocal, scrPos);
 
