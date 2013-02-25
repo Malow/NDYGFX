@@ -10,7 +10,8 @@ Include file for all samplers, rasterizer states, and blend states and constant 
 //------------------------------------------------------------------------------------------------------
 //	Constants
 //------------------------------------------------------------------------------------------------------
-#define PI float(3.14159265358979323846f)
+#define PI		float(3.14159265358979323846f)
+
 #define WHITE	float4(1.0f, 1.0f, 1.0f, 1.0f)
 #define BLACK	float4(0.0f, 0.0f, 0.0f, 1.0f)
 #define RED		float4(1.0f, 0.0f, 0.0f, 1.0f)

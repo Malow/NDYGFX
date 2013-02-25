@@ -46,6 +46,7 @@ private:
 	Shader* Shader_BillboardInstanced;
 	Shader* Shader_Text;
 	Shader* Shader_ShadowMap;
+	Shader* Shader_ShadowMapBillboardInstanced;
 	Shader* Shader_ShadowMapAnimated;
 	Shader* Shader_DeferredGeometry;
 	Shader* Shader_DeferredGeometryInstanced;
@@ -158,6 +159,7 @@ private:
 	void RenderParticles();
 	void RenderShadowMap();
 	void RenderCascadedShadowMap();
+	void RenderCascadedShadowMapBillboardInstanced();
 	void RenderImages();
 	void RenderBillboards();
 	void RenderText();

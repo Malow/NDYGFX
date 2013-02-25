@@ -636,20 +636,13 @@ void DxManager::RenderDeferredGeometry()
 			}
 			else
 			{
-				//**CULLING _ TILLMAN**
-				bool hasBeenCounted = false;
-
 				//Just check the first strip if it is culled.  //**TILLMAN**
 				if(!staticMesh->IsStripCulled(0))
 				{
-					if(!hasBeenCounted)
-					{
-						CurrentRenderedMeshes++;
-						hasBeenCounted = true;
-					}
+					CurrentRenderedMeshes++;
 
 					//Add billboard info
-					this->instancingHelper->AddBillboard(this->objects[i]);
+					this->instancingHelper->AddBillboard(staticMesh);
 				}
 			}
 		}

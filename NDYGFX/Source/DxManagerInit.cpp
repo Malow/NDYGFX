@@ -268,6 +268,14 @@ HRESULT DxManager::Init()
 		return E_FAIL;
 	}
 
+	// ShadowMapBillboardInstanced Shader
+	this->Shader_ShadowMapBillboardInstanced = new Shader();
+	if(FAILED(this->Shader_ShadowMapBillboardInstanced->Init(this->Dx_Device, this->Dx_DeviceContext, "Shaders/ShadowMapBillboardInstanced.fx", inputDescBillBoardInstanced, 4)))
+	{
+		MaloW::Debug("Failed to open ShadowMapBillboardInstanced.fx");
+		return E_FAIL;
+	}
+
 	// ShadowMapAnimated Shader
 	this->Shader_ShadowMapAnimated = new Shader();
 	if(FAILED(this->Shader_ShadowMapAnimated->Init(this->Dx_Device, this->Dx_DeviceContext, "Shaders/ShadowMapAnimated.fx", inputDescAnimatedVertex, 8)))

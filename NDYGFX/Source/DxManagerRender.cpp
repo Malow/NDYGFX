@@ -934,8 +934,7 @@ void DxManager::RenderCascadedShadowMap()
 	{
 		D3DXMATRIX wvp;
 		D3DXMatrixIdentity(&wvp);
-
-		//**TILLMAN TODO: check what cascade the object is in, object->IsIncascade(s)(indices)**
+		//**TILLMAN TODO: ta bort  DX-sakerna då detta görs av RenderCascadedShadowmapBillboard()?. check what cascade the object is in, object->IsIncascade(s)(indices)**
 		for (int l = 0; l < this->csm->GetNrOfCascadeLevels(); l++)
 		{
 			this->Dx_DeviceContext->OMSetRenderTargets(0, 0, this->csm->GetShadowMapDSV(l));
@@ -980,14 +979,6 @@ void DxManager::RenderCascadedShadowMap()
 					//Draw
 					if(inds)
 					{
-						//** TILLMAN - detta händer endast för cascade 0 (första drawcall i RenderCascadedShadowMap()).
-						//D3D11 WARNING: ID3D11DeviceContext::DrawIndexed: The Pixel Shader expects a Render Target View bound to slot 0,
-						//but none is bound. This is OK, as writes of an unbound Render Target View are discarded. 
-						//It is also possible the developer knows the data will not be used anyway. 
-						//This is only a problem if the developer actually intended to bind a Render Target View here. 
-						//[ EXECUTION WARNING #3146081: DEVICE_DRAW_RENDERTARGETVIEW_NOT_SET]
-						//** TILLMAN
-
 						this->Dx_DeviceContext->DrawIndexed(inds->GetElementCount(), 0, 0);
 					}
 					else if(verts)
@@ -1095,10 +1086,18 @@ void DxManager::RenderCascadedShadowMap()
 					}
 					else
 					{
-						//**TILLMAN - ADD CODE TO CREATE SHADOWS OF BILLBOARDS IF WANTED**
+						//Just check the first strip if it is culled.  //**TILLMAN todo: add once**
+						if(!staticMesh->IsStripCulled(0))
+						{
+							currentRenderedMeshShadows++;
+
+							//Add billboard info
+							this->instancingHelper->AddBillboard(staticMesh);
+						}
 					}
 				}
 			}
+
 			//Unbind shader resources
 			this->Shader_ShadowMap->SetResource("diffuseMap", NULL);
 			this->Shader_ShadowMap->Apply(0);
@@ -1111,7 +1110,7 @@ void DxManager::RenderCascadedShadowMap()
 				{
 					D3DXVECTOR3 distance = animatedMesh->GetBillboardGFX()->GetPositionD3DX() - this->camera->GetPositionD3DX();
 
-					//If the mesh has acal billboard AND is inside the billboard range, render the mesh
+					//If the mesh has a billboard AND is inside the billboard range, render the mesh
 					float billboardRange = 0.0f;
 					//If no billboard range has been set for the mesh, use the default value
 					if(animatedMesh->GetDistanceToSwapToBillboard() <= 0.0f)
@@ -1202,7 +1201,13 @@ void DxManager::RenderCascadedShadowMap()
 					}
 					else
 					{
-						//**TILLMAN - ADD CODE TO CREATE SHADOWS OF BILLBOARDS IF WANTED**
+						//Just check the first strip if it is culled.  //**TILLMAN todo: add once**
+						if(!animatedMesh->IsStripShadowCulled(0))
+						{
+							currentRenderedMeshShadows++;
+							//Add billboard info
+							this->instancingHelper->AddBillboard(animatedMesh);
+						}
 					}
 				}
 			}
@@ -1219,11 +1224,79 @@ void DxManager::RenderCascadedShadowMap()
 	{
 		this->Shader_ShadowMapAnimated->Apply(0); //**TILLMAN - SKA INTE BEHÖVAS, MEN MÅSTE. 
 		//** min gissning är att någon variabel (som ligger i stdafx.fx) sätts av denna shader
-		//och används en en ANNAN shader och måste därmed applyas. **
+		//och används en en ANNAN shader och måste därmed appliceras. **
 	}
 
 	this->renderedMeshShadows = currentRenderedMeshShadows;
 	this->renderedTerrainShadows = currentRenderedTerrainShadows;
+}
+void DxManager::RenderCascadedShadowMapBillboardInstanced()
+{
+	if(this->instancingHelper->GetNrOfBillboards() > 0)
+	{
+		//Sort, create instance groups and update buffer before rendering
+		this->instancingHelper->PreRenderBillboards(); //**Tillman todo opt: remove redundant billboard data**
+
+
+
+		//Draw billboards
+		unsigned int strides[1];
+		unsigned int offsets[1];
+		ID3D11Buffer* bufferPointers[1];
+
+		// Set the buffer strides.
+		strides[0] = sizeof(Vertex);
+		// Set the buffer offset.
+		offsets[0] = 0;
+		// Set the array of pointers to the vertex and instance buffers.
+		bufferPointers[0] = this->instancingHelper->GetBillboardInstanceBuffer();	
+
+		// Set the vertex(instance) buffer
+		this->Dx_DeviceContext->IASetVertexBuffers(0, 1, bufferPointers, strides, offsets);
+		this->Dx_DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+
+		// Set global variables per frame
+		this->Shader_ShadowMapBillboardInstanced->SetFloat3("gSunDir", this->sun.direction);
+		
+		// Per cascade:
+		for(int i = 0; i < this->csm->GetNrOfCascadeLevels(); ++i)
+		{
+			// Set data
+			this->Dx_DeviceContext->OMSetRenderTargets(0, 0, this->csm->GetShadowMapDSV(i));
+			D3D11_VIEWPORT wp = this->csm->GetShadowMapViewPort(i);
+			this->Dx_DeviceContext->RSSetViewports(1, &wp);
+
+			this->Shader_ShadowMapBillboardInstanced->SetMatrix("gLightViewProj", this->csm->GetViewProjMatrix(i));
+
+			// Per instance group:
+			for(unsigned int j = 0; j < this->instancingHelper->GetNrOfBillboardGroups(); ++j)
+			{
+				/*if(this->instancingHelper->GetBillboardGroup(j).s_SRV != NULL) 
+				{
+					this->Shader_ShadowMapBillboardInstanced->SetResource("gDiffuseMap", this->instancingHelper->GetBillboardGroup(j).s_SRV);
+					this->Shader_ShadowMapBillboardInstanced->SetBool("gIsTextured", true);
+				}
+				else
+				{
+					this->Shader_ShadowMapBillboardInstanced->SetResource("gDiffuseMap", NULL);
+					this->Shader_ShadowMapBillboardInstanced->SetBool("gIsTextured", false);
+				}
+				*/
+				//Apply pass and input layout
+				this->Shader_ShadowMapBillboardInstanced->Apply(0);
+
+				//Draw
+				int instanceCount = this->instancingHelper->GetBillboardGroup(j).s_Size;
+				int startInstanceLocation = this->instancingHelper->GetBillboardGroup(j).s_StartLocation;
+				this->Dx_DeviceContext->DrawInstanced(instanceCount, 1, startInstanceLocation, 0); //**TILLMAN, parameters inversed**
+			}
+		}
+
+
+
+		//Reset counter (nrofbillboards)
+		this->instancingHelper->PostRenderBillboards();
+	}
 }
 
 void DxManager::CalculateCulling()
@@ -1545,15 +1618,16 @@ HRESULT DxManager::Render()
 
 	this->RenderShadowMap();
 	this->RenderCascadedShadowMap();
+	this->RenderCascadedShadowMapBillboardInstanced(); //Must be after RenderCascadedShadowMap()
 
 	//this->RenderForward();
 
 
 	this->RenderDeferredGeometry();
-	this->RenderDeferredGeometryInstanced();
+	this->RenderDeferredGeometryInstanced(); //Must be after RenderDeferredGeometry()
 
 	this->RenderBillboards();
-	this->RenderBillboardsInstanced(); //Must be after renderDeferredGeometry()
+	this->RenderBillboardsInstanced(); //Must be after RenderDeferredGeometry()
 
 
 	this->RenderDecals();
