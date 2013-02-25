@@ -23,10 +23,10 @@ Texture2D		g_bb_DiffuseMap;
 //**TILLMAN
 float2 g_TexCoords[4] = 
 {
-	float2(0.0f, 1.0f),
 	float2(1.0f, 1.0f),
-	float2(0.0f, 0.0f),
-	float2(1.0f, 0.0f)
+	float2(0.0f, 1.0f),
+	float2(1.0f, 0.0f),
+	float2(0.0f, 0.0f)
 };
 
 //-----------------------------------------------------------------------------------------
@@ -50,10 +50,10 @@ cbuffer PerBillBoard
 
 struct VSIn
 {
-	float3 posW		: POSITION; //input for Geometry shader/TA BORT
-	float2 size		: SIZE;//TA BORT
+	float3 posW		: POSITION; //input for Geometry shader
+	float2 size		: SIZE;
 	float3 dummy	: DUMMY; //TA BORT
-	float3 color	: COLOR; //TA BORT
+	float3 color	: COLOR; 
 
 	/*float3 posWInstanced	: POSITION; //input for Geometry shader
 	float2 dummy1	: DUMMY;
