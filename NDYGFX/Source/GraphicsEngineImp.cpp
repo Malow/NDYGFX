@@ -1065,3 +1065,8 @@ void GraphicsEngineImp::DeleteDecal( iDecal* decal )
 	if(Decal* dec = dynamic_cast<Decal*>(decal))
 		this->dx->DeleteDecal(dec);
 }
+
+void GraphicsEngineImp::SetEnclosingFogEffect( Vector3 center, float radius, float fogfadefactor )
+{
+	this->dx->SetEnclosingFog(center, radius, fogfadefactor);
+}

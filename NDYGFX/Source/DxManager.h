@@ -60,6 +60,7 @@ private:
 	Shader* Shader_DeferredPerPixelTranslucent;
 	Shader* Shader_Fxaa;
 	Shader* Shader_Decal;
+	Shader* Shader_FogEnclosement;
 
 
 
@@ -105,6 +106,11 @@ private:
 
 	bool useShadow;
 	CascadedShadowMap* csm;
+
+	bool useEnclosingFog;
+	Vector3 fogCenter;
+	float fogRadius;
+	float fogFadeFactor;
 
 	// Deferred Rendering
 	// Gbuffer:
@@ -172,6 +178,7 @@ private:
 	void RenderDeferredGeoTranslucent();
 	void RenderDeferredPerPixelTranslucent();
 	void RenderDecals();
+	void RenderEnclosingFog();
 
 
 	void RenderQuadDeferred();
@@ -268,6 +275,8 @@ public:
 
 	void ChangeShadowQuality(int newQual);
 	void ReloadShaders(int shader);
+
+	void SetEnclosingFog(Vector3 center, float radius, float fadeFactor);
 
 	void SetSunLightProperties(Vector3 direction, Vector3 lightColor, float intensity);
 	void SetSunLightDisabled();

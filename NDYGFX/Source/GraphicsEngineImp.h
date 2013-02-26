@@ -198,6 +198,8 @@ public:
 	virtual void SetSceneAmbientLight(Vector3 ambientLight);
 	virtual Vector3 GetSceneAmbientLight() const;
 
+	virtual void SetEnclosingFogEffect(Vector3 center, float radius, float fogfadefactor = 0.1f);
+
 	/*! 
 	Takes control of the thread and renders a loading-screen with a progress bar. Returns once all objects that have been sent to load is loaded.
 	To use it first make all CreateMesh()-calls that you need and then call LoadingScreen(.,.) directly after, and it will return once all the meshes are
@@ -252,6 +254,8 @@ public:
 	Camera* GetCam() const { return this->cam; } //{ return this->dx->GetCamera(); }
 	KeyListener* GetKeyList() const { return this->kl; }
 	HWND GetWindowHandle() const { return this->hWnd; }
+
+	
 
 	void CreateSmokeEffect() { this->dx->CreateSmokeEffect(); }
 	virtual void Life();

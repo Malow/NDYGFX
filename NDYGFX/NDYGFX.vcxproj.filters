@@ -539,5 +539,8 @@
     <FxCompile Include="..\WorkingDir\Shaders\ShadowMapBillboardInstanced.fx">
       <Filter>Source Files\Engine\Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="..\WorkingDir\Shaders\FogEnclosement.fx">
+      <Filter>Source Files\Engine\Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

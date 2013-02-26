@@ -117,6 +117,14 @@ extern "C"
 
 		virtual void ChangeShadowQuality(int newQual) = 0;
 		virtual void ReloadShaders(int shaderIndex) = 0;
+
+		/*
+		Adds an enclosing fog effect.
+		Center is the center from which the fog is calculated in a circle around.
+		Radius is how far out from center to start fading to fog.
+		FogFadeFactor is over how much of Radius the fog should fade from nothing to fully solid.
+		*/
+		virtual void SetEnclosingFogEffect(Vector3 center, float radius, float fogfadefactor = 0.1f) = 0;
 	};
 
 	/*

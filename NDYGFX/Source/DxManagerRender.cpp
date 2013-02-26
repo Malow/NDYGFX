@@ -1573,6 +1573,38 @@ void DxManager::RenderFBXMeshes()
 	this->LastFBXUpdate = this->Timer;
 }
 
+void DxManager::RenderEnclosingFog()
+{
+	// only draw fog if there should be fog drawn.
+	Vector3 camToFogCenter = this->camera->GetPosition() - this->fogCenter;
+	float distanceToFogCenter = camToFogCenter.GetLength();
+	if(distanceToFogCenter > this->fogRadius)
+	{
+		float fogfactor = 0.0f;
+		float maxFog = this->fogRadius * this->fogFadeFactor;
+		if(distanceToFogCenter > this->fogRadius + maxFog)
+			fogfactor = 1.0f;
+		else
+		{
+			float curFog = distanceToFogCenter - this->fogRadius;
+
+			fogfactor = curFog / maxFog;
+
+			fogfactor += fogfactor - (fogfactor * fogfactor);	
+			// Exponential fog, making it intense quickly at first and slow at the end.
+		}
+
+		this->Dx_DeviceContext->OMSetRenderTargets(1, &this->Dx_RenderTargetView, this->Dx_DepthStencilView);
+		this->Dx_DeviceContext->RSSetViewports(1, &this->Dx_Viewport);
+		this->Dx_DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+
+		this->Shader_FogEnclosement->SetFloat("fogfactor", fogfactor);
+		this->Shader_FogEnclosement->Apply(0);
+
+		this->Dx_DeviceContext->Draw(1, 0);
+	}
+}
+
 HRESULT DxManager::Render()
 {
 	if(this->RendererSleep > 0)
@@ -1629,6 +1661,9 @@ HRESULT DxManager::Render()
 	this->RenderDeferredSkybox();
 
 	this->RenderParticles();
+
+	if(this->useEnclosingFog)
+		this->RenderEnclosingFog();
 
 	this->RenderImages();
 

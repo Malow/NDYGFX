@@ -61,7 +61,7 @@ DxManager::DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam)
 	this->Shader_DeferredQuad = NULL;
 	this->Shader_DeferredTexture = NULL;
 	this->Shader_DeferredAnimatedGeometry = NULL;
-
+	this->Shader_FogEnclosement = NULL;
 	this->fbx = NULL;
 
 	this->Dx_DeferredTexture = NULL;
@@ -72,6 +72,11 @@ DxManager::DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam)
 
 	this->ssao = NULL;
 	this->fxaa = NULL;
+
+	this->useEnclosingFog = false;
+	this->fogCenter = Vector3(0, 0, 0);
+	this->fogRadius = 0.0f;
+	this->fogFadeFactor = 0.0f;
 
 	//TILLMAN INST*
 	//this->instancingHelper = NULL;
@@ -156,6 +161,9 @@ DxManager::~DxManager()
 
 	if(this->Shader_Decal)
 		delete this->Shader_Decal;
+
+	if(this->Shader_FogEnclosement)
+		delete this->Shader_FogEnclosement;
 
 	if(this->Shader_DeferredPerPixelTranslucent)
 		delete this->Shader_DeferredPerPixelTranslucent;
@@ -374,7 +382,7 @@ void DxManager::CreateStaticMesh(StaticMesh* mesh)
 					texture = GetResourceManager()->CreateTextureResourceFromFile(texturePath.c_str(), true);
 					string ending = texturePath.substr(texturePath.length()-4);
 					string first = texturePath.substr(0, texturePath.length()-4);
-					string normalTexturePath = first + "NormalMap" + ending;
+					string normalTexturePath = first + "_n" + ending;
 					normalMap = GetResourceManager()->CreateTextureResourceFromFile(normalTexturePath.c_str(), true);
 				}
 
@@ -1103,5 +1111,20 @@ void DxManager::DeleteDecal( Decal* decal )
 {
 	DecalEvent* re = new DecalEvent("Delete Decal", decal);
 	this->PutEvent(re);
+}
+
+void DxManager::SetEnclosingFog( Vector3 center, float radius, float fadeFactor )
+{
+	if(radius > 0.0f)
+	{
+		this->useEnclosingFog = true;
+		this->fogCenter = center;
+		this->fogRadius = radius;
+		this->fogFadeFactor = fadeFactor;
+	}
+	else
+	{
+		this->useEnclosingFog = false;
+	}
 }
 

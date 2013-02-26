@@ -28,6 +28,7 @@ public:
 
 void MaloWTest::PreTest()
 {
+	GetGraphics()->SetEnclosingFogEffect(Vector3(0, 10, 0), 100.0f);
 	//nrofdiffs = 0;
 	//totDiff = 0;
 	wp = GetGraphics()->CreateWaterPlane(Vector3(0, 15, 0), "Media/WaterTexture.png");

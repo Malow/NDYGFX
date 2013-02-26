@@ -408,6 +408,14 @@ HRESULT DxManager::Init()
 		return E_FAIL;
 	}
 
+	// Fog Enclosement Shader
+	this->Shader_FogEnclosement = new Shader();
+	if(FAILED(this->Shader_FogEnclosement->Init(Dx_Device, Dx_DeviceContext, "Shaders/FogEnclosement.fx", NULL, 0)))
+	{
+		MaloW::Debug("Failed to open FogEnclosement.fx");
+		return E_FAIL;
+	}
+
 
 	/*
 	// Deferred Quad pass
