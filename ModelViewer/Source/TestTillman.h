@@ -84,7 +84,6 @@ void TillmanTest::PreTest()
 	
 	iT = GetGraphics()->CreateTerrain(Vector3(0, 0, 0), Vector3(testSize, 1.0f, testSize), vertSize);
 	iT2 = GetGraphics()->CreateTerrain(Vector3(testSize, 0, 0), Vector3(testSize, 1.0f, testSize), vertSize);
-	//iAnimatedMesh* iAM = GetGraphics()->CreateAnimatedMesh("Media/FlagBlue.ani", Vector3(30, 30, 30));
 	//iImage* iM = GetGraphics()->CreateImage(Vector2(100, 100), Vector2(100, 100), "Media/BallTexture.png");
 	//iText* iTe = GetGraphics()->CreateText("durp", Vector2(300, 100), 1.0f, "Media/Fonts/1");
 	
@@ -473,16 +472,28 @@ void TillmanTest::PreTest()
 		{
 			billboardFile = "Media/StoneItem_01_v01.png";
 		}
-		iMesh* treeWithBillboard = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(i * 5, 0, 50), billboardFile.c_str(), 0.5f);
+		iMesh* treeWithBillboard = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(i * 5, 0, 47.5f), billboardFile.c_str(), 0.5f);
 		treeWithBillboard->SetScale((0.061f));
-		iMesh* fernWithBillboard = GetGraphics()->CreateMesh("Media/Fern_02.ani", Vector3(i * 5, 0, 45), billboardFile.c_str(), 0.5f);
+		iMesh* fernWithBillboard = GetGraphics()->CreateMesh("Media/Fern_02.ani", Vector3(i * 5, 0, 42.5f), billboardFile.c_str(), 55.5f);
 		fernWithBillboard->SetScale((0.15f));
 
 		//Meshes
 		iMesh* treeWithWOBB = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(i * 5, 0, 55));
 		treeWithWOBB->SetScale((0.041f));
 	}
-	iBBMemLeak = GetGraphics()->CreateBillboard(Vector3(0, 20, 0), Vector2(10, 10), "Media/TreeBillboard.png");
+	//iBBMemLeak = GetGraphics()->CreateBillboard(Vector3(0, 20, 0), Vector2(10, 10), "Media/TreeBillboard.png");
+
+	//Shadow fail test with tree animation:
+	iMesh* shadowFail = GetGraphics()->CreateMesh("Media/Tree_02.ani", Vector3(-10, 0, -7.5f));
+	shadowFail->SetScale(0.05f);
+	//shadowFail = GetGraphics()->CreateMesh("Media/GrassPlant_01.ani", Vector3(-11, 0, 0));
+	//shadowFail->SetScale(0.05f);
+	shadowFail = GetGraphics()->CreateMesh("Media/Fern_02.ani", Vector3(-10, 0, 0));
+	shadowFail->SetScale(0.5f);
+	//shadowFail = GetGraphics()->CreateMesh("Media/Scale.ani", Vector3(-13, 0, 0));
+	//shadowFail->SetScale(0.05f);
+	shadowFail = GetGraphics()->CreateAnimatedMesh("Media/FlagBlue.ani", Vector3(-10, 0, 7.5f));
+	
 }
 
 void TillmanTest::RunTest(float diff)
@@ -559,13 +570,14 @@ void TillmanTest::RunTest(float diff)
 	static bool oncee = false;
 	if(GetGraphics()->GetKeyListener()->IsPressed('Q'))
 	{
+		GetGraphics()->ReloadShaders(8); //shadow map animated
 		//iT2->SetNormals(normals);
 		//iT2->SetHeightMap(hmData);
 		//debugCSMScale += diff * 0.001f;
 		//iT->SetAIGridThickness(0.0005f);
 		//iT->UseAIMap(true);*/
-		GetGraphics()->DeleteBillboard(iBBMemLeak);
-		
+		//GetGraphics()->DeleteBillboard(iBBMemLeak);
+		/*
 		fileNames[0] = "Media/TerrainTexture.png";
 		fileNames[1] = "Media/TerrainTexture.png";
 		fileNames[2] = "Media/TerrainTexture.png";
@@ -613,6 +625,9 @@ void TillmanTest::RunTest(float diff)
 	if(GetGraphics()->GetKeyListener()->IsPressed('E'))
 	{
 
+		//GetGraphics()->ReloadShaders(11); //deferred lightning
+		GetGraphics()->ReloadShaders(20); //shadow map billboard instanced
+		/*
 		debugCSMScale -= diff * 0.001f;
 		fileNames[0] = "Media/TerrainTexture.png";
 		fileNames[1] = "Media/TerrainTexture.png";
@@ -627,7 +642,7 @@ void TillmanTest::RunTest(float diff)
 		//GetGraphics()->DeleteMesh(bushCSMTest);
 		iT->UseAIMap(false);
 		GetGraphics()->DeleteTerrain(createTerrainIndexBufferCraschText);
-		oncee = false;
+		oncee = false;*/
 	}
 
 		/*for(int i = 0; i < ttte * nrOfFrustumSlices; i++)

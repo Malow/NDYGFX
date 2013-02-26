@@ -112,6 +112,10 @@ void DxManager::HandleReloadShaders(int shader)
 		if(this->Shader_Decal)		
 			Shader_Decal->Reload();
 		break;
+	case 20:
+		if(this->Shader_ShadowMapBillboardInstanced)	
+			Shader_ShadowMapBillboardInstanced->Reload();
+		break;
 	}
 }
 
@@ -1133,7 +1137,10 @@ void DxManager::RenderCascadedShadowMap()
 						if(!animatedMesh->IsStripShadowCulled(0))
 						{
 							currentRenderedMeshShadows++;
-
+							if(animatedMesh->GetFilePath() == "Media/Tree_02.ani") //TEST
+							{
+								float durp= 1.0f;
+							}
 							KeyFrame* one = NULL;
 							KeyFrame* two = NULL;
 							float t = 0.0f;
@@ -1275,7 +1282,7 @@ void DxManager::RenderCascadedShadowMapBillboardInstanced()
 			// Per instance group:
 			for(unsigned int j = 0; j < this->instancingHelper->GetNrOfBillboardGroups(); ++j)
 			{
-				/*if(this->instancingHelper->GetBillboardGroup(j).s_SRV != NULL) 
+				if(this->instancingHelper->GetBillboardGroup(j).s_SRV != NULL) 
 				{
 					this->Shader_ShadowMapBillboardInstanced->SetResource("gDiffuseMap", this->instancingHelper->GetBillboardGroup(j).s_SRV);
 					this->Shader_ShadowMapBillboardInstanced->SetBool("gIsTextured", true);
@@ -1285,7 +1292,7 @@ void DxManager::RenderCascadedShadowMapBillboardInstanced()
 					this->Shader_ShadowMapBillboardInstanced->SetResource("gDiffuseMap", NULL);
 					this->Shader_ShadowMapBillboardInstanced->SetBool("gIsTextured", false);
 				}
-				*/
+				
 				//Apply pass and input layout
 				this->Shader_ShadowMapBillboardInstanced->Apply(0);
 
