@@ -2,6 +2,11 @@
 
 void DxManager::PreRender()
 {
+	this->CurrentRenderedMeshes = 0;
+	this->CurrentRenderedTerrains = 0;
+	this->CurrentRenderedNrOfVertices = 0;
+	this->CurrentNrOfDrawCalls = 0;
+
 	//clear and set render target/depth
 	this->Dx_DeviceContext->OMSetRenderTargets(this->NrOfRenderTargets, this->Dx_GbufferRTs, this->Dx_DepthStencilView);
 	this->Dx_DeviceContext->ClearDepthStencilView(this->Dx_DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
@@ -56,32 +61,19 @@ void DxManager::PreRender()
 }
 
 
-void DxManager::RenderDeferredGeometry()
+void DxManager::RenderDeferredGeoTerrains()
 {
 	//static bool once = false;
 	//clear and set render target/depth
 	this->Dx_DeviceContext->OMSetRenderTargets(this->NrOfRenderTargets, this->Dx_GbufferRTs, this->Dx_DepthStencilView);
-	this->Dx_DeviceContext->ClearDepthStencilView(this->Dx_DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 	this->Dx_DeviceContext->RSSetViewports(1, &this->Dx_Viewport);
-	//Clear render targets
-	float ClearColor1[4] = {0.5f, 0.71f, 1.0f, 1};
-	float ClearColor2[4] = {-1.0f, -1.0f, -1.0f, -1.0f};
-	this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_GbufferRTs[0], ClearColor1);
-	this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_GbufferRTs[1], ClearColor2);
-	this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_GbufferRTs[2], ClearColor2);
-	this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_GbufferRTs[3], ClearColor2);
-
-	int CurrentRenderedMeshes = 0;
-	int CurrentRenderedTerrains = 0;
-
-	int CurrentRenderedNrOfVertices = 0;
-	int CurrentNrOfDrawCalls = 0;
 
 	//Matrices
 	D3DXMATRIX world, view, proj, wvp, worldInverseTranspose;
 	D3DXMatrixIdentity(&worldInverseTranspose); //Needed to calculate correct world inverse matrix
 	view = this->camera->GetViewMatrix();
 	proj = this->camera->GetProjectionMatrix();
+
 
 	//Terrain - **TILLMAN TODO: MOVE TO LOAD: blendmap, vertexbuffer, textures, aitexture**
 	this->Shader_TerrainEditor->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetPositionD3DX(), 1));
@@ -476,8 +468,51 @@ void DxManager::RenderDeferredGeometry()
 	this->Shader_TerrainEditor->SetResource("blendMap1", NULL);
 	this->Shader_TerrainEditor->SetResource("AIMap", NULL);
 	this->Shader_TerrainEditor->Apply(0);
+}
+
+void DxManager::RenderDecals()
+{
+	this->Dx_DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	this->Dx_DeviceContext->OMSetRenderTargets(1, &this->Dx_GbufferRTs[0], this->Dx_DepthStencilView);
+	D3DXMATRIX proj = this->camera->GetProjectionMatrix();
+	D3DXMATRIX view = this->camera->GetViewMatrix();
+	D3DXMATRIX viewProj = view * proj;
 
 
+	this->Shader_Decal->SetFloat2("PixelSize", D3DXVECTOR2(1.0f / this->params.WindowWidth, 1.0f / this->params.WindowHeight));
+
+	this->Shader_Decal->SetResource("Depth", this->Dx_GbufferSRVs[1]);
+
+	for(int i = 0; i < this->decals.size(); i++)
+	{
+		this->Shader_Decal->SetMatrix("World", this->decals[i]->GetWorldMatrix());
+		this->Shader_Decal->SetMatrix("WorldViewProj", this->decals[i]->GetWorldMatrix() * viewProj);
+		this->Shader_Decal->SetResource("Decal", this->decals[i]->GetTextureResource()->GetSRVPointer());
+		this->Shader_Decal->SetMatrix("ScreenToLocal", this->decals[i]->GetMatrix());
+		this->Shader_Decal->SetFloat("opacity", this->decals[i]->GetOpacity());
+
+		Buffer* verts = this->decals[i]->GetStrip()->GetRenderObject()->GetVertBuff();
+		verts->Apply();
+		Buffer* inds = this->decals[i]->GetStrip()->GetRenderObject()->GetIndsBuff();
+		inds->Apply();
+		this->Shader_Decal->Apply(0);
+
+		this->Dx_DeviceContext->DrawIndexed(inds->GetElementCount(), 0, 0);
+	}
+
+	this->Shader_Decal->SetResource("Depth", NULL);
+	this->Shader_Decal->SetResource("Decal", NULL);
+	this->Shader_Decal->Apply(0);
+}
+
+void DxManager::RenderDeferredGeoObjects()
+{
+	this->Dx_DeviceContext->OMSetRenderTargets(this->NrOfRenderTargets, this->Dx_GbufferRTs, this->Dx_DepthStencilView);
+
+	D3DXMATRIX world, view, proj, wvp, worldInverseTranspose;
+	D3DXMatrixIdentity(&worldInverseTranspose); //Needed to calculate correct world inverse matrix
+	view = this->camera->GetViewMatrix();
+	proj = this->camera->GetProjectionMatrix();
 
 	//Static meshes
 	//**TILLMAN TODO: ta bort shader variabler

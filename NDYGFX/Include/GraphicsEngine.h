@@ -58,7 +58,7 @@ extern "C"
 		virtual iFBXMesh* CreateFBXMesh(const char* filename, Vector3 pos) = 0;
 		virtual void DeleteFBXMesh(iFBXMesh* mesh) = 0;
 
-		virtual iDecal* CreateDecal(Vector3 pos, const char* texture) = 0;
+		virtual iDecal* CreateDecal(Vector3 pos, const char* texture, Vector3 direction, Vector3 up) = 0;
 		virtual void DeleteDecal(iDecal* decal) = 0;
 
 		virtual iCamera* GetCamera() const = 0;

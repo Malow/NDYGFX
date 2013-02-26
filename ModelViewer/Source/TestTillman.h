@@ -516,6 +516,8 @@ void TillmanTest::RunTest(float diff)
 		navArrowSpawn->RotateAxis(around, angle);
 		*/
 
+
+
 	CollisionData cd = GetGraphics()->GetPhysicsEngine()->GetSpecialCollisionRayTerrain(GetGraphics()->GetCamera()->GetPosition(),
 		GetGraphics()->GetCamera()->Get3DPickingRay(), iT2, testSize / (vertSize));	
 	if(cd.collision)
@@ -524,6 +526,20 @@ void TillmanTest::RunTest(float diff)
 	{
 		mmm->SetPosition(Vector3(0, 0, 0));
 	}
+
+	static bool fesd = true;
+	if(GetGraphics()->GetKeyListener()->IsClicked(1))
+	{		
+		if(fesd)
+		{
+			Vector3 pos = mmm->GetPosition();
+			iDecal* dec = GetGraphics()->CreateDecal(pos, "Media/BloodTexture.png", Vector3(0, -1, 0), Vector3(1, 0, 0));
+			dec->SetOpacity(0.5f);
+			fesd = false;
+		}
+	}
+	else
+		fesd = true;
 
 	//CASCADED SHADOW MAPPING
 	static float debugCSMScale = 1.0f;

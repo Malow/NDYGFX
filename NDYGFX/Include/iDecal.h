@@ -17,6 +17,14 @@ extern "C"
 
 	public:
 		iDecal() {};
-		
+
+		virtual float GetOpacity() const = 0;
+		virtual void SetOpacity(float opacity) = 0;
+		virtual float GetSize() const = 0;
+		virtual void SetSize(float size) = 0;
+		virtual Vector3 GetPosition() const = 0;
+		virtual void SetPosition(Vector3 pos) = 0;
+		virtual Vector3 GetDirection() = 0;
+		virtual Vector3 GetUp() = 0;
 	};
 }

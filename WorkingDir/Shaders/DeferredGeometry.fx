@@ -5,7 +5,35 @@
 //--------------------------------------------------------------------------------------
 
 // Marcus Löwegren
-#include "stdafx.fx"
+//#include "stdafx.fx"
+
+SamplerState AnisotropicWrapSampler 
+{
+	Filter = ANISOTROPIC;
+	AddressU = Wrap;
+	AddressV = Wrap;
+	AddressW = Wrap;
+	MipLODBias = 0.0f;//Unused
+	MaxAnisotropy = 16;
+	ComparisonFunc = ALWAYS; 
+	BorderColor = float4(0.0f, 0.0f, 0.0f, 0.0f); //Unused
+	MinLOD = 0.0f;
+	MaxLOD = 16.0f; //Max
+};
+DepthStencilState EnableDepth
+{
+    DepthEnable = TRUE;
+    DepthWriteMask = ALL;
+    DepthFunc = LESS_EQUAL;
+};
+BlendState NoBlend
+{
+	BlendEnable[0] = FALSE;
+};
+RasterizerState BackCulling
+{
+	CullMode = Back;
+};
 
 // For textures
 Texture2D tex2D;
@@ -21,6 +49,8 @@ SamplerState linearSampler
 // Input and Output Structures
 //-----------------------------------------------------------------------------------------
 
+float4 CameraPosition;
+float FarClip;
 
 cbuffer EveryStrip
 {
@@ -162,5 +192,6 @@ technique11 BasicTech
 
 		SetDepthStencilState( EnableDepth, 0 );
 	    SetRasterizerState( BackCulling );
+		SetBlendState(NoBlend, float4( 0.0f, 0.0f, 0.0f, 0.0f ), 0xFFFFFFFF );
     }  
 }

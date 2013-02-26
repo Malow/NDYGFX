@@ -1049,29 +1049,21 @@ void DxManager::CreateDecal( Decal* decal, string texture )
 	decal->SetTexture(tex);
 	
 	// create matrix for it.
-	D3DXMATRIX matrix;
-
-	D3DXMATRIX translate;
-	D3DXMATRIX scale;
-	D3DXMATRIX rotate;
-	D3DXMATRIX translate2;
-
-	translate = D3DXMATRIX(1,0,0,0.5f, 0,1,0,0.5f, 0,0,1,0.5f, 0,0,0,1);
-	scale = D3DXMATRIX(0.5f / decal->GetSize(),0,0,0, 0,0.5f / decal->GetSize(),0,0, 0,0,0.5f / decal->GetSize(),0, 0,0,0,1);
-
-
-	// MALOW : Add random rotation for decals?
-	D3DXMATRIX x, y, z;
-	D3DXMatrixRotationX(&x, 0);
-	D3DXMatrixRotationY(&y, 0);
-	D3DXMatrixRotationZ(&z, 0);
-	rotate = x*y*z;
-
-	Vector3 pos = decal->GetPosition();
-	translate2 = D3DXMATRIX(1,0,0,pos.x, 0,1,0,pos.y, 0,0,1,pos.z, 0,0,0,1);
-
-	matrix = translate * scale * rotate * translate2;
-	decal->SetMatrix(matrix);
+	Vector3 pos = decal->GetPosition() - (decal->GetDirection() * 1.01f) * decal->GetSize() * 0.5f;
+	float scale = decal->GetSize();
+	Vector3 zAxis = decal->GetDirection().Normalize();
+	Vector3 yAxis = decal->GetUp().Normalize();
+	Vector3 xAxis = yAxis.GetCrossProduct(zAxis);
+	D3DXMATRIX scaleMat = D3DXMATRIX(scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, scale, 0, 0, 0, 0, 1);
+	D3DXMATRIX worldMat = D3DXMATRIX(xAxis.x, xAxis.y, xAxis.z, 0, yAxis.x, yAxis.y, yAxis.z, 0, zAxis.x, zAxis.y, zAxis.z, 0,
+		pos.x, pos.y, pos.z, 1);
+	worldMat = scaleMat * worldMat;
+	decal->SetWorldMatrix(worldMat);
+	D3DXMATRIX lookAtMat = D3DXMATRIX(xAxis.x, yAxis.x, zAxis.x, 0, xAxis.y, yAxis.y, zAxis.y, 0, xAxis.z, yAxis.z, zAxis.z, 0,
+		-xAxis.GetDotProduct(pos), -yAxis.GetDotProduct(pos), -zAxis.GetDotProduct(pos), 1);
+	D3DXMATRIX projMat = D3DXMATRIX(2.0f / scale, 0, 0, 0, 0, 2.0f / scale, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+	D3DXMATRIX viewProjMat = lookAtMat * projMat;
+	decal->SetMatrix(viewProjMat);
 
 
 
@@ -1086,7 +1078,7 @@ void DxManager::CreateDecal( Decal* decal, string texture )
 	BufferDesc.Usage = BUFFER_DEFAULT;
 
 	// Create the buffer
-	BufferResource* VertexBuffer = GetResourceManager()->CreateBufferResource("DecalSphereDefault", BufferDesc);
+	BufferResource* VertexBuffer = GetResourceManager()->CreateBufferResource("DecalDefault", BufferDesc);
 
 
 	BUFFER_INIT_DESC indiceBufferDesc;
@@ -1096,7 +1088,7 @@ void DxManager::CreateDecal( Decal* decal, string texture )
 	indiceBufferDesc.Type = INDEX_BUFFER;
 	indiceBufferDesc.Usage = BUFFER_DEFAULT;
 
-	BufferResource* IndexBuffer = GetResourceManager()->CreateBufferResource("DecalSphereDefaultIndex", indiceBufferDesc);
+	BufferResource* IndexBuffer = GetResourceManager()->CreateBufferResource("DecalDefaultIndex", indiceBufferDesc);
 
 
 	Object3D* ro = new Object3D(VertexBuffer, IndexBuffer, tex, NULL, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
