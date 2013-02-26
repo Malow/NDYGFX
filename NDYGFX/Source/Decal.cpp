@@ -1,113 +1,85 @@
 #include "Decal.h"
 
 
-Decal::Decal(Vector3 pos, int latitude, int longitude)
+Decal::Decal(Vector3 pos, Vector3 dir, Vector3 up)
 {
+	this->opa = 1.0f;
+	this->dir = dir;
+	this->up = up;
 	this->size = 1.0f;
 	this->position = pos;
 	this->textureResource = NULL;
 	MeshStrip* strip = new MeshStrip();
 
 	// Create sphere
-	
-	int m_numSphereVertices = ((latitude-2) * longitude) + 2;
-	int m_numSphereFaces = ((latitude-3)*(longitude)*2) + (longitude*2);
-
-	float sphereYaw = 0.0f;
-	float spherePitch = 0.0f;
-	D3DXMATRIX rotationx;
-	D3DXMATRIX rotationy;
-	VertexNormalMap *vertices = new VertexNormalMap[m_numSphereVertices];
-
-	D3DXVECTOR3 currVertPos = D3DXVECTOR3(0,0,0);
-
-	vertices[0].pos.x = 0.0f;
-	vertices[0].pos.y = 0.0f;
-	vertices[0].pos.z = 1.0f;
-
-	for(int i = 0; i < latitude-2; ++i)
-	{
-		spherePitch = (i + 1) * (3.14f / (latitude - 1));
-		D3DXMatrixRotationX(&rotationx, spherePitch);
-		for(int j = 0; j < longitude; ++j)
-		{
-			sphereYaw = j * (6.28f / (longitude));
-			D3DXMatrixRotationZ(&rotationy, sphereYaw);
-			D3DXVECTOR3 pv = D3DXVECTOR3(0.0f, 0.0f, 1.0f);
-			D3DXMATRIX pm = rotationx * rotationy;
-			D3DXVec3TransformCoord(&currVertPos, &pv, &pm);	
-			D3DXVec3Normalize(&currVertPos, &currVertPos );
-			vertices[i * longitude + j + 1].pos.x = currVertPos.x;
-			vertices[i * longitude + j + 1].pos.y = currVertPos.y;
-			vertices[i * longitude + j + 1].pos.z = currVertPos.z;
-		}
-	}
-
-	vertices[m_numSphereVertices - 1].pos.x =  0.0f;
-	vertices[m_numSphereVertices - 1].pos.y =  0.0f;
-	vertices[m_numSphereVertices - 1].pos.z = -1.0f;
-
+	int nrOfVerts = 8;
+	VertexNormalMap *vertices = new VertexNormalMap[nrOfVerts];
+	vertices[0] = VertexNormalMap(D3DXVECTOR3(-0.5f, -0.5f, -0.5f), D3DXVECTOR2(0, 0), D3DXVECTOR3(1, 1, 1));
+	vertices[1] = VertexNormalMap(D3DXVECTOR3(0.5f, -0.5f, -0.5f), D3DXVECTOR2(0, 0), D3DXVECTOR3(1, 1, 1));
+	vertices[2] = VertexNormalMap(D3DXVECTOR3(-0.5f, -0.5f, 0.5f), D3DXVECTOR2(0, 0), D3DXVECTOR3(1, 1, 1));
+	vertices[3] = VertexNormalMap(D3DXVECTOR3(0.5f, -0.5f, 0.5f), D3DXVECTOR2(0, 0), D3DXVECTOR3(1, 1, 1));
+	vertices[4] = VertexNormalMap(D3DXVECTOR3(-0.5f, 0.5f, -0.5f), D3DXVECTOR2(0, 0), D3DXVECTOR3(1, 1, 1));
+	vertices[5] = VertexNormalMap(D3DXVECTOR3(0.5f, 0.5f, -0.5f), D3DXVECTOR2(0, 0), D3DXVECTOR3(1, 1, 1));
+	vertices[6] = VertexNormalMap(D3DXVECTOR3(-0.5f, 0.5f, 0.5f), D3DXVECTOR2(0, 0), D3DXVECTOR3(1, 1, 1));
+	vertices[7] = VertexNormalMap(D3DXVECTOR3(0.5f, 0.5f, 0.5f), D3DXVECTOR2(0, 0), D3DXVECTOR3(1, 1, 1));
 	
 	strip->SetVerts(vertices);
-	strip->setNrOfVerts(m_numSphereVertices);
+	strip->setNrOfVerts(nrOfVerts);
 
 
+	int nrOfIndicies = 36;
+	int *indices = new int[nrOfIndicies];
+	
+	// Bottom
+	indices[0] = 1;
+	indices[1] = 0;
+	indices[2] = 2;
+	indices[3] = 1;
+	indices[4] = 2;
+	indices[5] = 3;
 
-	int *indices = new int[m_numSphereFaces * 3];
 
-	int k = 0;
-	for(int l = 0; l < longitude-1; ++l)
-	{
-		indices[k] = 0;
-		indices[k+1] = l+1;
-		indices[k+2] = l+2;
-		k += 3;
-	}
+	// Left ***********
+	indices[6] = 1;
+	indices[7] = 5;
+	indices[8] = 0;
+	indices[9] = 0;
+	indices[10] = 5;
+	indices[11] = 4;
 
-	indices[k] = 0;
-	indices[k+1] = longitude;
-	indices[k+2] = 1;
-	k += 3;
+	// Right
+	indices[12] = 2;
+	indices[13] = 6;
+	indices[14] = 3;
+	indices[15] = 3;
+	indices[16] = 6;
+	indices[17] = 7;
 
-	for(int i = 0; i < latitude-3; ++i)
-	{
-		for(int j = 0; j < longitude-1; ++j)
-		{
-			indices[k]   = i*longitude+j+1;
-			indices[k+1] = i*longitude+j+2;
-			indices[k+2] = (i+1)*longitude+j+1;
+	// Front
+	indices[18] = 0;
+	indices[19] = 4;
+	indices[20] = 2;
+	indices[21] = 2;
+	indices[22] = 4;
+	indices[23] = 6;
 
-			indices[k+3] = (i+1)*longitude+j+1;
-			indices[k+4] = i*longitude+j+2;
-			indices[k+5] = (i+1)*longitude+j+2;
+	// Back
+	indices[24] = 3;
+	indices[25] = 7;
+	indices[26] = 1;
+	indices[27] = 1;
+	indices[28] = 7;
+	indices[29] = 5;
 
-			k += 6; // next quad
-		}
+	// Top
+	indices[30] = 4;
+	indices[31] = 5;
+	indices[32] = 6;
+	indices[33] = 6;
+	indices[34] = 5;
+	indices[35] = 7;
 
-		indices[k]   = (i*longitude)+longitude;
-		indices[k+1] = (i*longitude)+1;
-		indices[k+2] = ((i+1)*longitude)+longitude;
-
-		indices[k+3] = ((i+1)*longitude)+longitude;
-		indices[k+4] = (i*longitude)+1;
-		indices[k+5] = ((i+1)*longitude)+1;
-
-		k += 6;
-	}
-
-	for(int l = 0; l < longitude-1; ++l)
-	{
-		indices[k] = m_numSphereVertices-1;
-		indices[k+1] = (m_numSphereVertices-1)-(l+1);
-		indices[k+2] = (m_numSphereVertices-1)-(l+2);
-		k += 3;
-	}
-
-	indices[k] = m_numSphereVertices-1;
-	indices[k+1] = (m_numSphereVertices-1)-longitude;
-	indices[k+2] = m_numSphereVertices-2;
-
-	strip->setNrOfIndicies(m_numSphereFaces * 3);
+	strip->setNrOfIndicies(nrOfIndicies);
 	strip->SetIndicies(indices);
 	
 
@@ -137,12 +109,20 @@ D3DXMATRIX Decal::GetMatrix() const
 
 D3DXMATRIX Decal::GetWorldMatrix()
 {
+	/*
 	D3DXMATRIX translate;
 	D3DXMatrixTranslation(&translate, this->position.x, this->position.y, this->position.z);
 
 	D3DXMATRIX scaling;
 	D3DXMatrixScaling(&scaling, this->size, this->size, this->size);
 
-	D3DXMATRIX world = scaling*translate;
-	return world;
+	D3DXMATRIX nworld = scaling*translate;
+	this->world = nworld;
+	*/
+	return this->world;
+}
+
+void Decal::SetWorldMatrix( D3DXMATRIX mat )
+{
+	this->world = mat;
 }

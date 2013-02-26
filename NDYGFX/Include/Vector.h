@@ -242,7 +242,7 @@ public:
 		return sqrt(pow(this->x, 2) + pow(this->y, 2) + pow(this->z, 2));
 	}
 
-	inline void Normalize()
+	inline Vector3 Normalize()
 	{
 		float length = this->GetLength();
 			
@@ -252,6 +252,8 @@ public:
 			this->y /= length;
 			this->z /= length;
 		}
+
+		return *this;
 	}
 
 	inline float GetDotProduct(Vector3& compObj) const

@@ -156,12 +156,7 @@ void MaloWTest::RunTest(float diff)
 
 
 
-	if(GetGraphics()->GetKeyListener()->IsClicked(1))
-	{
-		Vector3 pos = Vector3(cd.posx, cd.posy, cd.posz);
-		GetGraphics()->CreateDecal(pos, "Media/BloodTexture.png");
-		GetGraphics()->CreateImage(Vector2(0, 0), Vector2(100, 100), "Media/BloodTexture.png");
-	}
+
 
 	static bool fesd = true;
 	static int qual = 0;

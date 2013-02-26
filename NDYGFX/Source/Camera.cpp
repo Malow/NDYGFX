@@ -1,4 +1,5 @@
 #include "Camera.h"
+#include "FBXMesh.h"
 
 Camera::Camera(HWND g_hWnd, GraphicsEngineParams &params) : 
 	params(params)
@@ -133,7 +134,11 @@ void Camera::MoveFollowingMesh()
 		
 
 		around = Vector3(0,1,0);
-		angle = acos(camDir.GetDotProduct(this->defaultMeshDirection));
+
+		if(dynamic_cast<FBXMesh*>(this->followTarget) != NULL)	// Invert rotation for FBX due to it being inverted.
+			angle = -acos(camDir.GetDotProduct(this->defaultMeshDirection));
+		else
+			angle = acos(camDir.GetDotProduct(this->defaultMeshDirection));
 
 		if(camDir.x > 0.0f)
 			angle *= -1;

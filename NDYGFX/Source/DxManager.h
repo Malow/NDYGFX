@@ -143,6 +143,10 @@ private:
 	int renderedMeshShadows;
 	int NrOfDrawnVertices;
 	int NrOfDrawCalls;
+	int CurrentRenderedMeshes;
+	int CurrentRenderedTerrains;
+	int CurrentRenderedNrOfVertices;
+	int CurrentNrOfDrawCalls;
 
 	// Needed for frustrum culling
 	PhysicsEngine pe;
@@ -152,7 +156,8 @@ private:
 	void PreRender(); //stdafx.fx
 
 	void RenderForward();
-	void RenderDeferredGeometry();
+	void RenderDeferredGeoTerrains();
+	void RenderDeferredGeoObjects();
 	void RenderDeferredGeometryInstanced();
 	void RenderDeferredPerPixel();
 	void RenderInvisibilityEffect();
