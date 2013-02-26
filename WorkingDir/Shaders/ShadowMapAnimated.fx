@@ -22,7 +22,7 @@ struct VSIn
 	float4 Color	: COLOR; //dummy
 
 	float4 Pos_Morph	: POSITION_MORPH; 
-	float2 Tex_Morph	: TEXCOORD_MORPH;
+	float2 Tex_Morph	: TEXCOORD_MORPH;//dummy TILLMAN
 	float3 Normal_Morph : NORMAL_MORPH;//dummy
 	float4 Color_Morph	: COLOR_MORPH;//dummy
 };

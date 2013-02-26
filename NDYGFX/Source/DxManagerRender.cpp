@@ -1165,7 +1165,7 @@ void DxManager::RenderCascadedShadowMap()
 								Buffer* vertsOne = objOne->GetVertBuff();
 								Buffer* vertsTwo = objTwo->GetVertBuff();
 								ID3D11Buffer* vertexBuffers [] = {vertsOne->GetBufferPointer(), vertsTwo->GetBufferPointer()};
-								UINT strides [] = {sizeof(Vertex), sizeof(Vertex)};
+								UINT strides [] = {sizeof(VertexNormalMap), sizeof(VertexNormalMap)}; //**Tillman - input layout stämmer inte, klagar inte dock
 								UINT offsets [] = {0, 0};
 								if(vertsOne != NULL && vertsTwo != NULL)
 								{
