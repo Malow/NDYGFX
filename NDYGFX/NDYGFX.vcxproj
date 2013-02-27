@@ -66,6 +66,7 @@
     <ClInclude Include="Source\KeyListener.h" />
     <ClInclude Include="Source\Light.h" />
     <ClInclude Include="Source\MaloWFileDebug.h" />
+    <ClInclude Include="Source\MaloWPerformance.h" />
     <ClInclude Include="Source\Material.h" />
     <ClInclude Include="Source\Mesh.h" />
     <ClInclude Include="Source\MeshStripsResource.h" />
@@ -125,6 +126,7 @@
     <ClCompile Include="Source\InstancingHelper.cpp" />
     <ClCompile Include="Source\KeyListener.cpp" />
     <ClCompile Include="Source\Light.cpp" />
+    <ClCompile Include="Source\MaloWPerformance.cpp" />
     <ClCompile Include="Source\Mesh.cpp" />
     <ClCompile Include="Source\MeshStripsResource.cpp" />
     <ClCompile Include="Source\MeshStrip.cpp" />

@@ -436,6 +436,9 @@
     <ClCompile Include="Source\Decal.cpp">
       <Filter>Source Files\Engine\Objects and Entities</Filter>
     </ClCompile>
+    <ClInclude Include="Source\MaloWPerformance.h">
+      <Filter>Source Files\Engine\Other</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Include\iKeyListener.h">
@@ -545,5 +548,10 @@
     <FxCompile Include="..\WorkingDir\Shaders\ShadowMapFBX.fx">
       <Filter>Source Files\Engine\Shaders</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\MaloWPerformance.cpp">
+      <Filter>Source Files\Engine\Other</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
