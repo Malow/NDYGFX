@@ -18,7 +18,7 @@ void MaloWPerformance::PostMeasure( string perfName )
 {
 	LARGE_INTEGER li;
 	QueryPerformanceCounter(&li);
-	float Timer = (li.QuadPart / PCFreq) * 0.001f;
+	float Timer = (li.QuadPart / PCFreq);
 
 	for(int i = 0; i < this->perfs.size(); i++)
 	{
@@ -31,11 +31,25 @@ void MaloWPerformance::PostMeasure( string perfName )
 	}
 }
 
-void MaloWPerformance::GenerateReport()
+void MaloWPerformance::GenerateReport(GraphicsEngineParams gep)
 {
 	fstream writeFile;
 	writeFile.open ("MaloWPerformanceReport.txt", ios::out | ios::trunc);
-	
+	writeFile << "Performance report, times in milliseconds, IE 100 in the file = 0.1 seconds." << endl << endl;
+	writeFile << "Settings: " << endl;
+	writeFile << "Resolution: " << gep.WindowWidth << " x " << gep.WindowHeight << endl;
+	writeFile << "Shadow Quality: " << gep.ShadowMapSettings << endl;
+	writeFile << "FXAA Quality: " << gep.FXAAQuality << endl;
+	writeFile << "Field of View: " << gep.FOV << endl;
+	writeFile << "FarClip: " << gep.FarClip << endl;
+	writeFile << "MaxFPS: " << gep.MaxFPS << endl;
+	writeFile << "ShadowFit: " << gep.ShadowFit << endl;
+	writeFile << "Billboard Range: " << gep.BillboardRange << endl; 
+	writeFile << endl;
+
+	if(gep.MaxFPS > 0)
+		writeFile << "WARNING, MAXFPS IS SET!" << endl << endl;
+
 	for(int i = 0; i < this->perfs.size(); i++)
 	{
 		writeFile << this->perfs[i].name << ": " << endl << 
@@ -50,7 +64,7 @@ void MaloWPerformance::PreMeasure( string perfName )
 {
 	LARGE_INTEGER li;
 	QueryPerformanceCounter(&li);
-	float Timer = (li.QuadPart / PCFreq) * 0.001f;
+	float Timer = (li.QuadPart / PCFreq);
 
 	bool found = false;
 	for(int i = 0; i < this->perfs.size(); i++)

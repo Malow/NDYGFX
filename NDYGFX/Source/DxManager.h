@@ -2,6 +2,9 @@
 #define DXMANAGER_H
 
 
+#define MALOWTESTPERF
+
+
 #include "Decal.h"
 #include "DirectX.h"
 #include "Camera.h"
@@ -27,8 +30,10 @@
 #include "DxManagerEvents.h"
 #include "CascadedShadowMap.h"
 #include "InstancingHelper.h"
-#include "MaloWPerformance.h"
 
+#ifdef MALOWTESTPERF
+#include "MaloWPerformance.h"
+#endif
 
 #if defined(DEBUG) || defined(_DEBUG)
 	#include <vld.h>
@@ -64,9 +69,9 @@ private:
 	Shader* Shader_FogEnclosement;
 	Shader* Shader_ShadowMapFBX;
 
-
+#ifdef MALOWTESTPERF
 	MaloWPerformance perf;
-
+#endif
 
 	// Standard stuff
 	ID3D11DeviceContext* Dx_DeviceContext;

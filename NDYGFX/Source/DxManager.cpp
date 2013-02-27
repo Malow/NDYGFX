@@ -111,8 +111,9 @@ DxManager::DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam)
 
 DxManager::~DxManager()
 {
-	perf.GenerateReport();
-
+#ifdef MALOWTESTPERF
+	perf.GenerateReport(this->params);
+#endif
 	if(this->camera)
 		delete this->camera;
 

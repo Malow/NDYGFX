@@ -3,7 +3,7 @@
 #include "DxManagerDebugging.h"
 
 
-#define MALOWTESTPERF		// 
+
 
 
 HRESULT DxManager::Update(float)
@@ -348,9 +348,16 @@ void DxManager::Life()
 
 	while(this->stayAlive)
 	{
+#ifdef MALOWTESTPERF
+		this->perf.PreMeasure("Renderer - Entire Frame");
+#endif
+
+
+#ifdef MALOWTESTPERF
+		this->perf.PreMeasure("Renderer - Life Overhead");
+#endif
 		while(MaloW::ProcessEvent* ev = this->PeekEvent())
 		{
-
 			if(dynamic_cast<RendererEvent*>(ev) != NULL)
 			{
 				string msg = ((RendererEvent*)ev)->getMessage();
@@ -439,10 +446,19 @@ void DxManager::Life()
 			delete ev;
 		}
 		this->camera->Update(this->Timer - this->LastCamUpdate);
-
 		this->LastCamUpdate = this->Timer;
+
+
+#ifdef MALOWTESTPERF
+		this->perf.PostMeasure("Renderer - Life Overhead");
+#endif
+
 		this->Render();
 		this->framecount++;
+
+#ifdef MALOWTESTPERF
+		this->perf.PostMeasure("Renderer - Entire Frame");
+#endif
 	}
 }
 
@@ -1653,60 +1669,126 @@ HRESULT DxManager::Render()
 	QueryPerformanceCounter(&li);
 	float diff = (li.QuadPart - prevTimeStamp) / this->PCFreq;
 	this->prevTimeStamp = li.QuadPart;
-
 	this->Timer += diff * 0.001f;
 
+#ifdef MALOWTESTPERF
+	this->perf.PreMeasure("Renderer - CalculateCulling");
+#endif
 	this->CalculateCulling();
+#ifdef MALOWTESTPERF
+	this->perf.PostMeasure("Renderer - CalculateCulling");
+#endif
 
+#ifdef MALOWTESTPERF
+	this->perf.PreMeasure("Renderer - PreRender");
+#endif
 	this->PreRender();
+#ifdef MALOWTESTPERF
+	this->perf.PostMeasure("Renderer - PreRender");
+#endif
 
-
+#ifdef MALOWTESTPERF
+	this->perf.PreMeasure("Renderer - Render Shadows");
+#endif
 	this->RenderShadowMap();
 	this->RenderCascadedShadowMap();
 	this->RenderCascadedShadowMapBillboardInstanced(); //Must be after RenderCascadedShadowMap()
+#ifdef MALOWTESTPERF
+	this->perf.PostMeasure("Renderer - Render Shadows");
+#endif
 
 	//this->RenderForward();
 
-
+#ifdef MALOWTESTPERF
+	this->perf.PreMeasure("Renderer - Render Deferred Geo");
+#endif
 	this->RenderDeferredGeoTerrains();
 	this->RenderDecals();
 
 	this->RenderDeferredGeoObjects();
 	this->RenderFBXMeshes();
 	this->RenderDeferredGeometryInstanced(); //Must be after RenderDeferredGeometry()
+#ifdef MALOWTESTPERF
+	this->perf.PostMeasure("Renderer - Render Deferred Geo");
+#endif
 
+
+#ifdef MALOWTESTPERF
+	this->perf.PreMeasure("Renderer - Render Billboards");
+#endif
 	this->RenderBillboards();
 	this->RenderBillboardsInstanced(); //Must be after RenderDeferredGeometry()
-
+#ifdef MALOWTESTPERF
+	this->perf.PostMeasure("Renderer - Render Billboards");
+#endif
 	
 	//this->RenderQuadDeferred();
 	//this->RenderDeferredTexture();
-
+#ifdef MALOWTESTPERF
+	this->perf.PreMeasure("Renderer - Render Per Pixel");
+#endif
 	this->RenderDeferredPerPixel();
+#ifdef MALOWTESTPERF
+	this->perf.PostMeasure("Renderer - Render Per Pixel");
+#endif
 
+
+#ifdef MALOWTESTPERF
+	this->perf.PreMeasure("Renderer - Render Translucent");
+#endif
 	this->RenderDeferredGeoTranslucent();
-
 	this->RenderDeferredPerPixelTranslucent();
-	
+#ifdef MALOWTESTPERF
+	this->perf.PostMeasure("Renderer - Render Translucent");
+#endif
+
 	if(this->invisibleGeometry)
 		this->RenderInvisibilityEffect(); 
 
 	//this->RenderWaterPlanes();
 	
-	
+#ifdef MALOWTESTPERF
+	this->perf.PreMeasure("Renderer - Render Skybox");
+#endif
 	this->RenderDeferredSkybox();
+#ifdef MALOWTESTPERF
+	this->perf.PostMeasure("Renderer - Render Skybox");
+#endif
 
 	this->RenderParticles();
 
+#ifdef MALOWTESTPERF
+	this->perf.PreMeasure("Renderer - Render Enclosing Fog");
+#endif
 	if(this->useEnclosingFog)
 		this->RenderEnclosingFog();
+#ifdef MALOWTESTPERF
+	this->perf.PostMeasure("Renderer - Render Enclosing Fog");
+#endif
 
+#ifdef MALOWTESTPERF
+	this->perf.PreMeasure("Renderer - Render Images");
+#endif
 	this->RenderImages();
+#ifdef MALOWTESTPERF
+	this->perf.PostMeasure("Renderer - Render Images");
+#endif
 
+#ifdef MALOWTESTPERF
+	this->perf.PreMeasure("Renderer - Render Text");
+#endif
 	this->RenderText();
+#ifdef MALOWTESTPERF
+	this->perf.PostMeasure("Renderer - Render Text");
+#endif
 
+#ifdef MALOWTESTPERF
+	this->perf.PreMeasure("Renderer - Render FXAA");
+#endif
 	this->RenderAntiAliasing();
-
+#ifdef MALOWTESTPERF
+	this->perf.PostMeasure("Renderer - Render FXAA");
+#endif
 
 	
 

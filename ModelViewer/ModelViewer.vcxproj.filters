@@ -33,5 +33,8 @@
     <ClInclude Include="Source\TestOther.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\TestRealisticScene.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

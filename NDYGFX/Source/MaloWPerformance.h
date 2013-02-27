@@ -4,6 +4,7 @@
 #include "Array.h"
 #include <string>
 #include <fstream>
+#include "GraphicsEngineParameters.h"
 
 struct PerformanceMeasurement
 {
@@ -33,5 +34,5 @@ public:
 
 	void PreMeasure(string perfName);
 	void PostMeasure(string perfName);
-	void GenerateReport();
+	void GenerateReport(GraphicsEngineParams gep);
 };
