@@ -61,6 +61,7 @@ private:
 	Shader* Shader_Fxaa;
 	Shader* Shader_Decal;
 	Shader* Shader_FogEnclosement;
+	Shader* Shader_ShadowMapFBX;
 
 
 

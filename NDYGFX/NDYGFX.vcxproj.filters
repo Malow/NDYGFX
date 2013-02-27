@@ -542,5 +542,8 @@
     <FxCompile Include="..\WorkingDir\Shaders\DeferredFBX.fx">
       <Filter>Source Files\Engine\Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="..\WorkingDir\Shaders\ShadowMapFBX.fx">
+      <Filter>Source Files\Engine\Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

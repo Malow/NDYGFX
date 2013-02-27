@@ -170,6 +170,11 @@ PSSceneIn DefaultVS(VSIn input)
 		//input.vTexCoord.x = ( 1.0f - input.vTexCoord.x );
 	}
 
+	// Invert y and z for the normals, whole model is inverted and then x is inverted, making x correct.
+	// Only guessing that tangent needs to be done the same.
+	normal.yz *= -1.0f;
+	tangent.yz *= -1.0f;
+
 	// Ininput.vert X
 	position.x *= -1.0f;
 

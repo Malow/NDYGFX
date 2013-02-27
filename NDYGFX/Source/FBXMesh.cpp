@@ -139,3 +139,10 @@ bool FBXMesh::GetBonePosition(const std::string& name, float& x, float& y, float
 
 	return false;
 }
+
+void FBXMesh::RenderShadow( float dt, D3DXMATRIX lightViewProj, Shader* shad, ID3D11DeviceContext* devCont )
+{
+	this->RecreateWorldMatrix();
+	D3DXMATRIX world = this->GetWorldMatrix();
+	this->zScene->RenderShadow(0, world, lightViewProj, shad, devCont );
+}

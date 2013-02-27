@@ -377,6 +377,7 @@ HRESULT DxManager::Init()
 		return E_FAIL;
 	}
 
+	// FBX
 	this->Shader_FBX = new Shader();
 	if(FAILED(this->Shader_FBX->Init(Dx_Device, Dx_DeviceContext, "Shaders/DeferredFBX.fx", inputDescFBX, 6)))
 	{
@@ -416,6 +417,14 @@ HRESULT DxManager::Init()
 		return E_FAIL;
 	}
 
+	// FBX Shadowmap
+	
+	this->Shader_ShadowMapFBX = new Shader();
+	if(FAILED(this->Shader_ShadowMapFBX->Init(Dx_Device, Dx_DeviceContext, "Shaders/ShadowMapFBX.fx", inputDescFBX, 6)))
+	{
+		MaloW::Debug("Failed to open ShadowMapFBX.fx");
+		return E_FAIL;
+	}
 
 	/*
 	// Deferred Quad pass

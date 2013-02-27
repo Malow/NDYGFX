@@ -30,7 +30,7 @@ void OtherTest::PreTest()
 {
 	copyrightedTempGuy = GetGraphics()->CreateFBXMesh("Media/temp_guy_few_anims.fbx", Vector3(50.0f, 0.0f, 0.0f));	// copyrightedTempGuy = GetGraphics()->CreateFBXMesh("Media/temp_guy_few_anims.fbx", Vector3(0.0f, 0.0f, 0.0f));
 	copyrightedTempGuy->SetScale(0.2f);
-	soldier = GetGraphics()->CreateFBXMesh("Media/Soldier_animated_jump.fbx", Vector3(20.0f, 0.0f, 0.0f));
+	soldier = GetGraphics()->CreateFBXMesh("Media/Soldier_animated_jump.fbx", Vector3(30.0f, 0.0f, -4.0f));
 	soldier->SetScale(0.05f);
 
 

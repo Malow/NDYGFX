@@ -80,3 +80,47 @@ void FBXModelPartD3D::Render(float dt, Shader* shader, D3DXMATRIX viewProj, bool
 	shader->Apply(0);
 	devCont->DrawIndexed((unsigned int)mIB->GetElementCount(), 0, 0);
 }
+
+
+
+
+void FBXModelPartD3D::RenderShadow(float dt, Shader* shader, D3DXMATRIX viewProj, bool enableAnimation, ID3D11DeviceContext* devCont)
+{
+	shader->SetBool("g_bSkinning", enableAnimation ? m_bSkinnedModel : false);
+
+	if( enableAnimation && !m_bSkinnedModel )
+	{
+		D3DXMATRIX temp = mParentModel->GetGeometricOffset() * mParentModel->GetAnimationTransform();
+		shader->SetMatrix("gWorld", temp);
+	}
+	else
+	{
+		D3DXMATRIX temp = mParentModel->GetGeometricOffset();
+		shader->SetMatrix("gWorld", temp);
+	}
+
+	// Buffers
+	ID3D11Buffer* aVB[5] = { 
+		mVB_Position->GetBufferPointer(), 
+		mVB_Normal->GetBufferPointer(), 
+		mVB_Tangent->GetBufferPointer(), 
+		mVB_TexCoord->GetBufferPointer(), 
+		(mVB_BlendWeights!=0? mVB_BlendWeights->GetBufferPointer() : 0 ) 
+	};
+
+	// Sizes Of Buffers
+	UINT aStrides[5] = { 
+		sizeof(D3DXVECTOR3), 
+		sizeof(D3DXVECTOR3), 
+		sizeof(D3DXVECTOR3), 
+		sizeof(D3DXVECTOR2), 
+		sizeof(BTHFBX_BLEND_WEIGHT_DATA) 
+	};
+
+	UINT aOffsets[5] = {0, 0, 0, 0, 0};
+
+	devCont->IASetVertexBuffers(0, 4+(mVB_BlendWeights!=0), aVB, aStrides, aOffsets);
+	devCont->IASetIndexBuffer(mIB->GetBufferPointer(), DXGI_FORMAT_R32_UINT, 0);
+	shader->Apply(0);
+	devCont->DrawIndexed((unsigned int)mIB->GetElementCount(), 0, 0);
+}

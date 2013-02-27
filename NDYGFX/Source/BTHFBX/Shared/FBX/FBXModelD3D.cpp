@@ -59,3 +59,14 @@ const D3DXMATRIX& FBXModelD3D::GetAnimationTransform()
 {
 	return mAnimationTransform;
 }
+
+void FBXModelD3D::RenderShadow(float dt, Shader* shader, D3DXMATRIX viewProj, bool enableAnimation, ID3D11DeviceContext* devCont)
+{
+	mGeometricOffset = *(D3DXMATRIX*)mBTHFBXModel->GetGeometricOffset();
+	mAnimationTransform = *(D3DXMATRIX*)mBTHFBXModel->GetAnimationTransform();
+
+	for(unsigned int i = 0; i < mParts.size(); i++)
+	{
+		mParts[i]->RenderShadow(dt, shader, viewProj, enableAnimation, devCont);
+	}
+}

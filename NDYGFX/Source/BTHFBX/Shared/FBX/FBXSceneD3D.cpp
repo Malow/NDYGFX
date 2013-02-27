@@ -89,3 +89,28 @@ BTHFBX_RAY_BOX_RESULT FBXSceneD3D::RayVsScene(const BTHFBX_RAY& ray, BTHFBX_MATR
 {
 	return mFBXScene->RayVsScene(ray, worldMatrix);
 }
+
+void FBXSceneD3D::RenderShadow( float dt, D3DXMATRIX world, D3DXMATRIX lightViewProj, Shader* mShader, ID3D11DeviceContext* devCont )
+{
+	devCont->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	if(mFBXSkeleton)
+	{
+		float* bonesArray = (float*)mFBXSkeleton->GetSkinTransforms();
+		if( bonesArray )
+		{
+			int nBoneCount = mFBXSkeleton->GetBoneCount();
+			mShader->SetMatrixArray("g_mBonesArray", bonesArray, 0, nBoneCount < BTHFBX_MAXBONES_PER_MESH ? nBoneCount : BTHFBX_MAXBONES_PER_MESH );
+		}
+	}
+	mShader->SetMatrix("g_mScale", world);
+	mShader->SetMatrix("gWorld", world);
+	mShader->SetMatrix("gViewProj", lightViewProj);
+
+	mShader->Apply(0);
+
+	for(unsigned int i = 0; i < mModels.size(); i++)
+	{
+		mModels[i]->RenderShadow(dt, mShader, lightViewProj, mFBXSkeleton != NULL ? true : false, devCont);
+	}
+}

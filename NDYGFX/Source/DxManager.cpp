@@ -19,6 +19,8 @@ DxManager::DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam)
 	this->Dx_SwapChain = NULL;
 	this->Dx_Device = NULL;
 
+	this->Shader_ShadowMapFBX = NULL;
+
 	this->DelayGettingCamera = false;
 
 	this->Shader_ShadowMap = NULL;
@@ -158,6 +160,9 @@ DxManager::~DxManager()
 
 	if(this->Shader_DeferredGeoTranslucent)
 		delete this->Shader_DeferredGeoTranslucent;
+
+	if(this->Shader_ShadowMapFBX)
+		delete this->Shader_ShadowMapFBX;
 
 	if(this->Shader_Decal)
 		delete this->Shader_Decal;

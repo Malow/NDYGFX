@@ -2,6 +2,7 @@
 
 #include "DxManagerDebugging.h"
 
+
 HRESULT DxManager::Update(float)
 {
 	// update subsystems
@@ -115,6 +116,9 @@ void DxManager::HandleReloadShaders(int shader)
 	case 20:
 		if(this->Shader_ShadowMapBillboardInstanced)	
 			Shader_ShadowMapBillboardInstanced->Reload();
+	case 21:
+		if(this->Shader_ShadowMapFBX)	
+			Shader_ShadowMapFBX->Reload();
 		break;
 	}
 }
@@ -629,7 +633,17 @@ void DxManager::RenderShadowMap()
 					}
 				}
 			}
-		
+
+
+			// FBX meshes
+			for(int i = 0; i < this->FBXMeshes.size(); i++)
+			{
+				this->FBXMeshes[i]->RenderShadow(0, this->lights[l]->GetViewProjMatrix(), this->Shader_ShadowMapFBX, this->Dx_DeviceContext);
+			}
+
+
+
+
 			D3DXMATRIX lvp = this->lights[l]->GetViewProjMatrix();
 		
 		
@@ -1221,6 +1235,12 @@ void DxManager::RenderCascadedShadowMap()
 						}
 					}
 				}
+			}
+
+			// FBX meshes
+			for(int i = 0; i < this->FBXMeshes.size(); i++)
+			{
+				this->FBXMeshes[i]->RenderShadow(0, this->csm->GetViewProjMatrix(l), this->Shader_ShadowMapFBX, this->Dx_DeviceContext);
 			}
 		
 
