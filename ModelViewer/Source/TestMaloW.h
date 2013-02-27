@@ -32,7 +32,7 @@ void MaloWTest::PreTest()
 	//nrofdiffs = 0;
 	//totDiff = 0;
 	wp = GetGraphics()->CreateWaterPlane(Vector3(0, 15, 0), "Media/WaterTexture.png");
-	wp->SetScale(10.0f);
+	//wp->SetScale(1.0f);
 	iWaterPlane* wp2 = GetGraphics()->CreateWaterPlane(Vector3(5, 10, 0), "Media/WaterTexture.png");
 	wp2->Rotate(Vector3(0.1f, 0.1f, 0.1f));
 	wp2->SetScale(30.0f);
@@ -165,19 +165,27 @@ void MaloWTest::RunTest(float diff)
 	{
 		if(fesd)
 		{
-			/*
+			
 			if(qual % 2 == 0)
 			{
-				GetGraphics()->GetEngineParameters().Maximized = true;
-				GetGraphics()->ResizeGraphicsEngine(1280, 1024);
+				//GetGraphics()->GetEngineParameters().Maximized = true;
+				//GetGraphics()->ResizeGraphicsEngine(1280, 1024);
+				wp->SetVertexPosition(Vector3(1, 0, -0.1), 0);
+				wp->SetVertexPosition(Vector3(0.8f, 0.2f, 0.8f), 1);
+				wp->SetVertexPosition(Vector3(-1, -0.2f, -0.2f), 2);
+				wp->SetVertexPosition(Vector3(-0.8f, 0, 1), 3);
 			}
 			else
 			{
-				GetGraphics()->GetEngineParameters().Maximized = false;
-				GetGraphics()->ResizeGraphicsEngine(1264, 947);
-			}*/
-			GetGraphics()->ReloadShaders(21);
-			GetGraphics()->ReloadShaders(1);
+				//GetGraphics()->GetEngineParameters().Maximized = false;
+				//GetGraphics()->ResizeGraphicsEngine(1264, 947);
+				wp->SetVertexPosition(Vector3(0.5f, 0, -0.5f), 0);
+				wp->SetVertexPosition(Vector3(0.5f, 0, 0.5f), 1);
+				wp->SetVertexPosition(Vector3(-0.5f, 0, -0.5f), 2);
+				wp->SetVertexPosition(Vector3(-0.5f, 0, 0.5f), 3);
+			}
+			//GetGraphics()->ReloadShaders(21);
+			//GetGraphics()->ReloadShaders(1);
 			//MaloW::Debug("Diff: " + MaloW::convertNrToString(totDiff / nrofdiffs));
 			//GetGraphics()->ChangeShadowQuality(qual);
 

@@ -111,6 +111,8 @@ DxManager::DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam)
 
 DxManager::~DxManager()
 {
+	perf.GenerateReport();
+
 	if(this->camera)
 		delete this->camera;
 

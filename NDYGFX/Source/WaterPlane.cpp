@@ -25,6 +25,7 @@ WaterPlane::WaterPlane(D3DXVECTOR3 pos) : Mesh(pos)
 	this->nrOfVerts = 6;
 
 	this->VertexDataHasChanged = false;
+	this->SetScale(1.0f);
 }
 
 WaterPlane::~WaterPlane()

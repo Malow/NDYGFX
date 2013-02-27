@@ -3,6 +3,9 @@
 #include "DxManagerDebugging.h"
 
 
+#define MALOWTESTPERF		// 
+
+
 HRESULT DxManager::Update(float)
 {
 	// update subsystems
@@ -347,6 +350,7 @@ void DxManager::Life()
 	{
 		while(MaloW::ProcessEvent* ev = this->PeekEvent())
 		{
+
 			if(dynamic_cast<RendererEvent*>(ev) != NULL)
 			{
 				string msg = ((RendererEvent*)ev)->getMessage();

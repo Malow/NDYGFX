@@ -27,6 +27,7 @@
 #include "DxManagerEvents.h"
 #include "CascadedShadowMap.h"
 #include "InstancingHelper.h"
+#include "MaloWPerformance.h"
 
 
 #if defined(DEBUG) || defined(_DEBUG)
@@ -64,6 +65,7 @@ private:
 	Shader* Shader_ShadowMapFBX;
 
 
+	MaloWPerformance perf;
 
 
 	// Standard stuff
