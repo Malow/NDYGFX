@@ -8,8 +8,12 @@ FBXMesh::FBXMesh( D3DXVECTOR3 pos ) : Mesh(pos)
 
 FBXMesh::~FBXMesh()
 {
+	zSceneMutex.lock();
 	if(this->zScene)
+	{
 		delete this->zScene;
+	}
+	zSceneMutex.unlock();
 }
 
 MaloW::Array<MeshStrip*>* FBXMesh::GetStrips()
@@ -19,7 +23,14 @@ MaloW::Array<MeshStrip*>* FBXMesh::GetStrips()
 
 void FBXMesh::Update( float dt )
 {
-	this->zScene->Update(0);
+	// Lock Scene
+	zSceneMutex.lock();
+
+	// Update Scene
+	this->zScene->Update(dt);
+
+	// Unlock Scene
+	zSceneMutex.unlock();
 
 	// Move Bound Meshes
 	for( auto i = zBoundMeshes.begin(); i != zBoundMeshes.end(); ++i )
@@ -38,19 +49,27 @@ void FBXMesh::Render(float dt, D3DXMATRIX camProj, D3DXMATRIX camView, Shader* s
 {
 	this->RecreateWorldMatrix();
 	D3DXMATRIX world = this->GetWorldMatrix();
-	this->zScene->Render(0, world, camProj, camView, shad, devCont );
+
+	zSceneMutex.lock();
+	this->zScene->Render(dt, world, camProj, camView, shad, devCont );
+	zSceneMutex.unlock();
 }
 
 bool FBXMesh::LoadFromFile( string file, IBTHFbx* fbx, ID3D11Device* dev, ID3D11DeviceContext* devCont )
 {
+	zSceneMutex.lock();
 	this->zScene->Init(file.c_str(), fbx, dev, devCont);
 	this->zScene->GetAnimationController()->SetCurrentAnimation(0);
 	this->zScene->GetAnimationController()->Play();
+	zSceneMutex.unlock();
+
 	return true;
 }
 
 bool FBXMesh::SetAnimation( unsigned int ani )
 {
+	zSceneMutex.lock();
+
 	if ( !this->zScene->GetAnimationController()->SetCurrentAnimation(ani) )
 	{	
 		MaloW::Debug(
@@ -60,14 +79,18 @@ bool FBXMesh::SetAnimation( unsigned int ani )
 			MaloW::convertNrToString(this->zScene->GetAnimationController()->GetAnimationCount()) + 
 			" animations.");
 		
+		zSceneMutex.unlock();
 		return false;
 	}
-
+	
+	zSceneMutex.unlock();
 	return true;
 }
 
 bool FBXMesh::SetAnimation( const char* name )
 {
+	zSceneMutex.lock();
+
 	if ( !this->zScene->GetAnimationController()->SetCurrentAnimation(name) )
 	{	
 		MaloW::Debug(
@@ -77,14 +100,19 @@ bool FBXMesh::SetAnimation( const char* name )
 			MaloW::convertNrToString(this->zScene->GetAnimationController()->GetAnimationCount()) + 
 			" animations.");
 		
+		zSceneMutex.unlock();
 		return false;
 	}
 
+	zSceneMutex.unlock();
 	return true;
 }
 
 bool FBXMesh::BindMesh(const char* boneName, iMesh* mesh)
 {
+	// Lock Scene
+	zSceneMutex.lock();
+
 	// Find Bone
 	if ( zScene )
 	{
@@ -93,10 +121,13 @@ bool FBXMesh::BindMesh(const char* boneName, iMesh* mesh)
 		if ( bone )
 		{
 			zBoundMeshes[mesh] = boneName;
+
+			zSceneMutex.unlock();
 			return true;
 		}
 	}
 
+	zSceneMutex.unlock();
 	return false;
 }
 
@@ -109,6 +140,7 @@ void FBXMesh::UnbindMesh(iMesh* mesh)
 
 bool FBXMesh::GetBonePosition(const std::string& name, float& x, float& y, float& z)
 {
+	zSceneMutex.lock();
 	if ( zScene )
 	{
 		IBTHFbxSkeletonBone* bone = zScene->GetSkeleton()->GetBone(name.c_str());
@@ -133,9 +165,11 @@ bool FBXMesh::GetBonePosition(const std::string& name, float& x, float& y, float
 			y = worldPos.y;
 			z = worldPos.z;
 
+			zSceneMutex.unlock();
 			return true;
 		}
 	}
 
+	zSceneMutex.unlock();
 	return false;
 }

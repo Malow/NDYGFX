@@ -89,7 +89,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	OtherTest ot;
 	mt.PreTest();
 	tt.PreTest();
-	ot.PreTest();
+	//ot.PreTest();
 	GetGraphics()->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 1.0f, 1.0f, 1.0f, 1.0f);
 #endif
 	//************************************* END OF PRE TEST **********************
@@ -135,7 +135,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 #ifdef TEST
 		mt.RunTest(diff);
 		tt.RunTest(diff);
-		ot.RunTest(diff);
+		//ot.RunTest(diff);
 #endif
 		//************************************* END OF RUN TESTS **********************
 
@@ -267,7 +267,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 #ifdef TEST
 	mt.PostTest();
 	tt.PostTest();
-	ot.PostTest();
+	//ot.PostTest();
 #endif
 	//************************************* END OF POST TEST **********************
 

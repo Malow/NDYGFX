@@ -41,6 +41,6 @@ public:
 
 	// Frames
 	void AddKeyFrame(const FbxMatrix& matTransform2);
-	const AnimationQuaternionKeyFrame& GetKeyFrameQuaternion(int nKeyFrame);
+	const AnimationQuaternionKeyFrame& GetKeyFrameQuaternion(unsigned int nKeyFrame);
 	void GenerateQuarternions();
 };

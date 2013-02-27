@@ -38,10 +38,8 @@ void FBXSceneD3D::Init(const char* filename, IBTHFbx* bthFBX, ID3D11Device* dev,
 
 void FBXSceneD3D::Update(float dt)
 {
-	for(unsigned int i = 0; i < mModels.size(); i++)
-	{
-		mModels[i]->Update(dt);
-	}
+	// Update Scene
+	mFBXScene->UpdateScene(dt, true);
 }
 
 void FBXSceneD3D::Render(float dt, D3DXMATRIX world, D3DXMATRIX camProj, D3DXMATRIX camView, Shader* mShader, ID3D11DeviceContext* devCont)

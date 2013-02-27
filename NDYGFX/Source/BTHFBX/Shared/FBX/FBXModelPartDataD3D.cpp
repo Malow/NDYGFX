@@ -2,19 +2,20 @@
 #include "FBXModelD3D.h"
 #include "..\Helpers\BTHResourceManager.h"
 #include "FBXSceneD3D.h"
+#include <sstream>
 
 
-FBXModelPartDataD3D::FBXModelPartDataD3D()
+FBXModelPartDataD3D::FBXModelPartDataD3D(const std::string& uniqueID) :
+	zID(uniqueID),
+	mVB_Position(0),
+	mVB_Normal(0),
+	mVB_Tangent(0),
+	mVB_TexCoord(0),
+	mVB_BlendWeights(0),
+	mIB(0),
+	mDiffuseTexture(0),
+	mNormalTexture(0)
 {
-	mVB_Position = NULL;
-	mVB_Normal = NULL;
-	mVB_Tangent = NULL;
-	mVB_TexCoord = NULL;
-	mVB_BlendWeights = NULL;
-	mIB = NULL;
-
-	mDiffuseTexture = NULL;
-	mNormalTexture = NULL;
 }
 
 FBXModelPartDataD3D::~FBXModelPartDataD3D()
@@ -25,6 +26,9 @@ FBXModelPartDataD3D::~FBXModelPartDataD3D()
 	SAFE_DELETE(mVB_TexCoord);
 	SAFE_DELETE(mVB_BlendWeights);
 	SAFE_DELETE(mIB);
+
+	if ( mDiffuseTexture ) BTHResourceManager::GetInstance()->FreeTexture(mDiffuseTexture);
+	if ( mNormalTexture ) BTHResourceManager::GetInstance()->FreeTexture(mNormalTexture);
 }
 
 inline std::string GetFileName(const std::string& str)
@@ -147,10 +151,14 @@ void FBXModelPartDataD3D::Init(FBXModelD3D* parentModel, IBTHFbxModelPart* model
 FBXModelPartDataD3DManager* FBXModelPartDataD3DManager::instance = NULL;
 FBXModelPartDataD3DManager* FBXModelPartDataD3DManager::GetInstance()
 {
+	static FBXModelPartDataD3DManager manager;
+
+	/*
 	if(!instance)
 		instance = new FBXModelPartDataD3DManager();
+	*/
 
-	return instance;
+	return &manager;
 }
 
 void FBXModelPartDataD3DManager::DeleteInstance()
@@ -164,28 +172,54 @@ FBXModelPartDataD3DManager::~FBXModelPartDataD3DManager()
 	Cleanup();
 }
 
-FBXModelPartDataD3D* FBXModelPartDataD3DManager::GetModelData(class FBXModelD3D* parentModel, IBTHFbxModelPart* modelPart, int partIndex, ID3D11Device* dev, ID3D11DeviceContext* devCont)
+FBXModelPartDataD3D* FBXModelPartDataD3DManager::GetModelData(FBXModelD3D* parentModel, IBTHFbxModelPart* modelPart, int partIndex, ID3D11Device* dev, ID3D11DeviceContext* devCont)
 {
-	char toFind[255];
-	sprintf_s(toFind, sizeof(toFind), "%s_%d", parentModel->GetName(), partIndex);
-	MODEL_PART_DATA_MAP::iterator i = mModelParts.find(toFind);
+	// Unique Part Identifier
+	std::stringstream ss;
+	ss << parentModel->GetScene()->GetFileName() << "_";
+	ss << parentModel->GetName() << "_";
+	ss << partIndex;
 
-	if(i != mModelParts.end())
+	// Find Cached Model Part
+	auto i = mModelParts.find(ss.str());
+
+	// Model Part Found
+	if( i != mModelParts.end() )
 	{
+		zRefCounters[i->second]++;
 		return i->second;
 	}
 
-	FBXModelPartDataD3D* data = new FBXModelPartDataD3D();
+	// Insert Data
+	FBXModelPartDataD3D* data = new FBXModelPartDataD3D(ss.str());
 	data->Init(parentModel, modelPart, dev, devCont);
-
-	mModelParts[toFind] = data;
+	mModelParts[ss.str()] = data;
+	zRefCounters[data] = 1;
 
 	return data;
 }
 
+void FBXModelPartDataD3DManager::FreeModelData(FBXModelPartDataD3D*& data)
+{
+	// Try Finding Reference Counter
+	auto i = zRefCounters.find(data);
+	if ( i != zRefCounters.end() )
+	{	
+		i->second--;
+		if ( i->second == 0 )
+		{
+			mModelParts.erase(mModelParts.find(i->first->zID));
+			zRefCounters.erase(i);
+			delete data;
+		}
+	}
+
+	data=0;
+}
+
 void FBXModelPartDataD3DManager::Cleanup()
 {
-	for(MODEL_PART_DATA_MAP::iterator i = mModelParts.begin(); i != mModelParts.end(); i++)
+	for(auto i = mModelParts.begin(); i != mModelParts.end(); i++)
 	{
 		SAFE_DELETE(i->second);
 	}

@@ -432,10 +432,6 @@ void DxManager::Life()
 		}
 		this->camera->Update(this->Timer - this->LastCamUpdate);
 
-		// Update FBX if it is set.
-		if(this->fbx)
-			this->fbx->UpdateScenes(this->Timer - this->LastCamUpdate, true);
-
 		this->LastCamUpdate = this->Timer;
 		this->Render();
 		this->framecount++;

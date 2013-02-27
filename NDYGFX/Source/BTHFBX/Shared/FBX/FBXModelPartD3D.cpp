@@ -4,46 +4,69 @@
 #include "FBXModelPartDataD3D.h"
 
 
-FBXModelPartD3D::FBXModelPartD3D()
+FBXModelPartD3D::FBXModelPartD3D() :
+	mDiffuseTexture(0),
+	mNormalTexture(0)
 {
 
 }
 
 FBXModelPartD3D::~FBXModelPartD3D()
 {
+	// Model Part
+	FBXModelPartDataD3DManager::GetInstance()->FreeModelData(mModelData);
 
+	// Textures
+	if ( mDiffuseTexture ) BTHResourceManager::GetInstance()->FreeTexture(mDiffuseTexture);
+	if ( mNormalTexture ) BTHResourceManager::GetInstance()->FreeTexture(mNormalTexture);
 }
 
 void FBXModelPartD3D::Init( FBXModelD3D* parentModel, IBTHFbxModelPart* modelPart, int partIndex, ID3D11Device* dev, ID3D11DeviceContext* devCont)
 {
+	// Parent
 	mParentModel = parentModel;
 
+	// Is The ModelPart Skinned?
 	m_bSkinnedModel = modelPart->IsSkinnedModel();
 
+	// Load Model Data
 	mModelData = FBXModelPartDataD3DManager::GetInstance()->GetModelData(parentModel, modelPart, partIndex, dev, devCont);
 
+	// Default Data
 	mVB_Position = mModelData->mVB_Position;
 	mVB_Normal = mModelData->mVB_Normal;
 	mVB_Tangent = mModelData->mVB_Tangent;
 	mVB_TexCoord = mModelData->mVB_TexCoord;
 	mVB_BlendWeights = mModelData->mVB_BlendWeights;
 	mIB = mModelData->mIB;
-
-	mDiffuseTexture = mModelData->mDiffuseTexture;
-	mNormalTexture = mModelData->mNormalTexture;
-}
-
-void FBXModelPartD3D::Update(float dt)
-{
-
 }
 
 void FBXModelPartD3D::Render(float dt, Shader* shader, D3DXMATRIX viewProj, bool enableAnimation, ID3D11DeviceContext* devCont)
 {
-	shader->SetResource("txDiffuse", mDiffuseTexture ? mDiffuseTexture->GetResource() : NULL);
-	shader->SetResource("txNormal", mNormalTexture ? mNormalTexture->GetResource() : NULL);
+	// Diffuse Texture
+	if ( mDiffuseTexture )
+	{
+		shader->SetResource("txDiffuse", mDiffuseTexture->GetResource());
+	}
+	else if ( mModelData && mModelData->mDiffuseTexture )
+	{
+		shader->SetResource("txDiffuse", mModelData->mDiffuseTexture? mModelData->mDiffuseTexture->GetResource() : NULL);
+	}
+
+	// Normal Texture
+	if ( mNormalTexture )
+	{
+		shader->SetResource("txNormal", mNormalTexture->GetResource());
+	}
+	else if ( mModelData && mModelData->mNormalTexture )
+	{
+		shader->SetResource("txNormal", mModelData->mNormalTexture? mModelData->mNormalTexture->GetResource() : NULL);
+	}
+
+	// Skinning Property
 	shader->SetBool("g_bSkinning", enableAnimation ? m_bSkinnedModel : false);
 	
+	// World Matrix
 	if( enableAnimation && !m_bSkinnedModel )
 	{
 		D3DXMATRIX temp = mParentModel->GetGeometricOffset() * mParentModel->GetAnimationTransform();

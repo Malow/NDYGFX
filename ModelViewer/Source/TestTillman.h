@@ -727,6 +727,8 @@ void TillmanTest::PostTest()
 	delete [] testData;
 	//delete[] resourceFileNames;
 
+	GetGraphics()->DeleteTerrain(iT);
+	GetGraphics()->DeleteTerrain(iT2);
 	GetGraphics()->DeleteImage(iM);
 	GetGraphics()->DeleteImage(iM2);
 	GetGraphics()->DeleteImage(iM3);

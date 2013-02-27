@@ -32,7 +32,5 @@ extern "C"
 		virtual ~SceneManager();
 		
 		virtual IBTHFbxScene* GetScene(const char* filename);
-
-		virtual void UpdateScenes(float deltaTime, bool bEnableAnimation);
 	};
 }

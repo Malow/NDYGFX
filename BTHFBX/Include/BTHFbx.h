@@ -16,8 +16,6 @@ extern "C"
 	{
 	public:
 		virtual IBTHFbxScene* GetScene(const char* filename) = 0;
-
-		virtual void UpdateScenes(float deltaTime, bool bEnableAnimation) = 0;
 	};
 
 	DECLDIR IBTHFbx* InitBTHFbx();

@@ -62,6 +62,7 @@ bool AnimationController::SetCurrentAnimation(const std::string& strAnimationNam
 	if(i != m_AnimationsStr.end())
 	{
 		m_pCurrentAnimation = i->second;
+		SetCurrentKeyFrame(0);
 		return true;
 	}
 	else

@@ -8,6 +8,7 @@
 #include "BoneWeights.h"
 #include "AnimationController.h"
 #include "Curve.h"
+#include <mutex>
 
 #include <BTHFbxScene.h>
 #include <BTHFbxSkeleton.h>
@@ -21,6 +22,7 @@ class FBXSceneInstance : public IBTHFbxScene
 	Dictionary<Model*> m_Models;
 	std::vector<Curve>* m_Curves;
 
+	std::mutex zControllerMutex;
 	AnimationController* m_pAnimationController;
 	BTHFBX_AABB_DATA m_BoundingBox;
 

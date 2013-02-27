@@ -244,7 +244,6 @@ void SkeletonBone::SetBoundingBoxData(BTHFBX_AABB_DATA aabb)
 	m_OBB.Corners[5] = BTHFBX_VEC3( max.x, min.y, max.z ); // XyZ
 	m_OBB.Corners[6] = BTHFBX_VEC3( min.x, max.y, max.z ); // 
 	m_OBB.Corners[7] = BTHFBX_VEC3( max.x, max.y, max.z ); // XYZ (max)
-
 }
 
 void SkeletonBone::UpdateBoundingBoxDataFromVertex(BTHFBX_VEC3 vertexPosition)

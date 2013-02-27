@@ -84,16 +84,6 @@ IBTHFbxScene* SceneManager::GetScene(const char* fileName)
 	return sceneInstance;
 }
 
-void SceneManager::UpdateScenes(float deltaTime, bool bEnableAnimation)
-{
-	m_InstancesMutex.lock();
-	for(SCENE_INSTANCE_VEC::iterator i = m_SceneInstances.begin(); i != m_SceneInstances.end(); i++)
-	{
-		(*i)->UpdateScene(deltaTime, bEnableAnimation);
-	}
-	m_InstancesMutex.unlock();
-}
-
 bool SceneManager::InitializeFBXSdk()
 {
     // Get the file version number generate by the FBX SDK.
