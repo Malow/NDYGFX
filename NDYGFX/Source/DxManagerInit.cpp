@@ -378,9 +378,9 @@ HRESULT DxManager::Init()
 	}
 
 	this->Shader_FBX = new Shader();
-	if(FAILED(this->Shader_FBX->Init(Dx_Device, Dx_DeviceContext, "Shaders/BTTFBXViewer.fx", inputDescFBX, 6)))
+	if(FAILED(this->Shader_FBX->Init(Dx_Device, Dx_DeviceContext, "Shaders/DeferredFBX.fx", inputDescFBX, 6)))
 	{
-		MaloW::Debug("Failed to open BTTFBXViewer.fx");
+		MaloW::Debug("Failed to open DeferredFBX.fx");
 		return E_FAIL;
 	}
 

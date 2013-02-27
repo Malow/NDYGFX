@@ -443,9 +443,6 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\WorkingDir\Shaders\BTTFBXViewer.fx">
-      <Filter>Source Files\Engine\Shaders</Filter>
-    </FxCompile>
     <FxCompile Include="..\WorkingDir\Shaders\DebugBoundingSpheres.fx">
       <Filter>Source Files\Engine\Shaders</Filter>
     </FxCompile>
@@ -540,6 +537,9 @@
       <Filter>Source Files\Engine\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\WorkingDir\Shaders\FogEnclosement.fx">
+      <Filter>Source Files\Engine\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\WorkingDir\Shaders\DeferredFBX.fx">
       <Filter>Source Files\Engine\Shaders</Filter>
     </FxCompile>
   </ItemGroup>

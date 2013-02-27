@@ -176,7 +176,7 @@ void MaloWTest::RunTest(float diff)
 				GetGraphics()->GetEngineParameters().Maximized = false;
 				GetGraphics()->ResizeGraphicsEngine(1264, 947);
 			}*/
-			GetGraphics()->ReloadShaders(19);
+			GetGraphics()->ReloadShaders(1);
 			//MaloW::Debug("Diff: " + MaloW::convertNrToString(totDiff / nrofdiffs));
 			//GetGraphics()->ChangeShadowQuality(qual);
 
