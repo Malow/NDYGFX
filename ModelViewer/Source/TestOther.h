@@ -10,8 +10,6 @@ private:
 	iFBXMesh* copyrightedTempGuy;
 	iFBXMesh* soldier;
 
-
-
 	iTerrain* T;
 	unsigned int vertexSizes;
 	std::vector<float> heightData;
@@ -32,7 +30,6 @@ void OtherTest::PreTest()
 	copyrightedTempGuy->SetScale(0.2f);
 	soldier = GetGraphics()->CreateFBXMesh("Media/Soldier_animated_jump.fbx", Vector3(30.0f, 0.0f, -4.0f));
 	soldier->SetScale(0.05f);
-
 
 	vertexSizes = 2;
 	heightData.resize(vertexSizes*vertexSizes);

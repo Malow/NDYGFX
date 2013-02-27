@@ -3,6 +3,7 @@
 #include "Array.h"
 #include "Mesh.h"
 #include "iFBXMesh.h"
+#include <mutex>
 
 // FBX
 #include "BTHFBX\Shared\FBX\FBXSceneD3D.h"
@@ -19,7 +20,9 @@
 class FBXMesh : public Mesh, public virtual iFBXMesh
 {
 private:
+	std::mutex zSceneMutex;
 	FBXSceneD3D* zScene;
+
 	std::map< iMesh*, std::string > zBoundMeshes;
 
 public:

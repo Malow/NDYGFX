@@ -34,11 +34,6 @@ void FBXModelD3D::Init(IBTHFbxModel* model, ID3D11Device* dev, ID3D11DeviceConte
 	}
 }
 
-void FBXModelD3D::Update(float dt)
-{
-
-}
-
 void FBXModelD3D::Render(float dt, Shader* shader, D3DXMATRIX viewProj, bool enableAnimation, ID3D11DeviceContext* devCont)
 {
 	mGeometricOffset = *(D3DXMATRIX*)mBTHFBXModel->GetGeometricOffset();

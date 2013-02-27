@@ -27,6 +27,8 @@ extern "C"
 		virtual BTHFBX_AABB_DATA GetBoundingBoxData() = 0;
 
 		virtual BTHFBX_RAY_BOX_RESULT RayVsScene(const BTHFBX_RAY& ray, BTHFBX_MATRIX* worldMatrix) = 0;
+		
+		virtual void UpdateScene(float fElapsedTime, bool bEnableAnimation) = 0;
 
 		// DEBUG!!!!!
 		//virtual void InitializeDeviceObjects(void* pd3dDeviceContext) = 0;

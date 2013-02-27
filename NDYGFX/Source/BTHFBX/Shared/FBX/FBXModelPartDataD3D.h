@@ -3,9 +3,18 @@
 #include "FBXModelPartD3D.h"
 #include <map>
 
+class FBXModelD3D;
+class IBTHFbxModelPart;
+
+#pragma warning ( push )
+#pragma warning ( disable : 4512 ) // Warning C4512: 'FBXModelPartDataD3D' : assignment operator could not be generated
+
+
 class FBXModelPartDataD3D
 {
 public:
+	const std::string zID;
+
 	Buffer*						mVB_Position;
 	Buffer*						mVB_Normal;
 	Buffer*						mVB_Tangent;
@@ -16,16 +25,17 @@ public:
 	BTHTexture*					mDiffuseTexture;
 	BTHTexture*					mNormalTexture;
 
-	FBXModelPartDataD3D();
+	FBXModelPartDataD3D(const std::string& uniqueID);
 	~FBXModelPartDataD3D();
 
-	void Init(class FBXModelD3D* parentModel, IBTHFbxModelPart* modelPart, ID3D11Device* dev, ID3D11DeviceContext* devCont);
+	void Init(FBXModelD3D* parentModel, IBTHFbxModelPart* modelPart, ID3D11Device* dev, ID3D11DeviceContext* devCont);
 };
 
-typedef std::map<std::string, FBXModelPartDataD3D*> MODEL_PART_DATA_MAP;
 class FBXModelPartDataD3DManager
 {
-	MODEL_PART_DATA_MAP	mModelParts;
+	std::map<std::string, FBXModelPartDataD3D*>	mModelParts;
+	std::map<FBXModelPartDataD3D*, unsigned int> zRefCounters;
+
 	FBXModelPartDataD3DManager() {}
 	~FBXModelPartDataD3DManager();
 
@@ -34,7 +44,10 @@ public:
 	static FBXModelPartDataD3DManager* GetInstance();
 	static void DeleteInstance();
 
-	FBXModelPartDataD3D* GetModelData(class FBXModelD3D* parentModel, IBTHFbxModelPart* modelPart, int partIndex, ID3D11Device* dev, ID3D11DeviceContext* devCont);
+	FBXModelPartDataD3D* GetModelData(FBXModelD3D* parentModel, IBTHFbxModelPart* modelPart, int partIndex, ID3D11Device* dev, ID3D11DeviceContext* devCont);
+	void FreeModelData(FBXModelPartDataD3D*& data);
 
 	void Cleanup();
 };
+
+#pragma warning ( pop )

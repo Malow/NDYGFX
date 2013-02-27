@@ -13,7 +13,7 @@ void AnimationKeyFrames::AddKeyFrame(const FbxMatrix& matTransform2)
 	m_Quarternions.push_back(AnimationQuaternionKeyFrame(matTransform2));
 }
 
-const AnimationQuaternionKeyFrame& AnimationKeyFrames::GetKeyFrameQuaternion(int nKeyFrame)
+const AnimationQuaternionKeyFrame& AnimationKeyFrames::GetKeyFrameQuaternion(unsigned int nKeyFrame)
 {
 	return m_Quarternions[nKeyFrame];
 }

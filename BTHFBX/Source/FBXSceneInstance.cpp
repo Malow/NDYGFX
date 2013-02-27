@@ -31,6 +31,7 @@ FBXSceneInstance::~FBXSceneInstance()
 
 void FBXSceneInstance::InitInstance()
 {
+	// Bounding Box
 	m_BoundingBox = mScene->m_BoundingBox;
 
 	// Models
@@ -39,8 +40,6 @@ void FBXSceneInstance::InitInstance()
 		Model* srcModel = mScene->GetModel(i);
 		m_Models.Add(srcModel->GetName(), new Model(srcModel));
 	}
-
-	// ProcessNode(mScene->GetScene()->GetRootNode(), FbxNodeAttribute::eSkeleton);
 
 	// Copy Skeleton
 	if ( mScene->GetSkeleton() )
@@ -74,6 +73,7 @@ void FBXSceneInstance::InitInstance()
 		m_pAnimationController = new AnimationController(mScene->m_pAnimationController);
 	}
 
+	// Curves
 	m_Curves = &mScene->m_Curves;
 }
 
