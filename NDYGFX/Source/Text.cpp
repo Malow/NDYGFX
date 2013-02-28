@@ -9,6 +9,7 @@ Text::Text(string text, D3DXVECTOR2 position, float size)
 
 	this->position = position;
 	this->size = size;
+	this->color = D3DXVECTOR3(0, 0, 0);
 	this->font = new Font();
 	this->font->textureResource = NULL;
 	for(int i = 0; i < 256; i++)
@@ -69,4 +70,9 @@ float Text::GetSize() const
 void Text::AppendText( const char* app )
 {
 	this->text += app;
+}
+
+void Text::SetColor( Vector3 color )
+{
+	this->color = D3DXVECTOR3(color.x / 255.0f, color.y / 255.0f, color.z / 255.0f);
 }

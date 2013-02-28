@@ -48,6 +48,7 @@ cbuffer EveryString
 {
 	int NrOfChars;
 	int text[40];
+	float3 overlayColor;
 };
 
 //-----------------------------------------------------------------------------------------
@@ -145,6 +146,7 @@ void GS(point VSIn input[1], inout TriangleStream<PSSceneIn> triStream)
 float4 PSScene(PSSceneIn input) : SV_Target
 {	
 	float4 tex = tex2D.Sample(linearSampler, input.tex);
+	tex.xyz += overlayColor;
 	return tex;
 }
 
