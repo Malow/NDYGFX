@@ -115,6 +115,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	bool toggleLight = true;
 	bool go = true;
 	float tempInt = 10.0f;
+	GetGraphics()->Update();
 	while(GetGraphics()->IsRunning() && go)
 	{
 		Sleep(10);
@@ -148,7 +149,10 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		ot.RunTest(diff);
 #endif
 #ifdef REALISTICTESTSCENE
-		trs.RunTest(diff);
+		if(trs.RunTest(diff))
+		{
+			go = false;
+		}
 #endif
 		//************************************* END OF RUN TESTS **********************
 

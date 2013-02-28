@@ -13,20 +13,47 @@ MaloWPerformance::~MaloWPerformance()
 
 }
 
-
-void MaloWPerformance::PostMeasure( string perfName )
+void MaloWPerformance::PreMeasure( string perfName, int tier )
 {
+	tier--;
 	LARGE_INTEGER li;
 	QueryPerformanceCounter(&li);
 	float Timer = (li.QuadPart / PCFreq);
 
-	for(int i = 0; i < this->perfs.size(); i++)
+	bool found = false;
+	for(int i = 0; i < this->perfs[tier].size(); i++)
 	{
-		if(this->perfs.get(i).name == perfName)
+		if(this->perfs[tier].get(i).name == perfName)
 		{
-			float timeDiff = Timer - this->perfs[i].lastClock;
-			this->perfs[i].totalTime += timeDiff;
-			this->perfs[i].measures++;
+			this->perfs[tier][i].lastClock = Timer;
+			found = true;
+		}
+	}
+	if(!found)
+	{
+		PerformanceMeasurement pm;
+		pm.name = perfName;
+		pm.totalTime = 0.0f;
+		pm.measures = 1;
+		pm.lastClock = Timer;
+		this->perfs[tier].add(pm);
+	}
+}
+
+void MaloWPerformance::PostMeasure( string perfName, int tier )
+{
+	tier--;
+	LARGE_INTEGER li;
+	QueryPerformanceCounter(&li);
+	float Timer = (li.QuadPart / PCFreq);
+
+	for(int i = 0; i < this->perfs[tier].size(); i++)
+	{
+		if(this->perfs[tier].get(i).name == perfName)
+		{
+			float timeDiff = Timer - this->perfs[tier][i].lastClock;
+			this->perfs[tier][i].totalTime += timeDiff;
+			this->perfs[tier][i].measures++;
 		}
 	}
 }
@@ -49,39 +76,38 @@ void MaloWPerformance::GenerateReport(GraphicsEngineParams gep)
 
 	if(gep.MaxFPS > 0)
 		writeFile << "WARNING, MAXFPS IS SET!" << endl << endl;
+	else
+		writeFile << endl;
 
-	for(int i = 0; i < this->perfs.size(); i++)
+	for(int u = 0; u < NR_OF_TIERS; u++)
 	{
-		writeFile << this->perfs[i].name << ": " << endl << 
-			"Avg: " << this->perfs[i].totalTime / this->perfs[i].measures << "     Tot:" <<
-			this->perfs[i].totalTime << ", Measures: " << this->perfs[i].measures << endl << endl;
+		writeFile << "           Tier " << u + 1 << ": " << endl;
+		for(int i = 0; i < this->perfs[u].size(); i++)
+		{
+			writeFile << this->perfs[u][i].name << ": " << endl << 
+				"Avg: " << this->perfs[u][i].totalTime / this->perfs[u][i].measures << "     Tot:" <<
+				this->perfs[u][i].totalTime << ", Measures: " << this->perfs[u][i].measures << endl << endl;
+		}
+		writeFile << endl;
 	}
 
 	writeFile.close();
 }
 
-void MaloWPerformance::PreMeasure( string perfName )
+void MaloWPerformance::ResetAll()
 {
 	LARGE_INTEGER li;
 	QueryPerformanceCounter(&li);
 	float Timer = (li.QuadPart / PCFreq);
 
-	bool found = false;
-	for(int i = 0; i < this->perfs.size(); i++)
+	for(int u = 0; u < NR_OF_TIERS; u++)
 	{
-		if(this->perfs.get(i).name == perfName)
+		for(int i = 0; i < this->perfs[u].size(); i++)
 		{
-			this->perfs[i].lastClock = Timer;
-			found = true;
+			this->perfs[u][i].measures = 1;
+			this->perfs[u][i].totalTime = 0.0f;
+			this->perfs[u][i].lastClock = Timer;
 		}
 	}
-	if(!found)
-	{
-		PerformanceMeasurement pm;
-		pm.name = perfName;
-		pm.totalTime = 0.0f;
-		pm.measures = 1;
-		pm.lastClock = Timer;
-		this->perfs.add(pm);
-	}
 }
+
