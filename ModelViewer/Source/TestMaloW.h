@@ -86,7 +86,6 @@ void MaloWTest::PreTest()
 	//tempguy->Scale(0.05f);
 
 	cube = GetGraphics()->CreateMesh("Media/Cube_1.obj", Vector3(25, 40, 25));
-	cube->SetScale(1.0f);
 }
 
 void MaloWTest::RunTest(float diff)
@@ -138,14 +137,14 @@ void MaloWTest::RunTest(float diff)
 	
 	//cd = GetGraphics()->GetPhysicsEngine()->GetCollisionRayMesh(GetGraphics()->GetCamera()->GetPosition(), 
 	//	GetGraphics()->GetCamera()->GetForward(), tempguy);
-	/*
-	if(!cd.collision)
+	
+	//if(!cd.collision)
 		cd = GetGraphics()->GetPhysicsEngine()->GetCollisionRayMesh(GetGraphics()->GetCamera()->GetPosition(), 
 		GetGraphics()->GetCamera()->Get3DPickingRay(), deer);
-	*/
+	/*
 	cd = GetGraphics()->GetPhysicsEngine()->GetCollisionRayMesh(GetGraphics()->GetCamera()->GetPosition(), 
 		GetGraphics()->GetCamera()->Get3DPickingRay(), cube);
-
+		*/
 
 	if(cd.BoundingSphereCollision)
 	{
