@@ -13,6 +13,12 @@
   <ItemGroup>
     <ClCompile Include="Source\Graphics.cpp" />
     <ClCompile Include="Source\ModelViewer.cpp" />
+    <ClCompile Include="Source\World\Entity.cpp" />
+    <ClCompile Include="Source\World\EntityList.cpp" />
+    <ClCompile Include="Source\World\Sector.cpp" />
+    <ClCompile Include="Source\World\World.cpp" />
+    <ClCompile Include="Source\World\WorldFile.cpp" />
+    <ClCompile Include="Source\World\WorldRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Graphics.h" />
@@ -22,6 +28,16 @@
     <ClInclude Include="Source\TestRealisticScene.h" />
     <ClInclude Include="Source\TestTillman.h" />
     <ClInclude Include="Source\Windows.h" />
+    <ClInclude Include="Source\World\BlendValues.h" />
+    <ClInclude Include="Source\World\CircleAndRect.h" />
+    <ClInclude Include="Source\World\Entity.h" />
+    <ClInclude Include="Source\World\EntityList.h" />
+    <ClInclude Include="Source\World\Observer.h" />
+    <ClInclude Include="Source\World\Sector.h" />
+    <ClInclude Include="Source\World\World.h" />
+    <ClInclude Include="Source\World\WorldEvents.h" />
+    <ClInclude Include="Source\World\WorldFile.h" />
+    <ClInclude Include="Source\World\WorldRenderer.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{E44C1BA5-FE53-4A74-B3DB-0F4469F47014}</ProjectGuid>

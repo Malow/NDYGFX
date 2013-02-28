@@ -1,5 +1,5 @@
 #define TEST //<----------------------- kommentera ut vid behov **********************
-#define REALISTICTESTSCENE
+//#define REALISTICTESTSCENE //<----------------------- kommentera ut vid behov **********************
 
 #if defined(DEBUG) || defined(_DEBUG)
 #include <vld.h>
@@ -8,11 +8,16 @@
 
 #include "Graphics.h"
 #include "..\Source\MaloWFileDebug.h"
+
+#ifdef TEST
 #include "TestMaloW.h"
 #include "TestTillman.h"
 #include "TestOther.h"
-#include "TestRealisticScene.h"
+#endif
 
+#ifdef REALISTICTESTSCENE
+#include "TestRealisticScene.h"
+#endif
 
 void ReplaceSlashes(string& str, char replace, char with)
 {
