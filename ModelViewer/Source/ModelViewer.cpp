@@ -1,5 +1,6 @@
-#define TEST //<----------------------- kommentera ut vid behov **********************
-//#define REALISTICTESTSCENE //<----------------------- kommentera ut vid behov **********************
+//#define TEST //<----------------------- kommentera ut vid behov **********************
+#define REALISTICTESTSCENE //<----------------------- kommentera ut vid behov **********************
+
 
 #if defined(DEBUG) || defined(_DEBUG)
 #include <vld.h>

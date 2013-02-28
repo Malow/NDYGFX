@@ -6,7 +6,7 @@
 #include <fstream>
 #include "GraphicsEngineParameters.h"
 
-#define NR_OF_TIERS 3
+#define NR_OF_TIERS 5
 
 struct PerformanceMeasurement
 {
@@ -28,7 +28,7 @@ class MaloWPerformance
 {
 private:
 	float PCFreq;
-	MaloW::Array<PerformanceMeasurement> perfs[3];
+	MaloW::Array<PerformanceMeasurement> perfs[NR_OF_TIERS];
 
 public:
 	MaloWPerformance();

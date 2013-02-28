@@ -258,16 +258,16 @@ LRESULT CALLBACK GraphicsEngineImp::WndProc(HWND hWnd, UINT message, WPARAM wPar
 		case WM_SYSKEYUP:
 			break;
 		case WM_SYSCHAR:
-			if(gfx)
+			/*if(gfx)
 			{
 				if((lParam >> 31) & 1)
 					gfx->GetKeyList()->KeyUp(wParam);
 				else 
 					gfx->GetKeyList()->KeyDown(wParam);
 			break;
-			}
+			}*/
 		case WM_MENUCHAR:
-			if (gfx) gfx->GetKeyList()->KeyUp(LOWORD(wParam));
+			//if (gfx) gfx->GetKeyList()->KeyUp(LOWORD(wParam));
 			break;
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);

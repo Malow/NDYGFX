@@ -178,7 +178,7 @@ public:
 	// Logic
 	virtual float Update();
 	virtual bool IsRunning();
-	virtual void StartRendering() { this->dx->StartRender = true; }
+	virtual void StartRendering() { this->dx->StartRendering(); }
 	virtual void ResizeGraphicsEngine(unsigned int width, unsigned int height);
 
 	// Settings

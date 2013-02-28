@@ -29,10 +29,10 @@ cbuffer EveryStrip
 	bool textured;
 	bool useNormalMap;
 
-	float4 AmbientLight;
+	float4 AmbientLight; //MaloW Opt
 	float SpecularPower;
-	float4 SpecularColor;
-	float4 DiffuseColor;
+	float4 SpecularColor; //MaloW Opt
+	float4 DiffuseColor; //MaloW Opt
 	float t;
 };
 cbuffer EveryMesh
@@ -140,7 +140,7 @@ PSout PSScene(PSSceneIn input) : SV_Target
 		if ( textureColor.a < 0.5f )
 			discard;
 	}
-	float4 finalColor = (textureColor + input.Color) * DiffuseColor;
+	float4 finalColor = (textureColor + input.Color) * DiffuseColor; // MaloW Opt
 
 	finalColor.w = (float)specialColor;
 
@@ -155,6 +155,7 @@ PSout PSScene(PSSceneIn input) : SV_Target
 	output.Position.w = -1.0f;
 
 	output.Specular = SpecularColor;
+
 	output.Specular.w = SpecularPower;
 
 	if(useNormalMap)

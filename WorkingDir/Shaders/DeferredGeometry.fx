@@ -48,9 +48,11 @@ SamplerState linearSampler
 //-----------------------------------------------------------------------------------------
 // Input and Output Structures
 //-----------------------------------------------------------------------------------------
-
-float4 CameraPosition;
-float FarClip;
+cbuffer EveryFrame
+{
+	float4 CameraPosition;
+	float FarClip;
+};
 
 cbuffer EveryStrip
 {

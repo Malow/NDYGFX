@@ -1136,3 +1136,8 @@ void DxManager::SetEnclosingFog( Vector3 center, float radius, float fadeFactor 
 	}
 }
 
+void DxManager::StartRendering()
+{
+	this->StartRender = true;
+}
+

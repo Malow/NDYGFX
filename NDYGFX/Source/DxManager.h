@@ -215,14 +215,13 @@ private:
 	HRESULT Init();
 
 	int TriangleCount;
-
+	bool StartRender;
 
 public:
-	bool StartRender;
 	DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam);
 	virtual ~DxManager();
 
-
+	void StartRendering();
 	virtual void Life();
 	HRESULT Render();
 	HRESULT Update(float deltaTime);

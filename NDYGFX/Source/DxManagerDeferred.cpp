@@ -507,6 +507,10 @@ void DxManager::RenderDecals()
 
 void DxManager::RenderDeferredGeoObjects()
 {
+#ifdef MALOWTESTPERF
+	this->perf.PreMeasure("Renderer - Render Deferred Geo Objects Static", 4);
+#endif
+
 	this->Dx_DeviceContext->OMSetRenderTargets(this->NrOfRenderTargets, this->Dx_GbufferRTs, this->Dx_DepthStencilView);
 
 	D3DXMATRIX world, view, proj, wvp, worldInverseTranspose;
@@ -692,7 +696,12 @@ void DxManager::RenderDeferredGeoObjects()
 	this->Shader_DeferredGeometry->SetResource("tex2D", NULL);
 	this->Shader_DeferredGeometry->Apply(0);
 
-
+#ifdef MALOWTESTPERF
+	this->perf.PostMeasure("Renderer - Render Deferred Geo Objects Static", 4);
+#endif
+#ifdef MALOWTESTPERF
+	this->perf.PreMeasure("Renderer - Render Deferred Geo Objects Animated", 4);
+#endif
 	
 	// Normal Animated meshes
 	this->Shader_DeferredAnimatedGeometry->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetPositionD3DX(), 1));
@@ -752,18 +761,17 @@ void DxManager::RenderDeferredGeoObjects()
 
 					for(int u = 0; u < stripsOne->size(); u++)
 					{
-
 						Object3D* objOne = stripsOne->get(u)->GetRenderObject();
 						Object3D* objTwo = stripsTwo->get(u)->GetRenderObject();
 
 						this->Dx_DeviceContext->IASetPrimitiveTopology(objOne->GetTopology());
 
 						// Setting lightning from material
-						this->Shader_DeferredAnimatedGeometry->SetFloat4("SpecularColor", D3DXVECTOR4(stripsOne->get(u)->GetMaterial()->SpecularColor, 1));
+						this->Shader_DeferredAnimatedGeometry->SetFloat4("SpecularColor", D3DXVECTOR4(stripsOne->get(u)->GetMaterial()->SpecularColor, 1)); //MaloW Opt
 						this->Shader_DeferredAnimatedGeometry->SetFloat("SpecularPower", stripsOne->get(u)->GetMaterial()->SpecularPower);
-						this->Shader_DeferredAnimatedGeometry->SetFloat4("AmbientLight", D3DXVECTOR4(stripsOne->get(u)->GetMaterial()->AmbientColor, 1));
-						this->Shader_DeferredAnimatedGeometry->SetFloat4("DiffuseColor", D3DXVECTOR4(stripsOne->get(u)->GetMaterial()->DiffuseColor, 1));
-
+						this->Shader_DeferredAnimatedGeometry->SetFloat4("AmbientLight", D3DXVECTOR4(stripsOne->get(u)->GetMaterial()->AmbientColor, 1)); //MaloW Opt
+						this->Shader_DeferredAnimatedGeometry->SetFloat4("DiffuseColor", D3DXVECTOR4(stripsOne->get(u)->GetMaterial()->DiffuseColor, 1)); //MaloW Opt
+							
 						Buffer* vertsOne = objOne->GetVertBuff();
 						Buffer* vertsTwo = objTwo->GetVertBuff();
 
@@ -818,9 +826,9 @@ void DxManager::RenderDeferredGeoObjects()
 						}
 
 						this->Shader_DeferredAnimatedGeometry->Apply(0);
-
 						//Draw
 						this->Dx_DeviceContext->Draw(vertsOne->GetElementCount(), 0);
+
 						//Count(debug)
 						CurrentNrOfDrawCalls++;
 					}
@@ -869,6 +877,10 @@ void DxManager::RenderDeferredGeoObjects()
 
 	this->NrOfDrawnVertices = CurrentRenderedNrOfVertices;
 	this->NrOfDrawCalls = CurrentNrOfDrawCalls;
+
+#ifdef MALOWTESTPERF
+	this->perf.PostMeasure("Renderer - Render Deferred Geo Objects Animated", 4);
+#endif
 }
 void DxManager::RenderDeferredGeometryInstanced()
 {
