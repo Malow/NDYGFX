@@ -86,6 +86,8 @@ void MaloWTest::PreTest()
 	//tempguy->Scale(0.05f);
 
 	cube = GetGraphics()->CreateMesh("Media/Cube_1.obj", Vector3(25, 40, 25));
+	iText* txt = GetGraphics()->CreateText("Lolboll", Vector2(100, 100), 1.0f, "Media/Fonts/1");
+	txt->SetColor(Vector3(255.0f, -100.0f, -100.0f));
 }
 
 void MaloWTest::RunTest(float diff)

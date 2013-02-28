@@ -911,6 +911,7 @@ void DxManager::RenderText()
 		if(drawText.size() > 40)
 			drawText = drawText.substr(0, 40);
 
+		this->Shader_Text->SetFloat3("overlayColor", txt->GetColor());
 		this->Shader_Text->SetFloat("NrOfChars", (float)drawText.size());
 		for(int t = 0; t < (int)drawText.size(); t++)
 		{

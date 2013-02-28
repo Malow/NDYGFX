@@ -28,6 +28,7 @@ private:
 	D3DXVECTOR2 position;
 	float size;
 	Font* font;
+	D3DXVECTOR3 color;
 
 	void ToUpper();
 
@@ -35,6 +36,8 @@ public:
 	Text(std::string text, D3DXVECTOR2 position, float size);
 	virtual ~Text();
 	
+	virtual void SetColor(Vector3 color);
+	virtual D3DXVECTOR3 GetColor() const { return this->color; }
 	virtual void SetText(const char* text);
 	virtual const char* GetText() const;
 	virtual void AppendText(const char* app);
