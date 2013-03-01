@@ -296,6 +296,7 @@ public:
 	void ResizeEngine(unsigned int width, unsigned int height);
 	ID3D11Device* GetDevice() { return this->Dx_Device; }
 	ID3D11DeviceContext* GetContextDevice() { return this->Dx_DeviceContext; }
+	void ResetPerfLogging();
 };
 
 #endif

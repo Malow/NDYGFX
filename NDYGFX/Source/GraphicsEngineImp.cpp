@@ -1071,3 +1071,8 @@ void GraphicsEngineImp::SetEnclosingFogEffect( Vector3 center, float radius, flo
 {
 	this->dx->SetEnclosingFog(center, radius, fogfadefactor);
 }
+
+void GraphicsEngineImp::ResetPerfLogging()
+{
+	this->dx->ResetPerfLogging();
+}

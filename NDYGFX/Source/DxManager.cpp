@@ -1146,3 +1146,10 @@ void DxManager::StartRendering()
 	this->StartRender = true;
 }
 
+void DxManager::ResetPerfLogging()
+{
+#ifdef MALOWTESTPERF
+	this->perf.ResetAll();
+#endif
+}
+

@@ -75,6 +75,28 @@ bool TestRealisticScene::RunTest(float diff)
 	Vector3 pos;
 	if(path == 0)
 	{
+		if(GetGraphics()->GetKeyListener()->IsPressed(VK_RETURN))
+		{
+			GetGraphics()->GetCamera()->SetPosition(Vector3(world->GetWorldCenter().x, 20.0f, world->GetWorldCenter().y));
+			path++;
+		}
+	}
+	else if(path == 1)
+	{
+		float diffylol = 0.0f;
+		while(diffylol < 3000.0f)
+		{
+			diffylol += GetGraphics()->Update();
+			wa->position = GetGraphics()->GetCamera()->GetPosition().GetXZ();
+			wa->radius = GetGraphics()->GetEngineParameters().FarClip;
+			world->Update();
+			wr->Update();
+		}
+		GetGraphics()->ResetPerfLogging();
+		path++;
+	}
+	else if(path == 2)
+	{
 		GetGraphics()->GetCamera()->SetForward(Vector3(1, 0, 1));
 		GetGraphics()->GetCamera()->MoveForward(diff * 10.0f);
 		pos = GetGraphics()->GetCamera()->GetPosition();
@@ -83,7 +105,7 @@ bool TestRealisticScene::RunTest(float diff)
 		if(GetGraphics()->GetCamera()->GetPosition().x > 2000)
 			path++;
 	}
-	else if(path == 1)
+	else if(path == 3)
 	{
 		GetGraphics()->GetCamera()->SetForward(Vector3(-1, 0, -1));
 		GetGraphics()->GetCamera()->MoveForward(diff * 10.0f);
