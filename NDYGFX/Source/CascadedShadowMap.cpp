@@ -262,7 +262,7 @@ void CascadedShadowMap::Init(ID3D11Device* g_Device, int quality)
 	CalcShadowMappingSplitDepths();
 }
 
-D3DXMATRIX CascadedShadowMap::GetViewProjMatrix(int i)
+D3DXMATRIX& CascadedShadowMap::GetViewProjMatrix(int i)
 {
 	return this->viewProj[i];
 }

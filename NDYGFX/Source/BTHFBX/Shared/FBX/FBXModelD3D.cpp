@@ -34,14 +34,14 @@ void FBXModelD3D::Init(IBTHFbxModel* model, ID3D11Device* dev, ID3D11DeviceConte
 	}
 }
 
-void FBXModelD3D::Render(float dt, Shader* shader, D3DXMATRIX viewProj, bool enableAnimation, ID3D11DeviceContext* devCont)
+void FBXModelD3D::Render(float dt, Shader* shader, bool enableAnimation, ID3D11DeviceContext* devCont)
 {
 	mGeometricOffset = *(D3DXMATRIX*)mBTHFBXModel->GetGeometricOffset();
 	mAnimationTransform = *(D3DXMATRIX*)mBTHFBXModel->GetAnimationTransform();
 
 	for(unsigned int i = 0; i < mParts.size(); i++)
 	{
-		mParts[i]->Render(dt, shader, viewProj, enableAnimation, devCont);
+		mParts[i]->Render(dt, shader, enableAnimation, devCont);
 	}
 }
 
@@ -55,13 +55,13 @@ const D3DXMATRIX& FBXModelD3D::GetAnimationTransform()
 	return mAnimationTransform;
 }
 
-void FBXModelD3D::RenderShadow(float dt, Shader* shader, D3DXMATRIX viewProj, bool enableAnimation, ID3D11DeviceContext* devCont)
+void FBXModelD3D::RenderShadow(float dt, Shader* shader, bool enableAnimation, ID3D11DeviceContext* devCont)
 {
 	mGeometricOffset = *(D3DXMATRIX*)mBTHFBXModel->GetGeometricOffset();
 	mAnimationTransform = *(D3DXMATRIX*)mBTHFBXModel->GetAnimationTransform();
 
 	for(unsigned int i = 0; i < mParts.size(); i++)
 	{
-		mParts[i]->RenderShadow(dt, shader, viewProj, enableAnimation, devCont);
+		mParts[i]->RenderShadow(dt, shader, enableAnimation, devCont);
 	}
 }

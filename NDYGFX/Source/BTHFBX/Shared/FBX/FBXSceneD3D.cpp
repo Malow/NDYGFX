@@ -43,7 +43,7 @@ void FBXSceneD3D::Update(float dt)
 	mFBXScene->UpdateScene(dt, true);
 }
 
-void FBXSceneD3D::Render(float dt, D3DXMATRIX world, D3DXMATRIX camProj, D3DXMATRIX camView, Shader* mShader, ID3D11DeviceContext* devCont)
+void FBXSceneD3D::Render(float dt, D3DXMATRIX& world, D3DXMATRIX& camProj, D3DXMATRIX& camView, D3DXMATRIX& camViewProj, Shader* mShader, ID3D11DeviceContext* devCont)
 {
 	devCont->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
@@ -59,18 +59,16 @@ void FBXSceneD3D::Render(float dt, D3DXMATRIX world, D3DXMATRIX camProj, D3DXMAT
 	mShader->SetMatrix("g_mScale", world);
 	mShader->SetMatrix("gWorld", world);
 
-	D3DXMATRIX vp = camView * camProj;
-
 	mShader->SetMatrix("gView", camView);
 	mShader->SetMatrix("gProj", camProj);
-	mShader->SetMatrix("gViewProj", vp);
-	mShader->SetMatrix("gWVP", world * vp);
+	mShader->SetMatrix("gViewProj", camViewProj);
+	mShader->SetMatrix("gWVP", world * camViewProj);
 	
 	mShader->Apply(0);
 
 	for(unsigned int i = 0; i < mModels.size(); i++)
 	{
-		mModels[i]->Render(dt, mShader, vp, mFBXSkeleton != NULL ? true : false, devCont);
+		mModels[i]->Render(dt, mShader, mFBXSkeleton != NULL ? true : false, devCont);
 	}
 }
 
@@ -89,7 +87,7 @@ BTHFBX_RAY_BOX_RESULT FBXSceneD3D::RayVsScene(const BTHFBX_RAY& ray, BTHFBX_MATR
 	return mFBXScene->RayVsScene(ray, worldMatrix);
 }
 
-void FBXSceneD3D::RenderShadow( float dt, D3DXMATRIX world, D3DXMATRIX lightViewProj, Shader* mShader, ID3D11DeviceContext* devCont )
+void FBXSceneD3D::RenderShadow( float dt, D3DXMATRIX& world, D3DXMATRIX& lightViewProj, Shader* mShader, ID3D11DeviceContext* devCont )
 {
 	devCont->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
@@ -110,6 +108,6 @@ void FBXSceneD3D::RenderShadow( float dt, D3DXMATRIX world, D3DXMATRIX lightView
 
 	for(unsigned int i = 0; i < mModels.size(); i++)
 	{
-		mModels[i]->RenderShadow(dt, mShader, lightViewProj, mFBXSkeleton != NULL ? true : false, devCont);
+		mModels[i]->RenderShadow(dt, mShader, mFBXSkeleton != NULL ? true : false, devCont);
 	}
 }

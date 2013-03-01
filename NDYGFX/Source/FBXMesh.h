@@ -37,8 +37,8 @@ public:
 	virtual bool LoadFromFile(string file, IBTHFbx* fbx, ID3D11Device* dev, ID3D11DeviceContext* devCont );
 
 	void Update(float dt);
-	void Render(float dt, D3DXMATRIX camProj, D3DXMATRIX camView, Shader* shad, ID3D11DeviceContext* devCont);
-	void RenderShadow(float dt, D3DXMATRIX lightViewProj, Shader* shad, ID3D11DeviceContext* devCont);
+	void Render(float dt, D3DXMATRIX& camProj, D3DXMATRIX& camView, D3DXMATRIX& camViewProj, Shader* shad, ID3D11DeviceContext* devCont);
+	void RenderShadow(float dt, D3DXMATRIX& lightViewProj, Shader* shad, ID3D11DeviceContext* devCont);
 
 	virtual bool SetAnimation(unsigned int ani);
 	virtual bool SetAnimation(const char* name);

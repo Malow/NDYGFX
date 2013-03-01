@@ -32,8 +32,8 @@ public:
 
 	void Init(IBTHFbxModel* model, ID3D11Device* dev, ID3D11DeviceContext* devCont);
 
-	void Render(float dt, Shader* shader, D3DXMATRIX viewProj, bool enableAnimation, ID3D11DeviceContext* devCont);
-	void RenderShadow(float dt, Shader* shader, D3DXMATRIX viewProj, bool enableAnimation, ID3D11DeviceContext* devCont);
+	void Render(float dt, Shader* shader, bool enableAnimation, ID3D11DeviceContext* devCont);
+	void RenderShadow(float dt, Shader* shader, bool enableAnimation, ID3D11DeviceContext* devCont);
 
 	const D3DXMATRIX& GetGeometricOffset();
 	const D3DXMATRIX& GetAnimationTransform();

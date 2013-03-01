@@ -45,13 +45,13 @@ void FBXMesh::Update( float dt )
 	}
 }
 
-void FBXMesh::Render(float dt, D3DXMATRIX camProj, D3DXMATRIX camView, Shader* shad, ID3D11DeviceContext* devCont)
+void FBXMesh::Render(float dt, D3DXMATRIX& camProj, D3DXMATRIX& camView, D3DXMATRIX& camViewProj, Shader* shad, ID3D11DeviceContext* devCont)
 {
 	this->RecreateWorldMatrix();
 	D3DXMATRIX world = this->GetWorldMatrix();
 
 	zSceneMutex.lock();
-	this->zScene->Render(dt, world, camProj, camView, shad, devCont );
+	this->zScene->Render(dt, world, camProj, camView, camViewProj, shad, devCont );
 	zSceneMutex.unlock();
 }
 
@@ -179,7 +179,7 @@ bool FBXMesh::GetBonePosition(const std::string& name, float& x, float& y, float
 	return false;
 }
 
-void FBXMesh::RenderShadow( float dt, D3DXMATRIX lightViewProj, Shader* shad, ID3D11DeviceContext* devCont )
+void FBXMesh::RenderShadow( float dt, D3DXMATRIX& lightViewProj, Shader* shad, ID3D11DeviceContext* devCont )
 {
 	this->RecreateWorldMatrix();
 	D3DXMATRIX world = this->GetWorldMatrix();

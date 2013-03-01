@@ -536,8 +536,7 @@ void DxManager::RenderShadowMap()
 		for (int l = 0; l < this->lights.size(); l++)
 		{
 			Dx_DeviceContext->OMSetRenderTargets(0, 0, this->lights[l]->GetShadowMapDSV());
-			D3D11_VIEWPORT wp = this->lights[l]->GetShadowMapViewPort();
-			Dx_DeviceContext->RSSetViewports(1, &wp);
+			Dx_DeviceContext->RSSetViewports(1, &this->lights[l]->GetShadowMapViewPort());
 			Dx_DeviceContext->ClearDepthStencilView(this->lights[l]->GetShadowMapDSV(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 
 			//Static meshes
@@ -972,13 +971,12 @@ void DxManager::RenderCascadedShadowMap()
 	if(this->useSun && this->useShadow) //* TILLMAN - sun ska också inte ligga här?*
 	{
 		D3DXMATRIX wvp;
-		D3DXMatrixIdentity(&wvp);
+		//D3DXMatrixIdentity(&wvp);
 		//**TILLMAN TODO: ta bort  DX-sakerna då detta görs av RenderCascadedShadowmapBillboard()?. check what cascade the object is in, object->IsIncascade(s)(indices)**
 		for (int l = 0; l < this->csm->GetNrOfCascadeLevels(); l++)
 		{
 			this->Dx_DeviceContext->OMSetRenderTargets(0, 0, this->csm->GetShadowMapDSV(l));
-			D3D11_VIEWPORT wp = this->csm->GetShadowMapViewPort(l);
-			this->Dx_DeviceContext->RSSetViewports(1, &wp);
+			this->Dx_DeviceContext->RSSetViewports(1, &this->csm->GetShadowMapViewPort(l));
 			this->Dx_DeviceContext->ClearDepthStencilView(this->csm->GetShadowMapDSV(l), D3D11_CLEAR_DEPTH, 1.0f, 0);
 			
 			//Terrain
@@ -1009,7 +1007,7 @@ void DxManager::RenderCascadedShadowMap()
 					}
 
 					//Texture - tell the shader to not use texture(s), as this will generate a warning if set to true. **TILLMAN - fortfarande samma problem, se nedan.
-					this->Shader_ShadowMap->SetResource("diffuseMap", NULL);
+					//this->Shader_ShadowMap->SetResource("diffuseMap", NULL);
 					this->Shader_ShadowMap->SetBool("textured", false);
 
 					//Apply Shader
@@ -1196,8 +1194,8 @@ void DxManager::RenderCascadedShadowMap()
 								Buffer* vertsOne = objOne->GetVertBuff();
 								Buffer* vertsTwo = objTwo->GetVertBuff();
 								ID3D11Buffer* vertexBuffers [] = {vertsOne->GetBufferPointer(), vertsTwo->GetBufferPointer()};
-								UINT strides [] = {sizeof(VertexNormalMap), sizeof(VertexNormalMap)}; //**Tillman - input layout stämmer inte, klagar inte dock
-								UINT offsets [] = {0, 0};
+								static const UINT strides [] = {sizeof(VertexNormalMap), sizeof(VertexNormalMap)}; //**Tillman - input layout stämmer inte, klagar inte dock
+								static const UINT offsets [] = {0, 0};
 								if(vertsOne != NULL && vertsTwo != NULL)
 								{
 									this->Dx_DeviceContext->IASetVertexBuffers(0, 2, vertexBuffers, strides, offsets);
@@ -1616,8 +1614,6 @@ void DxManager::RenderFBXMeshes()
 
 
 	Shader_FBX->Apply(0);
-	D3DXMATRIX proj = this->camera->GetProjectionMatrix();
-	D3DXMATRIX view = this->camera->GetViewMatrix();
 	float dt = this->Timer - this->LastFBXUpdate;
 	for(int i = 0; i < this->FBXMeshes.size(); i++)
 	{
@@ -1625,7 +1621,7 @@ void DxManager::RenderFBXMeshes()
 		{
 			this->CurrentRenderedFBX++;
 			this->FBXMeshes[i]->Update(dt);
-			this->FBXMeshes[i]->Render(dt, proj, view, this->Shader_FBX, this->Dx_DeviceContext);
+			this->FBXMeshes[i]->Render(dt, this->camera->GetProjectionMatrix(), this->camera->GetViewMatrix(), this->camera->GetViewProjMatrix(), this->Shader_FBX, this->Dx_DeviceContext);
 		}
 	}
 

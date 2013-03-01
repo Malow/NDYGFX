@@ -31,8 +31,8 @@ public:
 		Vector3& minPos, Vector3& maxPos);
 
 	void Update(float dt);
-	void Render(float dt, D3DXMATRIX world, D3DXMATRIX camProj, D3DXMATRIX camView, Shader* mShader, ID3D11DeviceContext* devCont);
-	void RenderShadow(float dt, D3DXMATRIX world, D3DXMATRIX lightViewProj, Shader* mShader, ID3D11DeviceContext* devCont);
+	void Render(float dt, D3DXMATRIX& world, D3DXMATRIX& camProj, D3DXMATRIX& camView, D3DXMATRIX& camViewProj, Shader* mShader, ID3D11DeviceContext* devCont);
+	void RenderShadow(float dt, D3DXMATRIX& world, D3DXMATRIX& lightViewProj, Shader* mShader, ID3D11DeviceContext* devCont);
 
 	IBTHFbxAnimationController*	GetAnimationController();
 	IBTHFbxSkeleton*			GetSkeleton();

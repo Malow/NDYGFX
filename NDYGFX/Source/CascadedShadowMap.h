@@ -42,11 +42,11 @@ public:
 
 	float GetBlendDistance() { return this->blendDistance; }
 	int GetNrOfCascadeLevels() { return SHADOW_MAP_CASCADE_COUNT; }
-	D3D11_VIEWPORT GetShadowMapViewPort(int i) const { return this->ShadowMapViewPort[i]; }
+	D3D11_VIEWPORT& GetShadowMapViewPort(int i) { return this->ShadowMapViewPort[i]; }
 	ID3D11ShaderResourceView* GetShadowMapSRV(int i) const { return this->shadowMapSRView[i]; }
 	ID3D11DepthStencilView* GetShadowMapDSV(int i) const { return this->shadowMapDepthView[i]; }
 	ID3D11Texture2D* GetShadowMap(int i) const { return this->shadowMap[i]; }
-	D3DXMATRIX GetViewProjMatrix(int i);
+	D3DXMATRIX& GetViewProjMatrix(int i);
 	float GetSplitDepth(int i) { return this->shadowMappingSplitDepths[i]; }
 	D3DXPLANE GetCascadePlane(unsigned int cascadeIndex, unsigned int planeIndex) { return this->cascadePlanes[cascadeIndex][planeIndex]; } 
 	D3DXPLANE* GetCascadePlanes(unsigned int cascadeIndex) { return this->cascadePlanes[cascadeIndex]; } 

@@ -41,7 +41,7 @@ void FBXModelPartD3D::Init( FBXModelD3D* parentModel, IBTHFbxModelPart* modelPar
 	mIB = mModelData->mIB;
 }
 
-void FBXModelPartD3D::Render(float dt, Shader* shader, D3DXMATRIX viewProj, bool enableAnimation, ID3D11DeviceContext* devCont)
+void FBXModelPartD3D::Render(float dt, Shader* shader, bool enableAnimation, ID3D11DeviceContext* devCont)
 {
 	// Diffuse Texture
 	if ( mDiffuseTexture )
@@ -88,7 +88,7 @@ void FBXModelPartD3D::Render(float dt, Shader* shader, D3DXMATRIX viewProj, bool
 	};
 
 	// Sizes Of Buffers
-	UINT aStrides[5] = { 
+	static const UINT aStrides[5] = { 
 		sizeof(D3DXVECTOR3), 
 		sizeof(D3DXVECTOR3), 
 		sizeof(D3DXVECTOR3), 
@@ -96,7 +96,7 @@ void FBXModelPartD3D::Render(float dt, Shader* shader, D3DXMATRIX viewProj, bool
 		sizeof(BTHFBX_BLEND_WEIGHT_DATA) 
 	};
 
-	UINT aOffsets[5] = {0, 0, 0, 0, 0};
+	static const UINT aOffsets[5] = {0, 0, 0, 0, 0};
 
 	devCont->IASetVertexBuffers(0, 4+(mVB_BlendWeights!=0), aVB, aStrides, aOffsets);
 	devCont->IASetIndexBuffer(mIB->GetBufferPointer(), DXGI_FORMAT_R32_UINT, 0);
@@ -107,7 +107,7 @@ void FBXModelPartD3D::Render(float dt, Shader* shader, D3DXMATRIX viewProj, bool
 
 
 
-void FBXModelPartD3D::RenderShadow(float dt, Shader* shader, D3DXMATRIX viewProj, bool enableAnimation, ID3D11DeviceContext* devCont)
+void FBXModelPartD3D::RenderShadow(float dt, Shader* shader, bool enableAnimation, ID3D11DeviceContext* devCont)
 {
 	shader->SetBool("g_bSkinning", enableAnimation ? m_bSkinnedModel : false);
 
@@ -132,7 +132,7 @@ void FBXModelPartD3D::RenderShadow(float dt, Shader* shader, D3DXMATRIX viewProj
 	};
 
 	// Sizes Of Buffers
-	UINT aStrides[5] = { 
+	static const UINT aStrides[5] = { 
 		sizeof(D3DXVECTOR3), 
 		sizeof(D3DXVECTOR3), 
 		sizeof(D3DXVECTOR3), 
@@ -140,7 +140,7 @@ void FBXModelPartD3D::RenderShadow(float dt, Shader* shader, D3DXMATRIX viewProj
 		sizeof(BTHFBX_BLEND_WEIGHT_DATA) 
 	};
 
-	UINT aOffsets[5] = {0, 0, 0, 0, 0};
+	static const UINT aOffsets[5] = {0, 0, 0, 0, 0};
 
 	devCont->IASetVertexBuffers(0, 4+(mVB_BlendWeights!=0), aVB, aStrides, aOffsets);
 	devCont->IASetIndexBuffer(mIB->GetBufferPointer(), DXGI_FORMAT_R32_UINT, 0);
