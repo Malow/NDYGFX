@@ -14,10 +14,12 @@ public:
 		this->radius = 0.0f;
 	}
 
-	BoundingSphere(D3DXVECTOR3 minCorner, D3DXVECTOR3 maxCorner)
+	BoundingSphere(const D3DXVECTOR3& minCorner, const D3DXVECTOR3& maxCorner)
 	{
 		this->center = (maxCorner + minCorner) / 2.0f;
-		this->radius = D3DXVec3Length(&((maxCorner - minCorner) / 2.0f));
+
+		D3DXVECTOR3 boxLength = D3DXVECTOR3(maxCorner - minCorner) / 2.0f;
+		this->radius = D3DXVec3Length(&boxLength);
 	}
 
 	virtual ~BoundingSphere() {}
