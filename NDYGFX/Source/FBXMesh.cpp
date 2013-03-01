@@ -57,11 +57,16 @@ void FBXMesh::Render(float dt, D3DXMATRIX camProj, D3DXMATRIX camView, Shader* s
 
 bool FBXMesh::LoadFromFile( string file, IBTHFbx* fbx, ID3D11Device* dev, ID3D11DeviceContext* devCont )
 {
+	Vector3 min = Vector3(99999.9f, 99999.9f, 99999.9f);
+	Vector3 max = Vector3(-99999.9f, -99999.9f, -99999.9f);
+
 	zSceneMutex.lock();
-	this->zScene->Init(file.c_str(), fbx, dev, devCont);
+	this->zScene->Init(file.c_str(), fbx, dev, devCont, min, max);
 	this->zScene->GetAnimationController()->SetCurrentAnimation(0);
 	this->zScene->GetAnimationController()->Play();
 	zSceneMutex.unlock();
+
+	this->bs = BoundingSphere(min, max);
 
 	return true;
 }

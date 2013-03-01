@@ -17,7 +17,24 @@ inline std::string GetFileFromPath( const std::string& name )
 	return tempFileName;
 }
 
-bool LoadCachedScene(const std::string& fileName, FBXScene* scene)
+#define max_(a,b)            (((a) > (b)) ? (a) : (b))
+#define min_(a,b)            (((a) < (b)) ? (a) : (b))
+
+void DoMinMax(Vector3& _min, Vector3& _max, std::vector<BTHFBX_VEC3>& positions)
+{
+	for(int i = 0; i < positions.size(); i++)
+	{
+		_min.x = min_(_min.x, positions[i].x);
+		_min.y = min_(_min.y, positions[i].y);
+		_min.z = min_(_min.z, positions[i].z);
+
+		_max.x = max_(_max.x, positions[i].x);
+		_max.y = max_(_max.y, positions[i].y);
+		_max.z = max_(_max.z, positions[i].z);
+	}
+}
+
+bool LoadCachedScene(const std::string& fileName, FBXScene* scene, Vector3& minPos, Vector3& maxPos)
 {
 	std::ifstream file(fileName+".cached", std::ios::binary);
 
@@ -105,6 +122,7 @@ bool LoadCachedScene(const std::string& fileName, FBXScene* scene)
 
 			// Read Positions
 			file.read(reinterpret_cast<char*>(&modelPart->GetPositions()[0]), sizeof(BTHFBX_VEC3)*numVertices);
+			DoMinMax(minPos, maxPos, modelPart->GetPositions());	// For bounding sphere
 
 			// Read Normals
 			file.read(reinterpret_cast<char*>(&modelPart->GetNormals()[0]), sizeof(BTHFBX_VEC3)*numVertices);

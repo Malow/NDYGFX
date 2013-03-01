@@ -4,6 +4,7 @@ void DxManager::PreRender()
 {
 	this->CurrentRenderedMeshes = 0;
 	this->CurrentRenderedTerrains = 0;
+	this->CurrentRenderedFBX = 0;
 	this->CurrentRenderedNrOfVertices = 0;
 	this->CurrentNrOfDrawCalls = 0;
 

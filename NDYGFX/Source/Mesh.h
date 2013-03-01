@@ -59,7 +59,7 @@ public:
 	virtual ~Mesh();
 	
 	// ID
-	string GetFilePath() { return this->filePath; }
+	virtual const char* GetFilePath() const { return this->filePath.c_str(); }
 
 	// Culling
 	bool IsStripCulled(unsigned int index) { return this->isStripCulled[index]; }

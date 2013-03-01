@@ -14,11 +14,12 @@ FBXSceneD3D::~FBXSceneD3D()
 	}
 }
 
-void FBXSceneD3D::Init(const char* filename, IBTHFbx* bthFBX, ID3D11Device* dev, ID3D11DeviceContext* devCont)
+void FBXSceneD3D::Init(const char* filename, IBTHFbx* bthFBX, ID3D11Device* dev, ID3D11DeviceContext* devCont, 
+					   Vector3& minPos, Vector3& maxPos)
 {
 	zFileName = filename;
 
-	mFBXScene = bthFBX->GetScene(filename);
+	mFBXScene = bthFBX->GetScene(filename, minPos, maxPos);
 
 	if(mFBXScene)
 	{

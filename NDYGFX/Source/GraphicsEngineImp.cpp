@@ -541,7 +541,8 @@ float GraphicsEngineImp::Update()
 		MaloW::convertNrToString(this->cam->GetPosition().y) + " " + 
 		MaloW::convertNrToString(this->cam->GetPosition().z) + "  -  Mesh Count: " + 
 		MaloW::convertNrToString(this->dx->GetMeshCount()) + "  - Ren. Meshes: " + 
-		MaloW::convertNrToString(this->dx->GetRenderedMeshCount()) + "  -  Ter. Count: " +
+		MaloW::convertNrToString(this->dx->GetRenderedMeshCount()) + "  -  FBX. Count: " +
+		MaloW::convertNrToString(this->dx->GetRenderedFBXCount()) + "  -  Ter. Count: " +
 		MaloW::convertNrToString(this->dx->GetTerrainCount()) + "  -  Ren. Ters: " +
 		MaloW::convertNrToString(this->dx->GetRenderedTerrainCount()) + "  -  Mesh shad: " +
 		MaloW::convertNrToString(this->dx->GetRenderedMeshShadowCount() / 4) + "  -  Terr shad: " + //** / 4 = temp**

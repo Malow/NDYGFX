@@ -54,5 +54,7 @@ extern "C"
 		virtual void DontRender(bool flag) = 0;
 		virtual bool IsUsingInvisibility() const = 0;
 		virtual void UseInvisibilityEffect(bool flag) = 0;
+
+		virtual const char* GetFilePath() const { return ""; }
 	};
 }

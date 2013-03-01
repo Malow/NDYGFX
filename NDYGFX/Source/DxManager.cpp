@@ -33,6 +33,7 @@ DxManager::DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam)
 	this->RenderedTerrains = 0;
 	this->renderedMeshShadows = 0;
 	this->renderedTerrainShadows = 0;
+	this->renderedFBX = 0;
 	this->NrOfDrawnVertices = 0;
 	this->NrOfDrawCalls = 0;
 
@@ -401,7 +402,7 @@ void DxManager::CreateStaticMesh(StaticMesh* mesh)
 	}
 	else
 	{
-		MaloW::Debug("WARNING: DxManager::CreateStaticMesh(): Strips of mesh has not been set for: '" + mesh->GetFilePath());
+		MaloW::Debug("WARNING: DxManager::CreateStaticMesh(): Strips of mesh has not been set for: '" + string(mesh->GetFilePath()));
 	}
 
 	//Per Mesh data
@@ -906,6 +907,10 @@ void DxManager::SetSunLightDisabled()
 int DxManager::GetRenderedMeshCount() const
 {
 	return this->RenderedMeshes;
+}
+int DxManager::GetRenderedFBXCount() const
+{
+	return this->renderedFBX;
 }
 int DxManager::GetRenderedTerrainCount() const
 {

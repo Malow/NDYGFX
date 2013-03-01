@@ -25,6 +25,9 @@ private:
 
 	std::map< iMesh*, std::string > zBoundMeshes;
 
+	bool culled;
+	BoundingSphere bs;
+
 public:
 	FBXMesh(D3DXVECTOR3 pos);
 	virtual ~FBXMesh();
@@ -44,6 +47,11 @@ public:
 	// Mesh Bounds
 	virtual bool BindMesh(const char* boneName, iMesh* mesh);
 	virtual void UnbindMesh(iMesh* mesh);
+
+	void SetCulled(bool cull) { this->culled = cull; }
+	bool IsCulled() const { return this->culled; }
+
+	BoundingSphere GetBoundingSphere() const { return this->bs; }
 
 	//BTHFBX_RAY_BOX_RESULT RayVsScene(const BTHFBX_RAY& ray, BTHFBX_MATRIX* worldMatrix);
 };

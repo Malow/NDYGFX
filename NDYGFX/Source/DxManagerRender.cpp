@@ -1482,6 +1482,22 @@ void DxManager::CalculateCulling()
 		}
 	}
 
+	// FBX meshes
+	for(int i = 0; i < this->FBXMeshes.size(); i++)
+	{
+		FBXMesh* mesh = this->FBXMeshes.get(i);
+		float scale = max(mesh->GetScaling().x, max(mesh->GetScaling().y, mesh->GetScaling().z));
+
+		if(pe.FrustrumVsSphere(this->FrustrumPlanes, mesh->GetBoundingSphere(), mesh->GetWorldMatrix(), scale))
+		{
+			mesh->SetCulled(false);
+		}
+		else
+		{
+			mesh->SetCulled(true);
+		}
+	}
+
 
 	//SHADOW CULLING - determine if an object is inside a cascade.
 	if(this->csm != NULL && this->useShadow) //**TILLMAN TODO, kolla att OBB blir rätt, verkar inte så...**
@@ -1617,15 +1633,19 @@ void DxManager::RenderFBXMeshes()
 	Shader_FBX->Apply(0);
 	D3DXMATRIX proj = this->camera->GetProjectionMatrix();
 	D3DXMATRIX view = this->camera->GetViewMatrix();
+	float dt = this->Timer - this->LastFBXUpdate;
 	for(int i = 0; i < this->FBXMeshes.size(); i++)
 	{
-		float dt = this->Timer - this->LastFBXUpdate;
-		this->FBXMeshes[i]->Update(dt);
-		this->FBXMeshes[i]->Render(dt, proj, view, this->Shader_FBX, this->Dx_DeviceContext);
+		if(!this->FBXMeshes[i]->IsCulled())
+		{
+			this->CurrentRenderedFBX++;
+			this->FBXMeshes[i]->Update(dt);
+			this->FBXMeshes[i]->Render(dt, proj, view, this->Shader_FBX, this->Dx_DeviceContext);
+		}
 	}
 
-
 	this->LastFBXUpdate = this->Timer;
+	this->renderedFBX = CurrentRenderedFBX;
 }
 
 void DxManager::RenderEnclosingFog()

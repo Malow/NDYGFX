@@ -44,18 +44,18 @@ FBXScene::~FBXScene()
 	if ( mScene ) mScene->Destroy();
 }
 
-bool FBXScene::Init(const char* fileName)
+bool FBXScene::Init(const char* fileName, Vector3& minPos, Vector3& maxPos)
 {
     // Create the entity that will hold the scene.
     mScene = FbxScene::Create(mSdkManager,"");
 	if(!mScene) return false;
 
 	// Cache Scene
-	if ( !LoadCachedScene(fileName, this) )
+	if ( !LoadCachedScene(fileName, this, minPos, maxPos) )
 	{
 		std::stringstream ss;
 
-		if ( !LoadScene(fileName, ss) )
+		if ( !LoadScene(fileName, ss, minPos, maxPos) )
 		{
 			return false;
 		}
@@ -78,7 +78,7 @@ void FBXScene::ProcessBlendWeights()
 	}
 }
 
-bool FBXScene::LoadScene(const char* filename, std::ostream& output)
+bool FBXScene::LoadScene(const char* filename, std::ostream& output, Vector3& minPos, Vector3& maxPos)
 {
     int lFileMajor, lFileMinor, lFileRevision;
 

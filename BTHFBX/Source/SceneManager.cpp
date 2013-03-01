@@ -29,7 +29,7 @@ SceneManager::~SceneManager()
 	}
 }
 
-FBXScene* SceneManager::LoadScene(const char* fileName)
+FBXScene* SceneManager::LoadScene(const char* fileName, Vector3& minPos, Vector3& maxPos)
 {
 	if(!mSdkManager)
 	{
@@ -39,7 +39,7 @@ FBXScene* SceneManager::LoadScene(const char* fileName)
 
 	FBXScene* scene = new FBXScene(mSdkManager);
 
-	if(!scene->Init(fileName))
+	if(!scene->Init(fileName, minPos, maxPos))
 	{
 		if ( scene ) delete scene, scene = 0;
 	}
@@ -51,7 +51,7 @@ FBXScene* SceneManager::LoadScene(const char* fileName)
 	return scene;
 }
 
-IBTHFbxScene* SceneManager::GetScene(const char* fileName)
+IBTHFbxScene* SceneManager::GetScene(const char* fileName, Vector3& minPos, Vector3& maxPos)
 {
 	FBXScene* scene = NULL;
 	FBXSceneInstance* sceneInstance = NULL;
@@ -70,7 +70,7 @@ IBTHFbxScene* SceneManager::GetScene(const char* fileName)
 	}
 	else
 	{
-		scene = LoadScene(fileName);
+		scene = LoadScene(fileName, minPos, maxPos);
 
 		sceneInstance = new FBXSceneInstance(scene);
 		sceneInstance->InitInstance();

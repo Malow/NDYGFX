@@ -23,6 +23,7 @@ Mesh::Mesh(D3DXVECTOR3 pos, string billboardFilePath, float distanceToSwapToBill
 
 	this->rotQuat = D3DXQUATERNION(0, 0, 0, 1);
 	this->scale = D3DXVECTOR3(1, 1, 1);
+	this->RecreateWorldMatrix();
 }
 Mesh::~Mesh() 
 {

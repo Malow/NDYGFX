@@ -155,10 +155,12 @@ private:
 	int RenderedTerrains;
 	int renderedTerrainShadows;
 	int renderedMeshShadows;
+	int renderedFBX;
 	int NrOfDrawnVertices;
 	int NrOfDrawCalls;
 	int CurrentRenderedMeshes;
 	int CurrentRenderedTerrains;
+	int CurrentRenderedFBX;
 	int CurrentRenderedNrOfVertices;
 	int CurrentNrOfDrawCalls;
 
@@ -268,6 +270,7 @@ public:
 	int GetRenderedMeshCount() const;
 	inline int GetTerrainCount() const { return this->terrains.size(); }
 	int GetRenderedTerrainCount() const; 
+	int GetRenderedFBXCount() const;
 
 	int GetRenderedMeshShadowCount() const;
 	int GetRenderedTerrainShadowCount() const; 
