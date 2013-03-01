@@ -51,7 +51,7 @@ public:
 	void SetCulled(bool cull) { this->culled = cull; }
 	bool IsCulled() const { return this->culled; }
 
-	const BoundingSphere& GetBoundingSphere() const { return this->bs; }
+	BoundingSphere& GetBoundingSphere() { return this->bs; }
 
 	//BTHFBX_RAY_BOX_RESULT RayVsScene(const BTHFBX_RAY& ray, BTHFBX_MATRIX* worldMatrix);
 };
