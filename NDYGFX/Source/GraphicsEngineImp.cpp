@@ -209,7 +209,7 @@ LRESULT CALLBACK GraphicsEngineImp::WndProc(HWND hWnd, UINT message, WPARAM wPar
 				}
 			}
 			break;
-
+			
 			
 		case WM_ACTIVATE:
 			{

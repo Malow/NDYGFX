@@ -40,6 +40,11 @@ bool KeyListener::IsPressed(char key)
 	return this->keys[key];
 }
 
+bool KeyListener::IsPressed(int key)
+{
+	return this->keys[key];
+}
+
 /*
 bool KeyListener::HasBeenPressedSinceLast(char key)
 {

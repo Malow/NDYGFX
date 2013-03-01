@@ -44,8 +44,7 @@ void TestRealisticScene::PreTest()
 	GetGraphics()->GetCamera()->SetPosition(Vector3(world->GetWorldCenter().x, 20.0f, world->GetWorldCenter().y));
 	path = 0;
 
-
-	/*
+	
 	Vector3 camPos = GetGraphics()->GetCamera()->GetPosition();
 	
 	for(int i = 0; i < 50; i++)
@@ -62,7 +61,7 @@ void TestRealisticScene::PreTest()
 	for(int i = 0; i < 50; i++)
 	{
 		iDecal* wp = GetGraphics()->CreateDecal(camPos + Vector3(i * 5, -10, 0), "Media/BloodTexture.png", Vector3(0,-1,0), Vector3(1, 0, 0));
-	}*/
+	}
 }
 
 bool TestRealisticScene::RunTest(float diff)
@@ -71,7 +70,6 @@ bool TestRealisticScene::RunTest(float diff)
 	wa->radius = GetGraphics()->GetEngineParameters().FarClip;
 	world->Update();
 	wr->Update();
-
 
 #ifdef AUTO_PATH
 	Vector3 pos;

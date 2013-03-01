@@ -1,0 +1,83 @@
+Performance report, times in milliseconds, IE 100 in the file = 0.1 seconds.
+
+Settings: 
+Resolution: 1264 x 947
+Shadow Quality: 0
+FXAA Quality: 4
+Field of View: 75
+FarClip: 200
+MaxFPS: 0
+ShadowFit: 50
+Billboard Range: 0.75
+
+
+           Tier 1: 
+Renderer - Entire Frame: 
+Avg: 50.1605     Tot:58687.8, Measures: 1170
+
+
+           Tier 2: 
+Renderer - CalculateCulling: 
+Avg: 2.66026     Tot:3112.5, Measures: 1170
+
+Renderer - PreRender: 
+Avg: 0.132265     Tot:154.75, Measures: 1170
+
+Renderer - Render Shadows: 
+Avg: 0.0258547     Tot:30.25, Measures: 1170
+
+Renderer - Render Deferred Geo: 
+Avg: 34.7266     Tot:40630.1, Measures: 1170
+
+Renderer - Render Billboards: 
+Avg: 0.163996     Tot:191.875, Measures: 1170
+
+Renderer - Render Per Pixel: 
+Avg: 0.14594     Tot:170.75, Measures: 1170
+
+Renderer - Render Translucent: 
+Avg: 0.943269     Tot:1103.63, Measures: 1170
+
+Renderer - Render Skybox: 
+Avg: 0.0424145     Tot:49.625, Measures: 1170
+
+Renderer - Render Enclosing Fog: 
+Avg: 0.0244658     Tot:28.625, Measures: 1170
+
+Renderer - Render Images: 
+Avg: 0.0126068     Tot:14.75, Measures: 1170
+
+Renderer - Render Text: 
+Avg: 0.0162393     Tot:19, Measures: 1170
+
+Renderer - Render FXAA: 
+Avg: 0.762393     Tot:892, Measures: 1170
+
+Renderer - Life Overhead: 
+Avg: 4.38205     Tot:5127, Measures: 1170
+
+
+           Tier 3: 
+Renderer - Render Deferred Geo Terrains: 
+Avg: 4.41464     Tot:5165.13, Measures: 1170
+
+Renderer - Render Deferred Geo Decals: 
+Avg: 0.381944     Tot:446.875, Measures: 1170
+
+Renderer - Render Deferred Geo Objects: 
+Avg: 28.7109     Tot:33591.8, Measures: 1170
+
+Renderer - Render Deferred Geo FBX: 
+Avg: 1.17991     Tot:1380.5, Measures: 1170
+
+
+           Tier 4: 
+Renderer - Render Deferred Geo Objects Static: 
+Avg: 1.68793     Tot:1974.88, Measures: 1170
+
+Renderer - Render Deferred Geo Objects Animated: 
+Avg: 26.9887     Tot:31576.8, Measures: 1170
+
+
+           Tier 5: 
+

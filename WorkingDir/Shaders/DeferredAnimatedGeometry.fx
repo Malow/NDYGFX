@@ -32,7 +32,7 @@ cbuffer EveryStrip
 	//float4 AmbientLight; //MaloW Opt
 	float SpecularPower;
 	float4 SpecularColor; //MaloW Opt
-	//float4 DiffuseColor; //MaloW Opt
+	float4 DiffuseColor; //MaloW Opt
 	float t;
 };
 cbuffer EveryMesh
@@ -140,7 +140,7 @@ PSout PSScene(PSSceneIn input) : SV_Target
 		if ( textureColor.a < 0.5f )
 			discard;
 	}
-	float4 finalColor = (textureColor + input.Color)/* * DiffuseColor*/; // MaloW Opt
+	float4 finalColor = (textureColor + input.Color) * DiffuseColor; // MaloW Opt
 
 	finalColor.w = (float)specialColor;
 

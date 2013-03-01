@@ -35,6 +35,7 @@ extern "C"
 		virtual void MouseUp(int button) = 0;
 
 		virtual bool IsPressed(char key) = 0;
+		virtual bool IsPressed(int key) = 0;
 		virtual bool IsClicked(int button) = 0;
 
 		/*! Returns the mouse-position relative to the window (excluding borders) */

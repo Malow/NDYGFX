@@ -62,6 +62,7 @@ public:
 	virtual void MouseUp(int button);
 
 	virtual bool IsPressed(char key);
+	virtual bool IsPressed(int key);
 	virtual bool IsClicked(int button);
 	//bool HasBeenPressedSinceLast(char NotYetImplemented) { }
 
