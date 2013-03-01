@@ -1,7 +1,7 @@
 #include "SkyBox.h"
 
 
-SkyBox::SkyBox(D3DXVECTOR3 pos, int latitude, int longitude) : StaticMesh(pos)
+SkyBox::SkyBox(D3DXVECTOR3 pos, int latitude, int longitude) : StaticMesh(pos, "")
 {
 	this->filePath = "skybox_unused";
 	int m_numSphereVertices = ((latitude-2) * longitude) + 2;

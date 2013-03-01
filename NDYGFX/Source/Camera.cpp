@@ -24,6 +24,8 @@ Camera::Camera(HWND g_hWnd, GraphicsEngineParams &params) :
 
 	D3DXVECTOR3 at = this->pos + this->forward;
 	D3DXMatrixLookAtLH(&view, &this->pos, &at, &this->up);
+
+	D3DXMatrixMultiply(&this->viewProj, &this->view, &this->projection);
 }
 
 Camera::~Camera()
@@ -31,12 +33,12 @@ Camera::~Camera()
 
 }
 
-D3DXMATRIX Camera::GetViewMatrix()
+D3DXMATRIX& Camera::GetViewMatrix()
 {
 	return this->view; 
 }
 
-D3DXMATRIX Camera::GetProjectionMatrix()
+D3DXMATRIX& Camera::GetProjectionMatrix()
 {
 	return this->projection; 
 }
@@ -122,7 +124,6 @@ void Camera::MoveFollowingMesh()
 		Vector3 pos = Vector3(this->pos.x, this->pos.y, this->pos.z) - this->distanceFromMesh;
 		this->followTarget->SetPosition(pos);
 
-
 		
 		//Rotate Mesh
 		Vector3 camDir = this->GetForward();
@@ -190,6 +191,7 @@ void Camera::Update(float delta)
 	D3DXMatrixLookAtLH(&view, &curPos, &at, &this->up);
 	D3DXMatrixPerspectiveFovLH(&this->projection, this->params.FOV * (float)D3DX_PI / 180.0f, 
 		this->params.WindowWidth / (float)this->params.WindowHeight, this->params.NearClip, this->params.FarClip);
+	D3DXMatrixMultiply(&this->viewProj, &this->view, &this->projection);
 	this->oldpos = curPos;
 }
 
@@ -217,6 +219,7 @@ void Camera::RecreateProjectionMatrix()
 {
 	D3DXMatrixPerspectiveFovLH(&this->projection, this->params.FOV * (float)D3DX_PI / 180.0f, 
 		this->params.WindowWidth / (float)this->params.WindowHeight, this->params.NearClip, this->params.FarClip);
+	D3DXMatrixMultiply(&this->viewProj, &this->view, &this->projection);
 }
 
 D3DXVECTOR3 Camera::GetRightVectorD3DX() const
@@ -283,5 +286,10 @@ void Camera::MoveOnlyInXZ( bool DoItOrNotThatIsTheQuestion )
 void Camera::SetUpdateCamera( bool update )
 {
 	this->updateCamera = update;
+}
+
+D3DXMATRIX& Camera::GetViewProjMatrix()
+{
+	return this->viewProj;
 }
 

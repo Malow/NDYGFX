@@ -1,7 +1,7 @@
 #include "WaterPlane.h"
 
 
-WaterPlane::WaterPlane(D3DXVECTOR3 pos) : Mesh(pos)
+WaterPlane::WaterPlane(D3DXVECTOR3 pos, string filePath) : Mesh(pos, filePath)
 {
 	this->verts = NULL;
 	this->vertBuffer = NULL;

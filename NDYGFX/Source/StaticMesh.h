@@ -7,7 +7,7 @@
 class StaticMesh : public Mesh
 {
 public:
-	StaticMesh(D3DXVECTOR3 pos, string billboardFilePath = "", float distanceToSwapToBillboard = -1);
+	StaticMesh(D3DXVECTOR3 pos, string filePath, string billboardFilePath = "", float distanceToSwapToBillboard = -1);
 	virtual ~StaticMesh();
 
 	bool LoadFromFile(string file);

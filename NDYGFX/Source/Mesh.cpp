@@ -1,8 +1,8 @@
 #include "Mesh.h"	
 
-Mesh::Mesh(D3DXVECTOR3 pos, string billboardFilePath, float distanceToSwapToBillboard)
+Mesh::Mesh(D3DXVECTOR3 pos, string filePath, string billboardFilePath, float distanceToSwapToBillboard)
 {
-	this->filePath = "";
+	this->filePath = filePath;
 	this->specialColor = NULL_COLOR;
 	this->usingInvisibilityEffect = false;
 	//this->transparency = 0.0f;

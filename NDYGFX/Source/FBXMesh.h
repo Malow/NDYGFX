@@ -29,7 +29,7 @@ private:
 	BoundingSphere bs;
 
 public:
-	FBXMesh(D3DXVECTOR3 pos);
+	FBXMesh(D3DXVECTOR3 pos, string filePath);
 	virtual ~FBXMesh();
 
 	virtual MaloW::Array<MeshStrip*>* GetStrips();

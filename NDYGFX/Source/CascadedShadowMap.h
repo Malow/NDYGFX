@@ -28,7 +28,7 @@ private:
 
 
 	void CalcShadowMappingSplitDepths();
-	void CalcShadowMapMatrices(D3DXVECTOR3 sunLight, Camera* cam, int i, float nearPlaneDistanceCloserToSun);
+	void CalcShadowMapMatrices(D3DXVECTOR3 sunLight, Camera* cam, int i);
 
 public:
 	CascadedShadowMap();
@@ -38,7 +38,7 @@ public:
 	/*
 		float nearPlaneDistanceCloserToSun - determines how much closer the near plane of the shadow map shall be to the sun to include potential occluders. This distance is added for each shadow map.
 	*/
-	void PreRender(D3DXVECTOR3 sunLight, Camera* cam, float nearPlaneDistanceCloserToSun);
+	void PreRender(D3DXVECTOR3& sunLight, Camera* cam);
 
 	float GetBlendDistance() { return this->blendDistance; }
 	int GetNrOfCascadeLevels() { return SHADOW_MAP_CASCADE_COUNT; }

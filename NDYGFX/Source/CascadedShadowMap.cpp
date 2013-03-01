@@ -33,16 +33,14 @@ CascadedShadowMap::~CascadedShadowMap()
 	if(this->cascadePlanes) delete[] this->cascadePlanes; this->cascadePlanes = NULL;
 }
 
-void CascadedShadowMap::CalcShadowMapMatrices(D3DXVECTOR3 sunLight, Camera* cam, int i, float nearPlaneDistanceCloserToSun)
+void CascadedShadowMap::CalcShadowMapMatrices(D3DXVECTOR3 sunLight, Camera* cam, int i)
 {
 	//calculate points (in world space) for the frustum slice
 	D3DXVECTOR4 camPos = D3DXVECTOR4(cam->GetPositionD3DX(), 1.0f);
 	D3DXVECTOR4 camForward = D3DXVECTOR4(cam->GetForwardD3DX(), 1.0f);
 	D3DXVECTOR4 camRight = D3DXVECTOR4(cam->GetRightVectorD3DX(), 1.0f);
 	D3DXVECTOR4 camUp = D3DXVECTOR4(cam->GetUpVectorD3DX(), 1.0f);
-	float ww = (float)this->params.WindowWidth;
-	float hh = (float)this->params.WindowHeight;
-	float aspectRatio = ww / hh;
+	float aspectRatio = (float)this->params.WindowWidth / (float)this->params.WindowHeight;
 	float tmp = tan((this->params.FOV * 0.0174532925f) / 3.14159265359f) * 2;
 
 	//Near plane	
@@ -107,7 +105,7 @@ void CascadedShadowMap::CalcShadowMapMatrices(D3DXVECTOR3 sunLight, Camera* cam,
 	
 	D3DXVECTOR3 tmpNearPlanePoint = minValue;
 	//Set the near plane to be closer to the light to include more potential occluders.
-	tmpNearPlanePoint -= sunLight * nearPlaneDistanceCloserToSun * (i + 1); //TILLMAN** sätta near plane till samma för alla.
+	tmpNearPlanePoint -= sunLight * this->params.ShadowFit * (i + 1); //TILLMAN** sätta near plane till samma för alla.
 	float nearPlane = tmpNearPlanePoint.z; 
 	float farPlane = maxValue.z;
 
@@ -129,19 +127,16 @@ void CascadedShadowMap::CalcShadowMapMatrices(D3DXVECTOR3 sunLight, Camera* cam,
 
 void CascadedShadowMap::CalcShadowMappingSplitDepths()
 {
-	float camNear = this->params.NearClip;
-	float camFar  = this->params.FarClip;
-
-	this->shadowMappingSplitDepths[0] = camNear;
+	this->shadowMappingSplitDepths[0] = this->params.NearClip;
 	/*float scale = ;
 	for(int i = 1; i < SHADOW_MAP_CASCADE_COUNT; i++) //TILLMAN TODO
 	{
 		this->shadowMappingSplitDepths[i] = camFar * scale * 0.001f;
 	}*/
-	this->shadowMappingSplitDepths[1] = camFar * 0.025f;
-	this->shadowMappingSplitDepths[2] = camFar * 0.1f;
-	this->shadowMappingSplitDepths[3] = camFar * 0.4f;
-	this->shadowMappingSplitDepths[SHADOW_MAP_CASCADE_COUNT] = camFar;
+	this->shadowMappingSplitDepths[1] = this->params.FarClip * 0.025f;
+	this->shadowMappingSplitDepths[2] = this->params.FarClip * 0.1f;
+	this->shadowMappingSplitDepths[3] = this->params.FarClip * 0.4f;
+	this->shadowMappingSplitDepths[SHADOW_MAP_CASCADE_COUNT] = this->params.FarClip;
 	
 	/*
 	float i_f = 1.0f;
@@ -272,12 +267,12 @@ D3DXMATRIX CascadedShadowMap::GetViewProjMatrix(int i)
 	return this->viewProj[i];
 }
 
-void CascadedShadowMap::PreRender(D3DXVECTOR3 sunLight, Camera* cam, float nearPlaneDistanceCloserToSun)
+void CascadedShadowMap::PreRender(D3DXVECTOR3& sunLight, Camera* cam)
 {
 	this->CalcShadowMappingSplitDepths();
 	for (int i = 0; i < SHADOW_MAP_CASCADE_COUNT; i++)
 	{
-		CalcShadowMapMatrices(sunLight, cam, i, nearPlaneDistanceCloserToSun);
+		CalcShadowMapMatrices(sunLight, cam, i);
 	}
 }
 

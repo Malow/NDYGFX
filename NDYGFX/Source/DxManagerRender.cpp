@@ -362,20 +362,74 @@ void DxManager::Life()
 		{
 			if(dynamic_cast<RendererEvent*>(ev) != NULL)
 			{
-				string msg = ((RendererEvent*)ev)->getMessage();
+				// MeshEvent
+				if(dynamic_cast<MeshEvent*>(ev) != NULL)
+				{
+					this->HandleMeshEvent((MeshEvent*)ev);
+				}
+
+				//TerrainEvent
+				else if(dynamic_cast<TerrainEvent*>(ev) != NULL)
+				{
+					this->HandleTerrainEvent((TerrainEvent*)ev);
+				}
+
+				// BillboardEvent
+				else if(dynamic_cast<BillboardEvent*>(ev) != NULL)
+				{
+					this->HandleBillboardEvent((BillboardEvent*)ev);
+				}
+
+				//FBXEvent
+				else if(dynamic_cast<FBXEvent*>(ev) != NULL)
+				{
+					this->HandleFBXEvent((FBXEvent*)ev);
+				}
+
+				//WaterPlaneEvent
+				else if(dynamic_cast<WaterPlaneEvent*>(ev) != NULL)
+				{
+					this->HandleWaterPlaneEvent((WaterPlaneEvent*)ev);
+				}
 
 				// DecalEvent
-				if(dynamic_cast<DecalEvent*>(ev) != NULL)
+				else if(dynamic_cast<DecalEvent*>(ev) != NULL)
 				{
 					this->HandleDecalEvent((DecalEvent*)ev);
 				}
 
-				// ReloadShaderEvent
-				if(ReloadShaderEvent* rse = dynamic_cast<ReloadShaderEvent*>(ev))
-					this->HandleReloadShaders(rse->GetShader());
-				
+				// ImageEvent
+				else if(dynamic_cast<ImageEvent*>(ev) != NULL)
+				{
+					this->HandleImageEvent((ImageEvent*)ev);
+				}
+
+				// TextEvent
+				else if(dynamic_cast<TextEvent*>(ev) != NULL)
+				{
+					this->HandleTextEvent((TextEvent*)ev);
+				}
+
+				// LightEvent
+				else if(dynamic_cast<LightEvent*>(ev) != NULL)
+				{
+					this->HandleLightEvent((LightEvent*)ev);
+				}
+
+				//SetCameraEvent
+				else if(dynamic_cast<SetCameraEvent*>(ev) != NULL)
+				{
+					this->SetCamera((SetCameraEvent*)ev);
+				}
+
+				// ResizeEvent
+				else if(dynamic_cast<ResizeEvent*>(ev) != NULL)
+				{
+					this->ResizeRenderer((ResizeEvent*)ev);
+				}
+
 				//ChangeShadowQualityEvent
-				if(ChangeShadowQualityEvent* csqe = dynamic_cast<ChangeShadowQualityEvent*>(ev))
+				else if(ChangeShadowQualityEvent* csqe = dynamic_cast<ChangeShadowQualityEvent*>(ev))
 				{
 					this->params.ShadowMapSettings = csqe->GetQuality();
 					if(this->csm)
@@ -385,65 +439,9 @@ void DxManager::Life()
 					}
 				}
 
-				//WaterPlaneEvent
-				if(dynamic_cast<FBXEvent*>(ev) != NULL)
-				{
-					this->HandleFBXEvent((FBXEvent*)ev);
-				}
-
-				//WaterPlaneEvent
-				if(dynamic_cast<WaterPlaneEvent*>(ev) != NULL)
-				{
-					this->HandleWaterPlaneEvent((WaterPlaneEvent*)ev);
-				}
-
-				//SetCameraEvent
-				if(dynamic_cast<SetCameraEvent*>(ev) != NULL)
-				{
-					this->SetCamera((SetCameraEvent*)ev);
-				}
-
-				// ResizeEvent
-				if(dynamic_cast<ResizeEvent*>(ev) != NULL)
-				{
-					this->ResizeRenderer((ResizeEvent*)ev);
-				}
-
-				//TerrainEvent
-				else if(dynamic_cast<TerrainEvent*>(ev) != NULL)
-				{
-					this->HandleTerrainEvent((TerrainEvent*)ev);
-				}
-
-				// MeshEvent
-				else if(dynamic_cast<MeshEvent*>(ev) != NULL)
-				{
-					this->HandleMeshEvent((MeshEvent*)ev);
-				}
-
-				// LightEvent
-				else if(dynamic_cast<LightEvent*>(ev) != NULL)
-				{
-					this->HandleLightEvent((LightEvent*)ev);
-				}
-
-				// ImageEvent
-				else if(dynamic_cast<ImageEvent*>(ev) != NULL)
-				{
-					this->HandleImageEvent((ImageEvent*)ev);
-				}
-
-				// BillboardEvent
-				else if(dynamic_cast<BillboardEvent*>(ev) != NULL)
-				{
-					this->HandleBillboardEvent((BillboardEvent*)ev);
-				}
-
-				// TextEvent
-				else if(dynamic_cast<TextEvent*>(ev) != NULL)
-				{
-					this->HandleTextEvent((TextEvent*)ev);
-				}
+				// ReloadShaderEvent
+				else if(ReloadShaderEvent* rse = dynamic_cast<ReloadShaderEvent*>(ev))
+					this->HandleReloadShaders(rse->GetShader());
 			}
 			delete ev;
 		}
@@ -1352,60 +1350,48 @@ void DxManager::RenderCascadedShadowMapBillboardInstanced()
 void DxManager::CalculateCulling()
 {
 	//CAMERA:
-	D3DXMATRIX view = this->camera->GetViewMatrix();
-	D3DXMATRIX proj = this->camera->GetProjectionMatrix();
-
-	/*
-	float zMinimum = -proj._43 / proj._33;
-	float r = this->params.FarClip / (this->params.FarClip - zMinimum);
-	proj._33 = r;
-	proj._43 = -r * zMinimum;
-	*/
-
-	D3DXMATRIX VP;
-	D3DXMatrixMultiply(&VP, &view, &proj);
-
+	D3DXMATRIX* VP = &this->camera->GetViewProjMatrix();
 
 	// Calculate near plane of frustum.
-	FrustrumPlanes[0].a = VP._14 + VP._13;
-	FrustrumPlanes[0].b = VP._24 + VP._23;
-	FrustrumPlanes[0].c = VP._34 + VP._33;
-	FrustrumPlanes[0].d = VP._44 + VP._43;
+	FrustrumPlanes[0].a = VP->_14 + VP->_13;
+	FrustrumPlanes[0].b = VP->_24 + VP->_23;
+	FrustrumPlanes[0].c = VP->_34 + VP->_33;
+	FrustrumPlanes[0].d = VP->_44 + VP->_43;
 	D3DXPlaneNormalize(&FrustrumPlanes[0], &FrustrumPlanes[0]);
 
 	// Calculate far plane of frustum.
-	FrustrumPlanes[1].a = VP._14 - VP._13; 
-	FrustrumPlanes[1].b = VP._24 - VP._23;
-	FrustrumPlanes[1].c = VP._34 - VP._33;
-	FrustrumPlanes[1].d = VP._44 - VP._43;
+	FrustrumPlanes[1].a = VP->_14 - VP->_13; 
+	FrustrumPlanes[1].b = VP->_24 - VP->_23;
+	FrustrumPlanes[1].c = VP->_34 - VP->_33;
+	FrustrumPlanes[1].d = VP->_44 - VP->_43;
 	D3DXPlaneNormalize(&FrustrumPlanes[1], &FrustrumPlanes[1]);
 
 	// Calculate left plane of frustum.
-	FrustrumPlanes[2].a = VP._14 + VP._11; 
-	FrustrumPlanes[2].b = VP._24 + VP._21;
-	FrustrumPlanes[2].c = VP._34 + VP._31;
-	FrustrumPlanes[2].d = VP._44 + VP._41;
+	FrustrumPlanes[2].a = VP->_14 + VP->_11; 
+	FrustrumPlanes[2].b = VP->_24 + VP->_21;
+	FrustrumPlanes[2].c = VP->_34 + VP->_31;
+	FrustrumPlanes[2].d = VP->_44 + VP->_41;
 	D3DXPlaneNormalize(&FrustrumPlanes[2], &FrustrumPlanes[2]);
 
 	// Calculate right plane of frustum.
-	FrustrumPlanes[3].a = VP._14 - VP._11; 
-	FrustrumPlanes[3].b = VP._24 - VP._21;
-	FrustrumPlanes[3].c = VP._34 - VP._31;
-	FrustrumPlanes[3].d = VP._44 - VP._41;
+	FrustrumPlanes[3].a = VP->_14 - VP->_11; 
+	FrustrumPlanes[3].b = VP->_24 - VP->_21;
+	FrustrumPlanes[3].c = VP->_34 - VP->_31;
+	FrustrumPlanes[3].d = VP->_44 - VP->_41;
 	D3DXPlaneNormalize(&FrustrumPlanes[3], &FrustrumPlanes[3]);
 
 	// Calculate top plane of frustum.
-	FrustrumPlanes[4].a = VP._14 - VP._12; 
-	FrustrumPlanes[4].b = VP._24 - VP._22;
-	FrustrumPlanes[4].c = VP._34 - VP._32;
-	FrustrumPlanes[4].d = VP._44 - VP._42;
+	FrustrumPlanes[4].a = VP->_14 - VP->_12; 
+	FrustrumPlanes[4].b = VP->_24 - VP->_22;
+	FrustrumPlanes[4].c = VP->_34 - VP->_32;
+	FrustrumPlanes[4].d = VP->_44 - VP->_42;
 	D3DXPlaneNormalize(&FrustrumPlanes[4], &FrustrumPlanes[4]);
 
 	// Calculate bottom plane of frustum.
-	FrustrumPlanes[5].a = VP._14 + VP._12;
-	FrustrumPlanes[5].b = VP._24 + VP._22;
-	FrustrumPlanes[5].c = VP._34 + VP._32;
-	FrustrumPlanes[5].d = VP._44 + VP._42;
+	FrustrumPlanes[5].a = VP->_14 + VP->_12;
+	FrustrumPlanes[5].b = VP->_24 + VP->_22;
+	FrustrumPlanes[5].c = VP->_34 + VP->_32;
+	FrustrumPlanes[5].d = VP->_44 + VP->_42;
 	D3DXPlaneNormalize(&FrustrumPlanes[5], &FrustrumPlanes[5]);
 	
 	//Terrain
@@ -1437,7 +1423,7 @@ void DxManager::CalculateCulling()
 			for(int u = 0; u < strips->size(); u++)
 			{
 				MeshStrip* s = strips->get(u);
-				float scale = max(ms->GetScaling().x, max(ms->GetScaling().y, ms->GetScaling().z));
+				float scale = max(ms->GetScalingD3D().x, max(ms->GetScalingD3D().y, ms->GetScalingD3D().z));
 				if(pe.FrustrumVsSphere(this->FrustrumPlanes, s->GetBoundingSphere(), ms->GetWorldMatrix(), scale))
 				{
 					ms->SetStripCulledFlag(u, false);
@@ -1461,7 +1447,7 @@ void DxManager::CalculateCulling()
 		{
 			if ( !animatedMesh->GetKeyFrames()->get(0)->meshStripsResource->GetMeshStripsPointer()->isEmpty() )
 			{
-				float scale = max(animatedMesh->GetScaling().x, max(animatedMesh->GetScaling().y, animatedMesh->GetScaling().z));
+				float scale = max(animatedMesh->GetScalingD3D().x, max(animatedMesh->GetScalingD3D().y, animatedMesh->GetScalingD3D().z));
 				MaloW::Array<MeshStrip*>* strips = animatedMesh->GetKeyFrames()->get(0)->meshStripsResource->GetMeshStripsPointer();
 				for(int u = 0; u < strips->size(); u++)
 				{
@@ -1486,7 +1472,7 @@ void DxManager::CalculateCulling()
 	for(int i = 0; i < this->FBXMeshes.size(); i++)
 	{
 		FBXMesh* mesh = this->FBXMeshes.get(i);
-		float scale = max(mesh->GetScaling().x, max(mesh->GetScaling().y, mesh->GetScaling().z));
+		float scale = max(mesh->GetScalingD3D().x, max(mesh->GetScalingD3D().y, mesh->GetScalingD3D().z));
 
 		if(pe.FrustrumVsSphere(this->FrustrumPlanes, mesh->GetBoundingSphere(), mesh->GetWorldMatrix(), scale))
 		{
@@ -1504,7 +1490,6 @@ void DxManager::CalculateCulling()
 	{
 		//Calculate frustums - the frustum in this case i an OBB (the cascade). 
 		this->csm->CalcCascadePlanes();
-
 
 
 		//Terrain
@@ -1541,7 +1526,7 @@ void DxManager::CalculateCulling()
 		for(int i = 0; i < this->objects.size(); i++)
 		{
 			StaticMesh* staticMesh = this->objects.get(i);
-			float scale = max(staticMesh->GetScaling().x, max(staticMesh->GetScaling().y, staticMesh->GetScaling().z));
+			float scale = max(staticMesh->GetScalingD3D().x, max(staticMesh->GetScalingD3D().y, staticMesh->GetScalingD3D().z));
 
 			MaloW::Array<MeshStrip*>* strips = staticMesh->GetStrips();
 			for(int j = 0; j < strips->size(); j++)
@@ -1580,7 +1565,7 @@ void DxManager::CalculateCulling()
 
 			if ( !animatedMesh->GetKeyFrames()->get(0)->meshStripsResource->GetMeshStripsPointer()->isEmpty() )
 			{
-				float scale = max(animatedMesh->GetScaling().x, max(animatedMesh->GetScaling().y, animatedMesh->GetScaling().z));
+				float scale = max(animatedMesh->GetScalingD3D().x, max(animatedMesh->GetScalingD3D().y, animatedMesh->GetScalingD3D().z));
 				
 				MaloW::Array<MeshStrip*>* strips = animatedMesh->GetStrips();
 				for(int j = 0; j < strips->size(); j++)

@@ -74,7 +74,7 @@ class AnimatedMesh : public Mesh, public virtual iAnimatedMesh
 		string*						mSubFileNames;
 
 	public:
-		AnimatedMesh(D3DXVECTOR3 pos, string billboardFilePath = "", float distanceToSwapToBillboard = -1);
+		AnimatedMesh(D3DXVECTOR3 pos, string filePath, string billboardFilePath = "", float distanceToSwapToBillboard = -1);
 		virtual ~AnimatedMesh();
 
 		MaloW::Array<KeyFrame*>*	GetKeyFrames()			const { return this->mKeyFrames; }

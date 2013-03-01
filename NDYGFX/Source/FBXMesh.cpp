@@ -1,7 +1,7 @@
 #include "FBXMesh.h"
 
 
-FBXMesh::FBXMesh( D3DXVECTOR3 pos ) : Mesh(pos)
+FBXMesh::FBXMesh( D3DXVECTOR3 pos, string filePath ) : Mesh(pos, filePath)
 {
 	this->zScene = new FBXSceneD3D();
 }
