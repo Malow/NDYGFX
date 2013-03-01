@@ -7,6 +7,7 @@
 #include "BoneWeights.h"
 #include "Curve.h"
 #include <sstream>
+#include "..\..\NDYGFX\include\Vector.h"
 
 class FBXScene
 {
@@ -27,7 +28,7 @@ class FBXScene
 	BTHFBX_AABB_DATA m_BoundingBox;
 
 	void UpdateBoundingBoxDataFromVertex(BTHFBX_VEC3 vertexPosition);
-	bool LoadScene(const char* filename, std::ostream& output );
+	bool LoadScene(const char* filename, std::ostream& output, Vector3& minPos, Vector3& maxPos );
 	void DisplayMetaData();
 
 public:
@@ -35,7 +36,7 @@ public:
 	~FBXScene();
 
 	// Initialize
-	bool Init(const char* filename);
+	bool Init(const char* filename, Vector3& minPos, Vector3& maxPos);
 	
 	// Data Access
 	inline Dictionary<Model*>& getModels() {return m_Models; }

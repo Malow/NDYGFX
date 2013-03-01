@@ -376,7 +376,7 @@ void GraphicsEngineImp::InitObjects()
 
 StaticMesh* GraphicsEngineImp::CreateStaticMesh(string filename, D3DXVECTOR3 pos, const char* billboardFilePath, float distanceToSwapToBillboard)
 {
-	StaticMesh* mesh = new StaticMesh(pos, billboardFilePath, distanceToSwapToBillboard);
+	StaticMesh* mesh = new StaticMesh(pos, filename, billboardFilePath, distanceToSwapToBillboard);
 	LoadMeshEvent* re = new LoadMeshEvent(filename, mesh, NULL, NULL);
 	this->PutEvent(re);
 
@@ -391,7 +391,7 @@ StaticMesh* GraphicsEngineImp::CreateStaticMesh(string filename, D3DXVECTOR3 pos
 
 StaticMesh* GraphicsEngineImp::CreateStaticMesh(string filename, D3DXVECTOR3 pos, Material* material)
 {
-	StaticMesh* mesh = new StaticMesh(pos);
+	StaticMesh* mesh = new StaticMesh(pos, filename);
 
 	LoadMeshEvent* re = new LoadMeshEvent(filename, mesh, NULL, material);
 	this->PutEvent(re);
@@ -406,7 +406,7 @@ iMesh* GraphicsEngineImp::CreateStaticMesh( const char* filename, const Vector3&
 
 AnimatedMesh* GraphicsEngineImp::CreateAnimatedMesh(string filename, D3DXVECTOR3 pos, const char* billboardFilePath, float distanceToSwapToBillboard)
 {
-	AnimatedMesh* mesh = new AnimatedMesh(pos, billboardFilePath, distanceToSwapToBillboard);
+	AnimatedMesh* mesh = new AnimatedMesh(pos, filename, billboardFilePath, distanceToSwapToBillboard);
 
 	LoadMeshEvent* re = new LoadMeshEvent(filename, NULL, mesh, NULL);
 	this->PutEvent(re);
@@ -541,7 +541,8 @@ float GraphicsEngineImp::Update()
 		MaloW::convertNrToString(this->cam->GetPosition().y) + " " + 
 		MaloW::convertNrToString(this->cam->GetPosition().z) + "  -  Mesh Count: " + 
 		MaloW::convertNrToString(this->dx->GetMeshCount()) + "  - Ren. Meshes: " + 
-		MaloW::convertNrToString(this->dx->GetRenderedMeshCount()) + "  -  Ter. Count: " +
+		MaloW::convertNrToString(this->dx->GetRenderedMeshCount()) + "  -  FBX. Count: " +
+		MaloW::convertNrToString(this->dx->GetRenderedFBXCount()) + "  -  Ter. Count: " +
 		MaloW::convertNrToString(this->dx->GetTerrainCount()) + "  -  Ren. Ters: " +
 		MaloW::convertNrToString(this->dx->GetRenderedTerrainCount()) + "  -  Mesh shad: " +
 		MaloW::convertNrToString(this->dx->GetRenderedMeshShadowCount() / 4) + "  -  Terr shad: " + //** / 4 = temp**
@@ -1018,7 +1019,7 @@ float GraphicsEngineImp::GetSunLightIntensity() const
 
 iWaterPlane* GraphicsEngineImp::CreateWaterPlane( Vector3& pos, const char* texture )
 {
-	WaterPlane* plane = new WaterPlane(D3DXVECTOR3(pos.x, pos.y, pos.z));
+	WaterPlane* plane = new WaterPlane(D3DXVECTOR3(pos.x, pos.y, pos.z), "");
 	this->dx->CreateWaterPlane(plane, texture);
 	return plane;
 }
@@ -1031,7 +1032,7 @@ void GraphicsEngineImp::DeleteWaterPlane( iWaterPlane* del )
 
 iFBXMesh* GraphicsEngineImp::CreateFBXMesh( const char* filename, Vector3 pos )
 {
-	FBXMesh* mesh = new FBXMesh(D3DXVECTOR3(pos.x, pos.y, pos.z));
+	FBXMesh* mesh = new FBXMesh(D3DXVECTOR3(pos.x, pos.y, pos.z), filename);
 	LoadMeshEvent* re = new LoadMeshEvent(filename, mesh);
 	this->PutEvent(re);
 	return mesh;
@@ -1069,4 +1070,9 @@ void GraphicsEngineImp::DeleteDecal( iDecal* decal )
 void GraphicsEngineImp::SetEnclosingFogEffect( Vector3 center, float radius, float fogfadefactor )
 {
 	this->dx->SetEnclosingFog(center, radius, fogfadefactor);
+}
+
+void GraphicsEngineImp::ResetPerfLogging()
+{
+	this->dx->ResetPerfLogging();
 }

@@ -4,6 +4,7 @@ void DxManager::PreRender()
 {
 	this->CurrentRenderedMeshes = 0;
 	this->CurrentRenderedTerrains = 0;
+	this->CurrentRenderedFBX = 0;
 	this->CurrentRenderedNrOfVertices = 0;
 	this->CurrentNrOfDrawCalls = 0;
 
@@ -12,8 +13,8 @@ void DxManager::PreRender()
 	this->Dx_DeviceContext->ClearDepthStencilView(this->Dx_DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 	this->Dx_DeviceContext->RSSetViewports(1, &this->Dx_Viewport);
 	//Clear render targets
-	float ClearColor1[4] = {0.5f, 0.71f, 1.0f, 1};
-	float ClearColor2[4] = {-1.0f, -1.0f, -1.0f, -1.0f};
+	static float ClearColor1[4] = {0.5f, 0.71f, 1.0f, 1};
+	static float ClearColor2[4] = {-1.0f, -1.0f, -1.0f, -1.0f};
 	this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_GbufferRTs[0], ClearColor1);
 	this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_GbufferRTs[1], ClearColor2);
 	this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_GbufferRTs[2], ClearColor2);
@@ -22,7 +23,7 @@ void DxManager::PreRender()
 
 	if(this->useSun && this->useShadow)	
 	{
-		this->csm->PreRender(this->sun.direction, this->camera, this->params.ShadowFit);
+		this->csm->PreRender(this->sun.direction, this->camera);
 	}
 
 

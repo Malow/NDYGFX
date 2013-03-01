@@ -43,7 +43,7 @@ public:
 	PhysicsEngine();
 	virtual ~PhysicsEngine();
 
-	bool FrustrumVsSphere(D3DXPLANE planes[], BoundingSphere bs, D3DXMATRIX world, float scale);
+	bool FrustrumVsSphere(D3DXPLANE planes[], BoundingSphere& bs, D3DXMATRIX& world, float& scale);
 
 	// Functions
 	virtual CollisionData GetCollisionRayMesh(Vector3 rayOrigin, Vector3 rayDirection, iMesh* imesh);

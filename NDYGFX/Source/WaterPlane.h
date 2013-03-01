@@ -17,7 +17,7 @@ private:
 	Buffer* vertBuffer;
 
 public:
-	WaterPlane(D3DXVECTOR3 pos);
+	WaterPlane(D3DXVECTOR3 pos, string filePath);
 	virtual ~WaterPlane();
 
 	bool VertexDataHasChanged;

@@ -5,6 +5,7 @@
 
 #include "BTHFbx.h"
 #include "BTHFbxScene.h"
+#include "..\..\NDYGFX\Include\Vector.h"
 
 #include <mutex>
 
@@ -23,7 +24,7 @@ extern "C"
 		std::mutex m_InstancesMutex;
 
 		
-		FBXScene* LoadScene(const char* filename);
+		FBXScene* LoadScene(const char* filename, Vector3& minPos, Vector3& maxPos);
 
 		bool InitializeFBXSdk();
 
@@ -31,6 +32,6 @@ extern "C"
 		SceneManager();
 		virtual ~SceneManager();
 		
-		virtual IBTHFbxScene* GetScene(const char* filename);
+		virtual IBTHFbxScene* GetScene(const char* filename, Vector3& minPos, Vector3& maxPos);
 	};
 }

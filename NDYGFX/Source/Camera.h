@@ -17,6 +17,7 @@ class Camera : public iCamera
 protected:
 	D3DXMATRIX view;
 	D3DXMATRIX projection;
+	D3DXMATRIX viewProj;
 
 	D3DXVECTOR3 pos;
 	D3DXVECTOR3 oldpos;
@@ -96,8 +97,9 @@ public:
 	virtual void MoveOnlyInXZ(bool DoItOrNotThatIsTheQuestion);
 
 	/* Not inherited */
-	D3DXMATRIX GetViewMatrix();
-	D3DXMATRIX GetProjectionMatrix();
+	D3DXMATRIX& GetViewMatrix();
+	D3DXMATRIX& GetProjectionMatrix();
+	D3DXMATRIX& GetViewProjMatrix();
 	void RecreateProjectionMatrix();
 
 	D3DXVECTOR3 GetPositionD3DX() const { return this->pos; }

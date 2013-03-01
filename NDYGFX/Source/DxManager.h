@@ -155,10 +155,12 @@ private:
 	int RenderedTerrains;
 	int renderedTerrainShadows;
 	int renderedMeshShadows;
+	int renderedFBX;
 	int NrOfDrawnVertices;
 	int NrOfDrawCalls;
 	int CurrentRenderedMeshes;
 	int CurrentRenderedTerrains;
+	int CurrentRenderedFBX;
 	int CurrentRenderedNrOfVertices;
 	int CurrentNrOfDrawCalls;
 
@@ -268,6 +270,7 @@ public:
 	int GetRenderedMeshCount() const;
 	inline int GetTerrainCount() const { return this->terrains.size(); }
 	int GetRenderedTerrainCount() const; 
+	int GetRenderedFBXCount() const;
 
 	int GetRenderedMeshShadowCount() const;
 	int GetRenderedTerrainShadowCount() const; 
@@ -293,6 +296,7 @@ public:
 	void ResizeEngine(unsigned int width, unsigned int height);
 	ID3D11Device* GetDevice() { return this->Dx_Device; }
 	ID3D11DeviceContext* GetContextDevice() { return this->Dx_DeviceContext; }
+	void ResetPerfLogging();
 };
 
 #endif

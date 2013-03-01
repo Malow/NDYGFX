@@ -1,7 +1,7 @@
 #include "FBXMesh.h"
 
 
-FBXMesh::FBXMesh( D3DXVECTOR3 pos ) : Mesh(pos)
+FBXMesh::FBXMesh( D3DXVECTOR3 pos, string filePath ) : Mesh(pos, filePath)
 {
 	this->zScene = new FBXSceneD3D();
 }
@@ -45,23 +45,28 @@ void FBXMesh::Update( float dt )
 	}
 }
 
-void FBXMesh::Render(float dt, D3DXMATRIX camProj, D3DXMATRIX camView, Shader* shad, ID3D11DeviceContext* devCont)
+void FBXMesh::Render(float dt, D3DXMATRIX& camProj, D3DXMATRIX& camView, D3DXMATRIX& camViewProj, Shader* shad, ID3D11DeviceContext* devCont)
 {
 	this->RecreateWorldMatrix();
 	D3DXMATRIX world = this->GetWorldMatrix();
 
 	zSceneMutex.lock();
-	this->zScene->Render(dt, world, camProj, camView, shad, devCont );
+	this->zScene->Render(dt, world, camProj, camView, camViewProj, shad, devCont );
 	zSceneMutex.unlock();
 }
 
 bool FBXMesh::LoadFromFile( string file, IBTHFbx* fbx, ID3D11Device* dev, ID3D11DeviceContext* devCont )
 {
+	Vector3 min = Vector3(99999.9f, 99999.9f, 99999.9f);
+	Vector3 max = Vector3(-99999.9f, -99999.9f, -99999.9f);
+
 	zSceneMutex.lock();
-	this->zScene->Init(file.c_str(), fbx, dev, devCont);
+	this->zScene->Init(file.c_str(), fbx, dev, devCont, min, max);
 	this->zScene->GetAnimationController()->SetCurrentAnimation(0);
 	this->zScene->GetAnimationController()->Play();
 	zSceneMutex.unlock();
+
+	this->bs = BoundingSphere(min, max);
 
 	return true;
 }
@@ -174,7 +179,7 @@ bool FBXMesh::GetBonePosition(const std::string& name, float& x, float& y, float
 	return false;
 }
 
-void FBXMesh::RenderShadow( float dt, D3DXMATRIX lightViewProj, Shader* shad, ID3D11DeviceContext* devCont )
+void FBXMesh::RenderShadow( float dt, D3DXMATRIX& lightViewProj, Shader* shad, ID3D11DeviceContext* devCont )
 {
 	this->RecreateWorldMatrix();
 	D3DXMATRIX world = this->GetWorldMatrix();

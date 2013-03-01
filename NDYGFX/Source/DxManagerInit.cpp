@@ -253,13 +253,14 @@ HRESULT DxManager::Init()
 	};
 	
 	
-	// Forward renderer shader:
+	// Forward renderer shader: MALOW: NOT USED
+	/*
 	this->Shader_ForwardRendering = new Shader();
 	if(FAILED(this->Shader_ForwardRendering->Init(Dx_Device, Dx_DeviceContext, "Shaders/ForwardRendering.fx", inputDescVertex, 4)))
 	{
 		MaloW::Debug("Failed to open ForwardRendering.fx");
 		return E_FAIL;
-	}
+	}*/
 	
 	// ShadowMap Shader //**TILLMAN - använd egen desc utan normal & color - likadant för animated & ändra ordning, float3 pos**
 	this->Shader_ShadowMap = new Shader();

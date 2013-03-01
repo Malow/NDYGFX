@@ -44,7 +44,7 @@ public:
 	void SetMaterial(Material* mat);
 	Material* GetMaterial() const { return this->material; }
 
-	BoundingSphere GetBoundingSphere() const { return this->bb; }
+	BoundingSphere& GetBoundingSphere() { return this->bb; }
 	void SetBoundingSphere(BoundingSphere bb) { this->bb = bb; }
 };
 

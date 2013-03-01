@@ -1,7 +1,7 @@
 #include "StaticMesh.h"
 
 
-StaticMesh::StaticMesh(D3DXVECTOR3 pos, string billboardFilePath, float distanceToSwapToBillboard) : Mesh(pos, billboardFilePath, distanceToSwapToBillboard)
+StaticMesh::StaticMesh(D3DXVECTOR3 pos, string filePath, string billboardFilePath, float distanceToSwapToBillboard) : Mesh(pos, filePath, billboardFilePath, distanceToSwapToBillboard)
 {
 
 }

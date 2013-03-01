@@ -101,8 +101,9 @@ HRESULT Light::InitShadowMap(ID3D11Device* g_Device, int quality)
 	return S_OK;
 }
 
-D3DXMATRIX Light::GetViewProjMatrix()
+D3DXMATRIX& Light::GetViewProjMatrix()
 { 
+	// DONT HAVE TO RECREATE UNLESS IT'S MOVED RIGHT?
 	// Recreate LightViewProj
 	D3DXMATRIX LightView;
 	D3DXMatrixLookAtLH(&LightView, &this->pos, &this->lookAt, &this->up);

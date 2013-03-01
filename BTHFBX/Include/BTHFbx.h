@@ -9,13 +9,14 @@
 
 #include "BTHFbxCommon.h"
 #include "BTHFbxScene.h"
+#include "..\..\NDYGFX\Include\Vector.h"
 
 extern "C"
 {
 	class DECLDIR IBTHFbx
 	{
 	public:
-		virtual IBTHFbxScene* GetScene(const char* filename) = 0;
+		virtual IBTHFbxScene* GetScene(const char* filename, Vector3& minPos, Vector3& maxPos) = 0;
 	};
 
 	DECLDIR IBTHFbx* InitBTHFbx();

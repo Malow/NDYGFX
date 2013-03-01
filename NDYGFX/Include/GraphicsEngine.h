@@ -78,6 +78,7 @@ extern "C"
 
 		/*! OBS! InnerRadius has to be greater than zero. */
 		virtual void SetSpecialCircle(float innerRadius, float outerRadius, Vector2& targetPos) const = 0;
+		virtual void ResetPerfLogging() = 0;
 
 		//Resource manager
 		/*

@@ -105,8 +105,8 @@ class Terrain : public iTerrain
 		//GET-functions
 		//Object data
 		unsigned int GetSize() const { return this->zSize; }
-		D3DXVECTOR3 GetScale() const { return this->zScale; }
-		D3DXMATRIX GetWorldMatrix() const { return this->zWorldMatrix; }
+		D3DXVECTOR3& GetScale() { return this->zScale; }
+		D3DXMATRIX& GetWorldMatrix() { return this->zWorldMatrix; }
 
 		//Vertex data
 		bool HasHeightMapChanged() const { return this->zHeightMapHasChanged; }
@@ -157,7 +157,7 @@ class Terrain : public iTerrain
 		//Collision
 		void SetCulled(bool flag) { this->zIsCulled = flag; }
 		void SetShadowCulled(bool flag) { this->zIsShadowCulled = flag; }
-		BoundingSphere GetBoundingSphere() { if(this->zRecreateBoundingSphere) { RecreateBoundingSphere(); } return this->zBoundingSphere; }
+		BoundingSphere& GetBoundingSphere() { if(this->zRecreateBoundingSphere) { RecreateBoundingSphere(); } return this->zBoundingSphere; }
 
 		//Editor
 		bool UseAIMap() { return this->zUseAIMap; }

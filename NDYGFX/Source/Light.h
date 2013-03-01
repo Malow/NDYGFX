@@ -71,11 +71,11 @@ public:
 	void SetPositionD3DX(D3DXVECTOR3 pos) { this->pos = pos; }
 
 	HRESULT InitShadowMap(ID3D11Device* g_Device, int quality);
-	D3DXMATRIX GetViewProjMatrix();
+	D3DXMATRIX& GetViewProjMatrix();
 	void SetViewProjMatrix(D3DXMATRIX vp) { this->ViewProj = vp; }
 	D3DXVECTOR3 GetLookAt() const { return this->lookAt; }
 	D3DXVECTOR3 GetUp() const { return this->up; }
-	D3D11_VIEWPORT GetShadowMapViewPort() const { return this->ShadowMapViewPort; }
+	D3D11_VIEWPORT& GetShadowMapViewPort() { return this->ShadowMapViewPort; }
 	ID3D11ShaderResourceView* GetShadowMapSRV() const { return this->shadowMapSRView; }
 	ID3D11DepthStencilView* GetShadowMapDSV() const { return this->shadowMapDepthView; }
 	ID3D11Texture2D* GetShadowMap() const { return this->shadowMap; }

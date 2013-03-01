@@ -1,8 +1,8 @@
 #include "Mesh.h"	
 
-Mesh::Mesh(D3DXVECTOR3 pos, string billboardFilePath, float distanceToSwapToBillboard)
+Mesh::Mesh(D3DXVECTOR3 pos, string filePath, string billboardFilePath, float distanceToSwapToBillboard)
 {
-	this->filePath = "";
+	this->filePath = filePath;
 	this->specialColor = NULL_COLOR;
 	this->usingInvisibilityEffect = false;
 	//this->transparency = 0.0f;
@@ -23,6 +23,7 @@ Mesh::Mesh(D3DXVECTOR3 pos, string billboardFilePath, float distanceToSwapToBill
 
 	this->rotQuat = D3DXQUATERNION(0, 0, 0, 1);
 	this->scale = D3DXVECTOR3(1, 1, 1);
+	this->RecreateWorldMatrix();
 }
 Mesh::~Mesh() 
 {
