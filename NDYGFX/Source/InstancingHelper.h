@@ -59,20 +59,20 @@ struct StripData
 {
 	struct InstancedDataStruct
 	{
-		D3DXMATRIX	s_WorldMatrix; //translation, rotation, scale
-		//D3DXVECTOR4 x;
-		//D3DXVECTOR4 y;
-		//D3DXVECTOR4 z;
-		//D3DXVECTOR4 w;
+		//D3DXMATRIX	s_WorldMatrix; //translation, rotation, scale
+		D3DXVECTOR4 x;
+		D3DXVECTOR4 y;
+		D3DXVECTOR4 z;
+		D3DXVECTOR4 w;
 		//D3DXMATRIX	s_WorldInverseTransposeMatrix; 
 
 		InstancedDataStruct() 
 		{
-			//x = D3DXVECTOR4(1.0f, 0.0f, 0.0f, 0.0f);
-			//y = D3DXVECTOR4(0.0f, 1.0f, 0.0f, 0.0f);
-			//z = D3DXVECTOR4(0.0f, 0.0f, 1.0f, 0.0f);
-			//w = D3DXVECTOR4(0.0f, 0.0f, 0.0f, 1.0f);
-			D3DXMatrixIdentity(&s_WorldMatrix);
+			x = D3DXVECTOR4(1.0f, 0.0f, 0.0f, 0.0f);
+			y = D3DXVECTOR4(0.0f, 1.0f, 0.0f, 0.0f);
+			z = D3DXVECTOR4(0.0f, 0.0f, 1.0f, 0.0f);
+			w = D3DXVECTOR4(0.0f, 0.0f, 0.0f, 1.0f);
+			//D3DXMatrixIdentity(&s_WorldMatrix);
 			//s_WorldInverseTransposeMatrix = s_WorldMatrix;
 		}
 	} InstancedData;

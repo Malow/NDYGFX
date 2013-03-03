@@ -321,7 +321,7 @@ void InstancingHelper::AddMesh(Mesh* mesh)
 		{
 			StripData StripData;
 
-			StripData.InstancedData.s_WorldMatrix = mesh->GetWorldMatrix();
+			//StripData.InstancedData.s_WorldMatrix = mesh->GetWorldMatrix();
 			//StripData.InstancedData.x 
 			//StripData.InstancedData.s_WorldInverseTransposeMatrix = worldInverseTranspose;
 			//D3DXMATRIX leWhy = mesh->GetWorldMatrix();
@@ -340,7 +340,7 @@ void InstancingHelper::AddMesh(Mesh* mesh)
 	if(this->zStripData.size() >= 1)
 	{
 
-		twice = true; //**TILLMAN TEST
+		//twice = true; //**TILLMAN TEST
 	}
 	}
 	}
@@ -355,7 +355,7 @@ void InstancingHelper::PreRenderStrips()
 
 	//Now that the data is sorted, create instance groups.
 	//Clear any old groups
-	this->zStripGroups.clear();
+	/*this->zStripGroups.clear();
 	if(this->zStripData.size() > 1)
 	{
 		MeshStrip* tempPtr = NULL;
@@ -418,6 +418,15 @@ void InstancingHelper::PreRenderStrips()
 		singleStrip.s_Size = 1;
 		singleStrip.s_MeshStrip = this->zStripData[0].s_MeshStrip;
 		this->zStripGroups.push_back(singleStrip);
+	}*/
+	this->zStripGroups.clear(); //**TILLMAN TEST
+	for(int testI = 0; testI < this->zStripData.size(); ++testI)
+	{
+		StripGroup testGroup;
+		testGroup.s_StartLocation = testI;
+		testGroup.s_Size = 1;
+		testGroup.s_MeshStrip = this->zStripData[testI].s_MeshStrip;
+		this->zStripGroups.push_back(testGroup);
 	}
 
 	//Update buffer 

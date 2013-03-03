@@ -934,15 +934,15 @@ void DxManager::RenderDeferredGeometryInstanced()
 			//Copy over all instance data
 			//for(UINT i = 0; i < this->instancingHelper->GetNrOfMeshes(); ++i)
 			//{
-			/*D3DXMATRIX testW = D3DXMATRIX(
+			D3DXMATRIX testW = D3DXMATRIX(
 				dataView[i].x.x, dataView[i].x.y, dataView[i].x.z, dataView[i].x.w, 
 				dataView[i].y.x, dataView[i].y.y, dataView[i].y.z, dataView[i].y.w, 
 				dataView[i].z.x, dataView[i].z.y, dataView[i].z.z, dataView[i].z.w, 
 				dataView[i].w.x, dataView[i].w.y, dataView[i].w.z, dataView[i].w.w);
 			
 				this->Shader_DeferredGeometryInstanced->SetMatrix("g_TestW", testW);
-				*/
-				this->Shader_DeferredGeometryInstanced->SetMatrix("g_TestW", dataView[i].s_WorldMatrix);
+				
+				//this->Shader_DeferredGeometryInstanced->SetMatrix("g_TestW", dataView[i].s_WorldMatrix);
 			//}
 			//Unmap so the GPU can have access
 			this->Dx_DeviceContext->Unmap(this->instancingHelper->GetStripInstanceBuffer(), 0);
@@ -953,10 +953,9 @@ void DxManager::RenderDeferredGeometryInstanced()
 
 
 
-
-
 			Object3D* renderObject = strip->GetRenderObject();
 
+			/*
 			//Set topology
 			this->Dx_DeviceContext->IASetPrimitiveTopology(renderObject->GetTopology());
 
@@ -965,9 +964,6 @@ void DxManager::RenderDeferredGeometryInstanced()
 			this->Shader_DeferredGeometryInstanced->SetFloat4("g_SpecularColor", D3DXVECTOR4(strip->GetMaterial()->SpecularColor, 1));
 			this->Shader_DeferredGeometryInstanced->SetFloat("g_SpecularPower", strip->GetMaterial()->SpecularPower);
 				
-			//Change vertex buffer and set it and the instance buffer.
-			bufferPointers[0] = renderObject->GetVertexBufferResource()->GetBufferPointer()->GetBufferPointer();
-			this->Dx_DeviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
 				
 			//Set texture
 			if(renderObject->GetTextureResource() != NULL)
@@ -989,7 +985,15 @@ void DxManager::RenderDeferredGeometryInstanced()
 				this->Shader_DeferredGeometryInstanced->SetBool("g_Textured", false);
 			}
 			//**TILLMAN TODO: normalmap**
-
+			*/
+		
+			
+			
+			
+			//Change vertex buffer and set it and the instance buffer.
+			bufferPointers[0] = renderObject->GetVertexBufferResource()->GetBufferPointer()->GetBufferPointer();
+			this->Dx_DeviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
+			
 			//Apply pass and input layout
 			this->Shader_DeferredGeometryInstanced->Apply(0);
 				
@@ -997,7 +1001,8 @@ void DxManager::RenderDeferredGeometryInstanced()
 			unsigned int vertexCount = strip->getNrOfVerts();
 			int instanceCount = this->instancingHelper->GetStripGroup(i).s_Size;
 			int startLoc = this->instancingHelper->GetStripGroup(i).s_StartLocation;
-			this->Dx_DeviceContext->DrawInstanced(vertexCount, instanceCount, 0, startLoc); //**tillman
+			//this->Dx_DeviceContext->DrawInstanced(vertexCount, instanceCount, 0, startLoc); //**tillman
+			this->Dx_DeviceContext->Draw(vertexCount, 0); //**tillman
 			
 			//Debug data
 			this->NrOfDrawCalls++;

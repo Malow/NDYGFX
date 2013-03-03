@@ -224,10 +224,10 @@ Terrain::Terrain(D3DXVECTOR3 pos, D3DXVECTOR3 scale, unsigned int size)
 	this->zNormalsHaveChanged = false;
 	this->zNrOfVertices = this->zSize * this->zSize;
 	this->zVertices = new Vertex[this->zSize * this->zSize];
-	this->zVertexBuffer = new Buffer();
+	this->zVertexBuffer = NULL;
 	this->zNrOfIndices = (this->zSize - 1) * 2 * (this->zSize - 1) * 3;
 	this->zIndices = new int[this->zNrOfIndices];
-	this->zIndexBuffer = new Buffer();
+	this->zIndexBuffer = NULL;
 	this->zTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
 	//Texturing
