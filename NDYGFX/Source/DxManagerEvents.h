@@ -7,19 +7,19 @@
 class RendererEvent : public MaloW::ProcessEvent
 {
 protected:
-	string message;
+	bool Adding;
 	bool deleteSelf;
 
 public:
-	RendererEvent(string message = "") 
+	RendererEvent(bool adding = true) 
 	{ 
-		this->message = message; 
+		this->Adding = adding; 
 		this->deleteSelf = true;
 	}
 	virtual ~RendererEvent() 
 	{ 
 	}
-	string getMessage() { return this->message; }
+	bool IsAdding() { return this->Adding; }
 };
 
 class TerrainEvent : public RendererEvent
@@ -28,13 +28,13 @@ private:
 	Terrain* terrain;
 
 public:
-	TerrainEvent(string message, Terrain* terrain) : RendererEvent(message)
+	TerrainEvent(bool adding, Terrain* terrain) : RendererEvent(adding)
 	{
 		this->terrain = terrain;
 	}
 	virtual ~TerrainEvent() 
 	{
-		if(this->deleteSelf && this->message.substr(0, 6) != "Delete")
+		if(this->deleteSelf && this->Adding)
 		{
 			if(this->terrain) delete this->terrain; this->terrain = NULL;
 		}
@@ -44,30 +44,47 @@ public:
 };
 
 
-class MeshEvent : public RendererEvent
+class StaticMeshEvent : public RendererEvent
 {
 private:
 	StaticMesh* mesh;
-	AnimatedMesh* ani;
 
 public:
-	MeshEvent(string message, StaticMesh* mesh, AnimatedMesh* ani) : RendererEvent(message)
+	StaticMeshEvent(bool adding, StaticMesh* mesh) : RendererEvent(adding)
 	{
 		this->mesh = mesh; 
-		this->ani = ani;
 	}
-	virtual ~MeshEvent() 
+	virtual ~StaticMeshEvent() 
 	{
-		if(this->deleteSelf && this->message.substr(0, 6) != "Delete")
+		if(this->deleteSelf && this->Adding)
 		{
 			if(this->mesh)
 				delete this->mesh;
+		}
+	}
+
+	StaticMesh* GetStaticMesh() { this->deleteSelf = false; return this->mesh; }
+};
+
+class AnimatedMeshEvent : public RendererEvent
+{
+private:
+	AnimatedMesh* ani;
+
+public:
+	AnimatedMeshEvent(bool adding, AnimatedMesh* ani) : RendererEvent(adding)
+	{
+		this->ani = ani;
+	}
+	virtual ~AnimatedMeshEvent() 
+	{
+		if(this->deleteSelf && this->Adding)
+		{
 			if(this->ani)
 				delete this->ani;
 		}
 	}
 
-	StaticMesh* GetStaticMesh() { this->deleteSelf = false; return this->mesh; }
 	AnimatedMesh* GetAnimatedMesh() { this->deleteSelf = false; return this->ani; }
 };
 
@@ -75,21 +92,24 @@ class LightEvent : public RendererEvent
 {
 private:
 	Light* light;
+	bool useShadows;
 
 public:
-	LightEvent(string msg, Light* light) : RendererEvent(msg)
+	LightEvent(bool adding, Light* light, bool useShadows) : RendererEvent(adding)
 	{
 		this->light = light;
+		this->useShadows = useShadows;
 	}
 	virtual ~LightEvent() 
 	{
-		if(this->deleteSelf && this->message.substr(0, 6) != "Delete")
+		if(this->deleteSelf && this->Adding)
 		{
 			if(this->light)
 				delete this->light;
 		}
 	}
 	Light* GetLight() { this->deleteSelf = false; return this->light; }
+	bool IsUsingShadows() { return this->useShadows; }
 };
 
 class ImageEvent : public RendererEvent
@@ -98,13 +118,13 @@ private:
 	Image* img;
 
 public:
-	ImageEvent(string msg, Image* img) : RendererEvent(msg)
+	ImageEvent(bool adding, Image* img) : RendererEvent(adding)
 	{
 		this->img = img;
 	}
 	virtual ~ImageEvent() 
 	{
-		if(this->deleteSelf && this->message.substr(0, 6) != "Delete")
+		if(this->deleteSelf && this->Adding)
 		{
 			if(this->img)
 				delete this->img;
@@ -119,13 +139,13 @@ private:
 	Billboard* billboard;
 
 public:
-	BillboardEvent(string msg, Billboard* billboard) : RendererEvent(msg)
+	BillboardEvent(bool adding, Billboard* billboard) : RendererEvent(adding)
 	{
 		this->billboard = billboard;
 	}
 	virtual ~BillboardEvent() 
 	{
-		if(this->deleteSelf && this->message.substr(0, 6) != "Delete")
+		if(this->deleteSelf && this->Adding)
 		{
 			if(this->billboard)
 				delete this->billboard;
@@ -140,13 +160,13 @@ private:
 	Text* txt;
 
 public:
-	TextEvent(string msg, Text* txt) : RendererEvent(msg)
+	TextEvent(bool adding, Text* txt) : RendererEvent(adding)
 	{
 		this->txt = txt;
 	}
 	virtual ~TextEvent() 
 	{
-		if(this->deleteSelf && this->message.substr(0, 6) != "Delete")
+		if(this->deleteSelf && this->Adding)
 		{
 			if(this->txt)
 				delete this->txt;
@@ -162,7 +182,7 @@ private:
 	unsigned int height;
 
 public:
-	ResizeEvent(string msg, unsigned int width, unsigned int height) : RendererEvent(msg)
+	ResizeEvent(bool adding, unsigned int width, unsigned int height) : RendererEvent(adding)
 	{
 		this->width = width;
 		this->height = height;
@@ -181,7 +201,7 @@ private:
 	Camera* cam;
 
 public:
-	SetCameraEvent(string msg, Camera* cam) : RendererEvent(msg)
+	SetCameraEvent(bool adding, Camera* cam) : RendererEvent(adding)
 	{
 		this->cam = cam;
 	}
@@ -202,13 +222,13 @@ private:
 	WaterPlane* wp;
 
 public:
-	WaterPlaneEvent(string msg, WaterPlane* wp) : RendererEvent(msg)
+	WaterPlaneEvent(bool adding, WaterPlane* wp) : RendererEvent(adding)
 	{
 		this->wp = wp;
 	}
 	virtual ~WaterPlaneEvent() 
 	{
-		if(this->deleteSelf && this->message.substr(0, 6) != "Delete")
+		if(this->deleteSelf && this->Adding)
 		{
 			if(this->wp)
 				delete this->wp;
@@ -225,13 +245,13 @@ private:
 	AnimatedMesh* ani;
 
 public:
-	FBXEvent(string message, FBXMesh* mesh) : RendererEvent(message)
+	FBXEvent(bool adding, FBXMesh* mesh) : RendererEvent(adding)
 	{
 		this->mesh = mesh; 
 	}
 	virtual ~FBXEvent() 
 	{
-		if(this->deleteSelf && this->message.substr(0, 6) != "Delete")
+		if(this->deleteSelf && this->Adding)
 		{
 			if(this->mesh)
 				delete this->mesh;
@@ -248,7 +268,7 @@ private:
 	int qual;
 
 public:
-	ChangeShadowQualityEvent(string message, int qual) : RendererEvent(message)
+	ChangeShadowQualityEvent(bool adding, int qual) : RendererEvent(adding)
 	{
 		this->qual = qual; 
 	}
@@ -267,7 +287,7 @@ private:
 	int shad;
 
 public:
-	ReloadShaderEvent(string message, int shader) : RendererEvent(message)
+	ReloadShaderEvent(bool adding, int shader) : RendererEvent(adding)
 	{
 		this->shad = shader; 
 	}
@@ -286,13 +306,13 @@ private:
 	Decal* dec;
 
 public:
-	DecalEvent(string message, Decal* dec) : RendererEvent(message)
+	DecalEvent(bool adding, Decal* dec) : RendererEvent(adding)
 	{
 		this->dec = dec; 
 	}
 	virtual ~DecalEvent() 
 	{
-		if(this->deleteSelf && this->message.substr(0, 6) != "Delete")
+		if(this->deleteSelf && this->Adding)
 		{
 			if(this->dec)
 				delete this->dec;
@@ -301,3 +321,6 @@ public:
 
 	Decal* GetDecal() { this->deleteSelf = false; return this->dec; }
 };
+
+
+

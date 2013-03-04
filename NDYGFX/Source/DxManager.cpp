@@ -338,7 +338,7 @@ void DxManager::CreateTerrain(Terrain* terrain)
 	//terrain->Init(this->Dx_Device, this->Dx_DeviceContext);
 
 	//Create & put this event
-	TerrainEvent* re = new TerrainEvent("Add Terrain", terrain);
+	TerrainEvent* re = new TerrainEvent(true, terrain);
 	this->PutEvent(re);
 }
 
@@ -417,7 +417,7 @@ void DxManager::CreateStaticMesh(StaticMesh* mesh)
 
 	mesh->RecreateWorldMatrix(); 
 	
-	MeshEvent* re = new MeshEvent("Add Mesh", mesh, NULL);
+	StaticMeshEvent* re = new StaticMeshEvent(true, mesh);
 	this->PutEvent(re);
 }
 
@@ -495,7 +495,7 @@ void DxManager::CreateAnimatedMesh(AnimatedMesh* mesh)
 	mesh->RecreateWorldMatrix(); 
 	
 	
-	MeshEvent* re = new MeshEvent("Add AniMesh", NULL, mesh);
+	AnimatedMeshEvent* re = new AnimatedMeshEvent(true, mesh);
 	this->PutEvent(re);
 }
 
@@ -545,25 +545,25 @@ void DxManager::CreateSmokeEffect()
 
 void DxManager::DeleteTerrain(Terrain* terrain)
 {
-	TerrainEvent* re = new TerrainEvent("Delete Terrain", terrain);
+	TerrainEvent* re = new TerrainEvent(false, terrain);
 	this->PutEvent(re);
 }
 
 void DxManager::DeleteStaticMesh(StaticMesh* mesh)
 {
-	MeshEvent* re = new MeshEvent("Delete Mesh", mesh, NULL);
+	StaticMeshEvent* re = new StaticMeshEvent(false, mesh);
 	this->PutEvent(re);
 }
 
 void DxManager::DeleteAnimatedMesh(AnimatedMesh* mesh)
 {
-	MeshEvent* re = new MeshEvent("Delete AniMesh", NULL, mesh);
+	AnimatedMeshEvent* re = new AnimatedMeshEvent(false, mesh);
 	this->PutEvent(re);
 }
 
 void DxManager::DeleteLight(Light* light)
 {
-	LightEvent* re = new LightEvent("Delete Light", light);
+	LightEvent* re = new LightEvent(false, light, false);
 	this->PutEvent(re);
 }
 
@@ -573,12 +573,12 @@ Light* DxManager::CreateLight(D3DXVECTOR3 pos, bool UseShadowMap)
 
 	if(UseShadowMap)
 	{
-		LightEvent* re = new LightEvent("Add Light with shadows", light);
+		LightEvent* re = new LightEvent(true, light, true);
 		this->PutEvent(re);
 	}
 	else
 	{
-		LightEvent* re = new LightEvent("Add Light", light);
+		LightEvent* re = new LightEvent(true, light, false);
 		this->PutEvent(re);
 	}
 
@@ -595,13 +595,13 @@ void DxManager::CreateImage(Image* image, string texture)
 
 	image->SetTexture(tex);
 	
-	ImageEvent* re = new ImageEvent("Add Image", image);
+	ImageEvent* re = new ImageEvent(true, image);
 	this->PutEvent(re);
 }
 
 void DxManager::DeleteImage(Image* image)
 {
-	ImageEvent* re = new ImageEvent("Delete Image", image);
+	ImageEvent* re = new ImageEvent(false, image);
 	this->PutEvent(re);
 }
 
@@ -616,18 +616,19 @@ void DxManager::CreateBillboard(Billboard* billboard, string texture)
 
 	billboard->SetTextureResource(tex);
 
-	BillboardEvent* re = new BillboardEvent("Add Billboard", billboard);
+	BillboardEvent* re = new BillboardEvent(true, billboard);
 	this->PutEvent(re);
 }
+
 void DxManager::DeleteBillboard(Billboard* billboard)
 {
-	BillboardEvent* re = new BillboardEvent("Delete Billboard", billboard);
+	BillboardEvent* re = new BillboardEvent(false, billboard);
 	this->PutEvent(re);
 }
 
 void DxManager::DeleteText(Text* text)
 {
-	TextEvent* te = new TextEvent("Delete Text", text);
+	TextEvent* te = new TextEvent(false, text);
 	this->PutEvent(te);
 }
 
@@ -686,7 +687,7 @@ void DxManager::CreateText(Text* text, string font)
 	}
 	file.close();
 
-	TextEvent* te = new TextEvent("Add Text", text);
+	TextEvent* te = new TextEvent(true, text);
 	this->PutEvent(te);
 }
 
@@ -996,25 +997,25 @@ void DxManager::CreateWaterPlane( WaterPlane* wp, string texture )
 	wp->SetVertexBuffer(vertexBuffer);
 
 	
-	WaterPlaneEvent* re = new WaterPlaneEvent("Add WaterPlane", wp);
+	WaterPlaneEvent* re = new WaterPlaneEvent(true, wp);
 	this->PutEvent(re);
 }
 
 void DxManager::DeleteWaterPlane( WaterPlane* wp )
 {
-	WaterPlaneEvent* re = new WaterPlaneEvent("Delete WaterPlane", wp);
+	WaterPlaneEvent* re = new WaterPlaneEvent(false, wp);
 	this->PutEvent(re);
 }
 
 void DxManager::CreateFBXMesh( FBXMesh* mesh )
 {
-	FBXEvent* re = new FBXEvent("Add FBX", mesh);
+	FBXEvent* re = new FBXEvent(true, mesh);
 	this->PutEvent(re);
 }
 
 void DxManager::DeleteFBXMesh( FBXMesh* mesh )
 {
-	FBXEvent* re = new FBXEvent("Delete FBX", mesh);
+	FBXEvent* re = new FBXEvent(false, mesh);
 	this->PutEvent(re);
 }
 
@@ -1117,13 +1118,13 @@ void DxManager::CreateDecal( Decal* decal, string texture )
 	strip->SetRenderObject(ro);
 
 
-	DecalEvent* re = new DecalEvent("Add Decal", decal);
+	DecalEvent* re = new DecalEvent(true, decal);
 	this->PutEvent(re);
 }
 
 void DxManager::DeleteDecal( Decal* decal )
 {
-	DecalEvent* re = new DecalEvent("Delete Decal", decal);
+	DecalEvent* re = new DecalEvent(false, decal);
 	this->PutEvent(re);
 }
 

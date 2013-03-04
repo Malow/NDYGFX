@@ -198,9 +198,10 @@ private:
 
 	void RenderBillboardsInstanced();
 
-	void SetCamera(SetCameraEvent* ev);
+	void HandleSetCameraEvent(SetCameraEvent* ev);
 	void HandleTerrainEvent(TerrainEvent* me);
-	void HandleMeshEvent(MeshEvent* me);
+	void HandleStaticMeshEvent(StaticMeshEvent* me);
+	void HandleAnimatedMeshEvent(AnimatedMeshEvent* me);
 	void HandleLightEvent(LightEvent* le);
 	void HandleImageEvent(ImageEvent* ie);
 	void HandleBillboardEvent(BillboardEvent* ie);

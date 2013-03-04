@@ -553,5 +553,8 @@
     <ClCompile Include="Source\MaloWPerformance.cpp">
       <Filter>Source Files\Engine\Other</Filter>
     </ClCompile>
+    <ClCompile Include="Source\DxManagerEventHandling.cpp">
+      <Filter>Source Files\Engine\DxMan and Techs</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
