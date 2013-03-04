@@ -16,10 +16,6 @@ HRESULT DxManager::Update(float)
 
 	return S_OK;
 }
-
-
-	}
-}
 void DxManager::Life()
 {
 	{

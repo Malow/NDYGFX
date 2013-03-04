@@ -290,6 +290,10 @@ void DxManager::HandleReloadShaders(int shader)
 		if(this->Shader_ShadowMapFBX)	
 			Shader_ShadowMapFBX->Reload();
 		break;
+	case 22:
+		if(this->Shader_DeferredGeometryInstanced)	
+			this->Shader_DeferredGeometryInstanced->Reload();
+		break;
 	}
 }
 
