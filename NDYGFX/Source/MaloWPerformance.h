@@ -6,7 +6,7 @@
 #include <fstream>
 #include "GraphicsEngineParameters.h"
 
-#define NR_OF_TIERS 5
+#define NR_OF_TIERS 6
 
 struct PerformanceMeasurement
 {

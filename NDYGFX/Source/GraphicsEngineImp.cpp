@@ -1064,3 +1064,8 @@ void GraphicsEngineImp::ResetPerfLogging()
 {
 	this->dx->ResetPerfLogging();
 }
+
+void GraphicsEngineImp::PrintPerfLogging()
+{
+	this->dx->PrintPerfLogging();
+}

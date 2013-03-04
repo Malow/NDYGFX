@@ -439,6 +439,9 @@
     <ClInclude Include="Source\MaloWPerformance.h">
       <Filter>Source Files\Engine\Other</Filter>
     </ClInclude>
+    <ClInclude Include="Source\DxManagerHelperThread.h">
+      <Filter>Source Files\Engine\DxMan and Techs</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Include\iKeyListener.h">
@@ -554,6 +557,9 @@
       <Filter>Source Files\Engine\Other</Filter>
     </ClCompile>
     <ClCompile Include="Source\DxManagerEventHandling.cpp">
+      <Filter>Source Files\Engine\DxMan and Techs</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DxManagerHelperThread.cpp">
       <Filter>Source Files\Engine\DxMan and Techs</Filter>
     </ClCompile>
   </ItemGroup>

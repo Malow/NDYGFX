@@ -186,6 +186,7 @@ public:
 	virtual void UseShadow(bool useShadow);
 	virtual void SetSpecialCircle(float innerRadius, float outerRadius, Vector2& targetPos) const;
 	virtual void ResetPerfLogging();
+	virtual void PrintPerfLogging();
 
 	virtual void PreLoadResources(unsigned int nrOfResources, const char** resourcesFileNames);
 

@@ -41,12 +41,12 @@ void DxManager::Life()
 	while(this->stayAlive)
 	{
 #ifdef MALOWTESTPERF
-		this->perf.PreMeasure("Renderer - Entire Frame", 1);
+		this->perf.PreMeasure("Renderer - Entire Frame", 0);
 #endif
 
 
 #ifdef MALOWTESTPERF
-		this->perf.PreMeasure("Renderer - Life Overhead", 2);
+		this->perf.PreMeasure("Renderer - Life Overhead", 1);
 #endif
 		while(MaloW::ProcessEvent* ev = this->PeekEvent())
 		{
@@ -146,14 +146,20 @@ void DxManager::Life()
 
 
 #ifdef MALOWTESTPERF
-		this->perf.PostMeasure("Renderer - Life Overhead", 2);
+		this->perf.PostMeasure("Renderer - Life Overhead", 1);
 #endif
 
+#ifdef MALOWTESTPERF
+		this->perf.PreMeasure("Renderer - Render", 1);
+#endif
 		this->Render();
 		this->framecount++;
+#ifdef MALOWTESTPERF
+		this->perf.PostMeasure("Renderer - Render", 1);
+#endif
 
 #ifdef MALOWTESTPERF
-		this->perf.PostMeasure("Renderer - Entire Frame", 1);
+		this->perf.PostMeasure("Renderer - Entire Frame", 0);
 #endif
 	}
 }
@@ -1325,8 +1331,11 @@ void DxManager::RenderEnclosingFog()
 	}
 }
 
-HRESULT DxManager::Render()
+void DxManager::Render()
 {
+#ifdef MALOWTESTPERF
+	this->perf.PreMeasure("Renderer - PreOverhead", 2);
+#endif
 	if(this->RendererSleep > 0)
 		Sleep((DWORD)this->RendererSleep);
 	if(GetForegroundWindow() != this->hWnd)	// Sleep a little if you're alt tabbed out of the game to prevent desktop lag.
@@ -1338,6 +1347,10 @@ HRESULT DxManager::Render()
 	float diff = (li.QuadPart - prevTimeStamp) / this->PCFreq;
 	this->prevTimeStamp = li.QuadPart;
 	this->Timer += diff * 0.001f;
+#ifdef MALOWTESTPERF
+	this->perf.PostMeasure("Renderer - PreOverhead", 2);
+#endif
+
 
 #ifdef MALOWTESTPERF
 	this->perf.PreMeasure("Renderer - CalculateCulling", 2);
@@ -1438,8 +1451,14 @@ HRESULT DxManager::Render()
 	this->perf.PostMeasure("Renderer - Render Translucent", 2);
 #endif
 
+#ifdef MALOWTESTPERF
+	this->perf.PreMeasure("Renderer - Render Invisible Geo", 2);
+#endif
 	if(this->invisibleGeometry)
 		this->RenderInvisibilityEffect(); 
+#ifdef MALOWTESTPERF
+	this->perf.PostMeasure("Renderer - Render Invisible Geo", 2);
+#endif
 
 	//this->RenderWaterPlanes();
 	
@@ -1451,7 +1470,7 @@ HRESULT DxManager::Render()
 	this->perf.PostMeasure("Renderer - Render Skybox", 2);
 #endif
 
-	this->RenderParticles();
+	//this->RenderParticles();
 
 #ifdef MALOWTESTPERF
 	this->perf.PreMeasure("Renderer - Render Enclosing Fog", 2);
@@ -1518,10 +1537,11 @@ HRESULT DxManager::Render()
 	//for(int q = 0; q < this->csm->GetNrOfCascadeLevels(); q++)
 	//	DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_Image, this->csm->GetShadowMapSRV(q), q); 
 
-	
-	
-	if(FAILED(Dx_SwapChain->Present( 0, 0 )))
-		return E_FAIL;
-
-	return S_OK;
+#ifdef MALOWTESTPERF
+	this->perf.PreMeasure("Renderer - SwapChain Present", 2);
+#endif
+	this->Dx_SwapChain->Present( 0, 0 );
+#ifdef MALOWTESTPERF
+	this->perf.PostMeasure("Renderer - SwapChain Present", 2);
+#endif
 }

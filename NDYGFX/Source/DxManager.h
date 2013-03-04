@@ -30,6 +30,7 @@
 #include "DxManagerEvents.h"
 #include "CascadedShadowMap.h"
 #include "InstancingHelper.h"
+#include "DxManagerHelperThread.h"
 
 #ifdef MALOWTESTPERF
 #include "MaloWPerformance.h"
@@ -219,6 +220,7 @@ private:
 
 	int TriangleCount;
 	bool StartRender;
+	void Render();
 
 public:
 	DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam);
@@ -226,7 +228,7 @@ public:
 
 	void StartRendering();
 	virtual void Life();
-	HRESULT Render();
+	
 	HRESULT Update(float deltaTime);
 
 	void CreateSmokeEffect();
@@ -298,6 +300,7 @@ public:
 	ID3D11Device* GetDevice() { return this->Dx_Device; }
 	ID3D11DeviceContext* GetContextDevice() { return this->Dx_DeviceContext; }
 	void ResetPerfLogging();
+	void PrintPerfLogging();
 };
 
 #endif
