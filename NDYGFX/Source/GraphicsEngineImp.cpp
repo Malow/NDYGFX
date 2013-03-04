@@ -869,28 +869,16 @@ iGraphicsEngineParams& GraphicsEngineImp::GetEngineParameters()
 
 void GraphicsEngineImp::DeleteMesh( iMesh* delMesh )
 {
-	Mesh* tmpMesh = dynamic_cast<Mesh*>(delMesh);
-	if( tmpMesh != NULL )
-	{
-		string fileName = tmpMesh->GetFilePath();
-		if ( fileName.length() > 4 )
-		{
-			if(fileName.substr(fileName.length() - 4) == ".obj") 
-			{
-				this->DeleteStaticMesh(dynamic_cast<StaticMesh*>(delMesh));
-			}
-			else if(fileName.substr(fileName.length() - 4) == ".ani")
-			{
-				this->DeleteAnimatedMesh(dynamic_cast<AnimatedMesh*>(delMesh));
-			}
-			else if(fileName.substr(fileName.length() - 4) == ".fbx")
-			{
-				this->DeleteFBXMesh(dynamic_cast<FBXMesh*>(delMesh));
-			}
-			delMesh = NULL;
-		}
-	}
-	if(WaterPlane* wp = dynamic_cast<WaterPlane*>(tmpMesh))
+	if(StaticMesh* mesh = dynamic_cast<StaticMesh*>(delMesh))
+		this->DeleteStaticMesh(mesh);
+
+	else if(AnimatedMesh* mesh = dynamic_cast<AnimatedMesh*>(delMesh))
+		this->DeleteAnimatedMesh(mesh);
+
+	else if(FBXMesh* mesh = dynamic_cast<FBXMesh*>(delMesh))
+		this->DeleteFBXMesh(mesh);
+
+	else if(WaterPlane* wp = dynamic_cast<WaterPlane*>(delMesh))
 		this->DeleteWaterPlane(wp);
 }
 

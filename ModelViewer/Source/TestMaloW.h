@@ -14,6 +14,8 @@ private:
 	iMesh* deer;
 	iMesh* tempguy;
 	iMesh* cube;
+
+	iFBXMesh* fbx;
 	
 	//int nrofdiffs;
 	//float totDiff;
@@ -79,6 +81,8 @@ void MaloWTest::PreTest()
 
 	iMesh* ferntest = GetGraphics()->CreateMesh("Media/fernTest.obj", Vector3(25, 20, 25));
 	ferntest->Scale(0.05f);	
+
+	fbx = GetGraphics()->CreateFBXMesh("Media/temp_guy_few_anims.fbx", Vector3(50, 10, 50));
 
 	deer = GetGraphics()->CreateMesh("Media/deer_temp.obj", Vector3(10, 20, 25));
 	deer->Scale(0.05f);
@@ -194,7 +198,7 @@ void MaloWTest::RunTest(float diff)
 			//GetGraphics()->ChangeShadowQuality(qual);
 
 			//secModel->SetPosition(Vector3(10, 10, 10));
-
+			GetGraphics()->DeleteMesh(fbx);
 			qual++;
 			fesd = false;
 		}			

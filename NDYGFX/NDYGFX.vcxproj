@@ -112,6 +112,7 @@
     <ClCompile Include="Source\Decal.cpp" />
     <ClCompile Include="Source\DxManager.cpp" />
     <ClCompile Include="Source\DxManagerDeferred.cpp" />
+    <ClCompile Include="Source\DxManagerEventHandling.cpp" />
     <ClCompile Include="Source\DxManagerForwardRendering.cpp" />
     <ClCompile Include="Source\DxManagerInit.cpp" />
     <ClCompile Include="Source\DxManagerPostProcess.cpp" />

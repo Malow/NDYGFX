@@ -22,5 +22,6 @@
 /NDYGFX/Obj
 /WorkingDir/MaloWPerformanceReport.txt
 /WorkingDir/Media/Maps/*.map
-/WorkingDir/MPR.txt/*.vspx
+/WorkingDir/MPR.txt
+/*.vspx
 /WorkingDir/OldPerfReports

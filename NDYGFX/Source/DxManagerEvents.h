@@ -44,30 +44,47 @@ public:
 };
 
 
-class MeshEvent : public RendererEvent
+class StaticMeshEvent : public RendererEvent
 {
 private:
 	StaticMesh* mesh;
-	AnimatedMesh* ani;
 
 public:
-	MeshEvent(string message, StaticMesh* mesh, AnimatedMesh* ani) : RendererEvent(message)
+	StaticMeshEvent(string message, StaticMesh* mesh) : RendererEvent(message)
 	{
 		this->mesh = mesh; 
-		this->ani = ani;
 	}
-	virtual ~MeshEvent() 
+	virtual ~StaticMeshEvent() 
 	{
 		if(this->deleteSelf && this->message.substr(0, 6) != "Delete")
 		{
 			if(this->mesh)
 				delete this->mesh;
+		}
+	}
+
+	StaticMesh* GetStaticMesh() { this->deleteSelf = false; return this->mesh; }
+};
+
+class AnimatedMeshEvent : public RendererEvent
+{
+private:
+	AnimatedMesh* ani;
+
+public:
+	AnimatedMeshEvent(string message, AnimatedMesh* ani) : RendererEvent(message)
+	{
+		this->ani = ani;
+	}
+	virtual ~AnimatedMeshEvent() 
+	{
+		if(this->deleteSelf && this->message.substr(0, 6) != "Delete")
+		{
 			if(this->ani)
 				delete this->ani;
 		}
 	}
 
-	StaticMesh* GetStaticMesh() { this->deleteSelf = false; return this->mesh; }
 	AnimatedMesh* GetAnimatedMesh() { this->deleteSelf = false; return this->ani; }
 };
 
@@ -301,3 +318,6 @@ public:
 
 	Decal* GetDecal() { this->deleteSelf = false; return this->dec; }
 };
+
+
+

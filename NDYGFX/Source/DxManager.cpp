@@ -416,7 +416,7 @@ void DxManager::CreateStaticMesh(StaticMesh* mesh)
 
 	mesh->RecreateWorldMatrix(); 
 	
-	MeshEvent* re = new MeshEvent("Add Mesh", mesh, NULL);
+	StaticMeshEvent* re = new StaticMeshEvent("Add Mesh", mesh);
 	this->PutEvent(re);
 }
 
@@ -494,7 +494,7 @@ void DxManager::CreateAnimatedMesh(AnimatedMesh* mesh)
 	mesh->RecreateWorldMatrix(); 
 	
 	
-	MeshEvent* re = new MeshEvent("Add AniMesh", NULL, mesh);
+	AnimatedMeshEvent* re = new AnimatedMeshEvent("Add AniMesh", mesh);
 	this->PutEvent(re);
 }
 
@@ -550,13 +550,13 @@ void DxManager::DeleteTerrain(Terrain* terrain)
 
 void DxManager::DeleteStaticMesh(StaticMesh* mesh)
 {
-	MeshEvent* re = new MeshEvent("Delete Mesh", mesh, NULL);
+	StaticMeshEvent* re = new StaticMeshEvent("Delete Mesh", mesh);
 	this->PutEvent(re);
 }
 
 void DxManager::DeleteAnimatedMesh(AnimatedMesh* mesh)
 {
-	MeshEvent* re = new MeshEvent("Delete AniMesh", NULL, mesh);
+	AnimatedMeshEvent* re = new AnimatedMeshEvent("Delete AniMesh", mesh);
 	this->PutEvent(re);
 }
 

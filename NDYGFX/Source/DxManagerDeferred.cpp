@@ -1610,3 +1610,36 @@ void DxManager::RenderDeferredPerPixelTranslucent()
 
 	this->Shader_DeferredPerPixelTranslucent->Apply(0);
 }
+
+void DxManager::RenderFBXMeshes()
+{
+	this->Dx_DeviceContext->OMSetRenderTargets(this->NrOfRenderTargets, this->Dx_GbufferRTs, this->Dx_DepthStencilView);
+	this->Shader_FBX->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetPositionD3DX(), 1));
+	this->Shader_FBX->SetFloat("NearClip", this->params.NearClip);
+	this->Shader_FBX->SetFloat("FarClip", this->params.FarClip);
+
+
+	// Should be per mesh, future....
+	this->Shader_FBX->SetInt("specialColor", 0);
+	this->Shader_FBX->SetFloat4("SpecularColor", D3DXVECTOR4(D3DXVECTOR3(0.05f, 0.05f, 0.05f), 1));
+	this->Shader_FBX->SetFloat("SpecularPower", 30.0f);
+	this->Shader_FBX->SetFloat4("AmbientLight", D3DXVECTOR4(D3DXVECTOR3(0.2f, 0.2f, 0.2f), 1));
+	this->Shader_FBX->SetFloat4("DiffuseColor", D3DXVECTOR4(D3DXVECTOR3(0.6f, 0.6f, 0.6f), 1));
+	//
+
+
+	Shader_FBX->Apply(0);
+	float dt = this->Timer - this->LastFBXUpdate;
+	for(int i = 0; i < this->FBXMeshes.size(); i++)
+	{
+		if(!this->FBXMeshes[i]->IsCulled())
+		{
+			this->CurrentRenderedFBX++;
+			this->FBXMeshes[i]->Update(dt);
+			this->FBXMeshes[i]->Render(dt, this->camera->GetProjectionMatrix(), this->camera->GetViewMatrix(), this->camera->GetViewProjMatrix(), this->Shader_FBX, this->Dx_DeviceContext);
+		}
+	}
+
+	this->LastFBXUpdate = this->Timer;
+	this->renderedFBX = CurrentRenderedFBX;
+}
