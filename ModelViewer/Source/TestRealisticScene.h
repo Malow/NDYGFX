@@ -137,6 +137,7 @@ bool TestRealisticScene::RunTest(float diff)
 
 void TestRealisticScene::PostTest()
 {
+	GetGraphics()->PrintPerfLogging();
 	delete world;
 	delete wr;
 }

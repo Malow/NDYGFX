@@ -15,7 +15,6 @@ MaloWPerformance::~MaloWPerformance()
 
 void MaloWPerformance::PreMeasure( string perfName, int tier )
 {
-	tier--;
 	LARGE_INTEGER li;
 	QueryPerformanceCounter(&li);
 	float Timer = (li.QuadPart / PCFreq);
@@ -42,7 +41,6 @@ void MaloWPerformance::PreMeasure( string perfName, int tier )
 
 void MaloWPerformance::PostMeasure( string perfName, int tier )
 {
-	tier--;
 	LARGE_INTEGER li;
 	QueryPerformanceCounter(&li);
 	float Timer = (li.QuadPart / PCFreq);

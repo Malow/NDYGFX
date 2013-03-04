@@ -56,6 +56,7 @@
     <ClInclude Include="Source\DxManager.h" />
     <ClInclude Include="Source\DxManagerDebugging.h" />
     <ClInclude Include="Source\DxManagerEvents.h" />
+    <ClInclude Include="Source\DxManagerHelperThread.h" />
     <ClInclude Include="Source\FBXMesh.h" />
     <ClInclude Include="Source\FPSCamera.h" />
     <ClInclude Include="Source\FXAA.h" />
@@ -114,6 +115,7 @@
     <ClCompile Include="Source\DxManagerDeferred.cpp" />
     <ClCompile Include="Source\DxManagerEventHandling.cpp" />
     <ClCompile Include="Source\DxManagerForwardRendering.cpp" />
+    <ClCompile Include="Source\DxManagerHelperThread.cpp" />
     <ClCompile Include="Source\DxManagerInit.cpp" />
     <ClCompile Include="Source\DxManagerPostProcess.cpp" />
     <ClCompile Include="Source\DxManagerRender.cpp" />
