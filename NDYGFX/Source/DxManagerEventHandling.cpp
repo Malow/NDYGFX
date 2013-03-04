@@ -2,12 +2,11 @@
 
 void DxManager::HandleDecalEvent(DecalEvent* de)
 {
-	string msg = de->getMessage();
-	if(msg == "Add Decal")
+	if(de->IsAdding())
 	{
 		this->decals.add(de->GetDecal());
 	}
-	else if(msg == "Delete Decal")
+	else
 	{
 		Decal* dec = de->GetDecal();
 		for(int i = 0; i < this->decals.size(); i++)
@@ -24,12 +23,11 @@ void DxManager::HandleDecalEvent(DecalEvent* de)
 
 void DxManager::HandleTerrainEvent(TerrainEvent* me)
 {
-	string msg = me->getMessage();
-	if(msg == "Add Terrain")
+	if(me->IsAdding())
 	{
 		this->terrains.add(me->GetTerrain());
 	}
-	else if(msg == "Delete Terrain")
+	else
 	{
 		Terrain* terrain = me->GetTerrain();
 		for(int i = 0; i < this->terrains.size(); i++)
@@ -45,12 +43,11 @@ void DxManager::HandleTerrainEvent(TerrainEvent* me)
 
 void DxManager::HandleStaticMeshEvent(StaticMeshEvent* me)
 {
-	string msg = me->getMessage();
-	if(msg == "Add Mesh")
+	if(me->IsAdding())
 	{
 		this->objects.add(me->GetStaticMesh());
 	}
-	else if(msg == "Delete Mesh")
+	else
 	{
 		StaticMesh* mesh = me->GetStaticMesh();
 		for(int i = 0; i < this->objects.size(); i++)
@@ -67,12 +64,11 @@ void DxManager::HandleStaticMeshEvent(StaticMeshEvent* me)
 
 void DxManager::HandleAnimatedMeshEvent(AnimatedMeshEvent* me)
 {
-	string msg = me->getMessage();
-	if(msg == "Add AniMesh")
+	if(me->IsAdding())
 	{
 		this->animations.add(me->GetAnimatedMesh());
 	}
-	else if(msg == "Delete AniMesh")
+	else
 	{
 		AnimatedMesh* mesh = me->GetAnimatedMesh();
 		for(int i = 0; i < this->animations.size(); i++)
@@ -90,12 +86,11 @@ void DxManager::HandleAnimatedMeshEvent(AnimatedMeshEvent* me)
 
 void DxManager::HandleFBXEvent(FBXEvent* me)
 {
-	string msg = me->getMessage();
-	if(msg == "Add FBX")
+	if(me->IsAdding())
 	{
 		this->FBXMeshes.add(me->GetFBXMesh());
 	}
-	else if(msg == "Delete FBX")
+	else
 	{
 		FBXMesh* mesh = me->GetFBXMesh();
 		for(int i = 0; i < this->FBXMeshes.size(); i++)
@@ -112,24 +107,24 @@ void DxManager::HandleFBXEvent(FBXEvent* me)
 
 void DxManager::HandleLightEvent(LightEvent* le)
 {
-	string msg = le->getMessage();
-	if(msg == "Add Light with shadows")
+	if(le->IsAdding())
 	{
-		le->GetLight()->InitShadowMap(this->Dx_Device, this->params.ShadowMapSettings);
-		this->lights.add(le->GetLight());
+		if(le->IsUsingShadows())
+		{			
+			le->GetLight()->InitShadowMap(this->Dx_Device, this->params.ShadowMapSettings);
+			this->lights.add(le->GetLight());
+		}
+		else
+			this->lights.add(le->GetLight());
 	}
-	else if(msg == "Add Light")
-	{
-		this->lights.add(le->GetLight());
-	}
-	else if(msg == "Delete Light")
+	else
 	{
 		Light* light = le->GetLight();
 		for(int i = 0; i < this->lights.size(); i++)
 		{
 			if(this->lights[i] == light)
 			{
-				//delete this->lights.getAndRemove(i);
+				delete this->lights.getAndRemove(i);
 				light = NULL;
 			}
 		}
@@ -138,10 +133,9 @@ void DxManager::HandleLightEvent(LightEvent* le)
 
 void DxManager::HandleImageEvent(ImageEvent* ie)
 {
-	string msg = ie->getMessage();
-	if(msg == "Add Image")
+	if(ie->IsAdding())
 		this->images.add(ie->GetImage());
-	else if(msg == "Delete Image")
+	else
 	{
 		Image* img = ie->GetImage();
 		for(int i = 0; i < this->images.size(); i++)
@@ -157,10 +151,9 @@ void DxManager::HandleImageEvent(ImageEvent* ie)
 
 void DxManager::HandleBillboardEvent(BillboardEvent* ie)
 {
-	string msg = ie->getMessage();
-	if(msg == "Add Billboard")
+	if(ie->IsAdding())
 		this->billboards.add(ie->GetBillboard());
-	else if(msg == "Delete Billboard")
+	else
 	{
 		Billboard* billboard = ie->GetBillboard();
 		for(int i = 0; i < this->billboards.size(); i++)
@@ -176,10 +169,9 @@ void DxManager::HandleBillboardEvent(BillboardEvent* ie)
 
 void DxManager::HandleTextEvent(TextEvent* te)
 {
-	string msg = te->getMessage();
-	if(msg == "Add Text")
+	if(te->IsAdding())
 		this->texts.add(te->GetText());
-	else if(msg == "Delete Text")
+	else
 	{
 		Text* txt = te->GetText();
 		for(int i = 0; i < this->texts.size(); i++)
@@ -195,10 +187,9 @@ void DxManager::HandleTextEvent(TextEvent* te)
 
 void DxManager::HandleWaterPlaneEvent(WaterPlaneEvent* ie)
 {
-	string msg = ie->getMessage();
-	if(msg == "Add WaterPlane")
+	if(ie->IsAdding())
 		this->waterplanes.add(ie->GetWaterPlane());
-	else if(msg == "Delete WaterPlane")
+	else
 	{
 		WaterPlane* wp = ie->GetWaterPlane();
 		for(int i = 0; i < this->waterplanes.size(); i++)
