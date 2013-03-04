@@ -70,7 +70,10 @@ bool TestRealisticScene::RunTest(float diff)
 	wa->radius = GetGraphics()->GetEngineParameters().FarClip;
 	world->Update();
 	wr->Update();
-
+	if(GetGraphics()->GetKeyListener()->IsPressed(VK_BACK))
+	{
+		GetGraphics()->ResetPerfLogging();
+	}
 #ifdef AUTO_PATH
 	Vector3 pos;
 	if(path == 0)

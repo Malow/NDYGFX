@@ -40,22 +40,12 @@ struct StripData
 	struct InstancedDataStruct
 	{
 		D3DXMATRIX	s_WorldMatrix; //translation, rotation, scale
-		//D3DXMATRIX	s_WorldInverseTransposeMatrix; 
+		D3DXMATRIX	s_WorldInverseTransposeMatrix; 
 
-		/*D3DXVECTOR4 x;
-		D3DXVECTOR4 y;
-		D3DXVECTOR4 z;
-		D3DXVECTOR4 w;*/
-		
 		InstancedDataStruct() 
 		{
 			D3DXMatrixIdentity(&s_WorldMatrix);
-			//s_WorldInverseTransposeMatrix = s_WorldMatrix;
-
-			/*x = D3DXVECTOR4(1.0f, 0.0f, 0.0f, 0.0f);
-			y = D3DXVECTOR4(0.0f, 1.0f, 0.0f, 0.0f);
-			z = D3DXVECTOR4(0.0f, 0.0f, 1.0f, 0.0f);
-			w = D3DXVECTOR4(0.0f, 0.0f, 0.0f, 1.0f);*/
+			s_WorldInverseTransposeMatrix = s_WorldMatrix;
 		}
 	} InstancedData;
 
@@ -65,25 +55,11 @@ struct StripData
 	StripData(MeshStrip* meshStrip) : s_MeshStrip(meshStrip) {}
 };
 
-/*
-struct MeshGroup 
-{
-	unsigned int		s_StartLocation;
-	unsigned int		s_Size; 
-	//MeshStripsResource*	s_MeshStripsResource;
-	MeshStrip*			s_MeshStrip;
-	MeshGroup() : s_StartLocation(0), s_Size(0), s_MeshStrip(NULL) {}// s_MeshStripsResource(NULL) {}
-	MeshGroup(unsigned int startLocation, unsigned int size, MeshStrip* meshStrip)
-		: s_StartLocation(startLocation), s_Size(size), s_MeshStrip(meshStrip) {}
-};
-*/
 
 struct StripGroup
 {
 	unsigned int		s_StartLocation;
 	unsigned int		s_Size; 
-	//Buffer*				s_VertexBuffer;
-	//TextureResource*	s_TextureResource;
 	MeshStrip*			s_MeshStrip;
 
 	StripGroup() : s_StartLocation(0), s_Size(0), s_MeshStrip(NULL) {}
@@ -93,7 +69,6 @@ struct StripGroup
 };
 
 bool SortBillboardData(BillboardData billboardLeft, BillboardData billboardRight);
-//bool SortMeshData(MeshData meshLeft, MeshData meshRight);
 bool SortStripData(StripData stripLeft, StripData stripRight);
 
 class InstancingHelper
@@ -113,7 +88,6 @@ class InstancingHelper
 		//Instance Buffer
 		ID3D11Buffer* zBillboardInstanceBuffer; //Shall contain vertex data of billboardData.
 
-		bool twice;//**TILLMAN
 
 
 		//MESHES(MESHSTRIPS)
@@ -128,8 +102,6 @@ class InstancingHelper
 
 		//Instance Buffer (containing all instanced data)
 		ID3D11Buffer* zStripInstanceBuffer; 
-
-		bool test; //**TILLMAN
 		
     private:
 	    void ExpandBillboardInstanceBuffer();
@@ -170,7 +142,5 @@ class InstancingHelper
 		/*	Sorts, creates instance groups and updates the instance buffer.	*/
 		void PreRenderStrips();
 		void PostRenderStrips() { this->zStripData.clear(); this->zStripGroups.clear(); }
-
-		void SetBoolTest(bool flag) { this->test = flag; }
 
 };
