@@ -854,8 +854,8 @@ void DxManager::RenderBillboardsInstanced()
 			//Draw
 			int instanceCount = this->instancingHelper->GetBillboardGroup(i).s_Size;
 			int startInstanceLocation = this->instancingHelper->GetBillboardGroup(i).s_StartLocation;
-			this->Dx_DeviceContext->DrawInstanced(instanceCount, 1, startInstanceLocation, 0); //**TILLMAN, parameters inversed**
-			
+			this->Dx_DeviceContext->Draw(instanceCount, startInstanceLocation);
+
 			//Debug data
 			this->NrOfDrawCalls++;
 		}
@@ -1334,7 +1334,7 @@ void DxManager::RenderCascadedShadowMapBillboardInstanced()
 				//Draw
 				int instanceCount = this->instancingHelper->GetBillboardGroup(j).s_Size;
 				int startInstanceLocation = this->instancingHelper->GetBillboardGroup(j).s_StartLocation;
-				this->Dx_DeviceContext->DrawInstanced(instanceCount, 1, startInstanceLocation, 0); //**TILLMAN, parameters inversed**
+				this->Dx_DeviceContext->Draw(instanceCount, startInstanceLocation);
 			}
 		}
 
