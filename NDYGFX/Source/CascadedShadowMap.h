@@ -5,7 +5,7 @@
 #include "GraphicsEngineParameters.h"
 #include "Camera.h"
 
-#define SHADOW_MAP_CASCADE_COUNT 4
+#define SHADOW_MAP_CASCADE_COUNT 3
 #define SHADOW_SPLIT_LOG_FACTOR 0.9f
 #define SHADOW_MAP_DEPTH_BIAS 0.01f
 

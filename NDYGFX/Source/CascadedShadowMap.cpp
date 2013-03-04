@@ -128,15 +128,22 @@ void CascadedShadowMap::CalcShadowMapMatrices(D3DXVECTOR3 sunLight, Camera* cam,
 void CascadedShadowMap::CalcShadowMappingSplitDepths()
 {
 	this->shadowMappingSplitDepths[0] = this->params.NearClip;
+
+	/*this->shadowMappingSplitDepths[1] = this->params.FarClip * 0.025f;
+	this->shadowMappingSplitDepths[2] = this->params.FarClip * 0.1f;
+	this->shadowMappingSplitDepths[3] = this->params.FarClip * 0.4f;
+	this->shadowMappingSplitDepths[SHADOW_MAP_CASCADE_COUNT] = this->params.FarClip;
+	*/
+	this->shadowMappingSplitDepths[1] = this->params.FarClip * 0.1f;
+	this->shadowMappingSplitDepths[2] = this->params.FarClip * 0.4f;
+	this->shadowMappingSplitDepths[SHADOW_MAP_CASCADE_COUNT] = this->params.FarClip;
+
+
 	/*float scale = ;
 	for(int i = 1; i < SHADOW_MAP_CASCADE_COUNT; i++) //TILLMAN TODO
 	{
 		this->shadowMappingSplitDepths[i] = camFar * scale * 0.001f;
 	}*/
-	this->shadowMappingSplitDepths[1] = this->params.FarClip * 0.025f;
-	this->shadowMappingSplitDepths[2] = this->params.FarClip * 0.1f;
-	this->shadowMappingSplitDepths[3] = this->params.FarClip * 0.4f;
-	this->shadowMappingSplitDepths[SHADOW_MAP_CASCADE_COUNT] = this->params.FarClip;
 	
 	/*
 	float i_f = 1.0f;
