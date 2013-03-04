@@ -43,13 +43,13 @@ PSIn VS(VSIn input)
 }
 float PS(PSIn input) : SV_Depth
 {
-	/*if(textured)
+	if(textured)
 	{
 		if(diffuseMap0.Sample(PointWrapSampler, input.Tex).a < 0.5f) 
 		{
 			discard;
 		}
-	}*/
+	}
 
 	return input.Pos.z;
 }
