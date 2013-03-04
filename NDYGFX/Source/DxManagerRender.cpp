@@ -979,14 +979,16 @@ void DxManager::RenderCascadedShadowMap()
 	this->renderedTerrainShadows = currentRenderedTerrainShadows;
 }
 
-void DxManager::RenderCascadedShadowMapBillboardInstanced()
+void DxManager::RenderCascadedShadowMapInstanced()
 {
+	//BILLBOARDS
+#ifdef MALOWTESTPERF
+	this->perf.PreMeasure("Renderer - Render Cascaded Shadowmap Instanced Billboards", 3);
+#endif
 	if(this->instancingHelper->GetNrOfBillboards() > 0)
 	{
 		//Sort, create instance groups and update buffer before rendering
 		this->instancingHelper->PreRenderBillboards(); //**Tillman todo opt: remove redundant billboard data**
-
-
 
 		//Draw billboards
 		unsigned int strides[1];
@@ -1041,11 +1043,37 @@ void DxManager::RenderCascadedShadowMapBillboardInstanced()
 			}
 		}
 
-
-
 		//Reset counter (nrofbillboards)
 		this->instancingHelper->PostRenderBillboards();
 	}
+#ifdef MALOWTESTPERF
+	this->perf.PostMeasure("Renderer - Render Cascaded Shadowmap Instanced Billboards", 3);
+#endif
+
+
+	//STATIC OBJECTS
+	if(this->instancingHelper->GetNrOfStrips() > 0)
+	{
+		//Sort, create instance groups and update buffer before rendering
+		this->instancingHelper->PreRenderStrips(); 
+
+		//TILLMAN TODO
+		//Draw meshes(meshstrips)
+		//vertex buffers - //OBS! används VertexNormalMapInstanced
+		//IA
+		//shader variables
+		//Etc
+
+		// Per cascade:
+		for(int i = 0; i < this->csm->GetNrOfCascadeLevels(); ++i)
+		{
+		}
+
+
+
+	}
+
+
 }
 
 void DxManager::CalculateCulling()
@@ -1373,7 +1401,7 @@ void DxManager::Render()
 #endif
 	this->RenderShadowMap();
 	this->RenderCascadedShadowMap();
-	this->RenderCascadedShadowMapBillboardInstanced(); //Must be after RenderCascadedShadowMap()
+	this->RenderCascadedShadowMapInstanced(); //Must be after RenderCascadedShadowMap()
 #ifdef MALOWTESTPERF
 	this->perf.PostMeasure("Renderer - Render Shadows", 2);
 #endif

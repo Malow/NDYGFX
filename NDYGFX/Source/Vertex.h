@@ -79,6 +79,33 @@ struct VertexNormalMap : public Vertex
 	}
 };
 
+struct VertexNormalMapCompressed1
+{
+	D3DXVECTOR4 pos_TexU;
+	D3DXVECTOR4 texV_Norm;
+	D3DXVECTOR3 tangent;	
+	D3DXVECTOR3 binormal;
+
+	VertexNormalMapCompressed1(D3DXVECTOR3 _pos, D3DXVECTOR2 _texCoord, D3DXVECTOR3 _norm, D3DXVECTOR3 _tang, D3DXVECTOR3 _binorm)
+	{
+		pos_TexU = D3DXVECTOR4(_pos, _texCoord.x);
+		texV_Norm = D3DXVECTOR4(_texCoord.y, _norm.x, _norm.y, _norm.z);
+		tangent = _tang;
+		binormal = _binorm;
+	}
+
+	VertexNormalMapCompressed1(const VertexNormalMapCompressed1* origObj)
+	{
+		pos_TexU = origObj->pos_TexU;
+		texV_Norm = origObj->texV_Norm;
+		tangent = origObj->tangent;
+		binormal = origObj->binormal;
+	}
+	inline D3DXVECTOR2& GetTexCoords() { return D3DXVECTOR2(pos_TexU.w, texV_Norm.x); }
+	inline D3DXVECTOR3& GetPos() { return D3DXVECTOR3(pos_TexU.x, pos_TexU.y, pos_TexU.z); }
+	inline D3DXVECTOR3& GetNormal() { return D3DXVECTOR3(texV_Norm.y, texV_Norm.z, texV_Norm.w); }
+};
+
 
 
 

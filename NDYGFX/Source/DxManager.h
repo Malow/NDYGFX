@@ -182,7 +182,7 @@ private:
 	void RenderParticles();
 	void RenderShadowMap();
 	void RenderCascadedShadowMap();
-	void RenderCascadedShadowMapBillboardInstanced();
+	void RenderCascadedShadowMapInstanced();
 	void RenderImages();
 	void RenderBillboards();
 	void RenderText();
