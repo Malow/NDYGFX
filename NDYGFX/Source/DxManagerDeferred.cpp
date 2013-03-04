@@ -891,15 +891,8 @@ void DxManager::RenderDeferredGeometryInstanced()
 	if(this->instancingHelper->GetNrOfStrips() > 0)
 	{
 		//Sort, create instance groups and update buffer before rendering
-		//static bool once = false;
-		//if(!once)
-		{
-
+		this->instancingHelper->PreRenderStrips();
 		
-			this->instancingHelper->PreRenderStrips();
-			//once = true;
-		//	this->instancingHelper->SetBoolTest(once);
-		}
 
 
 		// Set global variables per frame
@@ -913,48 +906,11 @@ void DxManager::RenderDeferredGeometryInstanced()
 		unsigned int offsets[2] = {0, 0};
 		bufferPointers[1] = this->instancingHelper->GetStripInstanceBuffer();	
 
-		//for(unsigned int jj = 0; jj < 3; ++jj)
-		//{
-
-
-			//Per Strip group
-		for(unsigned int i = 0; i < this->instancingHelper->GetNrOfStripGroups(); ++i)//** 1 tillman
-		//for(unsigned int i = 0; i < 1; ++i)
+		//Per Strip group
+		for(unsigned int i = 0; i < this->instancingHelper->GetNrOfStripGroups(); ++i)
 		{
 			StripGroup stripGroup = this->instancingHelper->GetStripGroup(i);
 			MeshStrip* strip = stripGroup.s_MeshStrip;
-
-			
-
-
-			D3DXMATRIX worldTest;
-			D3DXMatrixIdentity(&worldTest);
-			this->Shader_DeferredGeometryInstanced->SetMatrix("g_TestW", worldTest);
-			/*D3D11_MAPPED_SUBRESOURCE mappedSubResource; 
-			//Map to access data
-			this->Dx_DeviceContext->Map(this->instancingHelper->GetStripInstanceBuffer(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubResource);
-			StripData::InstancedDataStruct* dataView = reinterpret_cast<StripData::InstancedDataStruct*>(mappedSubResource.pData);
-			//Copy over all instance data
-			//for(UINT i = 0; i < this->instancingHelper->GetNrOfMeshes(); ++i)
-			//{
-			D3DXMATRIX testW = D3DXMATRIX(
-				dataView[i].x.x, dataView[i].x.y, dataView[i].x.z, dataView[i].x.w, 
-				dataView[i].y.x, dataView[i].y.y, dataView[i].y.z, dataView[i].y.w, 
-				dataView[i].z.x, dataView[i].z.y, dataView[i].z.z, dataView[i].z.w, 
-				dataView[i].w.x, dataView[i].w.y, dataView[i].w.z, dataView[i].w.w);
-			
-				this->Shader_DeferredGeometryInstanced->SetMatrix("g_TestW", testW);
-				
-				this->Shader_DeferredGeometryInstanced->SetMatrix("g_TestW", dataView[0].s_WorldMatrix);
-			//}
-			//Unmap so the GPU can have access
-			this->Dx_DeviceContext->Unmap(this->instancingHelper->GetStripInstanceBuffer(), 0);
-			*/
-			//this->Shader_DeferredGeometryInstanced->SetMatrix("g_TestW", this->instancingHelper->GetMeshData(0).InstancedData.s_WorldMatrix);
-			//this->Shader_DeferredGeometryInstanced->SetMatrix("g_TestWIT", this->instancingHelper->GetMeshData(0).InstancedData.s_WorldInverseTransposeMatrix);
-			
-
-
 
 			Object3D* renderObject = strip->GetRenderObject();
 			
@@ -963,7 +919,7 @@ void DxManager::RenderDeferredGeometryInstanced()
 
 			// Setting lightning from material
 			this->Shader_DeferredGeometryInstanced->SetFloat4("g_DiffuseColor", D3DXVECTOR4(strip->GetMaterial()->DiffuseColor, 1));
-			this->Shader_DeferredGeometryInstanced->SetFloat4("g_SpecularColor", D3DXVECTOR4(strip->GetMaterial()->SpecularColor, 1));
+			this->Shader_DeferredGeometryInstanced->SetFloat3("g_SpecularColor", D3DXVECTOR3(strip->GetMaterial()->SpecularColor));
 			this->Shader_DeferredGeometryInstanced->SetFloat("g_SpecularPower", strip->GetMaterial()->SpecularPower);
 				
 			//Set textures
@@ -978,10 +934,12 @@ void DxManager::RenderDeferredGeometryInstanced()
 					if(renderObject->GetNormalMapResource() != NULL)
 					{
 						this->Shader_DeferredGeometryInstanced->SetResource("g_NormalMap", renderObject->GetNormalMapResource()->GetSRVPointer());
+						this->Shader_DeferredGeometryInstanced->SetBool("g_UseNormalMap", true);
 					}
 					else
 					{
 						this->Shader_DeferredGeometryInstanced->SetResource("g_NormalMap", NULL);
+						this->Shader_DeferredGeometryInstanced->SetBool("g_UseNormalMap", false);
 					}
 				}
 				else
@@ -1009,14 +967,13 @@ void DxManager::RenderDeferredGeometryInstanced()
 			unsigned int vertexCount = strip->getNrOfVerts();
 			int instanceCount = this->instancingHelper->GetStripGroup(i).s_Size;
 			int startLoc = this->instancingHelper->GetStripGroup(i).s_StartLocation;
-			this->Dx_DeviceContext->DrawInstanced(vertexCount, instanceCount, 0, startLoc); //**tillman
-			//this->Dx_DeviceContext->Draw(vertexCount, 0); //**tillman
+			this->Dx_DeviceContext->DrawInstanced(vertexCount, instanceCount, 0, startLoc); 
 			
 			//Debug data
 			this->NrOfDrawCalls++;
 			this->NrOfDrawnVertices += vertexCount;
 		}
-		//}
+		
 
 
 
