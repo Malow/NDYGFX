@@ -1,5 +1,5 @@
 // EDIT 2013-01-23 by Tillman: Added transparency.
-//#include "stdafx.fx"
+#include "stdafx.fx"
 Texture2D diffuseMap0;
 //Texture2D diffuseMap1; //Only need one diffuse map if no blending is one.
 
@@ -55,22 +55,7 @@ float PS(PSIn input) : SV_Depth
 }
 
 
-//TEST
-RasterizerState SolidFrontCulling
-{
-	FillMode = Solid;
-	CullMode = Front;
-};
-DepthStencilState EnableDepth
-{
-    DepthEnable = TRUE;
-    DepthWriteMask = ALL;
-    DepthFunc = LESS_EQUAL;
-};
-BlendState NoBlend
-{
-	BlendEnable[0] = FALSE;
-};
+
 technique11 RenderShadowMap
 {
 	pass P0
