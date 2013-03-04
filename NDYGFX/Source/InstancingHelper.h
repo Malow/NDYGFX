@@ -102,10 +102,25 @@ class InstancingHelper
 
 		//Instance Buffer (containing all instanced data)
 		ID3D11Buffer* zStripInstanceBuffer; 
+
+
+		//ANIMATED MESHES(MESHSTRIPS)
+		//Counters
+		unsigned int zAnimatedStripInstanceBufferSize;
+
+		//Vector containing strip data of all meshes that are added each frame.
+		std::vector<StripData> zAnimatedStripData;
+
+		//Instance group (groups of strips that share the same texture)
+		std::vector<StripGroup> zAnimatedStripGroups;
+
+		//Instance Buffer (containing all instanced data)
+		ID3D11Buffer* zSAnimatedtripInstanceBuffer; 
 		
     private:
-	    void ExpandBillboardInstanceBuffer();
+		void ExpandBillboardInstanceBuffer();
 		void ExpandStripInstanceBuffer();
+		void ExpandAnimatedStripInstanceBuffer();
 
 	public:
 		InstancingHelper();
@@ -130,6 +145,8 @@ class InstancingHelper
 
 
 		//MESH
+		void AddMesh(Mesh* mesh);
+
 		unsigned int GetNrOfStrips() { return this->zStripData.size(); }
 		unsigned int GetNrOfStripGroups() { return this->zStripGroups.size(); }
 		unsigned int GetStripDataCapacity() { return this->zStripData.capacity(); }
@@ -138,9 +155,23 @@ class InstancingHelper
 		StripGroup GetStripGroup(unsigned int index) { return this->zStripGroups[index]; }
 		ID3D11Buffer* GetStripInstanceBuffer() { return this->zStripInstanceBuffer; }  
 
-		void AddMesh(Mesh* mesh);
 		/*	Sorts, creates instance groups and updates the instance buffer.	*/
 		void PreRenderStrips();
 		void PostRenderStrips() { this->zStripData.clear(); this->zStripGroups.clear(); }
+
+
+
+		//ANIMATED MESH
+		unsigned int GetNrOfAnimatedStrips() { return this->zStripData.size(); }
+		unsigned int GetNrOfAnimatedStripGroups() { return this->zStripGroups.size(); }
+		unsigned int GetAnimatedStripDataCapacity() { return this->zStripData.capacity(); }
+		unsigned int GetAnimatedStripGroupCapacity() { return this->zStripGroups.capacity(); }
+		StripData GetAnimatedStripData(unsigned int index) { return this->zStripData[index]; }
+		StripGroup GetAnimatedStripGroup(unsigned int index) { return this->zStripGroups[index]; }
+		ID3D11Buffer* GetAnimatedStripInstanceBuffer() { return this->zStripInstanceBuffer; }  
+
+		/*	Sorts, creates instance groups and updates the instance buffer.	*/
+		void PreRenderAnimatedStrips();
+		void PostRenderAnimatedStrips() { this->zAnimatedStripData.clear(); this->zAnimatedStripGroups.clear(); }
 
 };

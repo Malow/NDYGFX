@@ -48,20 +48,21 @@ private:
 	Shader* Shader_FBX;
 	Shader* Shader_Skybox;
 	Shader* Shader_Image;
-	Shader* Shader_Billboard;
+	Shader* Shader_Billboard; //**TILLMAN - deprecated
 	Shader* Shader_BillboardInstanced;
 	Shader* Shader_Text;
 	Shader* Shader_ShadowMap;
 	Shader* Shader_ShadowMapBillboardInstanced;
 	Shader* Shader_ShadowMapAnimated;
-	Shader* Shader_DeferredGeometry;
+	Shader* Shader_DeferredGeometry; //**TILLMAN - deprecated
 	Shader* Shader_DeferredGeometryInstanced;
+	Shader* Shader_DeferredAnimatedGeometry; //**TILLMAN - deprecated
+	Shader* Shader_DeferredAnimatedGeometryInstanced;
 	Shader* Shader_TerrainEditor;
 	Shader* Shader_DeferredLightning;
 	Shader* Shader_InvisibilityEffect;
 	Shader* Shader_DeferredQuad;
 	Shader* Shader_DeferredTexture;
-	Shader* Shader_DeferredAnimatedGeometry;
 	Shader* Shader_DeferredGeoTranslucent;
 	Shader* Shader_DeferredPerPixelTranslucent;
 	Shader* Shader_Fxaa;

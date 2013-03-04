@@ -54,6 +54,9 @@ DxManager::DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam)
 
 	this->Shader_DeferredGeometry = NULL;
 	this->Shader_DeferredGeometryInstanced = NULL;
+	this->Shader_DeferredAnimatedGeometry = NULL;
+	this->Shader_DeferredAnimatedGeometryInstanced = NULL;
+
 	this->Shader_TerrainEditor = NULL;
 	this->Shader_DeferredLightning = NULL;
 	this->Shader_InvisibilityEffect = NULL;
@@ -63,7 +66,6 @@ DxManager::DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam)
 
 	this->Shader_DeferredQuad = NULL;
 	this->Shader_DeferredTexture = NULL;
-	this->Shader_DeferredAnimatedGeometry = NULL;
 	this->Shader_FogEnclosement = NULL;
 	this->fbx = NULL;
 
@@ -155,6 +157,12 @@ DxManager::~DxManager()
 
 	if(this->Shader_DeferredGeometryInstanced)
 		delete this->Shader_DeferredGeometryInstanced;
+
+	if(this->Shader_DeferredAnimatedGeometry)
+		delete this->Shader_DeferredAnimatedGeometry;
+
+	if(this->Shader_DeferredAnimatedGeometryInstanced)
+		delete this->Shader_DeferredAnimatedGeometryInstanced;
 	
 	if(this->Shader_TerrainEditor)
 		delete this->Shader_TerrainEditor;
@@ -185,8 +193,7 @@ DxManager::~DxManager()
 	if(this->Shader_DeferredTexture)
 		delete this->Shader_DeferredTexture;
 
-	if(this->Shader_DeferredAnimatedGeometry)
-		delete this->Shader_DeferredAnimatedGeometry;
+	
 
 	if(this->Shader_FBX)
 		delete this->Shader_FBX;

@@ -181,7 +181,7 @@ HRESULT DxManager::Init()
 
 
 
-
+	//**TILLMAN - deprecated?
 	static const D3D11_INPUT_ELEMENT_DESC inputDescAnimatedVertex[] =
 	{
 		{"POSITION",       0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0},
@@ -194,7 +194,7 @@ HRESULT DxManager::Init()
 		{"NORMAL_MORPH",   0, DXGI_FORMAT_R32G32B32_FLOAT, 1, 20, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"COLOR_MORPH",	   0, DXGI_FORMAT_R32G32B32_FLOAT, 1, 32, D3D11_INPUT_PER_VERTEX_DATA, 0},
 	};			
-
+	//**TILLMAN - deprecated
 	static const D3D11_INPUT_ELEMENT_DESC inputDescAnimatedVertexNormalMap[] =
 	{
 		{"POSITION",       0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0},
@@ -211,6 +211,29 @@ HRESULT DxManager::Init()
 		{ "TANGENT_MORPH", 0, DXGI_FORMAT_R32G32B32_FLOAT, 1, 44, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{ "BINORMAL_MORPH", 0, DXGI_FORMAT_R32G32B32_FLOAT, 1, 56, D3D11_INPUT_PER_VERTEX_DATA, 0}
 	};			
+	static const D3D11_INPUT_ELEMENT_DESC inputDescAnimatedVertexNormalMapInstanced[] =
+	{
+		//Buffer 1
+		{"POSITION_TEX_U",		0, DXGI_FORMAT_R32G32B32A32_FLOAT,	0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TEX_V_NORMAL",	0, DXGI_FORMAT_R32G32B32A32_FLOAT,	0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TANGENT",			0, DXGI_FORMAT_R32G32B32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"BINORMAL",		0, DXGI_FORMAT_R32G32B32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		//Buffer 2
+		{"POSITION_TEX_U_MORPH",		0, DXGI_FORMAT_R32G32B32A32_FLOAT,	0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TEX_V_NORMAL_MORPH",	0, DXGI_FORMAT_R32G32B32A32_FLOAT,	0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TANGENT_MORPH",		0, DXGI_FORMAT_R32G32B32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"BINORMAL_MORPH",		0, DXGI_FORMAT_R32G32B32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		//Buffer 3 (instance buffer)
+		{ "WORLD",	0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+		{ "WORLD",	1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+		{ "WORLD",	2, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+		{ "WORLD",	3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+		{ "WIT",	0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+		{ "WIT",	1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+		{ "WIT",	2, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+		{ "WIT",	3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 }
+		//**TILLMAN - kan ändra WIT till float3x3**
+	};	
 
 	static const D3D11_INPUT_ELEMENT_DESC inputDescFBX[] =
 	{
@@ -332,20 +355,27 @@ HRESULT DxManager::Init()
 		return E_FAIL;
 	}
 
+	// Deferred Rendering Geo pass for animated
+	this->Shader_DeferredAnimatedGeometry = new Shader();
+	if(FAILED(this->Shader_DeferredAnimatedGeometry->Init(Dx_Device, Dx_DeviceContext, "Shaders/DeferredAnimatedGeometry.fx", inputDescAnimatedVertexNormalMap, 12)))
+	{
+		MaloW::Debug("Failed to open DeferredAnimatedGeometry.fx");
+		return E_FAIL;
+	}
+
+	// Deferred Rendering Geo pass for animated instanced
+	this->Shader_DeferredAnimatedGeometryInstanced = new Shader();
+	if(FAILED(this->Shader_DeferredAnimatedGeometryInstanced->Init(Dx_Device, Dx_DeviceContext, "Shaders/DeferredAnimatedGeometryInstanced.fx", inputDescAnimatedVertexNormalMapInstanced, 16)))
+	{
+		MaloW::Debug("Failed to open DeferredAnimatedGeometryInstanced.fx, HRESULT error code: " + MaloW::convertNrToString(hr) + ", error message: '" + MaloW::GetHRESULTErrorCodeString(hr) + "'.");
+		return E_FAIL;
+	}
 
 	// Deferred Rendering Geometry blend map pass
 	this->Shader_TerrainEditor = new Shader();
 	if(FAILED(this->Shader_TerrainEditor->Init(Dx_Device, Dx_DeviceContext, "Shaders/TerrainEditor.fx", inputDescVertex, 4)))
 	{
 		MaloW::Debug("Failed to open TerrainEditor.fx");
-		return E_FAIL;
-	}
-
-	// Deferred Rendering Geo pass for animated
-	this->Shader_DeferredAnimatedGeometry = new Shader();
-	if(FAILED(this->Shader_DeferredAnimatedGeometry->Init(Dx_Device, Dx_DeviceContext, "Shaders/DeferredAnimatedGeometry.fx", inputDescAnimatedVertexNormalMap, 12)))
-	{
-		MaloW::Debug("Failed to open DeferredAnimatedGeometry.fx");
 		return E_FAIL;
 	}
 

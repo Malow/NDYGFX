@@ -117,6 +117,56 @@ void InstancingHelper::ExpandStripInstanceBuffer()
 		);
 }
 
+void InstancingHelper::ExpandAnimatedStripInstanceBuffer()
+{/*
+	unsigned int oldSize = this->zAnimatedStripInstanceBufferSize;
+	this->zAnimatedStripInstanceBufferSize *= 2;
+
+	//Resize(recreate) instance buffer
+	D3D11_BUFFER_DESC vbd;
+	vbd.Usage = D3D11_USAGE_DYNAMIC;
+	vbd.ByteWidth = sizeof(StripData::InstancedDataStruct) * this->zStripInstanceBufferSize; 
+	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	vbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	vbd.MiscFlags = 0;
+	vbd.StructureByteStride = 0;
+
+	//Create new, temporary buffer with increased size.
+	ID3D11Buffer* temporaryNewBuffer = NULL;
+	HRESULT hr = this->g_Device->CreateBuffer(&vbd, 0, &temporaryNewBuffer);
+	if(FAILED(hr))
+	{
+		MaloW::Debug("ERROR: InstancingHelper: ExpandStripDataAndBuffer(): Failed to create buffer for instance Strips.");
+	}
+
+	//Copy over data from the old buffer to the new buffer.
+	D3D11_MAPPED_SUBRESOURCE mappedSubResourceNew;
+	D3D11_MAPPED_SUBRESOURCE mappedSubResourceOld;
+	this->g_DeviceContext->Map(temporaryNewBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubResourceNew);
+	this->g_DeviceContext->Map(this->zStripInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubResourceOld);
+
+	StripData::InstancedDataStruct* dataViewNew = reinterpret_cast<StripData::InstancedDataStruct*>(mappedSubResourceNew.pData);
+	StripData::InstancedDataStruct* dataViewOld = reinterpret_cast<StripData::InstancedDataStruct*>(mappedSubResourceOld.pData);
+	for(unsigned int i = 0; i < oldSize; ++i)
+	{
+		dataViewNew[i] = dataViewOld[i];
+	}
+	this->g_DeviceContext->Unmap(this->zStripInstanceBuffer, 0);
+	this->g_DeviceContext->Unmap(temporaryNewBuffer, 0);
+
+
+	//Release old buffer.
+	this->zStripInstanceBuffer->Release();
+	//Set old buffer to point to the new one.
+	this->zStripInstanceBuffer = temporaryNewBuffer;
+	//The temporary pointer is no longer needed, so set to NULL.
+	temporaryNewBuffer = NULL;
+
+	MaloW::Debug("INFO: InstancingHelper: ExpandStripDataAndBuffer(): Resizing Strip instance buffer. Number of Strips: '" + MaloW::convertNrToString(this->zStripData.size()) + "'."
+		+ "New BUFFER size: '" + MaloW::convertNrToString(this->zStripInstanceBufferSize) + "'."
+		);*/
+}
+
 //PUBLIC
 InstancingHelper::InstancingHelper()
 {
@@ -393,15 +443,6 @@ void InstancingHelper::PreRenderStrips()
 	}
 	
 
-	/*this->zStripGroups.clear(); //**TILLMAN TEST
-	for(int testI = 0; testI < this->zStripData.size(); ++testI)
-	{
-		StripGroup testGroup;
-		testGroup.s_StartLocation = testI;
-		testGroup.s_Size = 1;
-		testGroup.s_MeshStrip = this->zStripData[testI].s_MeshStrip;
-		this->zStripGroups.push_back(testGroup);
-	}*/
 
 	//Update buffer 
 	D3D11_MAPPED_SUBRESOURCE mappedSubResource;
@@ -417,3 +458,94 @@ void InstancingHelper::PreRenderStrips()
 	this->g_DeviceContext->Unmap(this->zStripInstanceBuffer, 0);
 }
 
+
+
+void InstancingHelper::PreRenderAnimatedStrips()
+{
+	//Sort the data by meshStrip
+	/*std::sort(this->zStripData.begin(), this->zStripData.end(), SortStripData);
+
+
+
+	//Now that the data is sorted, create instance groups.
+	//Clear any old groups
+	this->zStripGroups.clear();
+	if(this->zStripData.size() > 1)
+	{
+		MeshStrip* tempPtr = NULL;
+
+		int groupCounter = 1; //**
+		unsigned int nrOfGroups = 0;
+
+		//Add a seperator with an SRV pointing to NULL.
+		StripData seperator;
+		seperator.s_MeshStrip = NULL;
+		this->zStripData.push_back(seperator);
+
+		//First group's start location/index is always 0.
+		StripGroup firstStripGroup;
+		firstStripGroup.s_StartLocation = 0;
+		this->zStripGroups.push_back(firstStripGroup);
+
+		for(unsigned int i = 0; i < this->zStripData.size() - 1; i++)
+		{
+			//Save current element.
+			tempPtr = this->zStripData[i].s_MeshStrip;
+
+			//groupCounter++; //**
+
+			//As long as the next element is the same as the current element, increase groupCounter. 
+			//(The number of instances in the current group).
+			if(tempPtr == this->zStripData[i + 1].s_MeshStrip)
+			{
+				groupCounter++;
+			}
+			//If the next element is NOT the same as the current element, we have found a new instance group.
+			else
+			{
+				//Wrap up current instance group.
+				nrOfGroups++;
+				//Save groupCounter (size of group).
+				this->zStripGroups[nrOfGroups - 1].s_Size = groupCounter; 
+				//Save the strip for instance group to use.
+				this->zStripGroups[nrOfGroups - 1].s_MeshStrip = this->zStripData[i].s_MeshStrip;
+				
+				//Start new instance group.
+				//Set group counter to 1.
+				groupCounter = 1; 
+				//groupCounter = 0;  //**
+				StripGroup newStripGroup;
+				//Save index (startLocation) of the NEW group (+1 on indices).
+				newStripGroup.s_StartLocation = i + 1;
+				this->zStripGroups.push_back(newStripGroup);
+			}
+		}
+		//Remove seperator and the group it's in
+		this->zStripData.pop_back();
+		this->zStripGroups.pop_back();
+	}
+	//Handle the special case of 1 Strip.
+	else if(this->zStripData.size() == 1)
+	{
+		StripGroup singleStrip;
+		singleStrip.s_StartLocation = 0;
+		singleStrip.s_Size = 1;
+		singleStrip.s_MeshStrip = this->zStripData[0].s_MeshStrip;
+		this->zStripGroups.push_back(singleStrip);
+	}
+	
+
+
+	//Update buffer 
+	D3D11_MAPPED_SUBRESOURCE mappedSubResource;
+	//Map to access data
+	this->g_DeviceContext->Map(this->zStripInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubResource);
+	StripData::InstancedDataStruct* dataView = reinterpret_cast<StripData::InstancedDataStruct*>(mappedSubResource.pData);
+	//Copy over all instance data
+	for(UINT i = 0; i < this->zStripData.size(); ++i)
+	{
+		dataView[i] = this->zStripData[i].InstancedData;
+	}
+	//Unmap so the GPU can have access
+	this->g_DeviceContext->Unmap(this->zStripInstanceBuffer, 0);*/
+}

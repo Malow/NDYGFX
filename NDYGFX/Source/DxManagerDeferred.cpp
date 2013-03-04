@@ -886,8 +886,12 @@ void DxManager::RenderDeferredGeoObjects()
 void DxManager::RenderDeferredGeometryInstanced()
 {
 #ifdef MALOWTESTPERF
-	this->perf.PreMeasure("Renderer - Render Deferred Geo Objects Static Instanced", 4);
+	this->perf.PreMeasure("Renderer - Render Deferred Geo Objects Instanced", 4);
 #endif
+#ifdef MALOWTESTPERF
+	this->perf.PreMeasure("Renderer - Render Deferred Geo Objects Static Instanced", 5);
+#endif
+	//STATIC MESHES(strips)
 	if(this->instancingHelper->GetNrOfStrips() > 0)
 	{
 		//Sort, create instance groups and update buffer before rendering
@@ -981,7 +985,20 @@ void DxManager::RenderDeferredGeometryInstanced()
 		this->instancingHelper->PostRenderStrips();
 	}
 #ifdef MALOWTESTPERF
-	this->perf.PostMeasure("Renderer - Render Deferred Geo Objects Static Instanced", 4);
+	this->perf.PostMeasure("Renderer - Render Deferred Geo Objects Static Instanced", 5);
+#endif
+
+#ifdef MALOWTESTPERF
+	this->perf.PreMeasure("Renderer - Render Deferred Geo Objects Animated Instanced", 5);
+#endif
+	//ANIMATED MESHES(strips)
+	//TILLMAN TODO: CODE
+
+#ifdef MALOWTESTPERF
+	this->perf.PostMeasure("Renderer - Render Deferred Geo Objects Animated Instanced", 5);
+#endif
+#ifdef MALOWTESTPERF
+	this->perf.PostMeasure("Renderer - Render Deferred Geo Objects Instanced", 4);
 #endif
 }
 
