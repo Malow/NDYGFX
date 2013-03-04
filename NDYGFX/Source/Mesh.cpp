@@ -15,6 +15,14 @@ Mesh::Mesh(D3DXVECTOR3 pos, string filePath, string billboardFilePath, float dis
 
 	this->height = -1.0f;
 	this->billboardFilePath = billboardFilePath;
+	if(billboardFilePath != "")
+	{
+		this->hasBillboard = true;
+	}
+	else
+	{
+		this->hasBillboard = false;
+	}
 	this->billboard = NULL;
 	this->distanceToSwapToBillboard = distanceToSwapToBillboard;
 

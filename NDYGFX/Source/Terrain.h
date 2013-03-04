@@ -100,8 +100,6 @@ class Terrain : public iTerrain
 		Terrain(D3DXVECTOR3 pos, D3DXVECTOR3 scale, unsigned int size);
 		virtual ~Terrain();
 
-		HRESULT Init(ID3D11Device* device, ID3D11DeviceContext* deviceContext);
-
 		//GET-functions
 		//Object data
 		unsigned int GetSize() const { return this->zSize; }
@@ -126,7 +124,7 @@ class Terrain : public iTerrain
 		float GetTextureScale() const { return this->zTextureScale; }
 		int GetNrOfTextures() const { return this->zNrOfTextures; }
 		TextureResource* GetTexture(unsigned int index) const { return this->zTextureResources[index]; }
-		string GetTextureResourceToLoadFileName(unsigned int index) const { return this->zTextureResourceToLoadFileName[index]; }
+		inline string& GetTextureResourceToLoadFileName(unsigned int index) const { return this->zTextureResourceToLoadFileName[index]; }
 		int GetNrOfBlendMaps() const { return this->zNrOfBlendMaps; }
 		BlendMap* GetBlendMapPointer(unsigned int index) { return this->zBlendMaps[index]; }
 
@@ -147,8 +145,8 @@ class Terrain : public iTerrain
 		//Vertex data
 		void HeightMapHasChanged(bool flag) { this->zHeightMapHasChanged = flag; }
 		void NormalsHaveChanged(bool flag) { this->zNormalsHaveChanged = flag; }
-		void SetVertexBuffer(Buffer* vertexBuffer) { this->zVertexBuffer = vertexBuffer; }
-		void SetIndexBuffer(Buffer* indexBuffer) { this->zIndexBuffer = indexBuffer; }
+		void SetVertexBuffer(Buffer* vertexBuffer);
+		void SetIndexBuffer(Buffer* indexBuffer);
 
 		//Textures
 		void SetTexture(unsigned int index, TextureResource* textureResource) const { this->zTextureResources[index] = textureResource; }

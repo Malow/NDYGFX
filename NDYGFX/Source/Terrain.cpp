@@ -311,26 +311,6 @@ Terrain::~Terrain()
 	}
 }
 
-
-HRESULT Terrain::Init(ID3D11Device* device, ID3D11DeviceContext* deviceContext)
-{
-	BUFFER_INIT_DESC vertexBufferInitDesc;
-	vertexBufferInitDesc.ElementSize = sizeof(Vertex);
-	vertexBufferInitDesc.InitData = this->zVertices; 
-	vertexBufferInitDesc.NumElements = this->zNrOfVertices;
-	vertexBufferInitDesc.Type = VERTEX_BUFFER;
-	vertexBufferInitDesc.Usage = BUFFER_CPU_WRITE_DISCARD;
-
-	HRESULT hr = this->zVertexBuffer->Init(device, deviceContext, vertexBufferInitDesc);
-	if(FAILED(hr))
-	{
-		MaloW::Debug("ERROR: Could not create new vertex buffer for terrain."
-			+ string("ERROR code: '") 
-			+ MaloW::GetHRESULTErrorCodeString(hr));
-	}
-
-	return hr;
-}
 //OTHER
 void Terrain::RecreateWorldMatrix()
 {
@@ -432,6 +412,18 @@ void Terrain::SetScale(const Vector3& scale)
 void Terrain::SetDiffuseColor(const Vector3& color )
 {
 	this->zMaterial->DiffuseColor = D3DXVECTOR3(color.x, color.y, color.z);
+}
+
+//Vertex data
+void Terrain::SetVertexBuffer(Buffer* vertexBuffer)
+{
+	if(this->zVertexBuffer) delete this->zVertexBuffer; 
+	this->zVertexBuffer = vertexBuffer;
+}
+void Terrain::SetIndexBuffer(Buffer* indexBuffer)
+{
+	if(this->zIndexBuffer) delete this->zIndexBuffer; 
+	this->zIndexBuffer = indexBuffer;
 }
 
 void Terrain::SetHeightMap(float const* const data)

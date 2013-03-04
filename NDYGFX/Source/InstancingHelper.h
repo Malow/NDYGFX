@@ -35,45 +35,27 @@ struct BillboardGroup
 		: s_Size(size), s_StartLocation(startLocation), s_SRV(srv) {}
 };
 
-/*
-struct MeshData
-{
-	struct InstancedDataStruct
-	{
-		D3DXMATRIX	s_WorldMatrix; //translation, rotation, scale
-		D3DXMATRIX	s_WorldInverseTransposeMatrix; 
-
-		InstancedDataStruct() 
-		{
-			D3DXMatrixIdentity(&s_WorldMatrix);
-			s_WorldInverseTransposeMatrix = s_WorldMatrix;
-		}
-	} InstancedData;
-
-	MeshStripsResource*	 s_MeshStripsResource;
-
-	MeshData() : s_MeshStripsResource(NULL) {}
-	MeshData(MeshStripsResource* meshStripsResource) : s_MeshStripsResource(meshStripsResource) {}
-};*/
 struct StripData
 {
 	struct InstancedDataStruct
 	{
-		//D3DXMATRIX	s_WorldMatrix; //translation, rotation, scale
-		D3DXVECTOR4 x;
-		D3DXVECTOR4 y;
-		D3DXVECTOR4 z;
-		D3DXVECTOR4 w;
+		D3DXMATRIX	s_WorldMatrix; //translation, rotation, scale
 		//D3DXMATRIX	s_WorldInverseTransposeMatrix; 
 
+		/*D3DXVECTOR4 x;
+		D3DXVECTOR4 y;
+		D3DXVECTOR4 z;
+		D3DXVECTOR4 w;*/
+		
 		InstancedDataStruct() 
 		{
-			x = D3DXVECTOR4(1.0f, 0.0f, 0.0f, 0.0f);
+			D3DXMatrixIdentity(&s_WorldMatrix);
+			//s_WorldInverseTransposeMatrix = s_WorldMatrix;
+
+			/*x = D3DXVECTOR4(1.0f, 0.0f, 0.0f, 0.0f);
 			y = D3DXVECTOR4(0.0f, 1.0f, 0.0f, 0.0f);
 			z = D3DXVECTOR4(0.0f, 0.0f, 1.0f, 0.0f);
-			w = D3DXVECTOR4(0.0f, 0.0f, 0.0f, 1.0f);
-			//D3DXMatrixIdentity(&s_WorldMatrix);
-			//s_WorldInverseTransposeMatrix = s_WorldMatrix;
+			w = D3DXVECTOR4(0.0f, 0.0f, 0.0f, 1.0f);*/
 		}
 	} InstancedData;
 

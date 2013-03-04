@@ -283,13 +283,14 @@ void DxManager::CreateTerrain(Terrain* terrain)
 {
 	//OBS! Do not use resource manager to create buffers since they are (most likely) unique for every terrain.
 
+
 	//Create vertex buffer
 	BUFFER_INIT_DESC vertexBufferDesc;
 	vertexBufferDesc.ElementSize = sizeof(Vertex);
 	vertexBufferDesc.InitData = terrain->GetVerticesPointer(); 
 	vertexBufferDesc.NumElements = terrain->GetNrOfVertices();
 	vertexBufferDesc.Type = VERTEX_BUFFER;
-	vertexBufferDesc.Usage = BUFFER_DEFAULT;
+	vertexBufferDesc.Usage = BUFFER_CPU_WRITE_DISCARD;
 
 	Buffer* vertexBuffer = new Buffer();
 	HRESULT hr;
@@ -334,7 +335,7 @@ void DxManager::CreateTerrain(Terrain* terrain)
 
 	//Texture(s) are not set here since they are set afterwards.
 
-	terrain->Init(this->Dx_Device, this->Dx_DeviceContext);
+	//terrain->Init(this->Dx_Device, this->Dx_DeviceContext);
 
 	//Create & put this event
 	TerrainEvent* re = new TerrainEvent("Add Terrain", terrain);

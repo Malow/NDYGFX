@@ -545,10 +545,10 @@ void DxManager::RenderDeferredGeoObjects()
 				billboardRange = staticMesh->GetDistanceToSwapToBillboard();
 			}
 
-			if(D3DXVec3Length(&distance) < billboardRange || staticMesh->GetBillboardFilePath() == "")
+			if(D3DXVec3Length(&distance) < billboardRange || !staticMesh->HasBillboard())
 			{
 				//**TILLMAN TODO: ta bort shader variabler
-				MaloW::Array<MeshStrip*>* strips = staticMesh->GetStrips();
+				/*MaloW::Array<MeshStrip*>* strips = staticMesh->GetStrips();
 		
 				// Per object
 				this->Shader_DeferredGeometry->SetInt("specialColor", staticMesh->GetSpecialColor());
@@ -662,17 +662,17 @@ void DxManager::RenderDeferredGeoObjects()
 
 
 					}
-				}
+				}*/
 					
 						
 				//Just check the first strip if it is culled.  //**TILLMAN**
-				/*if(!staticMesh->IsStripCulled(0))
+				if(!staticMesh->IsStripCulled(0))
 				{
 					CurrentRenderedMeshes++;
 
 					//Add mesh info to instance helper
 					this->instancingHelper->AddMesh(staticMesh);
-				}*/
+				}
 			}
 			else
 			{
@@ -727,7 +727,7 @@ void DxManager::RenderDeferredGeoObjects()
 				billboardRange = animatedMesh->GetDistanceToSwapToBillboard();
 			}
 
-			if(D3DXVec3Length(&distance) < billboardRange || animatedMesh->GetBillboardFilePath() == "")
+			if(D3DXVec3Length(&distance) < billboardRange || !animatedMesh->HasBillboard())
 			{
 				if(!animatedMesh->IsStripCulled(0))
 				{
@@ -885,6 +885,9 @@ void DxManager::RenderDeferredGeoObjects()
 }
 void DxManager::RenderDeferredGeometryInstanced()
 {
+#ifdef MALOWTESTPERF
+	this->perf.PreMeasure("Renderer - Render Deferred Geo Objects Static Instanced", 4);
+#endif
 	if(this->instancingHelper->GetNrOfStrips() > 0)
 	{
 		//Sort, create instance groups and update buffer before rendering
@@ -926,8 +929,8 @@ void DxManager::RenderDeferredGeometryInstanced()
 
 			D3DXMATRIX worldTest;
 			D3DXMatrixIdentity(&worldTest);
-			//this->Shader_DeferredGeometryInstanced->SetMatrix("g_TestW", worldTest);
-			D3D11_MAPPED_SUBRESOURCE mappedSubResource; 
+			this->Shader_DeferredGeometryInstanced->SetMatrix("g_TestW", worldTest);
+			/*D3D11_MAPPED_SUBRESOURCE mappedSubResource; 
 			//Map to access data
 			this->Dx_DeviceContext->Map(this->instancingHelper->GetStripInstanceBuffer(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubResource);
 			StripData::InstancedDataStruct* dataView = reinterpret_cast<StripData::InstancedDataStruct*>(mappedSubResource.pData);
@@ -942,11 +945,11 @@ void DxManager::RenderDeferredGeometryInstanced()
 			
 				this->Shader_DeferredGeometryInstanced->SetMatrix("g_TestW", testW);
 				
-				//this->Shader_DeferredGeometryInstanced->SetMatrix("g_TestW", dataView[i].s_WorldMatrix);
+				this->Shader_DeferredGeometryInstanced->SetMatrix("g_TestW", dataView[0].s_WorldMatrix);
 			//}
 			//Unmap so the GPU can have access
 			this->Dx_DeviceContext->Unmap(this->instancingHelper->GetStripInstanceBuffer(), 0);
-
+			*/
 			//this->Shader_DeferredGeometryInstanced->SetMatrix("g_TestW", this->instancingHelper->GetMeshData(0).InstancedData.s_WorldMatrix);
 			//this->Shader_DeferredGeometryInstanced->SetMatrix("g_TestWIT", this->instancingHelper->GetMeshData(0).InstancedData.s_WorldInverseTransposeMatrix);
 			
@@ -954,8 +957,7 @@ void DxManager::RenderDeferredGeometryInstanced()
 
 
 			Object3D* renderObject = strip->GetRenderObject();
-
-			/*
+			
 			//Set topology
 			this->Dx_DeviceContext->IASetPrimitiveTopology(renderObject->GetTopology());
 
@@ -964,32 +966,38 @@ void DxManager::RenderDeferredGeometryInstanced()
 			this->Shader_DeferredGeometryInstanced->SetFloat4("g_SpecularColor", D3DXVECTOR4(strip->GetMaterial()->SpecularColor, 1));
 			this->Shader_DeferredGeometryInstanced->SetFloat("g_SpecularPower", strip->GetMaterial()->SpecularPower);
 				
-				
-			//Set texture
+			//Set textures
 			if(renderObject->GetTextureResource() != NULL)
 			{
 				if(renderObject->GetTextureResource()->GetSRVPointer() != NULL)
 				{
 					this->Shader_DeferredGeometryInstanced->SetResource("g_DiffuseMap", renderObject->GetTextureResource()->GetSRVPointer());
 					this->Shader_DeferredGeometryInstanced->SetBool("g_Textured", true);
+					
+					//Normal map
+					if(renderObject->GetNormalMapResource() != NULL)
+					{
+						this->Shader_DeferredGeometryInstanced->SetResource("g_NormalMap", renderObject->GetNormalMapResource()->GetSRVPointer());
+					}
+					else
+					{
+						this->Shader_DeferredGeometryInstanced->SetResource("g_NormalMap", NULL);
+					}
 				}
 				else
 				{
 					this->Shader_DeferredGeometryInstanced->SetResource("g_DiffuseMap", NULL);
+					this->Shader_DeferredGeometryInstanced->SetResource("g_NormalMap", NULL);
 					this->Shader_DeferredGeometryInstanced->SetBool("g_Textured", false);
 				}
 			}
 			else
 			{
 				this->Shader_DeferredGeometryInstanced->SetResource("g_DiffuseMap", NULL);
+				this->Shader_DeferredGeometryInstanced->SetResource("g_NormalMap", NULL);
 				this->Shader_DeferredGeometryInstanced->SetBool("g_Textured", false);
 			}
-			//**TILLMAN TODO: normalmap**
-			*/
-		
-			
-			
-			
+
 			//Change vertex buffer and set it and the instance buffer.
 			bufferPointers[0] = renderObject->GetVertexBufferResource()->GetBufferPointer()->GetBufferPointer();
 			this->Dx_DeviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
@@ -1001,8 +1009,8 @@ void DxManager::RenderDeferredGeometryInstanced()
 			unsigned int vertexCount = strip->getNrOfVerts();
 			int instanceCount = this->instancingHelper->GetStripGroup(i).s_Size;
 			int startLoc = this->instancingHelper->GetStripGroup(i).s_StartLocation;
-			//this->Dx_DeviceContext->DrawInstanced(vertexCount, instanceCount, 0, startLoc); //**tillman
-			this->Dx_DeviceContext->Draw(vertexCount, 0); //**tillman
+			this->Dx_DeviceContext->DrawInstanced(vertexCount, instanceCount, 0, startLoc); //**tillman
+			//this->Dx_DeviceContext->Draw(vertexCount, 0); //**tillman
 			
 			//Debug data
 			this->NrOfDrawCalls++;
@@ -1015,6 +1023,9 @@ void DxManager::RenderDeferredGeometryInstanced()
 		//Reset data.
 		this->instancingHelper->PostRenderStrips();
 	}
+#ifdef MALOWTESTPERF
+	this->perf.PostMeasure("Renderer - Render Deferred Geo Objects Static Instanced", 4);
+#endif
 }
 
 void DxManager::RenderDeferredSkybox()

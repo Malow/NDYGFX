@@ -62,10 +62,11 @@ struct VSIn
 	float3 Tangent : TANGENT;
 	float3 Binormal : BINORMAL;
 	//instance data
-	//float4 worldx					: WORLDX;
-	//float4 worldy					: WORLDY;
-	//float4 worldz					: WORLDZ;
-	//float4 worldw					: WORLDW;
+	/*float4 worldx					: WORLDX;
+	float4 worldy					: WORLDY;
+	float4 worldz					: WORLDZ;
+	float4 worldw					: WORLDW;
+	*/row_major float4x4 world			: WORLD;
 	
 	//float4 world					: WORLD;
 	//float4x4 worldInverseTranspose	: WIT;
@@ -109,8 +110,8 @@ PSSceneIn VSScene(VSIn input)
 {
 	PSSceneIn output = (PSSceneIn)0;
 
-	output.Pos = mul(float4(input.Pos, 1.0f), mul(g_TestW, g_CamViewProj));//input.world * g_CamViewProj);
-	output.WorldPos = mul(float4(input.Pos, 1.0f), g_TestW);//input.world);
+	//output.Pos = mul(float4(input.Pos, 1.0f), mul(g_TestW, g_CamViewProj));//input.world * g_CamViewProj);
+	//output.WorldPos = mul(float4(input.Pos, 1.0f), g_TestW);//input.world);
 	
 	/*float4x4 testW2;
 	testW2[0] = float4(1, 0, 0, 0);
@@ -121,18 +122,18 @@ PSSceneIn VSScene(VSIn input)
 		
 	output.Pos = mul(float4(input.Pos, 1.0f), WVP);
 	output.WorldPos = mul(float4(input.Pos, 1.0f), testW2);
-	
 	*/
+	
 	
 	/*float4x4 world;
 	world[0] = input.worldx;
 	world[1] = input.worldy;
 	world[2] = input.worldz;
 	world[3] = input.worldw;
-
-	output.Pos = mul(float4(input.Pos, 1.0f), mul(world, g_CamViewProj));
-	output.WorldPos = mul(float4(input.Pos, 1.0f), world);
 	*/
+	output.Pos = mul(float4(input.Pos, 1.0f), mul(input.world, g_CamViewProj));
+	output.WorldPos = mul(float4(input.Pos, 1.0f), input.world);
+	
 
 	//output.Pos = mul(float4(input.Pos, 1.0f), mul(input.world, g_CamViewProj));
 	//output.WorldPos = mul(float4(input.Pos, 1.0f), input.world);
@@ -172,7 +173,7 @@ PSout PSScene(PSSceneIn input) : SV_Target
 
 
 	PSout output;
-	output.Texture = float4(1,0,0,1);//finalColor;
+	output.Texture = finalColor; //float4(1,0,0,1); test
 	output.NormalAndDepth = float4(input.norm.xyz, input.Pos.z / input.Pos.w);		// pos.z / pos.w should work?
 
 	float depth = length(g_CamPos - input.WorldPos.xyz) / g_FarClip;		// Haxfix

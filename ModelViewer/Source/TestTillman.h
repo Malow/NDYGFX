@@ -624,9 +624,9 @@ void TillmanTest::RunTest(float diff)
 	}
 	if(GetGraphics()->GetKeyListener()->IsPressed('E'))
 	{
-
+		GetGraphics()->ReloadShaders(22); //defered geometry instanced
 		//GetGraphics()->ReloadShaders(11); //deferred lightning
-		GetGraphics()->ReloadShaders(20); //shadow map billboard instanced
+		//GetGraphics()->ReloadShaders(20); //shadow map billboard instanced
 		/*
 		debugCSMScale -= diff * 0.001f;
 		fileNames[0] = "Media/TerrainTexture.png";

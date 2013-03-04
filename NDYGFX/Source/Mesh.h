@@ -43,6 +43,7 @@ protected:
 	bool dontRender;
 
 	float height;
+	bool hasBillboard;
 	string billboardFilePath;
 	Billboard* billboard;
 	float distanceToSwapToBillboard;
@@ -71,7 +72,8 @@ public:
 
 	// Billboard
 	float GetHeight() { return this->height; }
-	string GetBillboardFilePath() { return this->billboardFilePath; }
+	inline bool HasBillboard() { return this->hasBillboard; }
+	inline string GetBillboardFilePath() { return this->billboardFilePath; }
 	Billboard* GetBillboardGFX() { return this->billboard; }
 	float GetDistanceToSwapToBillboard() { return this->distanceToSwapToBillboard; }
 

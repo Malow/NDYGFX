@@ -123,6 +123,10 @@ void DxManager::HandleReloadShaders(int shader)
 		if(this->Shader_ShadowMapFBX)	
 			Shader_ShadowMapFBX->Reload();
 		break;
+	case 22:
+		if(this->Shader_DeferredGeometryInstanced)	
+			this->Shader_DeferredGeometryInstanced->Reload();
+		break;
 	}
 }
 
@@ -1727,6 +1731,7 @@ HRESULT DxManager::Render()
 	this->perf.PreMeasure("Renderer - Render Deferred Geo Objects", 3);
 #endif
 	this->RenderDeferredGeoObjects();
+	this->RenderDeferredGeometryInstanced(); //Must be after RenderDeferredGeometry()
 #ifdef MALOWTESTPERF
 	this->perf.PostMeasure("Renderer - Render Deferred Geo Objects", 3);
 #endif
@@ -1739,7 +1744,6 @@ HRESULT DxManager::Render()
 	this->perf.PostMeasure("Renderer - Render Deferred Geo FBX", 3);
 #endif
 
-	this->RenderDeferredGeometryInstanced(); //Must be after RenderDeferredGeometry()
 #ifdef MALOWTESTPERF
 	this->perf.PostMeasure("Renderer - Render Deferred Geo", 2);
 #endif
