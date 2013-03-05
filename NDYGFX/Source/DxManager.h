@@ -53,8 +53,9 @@ private:
 	Shader* Shader_BillboardInstanced;
 	Shader* Shader_Text;
 	Shader* Shader_ShadowMap;
-	Shader* Shader_ShadowMapBillboardInstanced;
+	Shader*	Shader_ShadowMapInstanced;
 	Shader* Shader_ShadowMapAnimated;
+	Shader* Shader_ShadowMapBillboardInstanced;
 	Shader* Shader_DeferredGeometry; //**TILLMAN - deprecated
 	Shader* Shader_DeferredGeometryInstanced;
 	Shader* Shader_DeferredAnimatedGeometry; //**TILLMAN - deprecated

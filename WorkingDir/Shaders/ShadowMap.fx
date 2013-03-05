@@ -13,10 +13,10 @@ cbuffer PerStrip
 
 struct VSIn
 {
-	float4 Pos		: POSITION;
+	float3 Pos		: POSITION;
 	float2 Tex		: TEXCOORD;
-	float3 Normal	: NORMAL;
-	float4 Color	: COLOR;
+	//float3 Normal	: NORMAL;
+	//float3 Color	: COLOR;
 };
 
 struct PSIn
@@ -28,13 +28,13 @@ struct PSIn
 PSIn VS(VSIn input)
 {
 	PSIn output = (PSIn)0;
-	output.Pos = mul(input.Pos, lightWVP);
+	output.Pos = mul(float4(input.Pos, 1.0f), lightWVP);
 	output.Tex = input.Tex;
 
 	return output;
 }
 
-float PS(PSIn input) : SV_Depth
+void PS(PSIn input)// : SV_Depth
 {
 	if(textured)
 	{
@@ -44,7 +44,7 @@ float PS(PSIn input) : SV_Depth
 		}
 	}
 
-	return input.Pos.z;
+	//return input.Pos.z;
 }
 
 technique11 RenderShadowMap

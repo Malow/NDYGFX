@@ -24,6 +24,7 @@ DxManager::DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam)
 	this->DelayGettingCamera = false;
 
 	this->Shader_ShadowMap = NULL;
+	this->Shader_ShadowMapInstanced = NULL;
 	this->Shader_ShadowMapBillboardInstanced = NULL;
 	this->Shader_ShadowMapAnimated = NULL;
 
@@ -122,6 +123,11 @@ DxManager::~DxManager()
 
 	if(this->Shader_ShadowMap)
 		delete this->Shader_ShadowMap;
+	if(this->Shader_ShadowMapInstanced)
+	{
+		delete this->Shader_ShadowMapInstanced;
+		this->Shader_ShadowMapInstanced = NULL;
+	}
 
 	if(this->Shader_ShadowMapBillboardInstanced) 
 	{

@@ -315,8 +315,20 @@ HRESULT DxManager::Init()
 	static const D3D11_INPUT_ELEMENT_DESC inputDescPosition[] = {
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
-	
-	
+	static const D3D11_INPUT_ELEMENT_DESC inputDescPositionTexcoord[] = {
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+	};
+	static const D3D11_INPUT_ELEMENT_DESC inputDescPositionTexcoordInstanced[] = {
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		//Instance buffer
+		{ "WORLD",	0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+		{ "WORLD",	1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+		{ "WORLD",	2, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+		{ "WORLD",	3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+	};
+
 	// Forward renderer shader: MALOW: NOT USED
 	/*
 	this->Shader_ForwardRendering = new Shader();
@@ -328,9 +340,16 @@ HRESULT DxManager::Init()
 	
 	// ShadowMap Shader //**TILLMAN - använd egen desc utan normal & color - likadant för animated & ändra ordning, float3 pos**
 	this->Shader_ShadowMap = new Shader();
-	if(FAILED(this->Shader_ShadowMap->Init(Dx_Device, Dx_DeviceContext, "Shaders/ShadowMap.fx", inputDescVertex, 4)))
+	if(FAILED(this->Shader_ShadowMap->Init(Dx_Device, Dx_DeviceContext, "Shaders/ShadowMap.fx", inputDescPositionTexcoord, 2)))
 	{
 		MaloW::Debug("Failed to open ShadowMap.fx");
+		return E_FAIL;
+	}
+
+	this->Shader_ShadowMapInstanced = new Shader();
+	if(FAILED(this->Shader_ShadowMapInstanced->Init(Dx_Device, Dx_DeviceContext, "Shaders/ShadowMapInstanced.fx", inputDescPositionTexcoordInstanced, 6)))
+	{
+		MaloW::Debug("Failed to open ShadowMapInstanced.fx");
 		return E_FAIL;
 	}
 
