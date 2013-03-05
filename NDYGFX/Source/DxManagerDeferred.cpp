@@ -949,6 +949,8 @@ void DxManager::RenderDeferredGeometryInstanced()
 					{
 						this->Shader_DeferredGeometryInstanced->SetResource("g_NormalMap", renderObject->GetNormalMapResource()->GetSRVPointer());
 						this->Shader_DeferredGeometryInstanced->SetBool("g_UseNormalMap", true);
+						this->Shader_DeferredGeometryInstanced->SetResource("g_NormalMap", NULL);
+						this->Shader_DeferredGeometryInstanced->SetBool("g_UseNormalMap", false);
 					}
 					else
 					{

@@ -493,6 +493,32 @@ void TillmanTest::PreTest()
 	//shadowFail = GetGraphics()->CreateMesh("Media/Scale.ani", Vector3(-13, 0, 0));
 	//shadowFail->SetScale(0.05f);
 	shadowFail = GetGraphics()->CreateAnimatedMesh("Media/FlagBlue.ani", Vector3(-10, 0, 7.5f));
+
+
+	//Bottleneck test
+	billboardFile = "Media/TreeBillboard.png";
+	for(int i = 0; i < 10; i++)
+	{
+		//Billboards
+		if(i == 4)
+		{
+			billboardFile = "Media/BallTexture.png";
+		}
+		if(i == 6)
+		{
+			billboardFile = "Media/TreeBillboard.png";
+		}
+		if(i == 8)
+		{
+			billboardFile = "Media/StoneItem_01_v01.png";
+		}
+		iMesh* treeWithBillboard = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(i * -5 -50, 0, 100.0f), billboardFile.c_str(), 0.5f);
+		treeWithBillboard->SetScale((0.061f));
+		iMesh* fernWithBillboard = GetGraphics()->CreateMesh("Media/Fern_02.ani", Vector3(i * -5 -50, 0, 0.0f));
+		fernWithBillboard->SetScale((0.15f));
+		iMesh* treeWithWOBB = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(i * -5 -50, 0, -100.0f));
+		treeWithWOBB->SetScale((0.041f));
+	}
 	
 }
 

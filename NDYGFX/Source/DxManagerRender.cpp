@@ -673,9 +673,20 @@ void DxManager::RenderCascadedShadowMap()
 
 	if(this->useSun && this->useShadow) //* TILLMAN - sun ska också inte ligga här?*
 	{
+		bool* hasStaticMeshBeenAdded = new bool[this->objects.size()]; //TILLMAN
+		for(unsigned int i = 0; i < this->objects.size(); ++i)
+		{
+			hasStaticMeshBeenAdded[i] = false;
+		}
+		bool* hasAnimatedMeshBeenAdded = new bool[this->animations.size()]; //TILLMAN
+		for(unsigned int i = 0; i < this->animations.size(); ++i)
+		{
+			hasAnimatedMeshBeenAdded[i] = false;
+		}
+
 		D3DXMATRIX wvp;
 		//D3DXMatrixIdentity(&wvp);
-		//**TILLMAN TODO: ta bort  DX-sakerna då detta görs av RenderCascadedShadowmapBillboard()?. check what cascade the object is in, object->IsIncascade(s)(indices)**
+		//**TILLMAN TODO:  check what cascade the object is in, object->IsIncascade(s)(indices)**
 		for (int l = 0; l < this->csm->GetNrOfCascadeLevels(); l++)
 		{
 			this->Dx_DeviceContext->OMSetRenderTargets(0, 0, this->csm->GetShadowMapDSV(l));
@@ -826,13 +837,24 @@ void DxManager::RenderCascadedShadowMap()
 					}
 					else
 					{
-						//Just check the first strip if it is culled.  //**TILLMAN todo: add once**
-						if(!staticMesh->IsStripCulled(0))
+						//Only add once (same object can be in several cascades).
+						if(!hasStaticMeshBeenAdded[i])
 						{
-							currentRenderedMeshShadows++;
-
-							//Add billboard info
-							this->instancingHelper->AddBillboard(staticMesh);
+							//As long as one strip has not been culled, add whole **mesh** //tillman opt - lägga till strip bara
+							MaloW::Array<MeshStrip*>* strips = staticMesh->GetStrips();
+							unsigned int index = 0;
+							bool oneStripIsNotCulled = false;
+							while(!oneStripIsNotCulled && index < strips->size())
+							{
+								if(!staticMesh->IsStripCulled(index++))
+								{
+									oneStripIsNotCulled = true;
+									currentRenderedMeshShadows++;
+									//Add billboard info
+									this->instancingHelper->AddBillboard(staticMesh);
+									hasStaticMeshBeenAdded[i] = true;
+								}
+							}
 						}
 					}
 				}
@@ -869,10 +891,7 @@ void DxManager::RenderCascadedShadowMap()
 						if(!animatedMesh->IsStripShadowCulled(0))
 						{
 							currentRenderedMeshShadows++;
-							if(animatedMesh->GetFilePath() == "Media/Tree_02.ani") //TEST
-							{
-								float durp= 1.0f;
-							}
+							
 							KeyFrame* one = NULL;
 							KeyFrame* two = NULL;
 							float t = 0.0f;
@@ -944,12 +963,24 @@ void DxManager::RenderCascadedShadowMap()
 					}
 					else
 					{
-						//Just check the first strip if it is culled.  //**TILLMAN todo: add once**
-						if(!animatedMesh->IsStripShadowCulled(0))
+						//Only add once (same object can be in several cascades).
+						if(!hasAnimatedMeshBeenAdded[i])
 						{
-							currentRenderedMeshShadows++;
-							//Add billboard info
-							this->instancingHelper->AddBillboard(animatedMesh);
+							//As long as one strip has not been culled, add whole **mesh** //tillman opt - lägga till strip bara
+							MaloW::Array<MeshStrip*>* strips = animatedMesh->GetStrips();
+							unsigned int index = 0;
+							bool oneStripIsNotCulled = false;
+							while(!oneStripIsNotCulled && index < strips->size())
+							{
+								if(!animatedMesh->IsStripCulled(index++))
+								{
+									oneStripIsNotCulled = true;
+									currentRenderedMeshShadows++;
+									//Add billboard info
+									this->instancingHelper->AddBillboard(animatedMesh);
+									hasAnimatedMeshBeenAdded[i] = true;
+								}
+							}
 						}
 					}
 				}
@@ -968,6 +999,9 @@ void DxManager::RenderCascadedShadowMap()
 			//Only need one diffuse map since no blending between maps is done.
 			//this->Shader_ShadowMapAnimated->SetResource("diffuseMap1", NULL);
 		}
+
+		delete [] hasStaticMeshBeenAdded;
+		delete [] hasAnimatedMeshBeenAdded;
 	}
 	else
 	{
@@ -982,45 +1016,41 @@ void DxManager::RenderCascadedShadowMap()
 
 void DxManager::RenderCascadedShadowMapInstanced()
 {
-	//BILLBOARDS
 #ifdef MALOWTESTPERF
 	this->perf.PreMeasure("Renderer - Render Cascaded Shadowmap Instanced Billboards", 3);
 #endif
+	//BILLBOARDS
 	if(this->instancingHelper->GetNrOfBillboards() > 0)
 	{
 		//Sort, create instance groups and update buffer before rendering
 		this->instancingHelper->PreRenderBillboards(); //**Tillman todo opt: remove redundant billboard data**
 
 		//Draw billboards
+		//Set the vertex(instance) buffer
 		unsigned int strides[1];
 		unsigned int offsets[1];
 		ID3D11Buffer* bufferPointers[1];
-
-		// Set the buffer strides.
 		strides[0] = sizeof(Vertex);
-		// Set the buffer offset.
 		offsets[0] = 0;
-		// Set the array of pointers to the vertex and instance buffers.
 		bufferPointers[0] = this->instancingHelper->GetBillboardInstanceBuffer();	
-
-		// Set the vertex(instance) buffer
 		this->Dx_DeviceContext->IASetVertexBuffers(0, 1, bufferPointers, strides, offsets);
 		this->Dx_DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 
-		// Set global variables per frame
+		//Set global variables per frame
 		this->Shader_ShadowMapBillboardInstanced->SetFloat3("gSunDir", this->sun.direction);
 		
-		// Per cascade:
+		//Per cascade:
 		for(int i = 0; i < this->csm->GetNrOfCascadeLevels(); ++i)
 		{
-			// Set data
+			//Set render targets & view ports
 			this->Dx_DeviceContext->OMSetRenderTargets(0, 0, this->csm->GetShadowMapDSV(i));
 			D3D11_VIEWPORT wp = this->csm->GetShadowMapViewPort(i);
 			this->Dx_DeviceContext->RSSetViewports(1, &wp);
 
+			//Set variables
 			this->Shader_ShadowMapBillboardInstanced->SetMatrix("gLightViewProj", this->csm->GetViewProjMatrix(i));
 
-			// Per instance group:
+			//Per instance group:
 			for(unsigned int j = 0; j < this->instancingHelper->GetNrOfBillboardGroups(); ++j)
 			{
 				if(this->instancingHelper->GetBillboardGroup(j).s_SRV != NULL) 
@@ -1051,7 +1081,9 @@ void DxManager::RenderCascadedShadowMapInstanced()
 	this->perf.PostMeasure("Renderer - Render Cascaded Shadowmap Instanced Billboards", 3);
 #endif
 
-
+#ifdef MALOWTESTPERF
+	this->perf.PreMeasure("Renderer - Render Cascaded Shadowmap Instanced Static meshes", 3);
+#endif
 	//STATIC OBJECTS
 	if(this->instancingHelper->GetNrOfStrips() > 0)
 	{
@@ -1059,22 +1091,79 @@ void DxManager::RenderCascadedShadowMapInstanced()
 		this->instancingHelper->PreRenderStrips(); 
 
 		//TILLMAN TODO
-		//Draw meshes(meshstrips)
-		//vertex buffers - //OBS! används VertexNormalMapInstanced
-		//IA
-		//shader variables
-		//Etc
+		//Draw static meshes(meshstrips)
+		//"Set" the instance buffer
+		ID3D11Buffer* bufferPointers[2];
+		unsigned int strides[2] = {sizeof(Vertex), sizeof(StripData::InstancedDataStruct)};
+		unsigned int offsets[2] = {0, 0};
+		bufferPointers[1] = this->instancingHelper->GetBillboardInstanceBuffer();	
 
-		// Per cascade:
+		//Per cascade:
 		for(int i = 0; i < this->csm->GetNrOfCascadeLevels(); ++i)
 		{
+			//Render targets & view ports already set.
+			
+			//Set variables
+			this->Shader_ShadowMapBillboardInstanced->SetMatrix("gLightViewProj", this->csm->GetViewProjMatrix(i));
+
+			//Per instance group:
+			for(unsigned int j = 0; j < this->instancingHelper->GetNrOfBillboardGroups(); ++j)
+			{
+				/*MaloW::Array<MeshStrip*>* strips = staticMesh->GetStrips();
+				wvp = staticMesh->GetWorldMatrix() * this->csm->GetViewProjMatrix(l);
+				this->Shader_ShadowMap->SetMatrix("lightWVP", wvp);
+				*/
+				/*Object3D* obj = strips->get(u)->GetRenderObject();
+						this->Dx_DeviceContext->IASetVertexBuffers(0, 1, bufferPointers, strides, offsets);
+				//Vertex data
+				this->Dx_DeviceContext->IASetPrimitiveTopology(obj->GetTopology());
+				Buffer* verts = obj->GetVertBuff();
+				Buffer* inds = obj->GetIndsBuff();
+				if(verts)
+				{
+					verts->Apply();
+				}
+				if(inds)
+				{
+					inds->Apply();
+				}
+
+				//Texture
+				if(obj->GetTextureResource() != NULL)
+				{
+					if(obj->GetTextureResource()->GetSRVPointer() != NULL)
+					{
+						this->Shader_ShadowMap->SetResource("diffuseMap", obj->GetTextureResource()->GetSRVPointer());
+						this->Shader_ShadowMap->SetBool("textured", true);
+					}
+					else
+					{
+						this->Shader_ShadowMap->SetResource("diffuseMap", NULL);
+						this->Shader_ShadowMap->SetBool("textured", false);
+					}
+				}
+				else
+				{
+					this->Shader_ShadowMap->SetResource("diffuseMap", NULL);
+					this->Shader_ShadowMap->SetBool("textured", false);
+				}*/
+
+				//apply & draw
+			}
 		}
-
-
-
 	}
+#ifdef MALOWTESTPERF
+	this->perf.PostMeasure("Renderer - Render Cascaded Shadowmap Instanced Static meshes", 3);
+#endif
 
-
+#ifdef MALOWTESTPERF
+	this->perf.PreMeasure("Renderer - Render Cascaded Shadowmap Instanced Animated meshes", 3);
+#endif
+	//ANIMATED MESHES
+	//TODO
+#ifdef MALOWTESTPERF
+	this->perf.PostMeasure("Renderer - Render Cascaded Shadowmap Instanced Animated meshes", 3);
+#endif
 }
 
 void DxManager::CalculateCulling()
