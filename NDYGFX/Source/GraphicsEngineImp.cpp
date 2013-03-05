@@ -674,12 +674,18 @@ void GraphicsEngineImp::LoadingScreen(const char* BackgroundTexture, const char*
 
 	Image* bg = NULL;
 	if( strcmp(BackgroundTexture, "") != 0 )
+	{
 		bg = this->CreateImage(D3DXVECTOR2(0.0f, 0.0f), D3DXVECTOR2(0.0f, 0.0f), BackgroundTexture);
+		bg->SetStrata(10.0f);
+	}
 
 	Image* pb = NULL;
 	if( strcmp(ProgressBarTexture, "") != 0)
+	{
 		pb = this->CreateImage(D3DXVECTOR2((this->parameters.WindowWidth / 4.0f), ((this->parameters.WindowHeight * 3.0f) / 4.0f)), 
 			D3DXVECTOR2(0, this->parameters.WindowHeight / 10.0f), ProgressBarTexture);
+		pb->SetStrata(10.0f);
+	}
 
 	int TotalItems = this->GetEventQueueSize();
 
@@ -688,7 +694,10 @@ void GraphicsEngineImp::LoadingScreen(const char* BackgroundTexture, const char*
 
 	Image* fade = NULL;
 	if(FadeBlackInInTime != 0.0f || FadeBlackInOutTime != 0.0f || FadeBlackOutInTime != 0.0f || FadeBlackOutOutTime != 0.0f)
+	{
 		fade = this->CreateImage(D3DXVECTOR2(0.0f, 0.0f), D3DXVECTOR2((float)this->parameters.WindowWidth, (float)this->parameters.WindowHeight), "Media/LoadingScreen/FadeTexture.png");
+		fade->SetStrata(10.0f);
+	}
 
 	int state = 0;
 	/*

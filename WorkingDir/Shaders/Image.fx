@@ -28,6 +28,12 @@ DepthStencilState DisableDepthWrite
     DepthWriteMask = ZERO;
 };
 
+DepthStencilState EnableDepth
+{
+    DepthEnable = TRUE;
+    DepthWriteMask = ALL;
+    DepthFunc = LESS_EQUAL;
+};
 
 cbuffer EveryObject
 {
@@ -36,6 +42,7 @@ cbuffer EveryObject
 	float posy;
 	float dimx;
 	float dimy;
+	float strata;
 }
 
 //-----------------------------------------------------------------------------------------
@@ -80,7 +87,7 @@ void GS( point DummyIn input[1], inout TriangleStream<PSSceneIn> triStream )
 	output.opacity = 1.0f;
 	
 	//create sprite quad
-	float4 basepos = float4(posx, posy, 0, 1);
+	float4 basepos = float4(posx, posy, strata, 1);
 
 	//bottom left
 	output.Pos = basepos + float4(0, dimy, 0, 0);
@@ -128,7 +135,7 @@ technique11 BasicTech
         SetPixelShader( CompileShader( ps_4_0, PSScene() ) );
 	    
 
-		SetDepthStencilState( DisableDepthWrite, 0 );
+		SetDepthStencilState( EnableDepth, 0 );
 	    SetRasterizerState( NoCulling );
 		SetBlendState( SrcAlphaBlendingAdd, float4( 0.0f, 0.0f, 0.0f, 0.0f ), 0xFFFFFFFF );
     }  
