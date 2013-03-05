@@ -537,17 +537,17 @@ float GraphicsEngineImp::Update()
 	if(this->isManagingMyOwnWindow)
 	{
 		std::string txt = "FPS: " + MaloW::convertNrToString((float)this->fpsLast) + " - "; 
-		txt += "Camera Pos: " + MaloW::convertNrToString(this->cam->GetPosition().x) + " " + 
+		txt += "CP: " + MaloW::convertNrToString(this->cam->GetPosition().x) + " " + 
 		MaloW::convertNrToString(this->cam->GetPosition().y) + " " + 
-		MaloW::convertNrToString(this->cam->GetPosition().z) + "  -  Mesh Count: " + 
-		MaloW::convertNrToString(this->dx->GetMeshCount()) + "  - Ren. Meshes: " + 
-		MaloW::convertNrToString(this->dx->GetRenderedMeshCount()) + "  -  FBX. Count: " +
-		MaloW::convertNrToString(this->dx->GetRenderedFBXCount()) + "  -  Ter. Count: " +
-		MaloW::convertNrToString(this->dx->GetTerrainCount()) + "  -  Ren. Ters: " +
-		MaloW::convertNrToString(this->dx->GetRenderedTerrainCount()) + "  -  Mesh shad: " +
-		MaloW::convertNrToString(this->dx->GetRenderedMeshShadowCount() / 4) + "  -  Terr shad: " + //** / 4 = temp**
-		MaloW::convertNrToString(this->dx->GetRenderedTerrainShadowCount() / 4) + "  -  Verts: " +
-		MaloW::convertNrToString(this->dx->GetNrOfDrawnVerticesCount()) + "  -  DC: " +
+		MaloW::convertNrToString(this->cam->GetPosition().z) + " - Mesh C: " + 
+		MaloW::convertNrToString(this->dx->GetMeshCount()) + " - Ren. Meshes: " + 
+		MaloW::convertNrToString(this->dx->GetRenderedMeshCount()) + " - FBX.C: " +
+		MaloW::convertNrToString(this->dx->GetRenderedFBXCount()) + " - Ter.C: " +
+		MaloW::convertNrToString(this->dx->GetTerrainCount()) + " - Ren.Ter: " +
+		MaloW::convertNrToString(this->dx->GetRenderedTerrainCount()) + " - M-shad: " +
+		MaloW::convertNrToString(this->dx->GetRenderedMeshShadowCount() / 4) + " - T-shad: " + //** / 4 = temp**
+		MaloW::convertNrToString(this->dx->GetRenderedTerrainShadowCount() / 4) + " - V's: " +
+		MaloW::convertNrToString(this->dx->GetNrOfDrawnVerticesCount()) + " - DC: " +
 		MaloW::convertNrToString(this->dx->GetNrOfDrawCallsCount()); 
 
 		

@@ -171,7 +171,7 @@ private:
 	D3DXPLANE FrustrumPlanes[6];
 
 	//This Clears the scene(rendertargets & viewports) and function sets variables used by most shaders, such as camera position for instance.
-	void PreRender(); //stdafx.fx
+	void PreRender();
 
 	void RenderForward();
 	void RenderDeferredGeoTerrains();
@@ -199,6 +199,9 @@ private:
 	void RenderAntiAliasing();
 
 	void RenderBillboardsInstanced();
+
+	//Atm, only just for debuggin. This just sets the number of meshes, shadows, vertices, drawcalls, etc that are done each frame.
+	void PostRender();
 
 	void HandleSetCameraEvent(SetCameraEvent* ev);
 	void HandleTerrainEvent(TerrainEvent* me);

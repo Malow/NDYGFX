@@ -73,13 +73,13 @@ struct AnimatedStripData
 	struct AnimatedInstancedDataStruct
 	{
 		D3DXMATRIX	s_WorldMatrix; //translation, rotation, scale
-		D3DXMATRIX	s_WorldInverseTransposeMatrix; 
+		//D3DXMATRIX	s_WorldInverseTransposeMatrix; 
 		//float t;//**tillman
 
 		AnimatedInstancedDataStruct() 
 		{
 			D3DXMatrixIdentity(&s_WorldMatrix);
-			s_WorldInverseTransposeMatrix = s_WorldMatrix;
+			//s_WorldInverseTransposeMatrix = s_WorldMatrix;
 		}
 	} InstancedData;
 
@@ -160,8 +160,8 @@ class InstancingHelper
 		unsigned int GetNrOfBillboardGroups() { return this->zBillboardGroups.size(); }
 		unsigned int GetBillboardDataCapacity() { return this->zBillboardData.capacity(); }
 		unsigned int GetBillboardGroupCapacity() { return this->zBillboardGroups.capacity(); }
-		BillboardData GetBillboardData(unsigned int index) { return this->zBillboardData[index]; }
-		BillboardGroup GetBillboardGroup(unsigned int index) { return this->zBillboardGroups[index]; }
+		BillboardData& GetBillboardData(unsigned int index) { return this->zBillboardData[index]; }
+		BillboardGroup& GetBillboardGroup(unsigned int index) { return this->zBillboardGroups[index]; }
 		ID3D11Buffer* GetBillboardInstanceBuffer() { return this->zBillboardInstanceBuffer; }  
 
 		void AddBillboard(Mesh* meshWithBillboard);
@@ -178,8 +178,8 @@ class InstancingHelper
 		unsigned int GetNrOfStripGroups() { return this->zStripGroups.size(); }
 		unsigned int GetStripDataCapacity() { return this->zStripData.capacity(); }
 		unsigned int GetStripGroupCapacity() { return this->zStripGroups.capacity(); }
-		StripData GetStripData(unsigned int index) { return this->zStripData[index]; }
-		StripGroup GetStripGroup(unsigned int index) { return this->zStripGroups[index]; }
+		StripData& GetStripData(unsigned int index) { return this->zStripData[index]; }
+		StripGroup& GetStripGroup(unsigned int index) { return this->zStripGroups[index]; }
 		ID3D11Buffer* GetStripInstanceBuffer() { return this->zStripInstanceBuffer; }  
 
 		/*	Sorts, creates instance groups and updates the instance buffer.	*/
@@ -194,8 +194,8 @@ class InstancingHelper
 		unsigned int GetNrOfAnimatedStripGroups() { return this->zAnimatedStripGroups.size(); }
 		unsigned int GetAnimatedStripDataCapacity() { return this->zAnimatedStripData.capacity(); }
 		unsigned int GetAnimatedStripGroupCapacity() { return this->zAnimatedStripGroups.capacity(); }
-		AnimatedStripData GetAnimatedStripData(unsigned int index) { return this->zAnimatedStripData[index]; }
-		AnimatedStripGroup GetAnimatedStripGroup(unsigned int index) { return this->zAnimatedStripGroups[index]; }
+		AnimatedStripData& GetAnimatedStripData(unsigned int index) { return this->zAnimatedStripData[index]; }
+		AnimatedStripGroup& GetAnimatedStripGroup(unsigned int index) { return this->zAnimatedStripGroups[index]; }
 		ID3D11Buffer* GetAnimatedStripInstanceBuffer() { return this->zAnimatedStripInstanceBuffer; }  
 
 		/*	Sorts, creates instance groups and updates the instance buffer.	*/

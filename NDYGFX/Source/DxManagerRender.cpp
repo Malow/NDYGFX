@@ -559,10 +559,10 @@ void DxManager::RenderBillboardsInstanced()
 			this->Dx_DeviceContext->Draw(instanceCount, startInstanceLocation);
 
 			//Debug data
-			this->NrOfDrawCalls++;
+			this->CurrentNrOfDrawCalls++; 
 		}
 		//Debug data
-		this->NrOfDrawnVertices += 4 * this->instancingHelper->GetNrOfBillboards();
+		this->CurrentRenderedNrOfVertices += 4 * this->instancingHelper->GetNrOfBillboards(); 
 		//Reset counter (nrofbillboards)
 		this->instancingHelper->PostRenderBillboards();
 	}
@@ -1533,6 +1533,7 @@ void DxManager::Render()
 	this->perf.PostMeasure("Renderer - Render FXAA", 2);
 #endif
 
+	this->PostRender();
 	
 
 	// Debugging:

@@ -441,13 +441,13 @@ void DxManager::RenderDeferredGeoTerrains()
 			{
 				this->Dx_DeviceContext->DrawIndexed(indices->GetElementCount(), 0, 0);
 				//Count(debug)
-				CurrentNrOfDrawCalls++;
+				this->CurrentNrOfDrawCalls++;
 			}
 			else if(vertices)
 			{
 				this->Dx_DeviceContext->Draw(vertices->GetElementCount(), 0);
 				//Count(debug)
-				CurrentNrOfDrawCalls++;
+				this->CurrentNrOfDrawCalls++;
 			}
 			else
 			{
@@ -743,7 +743,7 @@ void DxManager::RenderDeferredGeoObjects()
 
 			if(D3DXVec3Length(&distance) < billboardRange || !animatedMesh->HasBillboard())
 			{
-				if(!animatedMesh->IsStripCulled(0))
+				/*if(!animatedMesh->IsStripCulled(0)) //tillman**
 				{
 					//Count(debug)
 					for(int o = 0; o < animatedMesh->GetKeyFrames()->get(0)->meshStripsResource->GetMeshStripsPointer()->size(); ++o)
@@ -847,35 +847,39 @@ void DxManager::RenderDeferredGeoObjects()
 						//Count(debug)
 						CurrentNrOfDrawCalls++;
 					}
+				}*/
+
+				//As long as one strip has not been culled, add whole **mesh** //tillman opt - lägga till strip bara
+				MaloW::Array<MeshStrip*>* strips = animatedMesh->GetStrips();
+				unsigned int index = 0;
+				bool oneStripIsNotCulled = false;
+				while(!oneStripIsNotCulled && index < strips->size())
+				{
+					if(!animatedMesh->IsStripCulled(index++))
+					{
+						oneStripIsNotCulled = true;
+						CurrentRenderedMeshes++;
+						//Add billboard info
+						this->instancingHelper->AddAnimatedMesh(animatedMesh, this->Timer);
+					}
 				}
 			}
 			else
 			{
-				//set variables used per frame
-				this->Dx_DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
-				this->Shader_Billboard->SetFloat3("g_CameraPos", this->camera->GetPositionD3DX());
-				this->Shader_Billboard->SetMatrix("g_CamViewProj", this->camera->GetViewMatrix() * this->camera->GetProjectionMatrix());
-
-				//**CULLING _ TILLMAN**
-				bool hasBeenCounted = false;
-				
-				//Just check the first strip if it is culled. //**TILLMAN**
-				if(!animatedMesh->IsStripCulled(0))
+				//As long as one strip has not been culled, add whole **mesh** //tillman opt - lägga till strip bara
+				MaloW::Array<MeshStrip*>* strips = animatedMesh->GetStrips();
+				unsigned int index = 0;
+				bool oneStripIsNotCulled = false;
+				while(!oneStripIsNotCulled && index < strips->size())
 				{
-					if(!hasBeenCounted)
+					if(!animatedMesh->IsStripCulled(index++))
 					{
+						oneStripIsNotCulled = true;
 						CurrentRenderedMeshes++;
-						hasBeenCounted = true;
+						//Add billboard info
+						this->instancingHelper->AddBillboard(animatedMesh);
 					}
-
-					//Add billboard info
-					this->instancingHelper->AddBillboard(animatedMesh);
 				}
-
-
-				//Unbind resources ** TILLMAN
-				this->Shader_Billboard->SetResource("g_bb_DiffuseMap", NULL);
-				this->Shader_Billboard->Apply(0);
 			}
 		}
 		else
@@ -886,12 +890,6 @@ void DxManager::RenderDeferredGeoObjects()
 	//Unbind resources animated geometry:
 	this->Shader_DeferredAnimatedGeometry->SetResource("tex2D", NULL);
 	this->Shader_DeferredAnimatedGeometry->Apply(0);
-
-	this->RenderedMeshes = CurrentRenderedMeshes;
-	this->RenderedTerrains = CurrentRenderedTerrains;
-
-	this->NrOfDrawnVertices = CurrentRenderedNrOfVertices;
-	this->NrOfDrawCalls = CurrentNrOfDrawCalls;
 
 #ifdef MALOWTESTPERF
 	this->perf.PostMeasure("Renderer - Render Deferred Geo Objects Animated", 4);
@@ -911,12 +909,10 @@ void DxManager::RenderDeferredGeometryInstanced()
 		//Sort, create instance groups and update buffer before rendering
 		this->instancingHelper->PreRenderStrips();
 		
-
-
 		// Set global variables per frame
-		this->Shader_DeferredGeometryInstanced->SetFloat3("g_CamPos", this->camera->GetPositionD3DX());
-		this->Shader_DeferredGeometryInstanced->SetMatrix("g_CamViewProj", this->camera->GetViewMatrix() * this->camera->GetProjectionMatrix());
 		this->Shader_DeferredGeometryInstanced->SetFloat("g_FarClip", this->params.FarClip);
+		this->Shader_DeferredGeometryInstanced->SetFloat3("g_CamPos", this->camera->GetPositionD3DX());
+		this->Shader_DeferredGeometryInstanced->SetMatrix("g_CamViewProj", this->camera->GetViewProjMatrix());
 		
 		//Set instance buffer
 		ID3D11Buffer* bufferPointers[2];
@@ -935,7 +931,7 @@ void DxManager::RenderDeferredGeometryInstanced()
 			//Set topology
 			this->Dx_DeviceContext->IASetPrimitiveTopology(renderObject->GetTopology());
 
-			// Setting lightning from material
+			//Set material variables
 			this->Shader_DeferredGeometryInstanced->SetFloat4("g_DiffuseColor", D3DXVECTOR4(strip->GetMaterial()->DiffuseColor, 1));
 			this->Shader_DeferredGeometryInstanced->SetFloat3("g_SpecularColor", D3DXVECTOR3(strip->GetMaterial()->SpecularColor));
 			this->Shader_DeferredGeometryInstanced->SetFloat("g_SpecularPower", strip->GetMaterial()->SpecularPower);
@@ -988,14 +984,11 @@ void DxManager::RenderDeferredGeometryInstanced()
 			this->Dx_DeviceContext->DrawInstanced(vertexCount, instanceCount, 0, startLoc); 
 			
 			//Debug data
-			this->NrOfDrawCalls++;
-			this->NrOfDrawnVertices += vertexCount;
+			this->CurrentNrOfDrawCalls++;
+			this->CurrentRenderedNrOfVertices += vertexCount;
 		}
 		
-
-
-
-		//Reset data.
+		//Reset data for next frame. //**TILLMAN - prerender eller ny - postrender?
 		this->instancingHelper->PostRenderStrips();
 	}
 #ifdef MALOWTESTPERF
@@ -1006,8 +999,102 @@ void DxManager::RenderDeferredGeometryInstanced()
 	this->perf.PreMeasure("Renderer - Render Deferred Geo Objects Animated Instanced", 5);
 #endif
 	//ANIMATED MESHES(strips)
-	//TILLMAN TODO: CODE
+	if(this->instancingHelper->GetNrOfAnimatedStrips() > 0)
+	{
+		//Sort, create instance groups and update buffer before rendering
+		this->instancingHelper->PreRenderAnimatedStrips();
 
+		//Draw animated mesh(strips) groups (instanced)
+		//Set variables per frame:
+		this->Shader_DeferredAnimatedGeometryInstanced->SetFloat("g_FarClip", this->params.FarClip);
+		this->Shader_DeferredAnimatedGeometryInstanced->SetFloat3("g_CamPos", this->camera->GetPositionD3DX());
+		this->Shader_DeferredAnimatedGeometryInstanced->SetMatrix("g_CamViewProj", this->camera->GetViewProjMatrix());
+		//"Set" instance buffer
+		ID3D11Buffer* bufferPointers[3]; //tillman ev todo
+		/*unsigned int strides[3] = { sizeof(VertexNormalMapCompressed1), 
+									sizeof(VertexNormalMapCompressed1), 
+									sizeof(AnimatedStripData::AnimatedInstancedDataStruct)};
+		*/
+		unsigned int strides[3] = { sizeof(VertexNormalMap), 
+			sizeof(VertexNormalMap), 
+			sizeof(AnimatedStripData::AnimatedInstancedDataStruct)};
+		unsigned int offsets[3] = {0, 0, 0};
+		bufferPointers[2] = this->instancingHelper->GetAnimatedStripInstanceBuffer();	
+
+		//Set variables per animated strip group:
+		for(unsigned int i = 0; i < this->instancingHelper->GetNrOfAnimatedStripGroups(); ++i)
+		{
+			AnimatedStripGroup stripGroup = this->instancingHelper->GetAnimatedStripGroup(i);
+			MeshStrip* stripOne = stripGroup.s_MeshStripOne;
+			MeshStrip* stripTwo = stripGroup.s_MeshStripTwo;
+			Object3D* renderObjectOne = stripOne->GetRenderObject();
+			Object3D* renderObjectTwo = stripTwo->GetRenderObject();
+
+			//Set topology (both use same topology)
+			this->Dx_DeviceContext->IASetPrimitiveTopology(renderObjectOne->GetTopology());
+
+			//Set material variables
+			this->Shader_DeferredAnimatedGeometryInstanced->SetFloat4("g_DiffuseColor", D3DXVECTOR4(stripOne->GetMaterial()->DiffuseColor, 1.0f));
+			this->Shader_DeferredAnimatedGeometryInstanced->SetFloat3("g_SpecularColor", D3DXVECTOR3(stripOne->GetMaterial()->SpecularColor));
+			this->Shader_DeferredAnimatedGeometryInstanced->SetFloat("g_SpecularPower", stripOne->GetMaterial()->SpecularPower);
+			
+			//Set textures (different texture between render objects is not supported)
+			if(renderObjectOne->GetTextureResource() != NULL)
+			{
+				if(renderObjectOne->GetTextureResource()->GetSRVPointer() != NULL)
+				{
+					this->Shader_DeferredAnimatedGeometryInstanced->SetResource("g_DiffuseMap", renderObjectOne->GetTextureResource()->GetSRVPointer());
+					this->Shader_DeferredAnimatedGeometryInstanced->SetBool("g_Textured", true);
+
+					//Normal map
+					if(renderObjectOne->GetNormalMapResource() != NULL)
+					{
+						this->Shader_DeferredAnimatedGeometryInstanced->SetResource("g_NormalMap", renderObjectOne->GetNormalMapResource()->GetSRVPointer());
+						this->Shader_DeferredAnimatedGeometryInstanced->SetBool("g_UseNormalMap", true);
+					}
+					else
+					{
+						this->Shader_DeferredAnimatedGeometryInstanced->SetResource("g_NormalMap", NULL);
+						this->Shader_DeferredAnimatedGeometryInstanced->SetBool("g_UseNormalMap", false);
+					}
+				}
+				else
+				{
+					this->Shader_DeferredAnimatedGeometryInstanced->SetResource("g_DiffuseMap", NULL);
+					this->Shader_DeferredAnimatedGeometryInstanced->SetResource("g_NormalMap", NULL);
+					this->Shader_DeferredAnimatedGeometryInstanced->SetBool("g_Textured", false);
+				}
+			}
+			else
+			{
+				this->Shader_DeferredAnimatedGeometryInstanced->SetResource("g_DiffuseMap", NULL);
+				this->Shader_DeferredAnimatedGeometryInstanced->SetResource("g_NormalMap", NULL);
+				this->Shader_DeferredAnimatedGeometryInstanced->SetBool("g_Textured", false);
+			}
+
+			//Change vertex buffers and set them and the instance buffer.
+			//**TILLMAN todo: vertex struct mismatch**
+			bufferPointers[0] = renderObjectOne->GetVertexBufferResource()->GetBufferPointer()->GetBufferPointer();
+			bufferPointers[1] = renderObjectTwo->GetVertexBufferResource()->GetBufferPointer()->GetBufferPointer();
+			this->Dx_DeviceContext->IASetVertexBuffers(0, 3, bufferPointers, strides, offsets);
+
+			//Apply pass and input layout
+			this->Shader_DeferredAnimatedGeometryInstanced->Apply(0);
+
+			//Draw
+			unsigned int vertexCount = stripOne->getNrOfVerts(); //Both strips contain the same amount of vertices.
+			int instanceCount = this->instancingHelper->GetAnimatedStripGroup(i).s_Size;
+			int startLoc = this->instancingHelper->GetAnimatedStripGroup(i).s_StartLocation;
+			this->Dx_DeviceContext->DrawInstanced(vertexCount, instanceCount, 0, startLoc); 
+
+			//Debug data
+			this->CurrentNrOfDrawCalls++;
+			this->CurrentRenderedNrOfVertices+= vertexCount * 2;
+		}
+
+		//Reset data for next frame.
+		this->instancingHelper->PostRenderAnimatedStrips();//**TILLMAN - prerender eller ny - postrender?
+	}
 #ifdef MALOWTESTPERF
 	this->perf.PostMeasure("Renderer - Render Deferred Geo Objects Animated Instanced", 5);
 #endif
@@ -1640,5 +1727,17 @@ void DxManager::RenderFBXMeshes()
 	}
 
 	this->LastFBXUpdate = this->Timer;
-	this->renderedFBX = CurrentRenderedFBX;
+}
+void DxManager::PostRender()
+{
+	//ev. todo: rendered vertices for shadows?
+	this->RenderedMeshes = this->CurrentRenderedMeshes;
+	this->RenderedTerrains = this->CurrentRenderedTerrains;
+	this->renderedFBX = this->CurrentRenderedFBX;
+
+	this->NrOfDrawnVertices = this->CurrentRenderedNrOfVertices;
+	this->NrOfDrawCalls = this->CurrentNrOfDrawCalls;
+
+	//this->renderedMeshShadows = 0;
+	//this->renderedTerrainShadows = 0;
 }

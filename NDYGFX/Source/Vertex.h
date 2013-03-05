@@ -101,9 +101,9 @@ struct VertexNormalMapCompressed1
 		tangent = origObj->tangent;
 		binormal = origObj->binormal;
 	}
-	inline D3DXVECTOR2& GetTexCoords() { return D3DXVECTOR2(pos_TexU.w, texV_Norm.x); }
-	inline D3DXVECTOR3& GetPos() { return D3DXVECTOR3(pos_TexU.x, pos_TexU.y, pos_TexU.z); }
-	inline D3DXVECTOR3& GetNormal() { return D3DXVECTOR3(texV_Norm.y, texV_Norm.z, texV_Norm.w); }
+	inline D3DXVECTOR2 GetTexCoords() { return D3DXVECTOR2(pos_TexU.w, texV_Norm.x); }
+	inline D3DXVECTOR3 GetPos() { return D3DXVECTOR3(pos_TexU.x, pos_TexU.y, pos_TexU.z); }
+	inline D3DXVECTOR3 GetNormal() { return D3DXVECTOR3(texV_Norm.y, texV_Norm.z, texV_Norm.w); }
 };
 
 

@@ -294,6 +294,10 @@ void DxManager::HandleReloadShaders(int shader)
 		if(this->Shader_DeferredGeometryInstanced)	
 			this->Shader_DeferredGeometryInstanced->Reload();
 		break;
+	case 23:
+		if(this->Shader_DeferredAnimatedGeometryInstanced)	
+			this->Shader_DeferredAnimatedGeometryInstanced->Reload();
+		break;
 	}
 }
 

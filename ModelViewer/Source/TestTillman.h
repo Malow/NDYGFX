@@ -488,7 +488,7 @@ void TillmanTest::PreTest()
 	shadowFail->SetScale(0.05f);
 	//shadowFail = GetGraphics()->CreateMesh("Media/GrassPlant_01.ani", Vector3(-11, 0, 0));
 	//shadowFail->SetScale(0.05f);
-	shadowFail = GetGraphics()->CreateMesh("Media/Fern_02.ani", Vector3(-10, 0, 0));
+	shadowFail = GetGraphics()->CreateMesh("Media/Fern_02.ani", Vector3(-10, 0, 0), "Media/TreeBillboard.png", 25.0f);
 	shadowFail->SetScale(0.5f);
 	//shadowFail = GetGraphics()->CreateMesh("Media/Scale.ani", Vector3(-13, 0, 0));
 	//shadowFail->SetScale(0.05f);
@@ -624,7 +624,8 @@ void TillmanTest::RunTest(float diff)
 	}
 	if(GetGraphics()->GetKeyListener()->IsPressed('E'))
 	{
-		GetGraphics()->ReloadShaders(22); //defered geometry instanced
+		//GetGraphics()->ReloadShaders(22); //deffered geometry instanced
+		GetGraphics()->ReloadShaders(23); //deffered animated geometry instanced
 		//GetGraphics()->ReloadShaders(11); //deferred lightning
 		//GetGraphics()->ReloadShaders(20); //shadow map billboard instanced
 		/*

@@ -31,15 +31,40 @@ cbuffer EveryStrip //(every 2 strips)
 	float4	g_DiffuseColor; 
 	float3	g_SpecularColor;
 	float	g_SpecularPower;
-	//Interpolation
-	float	g_InterpolationValue; //range [0,1].
 };
 
 
 struct VSIn
 {
+	//**TEST
+	/*float3 pos :	POSITION;
+	float2 texCoord : TEXCOORD;
+	float3 norm	: NORMAL;
+	float3 color : COLOR;
+
+	float3 pos_morph :	POSITION_MORPH;
+	float2 texCoord_morph : TEXCOORD_MORPH;
+	float3 norm_morph	: NORMAL_MORPH;
+	float3 color_morph : COLOR_MORPH;
+	*/
+	float3 pos :	POSITION;
+	float2 texCoord : TEXCOORD;
+	float3 norm	: NORMAL;
+	float3 color : COLOR;
+	float3 tangent : TANGENT;
+	float3 binormal : BINORMAL;
+
+	float3 pos_morph :	POSITION_MORPH;
+	float2 texCoord_morph : TEXCOORD_MORPH;
+	float3 norm_morph	: NORMAL_MORPH;
+	float3 color_morph : COLOR_MORPH;
+	float3 tangent_morph : TANGENT_MORPH;
+	float3 binormal_morph : BINORMAL_MORPH;
+	
+
+
 	//Buffer 1
-	float4 pos_TexU		: POSITION_TEX_U;
+	/*float4 pos_TexU		: POSITION_TEX_U;
 	float4 texV_Norm	: TEX_V_NORMAL;
 	float3 tangent		: TANGENT;
 	float3 binormal		: BINORMAL;
@@ -48,12 +73,12 @@ struct VSIn
 	float4 pos_TexU_Morph	: POSITION_TEX_U_MORPH;
 	float4 texV_Norm_Morph	: TEX_V_NORMAL_MORPH;
 	float3 tangent_Morph	: TANGENT_MORPH;
-	float3 binormal_Morph	: BINORMAL_MORPH;
+	float3 binormal_Morph	: BINORMAL_MORPH;*/
 
 
 	//Buffer 3 - Instance data
-	row_major float4x4 world					: WORLD;
-	row_major float4x4 worldInverseTranspose	: WIT; //**kan ändra till 3x3(inte world dock)
+	row_major float4x4 world					: WORLD; //[0][3] contains interpolation value
+	//row_major float4x4 worldInverseTranspose	: WIT; //**kan ändra till 3x3(inte world dock)
 };
 
 
@@ -91,16 +116,25 @@ RTs:
 PSSceneIn VSScene(VSIn input)
 {
 	PSSceneIn output = (PSSceneIn)0;
-	float2 texCoords		= float2(input.pos_TexU.w,			input.texV_Norm.x);
+	/*float2 texCoords		= float2(input.pos_TexU.w,			input.texV_Norm.x);
 	float2 texCoordsMorph	= float2(input.pos_TexU_Morph.w,	input.texV_Norm_Morph.x);
+	
 
 	//tillman obs; spaces **
-	output.worldPos		=			mul(lerp(float4(input.pos_TexU.xyz, 1.0f),	float4(input.pos_TexU_Morph.xyz, 1.0f), g_InterpolationValue),	input.world);
-	output.pos			=			mul(	 float4(output.worldPos.xyz, 1.0f),																	g_CamViewProj);
+	output.worldPos		=			mul(lerp(float4(input.pos_TexU.xyz, 1.0f),	float4(input.pos_TexU_Morph.xyz, 1.0f), g_InterpolationValue),	world);
+	output.pos			= output.worldPos;//			mul(	 float4(output.worldPos.xyz, 1.0f),																	g_CamViewProj);
 	output.tex			=				lerp(texCoords,							texCoordsMorph,							g_InterpolationValue);
 	output.norm			= normalize(mul(lerp(input.texV_Norm.yzw,				input.texV_Norm_Morph.yzw,				g_InterpolationValue),	(float3x3)input.worldInverseTranspose));
 	output.tangent		= normalize(mul(lerp(input.tangent,						input.tangent_Morph,					g_InterpolationValue),	(float3x3)input.worldInverseTranspose)); //**tillman, ev ta bort (float3x3)
 	output.binormal		= normalize(mul(lerp(input.binormal,					input.binormal_Morph,					g_InterpolationValue),	(float3x3)input.worldInverseTranspose));
+	*/
+	float interpolationValue = input.world[0][3];
+	output.worldPos = mul(lerp(float4(input.pos, 1.0f), float4(input.pos_morph, 1.0f), interpolationValue), input.world); //**TILLMAN OBS!, interpolation i .14
+	output.pos	= mul(float4(output.worldPos.xyz, 1.0f), g_CamViewProj);
+	output.tex		= lerp(input.texCoord, input.texCoord_morph, interpolationValue);
+	output.norm	=	lerp(input.norm, input.norm_morph, interpolationValue);
+	output.tangent	= lerp(input.tangent, input.tangent_morph, interpolationValue);
+	output.binormal	= lerp(input.binormal, input.binormal_morph, interpolationValue);
 	
 	return output;
 }
@@ -122,7 +156,7 @@ PSout PSScene(PSSceneIn input)
 	}
 	float4 finalColor = textureColor * g_DiffuseColor; 
 	finalColor.w = 0.0f;
-	output.Texture = finalColor;
+	output.Texture = finalColor; 
 
 	//Normal and depth
 	if(g_UseNormalMap)

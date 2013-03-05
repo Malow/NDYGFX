@@ -174,21 +174,24 @@ void InstancingHelper::ExpandAnimatedStripInstanceBuffer()
 //PUBLIC
 InstancingHelper::InstancingHelper()
 {
-	//BILLBOARDS
+	//Billboards
 	this->zBillboardInstanceBufferSize = 200;
 	this->zBillboardInstanceBuffer = NULL; 
 
-
-	//STRIPS
+	//Strips
 	this->zStripInstanceBufferSize = 200; 
 	this->zStripInstanceBuffer = NULL; 
+
+	//Animated strips
+	this->zAnimatedStripInstanceBufferSize = 200; 
+	this->zAnimatedStripInstanceBuffer = NULL; 
 }
 HRESULT InstancingHelper::Init(ID3D11Device* device, ID3D11DeviceContext* deviceContext)
 {
 	this->g_Device = device;
 	this->g_DeviceContext = deviceContext;
 
-	//BILLBOARD
+	//Billboard
 	D3D11_BUFFER_DESC bufferDesc;
 	bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 	bufferDesc.ByteWidth = sizeof(Vertex) * this->zBillboardInstanceBufferSize; 
@@ -196,26 +199,26 @@ HRESULT InstancingHelper::Init(ID3D11Device* device, ID3D11DeviceContext* device
 	bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	bufferDesc.MiscFlags = 0;
 	bufferDesc.StructureByteStride = 0;
-
 	HRESULT hr = this->g_Device->CreateBuffer(&bufferDesc, 0, &this->zBillboardInstanceBuffer);
 	if(FAILED(hr))
 	{
 		MaloW::Debug("ERROR: InstancingHelper: Init(): Failed to create billboard Strip buffer.");
 	}
 	
-	
 	//Strip
-	bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 	bufferDesc.ByteWidth = sizeof(StripData::InstancedDataStruct) * this->zStripInstanceBufferSize;
-	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	bufferDesc.MiscFlags = 0;
-	bufferDesc.StructureByteStride = 0;
-
 	hr = this->g_Device->CreateBuffer(&bufferDesc, 0, &this->zStripInstanceBuffer);
 	if(FAILED(hr))
 	{
 		MaloW::Debug("ERROR: InstancingHelper: Init(): Failed to create Strip instance buffer.");
+	}
+
+	//Animated strips
+	bufferDesc.ByteWidth = sizeof(AnimatedStripData::AnimatedInstancedDataStruct) * this->zAnimatedStripInstanceBufferSize;
+	hr = this->g_Device->CreateBuffer(&bufferDesc, 0, &this->zAnimatedStripInstanceBuffer);
+	if(FAILED(hr))
+	{
+		MaloW::Debug("ERROR: InstancingHelper: Init(): Failed to create Animated Strip instance buffer.");
 	}
 
 	return hr;
@@ -558,7 +561,7 @@ void InstancingHelper::AddAnimatedMesh(AnimatedMesh* animatedMesh, float timer)
 		KeyFrame* one = NULL;
 		KeyFrame* two = NULL;
 		float interpolationValue = 0.0f;
-		animatedMesh->SetCurrentTime(timer * 1000.0f); //Timer is in seconds.
+		animatedMesh->SetCurrentTime(timer * 1000.0f); //timer is in seconds.
 		animatedMesh->GetCurrentKeyFrames(&one, &two, interpolationValue);
 		MaloW::Array<MeshStrip*>* stripsOne = one->meshStripsResource->GetMeshStripsPointer();
 		MaloW::Array<MeshStrip*>* stripsTwo = two->meshStripsResource->GetMeshStripsPointer();
@@ -570,7 +573,9 @@ void InstancingHelper::AddAnimatedMesh(AnimatedMesh* animatedMesh, float timer)
 			AnimatedStripData animatedStripData;
 
 			animatedStripData.InstancedData.s_WorldMatrix = animatedMesh->GetWorldMatrix();
-			animatedStripData.InstancedData.s_WorldInverseTransposeMatrix = worldInverseTranspose;
+			//**TILLMAN TEST**
+			animatedStripData.InstancedData.s_WorldMatrix._14 = interpolationValue;
+			//animatedStripData.InstancedData.s_WorldInverseTransposeMatrix = worldInverseTranspose;
 			animatedStripData.s_MeshStripOne = stripsOne->get(i);
 			animatedStripData.s_MeshStripTwo = stripsTwo->get(i);
 			
@@ -581,14 +586,14 @@ void InstancingHelper::AddAnimatedMesh(AnimatedMesh* animatedMesh, float timer)
 void InstancingHelper::PreRenderAnimatedStrips()
 {
 	//Sort the data by meshStrip
-	/*std::sort(this->zAnimatedStripData.begin(), this->zAnimatedStripData.end(), SortStripData);
+	std::sort(this->zAnimatedStripData.begin(), this->zAnimatedStripData.end(), SortAnimatedStripData);
 
 
 
 	//Now that the data is sorted, create instance groups.
 	//Clear any old groups
-	this->zStripGroups.clear();
-	if(this->zStripData.size() > 1)
+	this->zAnimatedStripGroups.clear();
+	if(this->zAnimatedStripData.size() > 1)
 	{
 		MeshStrip* tempPtr = NULL;
 
@@ -596,25 +601,25 @@ void InstancingHelper::PreRenderAnimatedStrips()
 		unsigned int nrOfGroups = 0;
 
 		//Add a seperator with an SRV pointing to NULL.
-		StripData seperator;
-		seperator.s_MeshStrip = NULL;
-		this->zStripData.push_back(seperator);
+		AnimatedStripData seperator;
+		seperator.s_MeshStripOne = NULL; 
+		this->zAnimatedStripData.push_back(seperator);
 
 		//First group's start location/index is always 0.
-		StripGroup firstStripGroup;
-		firstStripGroup.s_StartLocation = 0;
-		this->zStripGroups.push_back(firstStripGroup);
+		AnimatedStripGroup firstAnimatedStripGroup;
+		firstAnimatedStripGroup.s_StartLocation = 0;
+		this->zAnimatedStripGroups.push_back(firstAnimatedStripGroup);
 
-		for(unsigned int i = 0; i < this->zStripData.size() - 1; i++)
+		for(unsigned int i = 0; i < this->zAnimatedStripData.size() - 1; i++)
 		{
-			//Save current element.
-			tempPtr = this->zStripData[i].s_MeshStrip;
+			//Save current element. (Checking the first strip is enough).
+			tempPtr = this->zAnimatedStripData[i].s_MeshStripOne;
 
 			//groupCounter++; //**
 
 			//As long as the next element is the same as the current element, increase groupCounter. 
 			//(The number of instances in the current group).
-			if(tempPtr == this->zStripData[i + 1].s_MeshStrip)
+			if(tempPtr == this->zAnimatedStripData[i + 1].s_MeshStripOne)
 			{
 				groupCounter++;
 			}
@@ -624,32 +629,36 @@ void InstancingHelper::PreRenderAnimatedStrips()
 				//Wrap up current instance group.
 				nrOfGroups++;
 				//Save groupCounter (size of group).
-				this->zStripGroups[nrOfGroups - 1].s_Size = groupCounter; 
-				//Save the strip for instance group to use.
-				this->zStripGroups[nrOfGroups - 1].s_MeshStrip = this->zStripData[i].s_MeshStrip;
-				
+				this->zAnimatedStripGroups[nrOfGroups - 1].s_Size = groupCounter; 
+				//Save the strips for instance group to use.
+				this->zAnimatedStripGroups[nrOfGroups - 1].s_MeshStripOne = this->zAnimatedStripData[i].s_MeshStripOne;
+				this->zAnimatedStripGroups[nrOfGroups - 1].s_MeshStripTwo = this->zAnimatedStripData[i].s_MeshStripTwo;
+
 				//Start new instance group.
 				//Set group counter to 1.
 				groupCounter = 1; 
 				//groupCounter = 0;  //**
-				StripGroup newStripGroup;
+				AnimatedStripGroup newAnimatedStripGroup;
 				//Save index (startLocation) of the NEW group (+1 on indices).
-				newStripGroup.s_StartLocation = i + 1;
-				this->zStripGroups.push_back(newStripGroup);
+				newAnimatedStripGroup.s_StartLocation = i + 1;
+				this->zAnimatedStripGroups.push_back(newAnimatedStripGroup);
 			}
 		}
 		//Remove seperator and the group it's in
-		this->zStripData.pop_back();
-		this->zStripGroups.pop_back();
+		this->zAnimatedStripData.pop_back();
+		this->zAnimatedStripGroups.pop_back();
 	}
 	//Handle the special case of 1 Strip.
-	else if(this->zStripData.size() == 1)
+	else if(this->zAnimatedStripData.size() == 1)
 	{
-		StripGroup singleStrip;
-		singleStrip.s_StartLocation = 0;
-		singleStrip.s_Size = 1;
-		singleStrip.s_MeshStrip = this->zStripData[0].s_MeshStrip;
-		this->zStripGroups.push_back(singleStrip);
+		AnimatedStripGroup singleAnimatedStrip;
+
+		singleAnimatedStrip.s_StartLocation = 0;
+		singleAnimatedStrip.s_Size = 1;
+		singleAnimatedStrip.s_MeshStripOne = this->zAnimatedStripData[0].s_MeshStripOne;
+		singleAnimatedStrip.s_MeshStripTwo = this->zAnimatedStripData[0].s_MeshStripTwo;
+
+		this->zAnimatedStripGroups.push_back(singleAnimatedStrip);
 	}
 	
 
@@ -657,13 +666,13 @@ void InstancingHelper::PreRenderAnimatedStrips()
 	//Update buffer 
 	D3D11_MAPPED_SUBRESOURCE mappedSubResource;
 	//Map to access data
-	this->g_DeviceContext->Map(this->zStripInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubResource);
-	StripData::InstancedDataStruct* dataView = reinterpret_cast<StripData::InstancedDataStruct*>(mappedSubResource.pData);
+	this->g_DeviceContext->Map(this->zAnimatedStripInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubResource);
+	AnimatedStripData::AnimatedInstancedDataStruct* dataView = reinterpret_cast<AnimatedStripData::AnimatedInstancedDataStruct*>(mappedSubResource.pData);
 	//Copy over all instance data
-	for(UINT i = 0; i < this->zStripData.size(); ++i)
+	for(UINT i = 0; i < this->zAnimatedStripData.size(); ++i)
 	{
-		dataView[i] = this->zStripData[i].InstancedData;
+		dataView[i] = this->zAnimatedStripData[i].InstancedData;
 	}
 	//Unmap so the GPU can have access
-	this->g_DeviceContext->Unmap(this->zStripInstanceBuffer, 0);*/
+	this->g_DeviceContext->Unmap(this->zAnimatedStripInstanceBuffer, 0);
 }
