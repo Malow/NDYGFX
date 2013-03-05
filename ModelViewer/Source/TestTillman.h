@@ -518,7 +518,13 @@ void TillmanTest::PreTest()
 		fernWithBillboard->SetScale((0.15f));
 		iMesh* treeWithWOBB = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(i * -5 -50, 0, -100.0f));
 		treeWithWOBB->SetScale((0.041f));
+
+		//Animated instanciating _no_texture_is_gray_instead
+		iMesh* treeAnimated = GetGraphics()->CreateMesh("Media/Tree_02.ani", Vector3(i * -5 -50, 0, -150.0f));
+		treeAnimated->SetScale((0.041f));
 	}
+
+	
 	
 }
 

@@ -122,14 +122,14 @@ void InstancingHelper::ExpandStripInstanceBuffer()
 }
 
 void InstancingHelper::ExpandAnimatedStripInstanceBuffer()
-{/*
+{
 	unsigned int oldSize = this->zAnimatedStripInstanceBufferSize;
 	this->zAnimatedStripInstanceBufferSize *= 2;
 
 	//Resize(recreate) instance buffer
 	D3D11_BUFFER_DESC vbd;
 	vbd.Usage = D3D11_USAGE_DYNAMIC;
-	vbd.ByteWidth = sizeof(StripData::InstancedDataStruct) * this->zStripInstanceBufferSize; 
+	vbd.ByteWidth = sizeof(AnimatedStripData::AnimatedInstancedDataStruct) * this->zAnimatedStripInstanceBufferSize; 
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	vbd.MiscFlags = 0;
@@ -140,35 +140,35 @@ void InstancingHelper::ExpandAnimatedStripInstanceBuffer()
 	HRESULT hr = this->g_Device->CreateBuffer(&vbd, 0, &temporaryNewBuffer);
 	if(FAILED(hr))
 	{
-		MaloW::Debug("ERROR: InstancingHelper: ExpandStripDataAndBuffer(): Failed to create buffer for instance Strips.");
+		MaloW::Debug("ERROR: InstancingHelper: ExpandAnimatedStripDataAndBuffer(): Failed to create buffer for instance Strips.");
 	}
 
 	//Copy over data from the old buffer to the new buffer.
 	D3D11_MAPPED_SUBRESOURCE mappedSubResourceNew;
 	D3D11_MAPPED_SUBRESOURCE mappedSubResourceOld;
 	this->g_DeviceContext->Map(temporaryNewBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubResourceNew);
-	this->g_DeviceContext->Map(this->zStripInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubResourceOld);
+	this->g_DeviceContext->Map(this->zAnimatedStripInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubResourceOld);
 
-	StripData::InstancedDataStruct* dataViewNew = reinterpret_cast<StripData::InstancedDataStruct*>(mappedSubResourceNew.pData);
-	StripData::InstancedDataStruct* dataViewOld = reinterpret_cast<StripData::InstancedDataStruct*>(mappedSubResourceOld.pData);
+	AnimatedStripData::AnimatedInstancedDataStruct* dataViewNew = reinterpret_cast<AnimatedStripData::AnimatedInstancedDataStruct*>(mappedSubResourceNew.pData);
+	AnimatedStripData::AnimatedInstancedDataStruct* dataViewOld = reinterpret_cast<AnimatedStripData::AnimatedInstancedDataStruct*>(mappedSubResourceOld.pData);
 	for(unsigned int i = 0; i < oldSize; ++i)
 	{
 		dataViewNew[i] = dataViewOld[i];
 	}
-	this->g_DeviceContext->Unmap(this->zStripInstanceBuffer, 0);
+	this->g_DeviceContext->Unmap(this->zAnimatedStripInstanceBuffer, 0);
 	this->g_DeviceContext->Unmap(temporaryNewBuffer, 0);
 
 
 	//Release old buffer.
-	this->zStripInstanceBuffer->Release();
+	this->zAnimatedStripInstanceBuffer->Release();
 	//Set old buffer to point to the new one.
-	this->zStripInstanceBuffer = temporaryNewBuffer;
+	this->zAnimatedStripInstanceBuffer = temporaryNewBuffer;
 	//The temporary pointer is no longer needed, so set to NULL.
 	temporaryNewBuffer = NULL;
 
-	MaloW::Debug("INFO: InstancingHelper: ExpandStripDataAndBuffer(): Resizing Strip instance buffer. Number of Strips: '" + MaloW::convertNrToString(this->zStripData.size()) + "'."
-		+ "New BUFFER size: '" + MaloW::convertNrToString(this->zStripInstanceBufferSize) + "'."
-		);*/
+	MaloW::Debug("INFO: InstancingHelper: ExpandStripDataAndBuffer(): Resizing Animated Strip instance buffer. Number of Aniamted Strips: '" + MaloW::convertNrToString(this->zAnimatedStripData.size()) + "'."
+		+ "New BUFFER size: '" + MaloW::convertNrToString(this->zAnimatedStripInstanceBufferSize) + "'."
+		);
 }
 
 //PUBLIC
