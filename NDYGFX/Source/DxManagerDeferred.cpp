@@ -665,24 +665,38 @@ void DxManager::RenderDeferredGeoObjects()
 				}*/
 					
 						
-				//Just check the first strip if it is culled.  //**TILLMAN**
-				if(!staticMesh->IsStripCulled(0))
+				//As long as one strip has not been culled, add whole **mesh** //tillman opt - lägga till strip bara
+				MaloW::Array<MeshStrip*>* strips = staticMesh->GetStrips();
+				unsigned int index = 0;
+				bool oneStripIsNotCulled = false;
+				while(!oneStripIsNotCulled && index < strips->size())
 				{
-					CurrentRenderedMeshes++;
+					if(!staticMesh->IsStripCulled(index++))
+					{
+						oneStripIsNotCulled = true;
+						CurrentRenderedMeshes++;
 
-					//Add mesh info to instance helper
-					this->instancingHelper->AddMesh(staticMesh);
+						//Add mesh info to instance helper
+						this->instancingHelper->AddStaticMesh(staticMesh);
+					}
 				}
 			}
 			else
 			{
-				//Just check the first strip if it is culled.  //**TILLMAN**
-				if(!staticMesh->IsStripCulled(0))
+				//As long as one strip has not been culled, add whole **mesh** //tillman opt - lägga till strip bara
+				MaloW::Array<MeshStrip*>* strips = staticMesh->GetStrips();
+				unsigned int index = 0;
+				bool oneStripIsNotCulled = false;
+				while(!oneStripIsNotCulled && index < strips->size())
 				{
-					CurrentRenderedMeshes++;
+					if(!staticMesh->IsStripCulled(index++))
+					{
+						oneStripIsNotCulled = true;
+						CurrentRenderedMeshes++;
 
-					//Add billboard info
-					this->instancingHelper->AddBillboard(staticMesh);
+						//Add billboard info
+						this->instancingHelper->AddBillboard(staticMesh);
+					}
 				}
 			}
 		}
@@ -707,7 +721,7 @@ void DxManager::RenderDeferredGeoObjects()
 	// Normal Animated meshes
 	this->Shader_DeferredAnimatedGeometry->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetPositionD3DX(), 1));
 	this->Shader_DeferredAnimatedGeometry->SetFloat("NearClip", this->params.NearClip);
-	this->Shader_DeferredAnimatedGeometry->SetFloat("FarClip", this->params.FarClip);
+	this->Shader_DeferredAnimatedGeometry->SetFloat("g_FarClip", this->params.FarClip);
 	for(int i = 0; i < this->animations.size(); i++)
 	{
 		AnimatedMesh* animatedMesh = this->animations[i];

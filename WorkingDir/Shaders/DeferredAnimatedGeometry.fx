@@ -42,6 +42,7 @@ cbuffer EveryMesh
 cbuffer EveryFrame
 {
 	float4 CameraPosition;
+	float g_FarClip;
 };
 
 struct VSIn
@@ -148,7 +149,7 @@ PSout PSScene(PSSceneIn input) : SV_Target
 	output.Texture = finalColor;
 	output.NormalAndDepth = float4(input.norm.xyz, input.Pos.z / input.Pos.w);		// pos.z / pos.w should work?
 
-	float depth = length(CameraPosition.xyz - input.WorldPos.xyz) / 200.0f;		// Haxfix //TILLMAN FIX
+	float depth = length(CameraPosition.xyz - input.WorldPos.xyz) / g_FarClip;		// Haxfix
 	output.NormalAndDepth.w = depth;
 
 	output.Position.xyz = input.WorldPos.xyz;

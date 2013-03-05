@@ -15,6 +15,8 @@
 #include "Billboard.h"
 #include "Mesh.h"
 
+class StaticMesh;
+class AnimatedMesh;
 
 struct BillboardData
 {
@@ -54,8 +56,6 @@ struct StripData
 	StripData() : s_MeshStrip(NULL) {}
 	StripData(MeshStrip* meshStrip) : s_MeshStrip(meshStrip) {}
 };
-
-
 struct StripGroup
 {
 	unsigned int		s_StartLocation;
@@ -68,8 +68,42 @@ struct StripGroup
 	{}
 };
 
-bool SortBillboardData(BillboardData billboardLeft, BillboardData billboardRight);
-bool SortStripData(StripData stripLeft, StripData stripRight);
+struct AnimatedStripData
+{
+	struct AnimatedInstancedDataStruct
+	{
+		D3DXMATRIX	s_WorldMatrix; //translation, rotation, scale
+		D3DXMATRIX	s_WorldInverseTransposeMatrix; 
+		//float t;//**tillman
+
+		AnimatedInstancedDataStruct() 
+		{
+			D3DXMatrixIdentity(&s_WorldMatrix);
+			s_WorldInverseTransposeMatrix = s_WorldMatrix;
+		}
+	} InstancedData;
+
+	MeshStrip*	 s_MeshStripOne;
+	MeshStrip*	 s_MeshStripTwo;
+
+	AnimatedStripData() : s_MeshStripOne(NULL), s_MeshStripTwo(NULL) {}
+	AnimatedStripData(MeshStrip* meshStripOne, MeshStrip* meshStripTwo) : s_MeshStripOne(meshStripOne), s_MeshStripTwo(meshStripTwo) {}
+};
+struct AnimatedStripGroup
+{
+	unsigned int		s_StartLocation;
+	unsigned int		s_Size; 
+	MeshStrip*			s_MeshStripOne;
+	MeshStrip*			s_MeshStripTwo;
+
+	AnimatedStripGroup() : s_StartLocation(0), s_Size(0), s_MeshStripOne(NULL), s_MeshStripTwo(NULL) {}
+	AnimatedStripGroup(unsigned int startLocation, unsigned int size, MeshStrip* meshStripOne, MeshStrip* meshStripTwo)
+		: s_StartLocation(startLocation), s_Size(size), s_MeshStripOne(meshStripOne), s_MeshStripTwo(meshStripTwo) {}
+};
+
+bool SortBillboardData(BillboardData &billboardLeft, BillboardData &billboardRight);
+bool SortStripData(StripData &stripLeft, StripData &stripRight);
+bool SortAnimatedStripData(AnimatedStripData &stripLeft, AnimatedStripData &stripRight);
 
 class InstancingHelper
 {
@@ -89,17 +123,13 @@ class InstancingHelper
 		ID3D11Buffer* zBillboardInstanceBuffer; //Shall contain vertex data of billboardData.
 
 
-
 		//MESHES(MESHSTRIPS)
 		//Counters
 		unsigned int zStripInstanceBufferSize;
-
 		//Vector containing strip data of all meshes that are added each frame.
 		std::vector<StripData> zStripData;
-
-		//Instance group (groups of strips that share the same texture)
+		//Instance group (groups of strips that share the same texture and vertex data)
 		std::vector<StripGroup> zStripGroups;
-
 		//Instance Buffer (containing all instanced data)
 		ID3D11Buffer* zStripInstanceBuffer; 
 
@@ -107,15 +137,12 @@ class InstancingHelper
 		//ANIMATED MESHES(MESHSTRIPS)
 		//Counters
 		unsigned int zAnimatedStripInstanceBufferSize;
-
-		//Vector containing strip data of all meshes that are added each frame.
-		std::vector<StripData> zAnimatedStripData;
-
-		//Instance group (groups of strips that share the same texture)
-		std::vector<StripGroup> zAnimatedStripGroups;
-
+		//Vector containing strip data (in groups of 2) of all meshes that are added each frame.
+		std::vector<AnimatedStripData> zAnimatedStripData;
+		//Instance group (groups of strips that share the same texture and vertex data)
+		std::vector<AnimatedStripGroup> zAnimatedStripGroups;
 		//Instance Buffer (containing all instanced data)
-		ID3D11Buffer* zSAnimatedtripInstanceBuffer; 
+		ID3D11Buffer* zAnimatedStripInstanceBuffer; 
 		
     private:
 		void ExpandBillboardInstanceBuffer();
@@ -145,7 +172,7 @@ class InstancingHelper
 
 
 		//MESH
-		void AddMesh(Mesh* mesh);
+		void AddStaticMesh(StaticMesh* staticMesh);
 
 		unsigned int GetNrOfStrips() { return this->zStripData.size(); }
 		unsigned int GetNrOfStripGroups() { return this->zStripGroups.size(); }
@@ -162,13 +189,14 @@ class InstancingHelper
 
 
 		//ANIMATED MESH
-		unsigned int GetNrOfAnimatedStrips() { return this->zStripData.size(); }
-		unsigned int GetNrOfAnimatedStripGroups() { return this->zStripGroups.size(); }
-		unsigned int GetAnimatedStripDataCapacity() { return this->zStripData.capacity(); }
-		unsigned int GetAnimatedStripGroupCapacity() { return this->zStripGroups.capacity(); }
-		StripData GetAnimatedStripData(unsigned int index) { return this->zStripData[index]; }
-		StripGroup GetAnimatedStripGroup(unsigned int index) { return this->zStripGroups[index]; }
-		ID3D11Buffer* GetAnimatedStripInstanceBuffer() { return this->zStripInstanceBuffer; }  
+		void AddAnimatedMesh(AnimatedMesh* animatedMesh, float timer);
+		unsigned int GetNrOfAnimatedStrips() { return this->zAnimatedStripData.size(); }
+		unsigned int GetNrOfAnimatedStripGroups() { return this->zAnimatedStripGroups.size(); }
+		unsigned int GetAnimatedStripDataCapacity() { return this->zAnimatedStripData.capacity(); }
+		unsigned int GetAnimatedStripGroupCapacity() { return this->zAnimatedStripGroups.capacity(); }
+		AnimatedStripData GetAnimatedStripData(unsigned int index) { return this->zAnimatedStripData[index]; }
+		AnimatedStripGroup GetAnimatedStripGroup(unsigned int index) { return this->zAnimatedStripGroups[index]; }
+		ID3D11Buffer* GetAnimatedStripInstanceBuffer() { return this->zAnimatedStripInstanceBuffer; }  
 
 		/*	Sorts, creates instance groups and updates the instance buffer.	*/
 		void PreRenderAnimatedStrips();

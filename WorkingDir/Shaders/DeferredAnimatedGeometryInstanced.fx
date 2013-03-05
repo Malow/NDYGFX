@@ -24,12 +24,14 @@ cbuffer EveryFrame
 
 cbuffer EveryStrip //(every 2 strips)
 {
+	//Textures
 	bool	g_Textured;
 	bool	g_UseNormalMap;
-
+	//Material
 	float4	g_DiffuseColor; 
 	float3	g_SpecularColor;
 	float	g_SpecularPower;
+	//Interpolation
 	float	g_InterpolationValue; //range [0,1].
 };
 

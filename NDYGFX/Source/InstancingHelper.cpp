@@ -1,18 +1,22 @@
 #include "InstancingHelper.h"
+
+#include "StaticMesh.h"
+#include "AnimatedMesh.h"
+
 #include <algorithm>
 
 //GLOBAL
-bool SortBillboardData(BillboardData billboardLeft, BillboardData billboardRight)
+bool SortBillboardData(BillboardData &billboardLeft, BillboardData &billboardRight)
 {
 	return billboardLeft.s_SRV > billboardRight.s_SRV;
 }
-/*bool SortMeshData(MeshData meshLeft, MeshData meshRight)
-{
-	return meshLeft.s_MeshStripsResource > meshRight.s_MeshStripsResource;
-}*/
-bool SortStripData(StripData stripLeft, StripData stripRight)
+bool SortStripData(StripData &stripLeft, StripData &stripRight)
 {
 	return stripLeft.s_MeshStrip > stripRight.s_MeshStrip;
+}
+bool SortAnimatedStripData(AnimatedStripData &stripLeft, AnimatedStripData &stripRight)
+{
+	return stripLeft.s_MeshStripOne > stripRight.s_MeshStripOne; //**räcker med 1 jämförelse?**
 }
 
 
@@ -340,7 +344,7 @@ void InstancingHelper::PreRenderBillboards()
 }
 
 
-void InstancingHelper::AddMesh(Mesh* mesh)
+void InstancingHelper::AddStaticMesh(StaticMesh* staticMesh)
 {
 	//Expand buffer if necessary
 	if(this->zStripData.size() >= this->zStripInstanceBufferSize)
@@ -352,21 +356,99 @@ void InstancingHelper::AddMesh(Mesh* mesh)
 		//Mesh & instance data
 		D3DXMATRIX worldInverseTranspose;
 		D3DXMatrixIdentity(&worldInverseTranspose);
-		D3DXMatrixInverse(&worldInverseTranspose, NULL, &mesh->GetWorldMatrix());
+		D3DXMatrixInverse(&worldInverseTranspose, NULL, &staticMesh->GetWorldMatrix());
 		D3DXMatrixTranspose(&worldInverseTranspose, &worldInverseTranspose);
 
 		//Add/save strips data
-		for(unsigned int i = 0; i < mesh->GetStrips()->size(); ++i)
+		for(unsigned int i = 0; i < staticMesh->GetStrips()->size(); ++i)
 		{
-			StripData StripData;
+			StripData stripData;
 
-			StripData.InstancedData.s_WorldMatrix = mesh->GetWorldMatrix();
-			StripData.InstancedData.s_WorldInverseTransposeMatrix = worldInverseTranspose;
-			StripData.s_MeshStrip = mesh->GetMeshStripsResourcePointer()->GetMeshStripsPointer()->get(i);
+			stripData.InstancedData.s_WorldMatrix = staticMesh->GetWorldMatrix();
+			stripData.InstancedData.s_WorldInverseTransposeMatrix = worldInverseTranspose;
+			stripData.s_MeshStrip = staticMesh->GetMeshStripsResourcePointer()->GetMeshStripsPointer()->get(i);
 
-			this->zStripData.push_back(StripData);
+			this->zStripData.push_back(stripData);
 		}
 	}
+
+
+	/*if(StaticMesh* staticMesh = dynamic_cast<StaticMesh*>(mesh))
+	{
+		
+	}//Expand buffer if necessary
+		if(this->zAnimatedStripData.size() >= this->zAnimatedStripInstanceBufferSize)
+		{
+			this->ExpandAnimatedStripInstanceBuffer();
+		}
+		else
+		{
+			//Mesh & instance data
+			D3DXMATRIX worldInverseTranspose;
+			D3DXMatrixIdentity(&worldInverseTranspose);
+			D3DXMatrixInverse(&worldInverseTranspose, NULL, &mesh->GetWorldMatrix());
+			D3DXMatrixTranspose(&worldInverseTranspose, &worldInverseTranspose);
+
+
+			KeyFrame* one = NULL;
+			KeyFrame* two = NULL;
+			float interpolationValue = 0.0f;
+			animatedMesh->SetCurrentTime(this->Timer * 1000.0f); //Timer is in seconds.
+			animatedMesh->GetCurrentKeyFrames(&one, &two, interpolationValue);
+
+
+			//Add/save strips data
+			for(unsigned int i = 0; i < mesh->GetStrips()->size(); ++i)
+			{
+				StripData StripData;
+
+				StripData.InstancedData.s_WorldMatrix = mesh->GetWorldMatrix();
+				StripData.InstancedData.s_WorldInverseTransposeMatrix = worldInverseTranspose;
+				StripData.s_MeshStrip = mesh->GetMeshStripsResourcePointer()->GetMeshStripsPointer()->get(i);
+
+				this->zStripData.push_back(StripData);
+			}
+		}
+	else if (AnimatedMesh* animatedMesh = dynamic_cast<AnimatedMesh*>(mesh))
+	{
+		//Expand buffer if necessary
+		if(this->zAnimatedStripData.size() >= this->zAnimatedStripInstanceBufferSize)
+		{
+			this->ExpandAnimatedStripInstanceBuffer();
+		}
+		else
+		{
+			//Mesh & instance data
+			D3DXMATRIX worldInverseTranspose;
+			D3DXMatrixIdentity(&worldInverseTranspose);
+			D3DXMatrixInverse(&worldInverseTranspose, NULL, &mesh->GetWorldMatrix());
+			D3DXMatrixTranspose(&worldInverseTranspose, &worldInverseTranspose);
+
+
+			KeyFrame* one = NULL;
+			KeyFrame* two = NULL;
+			float interpolationValue = 0.0f;
+			animatedMesh->SetCurrentTime(this->Timer * 1000.0f); //Timer is in seconds.
+			animatedMesh->GetCurrentKeyFrames(&one, &two, interpolationValue);
+
+
+			//Add/save strips data
+			for(unsigned int i = 0; i < mesh->GetStrips()->size(); ++i)
+			{
+				StripData StripData;
+
+				StripData.InstancedData.s_WorldMatrix = mesh->GetWorldMatrix();
+				StripData.InstancedData.s_WorldInverseTransposeMatrix = worldInverseTranspose;
+				StripData.s_MeshStrip = mesh->GetMeshStripsResourcePointer()->GetMeshStripsPointer()->get(i);
+
+				this->zStripData.push_back(StripData);
+			}
+		}
+	}
+	else
+	{
+		MaloW::Debug("WARNING: InstancingHelper: Addmesh(): unsupported mesh type.");
+	}*/
 }
 void InstancingHelper::PreRenderStrips()
 {
@@ -458,12 +540,48 @@ void InstancingHelper::PreRenderStrips()
 	this->g_DeviceContext->Unmap(this->zStripInstanceBuffer, 0);
 }
 
+void InstancingHelper::AddAnimatedMesh(AnimatedMesh* animatedMesh, float timer)
+{
+	//Expand buffer if necessary
+	if(this->zAnimatedStripData.size() >= this->zAnimatedStripInstanceBufferSize)
+	{
+		this->ExpandAnimatedStripInstanceBuffer();
+	}
+	else
+	{
+		//Mesh & instance data
+		D3DXMATRIX worldInverseTranspose;
+		D3DXMatrixIdentity(&worldInverseTranspose);
+		D3DXMatrixInverse(&worldInverseTranspose, NULL, &animatedMesh->GetWorldMatrix());
+		D3DXMatrixTranspose(&worldInverseTranspose, &worldInverseTranspose);
 
+		KeyFrame* one = NULL;
+		KeyFrame* two = NULL;
+		float interpolationValue = 0.0f;
+		animatedMesh->SetCurrentTime(timer * 1000.0f); //Timer is in seconds.
+		animatedMesh->GetCurrentKeyFrames(&one, &two, interpolationValue);
+		MaloW::Array<MeshStrip*>* stripsOne = one->meshStripsResource->GetMeshStripsPointer();
+		MaloW::Array<MeshStrip*>* stripsTwo = two->meshStripsResource->GetMeshStripsPointer();
 
+		//Add/save strips data
+		for(unsigned int i = 0; i < stripsOne->size(); ++i) //(stripsOne and stripsTwo are of the same size)
+		{
+			//Add strip data
+			AnimatedStripData animatedStripData;
+
+			animatedStripData.InstancedData.s_WorldMatrix = animatedMesh->GetWorldMatrix();
+			animatedStripData.InstancedData.s_WorldInverseTransposeMatrix = worldInverseTranspose;
+			animatedStripData.s_MeshStripOne = stripsOne->get(i);
+			animatedStripData.s_MeshStripTwo = stripsTwo->get(i);
+			
+			this->zAnimatedStripData.push_back(animatedStripData);
+		}
+	}
+}
 void InstancingHelper::PreRenderAnimatedStrips()
 {
 	//Sort the data by meshStrip
-	/*std::sort(this->zStripData.begin(), this->zStripData.end(), SortStripData);
+	/*std::sort(this->zAnimatedStripData.begin(), this->zAnimatedStripData.end(), SortStripData);
 
 
 
