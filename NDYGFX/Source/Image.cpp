@@ -6,6 +6,7 @@ Image::Image(D3DXVECTOR2 pos, D3DXVECTOR2 dim)
 	this->dimensions = dim;
 	this->textureResource = NULL;
 	this->opacity = 1.0f;
+	this->strata = 0.5f;
 }
 
 Image::~Image()
@@ -31,4 +32,14 @@ Vector2 Image::GetDimensions() const
 void Image::SetDimensions( Vector2 dims )
 {
 	this->dimensions = D3DXVECTOR2(dims.x, dims.y);
+}
+
+void Image::SetStrata( float strata )
+{
+	this->strata = strata / 1000.0f;
+}
+
+float Image::GetStrata() const
+{
+	return this->strata * 1000.0f;
 }

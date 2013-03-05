@@ -24,6 +24,7 @@ void DxManager::Life()
 		TextureResource* tex = NULL;
 		tex = GetResourceManager()->CreateTextureResourceFromFile("Media/LoadingScreen/StartingSplash.png");
 		img->SetTexture(tex);
+		img->SetStrata(10.0f);
 		this->images.add(img);
 
 		while(!this->StartRender)
@@ -421,11 +422,10 @@ void DxManager::RenderShadowMap()
 
 void DxManager::RenderImages()
 {
-	/*
 	this->Dx_DeviceContext->OMSetRenderTargets(1, &this->Dx_RenderTargetView, this->Dx_DepthStencilView);
 	this->Dx_DeviceContext->RSSetViewports(1, &this->Dx_Viewport);
 	this->Dx_DeviceContext->ClearDepthStencilView(this->Dx_DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
-	*/
+	
 	this->Dx_DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 	
 
@@ -438,7 +438,8 @@ void DxManager::RenderImages()
 		this->Shader_Image->SetFloat("dimx", (img->GetDimensions().x / this->params.WindowWidth) * 2);
 		this->Shader_Image->SetFloat("dimy", -(img->GetDimensions().y / this->params.WindowHeight) * 2);
 		this->Shader_Image->SetFloat("opacity", img->GetOpacity());
-		
+		this->Shader_Image->SetFloat("strata", img->GetStrata01());
+
 		/*// if -1 to 1
 		this->Shader_Image->SetFloat("posx", img->GetPosition().x);
 		this->Shader_Image->SetFloat("posy", img->GetPosition().y);
