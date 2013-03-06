@@ -55,6 +55,7 @@ private:
 	Shader* Shader_ShadowMap;
 	Shader*	Shader_ShadowMapInstanced;
 	Shader* Shader_ShadowMapAnimated;
+	Shader* Shader_ShadowMapAnimatedInstanced;
 	Shader* Shader_ShadowMapBillboardInstanced;
 	Shader* Shader_DeferredGeometry; //**TILLMAN - deprecated
 	Shader* Shader_DeferredGeometryInstanced;

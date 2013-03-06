@@ -302,6 +302,10 @@ void DxManager::HandleReloadShaders(int shader)
 		if(this->Shader_ShadowMapInstanced)	
 			this->Shader_ShadowMapInstanced->Reload();
 		break;
+	case 25:
+		if(this->Shader_ShadowMapAnimatedInstanced)	
+			this->Shader_ShadowMapAnimatedInstanced->Reload();
+		break;
 	}
 }
 

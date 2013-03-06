@@ -574,7 +574,7 @@ void InstancingHelper::AddAnimatedMesh(AnimatedMesh* animatedMesh, float timer)
 
 			animatedStripData.InstancedData.s_WorldMatrix = animatedMesh->GetWorldMatrix();
 			//**TILLMAN TEST**
-			animatedStripData.InstancedData.s_WorldMatrix._14 = interpolationValue;
+			animatedStripData.InstancedData.s_WorldMatrix._44 = interpolationValue;
 			//animatedStripData.InstancedData.s_WorldInverseTransposeMatrix = worldInverseTranspose;
 			animatedStripData.s_MeshStripOne = stripsOne->get(i);
 			animatedStripData.s_MeshStripTwo = stripsTwo->get(i);

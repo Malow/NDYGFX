@@ -660,7 +660,8 @@ void TillmanTest::RunTest(float diff)
 		//GetGraphics()->ReloadShaders(20); //shadow map billboard instanced
 		//GetGraphics()->ReloadShaders(22); //deffered geometry instanced
 		//GetGraphics()->ReloadShaders(23); //deffered animated geometry instanced
-		GetGraphics()->ReloadShaders(24); //static geometry shadow instanced
+		//GetGraphics()->ReloadShaders(24); //static geometry shadow instanced
+		GetGraphics()->ReloadShaders(25); //animated geometry shadow instanced
 		/*
 		debugCSMScale -= diff * 0.001f;
 		fileNames[0] = "Media/TerrainTexture.png";

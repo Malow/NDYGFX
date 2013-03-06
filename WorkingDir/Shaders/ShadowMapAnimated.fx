@@ -16,15 +16,15 @@ cbuffer PerStrip
 
 struct VSIn
 {
-	float4 Pos		: POSITION; 
+	float3 Pos		: POSITION; 
 	float2 Tex		: TEXCOORD;
-	float3 Normal	: NORMAL;//dummy
-	float4 Color	: COLOR; //dummy
+	//float3 Normal	: NORMAL;//dummy
+	//float4 Color	: COLOR; //dummy
 
-	float4 Pos_Morph	: POSITION_MORPH; 
-	float2 Tex_Morph	: TEXCOORD_MORPH;//dummy TILLMAN
-	float3 Normal_Morph : NORMAL_MORPH;//dummy
-	float4 Color_Morph	: COLOR_MORPH;//dummy
+	float3 Pos_Morph	: POSITION_MORPH; 
+	float2 Tex_Morph	: TEXCOORD_MORPH;
+	//float3 Normal_Morph : NORMAL_MORPH;//dummy
+	//float4 Color_Morph	: COLOR_MORPH;//dummy
 };
 
 struct PSIn 
@@ -36,12 +36,12 @@ struct PSIn
 PSIn VS(VSIn input) 
 {
 	PSIn output = (PSIn)0;
-	output.Pos = mul(lerp(input.Pos, input.Pos_Morph, t), lightWVP); //Interpolate position and transform it.
-	output.Tex = input.Tex; //No interpolation needed.
+	output.Pos = mul(lerp(float4(input.Pos, 1.0f), float4(input.Pos_Morph, 1.0f), t), lightWVP); //Interpolate position and transform it.
+	output.Tex = lerp(input.Tex, input.Tex_Morph, t);
 
 	return output;
 }
-float PS(PSIn input) : SV_Depth
+void PS(PSIn input)
 {
 	if(textured)
 	{
@@ -50,13 +50,11 @@ float PS(PSIn input) : SV_Depth
 			discard;
 		}
 	}
-
-	return input.Pos.z;
 }
 
 
 
-technique11 RenderShadowMap
+technique11 RenderShadowMapAnimated
 {
 	pass P0
 	{

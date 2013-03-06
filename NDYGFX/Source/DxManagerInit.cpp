@@ -179,7 +179,28 @@ HRESULT DxManager::Init()
 		{ "WIT", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 }
 	};
 
+	static const D3D11_INPUT_ELEMENT_DESC inputDescAnimatedShadowVertex[] =
+	{
+		{"POSITION",       0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TEXCOORD",       0, DXGI_FORMAT_R32G32_FLOAT,    0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
 
+		{"POSITION_MORPH", 0, DXGI_FORMAT_R32G32B32_FLOAT, 1, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TEXCOORD_MORPH", 0, DXGI_FORMAT_R32G32_FLOAT,    1, 12, D3D11_INPUT_PER_VERTEX_DATA, 0}
+	};	
+	static const D3D11_INPUT_ELEMENT_DESC inputDescAnimatedShadowInstanced[] =
+	{
+		//Buffer 1
+		{"POSITION",       0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TEXCOORD",       0, DXGI_FORMAT_R32G32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		//Buffer 2
+		{"POSITION_MORPH", 0, DXGI_FORMAT_R32G32B32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TEXCOORD_MORPH", 0, DXGI_FORMAT_R32G32_FLOAT,    1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		//Instance buffer
+		{ "WORLD", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 2, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+		{ "WORLD", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 2, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+		{ "WORLD", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 2, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+		{ "WORLD", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 2, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 }
+	};
 
 	//**TILLMAN - deprecated?
 	static const D3D11_INPUT_ELEMENT_DESC inputDescAnimatedVertex[] =
@@ -363,11 +384,19 @@ HRESULT DxManager::Init()
 
 	// ShadowMapAnimated Shader
 	this->Shader_ShadowMapAnimated = new Shader();
-	if(FAILED(this->Shader_ShadowMapAnimated->Init(this->Dx_Device, this->Dx_DeviceContext, "Shaders/ShadowMapAnimated.fx", inputDescAnimatedVertex, 8)))
+	if(FAILED(this->Shader_ShadowMapAnimated->Init(this->Dx_Device, this->Dx_DeviceContext, "Shaders/ShadowMapAnimated.fx", inputDescAnimatedShadowVertex, 4)))
 	{
 		MaloW::Debug("Failed to open ShadowMapAnimated.fx");
 		return E_FAIL;
 	}	
+
+	// ShadowMapAnimatedInstanced Shader
+	this->Shader_ShadowMapAnimatedInstanced = new Shader();
+	if(FAILED(this->Shader_ShadowMapAnimatedInstanced->Init(this->Dx_Device, this->Dx_DeviceContext, "Shaders/ShadowMapAnimatedInstanced.fx", inputDescAnimatedShadowInstanced, 8)))
+	{
+		MaloW::Debug("Failed to open ShadowMapAnimatedInstanced.fx");
+		return E_FAIL;
+	}
 
 	// For images
 	this->Shader_Image = new Shader();

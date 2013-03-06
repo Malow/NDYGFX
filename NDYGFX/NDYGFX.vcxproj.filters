@@ -557,6 +557,9 @@
     <FxCompile Include="..\WorkingDir\Shaders\ShadowMapInstanced.fx">
       <Filter>Source Files\Engine\Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="..\WorkingDir\Shaders\ShadowMapAnimatedInstanced.fx">
+      <Filter>Source Files\Engine\Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\MaloWPerformance.cpp">
