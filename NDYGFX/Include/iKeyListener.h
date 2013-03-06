@@ -6,7 +6,6 @@
 #define DECLDIR __declspec(dllimport)
 #endif
 
-#include "Process.h"
 #include "Vector.h"
 
 /*

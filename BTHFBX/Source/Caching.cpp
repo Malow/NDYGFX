@@ -22,7 +22,7 @@ inline std::string GetFileFromPath( const std::string& name )
 
 void DoMinMax(Vector3& _min, Vector3& _max, std::vector<BTHFBX_VEC3>& positions)
 {
-	for(int i = 0; i < positions.size(); i++)
+	for(unsigned int i = 0; i < positions.size(); i++)
 	{
 		_min.x = min_(_min.x, positions[i].x);
 		_min.y = min_(_min.y, positions[i].y);

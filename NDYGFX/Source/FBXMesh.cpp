@@ -75,6 +75,17 @@ bool FBXMesh::SetAnimation( unsigned int ani )
 {
 	zSceneMutex.lock();
 
+	if ( !this->zScene->GetAnimationController() )
+	{
+		MaloW::Debug(
+			"Tried to apply animation at index " + 
+			MaloW::convertNrToString(ani) + 
+			" to an FBX mesh that only has not been loaded!"); 
+
+		zSceneMutex.unlock();
+		return false;
+	}
+
 	if ( !this->zScene->GetAnimationController()->SetCurrentAnimation(ani) )
 	{	
 		MaloW::Debug(
@@ -96,6 +107,17 @@ bool FBXMesh::SetAnimation( const char* name )
 {
 	zSceneMutex.lock();
 
+	if ( !this->zScene->GetAnimationController() )
+	{
+		MaloW::Debug(
+			"Tried to apply animation named " + 
+			std::string(name) + 
+			" to an FBX mesh that only has not been loaded!"); 
+
+		zSceneMutex.unlock();
+		return false;
+	}
+
 	if ( !this->zScene->GetAnimationController()->SetCurrentAnimation(name) )
 	{	
 		MaloW::Debug(
@@ -103,7 +125,7 @@ bool FBXMesh::SetAnimation( const char* name )
 			std::string(name) + 
 			" to an FBX mesh that only has " + 
 			MaloW::convertNrToString(this->zScene->GetAnimationController()->GetAnimationCount()) + 
-			" animations.");
+			" animations."); 
 		
 		zSceneMutex.unlock();
 		return false;

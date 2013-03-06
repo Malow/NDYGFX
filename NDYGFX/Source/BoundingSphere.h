@@ -2,6 +2,9 @@
 
 #include "DirectX.h"
 
+#pragma warning ( push )
+#pragma warning ( disable : 4238 ) // warning C4238: nonstandard extension used : class rvalue used as lvalue
+
 class BoundingSphere
 {
 public:
@@ -22,3 +25,5 @@ public:
 
 	virtual ~BoundingSphere() {}
 };
+
+#pragma warning ( pop )
