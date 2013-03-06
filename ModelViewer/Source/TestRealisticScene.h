@@ -121,7 +121,7 @@ bool TestRealisticScene::RunTest(float diff)
 		pos.y = world->GetHeightAt(Vector2(pos.x, pos.z)) + 5.0f;
 		GetGraphics()->GetCamera()->SetPosition(pos);
 		if(GetGraphics()->GetCamera()->GetPosition().x < 1700)
-			path++;
+			path--;
 
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_RETURN))
 		{

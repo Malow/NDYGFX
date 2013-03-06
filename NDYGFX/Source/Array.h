@@ -24,8 +24,8 @@ namespace MaloW
 		T& operator[](unsigned int pos);
 
 		void add(const T& item);
-		const T& get(unsigned int pos) const;
-		T& get(unsigned int pos);
+		inline const T& get(unsigned int pos) const;
+		inline T& get(unsigned int pos);
 		T getAndRemove(unsigned int pos);
 		T getAndRemoveStaySorted(unsigned int pos);
 		bool isEmpty();
@@ -35,7 +35,7 @@ namespace MaloW
 		bool removeStaySorted(int pos);
 		int search(const T& item) const;
 		void sort();
-		int size() const { return this->nrOfItems; }
+		inline int size() const { return this->nrOfItems; }
 
 	};
 

@@ -764,7 +764,7 @@ void DxManager::RenderCascadedShadowMap()
 					}
 					if(D3DXVec3Length(&distance) < billboardRange || staticMesh->GetBillboardFilePath() == "")
 					{
-						MaloW::Array<MeshStrip*>* strips = staticMesh->GetStrips();
+						/*MaloW::Array<MeshStrip*>* strips = staticMesh->GetStrips();
 						wvp = staticMesh->GetWorldMatrix() * this->csm->GetViewProjMatrix(l);
 						this->Shader_ShadowMap->SetMatrix("lightWVP", wvp);
 
@@ -833,10 +833,10 @@ void DxManager::RenderCascadedShadowMap()
 									MaloW::Debug("WARNING: DxManagerRender: RenderCascadedShadowMap(): Both vertex and indexbuffers for static mesh were NULL.");
 								}
 							}
-						}
+						}*/
 
 						//Only add once (same object can be in several cascades).
-						/*if(!hasStaticMeshBeenAdded[i])
+						if(!hasStaticMeshBeenAdded[i])
 						{
 							//As long as one strip has not been culled, add whole **mesh** //tillman opt - lägga till strip bara
 							MaloW::Array<MeshStrip*>* strips = staticMesh->GetStrips();
@@ -853,7 +853,7 @@ void DxManager::RenderCascadedShadowMap()
 									hasStaticMeshBeenAdded[i] = true;
 								}
 							}
-						}*/
+						}
 					}
 					else
 					{
@@ -1119,10 +1119,13 @@ void DxManager::RenderCascadedShadowMapInstanced()
 		unsigned int offsets[2] = {0, 0};
 		bufferPointers[1] = this->instancingHelper->GetStripInstanceBuffer();	
 		
-		//Per cascade:
+		//Per cascade: //**TILLMAN opt, flytta ut denna forloop (rita alla instansierat per cascade)
 		for(int i = 0; i < this->csm->GetNrOfCascadeLevels(); ++i)
 		{
-			//Render targets & view ports already set.
+			//Set depth stencils and view ports.
+			this->Dx_DeviceContext->OMSetRenderTargets(0, 0, this->csm->GetShadowMapDSV(i));
+			D3D11_VIEWPORT wp = this->csm->GetShadowMapViewPort(i);
+			this->Dx_DeviceContext->RSSetViewports(1, &wp);
 			
 			//Set variables
 			this->Shader_ShadowMapInstanced->SetMatrix("g_LightViewProj", this->csm->GetViewProjMatrix(i));
@@ -1143,18 +1146,18 @@ void DxManager::RenderCascadedShadowMapInstanced()
 					if(renderObject->GetTextureResource()->GetSRVPointer() != NULL)
 					{
 						this->Shader_ShadowMapInstanced->SetResource("g_DiffuseMap", renderObject->GetTextureResource()->GetSRVPointer());
-						this->Shader_ShadowMapInstanced->SetBool("g_Textured", true);
+						this->Shader_ShadowMapInstanced->SetBool("g_IsTextured", true);
 					}
 					else
 					{
 						this->Shader_ShadowMapInstanced->SetResource("g_DiffuseMap", NULL);
-						this->Shader_ShadowMapInstanced->SetBool("g_Textured", false);
+						this->Shader_ShadowMapInstanced->SetBool("g_IsTextured", false);
 					}
 				}
 				else
 				{
 					this->Shader_ShadowMapInstanced->SetResource("g_DiffuseMap", NULL);
-					this->Shader_ShadowMapInstanced->SetBool("g_Textured", false);
+					this->Shader_ShadowMapInstanced->SetBool("g_IsTextured", false);
 				}
 
 				//Change vertex buffer and set it and the instance buffer.
