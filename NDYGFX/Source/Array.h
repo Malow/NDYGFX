@@ -24,8 +24,8 @@ namespace MaloW
 		T& operator[](unsigned int pos);
 
 		void add(const T& item);
-		inline const T& get(unsigned int pos) const;
-		inline T& get(unsigned int pos);
+		const T& get(unsigned int pos) const;
+		T& get(unsigned int pos);
 		T getAndRemove(unsigned int pos);
 		T getAndRemoveStaySorted(unsigned int pos);
 		bool isEmpty();
