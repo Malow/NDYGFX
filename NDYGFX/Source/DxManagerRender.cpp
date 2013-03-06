@@ -463,7 +463,7 @@ void DxManager::RenderBillboards()
 		this->Dx_DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 	
 		this->Shader_Billboard->SetFloat3("g_CameraPos", this->camera->GetPositionD3DX());
-		this->Shader_Billboard->SetMatrix("g_CamViewProj", this->camera->GetViewMatrix() * this->camera->GetProjectionMatrix());
+		this->Shader_Billboard->SetMatrix("g_CamViewProj", this->camera->GetViewProjMatrix());
 		this->Shader_Billboard->SetFloat("FarClip", this->params.FarClip);
 
 		for(int i = 0; i < this->billboards.size(); i++)
@@ -534,7 +534,7 @@ void DxManager::RenderBillboardsInstanced()
 
 		// Set global variables per frame
 		this->Shader_BillboardInstanced->SetFloat3("g_CameraPos", this->camera->GetPositionD3DX());
-		this->Shader_BillboardInstanced->SetMatrix("g_CamViewProj", this->camera->GetViewMatrix() * this->camera->GetProjectionMatrix());
+		this->Shader_BillboardInstanced->SetMatrix("g_CamViewProj", this->camera->GetViewProjMatrix());
 		this->Shader_BillboardInstanced->SetFloat("g_FarClip", this->params.FarClip);
 
 		// Set global variables per instance group
@@ -665,6 +665,9 @@ void DxManager::RenderText()
 
 void DxManager::RenderCascadedShadowMap()
 {
+#ifdef MALOWTESTPERF
+	this->perf.PreMeasure("Renderer - Render Cascaded Shadowmap", 3);
+#endif
 	//EDIT 2013-01-23 by Tillman - Added transparency.
 
 	//Reset counters
@@ -687,12 +690,22 @@ void DxManager::RenderCascadedShadowMap()
 		D3DXMATRIX wvp;
 		//D3DXMatrixIdentity(&wvp);
 		//**TILLMAN TODO:  check what cascade the object is in, object->IsIncascade(s)(indices)**
+
 		for (int l = 0; l < this->csm->GetNrOfCascadeLevels(); l++)
 		{
+/*#ifdef MALOWTESTPERF
+		this->perf.PreMeasure("TEST", 4);
+#endif*/
+			/* - This is now done in RenderCascadeShadowMapInstanced())  - TILLMAN */
 			this->Dx_DeviceContext->OMSetRenderTargets(0, 0, this->csm->GetShadowMapDSV(l));
 			this->Dx_DeviceContext->RSSetViewports(1, &this->csm->GetShadowMapViewPort(l));
 			this->Dx_DeviceContext->ClearDepthStencilView(this->csm->GetShadowMapDSV(l), D3D11_CLEAR_DEPTH, 1.0f, 0);
-			
+/*#ifdef MALOWTESTPERF
+	this->perf.PostMeasure("TEST", 4);
+#endif		
+#ifdef MALOWTESTPERF
+	this->perf.PreMeasure("Renderer - Render Cascaded Shadowmap Terrain", 4);
+#endif*/
 			//Terrain
 			for(int i = 0; i < this->terrains.size(); i++)
 			{
@@ -742,7 +755,12 @@ void DxManager::RenderCascadedShadowMap()
 					}
 				}
 			}
-
+/*#ifdef MALOWTESTPERF
+		this->perf.PostMeasure("Renderer - Render Cascaded Shadowmap Terrain", 4);
+#endif
+#ifdef MALOWTESTPERF
+		this->perf.PreMeasure("Renderer - Render Cascaded Shadowmap Static", 4);
+#endif*/
 			//Static meshes
 			for(int i = 0; i < this->objects.size(); i++)
 			{
@@ -762,7 +780,7 @@ void DxManager::RenderCascadedShadowMap()
 					{
 						billboardRange = staticMesh->GetDistanceToSwapToBillboard();
 					}
-					if(D3DXVec3Length(&distance) < billboardRange || staticMesh->GetBillboardFilePath() == "")
+					if(D3DXVec3Length(&distance) < billboardRange || !staticMesh->HasBillboard())
 					{
 						/*MaloW::Array<MeshStrip*>* strips = staticMesh->GetStrips();
 						wvp = staticMesh->GetWorldMatrix() * this->csm->GetViewProjMatrix(l);
@@ -883,7 +901,12 @@ void DxManager::RenderCascadedShadowMap()
 			//Unbind shader resources
 			this->Shader_ShadowMap->SetResource("diffuseMap", NULL);
 			this->Shader_ShadowMap->Apply(0);
-			
+/*#ifdef MALOWTESTPERF
+	this->perf.PostMeasure("Renderer - Render Cascaded Shadowmap Terrain", 4);
+#endif	
+#ifdef MALOWTESTPERF
+	this->perf.PreMeasure("Renderer - Render Cascaded Shadowmap Animated", 4);
+#endif*/	
 			//Animated meshes
 			for(int i = 0; i < this->animations.size(); i++)
 			{
@@ -904,7 +927,7 @@ void DxManager::RenderCascadedShadowMap()
 						billboardRange = animatedMesh->GetDistanceToSwapToBillboard();
 					}
 
-					if(D3DXVec3Length(&distance) < billboardRange || animatedMesh->GetBillboardFilePath() == "")
+					if(D3DXVec3Length(&distance) < billboardRange || !animatedMesh->HasBillboard())
 					{
 						//**Tillman - tillräckligt att kolla 1??**
 						/*if(!animatedMesh->IsStripShadowCulled(0))
@@ -1024,21 +1047,29 @@ void DxManager::RenderCascadedShadowMap()
 					}
 				}
 			}
-
-			// FBX meshes
-			for(int i = 0; i < this->FBXMeshes.size(); i++)
-			{
-				this->FBXMeshes[i]->RenderShadow(0, this->csm->GetViewProjMatrix(l), this->Shader_ShadowMapFBX, this->Dx_DeviceContext);
-			}
-		
-
 			//Unbind shader resources
 			this->Shader_ShadowMapAnimated->SetResource("diffuseMap0", NULL);
 			this->Shader_ShadowMapAnimated->Apply(0);
 			//Only need one diffuse map since no blending between maps is done.
 			//this->Shader_ShadowMapAnimated->SetResource("diffuseMap1", NULL);
-		}
 
+/*#ifdef MALOWTESTPERF
+	this->perf.PostMeasure("Renderer - Render Cascaded Shadowmap Animated", 4);
+#endif		
+#ifdef MALOWTESTPERF
+	this->perf.PreMeasure("Renderer - Render Cascaded Shadowmap FBX", 4);
+#endif*/						
+			// FBX meshes
+			for(int i = 0; i < this->FBXMeshes.size(); i++)
+			{
+				this->FBXMeshes[i]->RenderShadow(0, this->csm->GetViewProjMatrix(l), this->Shader_ShadowMapFBX, this->Dx_DeviceContext);
+			}
+
+			
+		}
+/*#ifdef MALOWTESTPERF
+	this->perf.PostMeasure("Renderer - Render Cascaded Shadowmap FBX", 4);
+#endif*/	
 		delete [] hasStaticMeshBeenAdded;
 		delete [] hasAnimatedMeshBeenAdded;
 	}
@@ -1051,12 +1082,19 @@ void DxManager::RenderCascadedShadowMap()
 
 	this->renderedMeshShadows = currentRenderedMeshShadows;
 	this->renderedTerrainShadows = currentRenderedTerrainShadows;
+
+#ifdef MALOWTESTPERF
+	this->perf.PostMeasure("Renderer - Render Cascaded Shadowmap", 3);
+#endif	
 }
 
 void DxManager::RenderCascadedShadowMapInstanced()
 {
 #ifdef MALOWTESTPERF
-	this->perf.PreMeasure("Renderer - Render Cascaded Shadowmap Instanced Billboards", 3);
+	this->perf.PreMeasure("Renderer - Render Cascaded Shadowmap Instanced", 3);
+#endif
+#ifdef MALOWTESTPERF
+	this->perf.PreMeasure("Renderer - Render Cascaded Shadowmap Instanced Billboards", 4);
 #endif
 	//BILLBOARDS
 	if(this->instancingHelper->GetNrOfBillboards() > 0)
@@ -1066,13 +1104,13 @@ void DxManager::RenderCascadedShadowMapInstanced()
 
 		//Draw billboards
 		//Set the vertex(instance) buffer
-		unsigned int strides[1];
-		unsigned int offsets[1];
-		ID3D11Buffer* bufferPointers[1];
-		strides[0] = sizeof(Vertex);
-		offsets[0] = 0;
-		bufferPointers[0] = this->instancingHelper->GetBillboardInstanceBuffer();	
-		this->Dx_DeviceContext->IASetVertexBuffers(0, 1, bufferPointers, strides, offsets);
+		unsigned int billboardStrides[1];
+		unsigned int billboardOffsets[1];
+		ID3D11Buffer* billboardBufferPointers[1];
+		billboardStrides[0] = sizeof(Vertex);
+		billboardOffsets[0] = 0;
+		billboardBufferPointers[0] = this->instancingHelper->GetBillboardInstanceBuffer();	
+		this->Dx_DeviceContext->IASetVertexBuffers(0, 1, billboardBufferPointers, billboardStrides, billboardOffsets);
 		this->Dx_DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 
 		//Set global variables per frame
@@ -1081,7 +1119,7 @@ void DxManager::RenderCascadedShadowMapInstanced()
 		//Per cascade:
 		for(int i = 0; i < this->csm->GetNrOfCascadeLevels(); ++i)
 		{
-			//Set render targets & view ports
+			//Set render targets & view ports - TILLMAN TODO: sätta ihop med terräng för färre API CALLS
 			this->Dx_DeviceContext->OMSetRenderTargets(0, 0, this->csm->GetShadowMapDSV(i));
 			D3D11_VIEWPORT wp = this->csm->GetShadowMapViewPort(i);
 			this->Dx_DeviceContext->RSSetViewports(1, &wp);
@@ -1117,11 +1155,11 @@ void DxManager::RenderCascadedShadowMapInstanced()
 		this->instancingHelper->PostRenderBillboards();
 	}
 #ifdef MALOWTESTPERF
-	this->perf.PostMeasure("Renderer - Render Cascaded Shadowmap Instanced Billboards", 3);
+	this->perf.PostMeasure("Renderer - Render Cascaded Shadowmap Instanced Billboards", 4);
 #endif
 
 #ifdef MALOWTESTPERF
-	this->perf.PreMeasure("Renderer - Render Cascaded Shadowmap Instanced Static meshes", 3);
+	this->perf.PreMeasure("Renderer - Render Cascaded Shadowmap Instanced Static meshes", 4);
 #endif
 	//STATIC OBJECTS
 	if(this->instancingHelper->GetNrOfStrips() > 0)
@@ -1203,11 +1241,11 @@ void DxManager::RenderCascadedShadowMapInstanced()
 		this->instancingHelper->PostRenderStrips();
 	}
 #ifdef MALOWTESTPERF
-	this->perf.PostMeasure("Renderer - Render Cascaded Shadowmap Instanced Static meshes", 3);
+	this->perf.PostMeasure("Renderer - Render Cascaded Shadowmap Instanced Static meshes", 4);
 #endif
 
 #ifdef MALOWTESTPERF
-	this->perf.PreMeasure("Renderer - Render Cascaded Shadowmap Instanced Animated meshes", 3);
+	this->perf.PreMeasure("Renderer - Render Cascaded Shadowmap Instanced Animated meshes", 4);
 #endif
 	//ANIMATED MESHES
 	if(this->instancingHelper->GetNrOfAnimatedStrips() > 0)
@@ -1292,7 +1330,10 @@ void DxManager::RenderCascadedShadowMapInstanced()
 	
 	
 #ifdef MALOWTESTPERF
-	this->perf.PostMeasure("Renderer - Render Cascaded Shadowmap Instanced Animated meshes", 3);
+	this->perf.PostMeasure("Renderer - Render Cascaded Shadowmap Instanced Animated meshes", 4);
+#endif
+#ifdef MALOWTESTPERF
+	this->perf.PostMeasure("Renderer - Render Cascaded Shadowmap Instanced", 3);
 #endif
 }
 
@@ -1783,8 +1824,8 @@ void DxManager::Render()
 	// Render shadowmap pictures:
 	//for(int q = 0; q < this->lights.size(); q++)
 		//DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_Image, this->lights[q]->GetShadowMapSRV(), q); 
-	for(int q = 0; q < this->csm->GetNrOfCascadeLevels(); q++)
-		DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_Image, this->csm->GetShadowMapSRV(q), q); 
+	//for(int q = 0; q < this->csm->GetNrOfCascadeLevels(); q++)
+	//	DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_Image, this->csm->GetShadowMapSRV(q), q); 
 
 #ifdef MALOWTESTPERF
 	this->perf.PreMeasure("Renderer - SwapChain Present", 2);
