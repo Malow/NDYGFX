@@ -408,29 +408,32 @@ void PhysicsEngine::DoCollisionRayVsMesh(Vector3 rayOrigin, Vector3 rayDirection
 		Mesh* mesh, CollisionData& cd)
 {
 	MaloW::Array<MeshStrip*>* strips = mesh->GetStrips();
-	for(int i = 0; i < strips->size(); i++)
+	if ( strips )
 	{
-		float scale = max(mesh->GetScaling().x, max(mesh->GetScaling().y, mesh->GetScaling().z));
-		
-		// Special case for Anis, only first strip has a boundingSphere and it has one covering all strips.
-		if(AnimatedMesh* aniMesh = dynamic_cast<AnimatedMesh*>(mesh))
+		for(int i = 0; i < strips->size(); i++)
 		{
-			if(this->DoCollisionSphereVsRay(strips->get(0)->GetBoundingSphere(), mesh->GetWorldMatrix(), 
-				scale, rayOrigin, rayDirection))
-				cd.BoundingSphereCollision = true;
-		}
-		else
-		{
-			if(this->DoCollisionSphereVsRay(strips->get(i)->GetBoundingSphere(), mesh->GetWorldMatrix(), 
-				scale, rayOrigin, rayDirection))
-				cd.BoundingSphereCollision = true;
-		}
+			float scale = max(mesh->GetScaling().x, max(mesh->GetScaling().y, mesh->GetScaling().z));
+			
+			// Special case for Anis, only first strip has a boundingSphere and it has one covering all strips.
+			if(AnimatedMesh* aniMesh = dynamic_cast<AnimatedMesh*>(mesh))
+			{
+				if(this->DoCollisionSphereVsRay(strips->get(0)->GetBoundingSphere(), mesh->GetWorldMatrix(), 
+					scale, rayOrigin, rayDirection))
+					cd.BoundingSphereCollision = true;
+			}
+			else
+			{
+				if(this->DoCollisionSphereVsRay(strips->get(i)->GetBoundingSphere(), mesh->GetWorldMatrix(), 
+					scale, rayOrigin, rayDirection))
+					cd.BoundingSphereCollision = true;
+			}
 
-		if(cd.BoundingSphereCollision)
-		{
-			this->DoCollisionRayVsTrianglesNM(rayOrigin, rayDirection, 
-				strips->get(i)->getVerts(), strips->get(i)->getNrOfVerts(), 
-				strips->get(i)->getIndicies(), strips->get(i)->getNrOfIndicies(), mesh->GetWorldMatrix(), cd);
+			if(cd.BoundingSphereCollision)
+			{
+				this->DoCollisionRayVsTrianglesNM(rayOrigin, rayDirection, 
+					strips->get(i)->getVerts(), strips->get(i)->getNrOfVerts(), 
+					strips->get(i)->getIndicies(), strips->get(i)->getNrOfIndicies(), mesh->GetWorldMatrix(), cd);
+			}
 		}
 	}
 }
