@@ -52,39 +52,9 @@ PSIn VS(VSIn input)
 	//Fetch interpolation value stored in last element.
 	float interpolationValue = input.world[3][3];
 	//Set last element to 1 again
-	input.world[3][3] = 0;
+	input.world[3][3] = 1;
+
 	output.Pos = mul(lerp(float4(input.pos, 1.0f), float4(input.posMorph, 1.0f), interpolationValue), mul(input.world, g_LightViewProj)); //Interpolate position and transform it.
-	
-	float4x4 world;
-	world[0] = float4(0.05,0,0,0);
-	world[1] = float4(0,0.05,0,0);
-	world[2] = float4(0,0,0.05,0);
-	world[3] = float4(0,0,0,1);
-
-	
-	//world[0] = input.world[0]; //fel
-	world[0][0] = input.world[0][0];
-	world[0][1] = input.world[0][1];
-	world[0][2] = input.world[0][2];
-	world[0][3] = input.world[0][3]; //fel
-	world[1] = input.world[1];
-	world[2] = input.world[2];
-	world[3] = input.world[3];
-
-	//output.Pos = mul(lerp(float4(input.pos, 1.0f), float4(input.posMorph, 1.0f), interpolationValue), mul(world, g_LightViewProj)); //Interpolate position and transform it.
-	
-	
-	//float4 testPosW = mul(lerp(float4(input.pos, 1.0f), float4(input.posMorph, 1.0f), interpolationValue), world);
-	//output.Pos = mul(testPosW, g_LightViewProj);
-
-	//output.Pos = mul(lerp(float4(input.pos, 1.0f), float4(input.posMorph, 1.0f), interpolationValue), g_LightViewProj); //Interpolate position and transform it.
-	
-
-	//output.worldPos = mul(lerp(float4(input.pos, 1.0f), float4(input.pos_morph, 1.0f), interpolationValue), input.world); //**TILLMAN OBS!, interpolation i .14
-	//output.pos	= mul(float4(output.worldPos.xyz, 1.0f), g_CamViewProj);
-
-	
-	
 	output.Tex = lerp(input.tex, input.texMorph, interpolationValue);
 
 	return output;
