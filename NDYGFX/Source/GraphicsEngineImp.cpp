@@ -368,7 +368,7 @@ void GraphicsEngineImp::InitObjects()
 	}
 	*/
 	this->dx->SetCamera(this->cam);
-	this->dx->SetMaxFPS(this->parameters.MaxFPS);
+	this->dx->SetMaxFPS((float)this->parameters.MaxFPS);
 	this->dx->Start();
 	this->fbx = InitBTHFbx();
 	this->dx->SetFBXScene(this->fbx);

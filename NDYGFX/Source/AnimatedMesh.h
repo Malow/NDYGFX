@@ -19,7 +19,7 @@
 class KeyFrame
 {
 	public:
-		int time;
+		unsigned int time;
 		MeshStripsResource* meshStripsResource;
 
 		KeyFrame() { this->time = 0; this->meshStripsResource = NULL; }

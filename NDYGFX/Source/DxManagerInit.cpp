@@ -406,15 +406,6 @@ HRESULT DxManager::Init()
 		return E_FAIL;
 	}
 
-	// For billboards  - **TILLMAN detta används inte**
-	this->Shader_Billboard = new Shader();
-	if(FAILED(this->Shader_Billboard->Init(Dx_Device, Dx_DeviceContext, "Shaders/Billboard.fx", inputDescBillBoard, 2)))
-	{
-		MaloW::Debug("Failed to open Billboard.fx");
-		return E_FAIL;
-	}
-
-
 	this->Shader_BillboardInstanced = new Shader();
 	if(FAILED(this->Shader_BillboardInstanced->Init(Dx_Device, Dx_DeviceContext, "Shaders/BillboardInstanced.fx", inputDescBillBoardInstanced, 4)))
 	{

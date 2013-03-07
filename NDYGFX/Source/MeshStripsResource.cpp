@@ -18,7 +18,7 @@ MeshStripsResource::MeshStripsResource(const MeshStripsResource& origObj)
 	}
 	delete this->zMesh;
 	this->zMesh = new MaloW::Array<MeshStrip*>();
-	for(int i = 0; i < origObj.zMesh->size(); i++)
+	for(unsigned int i = 0; i < origObj.zMesh->size(); i++)
 	{
 		this->zMesh->add(origObj.zMesh->get(i)); //**TILLMAN
 	}

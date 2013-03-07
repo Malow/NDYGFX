@@ -49,7 +49,6 @@ private:
 	Shader* Shader_FBX;
 	Shader* Shader_Skybox;
 	Shader* Shader_Image;
-	Shader* Shader_Billboard; //**TILLMAN - deprecated
 	Shader* Shader_BillboardInstanced;
 	Shader* Shader_Text;
 	Shader* Shader_ShadowMap;
@@ -101,7 +100,7 @@ private:
 	MaloW::Array<WaterPlane*> waterplanes;
 	MaloW::Array<FBXMesh*> FBXMeshes;
 	MaloW::Array<Image*> images;
-	MaloW::Array<Billboard*> billboards;
+	MaloW::Array<Billboard*> billboards; //Currently unused.
 	MaloW::Array<Text*> texts;
 	MaloW::Array<Decal*> decals;
 
@@ -174,6 +173,7 @@ private:
 
 	//This Clears the scene(rendertargets & viewports) and function sets variables used by most shaders, such as camera position for instance.
 	void PreRender();
+	//void AddBillboardsForInstancing(); //Ev todo
 
 	void RenderForward();
 	void RenderDeferredGeoTerrains();
@@ -186,7 +186,6 @@ private:
 	void RenderCascadedShadowMap();
 	void RenderCascadedShadowMapInstanced();
 	void RenderImages();
-	void RenderBillboards();
 	void RenderText();
 	void RenderFBXMeshes();
 	void RenderDeferredGeoTranslucent();

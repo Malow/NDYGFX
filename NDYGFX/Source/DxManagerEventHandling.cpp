@@ -9,7 +9,7 @@ void DxManager::HandleDecalEvent(DecalEvent* de)
 	else
 	{
 		Decal* dec = de->GetDecal();
-		for(int i = 0; i < this->decals.size(); i++)
+		for(unsigned int i = 0; i < this->decals.size(); i++)
 		{
 			if(this->decals[i] == dec)
 			{
@@ -30,7 +30,7 @@ void DxManager::HandleTerrainEvent(TerrainEvent* me)
 	else
 	{
 		Terrain* terrain = me->GetTerrain();
-		for(int i = 0; i < this->terrains.size(); i++)
+		for(unsigned int i = 0; i < this->terrains.size(); i++)
 		{
 			if(this->terrains[i] == terrain)
 			{
@@ -224,8 +224,7 @@ void DxManager::HandleReloadShaders(int shader)
 			Shader_Image->Reload();
 		break;
 	case 5:
-		if(this->Shader_Billboard)
-			Shader_Billboard->Reload();
+		//Unused atm
 		break;
 	case 6:
 		if(this->Shader_Text)

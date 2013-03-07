@@ -35,15 +35,15 @@ void AnimatedMesh::GetCurrentKeyFrames(KeyFrame** one, KeyFrame** two, float& t)
 		{
 			if(this->mLoopSeamless) //if looping seamlessly, add first keyframe as last keyframe & return the 2 current keyframes
 			{
-				int diff = this->mKeyFrames->get(this->mKeyFrames->size() - 1)->time - this->mKeyFrames->get(this->mKeyFrames->size() - 2)->time;
-				int newEndTime = this->mKeyFrames->get(this->mKeyFrames->size() - 1)->time + diff;
+				unsigned int diff = this->mKeyFrames->get(this->mKeyFrames->size() - 1)->time - this->mKeyFrames->get(this->mKeyFrames->size() - 2)->time;
+				unsigned int newEndTime = this->mKeyFrames->get(this->mKeyFrames->size() - 1)->time + diff;
 
 				this->mNrOfTimesLooped = (unsigned int)((int)this->mCurrentTime / newEndTime);
 			
 				//compute the indices for the keyframes to interpolate
-				int currentPlayTimeMillis = (int)this->mCurrentTime % newEndTime;
-				int firstIndex = 0;
-				int lastIndex = 1;
+				unsigned int currentPlayTimeMillis = (int)this->mCurrentTime % newEndTime;
+				unsigned int firstIndex = 0;
+				unsigned int lastIndex = 1;
 				bool foundIndex = false;
 				while(!foundIndex)
 				{

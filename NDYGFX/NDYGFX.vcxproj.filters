@@ -515,9 +515,6 @@
     <FxCompile Include="..\WorkingDir\Shaders\WaterPlane.fx">
       <Filter>Source Files\Engine\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="..\WorkingDir\Shaders\Billboard.fx">
-      <Filter>Source Files\Engine\Shaders</Filter>
-    </FxCompile>
     <FxCompile Include="..\WorkingDir\Shaders\Image.fx">
       <Filter>Source Files\Engine\Shaders</Filter>
     </FxCompile>

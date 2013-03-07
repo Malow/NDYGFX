@@ -51,7 +51,7 @@ bool Mesh::LoadFromFile(string file)
 		//Create arrays for culling
 		this->isStripCulled = new bool[this->meshStripsResource->GetMeshStripsPointer()->size()];
 		this->isStripShadowCulled = new bool[this->meshStripsResource->GetMeshStripsPointer()->size()];
-		for(int i = 0; i < this->meshStripsResource->GetMeshStripsPointer()->size(); i++)
+		for(unsigned int i = 0; i < this->meshStripsResource->GetMeshStripsPointer()->size(); i++)
 		{
 			this->isStripCulled[i] = false;
 			this->isStripShadowCulled[i] = false;

@@ -41,7 +41,6 @@ DxManager::DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam)
 
 	this->Shader_Text = NULL;
 	this->Shader_Image = NULL;
-	this->Shader_Billboard = NULL;
 	this->Shader_Decal = NULL;
 
 	for(int i = 0; i < NrOfRenderTargets; i++)
@@ -145,19 +144,15 @@ DxManager::~DxManager()
 
 	if(this->Shader_Image)
 		delete this->Shader_Image;
-
-	if(this->Shader_Billboard)
+	
+	if(this->instancingHelper) 
 	{
-		delete this->Shader_Billboard;
-		this->Shader_Billboard = NULL;
+		delete this->instancingHelper; 
+		this->instancingHelper = NULL;
 	}
-	//**TILLMAN INSTANCIATING TEST*
-	if(this->instancingHelper) delete this->instancingHelper; this->instancingHelper = NULL;
 
 	if(this->Shader_BillboardInstanced)
 	{
-		
-		
 		delete this->Shader_BillboardInstanced;
 		this->Shader_BillboardInstanced = NULL;
 	}
@@ -260,8 +255,8 @@ DxManager::~DxManager()
 	while(0 < this->images.size())
 		delete this->images.getAndRemove(0);
 
-	while(0 < this->billboards.size())
-		delete this->billboards.getAndRemove(0);
+	//while(0 < this->billboards.size())
+	//	delete this->billboards.getAndRemove(0);
 
 	while(0 < this-> terrains.size())
 		delete this-> terrains.getAndRemove(0);

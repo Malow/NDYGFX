@@ -46,7 +46,7 @@ cbuffer PerObject
 
 	//AI(editor)
 	bool useAIMap;
-	float nodesPerSide;
+	uint nodesPerSide;
 	float AIGridThickness;
 };
 //-----------------------------------------------------------------------------------------

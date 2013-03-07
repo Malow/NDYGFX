@@ -181,7 +181,7 @@ MaloW::Array<MeshStrip*>* ResourceManager::LoadMeshStrips(const char* filePath, 
 	MaloW::Array<MeshStrip*>* meshStrips = new MaloW::Array<MeshStrip*>();
 
 	MaloW::Array<MaterialData>* mats = objData->mats;
-	for(int q = 0; q < mats->size(); q++)
+	for(unsigned int q = 0; q < mats->size(); q++)
 	{
 		bool hasFace = false;
 		MeshStrip* strip = new MeshStrip();
@@ -197,7 +197,7 @@ MaloW::Array<MeshStrip*>* ResourceManager::LoadMeshStrips(const char* filePath, 
 		VertexNormalMap* tempverts = new VertexNormalMap[objData->faces->size()*3];
 		bool faceMaterialMisMatch = false;
 		int faceMaterialMisMatchIndex = -1;
-		for(int i = 0;  i < objData->faces->size(); i++)
+		for(unsigned int i = 0;  i < objData->faces->size(); i++)
 		{
 			if(objData->faces->get(i).material == mats->get(q).name)
 			{

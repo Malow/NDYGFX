@@ -236,14 +236,14 @@ void DxManager::RenderShadowMap()
 	//EDIT 2013-01-23 by Tillman - Added transparancy.
 	if(!this->lights.size())
 	{
-		for (int l = 0; l < this->lights.size(); l++)
+		for (unsigned int l = 0; l < this->lights.size(); l++)
 		{
 			Dx_DeviceContext->OMSetRenderTargets(0, 0, this->lights[l]->GetShadowMapDSV());
 			Dx_DeviceContext->RSSetViewports(1, &this->lights[l]->GetShadowMapViewPort());
 			Dx_DeviceContext->ClearDepthStencilView(this->lights[l]->GetShadowMapDSV(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 
 			//Static meshes
-			for(int i = 0; i < this->objects.size(); i++)
+			for(unsigned int i = 0; i < this->objects.size(); i++)
 			{
 				if(!this->objects[i]->IsUsingInvisibility() && !this->objects[i]->GetDontRenderFlag())
 				{
@@ -251,7 +251,7 @@ void DxManager::RenderShadowMap()
 					D3DXMATRIX wvp = this->objects[i]->GetWorldMatrix() * this->lights[l]->GetViewProjMatrix();
 					this->Shader_ShadowMap->SetMatrix("lightWVP", wvp);
 				
-					for(int u = 0; u < strips->size(); u++)
+					for(unsigned int u = 0; u < strips->size(); u++)
 					{
 						Object3D* obj = strips->get(u)->GetRenderObject();
 						
@@ -309,7 +309,7 @@ void DxManager::RenderShadowMap()
 			}
 		
 			//Animated meshes
-			for(int i = 0; i < this->animations.size(); i++)
+			for(unsigned int i = 0; i < this->animations.size(); i++)
 			{
 				if(!this->animations[i]->IsUsingInvisibility() && !this->animations[i]->GetDontRenderFlag())
 				{
@@ -326,7 +326,7 @@ void DxManager::RenderShadowMap()
 					D3DXMATRIX wvp = this->animations[i]->GetWorldMatrix() * this->lights[l]->GetViewProjMatrix();
 					this->Shader_ShadowMapAnimated->SetMatrix("LightWVP", wvp); 
 
-					for(int u = 0; u < stripsOne->size(); u++)  //**Tillman todo - indices?**
+					for(unsigned int u = 0; u < stripsOne->size(); u++)  //**Tillman todo - indices?**
 					{
 						//Set shader data per strip
 						Object3D* objOne = stripsOne->get(u)->GetRenderObject();
@@ -354,7 +354,7 @@ void DxManager::RenderShadowMap()
 
 
 			// FBX meshes
-			for(int i = 0; i < this->FBXMeshes.size(); i++)
+			for(unsigned int i = 0; i < this->FBXMeshes.size(); i++)
 			{
 				this->FBXMeshes[i]->RenderShadow(0, this->lights[l]->GetViewProjMatrix(), this->Shader_ShadowMapFBX, this->Dx_DeviceContext);
 			}
@@ -429,7 +429,7 @@ void DxManager::RenderImages()
 	this->Dx_DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 	
 
-	for(int i = 0; i < this->images.size(); i++)
+	for(unsigned int i = 0; i < this->images.size(); i++)
 	{
 		Image* img = this->images[i];
 		// if Convert from screenspace is needed, which it isnt.
@@ -455,57 +455,6 @@ void DxManager::RenderImages()
 	}
 	this->Shader_Image->SetResource("tex2D", NULL);
 	this->Shader_Image->Apply(0);
-}
-void DxManager::RenderBillboards()
-{
-	if(this->billboards.size() != 0)
-	{
-		this->Dx_DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
-	
-		this->Shader_Billboard->SetFloat3("g_CameraPos", this->camera->GetPositionD3DX());
-		this->Shader_Billboard->SetMatrix("g_CamViewProj", this->camera->GetViewProjMatrix());
-		this->Shader_Billboard->SetFloat("FarClip", this->params.FarClip);
-
-		for(int i = 0; i < this->billboards.size(); i++)
-		{
-			Billboard* billboard = this->billboards[i];
-		
-			//Set bill board variables
-			this->Shader_Billboard->SetFloat3("g_bb_Position", billboard->GetPositionD3DX()); 
-			this->Shader_Billboard->SetFloat2("g_bb_BillboardSize", billboard->GetSizeD3DX());
-			this->Shader_Billboard->SetFloat4("g_bb_Color", billboard->GetColorD3DX());
-
-			if(billboard->GetTextureResource() != NULL)
-			{
-				if(billboard->GetTextureResource()->GetSRVPointer())
-				{
-					this->Shader_Billboard->SetResource("g_bb_DiffuseMap", billboard->GetTextureResource()->GetSRVPointer());
-					this->Shader_Billboard->SetBool("g_bb_IsTextured", true);
-				}
-				else
-				{
-					this->Shader_Billboard->SetResource("g_bb_DiffuseMap", NULL);
-					this->Shader_Billboard->SetBool("g_bb_IsTextured", false);
-				}
-			}
-			else
-			{
-				this->Shader_Billboard->SetResource("g_bb_DiffuseMap", NULL);
-				this->Shader_Billboard->SetBool("g_bb_IsTextured", false);
-			}
-			//Apply them
-			this->Shader_Billboard->Apply(0);
-
-			//Ignore vertex input
-
-			//Draw one vertex
-			this->Dx_DeviceContext->Draw(1, 0);
-		}
-
-		//Unbind resources
-		this->Shader_Billboard->SetResource("g_bb_DiffuseMap", NULL);
-		this->Shader_Billboard->Apply(0);
-	}
 }
 void DxManager::RenderBillboardsInstanced()
 {
@@ -578,7 +527,7 @@ void DxManager::RenderText()
 	*/
 	this->Dx_DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 
-	for(int i = 0; i < this->texts.size(); i++)
+	for(unsigned int i = 0; i < this->texts.size(); i++)
 	{
 		Text* txt = this->texts[i];
 		// if Convert from screen space is needed, which it is
@@ -707,7 +656,7 @@ void DxManager::RenderCascadedShadowMap()
 	this->perf.PreMeasure("Renderer - Render Cascaded Shadowmap Terrain", 4);
 #endif*/
 			//Terrain
-			for(int i = 0; i < this->terrains.size(); i++)
+			for(unsigned int i = 0; i < this->terrains.size(); i++)
 			{
 				//If the terrain has not been culled for shadowing, render it to shadow map.
 				if(!terrains[i]->IsShadowCulled())
@@ -762,7 +711,7 @@ void DxManager::RenderCascadedShadowMap()
 		this->perf.PreMeasure("Renderer - Render Cascaded Shadowmap Static", 4);
 #endif*/
 			//Static meshes
-			for(int i = 0; i < this->objects.size(); i++)
+			for(unsigned int i = 0; i < this->objects.size(); i++)
 			{
 				StaticMesh* staticMesh = this->objects[i];
 				if(!staticMesh->IsUsingInvisibility() && !staticMesh->GetDontRenderFlag())
@@ -908,7 +857,7 @@ void DxManager::RenderCascadedShadowMap()
 	this->perf.PreMeasure("Renderer - Render Cascaded Shadowmap Animated", 4);
 #endif*/	
 			//Animated meshes
-			for(int i = 0; i < this->animations.size(); i++)
+			for(unsigned int i = 0; i < this->animations.size(); i++)
 			{
 				AnimatedMesh* animatedMesh = this->animations[i];
 				if(!animatedMesh->IsUsingInvisibility() && !animatedMesh->GetDontRenderFlag())
@@ -1060,7 +1009,7 @@ void DxManager::RenderCascadedShadowMap()
 	this->perf.PreMeasure("Renderer - Render Cascaded Shadowmap FBX", 4);
 #endif*/						
 			// FBX meshes
-			for(int i = 0; i < this->FBXMeshes.size(); i++)
+			for(unsigned int i = 0; i < this->FBXMeshes.size(); i++)
 			{
 				this->FBXMeshes[i]->RenderShadow(0, this->csm->GetViewProjMatrix(l), this->Shader_ShadowMapFBX, this->Dx_DeviceContext);
 			}
@@ -1385,7 +1334,7 @@ void DxManager::CalculateCulling()
 	D3DXPlaneNormalize(&FrustrumPlanes[5], &FrustrumPlanes[5]);
 	
 	//Terrain
-	for(int i = 0; i < this->terrains.size(); i++)
+	for(unsigned int i = 0; i < this->terrains.size(); i++)
 	{
 		Terrain* terr = this->terrains.get(i);
 
@@ -1404,13 +1353,13 @@ void DxManager::CalculateCulling()
 	}
 
 	//Static meshes
-	for(int i = 0; i < this->objects.size(); i++)
+	for(unsigned int i = 0; i < this->objects.size(); i++)
 	{
 		StaticMesh* ms = this->objects.get(i);
 		if ( ms->GetMeshStripsResourcePointer() != NULL)
 		{
 			MaloW::Array<MeshStrip*>* strips = ms->GetStrips();
-			for(int u = 0; u < strips->size(); u++)
+			for(unsigned int u = 0; u < strips->size(); u++)
 			{
 				MeshStrip* s = strips->get(u);
 				float scale = max(ms->GetScalingD3D().x, max(ms->GetScalingD3D().y, ms->GetScalingD3D().z));
@@ -1430,7 +1379,7 @@ void DxManager::CalculateCulling()
 	}
 
 	//Animated meshes
-	for(int i = 0; i < this->animations.size(); i++)
+	for(unsigned int i = 0; i < this->animations.size(); i++)
 	{
 		AnimatedMesh* animatedMesh = this->animations.get(i);
 		if ( animatedMesh->GetKeyFrames()->get(0)->meshStripsResource != NULL)
@@ -1439,7 +1388,7 @@ void DxManager::CalculateCulling()
 			{
 				float scale = max(animatedMesh->GetScalingD3D().x, max(animatedMesh->GetScalingD3D().y, animatedMesh->GetScalingD3D().z));
 				MaloW::Array<MeshStrip*>* strips = animatedMesh->GetKeyFrames()->get(0)->meshStripsResource->GetMeshStripsPointer();
-				for(int u = 0; u < strips->size(); u++)
+				for(unsigned int u = 0; u < strips->size(); u++)
 				{
 					MeshStrip* strip = strips->get(u);
 					if(pe.FrustrumVsSphere(this->FrustrumPlanes, strip->GetBoundingSphere(), animatedMesh->GetWorldMatrix(), scale))
@@ -1459,7 +1408,7 @@ void DxManager::CalculateCulling()
 	}
 
 	// FBX meshes
-	for(int i = 0; i < this->FBXMeshes.size(); i++)
+	for(unsigned int i = 0; i < this->FBXMeshes.size(); i++)
 	{
 		FBXMesh* mesh = this->FBXMeshes.get(i);
 		float scale = max(mesh->GetScalingD3D().x, max(mesh->GetScalingD3D().y, mesh->GetScalingD3D().z));
@@ -1483,7 +1432,7 @@ void DxManager::CalculateCulling()
 
 
 		//Terrain
-		for(int i = 0; i < this->terrains.size(); i++)
+		for(unsigned int i = 0; i < this->terrains.size(); i++)
 		{
 			Terrain* terrain = this->terrains.get(i);
 			float scale = max(terrain->GetScale().x, max(terrain->GetScale().y, terrain->GetScale().z));
@@ -1494,7 +1443,7 @@ void DxManager::CalculateCulling()
 			{
 				//See if the terrain is inside or intersects the bounding boxes(cascades).
 				bool notDone = true;
-				for(int k = 0; k < this->csm->GetNrOfCascadeLevels() && notDone; k++)
+				for(unsigned int k = 0; k < this->csm->GetNrOfCascadeLevels() && notDone; k++)
 				{
 					if(pe.FrustrumVsSphere(csm->GetCascadePlanes(k), terrain->GetBoundingSphere(), terrain->GetWorldMatrix(), scale))
 					{
@@ -1513,13 +1462,13 @@ void DxManager::CalculateCulling()
 
 
 		//Static meshes
-		for(int i = 0; i < this->objects.size(); i++)
+		for(unsigned int i = 0; i < this->objects.size(); i++)
 		{
 			StaticMesh* staticMesh = this->objects.get(i);
 			float scale = max(staticMesh->GetScalingD3D().x, max(staticMesh->GetScalingD3D().y, staticMesh->GetScalingD3D().z));
 
 			MaloW::Array<MeshStrip*>* strips = staticMesh->GetStrips();
-			for(int j = 0; j < strips->size(); j++)
+			for(unsigned int j = 0; j < strips->size(); j++)
 			{
 				MeshStrip* strip = strips->get(j);
 
@@ -1549,7 +1498,7 @@ void DxManager::CalculateCulling()
 
 
 		//Animated meshes
-		for(int i = 0; i < this->animations.size(); i++)
+		for(unsigned int i = 0; i < this->animations.size(); i++)
 		{
 			AnimatedMesh* animatedMesh = this->animations.get(i);
 
@@ -1558,7 +1507,7 @@ void DxManager::CalculateCulling()
 				float scale = max(animatedMesh->GetScalingD3D().x, max(animatedMesh->GetScalingD3D().y, animatedMesh->GetScalingD3D().z));
 				
 				MaloW::Array<MeshStrip*>* strips = animatedMesh->GetStrips();
-				for(int j = 0; j < strips->size(); j++)
+				for(unsigned int j = 0; j < strips->size(); j++)
 				{
 					MeshStrip* strip = strips->get(j);
 				
@@ -1714,7 +1663,6 @@ void DxManager::Render()
 #ifdef MALOWTESTPERF
 	this->perf.PreMeasure("Renderer - Render Billboards", 2);
 #endif
-	this->RenderBillboards();
 	this->RenderBillboardsInstanced(); //Must be after RenderDeferredGeometry()
 #ifdef MALOWTESTPERF
 	this->perf.PostMeasure("Renderer - Render Billboards", 2);

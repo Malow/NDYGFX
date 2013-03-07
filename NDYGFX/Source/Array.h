@@ -13,8 +13,8 @@ namespace MaloW
 	{
 	private:
 		T** items;
-		int nrOfItems;
-		int itemsCapacity;
+		unsigned int nrOfItems;
+		unsigned int itemsCapacity;
 		void expand();
 
 	public:
@@ -31,11 +31,11 @@ namespace MaloW
 		bool isEmpty();
 		bool hasItem(const T& item);
 		bool remove(const T& item);
-		bool remove(int pos);
-		bool removeStaySorted(int pos);
-		int search(const T& item) const;
+		bool remove(unsigned int pos);
+		bool removeStaySorted(unsigned int pos);
+		unsigned int search(const T& item) const;
 		void sort();
-		inline int size() const { return this->nrOfItems; }
+		inline unsigned int size() const { return this->nrOfItems; }
 
 	};
 
@@ -50,7 +50,7 @@ namespace MaloW
 	template <typename T>
 	Array<T>::~Array()
 	{
-		for(int i = 0; i < this->nrOfItems; i++)
+		for(unsigned int i = 0; i < this->nrOfItems; i++)
 		{
 			if(this->items[i])
 			{
@@ -65,7 +65,7 @@ namespace MaloW
 	void Array<T>::expand()
 	{
 		T** tempItems = new T*[this->itemsCapacity*2];
-		int i = 0;
+		unsigned int i = 0;
 		while(i < this->itemsCapacity)
 		{
 			tempItems[i] = this->items[i];
@@ -154,7 +154,7 @@ namespace MaloW
 	}
 
 	template <typename T>
-	bool Array<T>::remove(int pos)
+	bool Array<T>::remove(unsigned int pos)
 	{
 		bool succeed = false;
 		if(pos > -1 || pos < this->nrOfItems)
@@ -170,7 +170,7 @@ namespace MaloW
 	}
 
 	template <typename T>
-	bool Array<T>::removeStaySorted(int pos)
+	bool Array<T>::removeStaySorted(unsigned int pos)
 	{
 		bool succeed = false;
 		if(pos > -1 || pos < this->nrOfItems)
@@ -178,7 +178,7 @@ namespace MaloW
 			{
 				delete this->items[pos];
 				this->nrOfItems--;
-				for(int i = pos; i < this->nrOfItems; i++)
+				for(unsigned int i = pos; i < this->nrOfItems; i++)
 				{
 					this->items[i] = this->items[i + 1];
 				}
@@ -189,10 +189,10 @@ namespace MaloW
 	}
 
 	template <typename T>
-	int Array<T>::search(const T& item) const
+	unsigned int Array<T>::search(const T& item) const
 	{
-		int pos = -1;
-		for(int i = 0; i < this->nrOfItems; i++)
+		unsigned int pos = -1;
+		for(unsigned int i = 0; i < this->nrOfItems; i++)
 			if(*this->items[i] == item)
 			{
 				pos = i;
@@ -205,8 +205,8 @@ namespace MaloW
 	void Array<T>::sort()
 	{
 		T temp;
-		int counter = 0;
-		for(int i = 1; i < this->nrOfItems; i++)
+		unsigned int counter = 0;
+		for(unsigned int i = 1; i < this->nrOfItems; i++)
 		{
 			temp = this->items[i];
 			counter = i-1;

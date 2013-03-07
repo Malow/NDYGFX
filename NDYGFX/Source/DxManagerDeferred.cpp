@@ -392,7 +392,7 @@ void DxManager::RenderDeferredGeoTerrains()
 			if(terrPtr->GetAIShaderResourceView() != NULL)
 			{
 				this->Shader_TerrainEditor->SetBool("useAIMap", terrPtr->UseAIMap());
-				this->Shader_TerrainEditor->SetFloat("nodesPerSide", terrPtr->GetNrOfAINodesPerSide());
+				this->Shader_TerrainEditor->SetInt("nodesPerSide", terrPtr->GetNrOfAINodesPerSide());
 				this->Shader_TerrainEditor->SetResource("AIMap", terrPtr->GetAIShaderResourceView());
 				this->Shader_TerrainEditor->SetFloat("AIGridThickness", terrPtr->GetAIGridThickness());
 			}
@@ -484,7 +484,7 @@ void DxManager::RenderDecals()
 
 	this->Shader_Decal->SetResource("Depth", this->Dx_GbufferSRVs[1]);
 
-	for(int i = 0; i < this->decals.size(); i++)
+	for(unsigned int i = 0; i < this->decals.size(); i++)
 	{
 		this->Shader_Decal->SetMatrix("World", this->decals[i]->GetWorldMatrix());
 		this->Shader_Decal->SetMatrix("WorldViewProj", this->decals[i]->GetWorldMatrix() * viewProj);

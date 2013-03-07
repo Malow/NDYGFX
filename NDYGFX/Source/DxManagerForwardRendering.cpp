@@ -17,7 +17,7 @@ void DxManager::RenderForward()
 
 	this->Shader_ForwardRendering->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetPositionD3DX(), 1));
 
-	for(int i = 0; i < this->objects.size(); i++)
+	for(unsigned int i = 0; i < this->objects.size(); i++)
 	{
 		MaloW::Array<MeshStrip*>* strips = this->objects[i]->GetStrips();
 
@@ -31,7 +31,7 @@ void DxManager::RenderForward()
 		this->Shader_ForwardRendering->SetMatrix("worldMatrix", world);
 		this->Shader_ForwardRendering->SetMatrix("worldMatrixInverseTranspose", worldInverseTranspose);
 
-		for(int u = 0; u < strips->size(); u++)
+		for(unsigned int u = 0; u < strips->size(); u++)
 		{
 			Object3D* obj = strips->get(u)->GetRenderObject();
 			this->Dx_DeviceContext->IASetPrimitiveTopology(obj->GetTopology());
@@ -70,7 +70,7 @@ void DxManager::RenderForward()
 
 	// Unbind resources:
 	this->Shader_ForwardRendering->SetResource("tex2D", NULL);
-	for(int i = 0; i < this->lights.size(); i++)
+	for(unsigned int i = 0; i < this->lights.size(); i++)
 	{
 		this->Shader_ForwardRendering->SetResourceAtIndex(i, "ShadowMap", NULL);
 	}
