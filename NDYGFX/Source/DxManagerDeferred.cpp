@@ -496,7 +496,12 @@ void DxManager::RenderDeferredGrass()
 	this->Dx_DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 
 	//Per terrain:
-	for(unsigned int i = 0; i < this->terrains.size(); ++i)
+	if( this->terrains.size() > 0) //TILLMAN TEST
+	{
+		int i = 0;
+
+	
+	//for(unsigned int i = 0; i < this->terrains.size(); ++i)
 	{
 		//Set world matrix
 		this->Shader_Grass->SetMatrix("g_World", this->terrains[i]->GetWorldMatrix());
@@ -534,7 +539,7 @@ void DxManager::RenderDeferredGrass()
 		{
 			MaloW::Debug("WARNING: DxManagerDeferred: RenderDeferredGeometry(): Both index and vertex buffers were NULL for the terrain.");
 		}
-	}
+	}}
 }
 
 void DxManager::RenderDecals()

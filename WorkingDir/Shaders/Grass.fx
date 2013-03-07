@@ -96,8 +96,8 @@ void GS(point GSIn input[1], inout TriangleStream<PSIn> triStream)
 	float4x4 WVP = mul(W, g_CamViewProj); 
 	
 	//Create a quad in local space (facing down the z-axis)
-	float halfWidth  = 10 * 0.5f; 
-	float halfHeight = 10 * 0.5f;
+	float halfWidth  = 0.5f;
+	float halfHeight = 0.5f;
 	float4 positions[4];
 	positions[0] = float4(-halfWidth, -halfHeight, 0.0f, 1.0f); //Top left
 	positions[1] = float4(+halfWidth, -halfHeight, 0.0f, 1.0f);	//Top right
