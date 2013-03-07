@@ -179,8 +179,8 @@ PSout PSScene(PSSceneIn input)
 	{
 		output.NormalAndDepth = float4(input.norm.xyz, input.pos.z / input.pos.w);		// pos.z / pos.w should work?
 	}
-	float depth = length(CameraPosition.xyz - input.worldPos.xyz) / g_FarClip;		// Haxfix
-	output.NormalAndDepth.w = depth;
+	float depth = length(g_CamPos.xyz - input.worldPos.xyz) / g_FarClip;		// Haxfix
+	output.NormalAndDepth.w = 0.001f; //depth;
 	
 	//Position and object type(unused)
 	output.Position.xyz = input.worldPos.xyz;
