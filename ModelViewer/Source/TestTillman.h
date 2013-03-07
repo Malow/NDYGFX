@@ -75,6 +75,8 @@ void TillmanTest::PreTest()
 
 	iM3 = GetGraphics()->CreateImage(Vector2(100, 200), Vector2(100, 100), "Media/Bush_leaf_01_v07.png");
 	iM4 = GetGraphics()->CreateImage(Vector2(200, 100), Vector2(100, 100), "Media/Bush_leaf_01_v07.png");
+	
+	iText* textDXErrorTest = GetGraphics()->CreateText("durp", Vector2(300, 100), 1.0f, "Media/Fonts/1");
 
 	//iMesh* cacheBowCraschTest = GetGraphics()->CreateMesh("Media/Bow_v01.obj", Vector3(0, 2, 0));
 	//cacheBowCraschTest->SetScale(5.0f);
@@ -85,7 +87,6 @@ void TillmanTest::PreTest()
 	iT = GetGraphics()->CreateTerrain(Vector3(0, 0, 0), Vector3(testSize, 1.0f, testSize), vertSize);
 	iT2 = GetGraphics()->CreateTerrain(Vector3(testSize, 0, 0), Vector3(testSize, 1.0f, testSize), vertSize);
 	//iImage* iM = GetGraphics()->CreateImage(Vector2(100, 100), Vector2(100, 100), "Media/BallTexture.png");
-	//iText* iTe = GetGraphics()->CreateText("durp", Vector2(300, 100), 1.0f, "Media/Fonts/1");
 	
 	float test = 0.0f;
 	Vector2 dd = Vector2(0.1f, 0.2f);

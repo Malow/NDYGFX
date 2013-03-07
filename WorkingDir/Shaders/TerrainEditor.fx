@@ -72,12 +72,17 @@ struct PSSceneIn
 
 struct PSOut			
 {
-	float4 Texture			: SV_TARGET0;	//Texture XYZ, Special Color W(not by this shader)
-	float4 NormalAndDepth	: SV_TARGET1;	//Normal XYZ, depth W
-	float4 Position			: SV_TARGET2;	//Position XYZ, Type of object W
-	float4 Specular			: SV_TARGET3;	//Specular XYZ(not by this shader), specular power W(not by this shader)
+	float4 Texture			: SV_TARGET0;	//Texture XYZ, Special Color W(not by this shader).
+	float4 NormalAndDepth	: SV_TARGET1;	//Normal XYZ, depth W.
+	float4 Position			: SV_TARGET2;	//Position XYZ, Type of object W.
+	float4 Specular			: SV_TARGET3;	//Specular XYZ(unused by this shader), specular power W(unused by this shader).
+	float4 GrassCanopy		: SV_TARGET4;	//Grass color XYZ, grass height W.
 };
 
+
+//-----------------------------------------------------------------------------------------
+// Functions
+//-----------------------------------------------------------------------------------------
 float3 RenderTextured(float scale, float2 tex, bool useBlendMap)
 {
 	//Sample R,G,B,A textures
@@ -93,7 +98,7 @@ float3 RenderTextured(float scale, float2 tex, bool useBlendMap)
 		float4 blendMap0Color = blendMap0.Sample(LinearClampSampler, tex); 
 		
 		// Is blendmap 0 empty?
-		if ( length(blendMap0Color) > 0.0 )
+		if ( length(blendMap0Color) > 0.0f )
 		{	
 			// Are we using multiple blendmaps?
 			if(nrOfBlendMaps == 2)
@@ -101,7 +106,7 @@ float3 RenderTextured(float scale, float2 tex, bool useBlendMap)
 				float4 blendMap1Color = blendMap1.Sample(LinearClampSampler, tex);
 
 				// Is blendmap 1 empty?
-				if ( length(blendMap1Color) > 0.0 )
+				if ( length(blendMap1Color) > 0.0f )
 				{
 					float blendSum0 = blendMap0Color.r + blendMap0Color.g + blendMap0Color.b + blendMap0Color.a;
 					float blendSum1 = blendMap1Color.r + blendMap1Color.g + blendMap1Color.b + blendMap1Color.a;
@@ -176,6 +181,35 @@ float3 RenderTextured(float scale, float2 tex, bool useBlendMap)
 	
 	//if blendmapping is not used OR both blendmaps are empty, saturate texture colors.
 	return saturate((tex0Color + tex1Color + tex2Color + tex3Color) * 0.25f) * diffuseColor;
+}
+
+float GenerateGrassHeight(float3 grassColor)
+{
+	return 0.5f; //TEMP TEST
+
+
+	//**TILLMAN TODO : global variable
+	float maxGrassLength = 0.5f; //in meter.
+
+	//Check if the color is green enough.
+	if(grassColor.g > 0.785f) //~200 on the 0-255 RGB scale.
+	{
+		if(grassColor.g / grassColor.b > 2.0f && grassColor.g / grassColor.r > 1.25f)
+		{
+			//the greener it is, the longer it is.
+			float grDiff = grassColor.g - grassColor.r; //range[0,1].
+			float gbDiff = grassColor.g - grassColor.b; //range[0,1].
+
+			//Example: **TILLMAN TODO
+			//(1 - ((1 - 1) * 0.5)) * 0.5 =
+			//(1 - (2 * 0.5)) * 0.5
+			//(1 - 1) * 0.5
+			return (grassColor.g - ((grDiff - gbDiff) * 0.5f)) * maxGrassLength;
+		}
+	}
+
+
+	//return -1.0f;
 }
 
 //-----------------------------------------------------------------------------------------
@@ -266,6 +300,10 @@ PSOut PSScene(PSSceneIn input) : SV_Target
 	
 	//Specular RT
 	output.Specular.xyzw = 0.0f;
+
+	//Grass canopy RT
+	output.GrassCanopy.xyz = finalColor; 
+	output.GrassCanopy.w = GenerateGrassHeight(finalColor);
 	
 	return output;
 }

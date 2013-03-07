@@ -66,7 +66,15 @@ void DxManager::RenderDeferredGeoTerrains()
 {
 	//static bool once = false;
 	//clear and set render target/depth
-	this->Dx_DeviceContext->OMSetRenderTargets(this->NrOfRenderTargets, this->Dx_GbufferRTs, this->Dx_DepthStencilView);
+	ID3D11RenderTargetView* rtvs[this->NrOfRenderTargets + 1];
+	unsigned int i = 0U;
+	for(; i < this->NrOfRenderTargets; ++i)
+	{
+		rtvs[i] = this->Dx_GbufferRTs[i];
+	}
+	rtvs[i] = this->Dx_GBufferGrassCanopyRTV;
+	
+	this->Dx_DeviceContext->OMSetRenderTargets(this->NrOfRenderTargets + 1, rtvs, this->Dx_DepthStencilView);
 	this->Dx_DeviceContext->RSSetViewports(1, &this->Dx_Viewport);
 
 	//Matrices

@@ -130,6 +130,10 @@ private:
 	ID3D11RenderTargetView* Dx_GbufferRTs[NrOfRenderTargets];
 	ID3D11ShaderResourceView* Dx_GbufferSRVs[NrOfRenderTargets];
 
+	ID3D11Texture2D* Dx_GBufferGrassCanopyTexture;
+	ID3D11RenderTargetView* Dx_GBufferGrassCanopyRTV;
+	ID3D11ShaderResourceView* Dx_GBufferGrassCanopySRV;
+
 	ID3D11Texture2D* Dx_DeferredTexture;
 	ID3D11RenderTargetView* Dx_DeferredQuadRT;
 	ID3D11ShaderResourceView* Dx_DeferredSRV;

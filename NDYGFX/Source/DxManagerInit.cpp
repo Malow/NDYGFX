@@ -609,11 +609,11 @@ HRESULT DxManager::Init()
 	if(FAILED(this->Dx_Device->CreateShaderResourceView(this->Dx_DeferredTexture, &srQuadDesc, &this->Dx_DeferredSRV)))
 		MaloW::Debug("Failed to initiate Deferred Quad SRV");
 	*/
-
-
+	D3D11_TEXTURE2D_DESC GBufferTextureDesc;
+	D3D11_RENDER_TARGET_VIEW_DESC DescRT;
+	D3D11_SHADER_RESOURCE_VIEW_DESC srDesc;
 	for(int i = 0; i < this->NrOfRenderTargets; i++)
 	{
-		D3D11_TEXTURE2D_DESC GBufferTextureDesc;
 		ZeroMemory(&GBufferTextureDesc, sizeof(GBufferTextureDesc));
 		GBufferTextureDesc.Width = screenWidth;
 		GBufferTextureDesc.Height = screenHeight;	
@@ -630,8 +630,7 @@ HRESULT DxManager::Init()
 		if(FAILED(this->Dx_Device->CreateTexture2D(&GBufferTextureDesc, NULL, &this->Dx_GbufferTextures[i])))
 			MaloW::Debug("Failed to initiate GbufferTexture");
 
-
-		D3D11_RENDER_TARGET_VIEW_DESC DescRT;
+		
 		ZeroMemory(&DescRT, sizeof(DescRT));
 		DescRT.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 		DescRT.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
@@ -642,8 +641,7 @@ HRESULT DxManager::Init()
 		if(FAILED(this->Dx_Device->CreateRenderTargetView(this->Dx_GbufferTextures[i], &DescRT, &this->Dx_GbufferRTs[i])))
 			MaloW::Debug("Failed to initiate Gbuffer RT");
 
-
-		D3D11_SHADER_RESOURCE_VIEW_DESC srDesc;
+		
 		ZeroMemory(&srDesc, sizeof(srDesc));
 		srDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 		srDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
@@ -653,6 +651,21 @@ HRESULT DxManager::Init()
 		if(FAILED(this->Dx_Device->CreateShaderResourceView(this->Dx_GbufferTextures[i], &srDesc, &this->Dx_GbufferSRVs[i])))
 			MaloW::Debug("Failed to initiate Gbuffer SRV");
 	}
+
+	//Terrain grass canopy
+	if(FAILED(this->Dx_Device->CreateTexture2D(&GBufferTextureDesc, NULL, &this->Dx_GBufferGrassCanopyTexture)))
+	{
+		MaloW::Debug("Failed to initiate Grass Canopy GBuffer Texture");
+	}
+	if(FAILED(this->Dx_Device->CreateRenderTargetView(this->Dx_GBufferGrassCanopyTexture, &DescRT, &this->Dx_GBufferGrassCanopyRTV)))
+	{
+		MaloW::Debug("Failed to initiate Grass Canopy GBuffer Render target view");
+	}
+	if(FAILED(this->Dx_Device->CreateShaderResourceView(this->Dx_GBufferGrassCanopyTexture, &srDesc, &this->Dx_GBufferGrassCanopySRV)))
+	{	
+		MaloW::Debug("Failed to initiate Grass Canopy GBuffer shader resource view");
+	}
+
 
 	//Initialize resource manager (before anything that uses it).
 	ResourceManagerInit(this->Dx_Device, this->Dx_DeviceContext);

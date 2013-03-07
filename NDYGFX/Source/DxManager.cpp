@@ -49,6 +49,10 @@ DxManager::DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam)
 		this->Dx_GbufferRTs[i] = NULL;
 		this->Dx_GbufferSRVs[i] = NULL;
 	}
+	//Grass canopy for terrains
+	this->Dx_GBufferGrassCanopyTexture = NULL;
+	this->Dx_GBufferGrassCanopyRTV = NULL;
+	this->Dx_GBufferGrassCanopySRV = NULL;
 
 	this->useShadow = params.ShadowMapSettings > 0;
 	this->csm = NULL;
@@ -250,6 +254,22 @@ DxManager::~DxManager()
 			this->Dx_GbufferRTs[i]->Release();
 		if(this->Dx_GbufferSRVs[i])
 			this->Dx_GbufferSRVs[i]->Release();
+	}
+
+	if(this->Dx_GBufferGrassCanopyTexture)
+	{
+		this->Dx_GBufferGrassCanopyTexture->Release();
+		this->Dx_GBufferGrassCanopyTexture = NULL;
+	}
+	if(this->Dx_GBufferGrassCanopyRTV)
+	{
+		this->Dx_GBufferGrassCanopyRTV->Release();
+		this->Dx_GBufferGrassCanopyRTV = NULL;
+	}
+	if(this->Dx_GBufferGrassCanopySRV)
+	{
+		this->Dx_GBufferGrassCanopySRV->Release();
+		this->Dx_GBufferGrassCanopySRV = NULL;
 	}
 
 	while(0 < this->images.size())
@@ -861,10 +881,29 @@ void DxManager::ResizeRenderer(ResizeEvent* ev)
 			if(this->Dx_GbufferSRVs[i])
 				this->Dx_GbufferSRVs[i]->Release();
 		}
+		//Terrain grass canopy
+		if(this->Dx_GBufferGrassCanopyTexture)
+		{
+			this->Dx_GBufferGrassCanopyTexture->Release();
+			this->Dx_GBufferGrassCanopyTexture = NULL;
+		}
+		if(this->Dx_GBufferGrassCanopyRTV)
+		{
+			this->Dx_GBufferGrassCanopyRTV->Release();
+			this->Dx_GBufferGrassCanopyRTV = NULL;
+		}
+		if(this->Dx_GBufferGrassCanopySRV)
+		{
+			this->Dx_GBufferGrassCanopySRV->Release();
+			this->Dx_GBufferGrassCanopySRV = NULL;
+		}
 
+
+		D3D11_TEXTURE2D_DESC GBufferTextureDesc;
+		D3D11_RENDER_TARGET_VIEW_DESC DescRT;
+		D3D11_SHADER_RESOURCE_VIEW_DESC srDesc;
 		for(int i = 0; i < this->NrOfRenderTargets; i++)
 		{
-			D3D11_TEXTURE2D_DESC GBufferTextureDesc;
 			ZeroMemory(&GBufferTextureDesc, sizeof(GBufferTextureDesc));
 			GBufferTextureDesc.Width = width;
 			GBufferTextureDesc.Height = height;	
@@ -882,7 +921,6 @@ void DxManager::ResizeRenderer(ResizeEvent* ev)
 				MaloW::Debug("Failed to call ResizeRenderer on DxManager: Failed to initiate GbufferTexture");
 
 
-			D3D11_RENDER_TARGET_VIEW_DESC DescRT;
 			ZeroMemory(&DescRT, sizeof(DescRT));
 			DescRT.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 			DescRT.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
@@ -894,7 +932,6 @@ void DxManager::ResizeRenderer(ResizeEvent* ev)
 				MaloW::Debug("Failed to call ResizeRenderer on DxManager: Failed to initiate Gbuffer RT");
 
 
-			D3D11_SHADER_RESOURCE_VIEW_DESC srDesc;
 			ZeroMemory(&srDesc, sizeof(srDesc));
 			srDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 			srDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
@@ -903,6 +940,20 @@ void DxManager::ResizeRenderer(ResizeEvent* ev)
 
 			if(FAILED(this->Dx_Device->CreateShaderResourceView(this->Dx_GbufferTextures[i], &srDesc, &this->Dx_GbufferSRVs[i])))
 				MaloW::Debug("Failed to call ResizeRenderer on DxManager: Failed to initiate Gbuffer SRV");
+		}
+		
+		//Terrain grass canopy
+		if(FAILED(this->Dx_Device->CreateTexture2D(&GBufferTextureDesc, NULL, &this->Dx_GBufferGrassCanopyTexture)))
+		{
+			MaloW::Debug("Failed to initiate Grass Canopy GBuffer Texture");
+		}
+		if(FAILED(this->Dx_Device->CreateRenderTargetView(this->Dx_GBufferGrassCanopyTexture, &DescRT, &this->Dx_GBufferGrassCanopyRTV)))
+		{
+			MaloW::Debug("Failed to initiate Grass Canopy GBuffer Render target view");
+		}
+		if(FAILED(this->Dx_Device->CreateShaderResourceView(this->Dx_GBufferGrassCanopyTexture, &srDesc, &this->Dx_GBufferGrassCanopySRV)))
+		{	
+			MaloW::Debug("Failed to initiate Grass Canopy GBuffer shader resource view");
 		}
 	}
 }
