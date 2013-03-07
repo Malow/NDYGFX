@@ -20,7 +20,6 @@ void DxManager::PreRender()
 	this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_GbufferRTs[2], ClearColor2);
 	this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_GbufferRTs[3], ClearColor2);
 
-
 	if(this->useSun && this->useShadow)	
 	{
 		this->csm->PreRender(this->sun.direction, this->camera);
@@ -75,6 +74,8 @@ void DxManager::RenderDeferredGeoTerrains()
 	rtvs[i] = this->Dx_GBufferGrassCanopyRTV;
 	
 	this->Dx_DeviceContext->OMSetRenderTargets(this->NrOfRenderTargets + 1, rtvs, this->Dx_DepthStencilView);
+	
+	//this->Dx_DeviceContext->OMSetRenderTargets(this->NrOfRenderTargets, this->Dx_GbufferRTs, this->Dx_DepthStencilView);
 	this->Dx_DeviceContext->RSSetViewports(1, &this->Dx_Viewport);
 
 	//Matrices
@@ -85,10 +86,10 @@ void DxManager::RenderDeferredGeoTerrains()
 
 
 	//Terrain - **TILLMAN TODO: MOVE TO LOAD: blendmap, vertexbuffer, textures, aitexture**
-	this->Shader_TerrainEditor->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetPositionD3DX(), 1));
-	this->Shader_TerrainEditor->SetFloat("NearClip", this->params.NearClip);
-	this->Shader_TerrainEditor->SetFloat("FarClip", this->params.FarClip);
+	this->Shader_TerrainEditor->SetFloat3("g_CamPos", this->camera->GetPositionD3DX());
+	this->Shader_TerrainEditor->SetFloat("g_FarClip", this->params.FarClip);
 
+	//Per terrain:
 	for(int i = 0; i < this->terrains.size(); i++)
 	{
 		Terrain* terrPtr = this->terrains.get(i);
@@ -477,6 +478,63 @@ void DxManager::RenderDeferredGeoTerrains()
 	this->Shader_TerrainEditor->SetResource("blendMap1", NULL);
 	this->Shader_TerrainEditor->SetResource("AIMap", NULL);
 	this->Shader_TerrainEditor->Apply(0);
+}
+void DxManager::RenderDeferredGrass()
+{
+	//TILLMAN TODO
+
+	//Set render targets and view port - TILLMAN OPT: sätta ihop funktioner som använder samma rendertarget(s)
+	this->Dx_DeviceContext->OMSetRenderTargets(this->NrOfRenderTargets, this->Dx_GbufferRTs, this->Dx_DepthStencilView);
+	this->Dx_DeviceContext->RSSetViewports(1, &this->Dx_Viewport);
+
+	//Set variables per frame
+	this->Shader_Grass->SetResource("g_Canopy", this->Dx_GBufferGrassCanopySRV);
+	this->Shader_Grass->SetFloat("g_FarClip", this->params.FarClip);
+	this->Shader_Grass->SetFloat3("g_CamPos", this->camera->GetPositionD3DX());
+	this->Shader_Grass->SetMatrix("g_CamViewProj", this->camera->GetViewProjMatrix());
+	//Set topology
+	this->Dx_DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+
+	//Per terrain:
+	for(unsigned int i = 0; i < this->terrains.size(); ++i)
+	{
+		//Set world matrix
+		this->Shader_Grass->SetMatrix("g_World", this->terrains[i]->GetWorldMatrix());
+
+		//Apply vertex buffer
+		Buffer* vertexBuffer = this->terrains[i]->GetVertexBufferPointer();
+		if(vertexBuffer)
+		{
+			vertexBuffer->Apply(0);
+		}
+		//Apply index buffer
+		Buffer* indexBuffer = this->terrains[i]->GetIndexBufferPointer();
+		if(indexBuffer)
+		{
+			indexBuffer->Apply(0);
+		}
+	
+		//Apply input layout and pass
+		this->Shader_Grass->Apply(0);
+
+		//Draw
+		if(indexBuffer)
+		{
+			this->Dx_DeviceContext->DrawIndexed(indexBuffer->GetElementCount(), 0, 0);
+			//Count(debug)
+			this->CurrentNrOfDrawCalls++;
+		}
+		else if(vertexBuffer)
+		{
+			this->Dx_DeviceContext->Draw(vertexBuffer->GetElementCount(), 0);
+			//Count(debug)
+			this->CurrentNrOfDrawCalls++;
+		}
+		else
+		{
+			MaloW::Debug("WARNING: DxManagerDeferred: RenderDeferredGeometry(): Both index and vertex buffers were NULL for the terrain.");
+		}
+	}
 }
 
 void DxManager::RenderDecals()
@@ -1162,13 +1220,6 @@ void DxManager::RenderDeferredPerPixel()
 	this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_RenderTargetView, ClearColor);
 
 	this->Dx_DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
-	//Unbind the vertex buffer since no vertex data is used.
-	ID3D11Buffer* dummyBuffers [] = {NULL, NULL};
-	UINT dummyStrides [] = {0, 0};
-	UINT dummyOffsets [] = {0, 0};
-	this->Dx_DeviceContext->IASetVertexBuffers(0, 2, dummyBuffers, dummyStrides, dummyOffsets);
-
-
 
 	//Always tell the shader whether to use shadows or not.
 	this->Shader_DeferredLightning->SetBool("useShadow", this->useShadow);

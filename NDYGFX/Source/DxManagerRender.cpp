@@ -1629,6 +1629,21 @@ void DxManager::Render()
 #ifdef MALOWTESTPERF
 	this->perf.PostMeasure("Renderer - Render Deferred Geo Terrains", 3);
 #endif
+#ifdef MALOWTESTPERF
+	this->perf.PreMeasure("Renderer - Render Deferred Grass", 3);
+#endif
+	//this->RenderDeferredGrass();
+#ifdef MALOWTESTPERF
+	this->perf.PostMeasure("Renderer - Render Deferred Grass", 3);
+#endif
+	
+/*#ifdef MALOWTESTPERF
+	this->perf.PreMeasure("Renderer - Render Deferred Geo Terrains", 3);
+#endif
+	this->RenderDeferredGeoTerrains();
+#ifdef MALOWTESTPERF
+	this->perf.PostMeasure("Renderer - Render Deferred Geo Terrains", 3);
+#endif*/
 
 #ifdef MALOWTESTPERF
 	this->perf.PreMeasure("Renderer - Render Deferred Geo Decals", 3);

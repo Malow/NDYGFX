@@ -63,6 +63,7 @@ DxManager::DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam)
 	this->Shader_DeferredAnimatedGeometryInstanced = NULL;
 
 	this->Shader_TerrainEditor = NULL;
+	this->Shader_Grass = NULL;
 	this->Shader_DeferredLightning = NULL;
 	this->Shader_InvisibilityEffect = NULL;
 
@@ -174,7 +175,16 @@ DxManager::~DxManager()
 		delete this->Shader_DeferredAnimatedGeometryInstanced;
 	
 	if(this->Shader_TerrainEditor)
+	{
 		delete this->Shader_TerrainEditor;
+		this->Shader_TerrainEditor = NULL;
+	}
+
+	if(this->Shader_Grass)
+	{
+		delete this->Shader_Grass;
+		this->Shader_Grass = NULL;
+	}
 
 	if(this->Shader_DeferredLightning)
 		delete this->Shader_DeferredLightning;

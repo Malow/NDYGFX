@@ -456,11 +456,19 @@ HRESULT DxManager::Init()
 		return E_FAIL;
 	}
 
-	// Deferred Rendering Geometry blend map pass
+	// Deferred Rendering Geometry terrain 
 	this->Shader_TerrainEditor = new Shader();
 	if(FAILED(this->Shader_TerrainEditor->Init(Dx_Device, Dx_DeviceContext, "Shaders/TerrainEditor.fx", inputDescVertex, 4)))
 	{
 		MaloW::Debug("Failed to open TerrainEditor.fx");
+		return E_FAIL;
+	}
+
+	// Deferred Rendering Geometry grass
+	this->Shader_Grass = new Shader();
+	if(FAILED(this->Shader_Grass->Init(Dx_Device, Dx_DeviceContext, "Shaders/Grass.fx", inputDescPosition, 1)))
+	{
+		MaloW::Debug("Failed to open Grass.fx");
 		return E_FAIL;
 	}
 

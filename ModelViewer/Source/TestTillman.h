@@ -384,9 +384,9 @@ void TillmanTest::PreTest()
 
 
 	float navArrowsScale = 0.25f;
-	iMesh* navArrowX = GetGraphics()->CreateMesh("Media/RedArrow.obj", Vector3(0, 2, 0));
-	iMesh* navArrowZ = GetGraphics()->CreateMesh("Media/BlueArrow.obj", Vector3(-7.5f * navArrowsScale, 2, 7.5f * navArrowsScale));
-	iMesh* navArrowSpawn = GetGraphics()->CreateMesh("Media/BlackArrow.obj", Vector3(0, 2, 0));
+	iMesh* navArrowX = GetGraphics()->CreateMesh("Media/RedArrow.obj", Vector3(0, 1, 0));
+	iMesh* navArrowZ = GetGraphics()->CreateMesh("Media/BlueArrow.obj", Vector3(-7.5f * navArrowsScale, 1, 7.5f * navArrowsScale));
+	iMesh* navArrowSpawn = GetGraphics()->CreateMesh("Media/BlackArrow.obj", Vector3(0, 1, 0));
 	navArrowX->RotateAxis(Vector3(0, 0, 1), 3.14159265359 * 0.5f); //Point down x-axis
 	navArrowZ->RotateAxis(Vector3(1, 0, 0), -3.14159265359 * 0.5f); //Point down z-axis
 	navArrowSpawn->RotateAxis(Vector3(0, 0, 1), 3.14159265359 * 0.5f); //Point down x-axis
@@ -657,12 +657,13 @@ void TillmanTest::RunTest(float diff)
 	}
 	if(GetGraphics()->GetKeyListener()->IsPressed('E'))
 	{
+		GetGraphics()->ReloadShaders(10); //terrain
 		//GetGraphics()->ReloadShaders(11); //deferred lightning
 		//GetGraphics()->ReloadShaders(20); //shadow map billboard instanced
 		//GetGraphics()->ReloadShaders(22); //deffered geometry instanced
 		//GetGraphics()->ReloadShaders(23); //deffered animated geometry instanced
 		//GetGraphics()->ReloadShaders(24); //static geometry shadow instanced
-		GetGraphics()->ReloadShaders(25); //animated geometry shadow instanced
+		//GetGraphics()->ReloadShaders(25); //animated geometry shadow instanced
 		/*
 		debugCSMScale -= diff * 0.001f;
 		fileNames[0] = "Media/TerrainTexture.png";

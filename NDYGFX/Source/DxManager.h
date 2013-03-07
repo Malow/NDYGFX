@@ -61,6 +61,7 @@ private:
 	Shader* Shader_DeferredAnimatedGeometry; //**TILLMAN - deprecated
 	Shader* Shader_DeferredAnimatedGeometryInstanced;
 	Shader* Shader_TerrainEditor;
+	Shader* Shader_Grass;
 	Shader* Shader_DeferredLightning;
 	Shader* Shader_InvisibilityEffect;
 	Shader* Shader_DeferredQuad;
@@ -181,6 +182,7 @@ private:
 
 	void RenderForward();
 	void RenderDeferredGeoTerrains();
+	void RenderDeferredGrass();
 	void RenderDeferredGeoObjects();
 	void RenderDeferredGeometryInstanced();
 	void RenderDeferredPerPixel();
