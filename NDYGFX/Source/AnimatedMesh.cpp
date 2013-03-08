@@ -38,10 +38,10 @@ void AnimatedMesh::GetCurrentKeyFrames(KeyFrame*& one, KeyFrame*& two, float& t,
 				unsigned int diff = this->mKeyFrames->get(this->mKeyFrames->size() - 1)->time - this->mKeyFrames->get(this->mKeyFrames->size() - 2)->time;
 				unsigned int newEndTime = this->mKeyFrames->get(this->mKeyFrames->size() - 1)->time + diff;
 
-				this->mNrOfTimesLooped = (unsigned int)((int)time / newEndTime);
+				this->mNrOfTimesLooped = (unsigned int)((int)(time + this->mAnimationTime) / newEndTime);
 			
 				//compute the indices for the keyframes to interpolate
-				unsigned int currentPlayTimeMillis = (int)time % newEndTime;
+				unsigned int currentPlayTimeMillis = (int)(time + this->mAnimationTime)  % newEndTime;
 				unsigned int firstIndex = 0;
 				unsigned int lastIndex = 1;
 				bool foundIndex = false;
@@ -91,7 +91,7 @@ void AnimatedMesh::GetCurrentKeyFrames(KeyFrame*& one, KeyFrame*& two, float& t,
 				this->mNrOfTimesLooped = (unsigned int)((int)time / endTime);
 
 				//compute the indices for the keyframes to interpolate
-				int currentPlayTimeMillis = (int)time % endTime;
+				int currentPlayTimeMillis = (int)(time + this->mAnimationTime) % endTime;
 				int firstIndex = 0; 
 				bool foundIndex = false;
 				while(!foundIndex)
@@ -157,6 +157,10 @@ MaloW::Array<MeshStrip*>* AnimatedMesh::GetStrips(float time, bool first)
 }
 
 
+void AnimatedMesh::SetAnimationTime(float animationTime)
+{
+	this->mAnimationTime = animationTime;
+}
 void AnimatedMesh::NoLooping()
 {
 	this->mLoopNormal = false;

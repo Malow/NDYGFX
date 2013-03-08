@@ -515,8 +515,9 @@ void TillmanTest::PreTest()
 		}
 		iMesh* treeWithBillboard = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(i * -5 -50, 0, 100.0f), billboardFile.c_str(), 0.5f);
 		treeWithBillboard->SetScale((0.061f));
-		iMesh* fernWithBillboard = GetGraphics()->CreateMesh("Media/Fern_02.ani", Vector3(i * -5 -50, 0, 0.0f));
+		iAnimatedMesh* fernWithBillboard = GetGraphics()->CreateAnimatedMesh("Media/Fern_02.ani", Vector3(i * -5 -50, 0, 0.0f));
 		fernWithBillboard->SetScale((0.15f));
+		fernWithBillboard->SetAnimationTime((float)(i * 1000));
 		iMesh* treeWithWOBB = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(i * -5 -50, 0, -100.0f));
 		treeWithWOBB->SetScale((0.041f));
 

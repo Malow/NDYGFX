@@ -24,7 +24,7 @@ extern "C"
 		virtual unsigned int	GetAnimationLength()	const = 0;
 		
 		/* Sets the time to animated with. */
-		virtual void SetAnimationTime(float animationTime);
+		virtual void SetAnimationTime(float animationTime) = 0;
 
 		/*! Prevents looping. */
 		virtual void NoLooping() = 0;
