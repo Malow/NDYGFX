@@ -68,7 +68,7 @@ class AnimatedMesh : public Mesh, public virtual iAnimatedMesh
 		unsigned int				mNrOfTimesLooped;
 		bool						mLoopNormal;
 		bool						mLoopSeamless;
-		float						mCurrentTime;
+		float						mAnimationTime;
 		MaloW::Array<KeyFrame*>*	mKeyFrames;
 
 		string*						mSubFileNames;
@@ -80,25 +80,30 @@ class AnimatedMesh : public Mesh, public virtual iAnimatedMesh
 		MaloW::Array<KeyFrame*>*	GetKeyFrames()			const { return this->mKeyFrames; }
 
 		/*! Returns the 2 keyframes to interpolate with value t[0,1] through the parameters depending on the current time. */
+		/*! Last parameter determine what keyframes and interpolation value t is returned.
 		/*!	Note that currentTime is expected to be in milliseconds. Returns NULL if there's no keyframes loaded. */
 		/*! Also note that this function can most likely be optimized. */
-		void GetCurrentKeyFrames(KeyFrame** one, KeyFrame** two, float& t);
+		void GetCurrentKeyFrames(KeyFrame*& one, KeyFrame*& two, float& t, float time);
 
-		/* ! Returns the strips of the second mesh currently being used. */
-		virtual MaloW::Array<MeshStrip*>* GetStrips();
+		/*! Returns the strips of the first mesh. */
+		virtual MaloW::Array<MeshStrip*>* GetStrips(); 
+		/*! Returns the strips of the first or the second mesh currently being used. */
+		virtual MaloW::Array<MeshStrip*>* GetStrips(float time, bool first = true);
 
-		/*! Set the current time in milliseconds. This determines what key frames to interpolate. Must be called every frame for animation to work. */
-		virtual void SetCurrentTime(float currentTime);
-	
 		/*! Load the keyframes from file. Input is expected to be "'filename'.ani". */
 		virtual bool LoadFromFile(string file);
 
-		// iAnimatedMesh interface functions
 
+		// iAnimatedMesh interface functions
 		virtual unsigned int	GetNrOfTimesLooped()	const { return this->mNrOfTimesLooped; }
 		virtual bool			IsLooping()				const { return this->mLoopNormal || this->mLoopSeamless; }
 		virtual bool			IsLoopingNormal()		const { return this->mLoopNormal; }
 		virtual bool			IsLoopingSeamless()		const { return this->mLoopSeamless; }
+		virtual unsigned int	GetAnimationLength()	const { return this->mKeyFrames->get(this->mKeyFrames->size() - 1)->time + this->mKeyFrames->get(1)->time; }
+
+		
+		virtual void SetAnimationTime(float animationTime);
+
 		/*! Prevents looping. */
 		virtual void NoLooping();
 		/*! Loops by returning to the first keyframe when last keyframe is reached. Note that this kind of looping is not seamless. */

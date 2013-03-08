@@ -7,7 +7,7 @@ AnimatedMesh::AnimatedMesh(D3DXVECTOR3 pos, string filePath, string billboardFil
 	this->mNrOfTimesLooped = 0;
 	this->mLoopNormal = false;
 	this->mLoopSeamless = true;
-	this->mCurrentTime = 0.0f;
+	this->mAnimationTime = 0.0f;
 	this->mKeyFrames = new MaloW::Array<KeyFrame*>();
 	this->mSubFileNames = NULL;
 }
@@ -27,7 +27,7 @@ AnimatedMesh::~AnimatedMesh()
 }
 
 
-void AnimatedMesh::GetCurrentKeyFrames(KeyFrame** one, KeyFrame** two, float& t)
+void AnimatedMesh::GetCurrentKeyFrames(KeyFrame*& one, KeyFrame*& two, float& t, float time)
 {
 	if(this->mKeyFrames->size() > 1) //if 2 or more keyframes
 	{
@@ -38,10 +38,10 @@ void AnimatedMesh::GetCurrentKeyFrames(KeyFrame** one, KeyFrame** two, float& t)
 				unsigned int diff = this->mKeyFrames->get(this->mKeyFrames->size() - 1)->time - this->mKeyFrames->get(this->mKeyFrames->size() - 2)->time;
 				unsigned int newEndTime = this->mKeyFrames->get(this->mKeyFrames->size() - 1)->time + diff;
 
-				this->mNrOfTimesLooped = (unsigned int)((int)this->mCurrentTime / newEndTime);
+				this->mNrOfTimesLooped = (unsigned int)((int)time / newEndTime);
 			
 				//compute the indices for the keyframes to interpolate
-				unsigned int currentPlayTimeMillis = (int)this->mCurrentTime % newEndTime;
+				unsigned int currentPlayTimeMillis = (int)time % newEndTime;
 				unsigned int firstIndex = 0;
 				unsigned int lastIndex = 1;
 				bool foundIndex = false;
@@ -63,35 +63,35 @@ void AnimatedMesh::GetCurrentKeyFrames(KeyFrame** one, KeyFrame** two, float& t)
 				}
 
 				//get previous and next keyframes
-				*one = this->mKeyFrames->get(firstIndex);
+				one = this->mKeyFrames->get(firstIndex);
 				if(!lastIndex)
 				{
-					*two = this->mKeyFrames->get(lastIndex);
+					two = this->mKeyFrames->get(lastIndex);
 				}
 				else
 				{
-					*two = this->mKeyFrames->get(firstIndex + 1);
+					two = this->mKeyFrames->get(firstIndex + 1);
 				}
 
 				//compute interpolation value t
-				int newTimeTwo = (*two)->time - (*one)->time; //can also be seen as the time between keyframe one & two. (new time for keyframe one is 0.)
+				int newTimeTwo = two->time - one->time; //can also be seen as the time between keyframe one & two. (new time for keyframe one is 0.)
 				//if this time is negative, then we're at the end of the looping, and therefore have to compute the time
 				//between the first and second keyframes. (newTimeTwo = time of two = too long, t won't become [0,1])
 				if(newTimeTwo < 0)
 				{
 					newTimeTwo = this->mKeyFrames->get(1)->time;
 				}
-				int newCurrentTimeMillis = currentPlayTimeMillis - (*one)->time;
+				int newCurrentTimeMillis = currentPlayTimeMillis - one->time;
 				//convert to range [0,1]
 				t = ((float)newCurrentTimeMillis / (float)newTimeTwo);
 			}
 			else //if not (normal looping), return the 2 current keyframes
 			{
 				int endTime = this->mKeyFrames->get(this->mKeyFrames->size() - 1)->time;
-				this->mNrOfTimesLooped = (unsigned int)((int)this->mCurrentTime / endTime);
+				this->mNrOfTimesLooped = (unsigned int)((int)time / endTime);
 
 				//compute the indices for the keyframes to interpolate
-				int currentPlayTimeMillis = (int)this->mCurrentTime % endTime;
+				int currentPlayTimeMillis = (int)time % endTime;
 				int firstIndex = 0; 
 				bool foundIndex = false;
 				while(!foundIndex)
@@ -107,84 +107,55 @@ void AnimatedMesh::GetCurrentKeyFrames(KeyFrame** one, KeyFrame** two, float& t)
 				}
 
 				//get previous and next keyframes
-				*one = this->mKeyFrames->get(firstIndex);
-				*two = this->mKeyFrames->get(firstIndex + 1);
+				one = this->mKeyFrames->get(firstIndex);
+				two = this->mKeyFrames->get(firstIndex + 1);
 
 				//compute interpolation value t
-				int newTimeTwo = (*two)->time - (*one)->time; //can also be seen as the time between keyframe one & two. (new time for keyframe one is 0.)
-				int newCurrentTimeMillis = currentPlayTimeMillis - (*one)->time;
+				int newTimeTwo = two->time - one->time; //can also be seen as the time between keyframe one & two. (new time for keyframe one is 0.)
+				int newCurrentTimeMillis = currentPlayTimeMillis - one->time;
 				//convert to range [0,1]
 				t = ((float)newCurrentTimeMillis / (float)newTimeTwo);
 			}
 		}
 		else //if no looping, return last key frame for both
 		{
-			*one = this->mKeyFrames->get(this->mKeyFrames->size() - 1);
-			*two = *one;
+			one = this->mKeyFrames->get(this->mKeyFrames->size() - 1);
+			two = one;
 			t = 0.0f;
 		}
 	}
 	else if(this->mKeyFrames->size() == 1) //if only 1 keyframe, return it for both
 	{
-		*one = this->mKeyFrames->get(this->mKeyFrames->size() - 1);
-		*two = *one;
+		one = this->mKeyFrames->get(this->mKeyFrames->size() - 1);
+		two = one;
 		t = 0.0f;
 	}
 	else //if no keyframes, return null
 	{
-		*one = *two = NULL;
+		one = two = NULL;
 		t = 0.0f;
 	}
 }
-MaloW::Array<MeshStrip*>* AnimatedMesh::GetStrips()
+
+MaloW::Array<MeshStrip*>* AnimatedMesh::GetStrips() 
+{
+	return this->mKeyFrames->get(0)->meshStripsResource->GetMeshStripsPointer();
+}
+MaloW::Array<MeshStrip*>* AnimatedMesh::GetStrips(float time, bool first) 
 {
 	KeyFrame* one; 
 	KeyFrame* two;
-	//KeyFrame* interpolated = new KeyFrame();
-	float t = 0.0f; 
-	this->GetCurrentKeyFrames(&one, &two, t);
-	/* interpolation on CPU:
-	for(int i = 0; i < one->strips->size(); i++)
-	{
-		Vertex* oneVerts = one->strips->get(i)->getVerts(); //** samma vertiser **
-		Vertex* twoVerts = two->strips->get(i)->getVerts(); //** samma vertiser **
-		Vertex* interpolatedVerts = new Vertex[one->strips->get(i)->getNrOfVerts()];
-		
-		for(int j = 0; j < one->strips->get(i)->getNrOfVerts(); j++)
-		{
-			D3DXVECTOR3 posMorph;
-			D3DXVec3Lerp(&posMorph, &oneVerts[j].pos, &twoVerts[j].pos, t);
-			D3DXVECTOR2 texMorph;
-			D3DXVec2Lerp(&texMorph, &oneVerts[j].texCoord, &twoVerts[j].texCoord, t);
-			D3DXVECTOR3 normalMorph;
-			D3DXVec3Lerp(&normalMorph, &oneVerts[j].normal, &twoVerts[j].normal, t);
-			D3DXVECTOR3 colorMorph;
-			D3DXVec3Lerp(&colorMorph, &oneVerts[j].color, &twoVerts[j].color, t);
-			
-			interpolatedVerts[j].pos = posMorph;
-			interpolatedVerts[j].texCoord = texMorph;
-			interpolatedVerts[j].normal = normalMorph;
-			interpolatedVerts[j].color = colorMorph;
-		}
-		
-		//MeshStrip strip = new MeshStrip();
-		//strip.SetVerts(interpolatedVerts);
-		//interpolated->strips->add(&strip);
-		interpolated->strips->add(one->strips->get(i));
-		interpolated->strips->get(i)->SetVerts(interpolatedVerts);
-	}
-	
-	return interpolated->strips;
-	*/
+	float t; 
+	this->GetCurrentKeyFrames(one, two, t, time);
 
-	//return two->strips;
+	if(first)
+	{
+		return one->meshStripsResource->GetMeshStripsPointer();
+	}
+
 	return two->meshStripsResource->GetMeshStripsPointer();
 }
 
-void AnimatedMesh::SetCurrentTime(float currentTime)
-{
-	this->mCurrentTime = currentTime;
-}
 
 void AnimatedMesh::NoLooping()
 {

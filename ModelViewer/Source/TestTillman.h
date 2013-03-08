@@ -657,7 +657,8 @@ void TillmanTest::RunTest(float diff)
 	}
 	if(GetGraphics()->GetKeyListener()->IsPressed('E'))
 	{
-		GetGraphics()->ReloadShaders(10); //terrain
+		GetGraphics()->ReloadShaders(5); //grass
+		//GetGraphics()->ReloadShaders(10); //terrain
 		//GetGraphics()->ReloadShaders(11); //deferred lightning
 		//GetGraphics()->ReloadShaders(20); //shadow map billboard instanced
 		//GetGraphics()->ReloadShaders(22); //deffered geometry instanced

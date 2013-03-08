@@ -82,7 +82,7 @@ struct PSOut
 	float4 NormalAndDepth	: SV_TARGET1;	//Normal XYZ, depth W.
 	float4 Position			: SV_TARGET2;	//Position XYZ, Type of object W.
 	float4 Specular			: SV_TARGET3;	//Specular XYZ(unused by this shader), specular power W(unused by this shader).
-	float4 GrassCanopy		: SV_TARGET4;	//Grass color XYZ, grass height W.
+	//float4 GrassCanopy		: SV_TARGET4;	//Grass color XYZ, grass height W.
 };
 
 //-----------------------------------------------------------------------------------------
@@ -304,14 +304,14 @@ PSOut PSScene(PSSceneIn input) : SV_Target
 	
 	
 
-
+	//TILLMAN - unused:
 	//Specular RT
-	output.Specular.xyzw = 0.0f;
+	/*output.Specular.xyzw = 0.0f;
 
 	//Grass canopy RT
-	output.GrassCanopy.xyz = finalColor; 
-	output.GrassCanopy.w = GenerateGrassHeight(finalColor);
-	
+	output.GrassCanopy.xyz = finalColor;  //Grass color
+	output.GrassCanopy.w = GenerateGrassHeight(finalColor); //Grass height
+	*/
 
 
 

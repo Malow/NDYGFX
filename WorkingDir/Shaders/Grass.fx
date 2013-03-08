@@ -95,44 +95,53 @@ void GS(point GSIn input[1], inout TriangleStream<PSIn> triStream)
 	W[3] = float4(input[0].posW, 1.0f);
 	float4x4 WVP = mul(W, g_CamViewProj); 
 	
+	//Convert from world to homogeneous clip space [-w,w].
+	float4 pos = mul(input[0].posW, g_CamViewProj);
+	//Convert to normalized device coordinates [-1,1].
+	pos.xy /= pos.w;
+	//Convert to texture coordinates [0,1]
+	float2 texCoords = float2(pos.x * 0.5f, pos.y * -0.5f) + 0.5f;
+
+	float4 grassColorAndHeight = g_Canopy.SampleLevel(PointWrapSampler, texCoords, 0);
+	//float4 grassColorAndHeight = float4(0,1,0,0.5f);
+	float3 grassColor = grassColorAndHeight.xyz;
+	float grassHeight = grassColorAndHeight.w;
+
 	//Create a quad in local space (facing down the z-axis)
-	float halfWidth  = 0.5f;
-	float halfHeight = 0.5f;
+	float halfWidth  = 0.25f; //**TILLMAN - variabel?**
+	float halfHeight = grassHeight * 0.5f;
 	float4 positions[4];
 	positions[0] = float4(-halfWidth, -halfHeight, 0.0f, 1.0f); //Top left
 	positions[1] = float4(+halfWidth, -halfHeight, 0.0f, 1.0f);	//Top right
 	positions[2] = float4(-halfWidth, +halfHeight, 0.0f, 1.0f);	//Bottom left
 	positions[3] = float4(+halfWidth, +halfHeight, 0.0f, 1.0f);	//Bottom right
 
-	//float4 grassColorAndHeight = g_Canopy.SampleLevel(PointWrapSampler, float2(0.0f, 0.0f), 0);
-	float4 grassColorAndHeight = float4(0,1,0,0.5f);
-	float3 grassColor = grassColorAndHeight.xyz;
-	float grassHeight = grassColorAndHeight.w;
+	
 
 	//Transform quad to world space
 	//Unroll to avoid warning x4715: emitting a system-interpreted value which may not be written in every execution path of the shader
 	PSIn output = (PSIn)0;
 	output.posW = input[0].posW;
 	output.posH = mul(positions[0], WVP); //Transform positions to clip space [-w,-w]
-	output.normal = forward;
+	output.normal = float3(0.0f, 1.0f, 0.0f);
 	output.color = grassColor;
 	triStream.Append(output); 
 	
 	output.posW = input[0].posW;
 	output.posH = mul(positions[1], WVP); //Transform positions to clip space [-w,-w]
-	output.normal = forward;
+	output.normal = float3(0.0f, 1.0f, 0.0f);
 	output.color = grassColor;
 	triStream.Append(output); 
 	
 	output.posW = input[0].posW;
 	output.posH = mul(positions[2], WVP); //Transform positions to clip space [-w,-w]
-	output.normal = forward;
+	output.normal = float3(0.0f, 1.0f, 0.0f);
 	output.color = grassColor;
 	triStream.Append(output); 
 	
 	output.posW = input[0].posW;
 	output.posH = mul(positions[3], WVP); //Transform positions to clip space [-w,-w]
-	output.normal = forward;
+	output.normal = float3(0.0f, 1.0f, 0.0f);
 	output.color = grassColor;
 	triStream.Append(output); 
 }

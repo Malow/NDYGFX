@@ -21,6 +21,11 @@ extern "C"
 		virtual bool			IsLooping()				const = 0;
 		virtual bool			IsLoopingNormal()		const = 0;
 		virtual bool			IsLoopingSeamless()		const = 0;
+		virtual unsigned int	GetAnimationLength()	const = 0;
+		
+		/* Sets the time to animated with. */
+		virtual void SetAnimationTime(float animationTime);
+
 		/*! Prevents looping. */
 		virtual void NoLooping() = 0;
 		/*! Loops by returning to the first keyframe when last keyframe is reached. Note that this kind of looping is not seamless. */

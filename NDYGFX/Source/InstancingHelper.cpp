@@ -561,8 +561,7 @@ void InstancingHelper::AddAnimatedMesh(AnimatedMesh* animatedMesh, float timer)
 		KeyFrame* one = NULL;
 		KeyFrame* two = NULL;
 		float interpolationValue = 0.0f;
-		animatedMesh->SetCurrentTime(timer * 1000.0f); //timer is in seconds.
-		animatedMesh->GetCurrentKeyFrames(&one, &two, interpolationValue);
+		animatedMesh->GetCurrentKeyFrames(one, two, interpolationValue, timer * 1000.0f); //timer is in seconds.
 		MaloW::Array<MeshStrip*>* stripsOne = one->meshStripsResource->GetMeshStripsPointer();
 		MaloW::Array<MeshStrip*>* stripsTwo = two->meshStripsResource->GetMeshStripsPointer();
 

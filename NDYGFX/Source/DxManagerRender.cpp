@@ -316,8 +316,7 @@ void DxManager::RenderShadowMap()
 					KeyFrame* one = NULL;
 					KeyFrame* two = NULL;
 					float t = 0.0f;
-					this->animations[i]->SetCurrentTime(this->Timer * 1000.0f); //Timer is in seconds.
-					this->animations[i]->GetCurrentKeyFrames(&one, &two, t);
+					this->animations[i]->GetCurrentKeyFrames(one, two, t, this->Timer * 1000.0f);//Timer is in seconds.
 					MaloW::Array<MeshStrip*>* stripsOne = one->meshStripsResource->GetMeshStripsPointer();
 					MaloW::Array<MeshStrip*>* stripsTwo = two->meshStripsResource->GetMeshStripsPointer();
 
@@ -1629,13 +1628,13 @@ void DxManager::Render()
 #ifdef MALOWTESTPERF
 	this->perf.PostMeasure("Renderer - Render Deferred Geo Terrains", 3);
 #endif
-#ifdef MALOWTESTPERF
+/*#ifdef MALOWTESTPERF
 	this->perf.PreMeasure("Renderer - Render Deferred Grass", 3);
 #endif
-	//this->RenderDeferredGrass();
+	this->RenderDeferredGrass();
 #ifdef MALOWTESTPERF
 	this->perf.PostMeasure("Renderer - Render Deferred Grass", 3);
-#endif
+#endif*/
 	
 /*#ifdef MALOWTESTPERF
 	this->perf.PreMeasure("Renderer - Render Deferred Geo Terrains", 3);
