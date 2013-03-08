@@ -126,7 +126,17 @@ void TillmanTest::PreTest()
 	hmData[2099] = 15.0f;
 	hmData[2100] = 15.0f;
 
+		
 	iT->SetHeightMap(hmData);
+
+	//Grass
+	for(unsigned int i = 0; i < vertSize * vertSize; i++)
+	{
+		//iBillboard* grass = GetGraphics()->CreateBillboard(iT->GetVertexPosition(i), Vector2(0.2f, 0.5f), "Media/green.png");
+		iMesh* shadowFail = GetGraphics()->CreateMesh("Media/ball.obj", iT->GetVertexPosition(i).GetComponentMultiplication(iT->GetScale()));
+		//shadowFail->SetScale(0.5f);
+	}
+	
 	fileNames[0] = "Media/01_v02-Moss.png";
 	fileNames[1] = "Media/01_v02-Moss.png";
 	fileNames[2] = "Media/01_v02-Moss.png";
@@ -526,7 +536,6 @@ void TillmanTest::PreTest()
 		treeAnimated->SetScale((0.041f));
 	}
 
-	
 	
 }
 

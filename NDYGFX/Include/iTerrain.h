@@ -8,9 +8,6 @@
 
 #include "Vector.h"
 
-#pragma warning ( push )
-#pragma warning ( disable : 4290 ) // C++ Exception Does Nothing
-
 extern "C"
 {
 	class DECLDIR iTerrain// : public virtual iMesh
@@ -22,12 +19,18 @@ extern "C"
 		public:
 			//GET-FUNCTIONS.
 			//Object data
+			/*	Get scale of terrain in x, y and z.	*/
+			virtual Vector3 GetScale() const = 0;
 			/*  Get Position Of Terrain. */
 			virtual Vector3 GetPosition() const = 0;
 
 			//Vertex data
+			/* Returns a pointer to the array of vertices of the terrain. */
+			virtual int GetNrOfVertices() const = 0;
+			/* Returns a pointer to the array of vertices of the terrain. */
+			virtual Vector3 GetVertexPosition(unsigned int index) const = 0;
 			/* Returns the Y-position in local space on the terrain at x,z in local space. */
-			virtual float GetYPositionAt(float x, float z) const throw(const char*) = 0; 
+			virtual float GetYPositionAt(float x, float z) const throw(...) = 0; 
 
 			//SET-FUNCTIONS.
 			//Object data 
@@ -85,5 +88,3 @@ extern "C"
 			virtual void Scale(float scale) = 0;*/
 	};
 }
-
-#pragma warning ( pop )

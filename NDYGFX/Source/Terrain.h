@@ -103,13 +103,12 @@ class Terrain : public iTerrain
 		//GET-functions
 		//Object data
 		unsigned int GetSize() const { return this->zSize; }
-		D3DXVECTOR3& GetScale() { return this->zScale; }
+		D3DXVECTOR3& GetScaleD3DX() { return this->zScale; }
 		D3DXMATRIX& GetWorldMatrix() { return this->zWorldMatrix; }
 
 		//Vertex data
 		bool HasHeightMapChanged() const { return this->zHeightMapHasChanged; }
 		bool HaveNormalsChanged() const { return this->zNormalsHaveChanged; }
-		int GetNrOfVertices() const { return this->zNrOfVertices; }
 		Vertex* GetVerticesPointer() const { return this->zVertices; }
 		Buffer* GetVertexBufferPointer() const { return this->zVertexBuffer; }
 		int GetNrOfIndices() const { return this->zNrOfIndices; }
@@ -174,9 +173,12 @@ class Terrain : public iTerrain
 		//** iTerrain interface functions ** - for descriptions, see iTerrain.h.
 		//GET-functions.
 		//Object data
-		virtual Vector3 GetPosition() const { return Vector3(this->zPos.x, this->zPos.y, this->zPos.z); } ;
+		virtual Vector3 GetScale() const { return Vector3(this->zScale.x, this->zScale.y, this->zScale.z); }
+		virtual Vector3 GetPosition() const { return Vector3(this->zPos.x, this->zPos.y, this->zPos.z); }
 		
 		//Vertex data
+		virtual int GetNrOfVertices() const { return this->zNrOfVertices; }
+		virtual Vector3 GetVertexPosition(unsigned int index) const { return Vector3(this->zVertices[index].pos.x, this->zVertices[index].pos.y, this->zVertices[index].pos.z); }
 		virtual float GetYPositionAt(float x, float z) const throw(...); 
 
 

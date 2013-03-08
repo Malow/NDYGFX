@@ -285,8 +285,8 @@ DxManager::~DxManager()
 	while(0 < this->images.size())
 		delete this->images.getAndRemove(0);
 
-	//while(0 < this->billboards.size())
-	//	delete this->billboards.getAndRemove(0);
+	while(0 < this->billboards.size()) //**TILLE TODO: INST (gräs)
+		delete this->billboards.getAndRemove(0);
 
 	while(0 < this-> terrains.size())
 		delete this-> terrains.getAndRemove(0);
