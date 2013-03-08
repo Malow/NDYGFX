@@ -3,6 +3,35 @@
 
 #include "DirectX.h"
 
+struct VertexBillboardCompressed1
+{
+	D3DXVECTOR3 pos;
+	D3DXVECTOR4 texAndSize;
+	D3DXVECTOR3 color;
+	
+	VertexBillboardCompressed1(const D3DXVECTOR3& _pos, const D3DXVECTOR2& _tex, const D3DXVECTOR2& _size, const D3DXVECTOR3& _col)
+		: pos(_pos), texAndSize(_tex.x, _tex.y, _size.x, _size.y), color(_col)
+	{
+		
+	}
+	VertexBillboardCompressed1(const D3DXVECTOR3& _pos, const D3DXVECTOR4& _texAndSize, const D3DXVECTOR3& _col)
+		: pos(_pos), texAndSize(_texAndSize), color(_col)
+	{
+		
+	}
+	VertexBillboardCompressed1()
+		: pos(0.0f, 0.0f, 0.0f), texAndSize(0.0f, 0.0f, 0.0f, 0.0f), color(0.0f, 0.0f, 0.0f)
+	{
+		
+	}
+	VertexBillboardCompressed1(const VertexBillboardCompressed1& origObj)
+		: pos(origObj.pos), texAndSize(origObj.texAndSize), color(origObj.color)
+	{
+		
+	}
+};
+
+
 struct Vertex
 {
 	D3DXVECTOR3 pos;

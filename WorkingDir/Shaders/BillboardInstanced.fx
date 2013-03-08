@@ -50,27 +50,22 @@ cbuffer PerBillBoard
 
 struct VSIn
 {
-	float3 posW		: POSITION; //input for Geometry shader
-	float2 size		: SIZE;
-	float3 dummy	: DUMMY; //TA BORT
-	float3 color	: COLOR; 
-
-	/*float3 posWInstanced	: POSITION; //input for Geometry shader
-	float2 dummy1	: DUMMY;
-	float3 dummy2	: DUMMY;
-	float3 dummy3	: DUMMY;*/
+	float3 posW			: POSITION; 
+	float4 texAndSize	: TEXCOORD_AND_SIZE;
+	float3 color		: COLOR; 
 };
 
 struct GSIn 
 {
-	float3 posW		: POSITION;
+	float3 posW		: POSITION0;
+	float2 texCoord	: TEXCOORD;
 	float2 size		: SIZE;
 	float3 color	: COLOR;	
 };
 
 struct PSIn 
 {
-	float3	posW		: POSITION;	//homogenous clip space
+	float3	posW		: POSITION1;	//homogenous clip space
 	float4	posH		: SV_Position;	//homogenous clip space
 	float3	normal		: NORMAL;
 	float2	texCoords	: TEXCOORD;
@@ -93,7 +88,8 @@ GSIn VS(VSIn input)
 	GSIn output = (GSIn)0;
 
 	output.posW = input.posW;
-	output.size = input.size;
+	output.texCoord = input.texAndSize.xy;
+	output.size = input.texAndSize.zw;
 	output.color = input.color;
 
 	return output;

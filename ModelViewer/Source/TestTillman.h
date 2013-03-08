@@ -132,8 +132,8 @@ void TillmanTest::PreTest()
 	//Grass
 	for(unsigned int i = 0; i < vertSize * vertSize; i++)
 	{
-		//iBillboard* grass = GetGraphics()->CreateBillboard(iT->GetVertexPosition(i), Vector2(0.2f, 0.5f), "Media/green.png");
-		iMesh* shadowFail = GetGraphics()->CreateMesh("Media/ball.obj", iT->GetVertexPosition(i).GetComponentMultiplication(iT->GetScale()));
+		iBillboard* grass = GetGraphics()->CreateBillboard(iT->GetVertexPosition(i), Vector2(0.0f, 0.0f), Vector2(0.2f, 0.5f), Vector3(0.0f, 0.0f, 0.0f), "Media/green.png");
+		//iMesh* shadowFail = GetGraphics()->CreateMesh("Media/ball.obj", iT->GetVertexPosition(i).GetComponentMultiplication(iT->GetScale()));
 		//shadowFail->SetScale(0.5f);
 	}
 	

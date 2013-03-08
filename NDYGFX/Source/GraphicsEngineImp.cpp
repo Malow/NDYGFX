@@ -457,16 +457,16 @@ void GraphicsEngineImp::DeleteImage( iImage* &delImg )
 	delImg = NULL;
 }
 
-Billboard* GraphicsEngineImp::CreateBillboard(D3DXVECTOR3 position, D3DXVECTOR2 size, string texture)
+Billboard* GraphicsEngineImp::CreateBillboard(D3DXVECTOR3 position, D3DXVECTOR2 texCoord, D3DXVECTOR2 size, D3DXVECTOR3 color, string texture)
 {
-	Billboard* billboard = new Billboard(position, size);
+	Billboard* billboard = new Billboard(position, texCoord, size, color);
 	this->dx->CreateBillboard(billboard, texture);
 	return billboard;
 }
 
-iBillboard* GraphicsEngineImp::CreateBillboard( Vector3 pos, Vector2 size, const char* texture )
+iBillboard* GraphicsEngineImp::CreateBillboard( Vector3 pos, Vector2 texCoord, Vector2 size, Vector3 color, const char* texture )
 {
-	return this->CreateBillboard(D3DXVECTOR3(pos.x, pos.y, pos.z), D3DXVECTOR2(size.x, size.y), string(texture));
+	return this->CreateBillboard(D3DXVECTOR3(pos.x, pos.y, pos.z), D3DXVECTOR2(texCoord.x, texCoord.y), D3DXVECTOR2(size.x, size.y), D3DXVECTOR3(color.x, color.y, color.z), string(texture));
 }
 
 bool GraphicsEngineImp::DeleteBillboard(Billboard* delBillboard)

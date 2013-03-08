@@ -20,11 +20,11 @@ class AnimatedMesh;
 
 struct BillboardData
 {
-	Vertex							s_Vertex;
+	VertexBillboardCompressed1		s_Vertex;
 	ID3D11ShaderResourceView*		s_SRV; 
 	
 	BillboardData() : s_Vertex(), s_SRV(NULL) {}
-	BillboardData(Vertex vertex, ID3D11ShaderResourceView* srv) : s_Vertex(vertex), s_SRV(srv) {}
+	BillboardData(VertexBillboardCompressed1 vertex, ID3D11ShaderResourceView* srv) : s_Vertex(vertex), s_SRV(srv) {}
 };
 struct BillboardGroup
 {
@@ -164,6 +164,7 @@ class InstancingHelper
 		BillboardGroup& GetBillboardGroup(unsigned int index) { return this->zBillboardGroups[index]; }
 		ID3D11Buffer* GetBillboardInstanceBuffer() { return this->zBillboardInstanceBuffer; }  
 
+		void AddBillboard(Billboard* billboard);
 		void AddBillboard(Mesh* meshWithBillboard);
 		/*	Sorts, creates instance groups and updates the instance buffer.	*/
 		void PreRenderBillboards();

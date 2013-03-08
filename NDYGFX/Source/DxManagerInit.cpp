@@ -321,16 +321,14 @@ HRESULT DxManager::Init()
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 
-	static const D3D11_INPUT_ELEMENT_DESC inputDescBillBoard[] = {
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
+	static const D3D11_INPUT_ELEMENT_DESC inputDescShadowMapBillBoardInstanced[] = {
+		{ "POSITION",			0, DXGI_FORMAT_R32G32B32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "TEXCOORD_AND_SIZE",	0, DXGI_FORMAT_R32G32B32A32_FLOAT,	0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
 	};
-
 	static const D3D11_INPUT_ELEMENT_DESC inputDescBillBoardInstanced[] = {
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "SIZE", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{ "DUMMY", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
+		{ "POSITION",			0, DXGI_FORMAT_R32G32B32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "TEXCOORD_AND_SIZE",	0, DXGI_FORMAT_R32G32B32A32_FLOAT,	0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "COLOR",				0, DXGI_FORMAT_R32G32B32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
 	};
 
 	static const D3D11_INPUT_ELEMENT_DESC inputDescPosition[] = {
@@ -376,7 +374,7 @@ HRESULT DxManager::Init()
 
 	// ShadowMapBillboardInstanced Shader
 	this->Shader_ShadowMapBillboardInstanced = new Shader();
-	if(FAILED(this->Shader_ShadowMapBillboardInstanced->Init(this->Dx_Device, this->Dx_DeviceContext, "Shaders/ShadowMapBillboardInstanced.fx", inputDescBillBoardInstanced, 4)))
+	if(FAILED(this->Shader_ShadowMapBillboardInstanced->Init(this->Dx_Device, this->Dx_DeviceContext, "Shaders/ShadowMapBillboardInstanced.fx", inputDescShadowMapBillBoardInstanced, 2)))
 	{
 		MaloW::Debug("Failed to open ShadowMapBillboardInstanced.fx");
 		return E_FAIL;
@@ -407,7 +405,7 @@ HRESULT DxManager::Init()
 	}
 
 	this->Shader_BillboardInstanced = new Shader();
-	if(FAILED(this->Shader_BillboardInstanced->Init(Dx_Device, Dx_DeviceContext, "Shaders/BillboardInstanced.fx", inputDescBillBoardInstanced, 4)))
+	if(FAILED(this->Shader_BillboardInstanced->Init(Dx_Device, Dx_DeviceContext, "Shaders/BillboardInstanced.fx", inputDescBillBoardInstanced, 3)))
 	{
 		MaloW::Debug("Failed to open BillboardInstanced.fx");
 		return E_FAIL;

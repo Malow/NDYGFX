@@ -56,7 +56,9 @@ void DxManager::PreRender()
 		//float NearClip;
 		//float FarClip;
 	}*/
-		
+	
+
+
 	
 }
 
