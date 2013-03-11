@@ -1,0 +1,14 @@
+Cost report: With everything: 63.8
+Calculate Culling: +37
+PreRender: -13.9 (Caused shadows to turn off)
+Render Shadows: -35.6
+Render Terrain: -10.7
+Render Decals: +1.2
+Render Geo Obj & Inst: -12.1
+Render FBX: -0.4
+RenderBillboards: -1.4
+Render PerPixel: -4.7
+Render Translucent: -2.5
+Render Skybox: +1.4
+Render Fog: +0.1
+Render FXAA: -0.6
