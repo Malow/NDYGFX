@@ -150,6 +150,10 @@ public:
 	// Billboards
 	virtual iBillboard* CreateBillboard(Vector3 pos, Vector2 size, Vector3 color, const char* texture);
 	virtual void DeleteBillboard(iBillboard* &delBillboard);
+	// BillboardCollections
+	virtual iBillboardCollection* CreateBillboardCollection(unsigned int nrOfVertices, Vector3* positions, 
+															Vector2* sizes, Vector3* colors, Vector3& offsetVector, const char* texture );
+	virtual void DeleteBillboardCollection(iBillboardCollection* &delBillboardCollection);
 
 	// Text
 	virtual iText* CreateText(const char* text, Vector2 pos, float size, const char* fontTexturePath);
@@ -243,6 +247,10 @@ public:
 
 	Billboard* CreateBillboard(D3DXVECTOR3 position, D3DXVECTOR2 size, D3DXVECTOR3 color, string texture);
 	bool DeleteBillboard(Billboard* delBillboard);
+	BillboardCollection* CreateBillboardCollection(unsigned int nrOfVertices, D3DXVECTOR3* positions, D3DXVECTOR2* sizes, D3DXVECTOR3* colors, D3DXVECTOR3& offsetVector, string& texture);
+	bool DeleteBillboardCollection(BillboardCollection* delBillboardCollection);
+
+
 
 	Text* CreateText(string text, D3DXVECTOR2 position, float size, string fontTexturePath);
 	bool DeleteText(Text* delText);

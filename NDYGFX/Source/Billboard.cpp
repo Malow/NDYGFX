@@ -2,19 +2,19 @@
 
 
 Billboard::Billboard() 
-:	zVertex(), zTextureResource(NULL)
+:	zVertex(), zTextureResource(NULL), zRenderShadowFlag(true)
 {
 
 	
 }
 
-Billboard::Billboard(const VertexBillboard1& vertex)
-	: zVertex(vertex), zTextureResource(NULL)
+Billboard::Billboard(const VertexBillboard1& vertex, bool renderShadowFlag)
+	: zVertex(vertex), zTextureResource(NULL), zRenderShadowFlag(renderShadowFlag)
 {
 
 }
-Billboard::Billboard(const D3DXVECTOR3& position, const D3DXVECTOR2& size, const D3DXVECTOR3& color) 
-:	zVertex(position, size, color), zTextureResource(NULL)
+Billboard::Billboard(const D3DXVECTOR3& position, const D3DXVECTOR2& size, const D3DXVECTOR3& color, bool renderShadowFlag) 
+:	zVertex(position, size, color), zTextureResource(NULL), zRenderShadowFlag(renderShadowFlag)
 {
 	
 }

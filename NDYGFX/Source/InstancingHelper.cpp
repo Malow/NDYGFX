@@ -228,6 +228,17 @@ InstancingHelper::~InstancingHelper()
 	if(this->zBillboardInstanceBuffer) this->zBillboardInstanceBuffer->Release(); this->zBillboardInstanceBuffer = NULL;
 }
 
+
+
+void InstancingHelper::AddBillboardsReference(const MaloW::Array<Billboard*>& billboards)
+{
+	this->zBillboardsReference = &billboards;
+}
+void InstancingHelper::AddBillboardCollectionsReference(const MaloW::Array<BillboardCollection*>& billboardCollections)
+{
+	this->zBillboardCollectionsReference = &billboardCollections;
+}
+
 void InstancingHelper::AddBillboard(Billboard* billboard)
 {
 	//Expand buffer if necessary
@@ -274,8 +285,30 @@ void InstancingHelper::AddBillboard( Mesh* meshWithBillboard )
 	this->zBillboardData.push_back(billboardData);
 }
 
-void InstancingHelper::PreRenderBillboards()
+void InstancingHelper::PreRenderBillboards(bool shadowmap)
 {
+	//Add (standalone) billboards
+	if(shadowmap)
+	{
+		for(unsigned int i = 0; i < this->zBillboardsReference->size(); ++i)
+		{
+			Billboard* billboard = this->zBillboardsReference->get(i);
+			if(billboard->GetRenderShadowFlag())
+			{
+				this->AddBillboard(billboard);
+			}
+		}
+	}
+	else
+	{
+		for(unsigned int i = 0; i < this->zBillboardsReference->size(); ++i)
+		{
+			this->AddBillboard(this->zBillboardsReference->get(i));
+		}
+	}
+	
+
+
 	//Sort the data by shader resource view
 	std::sort(this->zBillboardData.begin(), this->zBillboardData.end(), SortBillboardData);
 

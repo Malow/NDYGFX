@@ -44,7 +44,7 @@ class BillboardCollection : public iBillboardCollection
 		//void SetSize(unsigned int vertexIndex, D3DXVECTOR2 size)		{ this->zVertices[vertexIndex].texAndSize = D3DXVECTOR4(this->zVertices[vertexIndex].texAndSize.x, this->zVertices[vertexIndex].texAndSize.y, size.x, size.y); }
 		//void SetColor(unsigned int vertexIndex, D3DXVECTOR3 color)		{ this->zVertices[vertexIndex].color = color; }
 		//VertexBillboardCompressed1& SetVertex(unsigned int vertexIndex, VertexBillboardCompressed1& vertex)	{ this->zVertices[vertexIndex] = vertex; }
-		//void SetTextureResource(TextureResource* textureResource)		{ this->zTextureResource = textureResource; }
+		void SetTextureResource(TextureResource* textureResource);
 
 
 

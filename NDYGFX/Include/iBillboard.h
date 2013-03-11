@@ -24,5 +24,7 @@ extern "C"
 			virtual void SetTexCoord(Vector2 texCoord) = 0;
 			virtual void SetSize(Vector2 size) = 0;
 			virtual void SetColor(Vector3 color) = 0;*/
+
+			virtual void SetRenderShadowFlag(bool flag) = 0;
 	};
 }

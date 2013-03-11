@@ -89,8 +89,8 @@ DxManager::DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam)
 	this->fogRadius = 0.0f;
 	this->fogFadeFactor = 0.0f;
 
-	//TILLMAN INST*
-	//this->instancingHelper = NULL;
+
+	this->instancingHelper = NULL;
 
 	this->framecount = 0;
 	this->TriangleCount = 0;
@@ -285,8 +285,11 @@ DxManager::~DxManager()
 	while(0 < this->images.size())
 		delete this->images.getAndRemove(0);
 
-	while(0 < this->billboards.size()) //**TILLE TODO: INST (gräs)
+	while(0 < this->billboards.size()) 
 		delete this->billboards.getAndRemove(0);
+	
+	while(0 < this->billboardCollections.size()) 
+		delete this->billboardCollections.getAndRemove(0);
 
 	while(0 < this-> terrains.size())
 		delete this-> terrains.getAndRemove(0);
@@ -665,6 +668,26 @@ void DxManager::CreateBillboard(Billboard* billboard, string texture)
 void DxManager::DeleteBillboard(Billboard* billboard)
 {
 	BillboardEvent* re = new BillboardEvent(false, billboard);
+	this->PutEvent(re);
+}
+
+void DxManager::CreateBillboardCollection(BillboardCollection* billboardCollection, string texture)
+{
+	TextureResource* tex = NULL;
+	if(texture != "")
+	{
+		tex = GetResourceManager()->CreateTextureResourceFromFile(texture.c_str(), true);
+	}
+
+	billboardCollection->SetTextureResource(tex);
+
+	BillboardCollectionEvent* re = new BillboardCollectionEvent(true, billboardCollection);
+	this->PutEvent(re);
+}
+
+void DxManager::DeleteBillboardCollection(BillboardCollection* billboardCollection)
+{
+	BillboardCollectionEvent* re = new BillboardCollectionEvent(false, billboardCollection);
 	this->PutEvent(re);
 }
 

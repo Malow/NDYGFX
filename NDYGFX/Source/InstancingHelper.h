@@ -13,6 +13,7 @@
 #include "DirectX.h"
 #include <vector>
 #include "Billboard.h"
+#include "BillboardCollection.h"
 #include "Mesh.h"
 
 class StaticMesh;
@@ -113,6 +114,8 @@ class InstancingHelper
 
 	private:
 		//BILLBOARD
+		const MaloW::Array<Billboard*>* zBillboardsReference;
+		const MaloW::Array<BillboardCollection*>* zBillboardCollectionsReference;
 		//Counter
 		unsigned int zBillboardInstanceBufferSize;
 		//Billboard data
@@ -121,6 +124,7 @@ class InstancingHelper
 		std::vector<BillboardGroup> zBillboardGroups;
 		//Instance Buffer
 		ID3D11Buffer* zBillboardInstanceBuffer; //Shall contain vertex data of billboardData.
+
 
 
 		//MESHES(MESHSTRIPS)
@@ -156,7 +160,10 @@ class InstancingHelper
 		HRESULT Init(ID3D11Device* device, ID3D11DeviceContext* deviceContext);
 
 		//BILLBOARD
-		unsigned int GetNrOfBillboards() { return this->zBillboardData.size(); }
+		void AddBillboardsReference(const MaloW::Array<Billboard*>& billboards);
+		void AddBillboardCollectionsReference(const MaloW::Array<BillboardCollection*>& billboardCollections);
+
+		unsigned int GetNrOfBillboards() { return this->zBillboardData.size() + this->zBillboardsReference->size() + this->zBillboardCollectionsReference->size(); }
 		unsigned int GetNrOfBillboardGroups() { return this->zBillboardGroups.size(); }
 		unsigned int GetBillboardDataCapacity() { return this->zBillboardData.capacity(); }
 		unsigned int GetBillboardGroupCapacity() { return this->zBillboardGroups.capacity(); }
@@ -167,10 +174,8 @@ class InstancingHelper
 		void AddBillboard(Billboard* billboard);
 		void AddBillboard(Mesh* meshWithBillboard);
 		/*	Sorts, creates instance groups and updates the instance buffer.	*/
-		void PreRenderBillboards();
+		void PreRenderBillboards(bool shadowmap = false);
 		void PostRenderBillboards() { this->zBillboardData.clear(); this->zBillboardGroups.clear(); }
-		
-
 
 		//MESH
 		void AddStaticMesh(StaticMesh* staticMesh);

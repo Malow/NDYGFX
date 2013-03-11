@@ -1048,7 +1048,7 @@ void DxManager::RenderCascadedShadowMapInstanced()
 	if(this->instancingHelper->GetNrOfBillboards() > 0)
 	{
 		//Sort, create instance groups and update buffer before rendering
-		this->instancingHelper->PreRenderBillboards(); //**Tillman todo opt: remove redundant billboard data**
+		this->instancingHelper->PreRenderBillboards(true); //**Tillman todo opt: remove redundant billboard data**
 
 		//Draw billboards
 		//Set the vertex(instance) buffer

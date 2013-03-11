@@ -167,6 +167,24 @@ void DxManager::HandleBillboardEvent(BillboardEvent* ie)
 	}
 }
 
+void DxManager::HandleBillboardCollectionEvent(BillboardCollectionEvent* ie)
+{
+	if(ie->IsAdding())
+		this->billboardCollections.add(ie->GetBillboardCollection());
+	else
+	{
+		BillboardCollection* billboardCollection = ie->GetBillboardCollection();
+		for(int i = 0; i < this->billboardCollections.size(); i++)
+		{
+			if(this->billboardCollections[i] == billboardCollection)
+			{
+				delete this->billboardCollections.getAndRemoveStaySorted(i);
+				billboardCollection = NULL;
+			}
+		}
+	}
+}
+
 void DxManager::HandleTextEvent(TextEvent* te)
 {
 	if(te->IsAdding())

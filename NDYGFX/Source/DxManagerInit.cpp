@@ -699,6 +699,8 @@ HRESULT DxManager::Init()
 	//INSTANCE ** TILLMAN
 	this->instancingHelper = new InstancingHelper();
 	this->instancingHelper->Init(this->Dx_Device, this->Dx_DeviceContext);
+	this->instancingHelper->AddBillboardsReference(this->billboards);
+	this->instancingHelper->AddBillboardCollectionsReference(this->billboardCollections);
 
 
 

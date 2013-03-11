@@ -41,6 +41,21 @@ BillboardCollection::~BillboardCollection()
 	
 }
 
+
+void BillboardCollection::SetTextureResource(TextureResource* textureResource)
+{
+	if(this->zTextureResource)
+	{
+		GetResourceManager()->DeleteTextureResource(this->zTextureResource);
+	}
+	
+	this->zTextureResource = textureResource;
+}
+	
+	
+			
+	
+	
 /*
 //GET
 Vector3 Billboard::GetPosition() const

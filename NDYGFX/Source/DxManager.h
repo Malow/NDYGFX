@@ -18,6 +18,7 @@
 #include "Process.h"
 #include "Image.h"
 #include "Billboard.h"
+#include "BillboardCollection.h"
 #include "SSAO.h"
 #include "Text.h"
 #include "SkyBox.h"
@@ -101,7 +102,8 @@ private:
 	MaloW::Array<WaterPlane*> waterplanes;
 	MaloW::Array<FBXMesh*> FBXMeshes;
 	MaloW::Array<Image*> images;
-	MaloW::Array<Billboard*> billboards; //Currently unused.
+	MaloW::Array<Billboard*> billboards;
+	MaloW::Array<BillboardCollection*> billboardCollections;
 	MaloW::Array<Text*> texts;
 	MaloW::Array<Decal*> decals;
 
@@ -143,7 +145,7 @@ private:
 	FXAA* fxaa;
 	IBTHFbx* fbx;
 
-	// Hardware instancing **TILLMAN TODO/TEST**
+	// Hardware instancing 
 	InstancingHelper* instancingHelper;
 
 
@@ -178,7 +180,6 @@ private:
 
 	//This Clears the scene(rendertargets & viewports) and function sets variables used by most shaders, such as camera position for instance.
 	void PreRender();
-	//void AddBillboardsForInstancing(); //Ev todo
 
 	void RenderForward();
 	void RenderDeferredGeoTerrains();
@@ -217,6 +218,7 @@ private:
 	void HandleLightEvent(LightEvent* le);
 	void HandleImageEvent(ImageEvent* ie);
 	void HandleBillboardEvent(BillboardEvent* ie);
+	void HandleBillboardCollectionEvent(BillboardCollectionEvent* ie);
 	void HandleTextEvent(TextEvent* te);
 	void HandleWaterPlaneEvent(WaterPlaneEvent* ie);
 	void HandleFBXEvent(FBXEvent* fe);
@@ -250,6 +252,7 @@ public:
 	Light* CreateLight(D3DXVECTOR3 pos, bool UseShadowMap);
 	void CreateImage(Image* image, string texture);
 	void CreateBillboard(Billboard* billboard, string texture);
+	void CreateBillboardCollection(BillboardCollection* billboardCollection, string texture);
 	void CreateText(Text* text, string font);
 	void CreateWaterPlane(WaterPlane* wp, string texture);
 	void CreateSkyBox(string texture);
@@ -271,6 +274,7 @@ public:
 	void DeleteLight(Light* light);
 	void DeleteImage(Image* image);
 	void DeleteBillboard(Billboard* billboard);
+	void DeleteBillboardCollection(BillboardCollection* billboardCollection);
 	void DeleteText(Text* text);
 	void DeleteWaterPlane(WaterPlane* wp);
 	void DeleteFBXMesh(FBXMesh* mesh);

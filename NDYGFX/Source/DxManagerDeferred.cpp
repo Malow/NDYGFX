@@ -58,7 +58,6 @@ void DxManager::PreRender()
 	}*/
 	
 
-
 	
 }
 
@@ -933,7 +932,7 @@ void DxManager::RenderDeferredGeoObjects()
 					{
 						oneStripIsNotCulled = true;
 						CurrentRenderedMeshes++;
-						//Add billboard info
+						//Add mesh
 						this->instancingHelper->AddAnimatedMesh(animatedMesh, this->Timer);
 					}
 				}

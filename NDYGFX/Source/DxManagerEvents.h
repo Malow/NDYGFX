@@ -154,6 +154,28 @@ public:
 	Billboard* GetBillboard() { this->deleteSelf = false; return this->billboard; }
 };
 
+class BillboardCollectionEvent : public RendererEvent
+{
+private:
+	BillboardCollection* billboardCollection;
+
+public:
+	BillboardCollectionEvent(bool adding, BillboardCollection* billboardCollection) : RendererEvent(adding)
+	{
+		this->billboardCollection = billboardCollection;
+	}
+	virtual ~BillboardCollectionEvent() 
+	{
+		if(this->deleteSelf && this->Adding)
+		{
+			if(this->billboardCollection)
+				delete this->billboardCollection;
+		}
+	}
+	BillboardCollection* GetBillboardCollection() { this->deleteSelf = false; return this->billboardCollection; }
+};
+
+
 class TextEvent : public RendererEvent
 {
 private:
