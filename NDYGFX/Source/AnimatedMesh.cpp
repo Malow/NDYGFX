@@ -8,7 +8,7 @@ AnimatedMesh::AnimatedMesh(D3DXVECTOR3 pos, string filePath, string billboardFil
 	this->mLoopNormal = false;
 	this->mLoopSeamless = true;
 	this->mAnimationTime = 0.0f;
-	this->mKeyFrames = new MaloW::Array<KeyFrame*>();
+	this->mKeyFrames = NULL;
 	this->mSubFileNames = NULL;
 }
 
@@ -139,8 +139,10 @@ void AnimatedMesh::GetCurrentKeyFrames(KeyFrame*& one, KeyFrame*& two, float& t,
 
 MaloW::Array<MeshStrip*>* AnimatedMesh::GetStrips() 
 {
+	if ( mKeyFrames == NULL ) return 0;
 	return this->mKeyFrames->get(0)->meshStripsResource->GetMeshStripsPointer();
 }
+
 MaloW::Array<MeshStrip*>* AnimatedMesh::GetStrips(float time, bool first) 
 {
 	KeyFrame* one; 
@@ -209,6 +211,8 @@ bool AnimatedMesh::LoadFromFile(string file)
 		//Create array to hold filenames.
 		this->mSubFileNames = new string[nrOfKeyframes];
 
+		auto keyFrames = mKeyFrames = new MaloW::Array<KeyFrame*>();
+
 		for(int a = 0; a < nrOfKeyframes; a++)
 		{
 			int time = 0;
@@ -242,9 +246,12 @@ bool AnimatedMesh::LoadFromFile(string file)
 					doOnce = true;
 				}
 			}
-			this->mKeyFrames->add(frame);
-			
+
+			keyFrames->add(frame);
 		}
+		
+		this->mKeyFrames = keyFrames;
+
 		//Set Billboard values
 		//Calculate billboard position(this needs to be updated as the mesh position changes).(don't forget to include the scale).
 		float halfHeightScaled = this->height * 0.5f * this->scale.y; //(yOffset)
@@ -262,4 +269,19 @@ bool AnimatedMesh::LoadFromFile(string file)
 		MaloW::Debug("Failed to open AnimatedMesh: " + file);
 		return false;
 	}
+}
+
+unsigned int AnimatedMesh::GetAnimationLength() const 
+{
+	if ( !this->mKeyFrames || !this->mKeyFrames->size() )
+	{
+		return 0;
+	}
+
+	if ( this->mKeyFrames->size() == 1 )
+	{
+		return 0;
+	}
+
+	return this->mKeyFrames->get(this->mKeyFrames->size() - 1)->time + this->mKeyFrames->get(1)->time; 
 }
