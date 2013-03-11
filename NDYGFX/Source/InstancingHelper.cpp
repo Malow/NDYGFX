@@ -29,7 +29,7 @@ void InstancingHelper::ExpandBillboardInstanceBuffer()
 	//Resize(recreate) instance buffer
 	D3D11_BUFFER_DESC vbd;
 	vbd.Usage = D3D11_USAGE_DYNAMIC;
-	vbd.ByteWidth = sizeof(VertexBillboardCompressed1) * this->zBillboardInstanceBufferSize;
+	vbd.ByteWidth = sizeof(VertexBillboard1) * this->zBillboardInstanceBufferSize;
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	vbd.MiscFlags = 0;
@@ -49,8 +49,8 @@ void InstancingHelper::ExpandBillboardInstanceBuffer()
 	this->g_DeviceContext->Map(temporaryNewBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubResourceNew);
 	this->g_DeviceContext->Map(this->zBillboardInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubResourceOld);
 	
-	VertexBillboardCompressed1* dataViewNew = reinterpret_cast<VertexBillboardCompressed1*>(mappedSubResourceNew.pData);
-	VertexBillboardCompressed1* dataViewOld = reinterpret_cast<VertexBillboardCompressed1*>(mappedSubResourceOld.pData);
+	VertexBillboard1* dataViewNew = reinterpret_cast<VertexBillboard1*>(mappedSubResourceNew.pData);
+	VertexBillboard1* dataViewOld = reinterpret_cast<VertexBillboard1*>(mappedSubResourceOld.pData);
 	for(unsigned int i = 0; i < oldSize; ++i)
 	{
 		dataViewNew[i] = dataViewOld[i];
@@ -194,7 +194,7 @@ HRESULT InstancingHelper::Init(ID3D11Device* device, ID3D11DeviceContext* device
 	//Billboard
 	D3D11_BUFFER_DESC bufferDesc;
 	bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	bufferDesc.ByteWidth = sizeof(VertexBillboardCompressed1) * this->zBillboardInstanceBufferSize; 
+	bufferDesc.ByteWidth = sizeof(VertexBillboard1) * this->zBillboardInstanceBufferSize; 
 	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	bufferDesc.MiscFlags = 0;
@@ -262,14 +262,12 @@ void InstancingHelper::AddBillboard( Mesh* meshWithBillboard )
 	//Note that this returns the half of the half size, so multiply by 4.
 	float billboardSize = sqrtf(powf(halfHeightScaled, 2.0f) * 0.5f) * 4.0f;
 	BillboardData billboardData;
-	D3DXVECTOR2 billboardTexCoord = meshWithBillboard->GetBillboardGFX()->GetTexCoordD3DX();
-	D3DXVECTOR3 billboardColor = meshWithBillboard->GetBillboardGFX()->GetVertex().color;
+	D3DXVECTOR3 billboardColor = meshWithBillboard->GetBillboardGFX()->GetVertex().GetColor();
 	
 	//Set data//**TILLMAN
-	billboardData.s_Vertex = VertexBillboardCompressed1(billboardPos, 
-														billboardTexCoord,
-														D3DXVECTOR2(billboardSize, billboardSize),
-														billboardColor);
+	billboardData.s_Vertex = VertexBillboard1(	billboardPos, 
+												D3DXVECTOR2(billboardSize, billboardSize),
+												billboardColor);
 	billboardData.s_SRV = meshWithBillboard->GetBillboardGFX()->GetTextureResource()->GetSRVPointer();				
 
 	//Add billboard data
@@ -352,10 +350,10 @@ void InstancingHelper::PreRenderBillboards()
 
 
 	//Update buffer 
-	D3D11_MAPPED_SUBRESOURCE mappedSubResource; 
+	D3D11_MAPPED_SUBRESOURCE mappedSubResource;
 	//Map to access data 
 	this->g_DeviceContext->Map(this->zBillboardInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubResource);
-	VertexBillboardCompressed1* dataView = reinterpret_cast<VertexBillboardCompressed1*>(mappedSubResource.pData);
+	VertexBillboard1* dataView = reinterpret_cast<VertexBillboard1*>(mappedSubResource.pData);
 	//Copy over all vertex data
 	for(UINT i = 0; i < this->zBillboardData.size(); ++i)
 	{

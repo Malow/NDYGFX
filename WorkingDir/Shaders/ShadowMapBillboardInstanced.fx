@@ -43,8 +43,8 @@ cbuffer PerCascade
 struct VSIn
 {
 	//Reusing input layout(this is why dumm2 semantic name is still 'COLOR'. //TILLMAN
-	float3 posW			: POSITION; 
-	float4 texAndSize	: TEXCOORD_AND_SIZE; 
+	float4 posWAndSizeX	: POSITION_AND_SIZE_X; 
+	float sizeY			: SIZE_Y; 
 	//float3 color		: COLOR; //= dummy
 };
 
@@ -97,8 +97,8 @@ GSIn VS(VSIn input)
 {
 	GSIn output = (GSIn)0;
 	
-	output.posCenterW = input.posW;	
-	output.size = input.texAndSize.zw;
+	output.posCenterW = input.posWAndSizeX.xyz;	
+	output.size = float2(input.posWAndSizeX.w, input.sizeY);
 
 	return output;
 }

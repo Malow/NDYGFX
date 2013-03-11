@@ -442,6 +442,12 @@
     <ClInclude Include="Source\DxManagerHelperThread.h">
       <Filter>Source Files\Engine\DxMan and Techs</Filter>
     </ClInclude>
+    <ClInclude Include="Source\BillboardCollection.h">
+      <Filter>Source Files\Engine\Objects and Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\iBillboardCollection.h">
+      <Filter>Source Files\Wrapper</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Include\iKeyListener.h">
@@ -567,6 +573,9 @@
     </ClCompile>
     <ClCompile Include="Source\DxManagerHelperThread.cpp">
       <Filter>Source Files\Engine\DxMan and Techs</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\BillboardCollection.cpp">
+      <Filter>Source Files\Engine\Objects and Entities</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -14,6 +14,7 @@
     <ClInclude Include="Include\GraphicsEngine.h" />
     <ClInclude Include="Include\iAnimatedMesh.h" />
     <ClInclude Include="Include\iBillboard.h" />
+    <ClInclude Include="Include\iBillboardCollection.h" />
     <ClInclude Include="Include\iCamera.h" />
     <ClInclude Include="Include\iDecal.h" />
     <ClInclude Include="Include\iFBXMesh.h" />
@@ -28,6 +29,7 @@
     <ClInclude Include="Include\Matrix.h" />
     <ClInclude Include="Include\Vector.h" />
     <ClInclude Include="Source\Billboard.h" />
+    <ClInclude Include="Source\BillboardCollection.h" />
     <ClInclude Include="Source\BoundingSphere.h" />
     <ClInclude Include="Source\AnimatedMesh.h" />
     <ClInclude Include="Source\Array.h" />
@@ -99,6 +101,7 @@
   <ItemGroup>
     <ClCompile Include="Source\AnimatedMesh.cpp" />
     <ClCompile Include="Source\Billboard.cpp" />
+    <ClCompile Include="Source\BillboardCollection.cpp" />
     <ClCompile Include="Source\BTHFBX\Shared\D3D\BTHTexture.cpp" />
     <ClCompile Include="Source\BTHFBX\Shared\FBX\FBXModelD3D.cpp" />
     <ClCompile Include="Source\BTHFBX\Shared\FBX\FBXModelPartD3D.cpp" />

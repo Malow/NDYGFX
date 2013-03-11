@@ -2,28 +2,19 @@
 
 
 Billboard::Billboard() 
-:	/*zPosition(D3DXVECTOR3(-1.0f, -1.0f, -1.0f)), 
-	zSize(D3DXVECTOR2(-1.0f, -1.0f)), 
-	zColor(D3DXVECTOR4(0.0f, 0.0f, 0.0f, 0.0f)),
-	*/
-	zVertex(), zTextureResource(NULL)
+:	zVertex(), zTextureResource(NULL)
 {
 
 	
 }
 
-Billboard::Billboard(const VertexBillboardCompressed1& vertex)
+Billboard::Billboard(const VertexBillboard1& vertex)
 	: zVertex(vertex), zTextureResource(NULL)
 {
 
 }
-Billboard::Billboard(const D3DXVECTOR3& position, const D3DXVECTOR2& texCoord, const D3DXVECTOR2& size, const D3DXVECTOR3& color) 
-:	/*zPosition(position), 
-	zSize(size),
-	zColor(color),
-	*/
-
-	zVertex(position, texCoord, size, color), zTextureResource(NULL)
+Billboard::Billboard(const D3DXVECTOR3& position, const D3DXVECTOR2& size, const D3DXVECTOR3& color) 
+:	zVertex(position, size, color), zTextureResource(NULL)
 {
 	
 }
@@ -34,7 +25,33 @@ Billboard::~Billboard()
 }
 
 
+
+void Billboard::SetPosition(D3DXVECTOR3& position)
+{
+	this->zVertex.posAndSizeX.x = position.x;
+	this->zVertex.posAndSizeX.y = position.y;
+	this->zVertex.posAndSizeX.z = position.z;
+}
+void Billboard::SetSize(D3DXVECTOR2& size)
+{
+	this->zVertex.posAndSizeX.w = size.x;
+	this->zVertex.sizeYAndColor.x = size.y;
+}
+void Billboard::SetColor(D3DXVECTOR3& color)
+{
+	this->zVertex.sizeYAndColor.y = color.x;
+	this->zVertex.sizeYAndColor.z = color.y;
+	this->zVertex.sizeYAndColor.w = color.z;
+}
+
+
+
+
+
+
+//** iBillboard interface functions **
 //GET
+/*
 Vector3 Billboard::GetPosition() const
 {
 	return Vector3(this->zVertex.pos.x, this->zVertex.pos.y, this->zVertex.pos.z);
@@ -72,4 +89,4 @@ void Billboard::SetSize(Vector2 size)
 void Billboard::SetColor(Vector3 color)
 {
 	this->zVertex.color = D3DXVECTOR3(color.x, color.y, color.z);
-}
+}*/

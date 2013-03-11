@@ -20,11 +20,11 @@ class AnimatedMesh;
 
 struct BillboardData
 {
-	VertexBillboardCompressed1		s_Vertex;
-	ID3D11ShaderResourceView*		s_SRV; 
+	VertexBillboard1			s_Vertex;
+	ID3D11ShaderResourceView*	s_SRV; 
 	
 	BillboardData() : s_Vertex(), s_SRV(NULL) {}
-	BillboardData(VertexBillboardCompressed1 vertex, ID3D11ShaderResourceView* srv) : s_Vertex(vertex), s_SRV(srv) {}
+	BillboardData(VertexBillboard1 vertex, ID3D11ShaderResourceView* srv) : s_Vertex(vertex), s_SRV(srv) {}
 };
 struct BillboardGroup
 {

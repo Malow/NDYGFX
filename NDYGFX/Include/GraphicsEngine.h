@@ -45,7 +45,7 @@ extern "C"
 		virtual iImage* CreateImage(Vector2 pos, Vector2 dimensions, const char* texture) = 0;
 		virtual void DeleteImage(iImage* &delImg) = 0;
 
-		virtual iBillboard* CreateBillboard(Vector3 pos, Vector2 texCoord, Vector2 size, Vector3 color, const char* texture) = 0;
+		virtual iBillboard* CreateBillboard(Vector3 pos, Vector2 size, Vector3 color, const char* texture) = 0;
 		virtual void DeleteBillboard(iBillboard* &delBillboard) = 0;
 
 		/*! fontTexturePath shall not contain the file type. */

@@ -457,17 +457,46 @@ void GraphicsEngineImp::DeleteImage( iImage* &delImg )
 	delImg = NULL;
 }
 
-Billboard* GraphicsEngineImp::CreateBillboard(D3DXVECTOR3 position, D3DXVECTOR2 texCoord, D3DXVECTOR2 size, D3DXVECTOR3 color, string texture)
+Billboard* GraphicsEngineImp::CreateBillboard(D3DXVECTOR3 position, D3DXVECTOR2 size, D3DXVECTOR3 color, string texture)
 {
-	Billboard* billboard = new Billboard(position, texCoord, size, color);
+	Billboard* billboard = new Billboard(position, size, color);
 	this->dx->CreateBillboard(billboard, texture);
 	return billboard;
 }
 
-iBillboard* GraphicsEngineImp::CreateBillboard( Vector3 pos, Vector2 texCoord, Vector2 size, Vector3 color, const char* texture )
+iBillboard* GraphicsEngineImp::CreateBillboard( Vector3 pos, Vector2 size, Vector3 color, const char* texture )
 {
-	return this->CreateBillboard(D3DXVECTOR3(pos.x, pos.y, pos.z), D3DXVECTOR2(texCoord.x, texCoord.y), D3DXVECTOR2(size.x, size.y), D3DXVECTOR3(color.x, color.y, color.z), string(texture));
+	return this->CreateBillboard(D3DXVECTOR3(pos.x, pos.y, pos.z), D3DXVECTOR2(size.x, size.y), D3DXVECTOR3(color.x, color.y, color.z), string(texture));
 }
+/*
+iBillboardCollection* GraphicsEngineImp::CreateBillboardCollection(unsigned int nrOfVertices, Vector3* positions, Vector2* texCoords, Vector2* sizes, Vector3* colors, const char* texture )
+{
+	//return this->CreateBillboardCollection(D3DXVECTOR3(pos.x, pos.y, pos.z), D3DXVECTOR2(texCoord.x, texCoord.y), D3DXVECTOR2(size.x, size.y), D3DXVECTOR3(color.x, color.y, color.z), string(texture));
+
+	D3DXVECTOR3* positions = new D3DXVECTOR3[nrOfVertices];
+	D3DXVECTOR2* texCoords = new D3DXVECTOR2[nrOfVertices];
+	D3DXVECTOR2* positions = new D3DXVECTOR2[nrOfVertices];
+	D3DXVECTOR3* positions = new D3DXVECTOR3[nrOfVertices];
+	for(unsigned int i = 0; i < nrOfVertices; ++i)
+	{
+		D3DXVECTOR3(positions.x, positions.y, positions.z)
+	}
+	
+	
+	return this->CreateBillboardCollection(positions, D3DXVECTOR2(texCoord.x, texCoord.y), D3DXVECTOR2(size.x, size.y), D3DXVECTOR3(color.x, color.y, color.z), string(texture));
+}
+
+BillboardCollection* GraphicsEngineImp::CreateBillboardCollection(unsigned int nrOfVertices, D3DXVECTOR3* positions, D3DXVECTOR2* texCoords, D3DXVECTOR2* sizes, D3DXVECTOR3* colors, string& texture)
+{
+	BillboardCollection* billboardCollection = new BillboardCollection(position, texCoord, size, color);
+
+	**delete arrays**
+
+	this->dx->CreateBillboardCollection(billboard, texture);
+	return billboard;
+}*/
+
+
 
 bool GraphicsEngineImp::DeleteBillboard(Billboard* delBillboard)
 {

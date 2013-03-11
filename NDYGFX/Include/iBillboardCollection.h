@@ -10,11 +10,11 @@
 
 extern "C"
 {
-	class DECLDIR iBillboard
+	class DECLDIR iBillboardCollection
 	{	
 		public:
-			iBillboard() {};
-			virtual ~iBillboard() {};
+			iBillboardCollection() {};
+			virtual ~iBillboardCollection() {};
 
 			/*virtual Vector3 GetPosition() const = 0;
 			virtual Vector2 GetTexCoord() const = 0;

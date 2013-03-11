@@ -148,7 +148,7 @@ public:
 	virtual void DeleteImage(iImage* &delImg);
 
 	// Billboards
-	virtual iBillboard* CreateBillboard(Vector3 pos, Vector2 texCoord, Vector2 size, Vector3 color, const char* texture);
+	virtual iBillboard* CreateBillboard(Vector3 pos, Vector2 size, Vector3 color, const char* texture);
 	virtual void DeleteBillboard(iBillboard* &delBillboard);
 
 	// Text
@@ -241,7 +241,7 @@ public:
 	/*! Stops rendering the Image and internally deletes it and the pointer will become NULL. Return depends on if the Image was sucessfully removed. */
 	bool DeleteImage(Image* delImage);
 
-	Billboard* CreateBillboard(D3DXVECTOR3 position, D3DXVECTOR2 texCoord, D3DXVECTOR2 size, D3DXVECTOR3 color, string texture);
+	Billboard* CreateBillboard(D3DXVECTOR3 position, D3DXVECTOR2 size, D3DXVECTOR3 color, string texture);
 	bool DeleteBillboard(Billboard* delBillboard);
 
 	Text* CreateText(string text, D3DXVECTOR2 position, float size, string fontTexturePath);

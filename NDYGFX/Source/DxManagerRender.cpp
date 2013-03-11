@@ -470,7 +470,7 @@ void DxManager::RenderBillboardsInstanced()
 		ID3D11Buffer* bufferPointers[1];
 
 		// Set the buffer strides.
-		strides[0] = sizeof(VertexBillboardCompressed1);
+		strides[0] = sizeof(VertexBillboard1);
 		// Set the buffer offset.
 		offsets[0] = 0;
 		// Set the array of pointers to the vertex and instance buffers.
@@ -1055,7 +1055,7 @@ void DxManager::RenderCascadedShadowMapInstanced()
 		unsigned int billboardStrides[1];
 		unsigned int billboardOffsets[1];
 		ID3D11Buffer* billboardBufferPointers[1];
-		billboardStrides[0] = sizeof(VertexBillboardCompressed1);
+		billboardStrides[0] = sizeof(VertexBillboard1);
 		billboardOffsets[0] = 0;
 		billboardBufferPointers[0] = this->instancingHelper->GetBillboardInstanceBuffer();	
 		this->Dx_DeviceContext->IASetVertexBuffers(0, 1, billboardBufferPointers, billboardStrides, billboardOffsets);

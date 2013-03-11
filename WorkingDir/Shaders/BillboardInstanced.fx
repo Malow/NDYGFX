@@ -50,22 +50,24 @@ cbuffer PerBillBoard
 
 struct VSIn
 {
-	float3 posW			: POSITION; 
-	float4 texAndSize	: TEXCOORD_AND_SIZE;
-	float3 color		: COLOR; 
+	float4 posW_SizeX	: POSITION_AND_SIZE_X; 
+	float4 sizeY_Color	: SIZE_Y_AND_COLOR;
+
+	//AndSize	: TEXCOORD_AND_SIZE;
+	//float3 color		: COLOR; 
 };
 
-struct GSIn 
+struct GSIn //TILLMAN - används VS in struct?
 {
-	float3 posW		: POSITION0;
-	float2 texCoord	: TEXCOORD;
+	float3 posW		: POSITION;
+	//float2 texCoord	: TEXCOORD;
 	float2 size		: SIZE;
 	float3 color	: COLOR;	
 };
 
 struct PSIn 
 {
-	float3	posW		: POSITION1;	//homogenous clip space
+	float3	posW		: POSITION;	//homogenous clip space
 	float4	posH		: SV_Position;	//homogenous clip space
 	float3	normal		: NORMAL;
 	float2	texCoords	: TEXCOORD;
@@ -87,10 +89,9 @@ GSIn VS(VSIn input)
 {
 	GSIn output = (GSIn)0;
 
-	output.posW = input.posW;
-	output.texCoord = input.texAndSize.xy;
-	output.size = input.texAndSize.zw;
-	output.color = input.color;
+	output.posW = input.posW_SizeX.xyz;
+	output.size = float2(input.posW_SizeX.w, input.sizeY_Color.x);
+	output.color = input.sizeY_Color.yzw;
 
 	return output;
 }
