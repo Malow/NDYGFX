@@ -92,15 +92,15 @@ class AnimatedMesh : public Mesh, public virtual iAnimatedMesh
 
 		/*! Load the keyframes from file. Input is expected to be "'filename'.ani". */
 		virtual bool LoadFromFile(string file);
-
+		
+		// The length of the animation in milliseconds
+		virtual unsigned int GetAnimationLength() const;
 
 		// iAnimatedMesh interface functions
 		virtual unsigned int	GetNrOfTimesLooped()	const { return this->mNrOfTimesLooped; }
 		virtual bool			IsLooping()				const { return this->mLoopNormal || this->mLoopSeamless; }
 		virtual bool			IsLoopingNormal()		const { return this->mLoopNormal; }
 		virtual bool			IsLoopingSeamless()		const { return this->mLoopSeamless; }
-		virtual unsigned int	GetAnimationLength()	const { return this->mKeyFrames->get(this->mKeyFrames->size() - 1)->time + this->mKeyFrames->get(1)->time; }
-
 		
 		virtual void SetAnimationTime(float animationTime);
 
