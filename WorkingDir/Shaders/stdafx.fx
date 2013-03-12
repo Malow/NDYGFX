@@ -170,7 +170,7 @@ DepthStencilState EnableDepth
 {
     DepthEnable = TRUE;
     DepthWriteMask = ALL;
-    DepthFunc = LESS_EQUAL;
+    DepthFunc = LESS;
 };
 
 #endif
