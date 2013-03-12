@@ -74,7 +74,6 @@ bool FBXMesh::LoadFromFile( string file, IBTHFbx* fbx, ID3D11Device* dev, ID3D11
 bool FBXMesh::SetAnimation( unsigned int ani )
 {
 	zSceneMutex.lock();
-
 	if ( !this->zScene->GetAnimationController() )
 	{
 		MaloW::Debug(
