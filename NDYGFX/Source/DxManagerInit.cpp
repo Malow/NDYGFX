@@ -470,14 +470,6 @@ HRESULT DxManager::Init()
 		return E_FAIL;
 	}
 
-	// Deferred Rendering Geometry grass
-	this->Shader_Grass = new Shader();
-	if(FAILED(this->Shader_Grass->Init(Dx_Device, Dx_DeviceContext, "Shaders/Grass.fx", inputDescPosition, 1)))
-	{
-		MaloW::Debug("Failed to open Grass.fx");
-		return E_FAIL;
-	}
-
 	// Deferred PerPixel pass
 	this->Shader_DeferredLightning = new Shader();
 	if(FAILED(this->Shader_DeferredLightning->Init(Dx_Device, Dx_DeviceContext, "Shaders/DeferredLightning.fx", NULL, 0)))
@@ -664,20 +656,6 @@ HRESULT DxManager::Init()
 
 		if(FAILED(this->Dx_Device->CreateShaderResourceView(this->Dx_GbufferTextures[i], &srDesc, &this->Dx_GbufferSRVs[i])))
 			MaloW::Debug("Failed to initiate Gbuffer SRV");
-	}
-
-	//Terrain grass canopy
-	if(FAILED(this->Dx_Device->CreateTexture2D(&GBufferTextureDesc, NULL, &this->Dx_GBufferGrassCanopyTexture)))
-	{
-		MaloW::Debug("Failed to initiate Grass Canopy GBuffer Texture");
-	}
-	if(FAILED(this->Dx_Device->CreateRenderTargetView(this->Dx_GBufferGrassCanopyTexture, &DescRT, &this->Dx_GBufferGrassCanopyRTV)))
-	{
-		MaloW::Debug("Failed to initiate Grass Canopy GBuffer Render target view");
-	}
-	if(FAILED(this->Dx_Device->CreateShaderResourceView(this->Dx_GBufferGrassCanopyTexture, &srDesc, &this->Dx_GBufferGrassCanopySRV)))
-	{	
-		MaloW::Debug("Failed to initiate Grass Canopy GBuffer shader resource view");
 	}
 
 

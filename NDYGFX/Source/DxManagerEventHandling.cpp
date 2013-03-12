@@ -242,8 +242,6 @@ void DxManager::HandleReloadShaders(int shader)
 			Shader_Image->Reload();
 		break;
 	case 5:
-		if(this->Shader_Grass)
-			this->Shader_Grass->Reload();
 		break;
 	case 6:
 		if(this->Shader_Text)

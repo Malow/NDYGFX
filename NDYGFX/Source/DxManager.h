@@ -62,7 +62,6 @@ private:
 	Shader* Shader_DeferredAnimatedGeometry; //**TILLMAN - deprecated
 	Shader* Shader_DeferredAnimatedGeometryInstanced;
 	Shader* Shader_TerrainEditor;
-	Shader* Shader_Grass;
 	Shader* Shader_DeferredLightning;
 	Shader* Shader_InvisibilityEffect;
 	Shader* Shader_DeferredQuad;
@@ -133,10 +132,6 @@ private:
 	ID3D11RenderTargetView* Dx_GbufferRTs[NrOfRenderTargets];
 	ID3D11ShaderResourceView* Dx_GbufferSRVs[NrOfRenderTargets];
 
-	ID3D11Texture2D* Dx_GBufferGrassCanopyTexture;
-	ID3D11RenderTargetView* Dx_GBufferGrassCanopyRTV;
-	ID3D11ShaderResourceView* Dx_GBufferGrassCanopySRV;
-
 	ID3D11Texture2D* Dx_DeferredTexture;
 	ID3D11RenderTargetView* Dx_DeferredQuadRT;
 	ID3D11ShaderResourceView* Dx_DeferredSRV;
@@ -183,7 +178,6 @@ private:
 
 	void RenderForward();
 	void RenderDeferredGeoTerrains();
-	void RenderDeferredGrass();
 	void RenderDeferredGeoObjects();
 	void RenderDeferredGeometryInstanced();
 	void RenderDeferredPerPixel();
