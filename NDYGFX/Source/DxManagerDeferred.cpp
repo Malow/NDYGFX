@@ -24,57 +24,11 @@ void DxManager::PreRender()
 	{
 		this->csm->PreRender(this->sun.direction, this->camera);
 	}
-
-
-
-	/*
-	if(this->Shader_ForwardRendering)
-	{
-
-	}
-	else
-	{
-		Shader_DeferredLightning is always used, and is therefore used here.
-		
-		
-
-		D3DXMATRIX vp = this->camera->GetViewMatrix() * this->camera->GetProjectionMatrix();
-		
-		this->Shader_DeferredLightning->SetMatrix("CameraVP", vp);
-		this->Shader_DeferredLightning->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetPositionD3DX(), 1));
-		
-
-		this->Shader_DeferredLightning->SetFloat("NrOfLights", (float)this->lights.size()); //**tillman**
-		this->Shader_DeferredLightning->SetFloat4("SceneAmbientLight", D3DXVECTOR4(this->sceneAmbientLight, 1.0f));
-		
-		//use sun
-		//sunlight
-		
-		if(this->animations.size()) this->Shader_DeferredLightning->SetFloat("timerMillis", this->TimerAnimation);
-		this->Shader_DeferredLightning->SetInt("windowWidth", this->params.windowWidth);
-		this->Shader_DeferredLightning->SetInt("windowHeight", this->params.windowHeight);
-		//float NearClip;
-		//float FarClip;
-	}*/
-	
-
-	
 }
 
 
 void DxManager::RenderDeferredGeoTerrains()
 {
-	/*ID3D11RenderTargetView* rtvs[this->NrOfRenderTargets + 1];
-	unsigned int i = 0U; //TILLMAN OLD/Unused
-	for(; i < this->NrOfRenderTargets; ++i)
-	{
-		rtvs[i] = this->Dx_GbufferRTs[i];
-	}
-	rtvs[i] = this->Dx_GBufferGrassCanopyRTV;
-	
-	this->Dx_DeviceContext->OMSetRenderTargets(this->NrOfRenderTargets + 1, rtvs, this->Dx_DepthStencilView);
-	*/
-
 	//clear and set render target/depth
 	this->Dx_DeviceContext->OMSetRenderTargets(this->NrOfRenderTargets, this->Dx_GbufferRTs, this->Dx_DepthStencilView);
 	this->Dx_DeviceContext->RSSetViewports(1, &this->Dx_Viewport);
@@ -480,69 +434,6 @@ void DxManager::RenderDeferredGeoTerrains()
 	this->Shader_TerrainEditor->SetResource("AIMap", NULL);
 	this->Shader_TerrainEditor->Apply(0);
 }
-/*
-void DxManager::RenderDeferredGrass()
-{
-	//TILLMAN TODO
-
-	//Set render targets and view port - TILLMAN OPT: sätta ihop funktioner som använder samma rendertarget(s)
-	this->Dx_DeviceContext->OMSetRenderTargets(this->NrOfRenderTargets, this->Dx_GbufferRTs, this->Dx_DepthStencilView);
-	this->Dx_DeviceContext->RSSetViewports(1, &this->Dx_Viewport);
-
-	//Set variables per frame
-	this->Shader_Grass->SetResource("g_Canopy", this->Dx_GBufferGrassCanopySRV);
-	this->Shader_Grass->SetFloat("g_FarClip", this->params.FarClip);
-	this->Shader_Grass->SetFloat3("g_CamPos", this->camera->GetPositionD3DX());
-	this->Shader_Grass->SetMatrix("g_CamViewProj", this->camera->GetViewProjMatrix());
-	//Set topology
-	this->Dx_DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
-
-	//Per terrain:
-	if( this->terrains.size() > 0) //TILLMAN TEST
-	{
-		int i = 0;
-
-	
-	//for(unsigned int i = 0; i < this->terrains.size(); ++i)
-	{
-		//Set world matrix
-		this->Shader_Grass->SetMatrix("g_World", this->terrains[i]->GetWorldMatrix());
-
-		//Apply vertex buffer
-		Buffer* vertexBuffer = this->terrains[i]->GetVertexBufferPointer();
-		if(vertexBuffer)
-		{
-			vertexBuffer->Apply(0);
-		}
-		//Apply index buffer
-		Buffer* indexBuffer = this->terrains[i]->GetIndexBufferPointer();
-		if(indexBuffer)
-		{
-			indexBuffer->Apply(0);
-		}
-	
-		//Apply input layout and pass
-		this->Shader_Grass->Apply(0);
-
-		//Draw
-		if(indexBuffer)
-		{
-			this->Dx_DeviceContext->DrawIndexed(indexBuffer->GetElementCount(), 0, 0);
-			//Count(debug)
-			this->CurrentNrOfDrawCalls++;
-		}
-		else if(vertexBuffer)
-		{
-			this->Dx_DeviceContext->Draw(vertexBuffer->GetElementCount(), 0);
-			//Count(debug)
-			this->CurrentNrOfDrawCalls++;
-		}
-		else
-		{
-			MaloW::Debug("WARNING: DxManagerDeferred: RenderDeferredGeometry(): Both index and vertex buffers were NULL for the terrain.");
-		}
-	}}
-}*/
 
 void DxManager::RenderDecals()
 {
