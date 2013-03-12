@@ -44,7 +44,7 @@ void FBXSceneInstance::InitInstance()
 	// Copy Skeleton
 	if ( mScene->GetSkeleton() )
 	{
-		m_pSkeleton = new Skeleton();
+		Skeleton* newSkeleton = new Skeleton();
 		
 		for( unsigned int x = 0; x < mScene->GetSkeleton()->GetBoneCount(); ++x )
 		{
@@ -53,23 +53,27 @@ void FBXSceneInstance::InitInstance()
 			SkeletonBone* targetBone = new SkeletonBone(
 				sourceBone->GetName(), 
 				sourceBone->GetParentBoneIndex(), 
-				m_pSkeleton);
+				newSkeleton);
 
-			m_pSkeleton->AddSkeletonBone( targetBone );
+			newSkeleton->AddSkeletonBone( targetBone );
 		}
 
-		m_pSkeleton->BuildBoneHierarchy();
+		newSkeleton->BuildBoneHierarchy();
 
-		for( unsigned int x = 0; x < m_pSkeleton->GetBoneCount(); ++x )
+		for( unsigned int x = 0; x < newSkeleton->GetBoneCount(); ++x )
 		{
 			SkeletonBone* sourceBone = mScene->GetSkeleton()->GetSkeletonBone(x);
-			SkeletonBone* targetBone = m_pSkeleton->GetSkeletonBone(x);
+			SkeletonBone* targetBone = newSkeleton->GetSkeletonBone(x);
 			targetBone->SetBindPoseTransform2(sourceBone->GetBindPoseTransform2());
 			targetBone->SetBoneReferenceTransform2(sourceBone->GetBoneReferenceTransform2());
 			targetBone->m_AnimationKeyFrames = sourceBone->m_AnimationKeyFrames;
 			targetBone->SetBoundingBoxData(sourceBone->m_AABB);
 		}
 
+		// Update My Skeleton
+		m_pSkeleton = newSkeleton;
+
+		// Update My Animation
 		m_pAnimationController = new AnimationController(mScene->m_pAnimationController);
 	}
 

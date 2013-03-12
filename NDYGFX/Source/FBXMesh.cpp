@@ -140,22 +140,13 @@ bool FBXMesh::BindMesh(const char* boneName, iMesh* mesh)
 	// Lock Scene
 	zSceneMutex.lock();
 
-	// Find Bone
-	if ( zScene )
-	{
-		IBTHFbxSkeletonBone* bone = zScene->GetSkeleton()->GetBone(boneName);
+	// Bind
+	zBoundMeshes[mesh] = boneName;
 
-		if ( bone )
-		{
-			zBoundMeshes[mesh] = boneName;
-
-			zSceneMutex.unlock();
-			return true;
-		}
-	}
-
+	// Unlock Mutex
 	zSceneMutex.unlock();
-	return false;
+	
+	return true;
 }
 
 void FBXMesh::UnbindMesh(iMesh* mesh)
@@ -168,7 +159,7 @@ void FBXMesh::UnbindMesh(iMesh* mesh)
 bool FBXMesh::GetBonePosition(const std::string& name, float& x, float& y, float& z)
 {
 	zSceneMutex.lock();
-	if ( zScene )
+	if ( zScene && zScene->GetSkeleton() )
 	{
 		IBTHFbxSkeletonBone* bone = zScene->GetSkeleton()->GetBone(name.c_str());
 
