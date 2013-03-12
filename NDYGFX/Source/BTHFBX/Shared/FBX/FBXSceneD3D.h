@@ -11,8 +11,6 @@ class FBXSceneD3D
 {
 	// BTHFBX Stuff
 	IBTHFbxScene*				mFBXScene;
-	IBTHFbxAnimationController*	mFBXAnimationController;
-	IBTHFbxSkeleton*			mFBXSkeleton;
 
 	// Properties
 	std::string					zFileName;
