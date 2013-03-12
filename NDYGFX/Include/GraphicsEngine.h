@@ -14,6 +14,7 @@
 #include "iLight.h"
 #include "iImage.h"
 #include "iBillboard.h"
+#include "iBillboardCollection.h"
 #include "iText.h"
 #include "iAnimatedMesh.h"
 #include "iCamera.h"
@@ -47,6 +48,12 @@ extern "C"
 
 		virtual iBillboard* CreateBillboard(Vector3 pos, Vector2 size, Vector3 color, const char* texture) = 0;
 		virtual void DeleteBillboard(iBillboard* &delBillboard) = 0;
+
+		virtual iBillboardCollection* CreateBillboardCollection(unsigned int nrOfVertices, Vector3* positions, 
+																Vector2* sizes, Vector3* colors, Vector3& offsetVector, 
+																const char* texture ) = 0;
+		virtual void DeleteBillboardCollection(iBillboardCollection* &delBillboardCollection) = 0;
+
 
 		/*! fontTexturePath shall not contain the file type. */
 		virtual iText* CreateText(const char* text, Vector2 pos, float size, const char* fontTexturePath) = 0;

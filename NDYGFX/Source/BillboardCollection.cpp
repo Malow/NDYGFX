@@ -2,16 +2,11 @@
 
 
 BillboardCollection::BillboardCollection() 
-:	zVertices(NULL), zTextureResource(NULL), zOffsetVector(0.0f, 0.0f, 0.0f)
+:	zVertices(NULL), zTextureResource(NULL), zOffsetVector(0.0f, 0.0f, 0.0f), zRenderShadowFlag(true)
 {
 
 	
 }
-/*BillboardCollection(const std::vector<VertexBillboardCompressed1>& vertices, const D3DXVECTOR3& offsetVector)
-	:	zVertices(), zTextureResource(NULL), zOffsetVector()
-{
-
-}*/
 
 BillboardCollection::BillboardCollection(unsigned int nrOfVertices, const VertexBillboard1* vertices, const D3DXVECTOR3& offsetVector)
 	: zNrOfVertices(nrOfVertices), zTextureResource(NULL), zOffsetVector(offsetVector)

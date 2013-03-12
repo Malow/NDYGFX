@@ -381,6 +381,77 @@ void InstancingHelper::PreRenderBillboards(bool shadowmap)
 	}
 
 
+	//Add billboard collections
+	if(shadowmap) //If for shadow map...
+	{
+		for(unsigned int i = 0; i < this->zBillboardCollectionsReference->size(); ++i)
+		{
+			BillboardCollection* billboardCollection = this->zBillboardCollectionsReference->get(i);
+			//... check if the billboard collection should cast a shadow.
+			if(billboardCollection->GetRenderShadowFlag())
+			{
+				//Add to groups
+				unsigned int prevGroupStart = 0;
+				unsigned int prevGroupSize = 0;
+				//If there's a group, start where it ends.
+				if(this->zBillboardGroups.size() > 0)
+				{
+					prevGroupStart = this->zBillboardGroups[this->zBillboardGroups.size() - 1].s_StartLocation;
+					prevGroupSize = this->zBillboardGroups[this->zBillboardGroups.size() - 1].s_Size;
+				}
+				BillboardGroup newBBGroup = BillboardGroup(billboardCollection->GetNrOfVertices(), prevGroupStart + prevGroupSize, billboardCollection->GetTextureResource()->GetSRVPointer());
+				this->zBillboardGroups.push_back(newBBGroup);
+
+				//Add billboard data
+				for(unsigned int j = 0; j < billboardCollection->GetNrOfVertices(); ++j)
+				{
+					//No need to call shader resource view pointer from the billboard collection since its only used to create groups.
+					BillboardData newBBData = BillboardData(billboardCollection->GetVertex(j), NULL); 
+					this->zBillboardData.push_back(newBBData);
+
+					//Expand buffer if necessary.
+					if(this->zBillboardData.size() >= this->zBillboardInstanceBufferSize)
+					{
+						this->ExpandBillboardInstanceBuffer();
+					}
+				}
+			}
+		}
+	}
+	else
+	{
+		for(unsigned int i = 0; i < this->zBillboardCollectionsReference->size(); ++i)
+		{
+			//Add to groups
+			BillboardCollection* billboardCollection = this->zBillboardCollectionsReference->get(i);
+			unsigned int prevGroupStart = 0;
+			unsigned int prevGroupSize = 0;
+			//If there's a group, start where it ends.
+			if(this->zBillboardGroups.size() > 0)
+			{
+				prevGroupStart = this->zBillboardGroups[this->zBillboardGroups.size() - 1].s_StartLocation;
+				prevGroupSize = this->zBillboardGroups[this->zBillboardGroups.size() - 1].s_Size;
+			}
+			BillboardGroup newBBGroup = BillboardGroup(billboardCollection->GetNrOfVertices(), prevGroupStart + prevGroupSize, billboardCollection->GetTextureResource()->GetSRVPointer());
+			this->zBillboardGroups.push_back(newBBGroup);
+			
+			//Add billboard data
+			for(unsigned int j = 0; j < billboardCollection->GetNrOfVertices(); ++j)
+			{
+				//No need to call shader resource view pointer from the billboard collection since its only used to create groups.
+				BillboardData newBBData = BillboardData(billboardCollection->GetVertex(j), NULL);
+				this->zBillboardData.push_back(newBBData);
+
+				//Expand buffer if necessary.
+				if(this->zBillboardData.size() >= this->zBillboardInstanceBufferSize)
+				{
+					this->ExpandBillboardInstanceBuffer();
+				}
+			}
+		}
+	}
+	
+
 
 	//Update buffer 
 	D3D11_MAPPED_SUBRESOURCE mappedSubResource;
@@ -424,84 +495,6 @@ void InstancingHelper::AddStaticMesh(StaticMesh* staticMesh)
 			this->zStripData.push_back(stripData);
 		}
 	}
-
-
-	/*if(StaticMesh* staticMesh = dynamic_cast<StaticMesh*>(mesh))
-	{
-		
-	}//Expand buffer if necessary
-		if(this->zAnimatedStripData.size() >= this->zAnimatedStripInstanceBufferSize)
-		{
-			this->ExpandAnimatedStripInstanceBuffer();
-		}
-		else
-		{
-			//Mesh & instance data
-			D3DXMATRIX worldInverseTranspose;
-			D3DXMatrixIdentity(&worldInverseTranspose);
-			D3DXMatrixInverse(&worldInverseTranspose, NULL, &mesh->GetWorldMatrix());
-			D3DXMatrixTranspose(&worldInverseTranspose, &worldInverseTranspose);
-
-
-			KeyFrame* one = NULL;
-			KeyFrame* two = NULL;
-			float interpolationValue = 0.0f;
-			animatedMesh->SetCurrentTime(this->Timer * 1000.0f); //Timer is in seconds.
-			animatedMesh->GetCurrentKeyFrames(&one, &two, interpolationValue);
-
-
-			//Add/save strips data
-			for(unsigned int i = 0; i < mesh->GetStrips()->size(); ++i)
-			{
-				StripData StripData;
-
-				StripData.InstancedData.s_WorldMatrix = mesh->GetWorldMatrix();
-				StripData.InstancedData.s_WorldInverseTransposeMatrix = worldInverseTranspose;
-				StripData.s_MeshStrip = mesh->GetMeshStripsResourcePointer()->GetMeshStripsPointer()->get(i);
-
-				this->zStripData.push_back(StripData);
-			}
-		}
-	else if (AnimatedMesh* animatedMesh = dynamic_cast<AnimatedMesh*>(mesh))
-	{
-		//Expand buffer if necessary
-		if(this->zAnimatedStripData.size() >= this->zAnimatedStripInstanceBufferSize)
-		{
-			this->ExpandAnimatedStripInstanceBuffer();
-		}
-		else
-		{
-			//Mesh & instance data
-			D3DXMATRIX worldInverseTranspose;
-			D3DXMatrixIdentity(&worldInverseTranspose);
-			D3DXMatrixInverse(&worldInverseTranspose, NULL, &mesh->GetWorldMatrix());
-			D3DXMatrixTranspose(&worldInverseTranspose, &worldInverseTranspose);
-
-
-			KeyFrame* one = NULL;
-			KeyFrame* two = NULL;
-			float interpolationValue = 0.0f;
-			animatedMesh->SetCurrentTime(this->Timer * 1000.0f); //Timer is in seconds.
-			animatedMesh->GetCurrentKeyFrames(&one, &two, interpolationValue);
-
-
-			//Add/save strips data
-			for(unsigned int i = 0; i < mesh->GetStrips()->size(); ++i)
-			{
-				StripData StripData;
-
-				StripData.InstancedData.s_WorldMatrix = mesh->GetWorldMatrix();
-				StripData.InstancedData.s_WorldInverseTransposeMatrix = worldInverseTranspose;
-				StripData.s_MeshStrip = mesh->GetMeshStripsResourcePointer()->GetMeshStripsPointer()->get(i);
-
-				this->zStripData.push_back(StripData);
-			}
-		}
-	}
-	else
-	{
-		MaloW::Debug("WARNING: InstancingHelper: Addmesh(): unsupported mesh type.");
-	}*/
 }
 void InstancingHelper::PreRenderStrips()
 {

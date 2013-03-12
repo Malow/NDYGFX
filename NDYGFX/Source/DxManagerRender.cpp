@@ -77,6 +77,12 @@ void DxManager::Life()
 					this->HandleBillboardEvent((BillboardEvent*)ev);
 				}
 
+				// BillboardCollectionEvent
+				else if(dynamic_cast<BillboardCollectionEvent*>(ev) != NULL)
+				{
+					this->HandleBillboardCollectionEvent((BillboardCollectionEvent*)ev);
+				}
+
 				//FBXEvent
 				else if(dynamic_cast<FBXEvent*>(ev) != NULL)
 				{
@@ -1630,21 +1636,6 @@ void DxManager::Render()
 #ifdef MALOWTESTPERF
 	this->perf.PostMeasure("Renderer - Render Deferred Geo Terrains", 3);
 #endif
-/*#ifdef MALOWTESTPERF
-	this->perf.PreMeasure("Renderer - Render Deferred Grass", 3);
-#endif
-	this->RenderDeferredGrass();
-#ifdef MALOWTESTPERF
-	this->perf.PostMeasure("Renderer - Render Deferred Grass", 3);
-#endif*/
-	
-/*#ifdef MALOWTESTPERF
-	this->perf.PreMeasure("Renderer - Render Deferred Geo Terrains", 3);
-#endif
-	this->RenderDeferredGeoTerrains();
-#ifdef MALOWTESTPERF
-	this->perf.PostMeasure("Renderer - Render Deferred Geo Terrains", 3);
-#endif*/
 
 #ifdef MALOWTESTPERF
 	this->perf.PreMeasure("Renderer - Render Deferred Geo Decals", 3);
