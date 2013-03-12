@@ -909,7 +909,7 @@ void DxManager::RenderDeferredGeometryInstanced()
 					this->Shader_DeferredGeometryInstanced->SetBool("g_Textured", true);
 					
 					//Normal map
-					if(renderObject->GetNormalMapResource() != NULL)
+					if(renderObject->GetNormalMapResource() != NULL && false)
 					{
 						this->Shader_DeferredGeometryInstanced->SetResource("g_NormalMap", renderObject->GetNormalMapResource()->GetSRVPointer());
 						this->Shader_DeferredGeometryInstanced->SetBool("g_UseNormalMap", true);

@@ -65,6 +65,10 @@ CollisionData PhysicsEngine::GetCollisionRayMesh( Vector3 rayOrigin, Vector3 ray
 		if(WaterPlane* wp = dynamic_cast<WaterPlane*>(mesh))
 			this->DoCollisionRayVsTriangles(rayOrigin, rayDirection, 
 				wp->GetVerts(), wp->GetNrOfVerts(), NULL, 0, wp->GetWorldMatrix(), cd);
+
+		else if(FBXMesh* fbx = dynamic_cast<FBXMesh*>(mesh))
+			this->DoCollisionRayVsFBXMesh(rayOrigin, rayDirection, fbx, cd);
+
 		else
 			this->DoCollisionRayVsMesh(rayOrigin, rayDirection, mesh, cd);
 	}
@@ -1835,6 +1839,21 @@ void PhysicsEngine::DoSpecialCollisionRayVsTerrainTriangles( Vector3 rayOrigin, 
 				}
 			}
 		}
+	}
+}
+
+void PhysicsEngine::DoCollisionRayVsFBXMesh( Vector3 rayOrigin, Vector3 rayDirection, FBXMesh* mesh, CollisionData& cd )
+{
+	BTHFBX_RAY_BOX_RESULT res = mesh->RayVsScene(rayOrigin, rayDirection);
+	if(res.DistanceToHit > 0.0f)
+	{
+		cd.distance = res.DistanceToHit;
+		cd.collision = true;
+		cd.BoundingSphereCollision = true;
+		Vector3 colPos = rayOrigin + rayDirection * cd.distance;
+		cd.posx = colPos.x;
+		cd.posy = colPos.y;
+		cd.posz = colPos.z;
 	}
 }
 

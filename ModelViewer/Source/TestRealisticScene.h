@@ -52,7 +52,13 @@ void TestRealisticScene::PreTest()
 		iWaterPlane* wp = GetGraphics()->CreateWaterPlane(camPos + Vector3(i * 5, 0, 0), "Media/WaterTexture.png");
 		wp->SetScale(10.0f);
 	}
-
+	/*
+	iWaterPlane* wp = GetGraphics()->CreateWaterPlane(Vector3(0, 0, 0), "Media/WaterTexture.png");
+	wp->SetVertexPosition(Vector3(300, -35, 100) + camPos, 0);
+	wp->SetVertexPosition(Vector3(300, -35, 300) + camPos, 1);
+	wp->SetVertexPosition(Vector3(100, -15, 100) + camPos, 2);
+	wp->SetVertexPosition(Vector3(100, -15, 300) + camPos, 3);
+	*/
 	GetGraphics()->CreateFBXMesh("Media/temp_guy_few_anims.fbx", camPos + Vector3(50, -10, 50));
 	GetGraphics()->CreateFBXMesh("Media/temp_guy_few_anims.fbx", camPos + Vector3(-50, -10, 50));
 	GetGraphics()->CreateFBXMesh("Media/temp_guy_few_anims.fbx", camPos + Vector3(-50, -10, -50));
@@ -121,7 +127,7 @@ bool TestRealisticScene::RunTest(float diff)
 		pos.y = world->GetHeightAt(Vector2(pos.x, pos.z)) + 5.0f;
 		GetGraphics()->GetCamera()->SetPosition(pos);
 		if(GetGraphics()->GetCamera()->GetPosition().x < 1700)
-			path++;
+			path--;
 
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_RETURN))
 		{
