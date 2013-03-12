@@ -1038,244 +1038,246 @@ void DxManager::RenderCascadedShadowMap()
 
 void DxManager::RenderCascadedShadowMapInstanced()
 {
+	if(this->csm != NULL)
+	{
+
 #ifdef MALOWTESTPERF
 	this->perf.PreMeasure("Renderer - Render Cascaded Shadowmap Instanced", 3);
 #endif
 #ifdef MALOWTESTPERF
 	this->perf.PreMeasure("Renderer - Render Cascaded Shadowmap Instanced Billboards", 4);
 #endif
-	//BILLBOARDS
-	if(this->instancingHelper->GetNrOfBillboards() > 0)
-	{
-		//Sort, create instance groups and update buffer before rendering
-		this->instancingHelper->PreRenderBillboards(true); //**Tillman todo opt: remove redundant billboard data**
-
-		//Draw billboards
-		//Set the vertex(instance) buffer
-		unsigned int billboardStrides[1];
-		unsigned int billboardOffsets[1];
-		ID3D11Buffer* billboardBufferPointers[1];
-		billboardStrides[0] = sizeof(VertexBillboard1);
-		billboardOffsets[0] = 0;
-		billboardBufferPointers[0] = this->instancingHelper->GetBillboardInstanceBuffer();	
-		this->Dx_DeviceContext->IASetVertexBuffers(0, 1, billboardBufferPointers, billboardStrides, billboardOffsets);
-		this->Dx_DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
-
-		//Set global variables per frame
-		this->Shader_ShadowMapBillboardInstanced->SetFloat3("gSunDir", this->sun.direction);
-		
-		//Per cascade:
-		for(int i = 0; i < this->csm->GetNrOfCascadeLevels(); ++i)
+		//BILLBOARDS
+		if(this->instancingHelper->GetNrOfBillboards() > 0)
 		{
-			//Set render targets & view ports - TILLMAN TODO: sätta ihop med terräng för färre API CALLS
-			this->Dx_DeviceContext->OMSetRenderTargets(0, 0, this->csm->GetShadowMapDSV(i));
-			D3D11_VIEWPORT wp = this->csm->GetShadowMapViewPort(i);
-			this->Dx_DeviceContext->RSSetViewports(1, &wp);
+			//Sort, create instance groups and update buffer before rendering
+			this->instancingHelper->PreRenderBillboards(true); //**Tillman todo opt: remove redundant billboard data**
 
-			//Set variables
-			this->Shader_ShadowMapBillboardInstanced->SetMatrix("gLightViewProj", this->csm->GetViewProjMatrix(i));
+			//Draw billboards
+			//Set the vertex(instance) buffer
+			unsigned int billboardStrides[1];
+			unsigned int billboardOffsets[1];
+			ID3D11Buffer* billboardBufferPointers[1];
+			billboardStrides[0] = sizeof(VertexBillboard1);
+			billboardOffsets[0] = 0;
+			billboardBufferPointers[0] = this->instancingHelper->GetBillboardInstanceBuffer();	
+			this->Dx_DeviceContext->IASetVertexBuffers(0, 1, billboardBufferPointers, billboardStrides, billboardOffsets);
+			this->Dx_DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 
-			//Per instance group:
-			for(unsigned int j = 0; j < this->instancingHelper->GetNrOfBillboardGroups(); ++j)
-			{
-				if(this->instancingHelper->GetBillboardGroup(j).s_SRV != NULL) 
-				{
-					this->Shader_ShadowMapBillboardInstanced->SetResource("gDiffuseMap", this->instancingHelper->GetBillboardGroup(j).s_SRV);
-					this->Shader_ShadowMapBillboardInstanced->SetBool("gIsTextured", true);
-				}
-				else
-				{
-					this->Shader_ShadowMapBillboardInstanced->SetResource("gDiffuseMap", NULL);
-					this->Shader_ShadowMapBillboardInstanced->SetBool("gIsTextured", false);
-				}
-				
-				//Apply pass and input layout
-				this->Shader_ShadowMapBillboardInstanced->Apply(0);
-
-				//Draw
-				int instanceCount = this->instancingHelper->GetBillboardGroup(j).s_Size;
-				int startInstanceLocation = this->instancingHelper->GetBillboardGroup(j).s_StartLocation;
-				this->Dx_DeviceContext->Draw(instanceCount, startInstanceLocation);
-			}
-		}
-
-		//Reset counter (nrofbillboards)
-		this->instancingHelper->PostRenderBillboards();
-	}
-#ifdef MALOWTESTPERF
-	this->perf.PostMeasure("Renderer - Render Cascaded Shadowmap Instanced Billboards", 4);
-#endif
-
-#ifdef MALOWTESTPERF
-	this->perf.PreMeasure("Renderer - Render Cascaded Shadowmap Instanced Static meshes", 4);
-#endif
-	//STATIC OBJECTS
-	if(this->instancingHelper->GetNrOfStrips() > 0)
-	{
-		//Sort, create instance groups and update buffer before rendering
-		this->instancingHelper->PreRenderStrips(); 
-
-		//Draw static meshes(meshstrips)
-		//"Set" the instance buffer
-		ID3D11Buffer* bufferPointers[2];
-		unsigned int strides[2] = {sizeof(VertexNormalMap), sizeof(StripData::InstancedDataStruct)};
-		unsigned int offsets[2] = {0, 0};
-		bufferPointers[1] = this->instancingHelper->GetStripInstanceBuffer();	
+			//Set global variables per frame
+			this->Shader_ShadowMapBillboardInstanced->SetFloat3("gSunDir", this->sun.direction);
 		
-		//Per cascade: //**TILLMAN opt, flytta ut denna forloop (rita alla instansierat per cascade)
-		for(int i = 0; i < this->csm->GetNrOfCascadeLevels(); ++i)
-		{
-			//Set depth stencils and view ports.
-			this->Dx_DeviceContext->OMSetRenderTargets(0, 0, this->csm->GetShadowMapDSV(i));
-			D3D11_VIEWPORT wp = this->csm->GetShadowMapViewPort(i);
-			this->Dx_DeviceContext->RSSetViewports(1, &wp);
-			
-			//Set variables
-			this->Shader_ShadowMapInstanced->SetMatrix("g_LightViewProj", this->csm->GetViewProjMatrix(i));
-
-			//Per instance group:
-			for(unsigned int j = 0; j < this->instancingHelper->GetNrOfStripGroups(); ++j)
+			//Per cascade:
+			for(int i = 0; i < this->csm->GetNrOfCascadeLevels(); ++i)
 			{
-				StripGroup stripGroup = this->instancingHelper->GetStripGroup(j);
-				MeshStrip* strip = stripGroup.s_MeshStrip;
-				Object3D* renderObject = strip->GetRenderObject();
+				//Set render targets & view ports - TILLMAN TODO: sätta ihop med terräng för färre API CALLS
+				this->Dx_DeviceContext->OMSetRenderTargets(0, 0, this->csm->GetShadowMapDSV(i));
+				D3D11_VIEWPORT wp = this->csm->GetShadowMapViewPort(i);
+				this->Dx_DeviceContext->RSSetViewports(1, &wp);
 
-				//Set topology
-				this->Dx_DeviceContext->IASetPrimitiveTopology(renderObject->GetTopology());
+				//Set variables
+				this->Shader_ShadowMapBillboardInstanced->SetMatrix("gLightViewProj", this->csm->GetViewProjMatrix(i));
 
-				//Set texture for alpha discarding
-				if(renderObject->GetTextureResource() != NULL)
+				//Per instance group:
+				for(unsigned int j = 0; j < this->instancingHelper->GetNrOfBillboardGroups(); ++j)
 				{
-					if(renderObject->GetTextureResource()->GetSRVPointer() != NULL)
+					if(this->instancingHelper->GetBillboardGroup(j).s_SRV != NULL) 
 					{
-						this->Shader_ShadowMapInstanced->SetResource("g_DiffuseMap", renderObject->GetTextureResource()->GetSRVPointer());
-						this->Shader_ShadowMapInstanced->SetBool("g_IsTextured", true);
+						this->Shader_ShadowMapBillboardInstanced->SetResource("gDiffuseMap", this->instancingHelper->GetBillboardGroup(j).s_SRV);
+						this->Shader_ShadowMapBillboardInstanced->SetBool("gIsTextured", true);
+					}
+					else
+					{
+						this->Shader_ShadowMapBillboardInstanced->SetResource("gDiffuseMap", NULL);
+						this->Shader_ShadowMapBillboardInstanced->SetBool("gIsTextured", false);
+					}
+				
+					//Apply pass and input layout
+					this->Shader_ShadowMapBillboardInstanced->Apply(0);
+
+					//Draw
+					int instanceCount = this->instancingHelper->GetBillboardGroup(j).s_Size;
+					int startInstanceLocation = this->instancingHelper->GetBillboardGroup(j).s_StartLocation;
+					this->Dx_DeviceContext->Draw(instanceCount, startInstanceLocation);
+				}
+			}
+
+			//Reset counter (nrofbillboards)
+			this->instancingHelper->PostRenderBillboards();
+		}
+	#ifdef MALOWTESTPERF
+		this->perf.PostMeasure("Renderer - Render Cascaded Shadowmap Instanced Billboards", 4);
+	#endif
+
+	#ifdef MALOWTESTPERF
+		this->perf.PreMeasure("Renderer - Render Cascaded Shadowmap Instanced Static meshes", 4);
+	#endif
+		//STATIC OBJECTS
+		if(this->instancingHelper->GetNrOfStrips() > 0)
+		{
+			//Sort, create instance groups and update buffer before rendering
+			this->instancingHelper->PreRenderStrips(); 
+
+			//Draw static meshes(meshstrips)
+			//"Set" the instance buffer
+			ID3D11Buffer* bufferPointers[2];
+			unsigned int strides[2] = {sizeof(VertexNormalMap), sizeof(StripData::InstancedDataStruct)};
+			unsigned int offsets[2] = {0, 0};
+			bufferPointers[1] = this->instancingHelper->GetStripInstanceBuffer();	
+		
+			//Per cascade: //**TILLMAN opt, flytta ut denna forloop (rita alla instansierat per cascade)
+			for(int i = 0; i < this->csm->GetNrOfCascadeLevels(); ++i)
+			{
+				//Set depth stencils and view ports.
+				this->Dx_DeviceContext->OMSetRenderTargets(0, 0, this->csm->GetShadowMapDSV(i));
+				D3D11_VIEWPORT wp = this->csm->GetShadowMapViewPort(i);
+				this->Dx_DeviceContext->RSSetViewports(1, &wp);
+			
+				//Set variables
+				this->Shader_ShadowMapInstanced->SetMatrix("g_LightViewProj", this->csm->GetViewProjMatrix(i));
+
+				//Per instance group:
+				for(unsigned int j = 0; j < this->instancingHelper->GetNrOfStripGroups(); ++j)
+				{
+					StripGroup stripGroup = this->instancingHelper->GetStripGroup(j);
+					MeshStrip* strip = stripGroup.s_MeshStrip;
+					Object3D* renderObject = strip->GetRenderObject();
+
+					//Set topology
+					this->Dx_DeviceContext->IASetPrimitiveTopology(renderObject->GetTopology());
+
+					//Set texture for alpha discarding
+					if(renderObject->GetTextureResource() != NULL)
+					{
+						if(renderObject->GetTextureResource()->GetSRVPointer() != NULL)
+						{
+							this->Shader_ShadowMapInstanced->SetResource("g_DiffuseMap", renderObject->GetTextureResource()->GetSRVPointer());
+							this->Shader_ShadowMapInstanced->SetBool("g_IsTextured", true);
+						}
+						else
+						{
+							this->Shader_ShadowMapInstanced->SetResource("g_DiffuseMap", NULL);
+							this->Shader_ShadowMapInstanced->SetBool("g_IsTextured", false);
+						}
 					}
 					else
 					{
 						this->Shader_ShadowMapInstanced->SetResource("g_DiffuseMap", NULL);
 						this->Shader_ShadowMapInstanced->SetBool("g_IsTextured", false);
 					}
+
+					//Change vertex buffer and set it and the instance buffer.
+					bufferPointers[0] = renderObject->GetVertexBufferResource()->GetBufferPointer()->GetBufferPointer();
+					this->Dx_DeviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
+
+					//**TODO: INDEX BUFFER**
+
+					//Apply pass input layout
+					this->Shader_ShadowMapInstanced->Apply(0);
+
+					//Draw instanced
+					unsigned int vertexCount = strip->getNrOfVerts();
+					int instanceCount = stripGroup.s_Size;
+					int startLoc = stripGroup.s_StartLocation;
+					this->Dx_DeviceContext->DrawInstanced(vertexCount, instanceCount, 0, startLoc); 
+
+					//Debug data
+					this->CurrentNrOfDrawCalls++;
+					this->CurrentRenderedNrOfVertices += vertexCount;
 				}
-				else
-				{
-					this->Shader_ShadowMapInstanced->SetResource("g_DiffuseMap", NULL);
-					this->Shader_ShadowMapInstanced->SetBool("g_IsTextured", false);
-				}
-
-				//Change vertex buffer and set it and the instance buffer.
-				bufferPointers[0] = renderObject->GetVertexBufferResource()->GetBufferPointer()->GetBufferPointer();
-				this->Dx_DeviceContext->IASetVertexBuffers(0, 2, bufferPointers, strides, offsets);
-
-				//**TODO: INDEX BUFFER**
-
-				//Apply pass input layout
-				this->Shader_ShadowMapInstanced->Apply(0);
-
-				//Draw instanced
-				unsigned int vertexCount = strip->getNrOfVerts();
-				int instanceCount = stripGroup.s_Size;
-				int startLoc = stripGroup.s_StartLocation;
-				this->Dx_DeviceContext->DrawInstanced(vertexCount, instanceCount, 0, startLoc); 
-
-				//Debug data
-				this->CurrentNrOfDrawCalls++;
-				this->CurrentRenderedNrOfVertices += vertexCount;
 			}
+
+
+			//Reset data for next frame
+			this->instancingHelper->PostRenderStrips();
 		}
+	#ifdef MALOWTESTPERF
+		this->perf.PostMeasure("Renderer - Render Cascaded Shadowmap Instanced Static meshes", 4);
+	#endif
 
-
-		//Reset data for next frame
-		this->instancingHelper->PostRenderStrips();
-	}
-#ifdef MALOWTESTPERF
-	this->perf.PostMeasure("Renderer - Render Cascaded Shadowmap Instanced Static meshes", 4);
-#endif
-
-#ifdef MALOWTESTPERF
-	this->perf.PreMeasure("Renderer - Render Cascaded Shadowmap Instanced Animated meshes", 4);
-#endif
-	//ANIMATED MESHES
-	if(this->instancingHelper->GetNrOfAnimatedStrips() > 0)
-	{
-		//Sort, create instance groups and update buffer before rendering
-		this->instancingHelper->PreRenderAnimatedStrips(); 
-
-		//Draw meshes(meshstrips)
-		//"Set" the instance buffer
-		ID3D11Buffer* bufferPointers[3];
-		unsigned int strides[3] = {sizeof(VertexNormalMap), sizeof(VertexNormalMap), sizeof(AnimatedStripData::AnimatedInstancedDataStruct)};
-		unsigned int offsets[3] = {0, 0, 0};
-		bufferPointers[2] = this->instancingHelper->GetAnimatedStripInstanceBuffer();	
-		
-		//Per cascade: //**TILLMAN opt, flytta ut denna forloop (rita alla instansierat per cascade)
-		for(int i = 0; i < this->csm->GetNrOfCascadeLevels(); ++i)
+	#ifdef MALOWTESTPERF
+		this->perf.PreMeasure("Renderer - Render Cascaded Shadowmap Instanced Animated meshes", 4);
+	#endif
+		//ANIMATED MESHES
+		if(this->instancingHelper->GetNrOfAnimatedStrips() > 0)
 		{
-			//Set depth stencils and view ports.
-			this->Dx_DeviceContext->OMSetRenderTargets(0, 0, this->csm->GetShadowMapDSV(i));
-			D3D11_VIEWPORT wp = this->csm->GetShadowMapViewPort(i);
-			this->Dx_DeviceContext->RSSetViewports(1, &wp);
+			//Sort, create instance groups and update buffer before rendering
+			this->instancingHelper->PreRenderAnimatedStrips(); 
 
-			//Set variables
-			this->Shader_ShadowMapAnimatedInstanced->SetMatrix("g_LightViewProj", this->csm->GetViewProjMatrix(i));
-
-			//Per instance group:
-			for(unsigned int j = 0; j < this->instancingHelper->GetNrOfAnimatedStripGroups(); ++j)
+			//Draw meshes(meshstrips)
+			//"Set" the instance buffer
+			ID3D11Buffer* bufferPointers[3];
+			unsigned int strides[3] = {sizeof(VertexNormalMap), sizeof(VertexNormalMap), sizeof(AnimatedStripData::AnimatedInstancedDataStruct)};
+			unsigned int offsets[3] = {0, 0, 0};
+			bufferPointers[2] = this->instancingHelper->GetAnimatedStripInstanceBuffer();	
+		
+			//Per cascade: //**TILLMAN opt, flytta ut denna forloop (rita alla instansierat per cascade)
+			for(int i = 0; i < this->csm->GetNrOfCascadeLevels(); ++i)
 			{
-				AnimatedStripGroup animatedStripGroup = this->instancingHelper->GetAnimatedStripGroup(j);
-				MeshStrip* stripOne = animatedStripGroup.s_MeshStripOne;
-				MeshStrip* stripTwo = animatedStripGroup.s_MeshStripTwo;
-				Object3D* renderObjectOne = stripOne->GetRenderObject();
-				Object3D* renderObjectTwo = stripTwo->GetRenderObject();
+				//Set depth stencils and view ports.
+				this->Dx_DeviceContext->OMSetRenderTargets(0, 0, this->csm->GetShadowMapDSV(i));
+				D3D11_VIEWPORT wp = this->csm->GetShadowMapViewPort(i);
+				this->Dx_DeviceContext->RSSetViewports(1, &wp);
 
-				//Set topology (topology is same for both render objects).
-				this->Dx_DeviceContext->IASetPrimitiveTopology(renderObjectOne->GetTopology());
+				//Set variables
+				this->Shader_ShadowMapAnimatedInstanced->SetMatrix("g_LightViewProj", this->csm->GetViewProjMatrix(i));
 
-				//Set texture for alpha discarding (only first one is used)
-				if(renderObjectOne->GetTextureResource() != NULL)
+				//Per instance group:
+				for(unsigned int j = 0; j < this->instancingHelper->GetNrOfAnimatedStripGroups(); ++j)
 				{
-					if(renderObjectOne->GetTextureResource()->GetSRVPointer() != NULL)
+					AnimatedStripGroup animatedStripGroup = this->instancingHelper->GetAnimatedStripGroup(j);
+					MeshStrip* stripOne = animatedStripGroup.s_MeshStripOne;
+					MeshStrip* stripTwo = animatedStripGroup.s_MeshStripTwo;
+					Object3D* renderObjectOne = stripOne->GetRenderObject();
+					Object3D* renderObjectTwo = stripTwo->GetRenderObject();
+
+					//Set topology (topology is same for both render objects).
+					this->Dx_DeviceContext->IASetPrimitiveTopology(renderObjectOne->GetTopology());
+
+					//Set texture for alpha discarding (only first one is used)
+					if(renderObjectOne->GetTextureResource() != NULL)
 					{
-						this->Shader_ShadowMapAnimatedInstanced->SetResource("g_DiffuseMap0", renderObjectOne->GetTextureResource()->GetSRVPointer());
-						this->Shader_ShadowMapAnimatedInstanced->SetBool("g_IsTextured", true);
+						if(renderObjectOne->GetTextureResource()->GetSRVPointer() != NULL)
+						{
+							this->Shader_ShadowMapAnimatedInstanced->SetResource("g_DiffuseMap0", renderObjectOne->GetTextureResource()->GetSRVPointer());
+							this->Shader_ShadowMapAnimatedInstanced->SetBool("g_IsTextured", true);
+						}
+						else
+						{
+							this->Shader_ShadowMapAnimatedInstanced->SetResource("g_DiffuseMap0", NULL);
+							this->Shader_ShadowMapAnimatedInstanced->SetBool("g_IsTextured", false);
+						}
 					}
 					else
 					{
 						this->Shader_ShadowMapAnimatedInstanced->SetResource("g_DiffuseMap0", NULL);
 						this->Shader_ShadowMapAnimatedInstanced->SetBool("g_IsTextured", false);
 					}
+
+					//Set vertex buffers
+					bufferPointers[0] = renderObjectOne->GetVertexBufferResource()->GetBufferPointer()->GetBufferPointer();
+					bufferPointers[1] = renderObjectTwo->GetVertexBufferResource()->GetBufferPointer()->GetBufferPointer();
+					this->Dx_DeviceContext->IASetVertexBuffers(0, 3, bufferPointers, strides, offsets);
+
+					//Apply pass and input layout.
+					this->Shader_ShadowMapAnimatedInstanced->Apply(0);
+
+					//Draw instanced.
+					unsigned int vertexCount = stripOne->getNrOfVerts(); //Same for strip two.
+					int instanceCount = animatedStripGroup.s_Size;
+					int startLoc = animatedStripGroup.s_StartLocation;
+					this->Dx_DeviceContext->DrawInstanced(vertexCount, instanceCount, 0, startLoc); 
+
+					//Debug data
+					this->CurrentNrOfDrawCalls++;
+					this->CurrentRenderedNrOfVertices += vertexCount * 2;
 				}
-				else
-				{
-					this->Shader_ShadowMapAnimatedInstanced->SetResource("g_DiffuseMap0", NULL);
-					this->Shader_ShadowMapAnimatedInstanced->SetBool("g_IsTextured", false);
-				}
-
-				//Set vertex buffers
-				bufferPointers[0] = renderObjectOne->GetVertexBufferResource()->GetBufferPointer()->GetBufferPointer();
-				bufferPointers[1] = renderObjectTwo->GetVertexBufferResource()->GetBufferPointer()->GetBufferPointer();
-				this->Dx_DeviceContext->IASetVertexBuffers(0, 3, bufferPointers, strides, offsets);
-
-				//Apply pass and input layout.
-				this->Shader_ShadowMapAnimatedInstanced->Apply(0);
-
-				//Draw instanced.
-				unsigned int vertexCount = stripOne->getNrOfVerts(); //Same for strip two.
-				int instanceCount = animatedStripGroup.s_Size;
-				int startLoc = animatedStripGroup.s_StartLocation;
-				this->Dx_DeviceContext->DrawInstanced(vertexCount, instanceCount, 0, startLoc); 
-
-				//Debug data
-				this->CurrentNrOfDrawCalls++;
-				this->CurrentRenderedNrOfVertices += vertexCount * 2;
 			}
+
+			//Reset data for next frame
+			this->instancingHelper->PostRenderAnimatedStrips();
 		}
-
-		//Reset data for next frame
-		this->instancingHelper->PostRenderAnimatedStrips();
 	}
-
-	
 	
 #ifdef MALOWTESTPERF
 	this->perf.PostMeasure("Renderer - Render Cascaded Shadowmap Instanced Animated meshes", 4);
