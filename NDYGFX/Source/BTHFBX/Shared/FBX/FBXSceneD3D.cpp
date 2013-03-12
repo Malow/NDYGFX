@@ -67,6 +67,8 @@ void FBXSceneD3D::Render(float dt, D3DXMATRIX& world, D3DXMATRIX& camProj, D3DXM
 
 IBTHFbxAnimationController* FBXSceneD3D::GetAnimationController()
 {
+	if(!this->mFBXScene)
+		return 0;
 	return mFBXScene->GetAnimationController();
 }
 

@@ -16,29 +16,28 @@
 class BillboardCollection : public iBillboardCollection
 {
 	private:
-		unsigned int				zNrOfVertices;
-		//std::vector<VertexBillboardCompressed1>zVertices; //position(world), texture coordinates, size(width, height), color
+		unsigned int		zNrOfVertices;
 		VertexBillboard1*	zVertices; //position(world), texture coordinates, size(width, height), color
-		TextureResource*			zTextureResource;
-		D3DXVECTOR3					zOffsetVector; //offset added to world positions, can be seen as a "world"-matrix.
+		TextureResource*	zTextureResource;
+		D3DXVECTOR3			zOffsetVector; //offset added to world positions, can be seen as a "world"-matrix.
+		bool				zRenderShadowFlag;
 
 	public:
 		BillboardCollection();
-		//BillboardCollection(const std::vector<VertexBillboardCompressed1>& vertices, const D3DXVECTOR3& offsetVector)
 		BillboardCollection(unsigned int nrOfVertices, const VertexBillboard1* vertices, const D3DXVECTOR3& offsetVector);
 		BillboardCollection(unsigned int nrOfVertices, const D3DXVECTOR3* positions,
 							const D3DXVECTOR2* sizes, const D3DXVECTOR3* colors, const D3DXVECTOR3& offsetVector);
 		virtual ~BillboardCollection();
 
 		unsigned int GetNrOfVertices() { return this->zNrOfVertices; }
-
 		//D3DXVECTOR3 GetPositionD3DX(unsigned int vertexIndex)					const { return this->zVertices[vertexIndex].pos; }
 		//D3DXVECTOR2 GetTexCoordD3DX(unsigned int vertexIndex)					const { return D3DXVECTOR2(this->zVertices[vertexIndex].texAndSize.x, this->zVertices[vertexIndex].texAndSize.y); }
 		//D3DXVECTOR2 GetSizeD3DX(unsigned int vertexIndex)						const { return D3DXVECTOR2(this->zVertices[vertexIndex].texAndSize.z, this->zVertices[vertexIndex].texAndSize.w); }
 		//D3DXVECTOR3 GetColorD3DX(unsigned int vertexIndex)						const { return this->zVertices[vertexIndex].color; }
 		const VertexBillboard1& GetVertex(unsigned int vertexIndex)	const { return this->zVertices[vertexIndex]; }
-		const TextureResource* GetTextureResource()								const { return this->zTextureResource; }
-		const D3DXVECTOR3& GetOffsetVector()									const { return this->zOffsetVector; }
+		const TextureResource* GetTextureResource()	const { return this->zTextureResource; }
+		const D3DXVECTOR3& GetOffsetVector() const { return this->zOffsetVector; }
+		bool GetRenderShadowFlag() const { return this->zRenderShadowFlag; }
 
 		//void SetPosition(unsigned int vertexIndex, D3DXVECTOR3 position){ this->zVertices[vertexIndex].pos = position; }
 		//void SetSize(unsigned int vertexIndex, D3DXVECTOR2 size)		{ this->zVertices[vertexIndex].texAndSize = D3DXVECTOR4(this->zVertices[vertexIndex].texAndSize.x, this->zVertices[vertexIndex].texAndSize.y, size.x, size.y); }
@@ -59,6 +58,7 @@ class BillboardCollection : public iBillboardCollection
 		virtual void SetColor(Vector3 color);
 		*/
 
+		virtual void SetRenderShadowFlag(bool flag) { this->zRenderShadowFlag = flag; }
 
 
 };

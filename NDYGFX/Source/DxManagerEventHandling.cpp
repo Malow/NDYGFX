@@ -170,7 +170,9 @@ void DxManager::HandleBillboardEvent(BillboardEvent* ie)
 void DxManager::HandleBillboardCollectionEvent(BillboardCollectionEvent* ie)
 {
 	if(ie->IsAdding())
+	{
 		this->billboardCollections.add(ie->GetBillboardCollection());
+	}
 	else
 	{
 		BillboardCollection* billboardCollection = ie->GetBillboardCollection();
