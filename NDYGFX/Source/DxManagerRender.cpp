@@ -1692,15 +1692,6 @@ void DxManager::Render()
 	this->perf.PostMeasure("Renderer - Render Translucent", 2);
 #endif
 
-#ifdef MALOWTESTPERF
-	this->perf.PreMeasure("Renderer - Render Invisible Geo", 2);
-#endif
-	if(this->invisibleGeometry)
-		this->RenderInvisibilityEffect(); 
-#ifdef MALOWTESTPERF
-	this->perf.PostMeasure("Renderer - Render Invisible Geo", 2);
-#endif
-
 	//this->RenderWaterPlanes();
 	
 #ifdef MALOWTESTPERF
@@ -1720,6 +1711,15 @@ void DxManager::Render()
 		this->RenderEnclosingFog();
 #ifdef MALOWTESTPERF
 	this->perf.PostMeasure("Renderer - Render Enclosing Fog", 2);
+#endif
+
+#ifdef MALOWTESTPERF
+	this->perf.PreMeasure("Renderer - Render Invisible Geo", 2);
+#endif
+	if(this->invisibleGeometry)
+		this->RenderInvisibilityEffect(); 
+#ifdef MALOWTESTPERF
+	this->perf.PostMeasure("Renderer - Render Invisible Geo", 2);
 #endif
 
 #ifdef MALOWTESTPERF

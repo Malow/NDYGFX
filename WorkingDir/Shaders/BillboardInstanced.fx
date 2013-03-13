@@ -173,7 +173,7 @@ PSOut PS(PSIn input)
 			discard;
 		}
 
-		output.Texture = saturate(finalColor + float4(input.color, 1.0f));
+		output.Texture = float4(((finalColor.rgb + input.color) * 0.5f), finalColor.a);
 	}
 	else
 	{
