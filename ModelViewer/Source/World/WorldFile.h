@@ -18,7 +18,11 @@ Entities
 AIGrid
 BlendMaps2
 TextureNames2
+Water
 */
+
+// The Maximum of water quads saved
+static unsigned int MAX_NUM_WATER_QUADS = 100000;
 
 enum WORLDFILE_OPENMODE
 {
@@ -98,6 +102,8 @@ class WorldFile : public Observed
 	std::fstream *zFile;
 	WORLDFILE_OPENMODE zMode;
 	unsigned int zNumSectors;
+	
+	std::vector<Vector3> zWaters;
 
 public:
 	WorldFile( Observer* observer, const std::string& fileName, WORLDFILE_OPENMODE mode );
@@ -138,6 +144,10 @@ public:
 	void WriteAIGrid( const AIGrid& grid, unsigned int sectorIndex );
 	bool ReadAIGrid( AIGrid& grid, unsigned int sectorIndex );
 
+	// Water
+	bool ReadWater( std::vector<Vector3>& waters );
+	void WriteWater( const std::vector<Vector3>& waters );
+
 	// Read the world header
 	void ReadHeader();
 
@@ -166,5 +176,6 @@ private:
 	unsigned int GetBlendsBegin2() const;
 	unsigned int GetSectorTexturesBegin2() const;
 	unsigned int GetNormalsBegin() const;
+	unsigned int GetWaterBegin() const;
 	unsigned int GetEnding() const;
 };

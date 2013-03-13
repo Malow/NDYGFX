@@ -1,19 +1,22 @@
 #pragma once
 
-#include <string>
-#include <map>
 #include "Sector.h"
 #include "Observer.h"
 #include "WorldFile.h"
 #include "CircleAndRect.h"
+#include "EntQuadTree.h"
+
+#include <string>
+#include <map>
 
 class Entity;
 class World;
+class WaterQuad;
 
 class WorldAnchor
 {
 private:
-	WorldAnchor() : position(0.0f,0.0f), radius(100.0f)
+	WorldAnchor() : position(0.0f, 0.0f), radius(100.0f)
 	{
 	}
 
@@ -38,9 +41,14 @@ private:
 	// Sectors
 	Sector*** zSectors;
 	std::set<Vector2UINT> zLoadedSectors;
-	std::map< Sector*, unsigned int > zLoadedEntityCount;
+	std::map<Sector*, unsigned int> zLoadedEntityCount;
 
-	std::vector<Entity*> zEntities;
+	// Water
+	std::set<WaterQuad*> zWaterQuads;
+	bool zWaterQuadsEdited;
+
+	// Entities
+	EntQuadTree zEntTree;
 	
 	// World Settings
 	unsigned int zNrOfSectorsWidth;
@@ -56,8 +64,8 @@ private:
 	std::set<WorldAnchor*> zAnchors;
 
 public:
-	World( Observer* observer, const std::string& fileName="", bool readOnly=true ) throw(...);
-	World( Observer* observer, unsigned int nrOfSectorWidth, unsigned int nrOfSectorHeight);
+	World(Observer* observer, const std::string& fileName="", bool readOnly=true) throw(...);
+	World(Observer* observer, unsigned int nrOfSectorWidth, unsigned int nrOfSectorHeight);
 	virtual ~World();
 
 	// Save World To File
@@ -69,9 +77,14 @@ public:
 	unsigned int GetNumSectorsWidth() const;
 	unsigned int GetNumSectorsHeight() const;
 	Vector2 GetWorldCenter() const;
-
 	Vector2 GetWorldSize() const;
 	bool IsInside( const Vector2& worldPos );
+
+	// Water Quads
+	WaterQuad* CreateWaterQuad();
+	void DeleteWaterQuad( WaterQuad* quad );
+	inline const std::set<WaterQuad*>& GetWaterQuads() const { return zWaterQuads; }
+	float GetWaterDepthAt( const Vector2& worldPos );
 
 	// Sun Settings
 	void SetSunProperties( const Vector3& dir, const Vector3& color, float intensity );
@@ -106,6 +119,7 @@ public:
 	void GenerateSectorNormals( const Vector2UINT& sectorCoords );
 
 	// Modify Blend Functions
+	float GetAmountOfTexture(const Vector2& worldPos, const std::string& name );
 	void ModifyBlendingAt( const Vector2& worldPos, const BlendValues& val );
 	BlendValues GetBlendingAt( const Vector2& worldPos );
 	void SetBlendingAt( const Vector2& worldPos, const BlendValues& val );

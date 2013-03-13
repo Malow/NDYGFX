@@ -9,6 +9,7 @@ class World;
 class Entity;
 class WorldFile;
 class WorldFileHeader;
+class WaterQuad;
 
 class WorldHeaderLoadedEvent : public Event
 {
@@ -166,6 +167,18 @@ public:
 	World* world;
 	Entity* entity;
 	EntityRemovedEvent( World* world, Entity* entity ) : world(world), entity(entity) {}
+};
+
+class WaterQuadCreatedEvent : public Event
+{
+public:
+	WaterQuad* zQuad;
+};
+
+class WaterQuadLoadedEvent : public Event
+{
+public:
+	WaterQuad* zQuad;
 };
 
 #pragma warning (pop)

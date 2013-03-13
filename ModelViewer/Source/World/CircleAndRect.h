@@ -10,7 +10,7 @@ public:
 	Vector2 center;
 	float radius;
 
-	Circle( const Vector2& center, float radius ) : 
+	Circle( const Vector2& center, const float& radius ) : 
 		center(center),
 		radius(radius)
 	{

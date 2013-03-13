@@ -2,6 +2,7 @@
 #define _OBSERVER_HPP_
 
 #include <set>
+#include <map>
 
 class Event;
 class Observer;
@@ -14,25 +15,104 @@ public:
 	virtual ~Event() {}
 };
 
-
 class Observer
 {
 protected:
 	virtual void OnEvent( Event* ) {};
+	virtual ~Observer() {};
 
 	friend class Observed;
 };
 
-
 class Observed
 {
-	std::set<Observer*> _observers;
+private:
+	std::set<Observer*> zObservers;
+	std::map<Observer*, int> zNewObservers;
+	bool zInUse;
+
 public:
-	inline void AddObserver( Observer* observer ) { if ( observer ) _observers.insert(observer); }
-	inline void RemoveObserver( Observer* observer ) { if ( observer ) _observers.erase(observer); }
+	inline void AddObserver( Observer* observer ) 
+	{
+		if ( observer ) 
+		{
+			if ( zInUse )
+			{
+				zNewObservers[observer]++;
+			}
+			else
+			{
+				zObservers.insert(observer); 
+			}
+		}
+	}
+
+	inline void RemoveObserver( Observer* observer ) 
+	{
+		if ( observer )
+		{
+			if ( zInUse )
+			{
+				zNewObservers[observer]--;
+			}
+			else
+			{
+				zObservers.erase(observer);
+			}
+		}
+	}
+
 protected:
-	Observed( Observer* default=0 ) { AddObserver(default); }
-	inline void NotifyObservers( Event* e ) { for( std::set<Observer*>::iterator i=_observers.begin(); i != _observers.end(); ++i ) { (*i)->OnEvent(e); } }
+	Observed( Observer* default = 0 ) : 
+		zInUse(false)
+	{
+		AddObserver(default); 
+	}
+
+	virtual ~Observed() 
+	{
+	}
+
+	inline void NotifyObservers( Event* e ) 
+	{ 
+		if ( zObservers.size() )
+		{
+			zInUse = true;
+
+			// Notify Observers
+			for( std::set<Observer*>::iterator i = zObservers.cbegin(); i != zObservers.cend(); ++i ) 
+			{
+				auto i2 = zNewObservers.find(*i);
+				if ( i2 == zNewObservers.cend() || i2->second > 0 )
+				{
+					try
+					{
+						(*i)->OnEvent(e);
+					}
+					catch(...)
+					{
+
+					}
+				}
+			}
+
+			// New Observers
+			for( auto i = zNewObservers.cbegin(); i != zNewObservers.cend(); ++i )
+			{
+				if ( i->second < 0 )
+				{
+					zObservers.erase(i->first);
+				}
+				else if ( i->second > 0 )
+				{
+					zObservers.insert(i->first);
+				}
+			}
+			zNewObservers.clear();
+
+			zInUse = false;
+		}
+	}
 };
 
 #endif // _OBSERVER_HPP_

@@ -3,6 +3,9 @@
 #include <Vector.h>
 #include "Observer.h"
 
+#pragma warning ( push )
+#pragma warning ( disable : 4512 ) // Assignment operator could not be generated
+
 class Entity;
 class World;
 
@@ -16,6 +19,19 @@ class EntityChangedTypeEvent : public Event
 {
 public:
 	Entity* entity;
+};
+
+class EntityMovingEvent : public Event
+{
+public:
+	const Vector3& zNewPos;
+	Entity* zEntity;
+
+	EntityMovingEvent( Entity* entity, const Vector3& newPos ) :
+		zNewPos(newPos),
+		zEntity(entity)
+	{
+	}
 };
 
 class EntityUpdatedEvent : public Event
@@ -41,7 +57,7 @@ private:
 	bool zSelected;
 	bool zEdited;
 
-	Entity(unsigned int type, const Vector3& pos=Vector3(0.0f,0.0f,0.0f), const Vector3& rot=Vector3(0.0f,0.0f,0.0f), const Vector3& scale=Vector3(1.0f,1.0f,1.0f));
+	Entity(unsigned int type, const Vector3& pos=Vector3(0.0f, 0.0f, 0.0f), const Vector3& rot=Vector3(0.0f,0.0f,0.0f), const Vector3& scale=Vector3(1.0f,1.0f,1.0f));
 	virtual ~Entity();
 
 public:
@@ -63,5 +79,7 @@ public:
 	void SetType( unsigned int& newType );
 	inline unsigned int GetType() const { return zType; }
 
-	friend class World;
+	friend World;
 };
+
+#pragma warning ( pop )

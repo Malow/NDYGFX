@@ -378,7 +378,6 @@ void WorldFile::WriteTextureNames2( const char* data, unsigned int sectorIndex )
 		zFile->write(data, sizeof(TextureNamesStruct));
 	}
 }
-
 bool WorldFile::ReadTextureNames2( char* data, unsigned int sectorIndex )
 {
 	if ( !zFile ) Open();
@@ -396,12 +395,10 @@ bool WorldFile::ReadTextureNames2( char* data, unsigned int sectorIndex )
 	return false;
 }
 
-
 unsigned int WorldFile::GetNormalsBegin() const
 {
 	return GetSectorTexturesBegin2() + zNumSectors * sizeof(TextureNamesStruct);
 }
-
 
 void WorldFile::WriteNormals( const float* const data, unsigned int sectorIndex )
 {
@@ -428,10 +425,52 @@ bool WorldFile::ReadNormals( float* data, unsigned int sectorIndex )
 	return true;
 }
 
+unsigned int WorldFile::GetWaterBegin() const
+{
+	return GetNormalsBegin() + zNumSectors * sizeof(NormalsStruct);
+}
+
+void WorldFile::WriteWater( const std::vector<Vector3>& waters )
+{
+	if ( zMode != OPEN_LOAD )
+	{
+		if ( !zFile ) Open();
+		
+		// Seek Water
+		zFile->seekp( GetWaterBegin(), std::ios::beg );
+
+		// Num Water Quads
+		unsigned int numWaterQuads = waters.size()/4;
+		if ( numWaterQuads > MAX_NUM_WATER_QUADS ) numWaterQuads = MAX_NUM_WATER_QUADS;
+		zFile->write(reinterpret_cast<const char*>(&numWaterQuads), sizeof(unsigned int));
+
+		// Water Quads
+		if ( numWaterQuads ) zFile->write(reinterpret_cast<const char*>(&waters[0]), sizeof(Vector3) * 4 * numWaterQuads);
+	}
+}
+
+bool WorldFile::ReadWater( std::vector<Vector3>& waters )
+{
+	if ( !zFile ) Open();
+
+	// Check Water
+	zFile->seekg( GetWaterBegin(), std::ios::beg );
+	if ( zFile->eof() ) return false;
+	
+	// Check Number of Water Quads
+	unsigned int numWaterQuads = 0;
+	if ( !zFile->read(reinterpret_cast<char*>(&numWaterQuads), sizeof(unsigned int)) ) return false;
+
+	// Load Water Quads
+	waters.resize(numWaterQuads*4);
+	if ( numWaterQuads ) if ( !zFile->read(reinterpret_cast<char*>(&waters[0]), numWaterQuads * sizeof(Vector3) * 4) ) return false;
+
+	return true;
+}
 
 unsigned int WorldFile::GetEnding() const
 {
-	return GetNormalsBegin() + zNumSectors * sizeof(NormalsStruct);
+	return GetWaterBegin() + sizeof(unsigned int) + MAX_NUM_WATER_QUADS * sizeof(Vector3) * 4;
 }
 
 void WorldFile::SetStartCamera( const Vector3& pos, const Vector3& rot )
@@ -451,7 +490,6 @@ void WorldFile::SetStartCamera( const Vector3& pos, const Vector3& rot )
 	}
 }
 
-
 void WorldFile::SetWorldAmbient( const Vector3& ambient )
 {
 	if ( zMode != OPEN_LOAD )
@@ -468,13 +506,11 @@ void WorldFile::SetWorldAmbient( const Vector3& ambient )
 	}
 }
 
-
 Vector3 WorldFile::GetStartCamPos()
 {
 	ReadHeader();
 	return Vector3(zHeader.camPos[0], zHeader.camPos[1], zHeader.camPos[2] );
 }
-
 
 Vector3 WorldFile::GetStartCamRot()
 {
@@ -482,13 +518,11 @@ Vector3 WorldFile::GetStartCamRot()
 	return Vector3(zHeader.camRot[0], zHeader.camRot[1], zHeader.camRot[2] );
 }
 
-
 Vector3 WorldFile::GetWorldAmbient()
 {
 	ReadHeader();
 	return Vector3(zHeader.ambientLight[0], zHeader.ambientLight[1], zHeader.ambientLight[2] );
 }
-
 
 void WorldFile::SetSunProperties( const Vector3& dir, const Vector3& color, float intensity )
 {
@@ -509,7 +543,6 @@ void WorldFile::SetSunProperties( const Vector3& dir, const Vector3& color, floa
 	}
 }
 
-
 Vector3 WorldFile::GetSunDirection()
 {
 	ReadHeader();
@@ -522,7 +555,6 @@ Vector3 WorldFile::GetSunColor()
 	ReadHeader();
 	return Vector3(zHeader.sunColor[0], zHeader.sunColor[1], zHeader.sunColor[2]);
 }
-
 
 float WorldFile::GetSunIntensity()
 {

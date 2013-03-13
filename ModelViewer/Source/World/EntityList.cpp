@@ -2,7 +2,7 @@
 #include <vector>
 #include <string>
 #include <fstream>
-
+#include <set>
 
 struct EntInfo
 {
@@ -10,7 +10,13 @@ struct EntInfo
 	float blockRadius;
 	float billboardDistance;
 	std::vector< std::string > billboards;
-	std::vector< std::string > models;
+	std::set< std::pair<float, std::string> > models;
+
+	EntInfo() :
+		blockRadius(0),
+		billboardDistance(0)
+	{
+	}
 };
 
 static std::vector<EntInfo> entities;
@@ -46,7 +52,17 @@ void LoadEntList( const std::string& fileName ) throw(...)
 		}
 		else if ( curLine.find("model:") == 0 )
 		{
-			entities[curNumber-1].models.push_back(curLine.substr(6, curLine.length() - 6));
+			// Distance
+			float distance = std::numeric_limits<float>::max();			
+
+			// Filename Buffer
+			std::string buffer;
+			buffer.resize(curLine.length()-6);
+
+			// Scan
+			sscanf(curLine.c_str(), "model:%s %f", &buffer[0], &distance);
+
+			entities[curNumber-1].models.insert(std::pair<float, std::string>(distance, buffer));
 		}
 		else if ( curLine.find("billboarddistance:") == 0 )
 		{
@@ -71,16 +87,30 @@ const std::string& GetEntName( unsigned int entIndex ) throw(...)
 	return entities[entIndex-1].entName;
 }
 
-const std::string& GetEntModel( unsigned int entIndex ) throw(...)
+const std::string& GetEntModel( unsigned int entIndex, float distance ) throw(...)
 {
 	if ( entIndex-1 >= entities.size() ) throw("Index Out Of Bounds!");
 	
+	// No Models
 	static const std::string noModel = "";
 	if ( entities[entIndex-1].models.empty() )
 		return noModel;
 
-	unsigned int r = rand()%entities[entIndex-1].models.size();
-	return entities[entIndex-1].models[r];
+	// Find Best Match
+	auto selected = entities[entIndex-1].models.rbegin();
+
+	auto ents_end = entities[entIndex-1].models.rend();
+
+	for( auto i = entities[entIndex-1].models.rbegin(); i != ents_end; ++i )
+	{
+		if ( distance < i->first )
+		{
+			selected = i;
+		}
+	} 
+
+	// All Models Outside Range
+	return ( distance < selected->first? selected->second : noModel );
 }
 
 const float& GetEntBlockRadius( unsigned int entIndex ) throw(...)
