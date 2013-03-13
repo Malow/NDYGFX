@@ -36,7 +36,7 @@ void FBXSceneD3D::Update(float dt)
 	mFBXScene->UpdateScene(dt, true);
 }
 
-void FBXSceneD3D::Render(float dt, D3DXMATRIX& world, D3DXMATRIX& camProj, D3DXMATRIX& camView, D3DXMATRIX& camViewProj, Shader* mShader, ID3D11DeviceContext* devCont)
+void FBXSceneD3D::Render(float dt, D3DXMATRIX& world, D3DXMATRIX& worldInverseTranspose, D3DXMATRIX& camProj, D3DXMATRIX& camView, D3DXMATRIX& camViewProj, Shader* mShader, ID3D11DeviceContext* devCont)
 {
 	devCont->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
@@ -51,6 +51,7 @@ void FBXSceneD3D::Render(float dt, D3DXMATRIX& world, D3DXMATRIX& camProj, D3DXM
 	}
 	mShader->SetMatrix("g_mScale", world);
 	mShader->SetMatrix("gWorld", world);
+	mShader->SetMatrix("gWorldInvTrans", worldInverseTranspose);
 
 	mShader->SetMatrix("gView", camView);
 	mShader->SetMatrix("gProj", camProj);

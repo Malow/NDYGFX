@@ -8,6 +8,7 @@
 //--------------------------------------------------------------------------------------
 matrix gWVP;					// Model * View * Projection
 matrix gWorld;					// World matrix
+matrix gWorldInvTrans;
 matrix gView;					// View
 matrix gProj;					// Projection
 matrix gViewProj;				// View * Project
@@ -184,7 +185,7 @@ PSSceneIn DefaultVS(VSIn input)
 	// Output
 	Output.WorldPos = position;
 	Output.Pos = mul(position, gViewProj);
-	Output.norm = normal; //mul(float4(normal, 0), g_mScale);
+	Output.norm = mul(float4(normal, 0), gWorldInvTrans); //mul(float4(normal, 0), g_mScale);
 	Output.Tangent = mul(float4(tangent, 0), g_mScale);
 	Output.tex = input.vTexCoord;
     return Output;
