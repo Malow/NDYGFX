@@ -3,9 +3,6 @@
 #include "DxManagerDebugging.h"
 
 
-
-
-
 HRESULT DxManager::Update(float)
 {
 	// update subsystems

@@ -138,6 +138,7 @@ class InstancingHelper
 		ID3D11Buffer* zStripInstanceBuffer; 
 
 
+
 		//ANIMATED MESHES(MESHSTRIPS)
 		//Counters
 		unsigned int zAnimatedStripInstanceBufferSize;

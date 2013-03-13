@@ -117,8 +117,12 @@ PSout PSScene(PSSceneIn input) : SV_Target
 	finalColor.w = 0.0f;
 	output.Texture = finalColor;
 
+
+	float depth = length(g_CamPos.xyz - input.worldPos.xyz) / g_FarClip;		// Haxfix
+
 	//Normal and depth
-	if(g_UseNormalMap)
+	// disable nm if too far away, 5% of far clip seems decent..
+	if(depth < 0.05f && g_UseNormalMap)
 	{
 		// NormalMap
 		float4 bumpMap = g_NormalMap.Sample(LinearWrapSampler, input.tex);
@@ -135,7 +139,6 @@ PSout PSScene(PSSceneIn input) : SV_Target
 	{
 		output.NormalAndDepth = float4(input.norm.xyz, input.Pos.z / input.Pos.w);		// pos.z / pos.w should work?
 	}
-	float depth = length(g_CamPos - input.worldPos.xyz) / g_FarClip;		// Haxfix
 	output.NormalAndDepth.w = depth;
 
 	//Position (and object type)

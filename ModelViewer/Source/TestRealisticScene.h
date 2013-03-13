@@ -127,7 +127,7 @@ bool TestRealisticScene::RunTest(float diff)
 		pos.y = world->GetHeightAt(Vector2(pos.x, pos.z)) + 5.0f;
 		GetGraphics()->GetCamera()->SetPosition(pos);
 		if(GetGraphics()->GetCamera()->GetPosition().x < 1700)
-			path--;
+			path++;
 
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_RETURN))
 		{
@@ -138,6 +138,48 @@ bool TestRealisticScene::RunTest(float diff)
 		return true;
 #endif
 	
+
+
+
+
+
+
+
+
+
+
+	static bool fesd = true;
+	static int qual = 0;
+	if(GetGraphics()->GetKeyListener()->IsPressed('H'))
+	{
+		if(fesd)
+		{
+
+			if(qual % 2 == 0)
+			{
+				
+			}
+			else
+			{
+				
+			}
+			GetGraphics()->ReloadShaders(23);
+			GetGraphics()->ReloadShaders(22);
+			//GetGraphics()->ReloadShaders(1);
+			//MaloW::Debug("Diff: " + MaloW::convertNrToString(totDiff / nrofdiffs));
+			//GetGraphics()->ChangeShadowQuality(qual);
+			//secModel->SetPosition(Vector3(10, 10, 10));
+			qual++;
+			fesd = false;
+		}			
+	}
+	else
+		fesd = true;
+
+
+
+
+
 	return false;
 }
 

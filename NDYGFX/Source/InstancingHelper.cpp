@@ -19,7 +19,6 @@ bool SortAnimatedStripData(AnimatedStripData &stripLeft, AnimatedStripData &stri
 	return stripLeft.s_MeshStripOne > stripRight.s_MeshStripOne; //**räcker med 1 jämförelse?**
 }
 
-
 //PRIVATE
 void InstancingHelper::ExpandBillboardInstanceBuffer()
 {
@@ -516,7 +515,6 @@ void InstancingHelper::PreRenderStrips()
 {
 	//Sort the data by meshStrip
 	std::sort(this->zStripData.begin(), this->zStripData.end(), SortStripData);
-
 
 
 	//Now that the data is sorted, create instance groups.

@@ -1017,6 +1017,7 @@ void DxManager::RenderDeferredGeometryInstanced()
 					{
 						this->Shader_DeferredAnimatedGeometryInstanced->SetResource("g_NormalMap", renderObjectOne->GetNormalMapResource()->GetSRVPointer());
 						this->Shader_DeferredAnimatedGeometryInstanced->SetBool("g_UseNormalMap", true);
+
 					}
 					else
 					{
