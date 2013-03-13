@@ -399,7 +399,15 @@ void InstancingHelper::PreRenderBillboards(bool shadowmap)
 					prevGroupStart = this->zBillboardGroups[this->zBillboardGroups.size() - 1].s_StartLocation;
 					prevGroupSize = this->zBillboardGroups[this->zBillboardGroups.size() - 1].s_Size;
 				}
-				BillboardGroup newBBGroup = BillboardGroup(billboardCollection->GetNrOfVertices(), prevGroupStart + prevGroupSize, billboardCollection->GetTextureResource()->GetSRVPointer());
+				BillboardGroup newBBGroup;
+				if(billboardCollection->GetTextureResource() != NULL)
+				{
+					newBBGroup = BillboardGroup(billboardCollection->GetNrOfVertices(), prevGroupStart + prevGroupSize, billboardCollection->GetTextureResource()->GetSRVPointer());
+				}
+				else
+				{
+					newBBGroup = BillboardGroup(billboardCollection->GetNrOfVertices(), prevGroupStart + prevGroupSize, NULL);
+				}
 				this->zBillboardGroups.push_back(newBBGroup);
 
 				//Add billboard data
@@ -432,7 +440,15 @@ void InstancingHelper::PreRenderBillboards(bool shadowmap)
 				prevGroupStart = this->zBillboardGroups[this->zBillboardGroups.size() - 1].s_StartLocation;
 				prevGroupSize = this->zBillboardGroups[this->zBillboardGroups.size() - 1].s_Size;
 			}
-			BillboardGroup newBBGroup = BillboardGroup(billboardCollection->GetNrOfVertices(), prevGroupStart + prevGroupSize, billboardCollection->GetTextureResource()->GetSRVPointer());
+			BillboardGroup newBBGroup;
+			if(billboardCollection->GetTextureResource() != NULL)
+			{
+				newBBGroup = BillboardGroup(billboardCollection->GetNrOfVertices(), prevGroupStart + prevGroupSize, billboardCollection->GetTextureResource()->GetSRVPointer());
+			}
+			else
+			{
+				newBBGroup = BillboardGroup(billboardCollection->GetNrOfVertices(), prevGroupStart + prevGroupSize, NULL);
+			}
 			this->zBillboardGroups.push_back(newBBGroup);
 			
 			//Add billboard data
