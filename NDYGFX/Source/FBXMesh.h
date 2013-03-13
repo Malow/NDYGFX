@@ -53,7 +53,7 @@ public:
 
 	BoundingSphere& GetBoundingSphere() { return this->bs; }
 
-	//BTHFBX_RAY_BOX_RESULT RayVsScene(const BTHFBX_RAY& ray, BTHFBX_MATRIX* worldMatrix);
+	BTHFBX_RAY_BOX_RESULT RayVsScene(Vector3& rayOrigin, Vector3& rayDirection);
 };
 
 #pragma warning ( pop )

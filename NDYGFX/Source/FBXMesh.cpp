@@ -74,7 +74,6 @@ bool FBXMesh::LoadFromFile( string file, IBTHFbx* fbx, ID3D11Device* dev, ID3D11
 bool FBXMesh::SetAnimation( unsigned int ani )
 {
 	zSceneMutex.lock();
-
 	if ( !this->zScene->GetAnimationController() )
 	{
 		MaloW::Debug(
@@ -197,4 +196,16 @@ void FBXMesh::RenderShadow( float dt, D3DXMATRIX& lightViewProj, Shader* shad, I
 	this->RecreateWorldMatrix();
 	D3DXMATRIX world = this->GetWorldMatrix();
 	this->zScene->RenderShadow(0, world, lightViewProj, shad, devCont );
+}
+
+BTHFBX_RAY_BOX_RESULT FBXMesh::RayVsScene(Vector3& rayOrigin, Vector3& rayDirection)
+{
+	D3DXMATRIX worldMat = this->GetWorldMatrix();
+	BTHFBX_RAY ray;
+	ray.Origin = BTHFBX_VEC3(rayOrigin.x, rayOrigin.y, rayOrigin.z);
+	ray.Direction = BTHFBX_VEC3(rayDirection.x, rayDirection.y, rayDirection.z);
+	BTHFBX_MATRIX mat;
+	for(int i = 0; i < 16; i++)
+		mat.f[i] = worldMat[i];
+	return this->zScene->RayVsScene(ray, &mat);
 }

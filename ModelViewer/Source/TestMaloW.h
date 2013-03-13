@@ -82,7 +82,8 @@ void MaloWTest::PreTest()
 	iMesh* ferntest = GetGraphics()->CreateMesh("Media/fernTest.obj", Vector3(25, 20, 25));
 	ferntest->Scale(0.05f);	
 
-	fbx = GetGraphics()->CreateFBXMesh("Media/temp_guy_few_anims.fbx", Vector3(50, 10, 50));
+	fbx = GetGraphics()->CreateFBXMesh("Media/Soldier_animated_jump.fbx", Vector3(50, 10, 50));
+	fbx->Scale(0.1f);
 
 	deer = GetGraphics()->CreateMesh("Media/deer_temp.obj", Vector3(10, 20, 25));
 	deer->Scale(0.05f);
@@ -118,6 +119,8 @@ void MaloWTest::RunTest(float diff)
 	//MaloW::Debug(" ");
 	//diff = 100.0f;
 
+	
+
 	//secModel->MoveBy(Vector3(0.001f, 0.001f, 0.001f) * diff);
 
 	/*
@@ -141,8 +144,10 @@ void MaloWTest::RunTest(float diff)
 	//	GetGraphics()->GetCamera()->GetForward(), tempguy);
 	
 	//if(!cd.collision)
-		cd = GetGraphics()->GetPhysicsEngine()->GetCollisionRayMesh(GetGraphics()->GetCamera()->GetPosition(), 
-		GetGraphics()->GetCamera()->Get3DPickingRay(), deer);
+		//cd = GetGraphics()->GetPhysicsEngine()->GetCollisionRayMesh(GetGraphics()->GetCamera()->GetPosition(), 
+		//GetGraphics()->GetCamera()->Get3DPickingRay(), deer);
+	fbx->SetAnimation((unsigned int)0);
+	cd = GetGraphics()->GetPhysicsEngine()->GetCollisionRayMesh(GetGraphics()->GetCamera()->GetPosition(), GetGraphics()->GetCamera()->Get3DPickingRay(), fbx);
 	/*
 	cd = GetGraphics()->GetPhysicsEngine()->GetCollisionRayMesh(GetGraphics()->GetCamera()->GetPosition(), 
 		GetGraphics()->GetCamera()->Get3DPickingRay(), cube);
