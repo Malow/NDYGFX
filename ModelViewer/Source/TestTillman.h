@@ -146,7 +146,7 @@ void TillmanTest::PreTest()
 		//shadowFail->SetScale(0.5f);
 		grass_positions[i] = pos;
 		grass_sizes[i] = size;
-		grass_colors[i] = Vector3(0.0f, 0.0f, 1.0f);
+		grass_colors[i] = Vector3(0.7f, 0.9f, 0.7f);
 		if(i % 100 == 0)
 		{
 			grass_colors[i] = Vector3(0.0f, 1.0f, 0.0f);
@@ -159,7 +159,7 @@ void TillmanTest::PreTest()
 	delete [] grass_positions;
 	delete [] grass_sizes;
 	delete [] grass_colors;
-
+	//GetGraphics()->DeleteBillboardCollection(bbColl);
 
 	fileNames[0] = "Media/01_v02-Moss.png";
 	fileNames[1] = "Media/01_v02-Moss.png";
