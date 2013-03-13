@@ -146,6 +146,9 @@ void MaloWTest::RunTest(float diff)
 	//if(!cd.collision)
 		//cd = GetGraphics()->GetPhysicsEngine()->GetCollisionRayMesh(GetGraphics()->GetCamera()->GetPosition(), 
 		//GetGraphics()->GetCamera()->Get3DPickingRay(), deer);
+	if(GetGraphics()->GetKeyListener()->IsPressed('1'))
+		fbx->RotateAxis(Vector3(0, 1, 0), diff * 0.01f);
+	
 	fbx->SetAnimation((unsigned int)0);
 	cd = GetGraphics()->GetPhysicsEngine()->GetCollisionRayMesh(GetGraphics()->GetCamera()->GetPosition(), GetGraphics()->GetCamera()->Get3DPickingRay(), fbx);
 	/*

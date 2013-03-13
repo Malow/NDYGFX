@@ -50,8 +50,13 @@ void FBXMesh::Render(float dt, D3DXMATRIX& camProj, D3DXMATRIX& camView, D3DXMAT
 	this->RecreateWorldMatrix();
 	D3DXMATRIX world = this->GetWorldMatrix();
 
+	D3DXMATRIX worldInverseTranspose;
+	D3DXMatrixIdentity(&worldInverseTranspose);
+	D3DXMatrixInverse(&worldInverseTranspose, NULL, &world);
+	D3DXMatrixTranspose(&worldInverseTranspose, &worldInverseTranspose);
+
 	zSceneMutex.lock();
-	this->zScene->Render(dt, world, camProj, camView, camViewProj, shad, devCont );
+	this->zScene->Render(dt, world, worldInverseTranspose, camProj, camView, camViewProj, shad, devCont );
 	zSceneMutex.unlock();
 }
 
