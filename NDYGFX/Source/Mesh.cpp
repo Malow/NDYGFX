@@ -67,7 +67,7 @@ bool Mesh::LoadFromFile(string file)
 		//Calculate the size using Pythagoras theorem (don't forget to include the scale).
 		//Note that this returns the half of the half size, so multiply by 4.
 		float size = sqrtf(powf(halfHeightScaled, 2.0f) * 0.5f) * 4.0f;
-		this->billboard = new Billboard(billboardPos, D3DXVECTOR2(size, size), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+		this->billboard = new Billboard(billboardPos, D3DXVECTOR2(size, size), D3DXVECTOR3(1.0f, 1.0f, 1.0f));
 
 		return true;
 	}

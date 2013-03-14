@@ -2,7 +2,7 @@
 
 
 Billboard::Billboard() 
-:	zVertex(), zTextureResource(NULL), zRenderShadowFlag(true)
+:	zVertex(D3DXVECTOR4(0.0f, 0.0f, 0.0f, 0.0f), D3DXVECTOR4(0.0f, 1.0f, 1.0f, 1.0f)), zTextureResource(NULL), zRenderShadowFlag(true)
 {
 
 	

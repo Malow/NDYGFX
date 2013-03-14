@@ -146,10 +146,10 @@ void TillmanTest::PreTest()
 		//shadowFail->SetScale(0.5f);
 		grass_positions[i] = pos;
 		grass_sizes[i] = size;
-		grass_colors[i] = Vector3(0.7f, 0.9f, 0.7f);
+		grass_colors[i] = Vector3(1.7f, 1.9f, 1.7f);
 		if(i % 100 == 0)
 		{
-			grass_colors[i] = Vector3(0.0f, 1.0f, 0.0f);
+			grass_colors[i] = Vector3(1.0f, 2.0f, 1.0f);
 		}
 	}
 
