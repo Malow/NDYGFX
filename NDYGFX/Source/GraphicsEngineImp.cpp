@@ -377,8 +377,21 @@ void GraphicsEngineImp::InitObjects()
 StaticMesh* GraphicsEngineImp::CreateStaticMesh(string filename, D3DXVECTOR3 pos, const char* billboardFilePath, float distanceToSwapToBillboard)
 {
 	StaticMesh* mesh = new StaticMesh(pos, filename, billboardFilePath, distanceToSwapToBillboard);
-	LoadMeshEvent* re = new LoadMeshEvent(filename, mesh, NULL, NULL);
-	this->PutEvent(re);
+	
+	// if it is in memory dont put it on another thread.
+	if(GetResourceManager()->HasMeshStripsResource(filename.c_str()))
+	{
+		bool success = mesh->LoadFromFile(filename);
+		if(success)
+		{
+			this->dx->CreateStaticMesh(mesh);
+		}
+	}
+	else
+	{
+		LoadMeshEvent* re = new LoadMeshEvent(filename, mesh, NULL, NULL);
+		this->PutEvent(re);
+	}
 
 	return mesh;
 }
@@ -393,8 +406,29 @@ StaticMesh* GraphicsEngineImp::CreateStaticMesh(string filename, D3DXVECTOR3 pos
 {
 	StaticMesh* mesh = new StaticMesh(pos, filename);
 
-	LoadMeshEvent* re = new LoadMeshEvent(filename, mesh, NULL, material);
-	this->PutEvent(re);
+	// if it is in memory dont put it on another thread.
+	if(GetResourceManager()->HasMeshStripsResource(filename.c_str()))
+	{
+		bool success = mesh->LoadFromFile(filename);
+		if(success)
+		{
+			this->dx->CreateStaticMesh(mesh);
+		}
+
+
+		MaloW::Array<MeshStrip*>* strips = mesh->GetStrips();
+		for(int i = 0; i < strips->size(); i++)
+		{
+			strips->get(i)->SetMaterial(material);
+			if(i+1 < strips->size())
+				material = new Material(material);
+		}
+	}
+	else
+	{
+		LoadMeshEvent* re = new LoadMeshEvent(filename, mesh, NULL, material);
+		this->PutEvent(re);
+	}
 
 	return mesh;
 }
@@ -407,10 +441,28 @@ iMesh* GraphicsEngineImp::CreateStaticMesh( const char* filename, const Vector3&
 AnimatedMesh* GraphicsEngineImp::CreateAnimatedMesh(string filename, D3DXVECTOR3 pos, const char* billboardFilePath, float distanceToSwapToBillboard)
 {
 	AnimatedMesh* mesh = new AnimatedMesh(pos, filename, billboardFilePath, distanceToSwapToBillboard);
-	//if(GetResourceManager()->)
 
-	LoadMeshEvent* re = new LoadMeshEvent(filename, NULL, mesh, NULL);
-	this->PutEvent(re);
+	// If we have it in memory dont put it on the other thread.
+	if(GetResourceManager()->HasMeshStripsResource(filename.c_str()))
+	{
+		//Check if loading the animation from file was successful...
+		if(mesh->LoadFromFile(filename))
+		{
+			//...and if so, add it
+			this->dx->CreateAnimatedMesh(mesh); 
+		}
+		else
+		{
+			//If not, delete the mesh.
+			MaloW::Debug("Warning: Deleting animated mesh because of failure.");
+			delete mesh;
+		}
+	}
+	else
+	{
+		LoadMeshEvent* re = new LoadMeshEvent(filename, NULL, mesh, NULL);
+		this->PutEvent(re);
+	}
 
 	return mesh;
 }
