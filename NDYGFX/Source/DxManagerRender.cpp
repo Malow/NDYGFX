@@ -484,7 +484,7 @@ void DxManager::RenderBillboardsInstanced()
 		this->Dx_DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 
 		// Set global variables per frame
-		this->Shader_BillboardInstanced->SetFloat3("g_CameraPos", this->camera->GetPositionD3DX());
+		this->Shader_BillboardInstanced->SetFloat3("g_CameraPos", this->camera->GetOldPos());
 		this->Shader_BillboardInstanced->SetMatrix("g_CamViewProj", this->camera->GetViewProjMatrix());
 		this->Shader_BillboardInstanced->SetFloat("g_FarClip", this->params.FarClip);
 
@@ -718,7 +718,7 @@ void DxManager::RenderCascadedShadowMap()
 				StaticMesh* staticMesh = this->objects[i];
 				if(!staticMesh->IsUsingInvisibility() && !staticMesh->GetDontRenderFlag())
 				{
-					D3DXVECTOR3 distance = staticMesh->GetBillboardGFX()->GetPositionD3DX() - this->camera->GetPositionD3DX();
+					D3DXVECTOR3 distance = staticMesh->GetBillboardGFX()->GetPositionD3DX() - this->camera->GetOldPos();
 
 					//If the mesh has a billboard AND is inside the billboard range, render the mesh
 					float billboardRange = 0.0f;
@@ -864,7 +864,7 @@ void DxManager::RenderCascadedShadowMap()
 				AnimatedMesh* animatedMesh = this->animations[i];
 				if(!animatedMesh->IsUsingInvisibility() && !animatedMesh->GetDontRenderFlag())
 				{
-					D3DXVECTOR3 distance = animatedMesh->GetBillboardGFX()->GetPositionD3DX() - this->camera->GetPositionD3DX();
+					D3DXVECTOR3 distance = animatedMesh->GetBillboardGFX()->GetPositionD3DX() - this->camera->GetOldPos();
 
 					//If the mesh has a billboard AND is inside the billboard range, render the mesh
 					float billboardRange = 0.0f;

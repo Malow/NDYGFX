@@ -35,8 +35,9 @@ CascadedShadowMap::~CascadedShadowMap()
 
 void CascadedShadowMap::CalcShadowMapMatrices(D3DXVECTOR3 sunLight, Camera* cam, int i)
 {
+	//TILLMAN - ändra getforward/right/up till getOldforward/right/up?
 	//calculate points (in world space) for the frustum slice
-	D3DXVECTOR4 camPos = D3DXVECTOR4(cam->GetPositionD3DX(), 1.0f);
+	D3DXVECTOR4 camPos = D3DXVECTOR4(cam->GetOldPos(), 1.0f);
 	D3DXVECTOR4 camForward = D3DXVECTOR4(cam->GetForwardD3DX(), 1.0f);
 	D3DXVECTOR4 camRight = D3DXVECTOR4(cam->GetRightVectorD3DX(), 1.0f);
 	D3DXVECTOR4 camUp = D3DXVECTOR4(cam->GetUpVectorD3DX(), 1.0f);

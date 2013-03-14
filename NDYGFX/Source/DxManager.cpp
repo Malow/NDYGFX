@@ -745,7 +745,7 @@ void DxManager::CreateSkyBox(string texture)
 	if(this->skybox)
 		delete this->skybox;
 		
-	SkyBox* sb = new SkyBox(this->camera->GetPositionD3DX(), 10, 10);
+	SkyBox* sb = new SkyBox(this->camera->GetOldPos(), 10, 10);
 	MeshStrip* strip = sb->GetStrip();
 
 	// Create the desc for the buffer

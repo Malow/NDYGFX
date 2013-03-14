@@ -41,7 +41,7 @@ void DxManager::RenderDeferredGeoTerrains()
 
 
 	//Terrain - **TILLMAN TODO: MOVE TO LOAD: blendmap, vertexbuffer, textures, aitexture**
-	this->Shader_TerrainEditor->SetFloat3("g_CamPos", this->camera->GetPositionD3DX());
+	this->Shader_TerrainEditor->SetFloat3("g_CamPos", this->camera->GetOldPos());
 	this->Shader_TerrainEditor->SetFloat("g_FarClip", this->params.FarClip);
 
 	//Per terrain:
@@ -485,7 +485,7 @@ void DxManager::RenderDeferredGeoObjects()
 
 	//Static meshes
 	//**TILLMAN TODO: ta bort shader variabler
-	this->Shader_DeferredGeometry->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetPositionD3DX(), 1));
+	this->Shader_DeferredGeometry->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetOldPos(), 1));
 	this->Shader_DeferredGeometry->SetFloat("NearClip", this->params.NearClip);
 	this->Shader_DeferredGeometry->SetFloat("FarClip", this->params.FarClip);
 
@@ -495,7 +495,7 @@ void DxManager::RenderDeferredGeoObjects()
 
 		if(!staticMesh->IsUsingInvisibility() && !staticMesh->GetDontRenderFlag())
 		{
-			D3DXVECTOR3 distance = staticMesh->GetBillboardGFX()->GetPositionD3DX() - this->camera->GetPositionD3DX();
+			D3DXVECTOR3 distance = staticMesh->GetBillboardGFX()->GetPositionD3DX() - this->camera->GetOldPos();
 			
 			//If the mesh has a billboard AND is inside the billboard range, render the mesh
 			float billboardRange = 0.0f;
@@ -683,7 +683,7 @@ void DxManager::RenderDeferredGeoObjects()
 #endif
 	
 	// Normal Animated meshes
-	this->Shader_DeferredAnimatedGeometry->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetPositionD3DX(), 1));
+	this->Shader_DeferredAnimatedGeometry->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetOldPos(), 1));
 	this->Shader_DeferredAnimatedGeometry->SetFloat("NearClip", this->params.NearClip);
 	this->Shader_DeferredAnimatedGeometry->SetFloat("g_FarClip", this->params.FarClip);
 	for(int i = 0; i < this->animations.size(); i++)
@@ -691,7 +691,7 @@ void DxManager::RenderDeferredGeoObjects()
 		AnimatedMesh* animatedMesh = this->animations[i];
 		if(!animatedMesh->IsUsingInvisibility() && !animatedMesh->GetDontRenderFlag())
 		{
-			D3DXVECTOR3 distance = animatedMesh->GetBillboardGFX()->GetPositionD3DX() - this->camera->GetPositionD3DX();
+			D3DXVECTOR3 distance = animatedMesh->GetBillboardGFX()->GetPositionD3DX() - this->camera->GetOldPos();
 
 			//If the mesh has a billboard AND is inside the billboard range, render the mesh
 			float billboardRange = 0.0f;
@@ -875,7 +875,7 @@ void DxManager::RenderDeferredGeometryInstanced()
 		
 		// Set global variables per frame
 		this->Shader_DeferredGeometryInstanced->SetFloat("g_FarClip", this->params.FarClip);
-		this->Shader_DeferredGeometryInstanced->SetFloat3("g_CamPos", this->camera->GetPositionD3DX());
+		this->Shader_DeferredGeometryInstanced->SetFloat3("g_CamPos", this->camera->GetOldPos());
 		this->Shader_DeferredGeometryInstanced->SetMatrix("g_CamViewProj", this->camera->GetViewProjMatrix());
 		
 		//Set instance buffer
@@ -973,7 +973,7 @@ void DxManager::RenderDeferredGeometryInstanced()
 		//Draw animated mesh(strips) groups (instanced)
 		//Set variables per frame:
 		this->Shader_DeferredAnimatedGeometryInstanced->SetFloat("g_FarClip", this->params.FarClip);
-		this->Shader_DeferredAnimatedGeometryInstanced->SetFloat3("g_CamPos", this->camera->GetPositionD3DX());
+		this->Shader_DeferredAnimatedGeometryInstanced->SetFloat3("g_CamPos", this->camera->GetOldPos());
 		this->Shader_DeferredAnimatedGeometryInstanced->SetMatrix("g_CamViewProj", this->camera->GetViewProjMatrix());
 		//"Set" instance buffer
 		ID3D11Buffer* bufferPointers[3]; //tillman ev todo
@@ -1177,7 +1177,7 @@ void DxManager::RenderDeferredPerPixel()
 	this->Shader_DeferredLightning->SetResource("Specular", this->Dx_GbufferSRVs[3]);
 	D3DXMATRIX vp = this->camera->GetViewMatrix() * this->camera->GetProjectionMatrix();
 	this->Shader_DeferredLightning->SetMatrix("CameraVP", vp);
-	this->Shader_DeferredLightning->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetPositionD3DX(), 1));
+	this->Shader_DeferredLightning->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetOldPos(), 1));
 	//stdafx.fx:
 	this->Shader_DeferredLightning->SetFloat("NrOfLights", (float)this->lights.size()); //**tillman - omstrukturering**
 	this->Shader_DeferredLightning->SetFloat4("SceneAmbientLight", D3DXVECTOR4(this->sceneAmbientLight, 1.0f));
@@ -1373,7 +1373,7 @@ void DxManager::RenderQuadDeferred()
 	this->Shader_DeferredQuad->SetFloat("CameraNear", this->params.NearClip);
 	this->Shader_DeferredQuad->SetFloat("ScreenWidth", (float)this->params.WindowWidth);
 	this->Shader_DeferredQuad->SetFloat("ScreenHeight", (float)this->params.WindowHeight);
-	this->Shader_DeferredQuad->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetPositionD3DX(), 1));
+	this->Shader_DeferredQuad->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetOldPos(), 1));
 	
 	this->Shader_DeferredQuad->Apply(0);
 	
@@ -1444,7 +1444,7 @@ void DxManager::RenderDeferredGeoTranslucent()
 	this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_GbufferRTs[3], ClearColor2);
 
 	//Static meshes
-	this->Shader_DeferredGeoTranslucent->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetPositionD3DX(), 1));
+	this->Shader_DeferredGeoTranslucent->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetOldPos(), 1));
 	this->Shader_DeferredGeoTranslucent->SetFloat("NearClip", this->params.NearClip);
 	this->Shader_DeferredGeoTranslucent->SetFloat("FarClip", this->params.FarClip);
 	this->Shader_DeferredGeoTranslucent->SetFloat("timerMillis", this->Timer);
@@ -1618,7 +1618,7 @@ void DxManager::RenderDeferredPerPixelTranslucent()
 	this->Shader_DeferredPerPixelTranslucent->SetResource("Specular", this->Dx_GbufferSRVs[3]);
 	D3DXMATRIX vp = this->camera->GetViewMatrix() * this->camera->GetProjectionMatrix();
 	this->Shader_DeferredPerPixelTranslucent->SetMatrix("CameraVP", vp);
-	this->Shader_DeferredPerPixelTranslucent->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetPositionD3DX(), 1));
+	this->Shader_DeferredPerPixelTranslucent->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetOldPos(), 1));
 	//stdafx.fx:
 	this->Shader_DeferredPerPixelTranslucent->SetFloat("NrOfLights", (float)this->lights.size()); //**tillman - omstrukturering**
 	this->Shader_DeferredPerPixelTranslucent->SetFloat4("SceneAmbientLight", D3DXVECTOR4(this->sceneAmbientLight, 1.0f));
@@ -1660,7 +1660,7 @@ void DxManager::RenderDeferredPerPixelTranslucent()
 void DxManager::RenderFBXMeshes()
 {
 	this->Dx_DeviceContext->OMSetRenderTargets(this->NrOfRenderTargets, this->Dx_GbufferRTs, this->Dx_DepthStencilView);
-	this->Shader_FBX->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetPositionD3DX(), 1));
+	this->Shader_FBX->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetOldPos(), 1));
 	this->Shader_FBX->SetFloat("NearClip", this->params.NearClip);
 	this->Shader_FBX->SetFloat("FarClip", this->params.FarClip);
 
