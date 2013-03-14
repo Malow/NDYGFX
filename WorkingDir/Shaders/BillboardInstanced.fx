@@ -181,13 +181,9 @@ PSOut PS(PSIn input)
 	}
 
 	//Normal and depth RT
-	//output.NormalAndDepth = float4(input.normal, input.posH.z / input.posH.w);	//convert z from [0, w] to [0,1]
 	output.NormalAndDepth.xyz = input.normal;
-	
 	float depth = length(g_CameraPos - input.posW) / g_FarClip;		// Haxfix**tillman
 	output.NormalAndDepth.w = depth;
-	//float depth = length(CameraPosition.xyz - input.WorldPos.xyz) / FarClip;		// Haxfix
-	//output.NormalAndDepth.w = depth;
 
 	//Position(world space) & object type RT
 	output.Position = float4(input.posW.xyz, OBJECT_TYPE_BILLBOARD);
