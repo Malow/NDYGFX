@@ -45,6 +45,8 @@
 class DxManager : public MaloW::Process
 {
 private:
+	DxManagerHelperThread* helperThread;
+
 	// Shaders
 	Shader*	Shader_ForwardRendering;
 	Shader* Shader_FBX;
