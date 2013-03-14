@@ -168,8 +168,8 @@ bool TestRealisticScene::RunTest(float diff)
 			{
 				
 			}
-			GetGraphics()->ReloadShaders(23);
-			GetGraphics()->ReloadShaders(22);
+			GetGraphics()->ReloadShaders(16);
+			GetGraphics()->ReloadShaders(17);
 			//GetGraphics()->ReloadShaders(1);
 			//MaloW::Debug("Diff: " + MaloW::convertNrToString(totDiff / nrofdiffs));
 			//GetGraphics()->ChangeShadowQuality(qual);
