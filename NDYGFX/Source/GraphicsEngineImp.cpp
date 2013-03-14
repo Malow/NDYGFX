@@ -9,7 +9,7 @@ int GraphicsEngineParams::ShadowMapSettings = 0;
 int GraphicsEngineParams::FXAAQuality = 0;
 CameraType GraphicsEngineParams::CamType = FPS;
 float GraphicsEngineParams::FOV = 75.0f;
-float GraphicsEngineParams::NearClip = 0.01f;
+float GraphicsEngineParams::NearClip = 0.2f;
 float GraphicsEngineParams::FarClip = 200.0f;
 int GraphicsEngineParams::RefreshRate = 60;
 int GraphicsEngineParams::MaxFPS = 0;
@@ -407,6 +407,7 @@ iMesh* GraphicsEngineImp::CreateStaticMesh( const char* filename, const Vector3&
 AnimatedMesh* GraphicsEngineImp::CreateAnimatedMesh(string filename, D3DXVECTOR3 pos, const char* billboardFilePath, float distanceToSwapToBillboard)
 {
 	AnimatedMesh* mesh = new AnimatedMesh(pos, filename, billboardFilePath, distanceToSwapToBillboard);
+	//if(GetResourceManager()->)
 
 	LoadMeshEvent* re = new LoadMeshEvent(filename, NULL, mesh, NULL);
 	this->PutEvent(re);
