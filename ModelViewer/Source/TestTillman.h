@@ -153,9 +153,14 @@ void TillmanTest::PreTest()
 		}
 	}
 
-	iBillboardCollection* bbColl = GetGraphics()->CreateBillboardCollection(nrOfVertices, grass_positions, grass_sizes, grass_colors, 
-																			Vector3(0.0f, 0.0f, 0.0f), "Media/Grass.png");
-	bbColl->SetRenderShadowFlag(false);
+	//Benchmark/-test
+	for(unsigned int i = 0; i < 1; ++i)
+	{
+		iBillboardCollection* bbColl = GetGraphics()->CreateBillboardCollection(nrOfVertices, grass_positions, grass_sizes, grass_colors, 
+			Vector3(50.0f, 0.0f, 50.0f), "Media/Grass.png");
+		bbColl->SetRenderShadowFlag(false);
+	}
+	
 	delete [] grass_positions;
 	delete [] grass_sizes;
 	delete [] grass_colors;

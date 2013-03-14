@@ -39,7 +39,8 @@ void InstancingHelper::ExpandBillboardInstanceBuffer()
 	HRESULT hr = this->g_Device->CreateBuffer(&vbd, 0, &temporaryNewBuffer);
 	if(FAILED(hr))
 	{
-		MaloW::Debug("ERROR: InstancingHelper: ExpandBillboardDataAndBuffer(): Failed to create buffer for instance billboard.");
+		MaloW::Debug("ERROR: InstancingHelper: ExpandBillboardBuffer(): Failed to create buffer for instance billboard. HRESULT error msg: '"
+			+ MaloW::GetHRESULTErrorCodeString(hr) + "'. HRESULT #" + MaloW::convertNrToString(hr) + ".");
 	}
 						
 	//Copy over data from the old buffer to the new buffer.
@@ -65,7 +66,7 @@ void InstancingHelper::ExpandBillboardInstanceBuffer()
 	//The temporary pointer is no longer needed, so set to NULL.
 	temporaryNewBuffer = NULL;
 
-	MaloW::Debug("INFO: InstancingHelper: ExpandBillboardDataAndBuffer(): Resizing billboard instance buffer. Number of billboards: '" + MaloW::convertNrToString(this->zBillboardData.size()) + "'."
+	MaloW::Debug("INFO: InstancingHelper: ExpandBillboardBuffer(): Resizing billboard instance buffer. Number of billboards: '" + MaloW::convertNrToString(this->zBillboardData.size()) + "'."
 		+ "New BUFFER size '" + MaloW::convertNrToString(this->zBillboardInstanceBufferSize) + "'."
 		);
 }
