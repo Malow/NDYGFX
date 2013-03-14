@@ -105,7 +105,7 @@ void GraphicsEngineParams::SaveToFile(const char* file)
 	out << "Field of View:	Default: 75" << endl;
 	out << this->FOV << std::endl;
 	out << endl;
-	out << "NearClip:	Default: 0.01" << endl;
+	out << "NearClip:	Default: 0.2" << endl;
 	out << this->NearClip << std::endl;
 	out << endl;
 	out << "Far Clip:	Default: 200" << endl;
