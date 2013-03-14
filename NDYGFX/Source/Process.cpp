@@ -138,6 +138,7 @@ ProcessEvent* Process::WaitEvent()
 		ReleaseMutex(this->ProcMtx);
 
 		this->Suspend();
+		this->state = RUNNING;
 
 		if(this->ProcMtx)
 		{
@@ -220,7 +221,6 @@ void Process::PutEvent(ProcessEvent* ev, bool important)
 		}
 		if(this->state == WAITING)
 		{
-			this->state = RUNNING;
 			this->Resume();
 		}
 

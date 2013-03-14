@@ -8,7 +8,6 @@ Decal::Decal(Vector3 pos, Vector3 dir, Vector3 up)
 	this->up = up;
 	this->size = 1.0f;
 	this->position = pos;
-	this->textureResource = NULL;
 	MeshStrip* strip = new MeshStrip();
 
 	// Create sphere

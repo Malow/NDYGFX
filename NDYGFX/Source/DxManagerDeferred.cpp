@@ -452,7 +452,7 @@ void DxManager::RenderDecals()
 	{
 		this->Shader_Decal->SetMatrix("World", this->decals[i]->GetWorldMatrix());
 		this->Shader_Decal->SetMatrix("WorldViewProj", this->decals[i]->GetWorldMatrix() * viewProj);
-		this->Shader_Decal->SetResource("Decal", this->decals[i]->GetTextureResource()->GetSRVPointer());
+		this->Shader_Decal->SetResource("Decal", this->decals[i]->GetStrip()->GetRenderObject()->GetTextureResource()->GetSRVPointer());
 		this->Shader_Decal->SetMatrix("ScreenToLocal", this->decals[i]->GetMatrix());
 		this->Shader_Decal->SetFloat("opacity", this->decals[i]->GetOpacity());
 

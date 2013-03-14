@@ -1109,7 +1109,6 @@ void DxManager::CreateDecal( Decal* decal, string texture )
 	{
 		tex = GetResourceManager()->CreateTextureResourceFromFile(texture.c_str(), true);
 	}
-	decal->SetTexture(tex);
 	
 	// create matrix for it.
 	Vector3 pos = decal->GetPosition() - (decal->GetDirection() * 1.01f) * decal->GetSize() * 0.5f;

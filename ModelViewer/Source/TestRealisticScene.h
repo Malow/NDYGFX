@@ -28,6 +28,11 @@ public:
 protected:
 	virtual void OnEvent(Event* e) 
 	{
+		if ( WorldDeletedEvent* wde = dynamic_cast<WorldDeletedEvent*>(e))
+		{
+			delete this->wr;
+			this->wr = NULL;
+		}
 		if ( WorldLoadedEvent* WLE = dynamic_cast<WorldLoadedEvent*>(e) )
 		{
 			// Create Anchor
@@ -40,7 +45,7 @@ protected:
 void TestRealisticScene::PreTest()
 {
 	LoadEntList("Entities.txt");
-	world = new World(this, "Media/Maps/Map_01_v63.map", true);
+	world = new World(this, "Media/Maps/Map_01_v85.map", true);
 	GetGraphics()->GetCamera()->SetPosition(Vector3(world->GetWorldCenter().x, 20.0f, world->GetWorldCenter().y));
 	path = 0;
 
@@ -127,7 +132,7 @@ bool TestRealisticScene::RunTest(float diff)
 		pos.y = world->GetHeightAt(Vector2(pos.x, pos.z)) + 5.0f;
 		GetGraphics()->GetCamera()->SetPosition(pos);
 		if(GetGraphics()->GetCamera()->GetPosition().x < 1700)
-			path++;
+			path--;
 
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_RETURN))
 		{
@@ -187,5 +192,5 @@ void TestRealisticScene::PostTest()
 {
 	GetGraphics()->PrintPerfLogging();
 	delete world;
-	delete wr;
+	//delete wr;
 }

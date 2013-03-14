@@ -1,108 +1,119 @@
 Number:1
 Name:Scale
-Model:Media/Models/Scale.obj
 BlockRadius:0.5
+Model:Media/MapModels/Scale.obj
 
 Number:2
-Name:Arrow
-Model:Media/Models/Arrow_v01.obj
+Name:Tree_2_LOD
+BlockRadius:0.7
+Model:Media/MapModels/Tree_02.ani 25.0
+Model:Media/MapModels/Tree_02_01.obj
+Billboard:Media/TreeBillboard.png
+BillboardDistance:100
 
 Number:3
 Name:Bush
-Model:Media/Models/Bush_01_v04_r.obj
+Model:Media/MapModels/Bush_01.ani 25.0
+Model:Media/MapModels/Bush_01_01.obj
 
 Number:4
 Name:Fern
-Model:Media/Models/Fern_02.ani
+Model:Media/MapModels/Fern_02.ani 10.0
+Model:Media/MapModels/Fern_02_01.obj 45.0
 
 Number:5
-Name:Tree
-Model:Media/Models/Tree_02_v02_r.obj
-BlockRadius:0.5
+Name:Tree_1_LOD
+BlockRadius:0.7
+Model:Media/MapModels/Tree_01.ani 25.0
+Model:Media/MapModels/Tree_01_01.obj
 Billboard:Media/TreeBillboard.png
 BillboardDistance:100
 
 Number:6
 Name:Stone
-Model:Media/Models/Stone_01_v02.obj
+Model:Media/MapModels/Stone_01.obj
 
 Number:7
-Name:ArmyRation
-Model:Media/Models/ArmyRation_v01.obj
+Name:Placeholder
+Model:Media/MapModels/Scale.obj
 
 Number:8
-Name:Machete
-Model:Media/Models/Machete_v01.obj
+Name:Placeholder
+Model:Media/MapModels/Scale.obj
 
 Number:9
-Name:PocketKnife
-Model:Media/Models/PocketKnife_v02.obj
+Name:Placeholder
+Model:Media/MapModels/Scale.obj
 
 Number:10
 Name:Veins
-Model:Media/Models/Veins_01_v03_r.obj
+Model:Media/MapModels/Veins_01.obj
 
 Number:11
-Name:Plant-Bigleaf
-Model:Media/Models/BigleafShrubbery_01_v02.obj
+Name:Placeholder
+Model:Media/MapModels/Scale.obj
 
 Number:12
 Name:Spawn
-Model:Media/Models/SPAWN.obj
+Model:Media/MapModels/SPAWN.obj
 
 Number:13
 Name:Plant-Grass
-Model:Media/Models/GrassPlant_01.ani
+Model:Media/MapModels/GrassPlant_01.ani 10.0
+Model:Media/MapModels/GrassPlant_01_01.obj 35.0
 
 Number:14
-Name:Flag
-Model:Media/Models/Flag/FlagBlue.ani
+Name:Placeholder
+Model:Media/MapModels/Scale.obj
 
 Number:15
 Name:Stone_02
-Model:Media/Models/Stone_02_v01.obj
+Model:Media/MapModels/Stone_02.obj
 
 Number:16
 Name:WaterGrass_01
-Model:Media/Models/WaterGrass_01_v01.obj
+Model:Media/MapModels/WaterGrass_01.obj
 
 Number:17
 Name:WaterGrass_02
-Model:Media/Models/WaterGrass_02.ani
+Model:Media/MapModels/WaterGrass_02.ani 25.0
+Model:Media/MapModels/WaterGrass_02_01.obj
 
 Number:18
-Name:ShrubberyGrass_01
-Model:Media/Models/ShrubberyGrass_01_v01.obj
+Name:Placeholder
+Model:Media/MapModels/Scale.obj
 
 Number:19
 Name:Bush_02
-Model:Media/Models/Bush_02_v02.obj
+Model:Media/MapModels/Bush_02.ani 25.0
+Model:Media/MapModels/Bush_02.obj
 
 Number:20
 Name:Tree
-Model:Media/Models/Tree_03_v03.obj
-BlockRadius:0.5
-
-Number:21
-Name:Water
-Model:Water
+Model:Media/MapModels/Tree_03.obj
+BlockRadius:0.7
 
 Number:22
-Name:WaterStones	
-Model:Media/Models/Stone_03_v01.obj
+Name:WaterStones
+Model:Media/MapModels/Stone_03.obj
 
 Number:23
 Name:Bush_misc_01	
-Model:Media/Models/Bush_misc_01.obj
+Model:Media/MapModels/Bush_misc_01.obj
+
+Number:24
+Name:Target	
+Model:Media/MapModels/Target.obj
+
 
 Number:200
 Name:Deer Spawnpoint
-Model:Media/Models/DEEEEER.obj
+Model:Media/MapModels/Deer.obj
 
 Number:201
 Name:Wolf Spawnpoint
-Model:Media/Models/Scale.obj
+Model:Media/MapModels/Scale.obj
 
 Number:202
 Name:Bear Spawnpoint
-Model:Media/Models/Scale.obj
+Model:Media/MapModels/Scale.obj
