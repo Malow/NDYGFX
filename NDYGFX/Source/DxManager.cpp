@@ -789,6 +789,16 @@ void DxManager::UseShadow(bool useShadow)
 	}
 }
 
+void DxManager::SetGrassFilePath(const char* filePath)
+{
+	this->instancingHelper->SetGrassFilePath(filePath);
+}
+
+void DxManager::RenderGrass(bool flag)
+{
+	this->instancingHelper->SetRenderGrassFlag(flag);
+}
+
 void DxManager::SetSpecialCircle(float innerRadius, float outerRadius, Vector2& targetPos)
 {
 	this->specialCircleParams.x = innerRadius;

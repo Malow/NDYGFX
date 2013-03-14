@@ -83,6 +83,10 @@ extern "C"
 
 		virtual void UseShadow(bool useShadow) = 0;
 
+		// Grass settings
+		virtual void SetGrassFilePath(const char* filePath) = 0;
+		virtual void RenderGrass(bool flag) = 0;
+
 		/*! OBS! InnerRadius has to be greater than zero. */
 		virtual void SetSpecialCircle(float innerRadius, float outerRadius, Vector2& targetPos) const = 0;
 		virtual void ResetPerfLogging() = 0;

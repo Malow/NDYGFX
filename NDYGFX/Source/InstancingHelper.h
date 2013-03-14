@@ -114,6 +114,8 @@ class InstancingHelper
 
 	private:
 		//BILLBOARD
+		bool zRenderGrassFlag;
+		string zGrassFilePath;
 		const MaloW::Array<Billboard*>* zBillboardsReference;
 		const MaloW::Array<BillboardCollection*>* zBillboardCollectionsReference;
 		//Counter
@@ -125,7 +127,7 @@ class InstancingHelper
 		//Instance Buffer
 		ID3D11Buffer* zBillboardInstanceBuffer; //Shall contain vertex data of billboardData.
 
-
+		
 
 		//MESHES(MESHSTRIPS)
 		//Counters
@@ -161,6 +163,11 @@ class InstancingHelper
 		HRESULT Init(ID3D11Device* device, ID3D11DeviceContext* deviceContext);
 
 		//BILLBOARD
+		//**tillman todo - set grasstexturefilepath**
+		bool GetRenderGrassFlag() { return this->zRenderGrassFlag; }
+		void SetRenderGrassFlag(bool flag) { this->zRenderGrassFlag = flag; }
+		string GetGrassFilePath() { return this->zGrassFilePath; }
+		void SetGrassFilePath(string filePath) { this->zGrassFilePath = filePath; }
 		void AddBillboardsReference(const MaloW::Array<Billboard*>& billboards);
 		void AddBillboardCollectionsReference(const MaloW::Array<BillboardCollection*>& billboardCollections);
 

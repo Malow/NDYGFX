@@ -176,7 +176,7 @@ public:
 	// Key Listener
 	virtual iKeyListener* GetKeyListener() const;
 
-	// Phyics Engine
+	// Physics Engine
 	virtual iPhysicsEngine* GetPhysicsEngine() const;
 
 	// Logic
@@ -188,6 +188,8 @@ public:
 	// Settings
 	virtual iGraphicsEngineParams& GetEngineParameters();
 	virtual void UseShadow(bool useShadow);
+	virtual void SetGrassFilePath(const char* filePath);
+	virtual void RenderGrass(bool flag);
 	virtual void SetSpecialCircle(float innerRadius, float outerRadius, Vector2& targetPos) const;
 	virtual void ResetPerfLogging();
 	virtual void PrintPerfLogging();

@@ -117,7 +117,6 @@ private:
 	D3DXVECTOR3 sceneAmbientLight;
 	SunLight sun;
 	bool useSun;
-	
 
 	bool useShadow;
 	CascadedShadowMap* csm;
@@ -144,7 +143,6 @@ private:
 
 	// Hardware instancing 
 	InstancingHelper* instancingHelper;
-
 
 	bool invisibleGeometry;
 
@@ -260,6 +258,8 @@ public:
 
 
 	void UseShadow(bool useShadow);
+	void SetGrassFilePath(const char* flag);
+	void RenderGrass(bool flag);
 	void SetSpecialCircle(float innerRadius, float outerRadius, Vector2& targetPos);
 
 	long GetFrameCount() const { return this->framecount; }

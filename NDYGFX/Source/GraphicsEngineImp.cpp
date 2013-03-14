@@ -683,6 +683,15 @@ void GraphicsEngineImp::UseShadow(bool useShadow)
 	this->dx->UseShadow(useShadow);
 }
 
+void GraphicsEngineImp::SetGrassFilePath(const char* filePath)
+{
+	this->dx->SetGrassFilePath(filePath);
+}
+void GraphicsEngineImp::RenderGrass(bool flag)
+{
+	this->dx->RenderGrass(flag);
+}
+
 void GraphicsEngineImp::SetSpecialCircle(float innerRadius, float outerRadius, Vector2& targetPos) const
 {
 	this->dx->SetSpecialCircle(innerRadius, outerRadius, targetPos);
