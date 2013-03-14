@@ -11,6 +11,8 @@ DxManager::DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam)
 	this->params = params;
 	this->hWnd = g_hWnd;
 
+	this->helperThread = NULL;
+
 	this->Dx_DeviceContext = NULL;
 	this->Dx_DepthStencilView = NULL;
 	this->Dx_DepthStencil = NULL;
@@ -115,6 +117,14 @@ DxManager::DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam)
 
 DxManager::~DxManager()
 {
+	if(this->helperThread)
+	{
+		this->helperThread->Close();
+		this->helperThread->WaitUntillDone();
+		delete this->helperThread;
+		this->helperThread = NULL;
+	}
+
 	if(this->camera)
 		delete this->camera;
 

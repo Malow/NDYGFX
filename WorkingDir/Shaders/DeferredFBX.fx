@@ -173,8 +173,7 @@ PSSceneIn DefaultVS(VSIn input)
 
 	// Invert y and z for the normals, whole model is inverted and then x is inverted, making x correct.
 	// Only guessing that tangent needs to be done the same.
-	normal.yz *= -1.0f;
-	tangent.yz *= -1.0f;
+	normal.z *= -1.0f;
 
 	// Ininput.vert X
 	position.x *= -1.0f;
@@ -186,6 +185,7 @@ PSSceneIn DefaultVS(VSIn input)
 	Output.WorldPos = position;
 	Output.Pos = mul(position, gViewProj);
 	Output.norm = mul(float4(normal, 0), gWorldInvTrans); //mul(float4(normal, 0), g_mScale);
+	Output.norm = mul(float4(normal, 0), g_mScale); //mul(float4(normal, 0), g_mScale);
 	Output.Tangent = mul(float4(tangent, 0), g_mScale);
 	Output.tex = input.vTexCoord;
     return Output;
@@ -220,8 +220,10 @@ PSout DefaultPS( PSSceneIn input )
 
 	// NormalMap
 	float4 bumpMap = txNormal.Sample(AnisotropicWrapSampler, input.tex);
+
 	// Expand the range of the normal value from (0, +1) to (-1, +1).
 	bumpMap = (bumpMap * 2.0f) - 1.0f;
+	bumpMap.xyz *= -1.0f;	// invert the bumpmap
 	// Calculate the normal from the data in the bump map.
 	float3 binormal = cross(input.norm, input.Tangent);
 	float3 bumpNormal = input.norm + bumpMap.x * input.Tangent + bumpMap.y * binormal;

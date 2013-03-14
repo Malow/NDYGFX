@@ -681,6 +681,8 @@ HRESULT DxManager::Init()
 	this->instancingHelper->AddBillboardCollectionsReference(this->billboardCollections);
 
 
+	this->helperThread = new DxManagerHelperThread();
+	this->helperThread->Start();
 
 	this->invisibleGeometry = false;
 

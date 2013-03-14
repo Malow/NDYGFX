@@ -576,10 +576,12 @@ float4 PSScene(PSSceneIn input) : SV_Target
 	// Haxfix, want it above but I lose 75% of my FPS then (??!?!? :S:S:S:S:S)
 	if(NormsAndDepth.w < -0.5f)		// All pixels that has a negative depth means that there is no geometry, therefor go without lightcalcs.
 		discard;
+	
 
+	/* NOPE, cuz of the haxfix we sometimes get depth higher than 1.0f
 	if(NormsAndDepth.w > 1.0f)		// All pixels that has a greater than 1 depth means that there is no geometry and there is skybox, therefor go without lightcalcs.
 		discard;
-	
+	*/
 	
 
 	
@@ -617,22 +619,22 @@ float4 PSScene(PSSceneIn input) : SV_Target
 		//finalColor = SSAO(input.tex, NormalAndDepth, Position); //**tillman opt(position tex)**
 	
 	finalColor.rgb = HighlightArea(WorldPos.xz, finalColor.rgb); //Position is in world space
-	finalColor.a = 1.0f;
-		
 	//}
 
+	finalColor.a = 0.75f;
 
 	///////////////////////////////////////////////////////////////////
 	//							Basic fog:							//
 	//////////////////////////////////////////////////////////////////
 	finalColor = saturate(finalColor);
 	float fogDepth = NormsAndDepth.w;
+
 	if(fogDepth > 0.75f)
 	{
 		float fogfactor = (fogDepth - 0.75f) * 4.1f;	// Linear scale the last 25% of farclip, but a little more 
 		finalColor = lerp(finalColor, float4(0.45f, 0.45f, 0.45f, 1.0f), saturate(fogfactor));
 	}
-	finalColor.a = 0.7f;
+	
 	
 	return saturate(finalColor);
 }

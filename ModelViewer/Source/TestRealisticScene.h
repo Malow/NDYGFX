@@ -64,10 +64,14 @@ void TestRealisticScene::PreTest()
 	wp->SetVertexPosition(Vector3(100, -15, 100) + camPos, 2);
 	wp->SetVertexPosition(Vector3(100, -15, 300) + camPos, 3);
 	*/
-	GetGraphics()->CreateFBXMesh("Media/temp_guy_few_anims.fbx", camPos + Vector3(50, -10, 50));
-	GetGraphics()->CreateFBXMesh("Media/temp_guy_few_anims.fbx", camPos + Vector3(-50, -10, 50));
-	GetGraphics()->CreateFBXMesh("Media/temp_guy_few_anims.fbx", camPos + Vector3(-50, -10, -50));
-	GetGraphics()->CreateFBXMesh("Media/temp_guy_few_anims.fbx", camPos + Vector3(50, -10, -50));
+	iMesh* meee = GetGraphics()->CreateFBXMesh("Media/Models/token_anims.fbx", camPos + Vector3(50, -10, 50));
+	meee->SetScale(0.5f);
+	meee = GetGraphics()->CreateFBXMesh("Media/temp_guy_few_anims.fbx", camPos + Vector3(-50, -10, 50));
+	meee->SetScale(0.5f);
+	meee = GetGraphics()->CreateFBXMesh("Media/temp_guy_few_anims.fbx", camPos + Vector3(-50, -10, -50));
+	meee->SetScale(0.5f);
+	meee = GetGraphics()->CreateFBXMesh("Media/temp_guy_few_anims.fbx", camPos + Vector3(50, -10, -50));
+	meee->SetScale(0.5f);
 
 	for(int i = 0; i < 50; i++)
 	{
@@ -168,8 +172,7 @@ bool TestRealisticScene::RunTest(float diff)
 			{
 				
 			}
-			GetGraphics()->ReloadShaders(23);
-			GetGraphics()->ReloadShaders(22);
+			GetGraphics()->ReloadShaders(1);
 			//GetGraphics()->ReloadShaders(1);
 			//MaloW::Debug("Diff: " + MaloW::convertNrToString(totDiff / nrofdiffs));
 			//GetGraphics()->ChangeShadowQuality(qual);
