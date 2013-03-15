@@ -73,13 +73,21 @@ void TestRealisticScene::PreTest()
 	meee = GetGraphics()->CreateFBXMesh("Media/temp_guy_few_anims.fbx", camPos + Vector3(50, -10, -50));
 	meee->SetScale(0.5f);
 
-	meee = GetGraphics()->CreateMesh("Media/Models/NMTest.obj", camPos + Vector3(0, -10, 0));
+	meee = GetGraphics()->CreateMesh("Media/Models/NMTest.obj", camPos + Vector3(-20, -10, 0));
 	meee->SetScale(1.0f);
+
+	wa->position = GetGraphics()->GetCamera()->GetPosition().GetXZ();
+	wa->radius = GetGraphics()->GetEngineParameters().FarClip;
+	world->Update();
+	wr->Update();
 
 	for(int i = 0; i < 50; i++)
 	{
 		iDecal* wp = GetGraphics()->CreateDecal(camPos + Vector3(i * 5, -10, 0), "Media/BloodTexture.png", Vector3(0,-1,0), Vector3(1, 0, 0));
+		wr->Update();
 	}
+
+	GetGraphics()->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 bool TestRealisticScene::RunTest(float diff)

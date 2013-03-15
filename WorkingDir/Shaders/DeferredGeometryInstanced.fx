@@ -121,7 +121,6 @@ PSout PSScene(PSSceneIn input) : SV_Target
 	float depth = length(g_CamPos.xyz - input.worldPos.xyz) / g_FarClip;		// Haxfix
 
 	//Normal and depth
-	// disable nm if too far away, 5% of far clip seems decent..
 	if(g_UseNormalMap)
 	{
 		// NormalMap
