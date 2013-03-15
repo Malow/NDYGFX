@@ -41,6 +41,8 @@ cbuffer PerFrame
 cbuffer PerBillBoard
 {
 	bool		g_bb_IsTextured;
+	float		g_bb_CullNear;
+	float		g_bb_CullFar;
 };
 
 //-----------------------------------------------------------------------------------------
@@ -88,10 +90,22 @@ struct PSOut
 GSIn VS(VSIn input)
 {
 	GSIn output = (GSIn)0;
+	
+	float dist = length(input.posW_SizeX.xz - g_CameraPos.xz);
 
-	output.posW = input.posW_SizeX.xyz;
-	output.size = float2(input.posW_SizeX.w, input.sizeY_Color.x);
-	output.color = input.sizeY_Color.yzw;
+	//if(dist < g_bb_CullNear || dist >= g_bb_CullFar) //TILLMAN TODO: skicak data
+	if(dist < 2.0f || dist >= g_FarClip * 0.5f) //TILLMAN TODO: skicak data
+	{
+		//output.posW = float3(0.0f, 0.0f, 0.0f);
+		output.size = float2(0.0f, 0.0f);
+		//output.color = float3(0.0f, 0.0f, 0.0f);
+	}
+	else
+	{
+		output.posW = input.posW_SizeX.xyz;
+		output.size = float2(input.posW_SizeX.w, input.sizeY_Color.x);
+		output.color = input.sizeY_Color.yzw;
+	}
 
 	return output;
 }
@@ -106,6 +120,10 @@ GSIn VS(VSIn input)
 [maxvertexcount(4)]
 void GS(point GSIn input[1], inout TriangleStream<PSIn> triStream)
 {	
+	if(input[0].size.x <= 0.0f || input[0].size.y <= 0.0f)
+	{
+		return;
+	}
 	//Create world matrix to make the billboard face the camera.
 	float3 forward = normalize(g_CameraPos - input[0].posW); 
 	float3 right = normalize(cross(float3(0.0f, 1.0f, 0.0f), forward));
