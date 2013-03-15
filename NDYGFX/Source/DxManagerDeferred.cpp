@@ -913,8 +913,6 @@ void DxManager::RenderDeferredGeometryInstanced()
 					{
 						this->Shader_DeferredGeometryInstanced->SetResource("g_NormalMap", renderObject->GetNormalMapResource()->GetSRVPointer());
 						this->Shader_DeferredGeometryInstanced->SetBool("g_UseNormalMap", true);
-						this->Shader_DeferredGeometryInstanced->SetResource("g_NormalMap", NULL);
-						this->Shader_DeferredGeometryInstanced->SetBool("g_UseNormalMap", false);
 					}
 					else
 					{
@@ -927,6 +925,7 @@ void DxManager::RenderDeferredGeometryInstanced()
 					this->Shader_DeferredGeometryInstanced->SetResource("g_DiffuseMap", NULL);
 					this->Shader_DeferredGeometryInstanced->SetResource("g_NormalMap", NULL);
 					this->Shader_DeferredGeometryInstanced->SetBool("g_Textured", false);
+					this->Shader_DeferredGeometryInstanced->SetBool("g_UseNormalMap", false);
 				}
 			}
 			else
@@ -934,6 +933,7 @@ void DxManager::RenderDeferredGeometryInstanced()
 				this->Shader_DeferredGeometryInstanced->SetResource("g_DiffuseMap", NULL);
 				this->Shader_DeferredGeometryInstanced->SetResource("g_NormalMap", NULL);
 				this->Shader_DeferredGeometryInstanced->SetBool("g_Textured", false);
+				this->Shader_DeferredGeometryInstanced->SetBool("g_UseNormalMap", false);
 			}
 
 			//Change vertex buffer and set it and the instance buffer.

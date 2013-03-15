@@ -1,0 +1,121 @@
+Performance report, times in milliseconds, IE 100 in the file = 0.1 seconds.
+
+Settings: 
+Resolution: 1264 x 947
+Shadow Quality: 2
+FXAA Quality: 4
+Field of View: 75
+FarClip: 200
+MaxFPS: 0
+ShadowFit: 50
+Billboard Range: 0.75
+
+
+           Tier 1: 
+Renderer - Entire Frame: 
+Avg: 53.764     Tot:53764, Measures: 1000
+
+
+           Tier 2: 
+Renderer - Life Overhead: 
+Avg: 0.3555     Tot:355.5, Measures: 1000
+
+Renderer - Render: 
+Avg: 53.3895     Tot:53389.5, Measures: 1000
+
+
+           Tier 3: 
+Renderer - PreOverhead: 
+Avg: 0.006     Tot:6, Measures: 1000
+
+Renderer - CalculateCulling: 
+Avg: 1.4395     Tot:1439.5, Measures: 1000
+
+Renderer - PreRender: 
+Avg: 0.0685     Tot:68.5, Measures: 1000
+
+Renderer - Render Shadows: 
+Avg: 5.704     Tot:5704, Measures: 1000
+
+Renderer - Render Deferred Geo: 
+Avg: 6.7595     Tot:6759.5, Measures: 1000
+
+Renderer - Render Billboards: 
+Avg: 0.0575     Tot:57.5, Measures: 1000
+
+Renderer - Render Per Pixel: 
+Avg: 0.0735     Tot:73.5, Measures: 1000
+
+Renderer - Render Translucent: 
+Avg: 1.09     Tot:1090, Measures: 1000
+
+Renderer - Render Skybox: 
+Avg: 0.0395     Tot:39.5, Measures: 1000
+
+Renderer - Render Enclosing Fog: 
+Avg: 0.0115     Tot:11.5, Measures: 1000
+
+Renderer - Render Invisible Geo: 
+Avg: 0.003     Tot:3, Measures: 1000
+
+Renderer - Render Images: 
+Avg: 0.0135     Tot:13.5, Measures: 1000
+
+Renderer - Render Text: 
+Avg: 0.0125     Tot:12.5, Measures: 1000
+
+Renderer - Render FXAA: 
+Avg: 0.3095     Tot:309.5, Measures: 1000
+
+Renderer - SwapChain Present: 
+Avg: 37.484     Tot:37484, Measures: 1000
+
+
+           Tier 4: 
+Renderer - Render Cascaded Shadowmap: 
+Avg: 5.208     Tot:5208, Measures: 1000
+
+Renderer - Render Cascaded Shadowmap Instanced: 
+Avg: 0.457     Tot:457, Measures: 1000
+
+Renderer - Render Deferred Geo Terrains: 
+Avg: 4.072     Tot:4072, Measures: 1000
+
+Renderer - Render Deferred Geo Decals: 
+Avg: 0.2765     Tot:276.5, Measures: 1000
+
+Renderer - Render Deferred Geo Objects: 
+Avg: 1.155     Tot:1155, Measures: 1000
+
+Renderer - Render Deferred Geo FBX: 
+Avg: 0.9855     Tot:985.5, Measures: 1000
+
+
+           Tier 5: 
+Renderer - Render Cascaded Shadowmap Instanced Billboards: 
+Avg: 0.1375     Tot:137.5, Measures: 1000
+
+Renderer - Render Cascaded Shadowmap Instanced Static meshes: 
+Avg: 0.1945     Tot:194.5, Measures: 1000
+
+Renderer - Render Cascaded Shadowmap Instanced Animated meshes: 
+Avg: 0.0575     Tot:57.5, Measures: 1000
+
+Renderer - Render Deferred Geo Objects Static: 
+Avg: 0.8625     Tot:862.5, Measures: 1000
+
+Renderer - Render Deferred Geo Objects Animated: 
+Avg: 0.0395     Tot:39.5, Measures: 1000
+
+Renderer - Render Deferred Geo Objects Instanced: 
+Avg: 0.189     Tot:189, Measures: 1000
+
+
+           Tier 6: 
+Renderer - Render Deferred Geo Objects Static Instanced: 
+Avg: 0.1045     Tot:104.5, Measures: 1000
+
+Renderer - Render Deferred Geo Objects Animated Instanced: 
+Avg: 0.0305     Tot:30.5, Measures: 1000
+
+
