@@ -121,10 +121,22 @@ void Camera::MoveFollowingMesh()
 	if(this->followTarget)
 	{
 		// If it crashes here it's because the mesh has gotten removed without camera being notified.
-		Vector3 pos = Vector3(this->pos.x, this->pos.y, this->pos.z) - this->distanceFromMesh;
-		this->followTarget->SetPosition(pos);
 
-		
+		// If it's an FBX mesh and a bone is set, make the camera follow the bone, else make the mesh follow camera.
+		FBXMesh* mesh = dynamic_cast<FBXMesh*>(this->followTarget);
+		if(mesh && this->bone)
+		{
+			float x, y, z;
+			mesh->GetBonePosition(this->bone, x, y, z);
+			this->pos = D3DXVECTOR3(x, y, z);
+		}
+		else
+		{
+			Vector3 pos = Vector3(this->pos.x, this->pos.y, this->pos.z) - this->distanceFromMesh;
+			this->followTarget->SetPosition(pos);
+		}
+
+
 		//Rotate Mesh
 		Vector3 camDir = this->GetForward();
 		Vector3 around = Vector3(0,1,0);
@@ -133,7 +145,7 @@ void Camera::MoveFollowingMesh()
 		camDir.y = 0;
 		camDir.Normalize();
 
-		if(dynamic_cast<FBXMesh*>(this->followTarget) != NULL)	// Invert rotation for FBX due to it being inverted.
+		if(mesh)	// Invert rotation for FBX due to it being inverted.
 			angle = -acos(camDir.GetDotProduct(this->defaultMeshDirection));
 		else
 			angle = acos(camDir.GetDotProduct(this->defaultMeshDirection));
@@ -209,6 +221,16 @@ void Camera::SetMesh(iMesh* target, Vector3 distanceFromCamera, Vector3 defaultM
 	this->followTarget = dynamic_cast<Mesh*>(target);
 	this->distanceFromMesh = distanceFromCamera;
 	this->defaultMeshDirection = defaultMeshDirection;
+	this->bone = NULL;
+	this->defaultMeshDirection.Normalize();
+}
+
+void Camera::SetMesh(iMesh* target, const char* bone, Vector3 defaultMeshDirection)
+{
+	this->followTarget = dynamic_cast<Mesh*>(target);
+	this->distanceFromMesh = Vector3(0, 0, 0);
+	this->defaultMeshDirection = defaultMeshDirection;
+	this->bone = bone;
 	this->defaultMeshDirection.Normalize();
 }
 

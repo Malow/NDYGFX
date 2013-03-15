@@ -372,6 +372,13 @@ void GraphicsEngineImp::InitObjects()
 	this->dx->Start();
 	this->fbx = InitBTHFbx();
 	this->dx->SetFBXScene(this->fbx);
+
+
+	this->loadingScreenBG = NULL;
+	this->loadingScreenPB = NULL;
+	this->loadingScreenFade = NULL;
+	this->loadingScreenState = 0;
+	this->useLoadingThread = false;
 }
 
 StaticMesh* GraphicsEngineImp::CreateStaticMesh(string filename, D3DXVECTOR3 pos, const char* billboardFilePath, float distanceToSwapToBillboard)
@@ -379,7 +386,7 @@ StaticMesh* GraphicsEngineImp::CreateStaticMesh(string filename, D3DXVECTOR3 pos
 	StaticMesh* mesh = new StaticMesh(pos, filename, billboardFilePath, distanceToSwapToBillboard);
 	
 	// if it is in memory dont put it on another thread.
-	if(GetResourceManager()->HasMeshStripsResource(filename.c_str()))
+	if(!this->useLoadingThread && GetResourceManager()->HasMeshStripsResource(filename.c_str()))
 	{
 		bool success = mesh->LoadFromFile(filename);
 		if(success)
@@ -407,7 +414,7 @@ StaticMesh* GraphicsEngineImp::CreateStaticMesh(string filename, D3DXVECTOR3 pos
 	StaticMesh* mesh = new StaticMesh(pos, filename);
 
 	// if it is in memory dont put it on another thread.
-	if(GetResourceManager()->HasMeshStripsResource(filename.c_str()))
+	if(!this->useLoadingThread && GetResourceManager()->HasMeshStripsResource(filename.c_str()))
 	{
 		bool success = mesh->LoadFromFile(filename);
 		if(success)
@@ -443,7 +450,7 @@ AnimatedMesh* GraphicsEngineImp::CreateAnimatedMesh(string filename, D3DXVECTOR3
 	AnimatedMesh* mesh = new AnimatedMesh(pos, filename, billboardFilePath, distanceToSwapToBillboard);
 
 	// If we have it in memory dont put it on the other thread.
-	if(GetResourceManager()->HasMeshStripsResource(filename.c_str()))
+	if(!this->useLoadingThread && GetResourceManager()->HasMeshStripsResource(filename.c_str()))
 	{
 		//Check if loading the animation from file was successful...
 		if(mesh->LoadFromFile(filename))
@@ -769,170 +776,6 @@ void GraphicsEngineImp::PreLoadResources(unsigned int nrOfResources, const char*
 	this->PutEvent(re);
 }
 
-void GraphicsEngineImp::LoadingScreen(const char* BackgroundTexture, const char* ProgressBarTexture, float FadeBlackInInTime, float FadeBlackInOutTime, float FadeBlackOutInTime, float FadeBlackOutOutTime)
-{
-	bool updateCam = this->cam->GetUpdatingCamera();
-	this->cam->SetUpdateCamera(false);
-	this->Update();
-
-	// Set MaxFPS during loading screen
-	float prevRendSleep = this->dx->GetRendererSleep();
-	this->dx->SetMaxFPS(30.0f);
-
-	Image* bg = NULL;
-	if( strcmp(BackgroundTexture, "") != 0 )
-	{
-		bg = this->CreateImage(D3DXVECTOR2(0.0f, 0.0f), D3DXVECTOR2(0.0f, 0.0f), BackgroundTexture);
-		bg->SetStrata(10.0f);
-	}
-
-	Image* pb = NULL;
-	if( strcmp(ProgressBarTexture, "") != 0)
-	{
-		pb = this->CreateImage(D3DXVECTOR2((this->parameters.WindowWidth / 4.0f), ((this->parameters.WindowHeight * 3.0f) / 4.0f)), 
-			D3DXVECTOR2(0, this->parameters.WindowHeight / 10.0f), ProgressBarTexture);
-		pb->SetStrata(10.0f);
-	}
-
-	int TotalItems = this->GetEventQueueSize();
-
-	float dx = (this->parameters.WindowWidth / 2.0f) / TotalItems;
-	float y = this->parameters.WindowHeight / 10.0f;
-
-	Image* fade = NULL;
-	if(FadeBlackInInTime != 0.0f || FadeBlackInOutTime != 0.0f || FadeBlackOutInTime != 0.0f || FadeBlackOutOutTime != 0.0f)
-	{
-		fade = this->CreateImage(D3DXVECTOR2(0.0f, 0.0f), D3DXVECTOR2((float)this->parameters.WindowWidth, (float)this->parameters.WindowHeight), "Media/LoadingScreen/FadeTexture.png");
-		fade->SetStrata(10.0f);
-	}
-
-	int state = 0;
-	/*
-	0 = fade in to black
-	1 = fade out to loading screen
-	2 = loading 
-	3 = fade in to black
-	4 = fade out to game
-	*/
-	this->StartRendering();
-	float timer = 0.0f;
-	bool go = true;
-	while(go)
-	{
-		float diff = this->Update();
-		timer += diff * 0.001f;
-		
-		
-		if(state == 0)
-		{
-			if(FadeBlackInInTime > 0.0f)
-			{
-				float op = timer / FadeBlackInInTime;
-				if(op > 1.0f)
-					op = 1.0f;
-				if(fade)
-					fade->SetOpacity(op);
-			}
-			if(timer > FadeBlackInInTime)
-			{
-				state++;
-				timer = 0;
-
-				// Added by Alexivan
-				if ( bg ) bg->SetDimensions(Vector2((float)this->parameters.WindowWidth, (float)this->parameters.WindowHeight));
-			}
-		}
-		else if(state == 1)
-		{
-			if(FadeBlackInOutTime > 0.0f)
-			{
-				float op = 1 - (timer / FadeBlackInOutTime);
-				if(op < 0.0f)
-					op = 0.0f;
-				if(fade)
-					fade->SetOpacity(op);
-			}
-
-			if(timer > FadeBlackInOutTime)
-				state++;
-		}
-		else if(state == 2)
-		{
-			if(!this->loading)
-			{
-				timer = 0;
-				state++;
-			}
-		}
-		else if(state == 3)
-		{
-			if(FadeBlackOutInTime > 0.0f)
-			{
-				float op = timer / FadeBlackOutInTime;
-				if(op > 1.0f)
-					op = 1.0f;
-				if(fade)
-					fade->SetOpacity(op);
-			}
-
-			if(timer > FadeBlackOutInTime)
-			{
-				state++;
-				timer = 0;
-
-				if(pb)
-					this->DeleteImage(pb);
-				if(bg)
-					this->DeleteImage(bg);
-			}
-
-		}
-		else
-		{
-			if(FadeBlackOutOutTime > 0.0f)
-			{
-				float op = 1 - (timer / FadeBlackOutOutTime);
-				if(op < 0.0f)
-					op = 0.0f;
-				if(fade)
-					fade->SetOpacity(op);
-			}
-
-			if(timer > FadeBlackOutOutTime)
-			{
-				state++;
-				go = false;
-			}
-		}
-
-
-		int ItemsToGo = this->GetEventQueueSize();
-		
-		if(this->loading && state > 0)
-			if(pb)
-			{
-				if(ItemsToGo == 0)
-					pb->SetDimensions(Vector2(dx * (TotalItems - 0.5f), y));
-				else if(ItemsToGo < TotalItems - 1)
-					pb->SetDimensions(Vector2(dx * (TotalItems - ItemsToGo - 1), y));
-				else
-					pb->SetDimensions(Vector2(dx * 0.5f, y));
-			}
-
-		// Sleep for a bit
-		Sleep(15);
-	}
-
-	if(fade)
-	{
-		this->DeleteImage(fade);
-	}
-
-	if(this->cam->GetCameraType() == FPS)
-		this->GetKeyList()->SetMousePosition(Vector2(this->parameters.WindowWidth / 2.0f, this->parameters.WindowHeight / 2.0f));
-	this->cam->SetUpdateCamera(updateCam);
-	this->dx->SetRendererSleep(prevRendSleep);
-}
 
 iMesh* GraphicsEngineImp::CreateMesh( const char* filename, const Vector3& pos, const char* billboardFilePath, float distanceToSwapToBillboard)
 {
@@ -1184,4 +1027,276 @@ void GraphicsEngineImp::ResetPerfLogging()
 void GraphicsEngineImp::PrintPerfLogging()
 {
 	this->dx->PrintPerfLogging();
+}
+
+
+
+void GraphicsEngineImp::ShowLoadingScreen( const char* BackgroundTexture /*= ""*/, const char* ProgressBarTexture /*= ""*/, float FadeBlackInInTime /*= 0.0f*/, float FadeBlackInOutTime /*= 0.0f*/ )
+{
+	this->useLoadingThread = true;
+	if(!this->loadingScreenBG)
+	{
+		if( strcmp(BackgroundTexture, "") != 0 )
+		{
+			this->loadingScreenBG = this->CreateImage(D3DXVECTOR2(0.0f, 0.0f), D3DXVECTOR2(0.0f, 0.0f), BackgroundTexture);
+			this->loadingScreenBG->SetStrata(10.0f);
+		}
+	}
+
+	if(!this->loadingScreenPB)
+	{
+		if( strcmp(ProgressBarTexture, "") != 0)
+		{
+			this->loadingScreenPB = this->CreateImage(D3DXVECTOR2((this->parameters.WindowWidth / 4.0f), ((this->parameters.WindowHeight * 3.0f) / 4.0f)), 
+				D3DXVECTOR2(0, this->parameters.WindowHeight / 10.0f), ProgressBarTexture);
+			this->loadingScreenPB->SetStrata(10.0f);
+		}
+	}
+
+
+	if(!this->loadingScreenFade)
+	{
+		if(FadeBlackInInTime != 0.0f || FadeBlackInOutTime != 0.0f)
+		{
+			this->loadingScreenFade = this->CreateImage(D3DXVECTOR2(0.0f, 0.0f), D3DXVECTOR2((float)this->parameters.WindowWidth, (float)this->parameters.WindowHeight), "Media/LoadingScreen/FadeTexture.png");
+			this->loadingScreenFade->SetStrata(10.0f);
+		}
+	}
+
+
+
+	this->StartRendering();
+	float timer = 0.0f;
+	bool go = true;
+	while(go)
+	{
+		float diff = this->Update();
+		timer += diff * 0.001f;
+
+
+		if(this->loadingScreenState == 0)
+		{
+			if(FadeBlackInInTime > 0.0f)
+			{
+				float op = timer / FadeBlackInInTime;
+				if(op > 1.0f)
+					op = 1.0f;
+				if(this->loadingScreenFade)
+					this->loadingScreenFade->SetOpacity(op);
+			}
+			if(timer > FadeBlackInInTime)
+			{
+				this->loadingScreenState++;
+				timer = 0;
+
+				// Added by Alexivan
+				if ( this->loadingScreenBG ) 
+					this->loadingScreenBG->SetDimensions(Vector2((float)this->parameters.WindowWidth, (float)this->parameters.WindowHeight));
+			}
+		}
+		else if(this->loadingScreenState == 1)
+		{
+			if(FadeBlackInOutTime > 0.0f)
+			{
+				float op = 1 - (timer / FadeBlackInOutTime);
+				if(op < 0.0f)
+					op = 0.0f;
+				if(this->loadingScreenFade)
+					this->loadingScreenFade->SetOpacity(op);
+			}
+
+			if(timer > FadeBlackInOutTime)
+				this->loadingScreenState++;
+		}
+		else
+		{
+			go = false;
+		}
+
+
+		// Sleep for a bit
+		Sleep(15);
+	}
+}
+
+void GraphicsEngineImp::LoadingScreen(const char* BackgroundTexture, const char* ProgressBarTexture, float FadeBlackInInTime, float FadeBlackInOutTime, float FadeBlackOutInTime, float FadeBlackOutOutTime)
+{
+	bool updateCam = this->cam->GetUpdatingCamera();
+	this->cam->SetUpdateCamera(false);
+	this->Update();
+
+	// Set MaxFPS during loading screen
+	float prevRendSleep = this->dx->GetRendererSleep();
+	this->dx->SetMaxFPS(30.0f);
+
+	if(!this->loadingScreenBG)
+	{
+		if( strcmp(BackgroundTexture, "") != 0 )
+		{
+			this->loadingScreenBG = this->CreateImage(D3DXVECTOR2(0.0f, 0.0f), D3DXVECTOR2(0.0f, 0.0f), BackgroundTexture);
+			this->loadingScreenBG->SetStrata(10.0f);
+		}
+	}
+
+	if(!this->loadingScreenPB)
+	{
+		if( strcmp(ProgressBarTexture, "") != 0)
+		{
+			this->loadingScreenPB = this->CreateImage(D3DXVECTOR2((this->parameters.WindowWidth / 4.0f), ((this->parameters.WindowHeight * 3.0f) / 4.0f)), 
+				D3DXVECTOR2(0, this->parameters.WindowHeight / 10.0f), ProgressBarTexture);
+			this->loadingScreenPB->SetStrata(10.0f);
+		}
+	}
+
+
+	int TotalItems = this->GetEventQueueSize();
+
+	float dx = (this->parameters.WindowWidth / 2.0f) / TotalItems;
+	float y = this->parameters.WindowHeight / 10.0f;
+
+	if(!this->loadingScreenFade)
+	{
+		if(FadeBlackInInTime != 0.0f || FadeBlackInOutTime != 0.0f || FadeBlackOutInTime != 0.0f || FadeBlackOutOutTime != 0.0f)
+		{
+			this->loadingScreenFade = this->CreateImage(D3DXVECTOR2(0.0f, 0.0f), D3DXVECTOR2((float)this->parameters.WindowWidth, (float)this->parameters.WindowHeight), "Media/LoadingScreen/FadeTexture.png");
+			this->loadingScreenFade->SetStrata(10.0f);
+		}
+	}
+
+	/*
+	0 = fade in to black
+	1 = fade out to loading screen
+	2 = loading 
+	3 = fade in to black
+	4 = fade out to game
+	*/
+	this->StartRendering();
+	float timer = 0.0f;
+	bool go = true;
+	while(go)
+	{
+		float diff = this->Update();
+		timer += diff * 0.001f;
+		
+		
+		if(this->loadingScreenState == 0)
+		{
+			if(FadeBlackInInTime > 0.0f)
+			{
+				float op = timer / FadeBlackInInTime;
+				if(op > 1.0f)
+					op = 1.0f;
+				if(this->loadingScreenFade)
+					this->loadingScreenFade->SetOpacity(op);
+			}
+			if(timer > FadeBlackInInTime)
+			{
+				this->loadingScreenState++;
+				timer = 0;
+
+				// Added by Alexivan
+				if ( this->loadingScreenBG ) 
+					this->loadingScreenBG->SetDimensions(Vector2((float)this->parameters.WindowWidth, (float)this->parameters.WindowHeight));
+			}
+		}
+		else if(this->loadingScreenState == 1)
+		{
+			if(FadeBlackInOutTime > 0.0f)
+			{
+				float op = 1 - (timer / FadeBlackInOutTime);
+				if(op < 0.0f)
+					op = 0.0f;
+				if(this->loadingScreenFade)
+					this->loadingScreenFade->SetOpacity(op);
+			}
+
+			if(timer > FadeBlackInOutTime)
+				this->loadingScreenState++;
+		}
+		else if(this->loadingScreenState == 2)
+		{
+			if(!this->loading)
+			{
+				timer = 0;
+				this->loadingScreenState++;
+			}
+		}
+		else if(this->loadingScreenState == 3)
+		{
+			if(FadeBlackOutInTime > 0.0f)
+			{
+				float op = timer / FadeBlackOutInTime;
+				if(op > 1.0f)
+					op = 1.0f;
+				if(this->loadingScreenFade)
+					this->loadingScreenFade->SetOpacity(op);
+			}
+
+			if(timer > FadeBlackOutInTime)
+			{
+				this->loadingScreenState++;
+				timer = 0;
+
+				if(this->loadingScreenPB)
+				{
+					this->DeleteImage(this->loadingScreenPB);
+					this->loadingScreenPB = NULL;
+				}
+				if(this->loadingScreenBG)
+				{
+					this->DeleteImage(this->loadingScreenBG);
+					this->loadingScreenBG = NULL;
+				}
+			}
+
+		}
+		else
+		{
+			if(FadeBlackOutOutTime > 0.0f)
+			{
+				float op = 1 - (timer / FadeBlackOutOutTime);
+				if(op < 0.0f)
+					op = 0.0f;
+				if(this->loadingScreenFade)
+					this->loadingScreenFade->SetOpacity(op);
+			}
+
+			if(timer > FadeBlackOutOutTime)
+			{
+				this->loadingScreenState++;
+				go = false;
+			}
+		}
+
+
+		int ItemsToGo = this->GetEventQueueSize();
+		
+		if(this->loading && this->loadingScreenState > 0)
+		{
+			if(this->loadingScreenPB)
+			{
+				if(ItemsToGo == 0)
+					this->loadingScreenPB->SetDimensions(Vector2(dx * (TotalItems - 0.5f), y));
+				else if(ItemsToGo < TotalItems - 1)
+					this->loadingScreenPB->SetDimensions(Vector2(dx * (TotalItems - ItemsToGo - 1), y));
+				else
+					this->loadingScreenPB->SetDimensions(Vector2(dx * 0.5f, y));
+			}
+		}
+
+		// Sleep for a bit
+		Sleep(15);
+	}
+
+	if(this->loadingScreenFade)
+	{
+		this->DeleteImage(this->loadingScreenFade);
+		this->loadingScreenFade = NULL;
+	}
+
+	if(this->cam->GetCameraType() == FPS)
+		this->GetKeyList()->SetMousePosition(Vector2(this->parameters.WindowWidth / 2.0f, this->parameters.WindowHeight / 2.0f));
+	this->cam->SetUpdateCamera(updateCam);
+	this->dx->SetRendererSleep(prevRendSleep);
+	this->useLoadingThread = false;
 }
