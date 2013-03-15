@@ -40,6 +40,9 @@
     <ClCompile Include="Source\World\EntityList.cpp">
       <Filter>Source Files\World</Filter>
     </ClCompile>
+    <ClCompile Include="Source\World\WorldRendererSettings.cpp">
+      <Filter>Source Files\World</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Graphics.h">
@@ -104,6 +107,12 @@
     </ClInclude>
     <ClInclude Include="Source\MaloWFileDebug.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\World\WorldRendererSettings.h">
+      <Filter>Source Files\World</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\World\AnyType.h">
+      <Filter>Source Files\World</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
