@@ -4,7 +4,8 @@
 #include "WaterQuad.h"
 
 
-WorldRenderer::WorldRenderer(World* world, GraphicsEngine* graphics) : 
+WorldRenderer::WorldRenderer(World* world, GraphicsEngine* graphics) :
+	zSettings(this, "WorldRenderer.cfg"),
 	zWorld(world),
 	zGraphics(graphics),
 	zShowAIMap(false),
@@ -48,7 +49,8 @@ WorldRenderer::WorldRenderer(World* world, GraphicsEngine* graphics) :
 
 		UpdateWaterBoxes(*i);
 	}
-}
+
+	this->zGrassDensity = zSettings.GetSetting("GrassDensity");}
 
 WorldRenderer::~WorldRenderer()
 {
@@ -58,6 +60,16 @@ WorldRenderer::~WorldRenderer()
 		zWorld->RemoveObserver(this);
 		zWorld = 0;
 	}
+
+	// Clean grass
+	for(auto i = this->zGrass.begin(); i != this->zGrass.end(); ++i)
+	{
+		if(i->second)
+		{
+			this->zGraphics->DeleteBillboardCollection(i->second);
+		}
+	}
+	this->zGrass.clear();
 
 	// Clean Terrain
 	for( unsigned int x=0; x<zTerrain.size(); ++x )
@@ -73,7 +85,10 @@ WorldRenderer::~WorldRenderer()
 	for( auto i = zEntities.cbegin(); i != zEntities.cend(); ++i )
 	{
 		i->first->RemoveObserver(this);
-		zGraphics->DeleteMesh(i->second);
+		if(i->second)
+		{
+			zGraphics->DeleteMesh(i->second);
+		}
 	}
 	zEntities.clear();
 
@@ -94,6 +109,7 @@ WorldRenderer::~WorldRenderer()
 		zGraphics->DeleteMesh(i->second);
 	}
 	zWaterQuads.clear();
+
 }
 
 void WorldRenderer::OnEvent( Event* e )
@@ -158,24 +174,17 @@ void WorldRenderer::OnEvent( Event* e )
 			zWaterBoxes.erase(boxI);
 		}
 	}
-	else if ( SectorUnloadedEvent* SUE = dynamic_cast<SectorUnloadedEvent*>(e) )
-	{
-		unsigned int tIndex = SUE->sectorY * SUE->world->GetNumSectorsWidth() + SUE->sectorX;
-		zGraphics->DeleteTerrain(zTerrain[tIndex]);
-
-		// Remove AI Grid
-		auto grid = zAIGrids.find(zTerrain[tIndex]);
-		if ( grid != zAIGrids.end() )
-			zAIGrids.erase(grid);
-
-		zTerrain[tIndex] = 0;
-	}
 	else if ( WorldSunChanged* WSC = dynamic_cast<WorldSunChanged*>(e) )
 	{
 		zGraphics->SetSunLightProperties(
 			WSC->world->GetSunDir(),
 			WSC->world->GetSunColor(),
 			WSC->world->GetSunIntensity() );
+	}
+	else if ( SectorUnloadedEvent* SUE = dynamic_cast<SectorUnloadedEvent*>(e) )
+	{
+		UPDATEENUM& u = zUpdatesRequired[Vector2UINT(SUE->sectorX, SUE->sectorY)];
+		u = (UPDATEENUM)(u | UPDATE_DELETE);
 	}
 	else if ( SectorLoadedEvent* SLE = dynamic_cast<SectorLoadedEvent*>(e) )
 	{
@@ -222,26 +231,11 @@ void WorldRenderer::OnEvent( Event* e )
 	else if ( EntityRemovedEvent* ERE = dynamic_cast<EntityRemovedEvent*>(e) )
 	{
 		DeleteEntity(ERE->entity);
-		ERE->entity->RemoveObserver(this);
 	}
-}
-
-float WorldRenderer::GetYPosFromHeightMap( float x, float y )
-{
-	if(zWorld == NULL)
-		return std::numeric_limits<float>::infinity();
-
-	unsigned int tIndex = (unsigned int)(y / (float)SECTOR_WORLD_SIZE) * zWorld->GetNumSectorsWidth() + (unsigned int)(x/(float)SECTOR_WORLD_SIZE);
-	
-	if ( tIndex >= zWorld->GetNumSectorsWidth() * zWorld->GetNumSectorsHeight() )
-		return std::numeric_limits<float>::infinity();
-
-	if ( zTerrain[tIndex])
+	else if ( EntityDeletedEvent* EDE = dynamic_cast<EntityDeletedEvent*>(e) )
 	{
-		return zTerrain[tIndex]->GetYPositionAt(fmod(x, (float)SECTOR_WORLD_SIZE), fmod(y, (float)SECTOR_WORLD_SIZE));
+		DeleteEntity(EDE->entity);
 	}
-	
-	return std::numeric_limits<float>::infinity();
 }
 
 WaterCollisionData WorldRenderer::GetCollisionWithWaterBoxes()
@@ -465,90 +459,125 @@ void WorldRenderer::ToggleWaterBoxes(bool flag)
 	}
 }
 
-void WorldRenderer::CreateEntity( Entity* e )
-{
-	e->AddObserver(this);
-	SetEntityGraphics(e);
-}
-
 void WorldRenderer::SetEntityGraphics( Entity* e )
 {
 	// Camera Distance
 	Vector3 camPos = zGraphics->GetCamera()->GetPosition();
 	float distanceToCam = (camPos - e->GetPosition()).GetLength();
 
+	// Entity in map
+	auto i = zEntities.find(e);
+
 	// Too Far Away
 	if ( distanceToCam >= zGraphics->GetEngineParameters().FarClip )
 	{
-		auto i = zEntities.find(e);
 		if ( i != zEntities.cend() )
 		{
+			// Remove observer
 			i->first->RemoveObserver(this);
-			if ( i->second ) zGraphics->DeleteMesh(i->second);
+
+			// Delete graphics
+			if ( i->second ) 
+			{
+				zGraphics->DeleteMesh(i->second);
+			}
+
+			// Erase from set
 			zEntities.erase(i);
 		}
+
 		return;
 	}
 
-	// New Graphics
+	// New graphics file name
 	const std::string& model = GetEntModel(e->GetType(), distanceToCam);
 
-	// Find Old Graphics
-	auto i = zEntities.find(e);
+	// Empty model
+	if ( model.empty() )
+	{
+		// Is it mapped?
+		if ( i != zEntities.cend() )
+		{
+			e->RemoveObserver(this);
 
-	if ( !model.empty() && i == zEntities.end() )
+			if ( i->second ) 
+			{
+				zGraphics->DeleteMesh(i->second);
+			}
+			
+			zEntities.erase(i);
+		}
+
+		return;
+	}
+
+	// Compare Current Name
+	if ( i != zEntities.cend() && i->second )
+	{
+		// Get previous filename
+		std::string file = i->second->GetFilePath();
+		if ( !strcmp(model.c_str(), i->second->GetFilePath()) )
+		{
+			// Save Name, Return
+			return;
+		}
+	}
+
+	// Insert Entity
+	if ( i == zEntities.cend() && !model.empty() )
 	{
 		e->AddObserver(this);
 		zEntities[e] = 0;
 		i = zEntities.find(e);
 	}
 
-	std::string file;
-	if ( i != zEntities.end() && i->second ) file = i->second->GetFilePath();
+	// New Mesh
+	iMesh* newMesh = 0;
 
-	if ( i != zEntities.end() && (!i->second || strcmp(model.c_str(), i->second->GetFilePath())) )
+	// Create new
+	float billboardDistance = GetEntBillboardDistance(e->GetType());	
+
+	// Check billboard
+	if ( billboardDistance > 0.0f )
 	{
-		// Delete Old Graphics
-		if ( i->second ) zGraphics->DeleteMesh(i->second);
+		newMesh = zGraphics->CreateMesh(
+			model.c_str(), 
+			e->GetPosition(), 
+			GetEntBillboard(e->GetType()).c_str(),
+			billboardDistance);
+	}
+	else
+	{
+		newMesh = zGraphics->CreateMesh(model.c_str(), e->GetPosition());
+	}
 
-		// Create New
-		if ( !model.empty() )
-		{
-			float billboardDistance = GetEntBillboardDistance(e->GetType());
+	// Randomize animation frame
+	if ( iAnimatedMesh* iAnimMesh = dynamic_cast<iAnimatedMesh*>(newMesh) )
+	{
+		float randTime = (float)rand() / (float)RAND_MAX;
+		iAnimMesh->SetAnimationTime( randTime * (float)iAnimMesh->GetAnimationLength() * 0.001f );
+	}
 
-			if ( billboardDistance > 0.0f )
-			{
-				i->second = zGraphics->CreateMesh(
-					model.c_str(), 
-					e->GetPosition(), 
-					GetEntBillboard(e->GetType()).c_str(),
-					billboardDistance);
-			}
-			else
-			{
-				i->second = zGraphics->CreateMesh(model.c_str(), e->GetPosition());
-			}
+	// Delete Current
+	if ( i->second ) 
+	{
+		zGraphics->DeleteMesh(i->second);
+	}
 
-			// Randomize Animation Frame
-			if ( iAnimatedMesh* iAnimMesh = dynamic_cast<iAnimatedMesh*>(i->second) )
-			{
-				float randTime = (float)rand() / (float)RAND_MAX;
-				iAnimMesh->SetAnimationTime( randTime * (float)iAnimMesh->GetAnimationLength() * 0.001f );
-			}
+	// Set Mesh
+	i->second = newMesh;
 
-			SetEntityTransformation(e);
-		}
-		else
-		{
-			zEntities.erase(i);
-		}
+	// Update entity transformation
+	if ( newMesh ) 
+	{
+		SetEntityTransformation(e);
 	}
 }
 
 void WorldRenderer::SetEntityTransformation( Entity* e )
 {
 	auto i = zEntities.find(e);
-	if ( i != zEntities.end() && i->second != 0 )
+	if ( i != zEntities.cend() && i->second )
 	{
 		i->second->SetPosition(e->GetPosition());
 		i->second->SetQuaternion(Vector4(0.0f, 0.0f, 0.0f, 1.0f));
@@ -686,13 +715,21 @@ void WorldRenderer::UpdateTerrain()
 		{
 			if ( ptrTerrain )
 			{
-				// Destroy Terrain
-				zGraphics->DeleteTerrain(ptrTerrain);
+				//Delete previous grass if existing.
+				auto grassData = this->zGrass.find(ptrTerrain);
+				if(grassData != this->zGrass.end())
+				{
+					this->zGraphics->DeleteBillboardCollection(grassData->second);
+					this->zGrass.erase(grassData);
+				}
 
 				// Remove AI Grid
 				auto grid = zAIGrids.find(ptrTerrain);
 				if ( grid != zAIGrids.end() )
 					zAIGrids.erase(grid);
+
+				// Destroy Terrain
+				zGraphics->DeleteTerrain(ptrTerrain);
 
 				// Set Pointers
 				zTerrain[tIndex] = 0;
@@ -736,6 +773,8 @@ void WorldRenderer::UpdateTerrain()
 						2,
 						&sizes[0],
 						&data[0] );
+
+					this->GenerateGrass(ptrTerrain);
 				}
 
 				// Textures
@@ -750,6 +789,8 @@ void WorldRenderer::UpdateTerrain()
 						terrainTextures[x] = &files[x][0];
 					}
 					ptrTerrain->SetTextures(terrainTextures);
+
+					this->GenerateGrass(ptrTerrain);
 				}
 
 				// AI Grid
@@ -775,4 +816,225 @@ void WorldRenderer::UpdateTerrain()
 
 		zUpdatesRequired.erase(i);
 	}
+}
+
+void WorldRenderer::GenerateGrass(iTerrain* ptrTerrain)
+{
+	//Delete previous grass if existing.
+	auto grassData = this->zGrass.find(ptrTerrain);
+	if(grassData != this->zGrass.end())
+	{
+		//Remove from graphics engine.
+		this->zGraphics->DeleteBillboardCollection(grassData->second);
+		//Remove from map.
+		this->zGrass.erase(grassData);
+	}
+
+	float width = FSECTOR_WORLD_SIZE;
+	float depth = FSECTOR_WORLD_SIZE; 
+	unsigned int sqrtGrassDensity = (unsigned int)sqrt((long)this->zGrassDensity);
+	float xDiff = width / sqrtGrassDensity;
+	float zDiff = depth / sqrtGrassDensity;
+	Vector2 grassPos = Vector2(0.0f);
+	Vector2 terrainPosXZ = Vector2(ptrTerrain->GetPosition().x - width * 0.5f, ptrTerrain->GetPosition().z - depth * 0.5f);
+	float blendValueGrassLight = 0.0f;
+	float blendValueGrassMedium = 0.0f;
+	float blendValueGrassDark = 0.0f;
+	//1 / nrOfGrassTextures - epsilon for the special case when blend value of all 3 grass textures is equal(1/3).
+	float blendThreshHold = 0.32f;
+	const static float RGB10 = 10.0f / 255.0f;
+	const static float RGB20 = 20.0f / 255.0f;
+	const static float RGB25 = 25.0f / 255.0f;
+	const static float RGB30 = 30.0f / 255.0f;
+	const static float RGB40 = 40.0f / 255.0f;
+	const static float RGB50 = 50.0f / 255.0f;
+	const static float RGB75 = 75.0f / 255.0f;
+	const static float RGB100 = 100.0f / 255.0f;
+	const static float RGB125 = 125.0f / 255.0f;
+	float minGrassWidth = 0.5f; //global variabel?
+	float maxGrassWidth = 1.0f; //global variabel?
+	float minGrassHeight = 0.25f; //global variabel?
+	float maxGrassHeight = 0.5f; //global variabel?
+	Vector3* positions = new Vector3[this->zGrassDensity];
+	Vector2* sizes = new Vector2[this->zGrassDensity];
+	Vector3* colors = new Vector3[this->zGrassDensity];
+	srand(ptrTerrain->GetPosition().x + ptrTerrain->GetPosition().z); //Use same, unique seed for terrain every time.
+	float rndMaxInv = 1.0f / RAND_MAX;
+	float grassWidth = 0.0f;
+	float grassHeight = 0.0f;
+	float rndGrassColorOffset = 0.0f;
+	//Vector3 rndGrassColorOffsetVec = Vector3(0.0f, 0.0f, 0.0f);
+	float terrainY = 0.0f;
+	Vector2 offsetVector = Vector2(xDiff, zDiff) * 0.5f;
+	/*float diff = 0.0f; 
+	float diffPow = 0.0f;
+	float maxDiff = 0.0f;
+	float maxDiffPow = 0.0f;
+	float tmp = 0.0f;
+	float scale = 0.0f;
+	float scaleSum = 0.0f;*/
+
+	unsigned int index = 0;
+	float totBlendValue = 0.0f;
+	//Vector3 colorGrassLight = Vector3(0.0f, RGB75, 0.0f);
+	//Vector3 colorGrassMedium = Vector3(0.0f, RGB50, 0.0f);
+	//Vector3 colorGrassDark = Vector3(0.0f, RGB25, 0.0f);
+	Vector3 rndGrassColorOffsetVecGrassLight = Vector3(0.0f, 0.0f, 0.0f);
+	Vector3 rndGrassColorOffsetVecGrassMedium = Vector3(0.0f, 0.0f, 0.0f);
+	Vector3 rndGrassColorOffsetVecGrassDark = Vector3(0.0f, 0.0f, 0.0f);
+
+	/*Vector3 colorGrassLight = Vector3(RGB75, RGB125, RGB75);
+	Vector3 colorGrassMedium = Vector3(RGB50, RGB100, RGB50);
+	Vector3 colorGrassDark = Vector3(RGB25, RGB75, RGB25);*/
+
+	for(unsigned int x = 0; x < sqrtGrassDensity; ++x)
+	{
+		for(unsigned int z = 0; z < sqrtGrassDensity; ++z)
+		{
+			grassPos = terrainPosXZ + Vector2((float)x * xDiff, (float)z * zDiff) + offsetVector;
+			try
+			{
+				terrainY = zWorld->CalcHeightAtWorldPos(grassPos);
+			}
+			catch (...)
+			{
+				continue;
+			}
+
+			//Always set variables using random to ensure same pattern.
+			//Randomize size between min and max grass width and height.
+			grassWidth = fmod(rand() * rndMaxInv, maxGrassWidth - minGrassWidth) + minGrassWidth;
+			grassHeight = fmod(rand() * rndMaxInv, maxGrassHeight - minGrassHeight) + minGrassHeight;
+
+			float RGB_MIN_MAX = RGB75;
+
+			//Randomize dark grass RGB = g[-RGB_MIN_MAX, 0]
+			rndGrassColorOffset = fmod(rand() * rndMaxInv, RGB_MIN_MAX) - RGB_MIN_MAX; //RGB_MIN_MAX = min
+			rndGrassColorOffsetVecGrassDark.y = rndGrassColorOffset;
+			//Randomize medium grass RGB = g[-RGB_MIN_MAX / 2, RGB_MIN_MAX / 2]
+			rndGrassColorOffset = fmod(rand() * rndMaxInv, RGB_MIN_MAX * 0.5f + RGB_MIN_MAX * 0.5f) - RGB_MIN_MAX * 0.5f;
+			rndGrassColorOffsetVecGrassMedium.y = rndGrassColorOffset;
+			//Randomize light grass RGB = g[0, RGB_MIN_MAX]
+			rndGrassColorOffset = fmod(rand() * rndMaxInv, RGB_MIN_MAX); //RGB_MIN_MAX = max
+			rndGrassColorOffsetVecGrassLight.y = rndGrassColorOffset;
+
+			//blendValueGrassLight + blendValueGrassMedium + blendValueGrassDark -> range[0,1]
+			blendValueGrassLight = this->zWorld->GetAmountOfTexture(grassPos, "07_v01-MossLight.png");
+			blendValueGrassMedium = this->zWorld->GetAmountOfTexture(grassPos, "01_v02-Moss.png");
+			blendValueGrassDark = this->zWorld->GetAmountOfTexture(grassPos, "06_v01-MossDark.png");
+
+			totBlendValue = blendValueGrassLight + blendValueGrassMedium + blendValueGrassDark;
+			if(totBlendValue > blendThreshHold) //Not equal to to avoid division by zero
+			{
+				if(totBlendValue < blendThreshHold + 0.1f)
+				{
+					float derp = 1.0f;
+				}
+				//totBlendValue range[blendThreshHold, 1], we want [0,1]
+				float tmp = totBlendValue - blendThreshHold; //range[0, 1 - blendThreshHold];
+				tmp /= 1.0f - blendThreshHold;
+				totBlendValue = tmp;
+				//Set size
+				grassHeight *= totBlendValue; //modify grassheight depending on blend values
+				sizes[index] = Vector2(grassWidth, grassHeight);
+				//Set position
+				positions[index] = Vector3(grassPos.x, terrainY + grassHeight * 0.5f, grassPos.y);
+				//Set color
+				//Col = Lc * Lb +  Mc * Mb + Dc * Db + Rc
+				/*colors[index] =		colorGrassLight * blendValueGrassLight 
+								+	colorGrassMedium * blendValueGrassMedium
+								+	colorGrassDark * blendValueGrassDark
+								+	rndGrassColorOffsetVec;
+				*/
+				colors[index] =		rndGrassColorOffsetVecGrassLight * blendValueGrassLight
+								+	rndGrassColorOffsetVecGrassMedium * blendValueGrassMedium
+								+	rndGrassColorOffsetVecGrassDark * blendValueGrassDark
+								+	Vector3(0.5f, 0.5f, 0.5f); //Color is a multiplier.
+				
+				//Increase index(number of grass objects)
+				index++;
+			}
+
+			
+
+			//if(blendValueGrass >= blendThreshHold)
+			//{
+			//	nrOfPassedConditions++;
+			//	//Change height depending on blend value.
+			//	//Convert blend value from range[blendThreshHold, 1] to range[0, 1].
+			//	/*diff = blendValueGrass - blendThreshHold; 
+			//	diffPow = diff * diff;
+			//	maxDiff = 1.0f - blendThreshHold;
+			//	maxDiffPow = maxDiff * maxDiff;
+			//	tmp = pow(maxDiff / maxDiffPow, 2.0f);
+			//	scale = diffPow * tmp;
+			//	scaleSum += scale;
+			//	*/
+			//	colorSum += Vector3(RGB50, RGB100, RGB50) + rndGrassColorOffsetVec;
+			//	totBlendValue += blendValueGrass;
+			//}
+			//if(blendValueGrassLight >= blendThreshHold)
+			//{
+			//	nrOfPassedConditions++;
+			//	//Change height depending on blend value.
+			//	//Convert blend value from range[blendThreshHold, 1] to range[0, 1].
+			//	/*diff = blendValueGrassLight - blendThreshHold; 
+			//	diffPow = diff * diff;
+			//	maxDiff = 1.0f - blendThreshHold;
+			//	maxDiffPow = maxDiff * maxDiff;
+			//	tmp = pow(maxDiff / maxDiffPow, 2.0f);
+			//	scale = diffPow * tmp;
+			//	scaleSum += scale;
+			//	*/
+			//	colorSum += Vector3(RGB75, RGB125, RGB75) + rndGrassColorOffsetVec;
+			//	totBlendValue += blendValueGrassLight;
+			//}
+			//if(blendValueGrassDark >= blendThreshHold)
+			//{
+			//	nrOfPassedConditions++;
+			//	//Change height depending on blend value.
+			//	//Convert blend value from range[blendThreshHold, 1] to range[0, 1].
+			//	/*diff = blendValueGrassDark - blendThreshHold; 
+			//	diffPow = diff * diff;
+			//	maxDiff = 1.0f - blendThreshHold;
+			//	maxDiffPow = maxDiff * maxDiff;
+			//	tmp = pow(maxDiff / maxDiffPow, 2.0f);
+			//	scale = diffPow * tmp;
+			//	scaleSum += scale;
+			//	*/
+			//	colorSum += Vector3(RGB25, RGB75, RGB25) + rndGrassColorOffsetVec;
+			//	totBlendValue += blendValueGrassDark;
+			//}
+
+			//if(nrOfPassedConditions > 0)
+			//{
+			//	//tillman todo: if x of tex 0 && x of tex 1 => 0 scalesum
+			//	//Set size
+			//	//scaleSum /= (float)nrOfPassedConditions;
+			//	//grassHeight *= scaleSum;
+			//	grassHeight *= totBlendValue;
+			//	sizes[index] = Vector2(grassWidth, grassHeight);
+			//	//Set position
+			//	positions[index] = Vector3(grassPos.x, terrainY + grassHeight * 0.5f, grassPos.y);
+			//	//Set color
+			//	colorSum /= (float)nrOfPassedConditions;
+			//	colors[index] = colorSum;
+			//	index++;
+			//}
+		}
+	}
+
+	
+	//Add grass
+	//No offset vector needed since grass positions is in world space.
+	if(index > 0)
+	{
+		this->zGrass[ptrTerrain] = this->zGraphics->CreateBillboardCollection(index, positions, sizes, colors, Vector3(0.0f, 0.0f, 0.0f), "Media/Grass.png"); 
+		this->zGrass[ptrTerrain]->SetRenderShadowFlag(false); //Don't render shadows.
+	}
+	
+	//Delete data 
+	delete [] positions;
+	delete [] sizes;
+	delete [] colors;
 }

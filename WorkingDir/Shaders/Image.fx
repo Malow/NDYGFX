@@ -119,6 +119,10 @@ float4 PSScene(PSSceneIn input) : SV_Target
 {	
 	float4 tex = tex2D.Sample(linearSampler, input.tex);
 	tex.w *= opacity;
+
+	if(tex.w < 0.15f)	// Make transperance correct.
+		discard;
+
 	return tex;
 }
 

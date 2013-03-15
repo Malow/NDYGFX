@@ -11,6 +11,19 @@ class WorldFile;
 class WorldFileHeader;
 class WaterQuad;
 
+class WorldWarningEvent : public Event
+{
+public:
+	World* world;
+	std::string message;
+};
+
+class SectorWarningEvent : public WorldWarningEvent
+{
+public:
+	unsigned int sectorX, sectorY;
+};
+
 class WorldHeaderLoadedEvent : public Event
 {
 public:

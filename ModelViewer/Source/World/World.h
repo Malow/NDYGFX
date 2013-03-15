@@ -153,6 +153,7 @@ public:
 	unsigned int GetEntitiesInRect(const Rect& rect, std::set<Entity*>& out, unsigned int typeFilter=0) const;
 	unsigned int GetEntitiesInCircle(const Vector2& center, float radius, std::set<Entity*>& out, unsigned int typeFilter=0) const;
 	unsigned int GetSectorsInCicle(const Vector2& center, float radius, std::set<Vector2UINT>& out) const;
+	unsigned int CountEntitiesInRect(const Rect& rect) const;
 	unsigned int GetHeightNodesInCircle(const Vector2& center, float radius, std::set<Vector2>& out) const;
 	unsigned int GetTextureNodesInCircle(const Vector2& center, float radius, std::set<Vector2>& out) const;
 	const std::set< Vector2UINT >& GetLoadedSectors() const { return zLoadedSectors; }

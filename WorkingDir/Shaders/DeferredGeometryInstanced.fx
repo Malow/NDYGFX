@@ -42,7 +42,7 @@ struct VSIn
 	float3 norm		: NORMAL;
 	float3 color	: COLOR;
 	float3 Tangent	: TANGENT;
-	float3 Binormal	: BINORMAL;
+	//float3 Binormal	: BINORMAL;
 	//instance data
 	row_major float4x4 world					: WORLD;
 	row_major float4x4 worldInverseTranspose	: WIT;
@@ -56,7 +56,7 @@ struct PSSceneIn
 	float3 norm		: NORMAL;
 	float3 color	: COLOR;
 	float3 Tangent	: TANGENT;
-	float3 Binormal : BINORMAL;
+	//float3 Binormal : BINORMAL;
 
 	float4 worldPos : POSITION;
 	//float4 instanceColor : INSTANCE_COLOR; //TILLMAN ev todo, göra vid skapandet av mesh(pga dynamisk instansiering)
@@ -91,7 +91,7 @@ PSSceneIn VSScene(VSIn input)
 	output.color = input.color;
 	output.norm = normalize(mul(input.norm, (float3x3)input.worldInverseTranspose));
 	output.Tangent = normalize(mul(input.Tangent, (float3x3)input.worldInverseTranspose));
-	output.Binormal = normalize(mul(input.Binormal, (float3x3)input.worldInverseTranspose));
+	//output.Binormal = normalize(mul(input.Binormal, (float3x3)input.worldInverseTranspose));
 	output.worldPos = mul(float4(input.Pos, 1.0f), input.world);
 
 	return output;
@@ -121,15 +121,17 @@ PSout PSScene(PSSceneIn input) : SV_Target
 	float depth = length(g_CamPos.xyz - input.worldPos.xyz) / g_FarClip;		// Haxfix
 
 	//Normal and depth
-	// disable nm if too far away, 5% of far clip seems decent..
-	if(depth < 0.05f && g_UseNormalMap)
+	if(g_UseNormalMap)
 	{
 		// NormalMap
 		float4 bumpMap = g_NormalMap.Sample(LinearWrapSampler, input.tex);
 		// Expand the range of the normal value from (0, +1) to (-1, +1).
 		bumpMap = (bumpMap * 2.0f) - 1.0f;
 		// Calculate the normal from the data in the bump map.
-		float3 bumpNormal = input.norm + bumpMap.x * input.Tangent + bumpMap.y * input.Binormal;
+		//float3 bumpNormal = input.norm + bumpMap.x * input.Tangent + bumpMap.y * input.Binormal;
+		
+		float3 biNorm = cross(input.norm, input.Tangent);
+		float3 bumpNormal = input.norm + bumpMap.x * input.Tangent + bumpMap.y * biNorm;
 		// Normalize the resulting bump normal.
 		bumpNormal = normalize(bumpNormal);
 		output.NormalAndDepth.xyz = bumpNormal.xyz;
