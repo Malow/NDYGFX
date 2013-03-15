@@ -21,12 +21,16 @@ class BillboardCollection : public iBillboardCollection
 		TextureResource*	zTextureResource;
 		D3DXVECTOR3			zOffsetVector; //offset added to world positions, can be seen as a "world"-matrix.
 		bool				zRenderShadowFlag;
+		float				zCullNearDistance;
+		float				zCullFarDistance;
 
 	public:
 		BillboardCollection();
-		BillboardCollection(unsigned int nrOfVertices, const VertexBillboard1* vertices, const D3DXVECTOR3& offsetVector);
+		BillboardCollection(unsigned int nrOfVertices, const VertexBillboard1* vertices, const D3DXVECTOR3& offsetVector,
+							float cullNearDistance, float cullFarDistance);
 		BillboardCollection(unsigned int nrOfVertices, const D3DXVECTOR3* positions,
-							const D3DXVECTOR2* sizes, const D3DXVECTOR3* colors, const D3DXVECTOR3& offsetVector);
+							const D3DXVECTOR2* sizes, const D3DXVECTOR3* colors, const D3DXVECTOR3& offsetVector,
+							float cullNearDistance, float cullFarDistance);
 		virtual ~BillboardCollection();
 
 		unsigned int GetNrOfVertices() { return this->zNrOfVertices; }
@@ -38,6 +42,8 @@ class BillboardCollection : public iBillboardCollection
 		const TextureResource* GetTextureResource()	const { return this->zTextureResource; }
 		const D3DXVECTOR3& GetOffsetVector() const { return this->zOffsetVector; }
 		bool GetRenderShadowFlag() const { return this->zRenderShadowFlag; }
+		float GetCullNearDistance() { return this->zCullNearDistance; }
+		float GetCullFarDistance() { return this->zCullFarDistance; }
 
 		//void SetPosition(unsigned int vertexIndex, D3DXVECTOR3 position){ this->zVertices[vertexIndex].pos = position; }
 		//void SetSize(unsigned int vertexIndex, D3DXVECTOR2 size)		{ this->zVertices[vertexIndex].texAndSize = D3DXVECTOR4(this->zVertices[vertexIndex].texAndSize.x, this->zVertices[vertexIndex].texAndSize.y, size.x, size.y); }
@@ -59,6 +65,8 @@ class BillboardCollection : public iBillboardCollection
 		*/
 
 		virtual void SetRenderShadowFlag(bool flag) { this->zRenderShadowFlag = flag; }
+		virtual void SetCullNearDistance(float distance) { this->zCullNearDistance = distance; }
+		virtual void SetCullFarDistance(float distance) { this->zCullFarDistance = distance; }
 
 
 };

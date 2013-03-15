@@ -91,21 +91,21 @@ GSIn VS(VSIn input)
 {
 	GSIn output = (GSIn)0;
 	
-	float dist = length(input.posW_SizeX.xz - g_CameraPos.xz);
+	//float dist = length(input.posW_SizeX.xz - g_CameraPos.xz);
 
 	//if(dist < g_bb_CullNear || dist >= g_bb_CullFar) //TILLMAN TODO: skicak data
-	if(dist < 2.0f || dist >= g_FarClip * 0.5f) //TILLMAN TODO: skicak data
-	{
+	//if(dist < 2.0f || dist >= g_FarClip * 0.5f) //TILLMAN TODO: skicak data
+	//{
 		//output.posW = float3(0.0f, 0.0f, 0.0f);
-		output.size = float2(0.0f, 0.0f);
+	//	output.size = float2(0.0f, 0.0f);
 		//output.color = float3(0.0f, 0.0f, 0.0f);
-	}
-	else
-	{
+	//}
+	//else
+	//{
 		output.posW = input.posW_SizeX.xyz;
 		output.size = float2(input.posW_SizeX.w, input.sizeY_Color.x);
 		output.color = input.sizeY_Color.yzw;
-	}
+	//}
 
 	return output;
 }

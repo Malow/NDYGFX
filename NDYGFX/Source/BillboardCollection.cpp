@@ -2,14 +2,16 @@
 
 
 BillboardCollection::BillboardCollection() 
-:	zVertices(NULL), zTextureResource(NULL), zOffsetVector(0.0f, 0.0f, 0.0f), zRenderShadowFlag(true)
+:	zVertices(NULL), zTextureResource(NULL), zOffsetVector(0.0f, 0.0f, 0.0f), zRenderShadowFlag(true), zCullNearDistance(0.0f), zCullFarDistance(INFINITE)
 {
 
 	
 }
 
-BillboardCollection::BillboardCollection(unsigned int nrOfVertices, const VertexBillboard1* vertices, const D3DXVECTOR3& offsetVector)
-	: zNrOfVertices(nrOfVertices), zTextureResource(NULL), zOffsetVector(offsetVector)
+BillboardCollection::BillboardCollection(unsigned int nrOfVertices, const VertexBillboard1* vertices, const D3DXVECTOR3& offsetVector,
+										 float cullNearDistance, float cullFarDistance)
+: zNrOfVertices(nrOfVertices), zTextureResource(NULL), zOffsetVector(offsetVector), 
+	zCullNearDistance(cullNearDistance), zCullFarDistance(cullFarDistance)
 {
 	this->zVertices = new VertexBillboard1[nrOfVertices];
 	for(unsigned int i = 0; i < nrOfVertices; ++i)
@@ -18,8 +20,10 @@ BillboardCollection::BillboardCollection(unsigned int nrOfVertices, const Vertex
 	}
 }
 BillboardCollection::BillboardCollection(unsigned int nrOfVertices, const D3DXVECTOR3* positions, 
-										 const D3DXVECTOR2* sizes, const D3DXVECTOR3* colors, const D3DXVECTOR3& offsetVector) 
-:	zNrOfVertices(nrOfVertices), zTextureResource(NULL), zOffsetVector(offsetVector)
+										 const D3DXVECTOR2* sizes, const D3DXVECTOR3* colors, const D3DXVECTOR3& offsetVector,
+										 float cullNearDistance, float cullFarDistance) 
+:	zNrOfVertices(nrOfVertices), zTextureResource(NULL), zOffsetVector(offsetVector), 
+	zCullNearDistance(cullNearDistance), zCullFarDistance(cullFarDistance)
 {
 	
 	this->zVertices = new VertexBillboard1[nrOfVertices];

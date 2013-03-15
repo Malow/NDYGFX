@@ -26,5 +26,7 @@ extern "C"
 			virtual void SetColor(Vector3 color) = 0;*/
 
 			virtual void SetRenderShadowFlag(bool flag) = 0;
+			virtual void SetCullNearDistance(float distance) = 0;
+			virtual void SetCullFarDistance(float distance) = 0;
 	};
 }
