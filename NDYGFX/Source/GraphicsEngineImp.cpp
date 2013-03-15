@@ -544,8 +544,6 @@ void GraphicsEngineImp::DeleteBillboard( iBillboard* &delbillboard )
 
 iBillboardCollection* GraphicsEngineImp::CreateBillboardCollection(unsigned int nrOfVertices, Vector3* positions, Vector2* sizes, Vector3* colors, Vector3& offsetVector, const char* texture )
 {
-	//return this->CreateBillboardCollection(D3DXVECTOR3(pos.x, pos.y, pos.z), D3DXVECTOR2(texCoord.x, texCoord.y), D3DXVECTOR2(size.x, size.y), D3DXVECTOR3(color.x, color.y, color.z), string(texture));
-
 	D3DXVECTOR3* positionsD3DX = new D3DXVECTOR3[nrOfVertices];
 	D3DXVECTOR2* sizesD3DX = new D3DXVECTOR2[nrOfVertices];
 	D3DXVECTOR3* colorsD3DX = new D3DXVECTOR3[nrOfVertices];
