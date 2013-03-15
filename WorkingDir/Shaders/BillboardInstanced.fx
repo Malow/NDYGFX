@@ -167,7 +167,7 @@ PSOut PS(PSIn input)
 	//Texture RT
 	if(g_bb_IsTextured)
 	{
-		float4 finalColor = g_bb_DiffuseMap.Sample(AnisotropicWrapSampler, input.texCoords);
+		float4 finalColor = g_bb_DiffuseMap.Sample(AnisotropicClampSamplerBB, input.texCoords);
 		if(finalColor.a < 0.5f)
 		{
 			discard;

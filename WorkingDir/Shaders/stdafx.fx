@@ -121,6 +121,19 @@ SamplerState AnisotropicClampSampler
 	MaxLOD = 0.0f;
 	MinLOD = 0.0f;
 };
+SamplerState AnisotropicClampSamplerBB 
+{
+	Filter = ANISOTROPIC;
+	AddressU = Clamp;
+	AddressV = Clamp;
+	AddressW = Clamp;
+	MipLODBias = 0.0f;//Unused
+	MaxAnisotropy = 16;
+	ComparisonFunc = ALWAYS; 
+	BorderColor = float4(0.0f, 0.0f, 0.0f, 0.0f); //Unused
+	MinLOD = 0.0f;
+	MaxLOD = 16.0f; //Max
+};
 SamplerState AnisotropicWrapSampler 
 {
 	Filter = ANISOTROPIC;
