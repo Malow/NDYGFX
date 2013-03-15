@@ -127,7 +127,7 @@ void GS(point GSIn input[1], inout TriangleStream<PSIn> triStream)
 	//Create world matrix to make the billboard face the camera.
 	float3 forward = normalize(g_CameraPos - input[0].posW); 
 	float3 right = normalize(cross(float3(0.0f, 1.0f, 0.0f), forward));
-	float3 up = float3(0.0f, 1.0f, 0.0f);//cross(forward, right);
+	float3 up = cross(forward, right);//TILLMAN testa * 0.5f?, (fästa vid 45%)
 	float4x4 W;
 	W[0] = float4(right, 0.0f);
 	W[1] = float4(up, 0.0f);
