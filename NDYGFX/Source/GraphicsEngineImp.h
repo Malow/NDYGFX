@@ -115,6 +115,12 @@ private:
 
 	bool isManagingMyOwnWindow;
 
+	Image* loadingScreenBG;
+	Image* loadingScreenPB;
+	Image* loadingScreenFade;
+	int loadingScreenState;
+	bool useLoadingThread;
+
 
 	float PCFreq;
 	__int64 prevTimeStamp;
@@ -213,6 +219,8 @@ public:
 	To use it first make all CreateMesh()-calls that you need and then call LoadingScreen(.,.) directly after, and it will return once all the meshes are
 	created and being rendered in the background. */
 	virtual void LoadingScreen(const char* BackgroundTexture = "", const char* ProgressBarTexture = "", float FadeBlackInInTime = 0.0f, float FadeBlackInOutTime = 0.0f, float FadeBlackOutInTime = 0.0f, float FadeBlackOutOutTime = 0.0f);
+	virtual void ShowLoadingScreen(const char* BackgroundTexture = "", const char* ProgressBarTexture = "", float FadeBlackInInTime = 0.0f, float FadeBlackInOutTime = 0.0f);
+	virtual void UseSeperateLoadingThread(bool use) { this->useLoadingThread = use; }
 
 	virtual iWaterPlane* CreateWaterPlane(Vector3& pos, const char* texture);
 	virtual void DeleteWaterPlane(iWaterPlane* del);

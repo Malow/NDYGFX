@@ -44,10 +44,27 @@ protected:
 
 void TestRealisticScene::PreTest()
 {
+	GetGraphics()->ShowLoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 1.0f, 1.0f);
+
 	LoadEntList("Entities.txt");
 	world = new World(this, "Media/Maps/Map_01_v85.map", true);
 	GetGraphics()->GetCamera()->SetPosition(Vector3(world->GetWorldCenter().x, 20.0f, world->GetWorldCenter().y));
 	path = 0;
+
+	wa->position = GetGraphics()->GetCamera()->GetPosition().GetXZ();
+	wa->radius = GetGraphics()->GetEngineParameters().FarClip;
+	world->Update();
+	wr->Update();
+	wr->Update();
+	wr->Update();
+	wr->Update();
+	wr->Update();
+	wr->Update();
+	wr->Update();
+	wr->Update();
+	wr->Update();
+	wr->Update();
+	wr->Update();
 
 	
 	Vector3 camPos = GetGraphics()->GetCamera()->GetPosition();
@@ -76,15 +93,9 @@ void TestRealisticScene::PreTest()
 	meee = GetGraphics()->CreateMesh("Media/Models/NMTest.obj", camPos + Vector3(-20, -10, 0));
 	meee->SetScale(1.0f);
 
-	wa->position = GetGraphics()->GetCamera()->GetPosition().GetXZ();
-	wa->radius = GetGraphics()->GetEngineParameters().FarClip;
-	world->Update();
-	wr->Update();
-
 	for(int i = 0; i < 50; i++)
 	{
 		iDecal* wp = GetGraphics()->CreateDecal(camPos + Vector3(i * 5, -10, 0), "Media/BloodTexture.png", Vector3(0,-1,0), Vector3(1, 0, 0));
-		wr->Update();
 	}
 
 	GetGraphics()->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 1.0f, 1.0f, 1.0f, 1.0f);
@@ -207,5 +218,4 @@ void TestRealisticScene::PostTest()
 {
 	GetGraphics()->PrintPerfLogging();
 	delete world;
-	//delete wr;
 }
