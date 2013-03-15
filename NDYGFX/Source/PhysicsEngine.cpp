@@ -135,6 +135,10 @@ CollisionData PhysicsEngine::GetCollisionRayMeshBoundingOnly( Vector3 rayOrigin,
 	if(Mesh* mesh = dynamic_cast<Mesh*>(imesh))
 	{
 		MaloW::Array<MeshStrip*>* strips = mesh->GetStrips();
+
+		if(!strips) // If strips isnt set just return.
+			return cd;
+
 		for(int i = 0; i < strips->size(); i++)
 		{
 			float scale = max(mesh->GetScaling().x, max(mesh->GetScaling().y, mesh->GetScaling().z));

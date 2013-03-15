@@ -984,6 +984,16 @@ MeshStripsResource* ResourceManager::CreateMeshStripsResourceFromFile(const char
 	ReleaseMutex(this->mutex);
 	return NULL;
 }
+bool ResourceManager::HasMeshStripsResource(const char* fileName)
+{
+	auto find = this->zMeshStripsResources.find(fileName);
+	if(find != this->zMeshStripsResources.cend())
+	{
+		return true;
+	}
+	return false;
+}
+
 void ResourceManager::DeleteMeshStripsResource(MeshStripsResource* &meshStripsResource)
 {
 	if(this->mutex)

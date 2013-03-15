@@ -54,8 +54,11 @@ void DxManager::HandleStaticMeshEvent(StaticMeshEvent* me)
 		{
 			if(this->objects[i] == mesh)
 			{
+				/*
 				delete this->objects.getAndRemove(i);
 				mesh = NULL;
+				*/
+				this->helperThread->PutEvent(new DeleteObjectEvent(this->objects.getAndRemove(i)));
 				break;
 			}
 		}
@@ -75,8 +78,13 @@ void DxManager::HandleAnimatedMeshEvent(AnimatedMeshEvent* me)
 		{
 			if(this->animations[i] == mesh)
 			{
+				/*
 				delete this->animations.getAndRemove(i);
 				mesh = NULL;
+				*/
+				this->helperThread->PutEvent(new DeleteObjectEvent(this->animations.getAndRemove(i)));
+
+
 				break;
 			}
 		}

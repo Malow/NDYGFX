@@ -39,7 +39,8 @@ void InstancingHelper::ExpandBillboardInstanceBuffer()
 	HRESULT hr = this->g_Device->CreateBuffer(&vbd, 0, &temporaryNewBuffer);
 	if(FAILED(hr))
 	{
-		MaloW::Debug("ERROR: InstancingHelper: ExpandBillboardDataAndBuffer(): Failed to create buffer for instance billboard.");
+		MaloW::Debug("ERROR: InstancingHelper: ExpandBillboardBuffer(): Failed to create buffer for instance billboard. HRESULT error msg: '"
+			+ MaloW::GetHRESULTErrorCodeString(hr) + "'. HRESULT #" + MaloW::convertNrToString(hr) + ".");
 	}
 						
 	//Copy over data from the old buffer to the new buffer.
@@ -65,7 +66,7 @@ void InstancingHelper::ExpandBillboardInstanceBuffer()
 	//The temporary pointer is no longer needed, so set to NULL.
 	temporaryNewBuffer = NULL;
 
-	MaloW::Debug("INFO: InstancingHelper: ExpandBillboardDataAndBuffer(): Resizing billboard instance buffer. Number of billboards: '" + MaloW::convertNrToString(this->zBillboardData.size()) + "'."
+	MaloW::Debug("INFO: InstancingHelper: ExpandBillboardBuffer(): Resizing billboard instance buffer. Number of billboards: '" + MaloW::convertNrToString(this->zBillboardData.size()) + "'."
 		+ "New BUFFER size '" + MaloW::convertNrToString(this->zBillboardInstanceBufferSize) + "'."
 		);
 }
@@ -174,6 +175,8 @@ void InstancingHelper::ExpandAnimatedStripInstanceBuffer()
 InstancingHelper::InstancingHelper()
 {
 	//Billboards
+	this->zRenderGrassFlag = true;
+	this->zGrassFilePath = "";
 	this->zBillboardInstanceBufferSize = 200;
 	this->zBillboardInstanceBuffer = NULL; 
 
@@ -429,38 +432,51 @@ void InstancingHelper::PreRenderBillboards(bool shadowmap)
 	{
 		for(unsigned int i = 0; i < this->zBillboardCollectionsReference->size(); ++i)
 		{
-			//Add to groups
 			BillboardCollection* billboardCollection = this->zBillboardCollectionsReference->get(i);
-			unsigned int prevGroupStart = 0;
-			unsigned int prevGroupSize = 0;
-			//If there's a group, start where it ends.
-			if(this->zBillboardGroups.size() > 0)
+			//Check if billboardCollection is grass and if it should be added.
+			bool add = true;
+			if(!this->zRenderGrassFlag)
 			{
-				prevGroupStart = this->zBillboardGroups[this->zBillboardGroups.size() - 1].s_StartLocation;
-				prevGroupSize = this->zBillboardGroups[this->zBillboardGroups.size() - 1].s_Size;
-			}
-			BillboardGroup newBBGroup;
-			if(billboardCollection->GetTextureResource() != NULL)
-			{
-				newBBGroup = BillboardGroup(billboardCollection->GetNrOfVertices(), prevGroupStart + prevGroupSize, billboardCollection->GetTextureResource()->GetSRVPointer());
-			}
-			else
-			{
-				newBBGroup = BillboardGroup(billboardCollection->GetNrOfVertices(), prevGroupStart + prevGroupSize, NULL);
-			}
-			this->zBillboardGroups.push_back(newBBGroup);
-			
-			//Add billboard data
-			for(unsigned int j = 0; j < billboardCollection->GetNrOfVertices(); ++j)
-			{
-				//No need to call shader resource view pointer from the billboard collection since its only used to create groups.
-				BillboardData newBBData = BillboardData(billboardCollection->GetVertex(j), NULL);
-				this->zBillboardData.push_back(newBBData);
-
-				//Expand buffer if necessary.
-				if(this->zBillboardData.size() >= this->zBillboardInstanceBufferSize)
+				if(std::strcmp(billboardCollection->GetTextureResource()->GetName().c_str(), this->zGrassFilePath.c_str()) == 0)
 				{
-					this->ExpandBillboardInstanceBuffer();
+					add = false;
+				}
+			}
+
+			//Add to groups
+			if(add)
+			{
+				unsigned int prevGroupStart = 0;
+				unsigned int prevGroupSize = 0;
+				//If there's a group, start where it ends.
+				if(this->zBillboardGroups.size() > 0)
+				{
+					prevGroupStart = this->zBillboardGroups[this->zBillboardGroups.size() - 1].s_StartLocation;
+					prevGroupSize = this->zBillboardGroups[this->zBillboardGroups.size() - 1].s_Size;
+				}
+				BillboardGroup newBBGroup;
+				if(billboardCollection->GetTextureResource() != NULL)
+				{
+					newBBGroup = BillboardGroup(billboardCollection->GetNrOfVertices(), prevGroupStart + prevGroupSize, billboardCollection->GetTextureResource()->GetSRVPointer());
+				}
+				else
+				{
+					newBBGroup = BillboardGroup(billboardCollection->GetNrOfVertices(), prevGroupStart + prevGroupSize, NULL);
+				}
+				this->zBillboardGroups.push_back(newBBGroup);
+			
+				//Add billboard data
+				for(unsigned int j = 0; j < billboardCollection->GetNrOfVertices(); ++j)
+				{
+					//No need to call shader resource view pointer from the billboard collection since its only used to create groups.
+					BillboardData newBBData = BillboardData(billboardCollection->GetVertex(j), NULL);
+					this->zBillboardData.push_back(newBBData);
+
+					//Expand buffer if necessary.
+					if(this->zBillboardData.size() >= this->zBillboardInstanceBufferSize)
+					{
+						this->ExpandBillboardInstanceBuffer();
+					}
 				}
 			}
 		}

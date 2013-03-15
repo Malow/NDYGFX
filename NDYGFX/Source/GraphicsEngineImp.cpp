@@ -9,7 +9,7 @@ int GraphicsEngineParams::ShadowMapSettings = 0;
 int GraphicsEngineParams::FXAAQuality = 0;
 CameraType GraphicsEngineParams::CamType = FPS;
 float GraphicsEngineParams::FOV = 75.0f;
-float GraphicsEngineParams::NearClip = 0.01f;
+float GraphicsEngineParams::NearClip = 0.2f;
 float GraphicsEngineParams::FarClip = 200.0f;
 int GraphicsEngineParams::RefreshRate = 60;
 int GraphicsEngineParams::MaxFPS = 0;
@@ -377,8 +377,21 @@ void GraphicsEngineImp::InitObjects()
 StaticMesh* GraphicsEngineImp::CreateStaticMesh(string filename, D3DXVECTOR3 pos, const char* billboardFilePath, float distanceToSwapToBillboard)
 {
 	StaticMesh* mesh = new StaticMesh(pos, filename, billboardFilePath, distanceToSwapToBillboard);
-	LoadMeshEvent* re = new LoadMeshEvent(filename, mesh, NULL, NULL);
-	this->PutEvent(re);
+	
+	// if it is in memory dont put it on another thread.
+	if(GetResourceManager()->HasMeshStripsResource(filename.c_str()))
+	{
+		bool success = mesh->LoadFromFile(filename);
+		if(success)
+		{
+			this->dx->CreateStaticMesh(mesh);
+		}
+	}
+	else
+	{
+		LoadMeshEvent* re = new LoadMeshEvent(filename, mesh, NULL, NULL);
+		this->PutEvent(re);
+	}
 
 	return mesh;
 }
@@ -393,8 +406,29 @@ StaticMesh* GraphicsEngineImp::CreateStaticMesh(string filename, D3DXVECTOR3 pos
 {
 	StaticMesh* mesh = new StaticMesh(pos, filename);
 
-	LoadMeshEvent* re = new LoadMeshEvent(filename, mesh, NULL, material);
-	this->PutEvent(re);
+	// if it is in memory dont put it on another thread.
+	if(GetResourceManager()->HasMeshStripsResource(filename.c_str()))
+	{
+		bool success = mesh->LoadFromFile(filename);
+		if(success)
+		{
+			this->dx->CreateStaticMesh(mesh);
+		}
+
+
+		MaloW::Array<MeshStrip*>* strips = mesh->GetStrips();
+		for(int i = 0; i < strips->size(); i++)
+		{
+			strips->get(i)->SetMaterial(material);
+			if(i+1 < strips->size())
+				material = new Material(material);
+		}
+	}
+	else
+	{
+		LoadMeshEvent* re = new LoadMeshEvent(filename, mesh, NULL, material);
+		this->PutEvent(re);
+	}
 
 	return mesh;
 }
@@ -408,8 +442,27 @@ AnimatedMesh* GraphicsEngineImp::CreateAnimatedMesh(string filename, D3DXVECTOR3
 {
 	AnimatedMesh* mesh = new AnimatedMesh(pos, filename, billboardFilePath, distanceToSwapToBillboard);
 
-	LoadMeshEvent* re = new LoadMeshEvent(filename, NULL, mesh, NULL);
-	this->PutEvent(re);
+	// If we have it in memory dont put it on the other thread.
+	if(GetResourceManager()->HasMeshStripsResource(filename.c_str()))
+	{
+		//Check if loading the animation from file was successful...
+		if(mesh->LoadFromFile(filename))
+		{
+			//...and if so, add it
+			this->dx->CreateAnimatedMesh(mesh); 
+		}
+		else
+		{
+			//If not, delete the mesh.
+			MaloW::Debug("Warning: Deleting animated mesh because of failure.");
+			delete mesh;
+		}
+	}
+	else
+	{
+		LoadMeshEvent* re = new LoadMeshEvent(filename, NULL, mesh, NULL);
+		this->PutEvent(re);
+	}
 
 	return mesh;
 }
@@ -681,6 +734,15 @@ void GraphicsEngineImp::CreateSkyBox(const char* texture)
 void GraphicsEngineImp::UseShadow(bool useShadow)
 {
 	this->dx->UseShadow(useShadow);
+}
+
+void GraphicsEngineImp::SetGrassFilePath(const char* filePath)
+{
+	this->dx->SetGrassFilePath(filePath);
+}
+void GraphicsEngineImp::RenderGrass(bool flag)
+{
+	this->dx->RenderGrass(flag);
 }
 
 void GraphicsEngineImp::SetSpecialCircle(float innerRadius, float outerRadius, Vector2& targetPos) const

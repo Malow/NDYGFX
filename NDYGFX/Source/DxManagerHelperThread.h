@@ -1,14 +1,15 @@
 #pragma once
 
 #include "Process.h"
+#include "Mesh.h"
 
 class DeleteObjectEvent : public MaloW::ProcessEvent
 {
 private:
-	void* obj;
+	Mesh* obj;
 
 public:
-	DeleteObjectEvent(void* object)
+	DeleteObjectEvent(Mesh* object)
 	{
 		this->obj = object;
 	}

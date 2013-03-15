@@ -1,0 +1,16 @@
+# This file uses centimeters as units for non-parametric coordinates.
+
+mtllib ghost.mtl
+v 0.000000 0.000000 212.132034
+v 212.132034 0.000000 0.000000
+v -212.132034 0.000000 0.000000
+vt 0.000000 0.000000
+vt 1.000000 0.000000
+vt 0.000000 1.000000
+vn 0.000000 1.000000 0.000000
+vn 0.000000 1.000000 0.000000
+vn 0.000000 1.000000 0.000000
+s off
+g pPlane1
+usemtl lambert2SG
+f 1/1/1 2/2/2 3/3/3

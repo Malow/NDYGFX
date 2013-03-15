@@ -11,6 +11,8 @@ DxManager::DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam)
 	this->params = params;
 	this->hWnd = g_hWnd;
 
+	this->helperThread = NULL;
+
 	this->Dx_DeviceContext = NULL;
 	this->Dx_DepthStencilView = NULL;
 	this->Dx_DepthStencil = NULL;
@@ -115,6 +117,14 @@ DxManager::DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam)
 
 DxManager::~DxManager()
 {
+	if(this->helperThread)
+	{
+		this->helperThread->Close();
+		this->helperThread->WaitUntillDone();
+		delete this->helperThread;
+		this->helperThread = NULL;
+	}
+
 	if(this->camera)
 		delete this->camera;
 
@@ -735,7 +745,7 @@ void DxManager::CreateSkyBox(string texture)
 	if(this->skybox)
 		delete this->skybox;
 		
-	SkyBox* sb = new SkyBox(this->camera->GetPositionD3DX(), 10, 10);
+	SkyBox* sb = new SkyBox(this->camera->GetOldPos(), 10, 10);
 	MeshStrip* strip = sb->GetStrip();
 
 	// Create the desc for the buffer
@@ -777,6 +787,16 @@ void DxManager::UseShadow(bool useShadow)
 	{
 		this->useShadow = useShadow;
 	}
+}
+
+void DxManager::SetGrassFilePath(const char* filePath)
+{
+	this->instancingHelper->SetGrassFilePath(filePath);
+}
+
+void DxManager::RenderGrass(bool flag)
+{
+	this->instancingHelper->SetRenderGrassFlag(flag);
 }
 
 void DxManager::SetSpecialCircle(float innerRadius, float outerRadius, Vector2& targetPos)
@@ -1109,7 +1129,6 @@ void DxManager::CreateDecal( Decal* decal, string texture )
 	{
 		tex = GetResourceManager()->CreateTextureResourceFromFile(texture.c_str(), true);
 	}
-	decal->SetTexture(tex);
 	
 	// create matrix for it.
 	Vector3 pos = decal->GetPosition() - (decal->GetDirection() * 1.01f) * decal->GetSize() * 0.5f;

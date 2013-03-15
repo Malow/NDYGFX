@@ -146,16 +146,22 @@ void TillmanTest::PreTest()
 		//shadowFail->SetScale(0.5f);
 		grass_positions[i] = pos;
 		grass_sizes[i] = size;
-		grass_colors[i] = Vector3(0.7f, 0.9f, 0.7f);
+		grass_colors[i] = Vector3(1.7f, 1.9f, 1.7f);
 		if(i % 100 == 0)
 		{
-			grass_colors[i] = Vector3(0.0f, 1.0f, 0.0f);
+			grass_colors[i] = Vector3(1.0f, 2.0f, 1.0f);
 		}
 	}
-
-	iBillboardCollection* bbColl = GetGraphics()->CreateBillboardCollection(nrOfVertices, grass_positions, grass_sizes, grass_colors, 
-																			Vector3(0.0f, 0.0f, 0.0f), "Media/Grass.png");
-	bbColl->SetRenderShadowFlag(false);
+	GetGraphics()->SetGrassFilePath("Media/Grass.png");
+	GetGraphics()->RenderGrass(true);
+	//Benchmark/-test
+	for(unsigned int i = 0; i < 1; ++i)
+	{
+		iBillboardCollection* bbColl = GetGraphics()->CreateBillboardCollection(nrOfVertices, grass_positions, grass_sizes, grass_colors, 
+			Vector3(50.0f, 0.0f, 50.0f), "Media/Grass.png");
+		bbColl->SetRenderShadowFlag(false);
+	}
+	
 	delete [] grass_positions;
 	delete [] grass_sizes;
 	delete [] grass_colors;
@@ -638,7 +644,8 @@ void TillmanTest::RunTest(float diff)
 	static bool oncee = false;
 	if(GetGraphics()->GetKeyListener()->IsPressed('Q'))
 	{
-		GetGraphics()->ReloadShaders(8); //shadow map animated
+		GetGraphics()->RenderGrass(false);
+		//GetGraphics()->ReloadShaders(8); //shadow map animated
 		//iT2->SetNormals(normals);
 		//iT2->SetHeightMap(hmData);
 		//debugCSMScale += diff * 0.001f;
@@ -692,7 +699,8 @@ void TillmanTest::RunTest(float diff)
 	}
 	if(GetGraphics()->GetKeyListener()->IsPressed('E'))
 	{
-		GetGraphics()->ReloadShaders(5); //grass
+		GetGraphics()->RenderGrass(true);
+		//GetGraphics()->ReloadShaders(5); //grass
 		//GetGraphics()->ReloadShaders(10); //terrain
 		//GetGraphics()->ReloadShaders(11); //deferred lightning
 		//GetGraphics()->ReloadShaders(20); //shadow map billboard instanced

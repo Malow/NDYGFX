@@ -486,6 +486,7 @@ float4 PSScene(PSIn input) : SV_Target
 	
 	
 	// Sun
+	float diffShadow = 1.0f;
 	if(UseSun)
 	{
 		// Diff light
@@ -533,6 +534,7 @@ float4 PSScene(PSIn input) : SV_Target
 			//Multiply the shadow into the light.
 			diffLight *= shadow;
 			specLight *= shadow;
+			diffShadow = shadow; //Used for billboards.
 		}
 		
 		//**tillman end of CSM
@@ -624,7 +626,7 @@ float4 PSScene(PSIn input) : SV_Target
 	//Skip shadow "lighting" and specular
 	if(WorldPosAndObjectType.w == OBJECT_TYPE_BILLBOARD)
 	{	
-		finalColor = float4(SceneAmbientLight * DiffuseColor + DiffuseColor, 1.0f);// = Texture.Sample(linearSampler, input.tex).xyz;	
+		finalColor = float4((SceneAmbientLight * DiffuseColor) + (DiffuseColor * diffShadow), 1.0f);// = Texture.Sample(linearSampler, input.tex).xyz;	
 	
 		//finalColor = float4(AmbientLight.xyz * DiffuseColor + DiffuseColor * diffuseLighting, 1.0f);// = Texture.Sample(linearSampler, input.tex).xyz;	
 	}

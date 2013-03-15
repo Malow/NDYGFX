@@ -15,7 +15,7 @@ void DxManager::RenderForward()
 	this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_RenderTargetView, ClearColor);
 	this->Dx_DeviceContext->ClearDepthStencilView(this->Dx_DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);	
 
-	this->Shader_ForwardRendering->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetPositionD3DX(), 1));
+	this->Shader_ForwardRendering->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetOldPos(), 1));
 
 	for(unsigned int i = 0; i < this->objects.size(); i++)
 	{

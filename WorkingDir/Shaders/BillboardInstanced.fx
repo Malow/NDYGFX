@@ -129,28 +129,28 @@ void GS(point GSIn input[1], inout TriangleStream<PSIn> triStream)
 	//Transform quad to world space
 	//Unroll to avoid warning x4715: emitting a system-interpreted value which may not be written in every execution path of the shader
 	PSIn output = (PSIn)0;
-	output.posW = input[0].posW; 
+	output.posW = mul(positions[0], W);
 	output.posH = mul(positions[0], WVP); //Transform positions to clip space [-w,-w]
 	output.normal = float3(0.0f, 1.0f, 0.0f);
 	output.texCoords = g_TexCoords[0];
 	output.color = input[0].color;
 	triStream.Append(output); 
 	
-	output.posW = input[0].posW; 
+	output.posW = mul(positions[1], W);
 	output.posH = mul(positions[1], WVP); //Transform positions to clip space [-w,-w]
 	output.normal = float3(0.0f, 1.0f, 0.0f);
 	output.texCoords = g_TexCoords[1];
 	output.color = input[0].color;
 	triStream.Append(output); 
 	
-	output.posW = input[0].posW; 
+	output.posW = mul(positions[2], W);
 	output.posH = mul(positions[2], WVP); //Transform positions to clip space [-w,-w]
 	output.normal = float3(0.0f, 1.0f, 0.0f);
 	output.texCoords = g_TexCoords[2];
 	output.color = input[0].color;
 	triStream.Append(output); 
 	
-	output.posW = input[0].posW; 
+	output.posW = mul(positions[3], W);
 	output.posH = mul(positions[3], WVP); //Transform positions to clip space [-w,-w]
 	output.normal = float3(0.0f, 1.0f, 0.0f);
 	output.texCoords = g_TexCoords[3];
@@ -172,8 +172,8 @@ PSOut PS(PSIn input)
 		{
 			discard;
 		}
-
-		output.Texture = float4(((finalColor.rgb + input.color) * 0.5f), finalColor.a);
+		
+		output.Texture = float4(saturate(finalColor * input.color), finalColor.a);
 	}
 	else
 	{
@@ -181,13 +181,9 @@ PSOut PS(PSIn input)
 	}
 
 	//Normal and depth RT
-	//output.NormalAndDepth = float4(input.normal, input.posH.z / input.posH.w);	//convert z from [0, w] to [0,1]
 	output.NormalAndDepth.xyz = input.normal;
-	
 	float depth = length(g_CameraPos - input.posW) / g_FarClip;		// Haxfix**tillman
 	output.NormalAndDepth.w = depth;
-	//float depth = length(CameraPosition.xyz - input.WorldPos.xyz) / FarClip;		// Haxfix
-	//output.NormalAndDepth.w = depth;
 
 	//Position(world space) & object type RT
 	output.Position = float4(input.posW.xyz, OBJECT_TYPE_BILLBOARD);
