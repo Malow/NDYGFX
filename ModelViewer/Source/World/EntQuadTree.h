@@ -57,6 +57,9 @@ class EntQuadTree : public Observer
 		// Child node count
 		inline size_t GetNumNodes() const { return (zChildNodes[0]!=0) + (zChildNodes[1]!=0) + (zChildNodes[2]!=0) + (zChildNodes[3]!=0); }
 
+		// Number of my elements and the child node elements
+		inline size_t GetTotalElements() const { return zNumElementsWithChildren; }
+
 		// Iterative entity count
 		size_t CalcNumEntities(unsigned int entType=0) const;
 
@@ -65,6 +68,7 @@ class EntQuadTree : public Observer
 
 		// Child node access
 		inline Node* GetNode(unsigned int index) const { return zChildNodes[index]; }
+		size_t CountInRect( const Rect& rect ) const;
 	};
 
 	Node* zRoot;
@@ -81,6 +85,9 @@ public:
 
 	// Scan Rectangle Area
 	size_t RectangleScan(std::set<Entity*>& ents, const Rect& rect, unsigned int entType = 0) const;
+
+	// Count Elements in Rectangle Area
+	size_t CountInRect( const Rect& rect ) const;
 
 	// Management
 	bool Insert(Entity* E);

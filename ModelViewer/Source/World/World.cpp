@@ -5,7 +5,7 @@
 #include "WorldPhysics.h"
 #include <sstream>
 #include <math.h>
-#include "Windows.h"
+#include <windows.h>
 
 
 World::World( Observer* observer, const std::string& fileName, bool readOnly) throw(...) : 
@@ -57,7 +57,7 @@ World::World( Observer* observer, unsigned int nrOfSectorWidth, unsigned int nrO
 	zAmbient.y = 0.1f;
 	zAmbient.z = 0.1f;
 
-	zSunDir = Vector3(0.5f, -1.0f, 0.0f);
+	zSunDir = Vector3(0.5f, -1.0f, 0.5f);
 	zSunColor = Vector3(1.0f, 1.0f, 1.0f);
 	zSunIntensity = 1.0f;
 
@@ -70,7 +70,11 @@ World::~World()
 	NotifyObservers( &WorldDeletedEvent(this) );
 
 	// Close File
-	if ( zFile ) delete zFile, zFile=0;
+	if ( zFile ) 
+	{
+		delete zFile;
+		zFile = 0;
+	}
 
 	// Delete Anchors
 	for( auto i = zAnchors.cbegin(); i != zAnchors.cend(); ++i )
@@ -390,57 +394,92 @@ Sector* World::GetSector( unsigned int x, unsigned int y ) throw(...)
 				// Set Header
 				s->SetAmbient(Vector3(header.ambientColor[0], header.ambientColor[1], header.ambientColor[2]));
 
+				// Height Map
 				if ( !zFile->ReadHeightMap(s->GetHeightMap(), y * GetNumSectorsWidth() + x) )
 				{
-					std::stringstream ss;
-					ss << "Failed Loading AI For Sector: (" << x << ", " << y << ")";
-					//MaloW::Debug( ss.str() );
+					SectorWarningEvent SWE;
+					SWE.message = "Failed Loading Height Map";
+					SWE.sectorX = x;
+					SWE.sectorY = y;
+					SWE.world = this;
+					NotifyObservers(&SWE);
 				}
 
+				// Blend Map
 				if ( !zFile->ReadBlendMap(s->GetBlendMap(), y * GetNumSectorsWidth() + x) )
 				{
-					std::stringstream ss;
-					ss << "Failed Loading AI For Sector: (" << x << ", " << y << ")";
-					//MaloW::Debug( ss.str() );
+					SectorWarningEvent SWE;
+					SWE.message = "Failed Loading Blend Map #1";
+					SWE.sectorX = x;
+					SWE.sectorY = y;
+					SWE.world = this;
+					NotifyObservers(&SWE);
 				}
 
+				// Texture Set Number 1
 				if ( !zFile->ReadTextureNames(s->GetTextureNames(), y * GetNumSectorsWidth() + x) )
 				{
-					std::stringstream ss;
-					ss << "Failed Loading AI For Sector: (" << x << ", " << y << ")";
-					//MaloW::Debug( ss.str() );
+					SectorWarningEvent SWE;
+					SWE.message = "Failed Loading Texture Set #1";
+					SWE.sectorX = x;
+					SWE.sectorY = y;
+					SWE.world = this;
+					NotifyObservers(&SWE);
 				}
 				
+				// AI Grid
 				if ( !zFile->ReadAIGrid(s->GetAIGrid(), y * GetNumSectorsWidth() + x) )
 				{
-					std::stringstream ss;
-					ss << "Failed Loading AI For Sector: (" << x << ", " << y << ")";
-					//MaloW::Debug( ss.str() );
+					SectorWarningEvent SWE;
+					SWE.message = "Failed Loading AI Grid";
+					SWE.sectorX = x;
+					SWE.sectorY = y;
+					SWE.world = this;
+					NotifyObservers(&SWE);
 				}
 
+				// Second Blend Map
 				if ( !zFile->ReadBlendMap2(s->GetBlendMap2(), y * GetNumSectorsWidth() + x) )
 				{
-					std::stringstream ss;
-					ss << "Failed Reading Second Blendmap For Sector: (" << x << ", " << y << ")";
-					//MaloW::Debug( ss.str() );
+					SectorWarningEvent SWE;
+					SWE.message = "Failed Loading Blend Map #2";
+					SWE.sectorX = x;
+					SWE.sectorY = y;
+					SWE.world = this;
+					NotifyObservers(&SWE);
 
+					// Use Default
 					s->ResetBlendMap2();
 				}
 
+				// Texture Set
 				if ( !zFile->ReadTextureNames2(s->GetTextureNames2(), y * GetNumSectorsWidth() + x) )
 				{
-					std::stringstream ss;
-					ss << "Failed Reading Second Blendmap Textures For Sector: (" << x << ", " << y << ")";
-					//MaloW::Debug( ss.str() );
+					SectorWarningEvent SWE;
+					SWE.message = "Failed Loading Texture Set #2";
+					SWE.sectorX = x;
+					SWE.sectorY = y;
+					SWE.world = this;
+					NotifyObservers(&SWE);
 
+					// Default Values
 					s->SetTextureName(4, s->GetTextureName(0));
 					s->SetTextureName(5, s->GetTextureName(1));
 					s->SetTextureName(6, s->GetTextureName(2));
 					s->SetTextureName(7, s->GetTextureName(3));
 				}
 
+				// Normals
 				if ( !zFile->ReadNormals(s->GetNormals(), y * GetNumSectorsWidth() + x) )
 				{
+					SectorWarningEvent SWE;
+					SWE.message = "Failed Loading Normals";
+					SWE.sectorX = x;
+					SWE.sectorY = y;
+					SWE.world = this;
+					NotifyObservers(&SWE);
+
+					// Use Default
 					s->ResetNormals();
 				}
 			}
@@ -598,6 +637,11 @@ unsigned int World::GetSectorsInCicle( const Vector2& center, float radius, std:
 	}
 
 	return counter;
+}
+
+unsigned int World::CountEntitiesInRect(const Rect& rect) const
+{
+	return zEntTree.CountInRect(rect);
 }
 
 unsigned int World::GetHeightNodesInCircle( const Vector2& center, float radius, std::set<Vector2>& out ) const

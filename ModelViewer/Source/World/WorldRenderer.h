@@ -1,5 +1,6 @@
 #pragma once
 
+#include "WorldRendererSettings.h"
 #include "World.h"
 #include <GraphicsEngine.h>
 #include <map>
@@ -30,6 +31,9 @@ struct WaterCollisionData
 
 class WorldRenderer : Observer
 {
+	// Settings
+	WorldRendererSettings zSettings;
+
 	// Components
 	World* zWorld;
 	GraphicsEngine* zGraphics;
@@ -58,6 +62,10 @@ class WorldRenderer : Observer
 	std::map< WaterQuad*, WaterCubes > zWaterBoxes;
 	bool zShowWaterBoxes;
 
+	// Billboard collections
+	unsigned int zGrassDensity; //Nr of grass objects per terrain.
+	std::map<iTerrain*, iBillboardCollection*> zGrass;
+
 public:
 	WorldRenderer(World* world, GraphicsEngine* graphics);
 	virtual ~WorldRenderer();
@@ -77,8 +85,9 @@ protected:
 	void UpdateWaterBoxes( WaterQuad* water );
 	void UpdateTerrain();
 
-	void CreateEntity( Entity* e );
 	void SetEntityGraphics( Entity* e );
 	void SetEntityTransformation( Entity* e );
 	void DeleteEntity( Entity* e );
+
+	void GenerateGrass(iTerrain* ptrTerrain);
 };

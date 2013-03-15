@@ -35,12 +35,27 @@ public:
 	{
 	}
 
+	// Sides
+	inline float GetRight() const { return topLeft.x + size.x; }
+	inline float GetBottom() const { return topLeft.y + size.y; }
+
+	// Returns true if point is inside rect
 	bool IsInside( const Vector2& point ) const
 	{
 		if ( point.x < topLeft.x ) return false;
 		if ( point.y < topLeft.y ) return false;
 		if ( point.x >= topLeft.x + size.x ) return false;
 		if ( point.y >= topLeft.y + size.y ) return false;
+		return true;
+	}
+
+	// Returns true if the target rect is inside
+	bool Contains( const Rect& rect ) const
+	{
+		if ( topLeft.x > rect.topLeft.x ) return false;
+		if ( topLeft.y > rect.topLeft.y ) return false;
+		if ( GetRight() < rect.GetRight() ) return false;
+		if ( GetBottom() < rect.GetBottom() ) return false;
 		return true;
 	}
 };
