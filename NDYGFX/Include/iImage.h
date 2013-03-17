@@ -32,5 +32,7 @@ extern "C"
 		virtual void SetDimensions(Vector2 dims) = 0;
 		virtual float GetOpacity() const = 0;
 		virtual void SetOpacity(float opacity) = 0;
+		virtual unsigned int GetLayer() const = 0;
+		virtual void SetLayer(unsigned int layer) = 0;
 	};
 }

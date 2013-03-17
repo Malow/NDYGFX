@@ -66,7 +66,7 @@ void TillmanTest::PreTest()
 	GetGraphics()->PreLoadResources(nrOfResources, resourceFileNames);
 
 
-	iM = GetGraphics()->CreateImage(Vector2(100, 100), Vector2(100, 100), "Media/BallTexture.png");
+	/*iM = GetGraphics()->CreateImage(Vector2(100, 100), Vector2(100, 100), "Media/BallTexture.png");
 	iM2 = GetGraphics()->CreateImage(Vector2(200, 200), Vector2(100, 100), "Media/BallTexture.png");
 
 
@@ -76,7 +76,20 @@ void TillmanTest::PreTest()
 	iM3 = GetGraphics()->CreateImage(Vector2(100, 200), Vector2(100, 100), "Media/Bush_leaf_01_v07.png");
 	iM4 = GetGraphics()->CreateImage(Vector2(200, 100), Vector2(100, 100), "Media/Bush_leaf_01_v07.png");
 	
-	iText* textDXErrorTest = GetGraphics()->CreateText("durp", Vector2(300, 100), 1.0f, "Media/Fonts/1");
+	iText* textDXErrorTest = GetGraphics()->CreateText("durp", Vector2(300, 100), 1.0f, "Media/Fonts/1", 1);
+	*/
+
+	//LAYER TEST
+	
+	iM = NULL;
+	iM2 = NULL;
+	iM5 = NULL;
+	iM3 = NULL;
+	iM4 = NULL;
+	iM = GetGraphics()->CreateImage(Vector2(50, 100), Vector2(100, 100), "Media/BallTexture.png", 0);
+	iText* textDXErrorTest = GetGraphics()->CreateText("durp", Vector2(100, 100), 1.0f, "Media/Fonts/1", 1);
+	iM = GetGraphics()->CreateImage(Vector2(150, 100), Vector2(100, 100), "Media/BallTexture.png", 2);
+	textDXErrorTest = GetGraphics()->CreateText("durp", Vector2(200, 100), 1.0f, "Media/Fonts/1", 1);
 
 	//iMesh* cacheBowCraschTest = GetGraphics()->CreateMesh("Media/Bow_v01.obj", Vector3(0, 2, 0));
 	//cacheBowCraschTest->SetScale(5.0f);

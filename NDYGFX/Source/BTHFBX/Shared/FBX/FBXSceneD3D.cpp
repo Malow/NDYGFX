@@ -75,6 +75,9 @@ IBTHFbxAnimationController* FBXSceneD3D::GetAnimationController()
 
 IBTHFbxSkeleton* FBXSceneD3D::GetSkeleton()
 {
+	if (!this->mFBXScene)
+		return NULL;
+
 	return mFBXScene->GetSkeleton();
 }
 

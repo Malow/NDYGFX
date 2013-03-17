@@ -30,5 +30,8 @@ extern "C"
 		virtual Vector2 GetPosition() const = 0;
 		virtual void SetSize(float size) = 0;
 		virtual float GetSize() const = 0;
+		virtual unsigned int GetLayer() const = 0;
+		virtual void SetLayer(unsigned int layer) = 0;
+
 	};
 }
