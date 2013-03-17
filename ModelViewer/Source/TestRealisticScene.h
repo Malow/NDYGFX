@@ -92,7 +92,18 @@ void TestRealisticScene::PreTest()
 
 	meee = GetGraphics()->CreateMesh("Media/Models/NMTest.obj", camPos + Vector3(-20, -10, 0));
 	meee->SetScale(1.0f);
+	
+	meee = GetGraphics()->CreateMesh("Media/MaloWGravestone.obj", camPos);
+	Vector3 groundPos = camPos;
+	groundPos.x += 70;
+	groundPos.y = world->GetHeightAt(Vector2(groundPos.x, groundPos.z));
+	meee->SetPosition(groundPos);
+	meee->SetScale(0.05f);
 
+	meee = GetGraphics()->CreateFBXMesh("Media/Models/token_anims.fbx", camPos + Vector3(50, -10, 50));
+	meee->SetPosition(groundPos + Vector3(3, 0, 0));
+	meee->SetScale(0.05f);
+	
 	for(int i = 0; i < 50; i++)
 	{
 		iDecal* wp = GetGraphics()->CreateDecal(camPos + Vector3(i * 5, -10, 0), "Media/BloodTexture.png", Vector3(0,-1,0), Vector3(1, 0, 0));
