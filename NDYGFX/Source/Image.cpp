@@ -1,12 +1,13 @@
 #include "Image.h"
 
-Image::Image(D3DXVECTOR2 pos, D3DXVECTOR2 dim)
+Image::Image(D3DXVECTOR2 pos, D3DXVECTOR2 dim, unsigned int layer)
 {
 	this->position = pos;
 	this->dimensions = dim;
 	this->textureResource = NULL;
 	this->opacity = 1.0f;
 	this->strata = 0.5f;
+	this->layer = layer;
 }
 
 Image::~Image()

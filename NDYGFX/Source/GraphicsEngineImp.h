@@ -150,7 +150,7 @@ public:
 	virtual void DeleteLight(iLight* &light);
 
 	// Images
-	virtual iImage* CreateImage(Vector2 pos, Vector2 dimensions, const char* texture);
+	virtual iImage* CreateImage(Vector2 pos, Vector2 dimensions, const char* texture, unsigned int layer = 0);
 	virtual void DeleteImage(iImage* &delImg);
 
 	// Billboards
@@ -162,7 +162,7 @@ public:
 	virtual void DeleteBillboardCollection(iBillboardCollection* &delBillboardCollection);
 
 	// Text
-	virtual iText* CreateText(const char* text, Vector2 pos, float size, const char* fontTexturePath);
+	virtual iText* CreateText(const char* text, Vector2 pos, float size, const char* fontTexturePath, unsigned int layer);
 	virtual void DeleteText(iText* &deltxt);
 
 
@@ -250,7 +250,7 @@ public:
 
 	/*! Create an Image and starts rendering it every frame. Return is a pointer to the image created. Coordinates are in screen-space. 
 	To stop rendering it call DeleteImage on the engine with the image as parameter. */
-	Image* CreateImage(D3DXVECTOR2 position, D3DXVECTOR2 dimensions, string texture);
+	Image* CreateImage(D3DXVECTOR2 position, D3DXVECTOR2 dimensions, string texture, unsigned int layer = 0);
 
 	/*! Stops rendering the Image and internally deletes it and the pointer will become NULL. Return depends on if the Image was sucessfully removed. */
 	bool DeleteImage(Image* delImage);
@@ -262,7 +262,7 @@ public:
 
 
 
-	Text* CreateText(string text, D3DXVECTOR2 position, float size, string fontTexturePath);
+	Text* CreateText(string text, D3DXVECTOR2 position, float size, string fontTexturePath, unsigned int layer);
 	bool DeleteText(Text* delText);
 
 
