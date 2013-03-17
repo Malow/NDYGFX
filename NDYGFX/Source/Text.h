@@ -29,12 +29,11 @@ private:
 	float size;
 	Font* font;
 	D3DXVECTOR3 color;
-	unsigned int layer;
 
 	void ToUpper();
 
 public:
-	Text(std::string text, D3DXVECTOR2 position, float size, unsigned int layer = 0);
+	Text(std::string text, D3DXVECTOR2 position, float size);
 	virtual ~Text();
 	
 	virtual void SetColor(Vector3 color);
@@ -49,8 +48,6 @@ public:
 	virtual float GetSize() const;
 	void SetFont(Font* newFont) { this->font = newFont; }
 	Font* GetFont() const { return this->font; }
-	virtual unsigned int GetLayer() const { return this->layer; }
-	virtual void SetLayer(unsigned int layer) { this->layer = layer; }
 	
 };
 

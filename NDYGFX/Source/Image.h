@@ -16,11 +16,10 @@ private:
 	D3DXVECTOR2 dimensions;
 	float opacity;
 	TextureResource* textureResource;
-	unsigned int layer;
 
 
 public:
-	Image(D3DXVECTOR2 pos, D3DXVECTOR2 dim, unsigned int layer = 0);
+	Image(D3DXVECTOR2 pos, D3DXVECTOR2 dim);
 	virtual ~Image();
 
 	virtual Vector2 GetPosition() const;
@@ -33,8 +32,6 @@ public:
 	virtual void SetDimensions(Vector2 dims);
 	virtual float GetOpacity() const { return this->opacity; }
 	virtual void SetOpacity(float opacity) { this->opacity = opacity; }
-	virtual unsigned int GetLayer() const { return this->layer; }
-	virtual void SetLayer(unsigned int layer) { this->layer = layer; }
 
 	float GetStrata01() { return this->strata; }
 };

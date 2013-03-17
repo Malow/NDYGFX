@@ -2,7 +2,7 @@
 
 using namespace std;
 
-Text::Text(string text, D3DXVECTOR2 position, float size, unsigned int layer)
+Text::Text(string text, D3DXVECTOR2 position, float size)
 {
 	this->text = text;
 	this->ToUpper();
@@ -14,8 +14,6 @@ Text::Text(string text, D3DXVECTOR2 position, float size, unsigned int layer)
 	this->font->textureResource = NULL;
 	for(int i = 0; i < 256; i++)
 		this->font->charTexCoords[i] = 0;
-
-	this->layer = layer;
 }
 
 void Text::ToUpper()

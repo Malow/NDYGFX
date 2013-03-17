@@ -186,9 +186,8 @@ private:
 	void RenderShadowMap();
 	void RenderCascadedShadowMap();
 	void RenderCascadedShadowMapInstanced();
-	void RenderImages(); //TILLMAN - deprecated, replaced by RenderImagesAndText()
-	void RenderText(); //TILLMAN - deprecated, replaced by RenderImagesAndText()
-	void RenderImagesAndText();
+	void RenderImages();
+	void RenderText();
 	void RenderFBXMeshes();
 	void RenderDeferredGeoTranslucent();
 	void RenderDeferredPerPixelTranslucent();

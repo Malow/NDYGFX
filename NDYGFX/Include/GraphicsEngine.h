@@ -43,7 +43,7 @@ extern "C"
 		virtual iLight* CreateLight(Vector3 pos) = 0;
 		virtual void DeleteLight(iLight* &light) = 0;
 
-		virtual iImage* CreateImage(Vector2 pos, Vector2 dimensions, const char* texture, unsigned int layer = 0) = 0;
+		virtual iImage* CreateImage(Vector2 pos, Vector2 dimensions, const char* texture) = 0;
 		virtual void DeleteImage(iImage* &delImg) = 0;
 
 		virtual iBillboard* CreateBillboard(Vector3 pos, Vector2 size, Vector3 color, const char* texture) = 0;
@@ -56,7 +56,7 @@ extern "C"
 
 
 		/*! fontTexturePath shall not contain the file type. */
-		virtual iText* CreateText(const char* text, Vector2 pos, float size, const char* fontTexturePath, unsigned int layer = 0) = 0;
+		virtual iText* CreateText(const char* text, Vector2 pos, float size, const char* fontTexturePath) = 0;
 		virtual void DeleteText(iText* &deltxt) = 0;
 
 		virtual iTerrain* CreateTerrain(const Vector3& pos, const Vector3& scale, const unsigned int& size) = 0;

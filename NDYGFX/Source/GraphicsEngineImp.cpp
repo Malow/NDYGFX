@@ -493,16 +493,16 @@ iTerrain* GraphicsEngineImp::CreateTerrain(const Vector3& pos, const Vector3& sc
 }
 
 
-Image* GraphicsEngineImp::CreateImage(D3DXVECTOR2 position, D3DXVECTOR2 dimensions, string texture, unsigned int layer)
+Image* GraphicsEngineImp::CreateImage(D3DXVECTOR2 position, D3DXVECTOR2 dimensions, string texture)
 {
-	Image* img = new Image(position, dimensions, layer);
+	Image* img = new Image(position, dimensions);
 	this->dx->CreateImage(img, texture);
 	return img;
 }
 
-iImage* GraphicsEngineImp::CreateImage( Vector2 pos, Vector2 dimensions, const char* texture, unsigned int layer)
+iImage* GraphicsEngineImp::CreateImage( Vector2 pos, Vector2 dimensions, const char* texture )
 {
-	return this->CreateImage(D3DXVECTOR2(pos.x, pos.y), D3DXVECTOR2(dimensions.x, dimensions.y), string(texture), layer);
+	return this->CreateImage(D3DXVECTOR2(pos.x, pos.y), D3DXVECTOR2(dimensions.x, dimensions.y), string(texture));
 }
 
 bool GraphicsEngineImp::DeleteImage(Image* delImage)
@@ -584,16 +584,16 @@ void GraphicsEngineImp::DeleteBillboardCollection( iBillboardCollection* &delbil
 }
 
 
-Text* GraphicsEngineImp::CreateText(string text, D3DXVECTOR2 position, float size, string fontTexturePath, unsigned int layer)
+Text* GraphicsEngineImp::CreateText(string text, D3DXVECTOR2 position, float size, string fontTexturePath)
 {
-	Text* textobj = new Text(text, position, size, layer);
+	Text* textobj = new Text(text, position, size);
 	this->dx->CreateText(textobj, fontTexturePath);
 	return textobj;
 }
 
-iText* GraphicsEngineImp::CreateText( const char* text, Vector2 pos, float size, const char* fontTexturePath, unsigned int layer )
+iText* GraphicsEngineImp::CreateText( const char* text, Vector2 pos, float size, const char* fontTexturePath )
 {
-	return this->CreateText(string(text), D3DXVECTOR2(pos.x, pos.y), size, string(fontTexturePath), layer);
+	return this->CreateText(string(text), D3DXVECTOR2(pos.x, pos.y), size, string(fontTexturePath));
 }
 
 bool GraphicsEngineImp::DeleteText(Text* delText)

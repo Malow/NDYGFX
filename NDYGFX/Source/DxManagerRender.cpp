@@ -613,109 +613,7 @@ void DxManager::RenderText()
 	this->Shader_Text->SetResource("tex2D", NULL);
 	this->Shader_Text->Apply(0);
 }
-void DxManager::RenderImagesAndText()
-{
-	this->Dx_DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 
-	unsigned int currLayer = 10; //TILLMAN
-	bool allRendered = false;
-	unsigned int index = 0;
-	unsigned int imagesRendered = 0;
-	unsigned int textsRendered = 0;
-	while(!allRendered)
-	{
-		// IMAGES
-		for(unsigned int j = 0; j < this->images.size(); j++)
-		{
-			Image* img = this->images[j];
-			if(img->GetLayer() == currLayer)
-			{
-				// if Convert from screenspace is needed, which it isnt.
-				this->Shader_Image->SetFloat("posx", (img->GetPosition().x / this->params.WindowWidth) * 2 - 1);
-				this->Shader_Image->SetFloat("posy", 2 - (img->GetPosition().y / this->params.WindowHeight) * 2 - 1);
-				this->Shader_Image->SetFloat("dimx", (img->GetDimensions().x / this->params.WindowWidth) * 2);
-				this->Shader_Image->SetFloat("dimy", -(img->GetDimensions().y / this->params.WindowHeight) * 2);
-				this->Shader_Image->SetFloat("opacity", img->GetOpacity());
-				this->Shader_Image->SetFloat("strata", img->GetStrata01());
-				if(img->GetTexture() != NULL)
-				{
-					this->Shader_Image->SetResource("tex2D", img->GetTexture()->GetSRVPointer());
-				}
-				this->Shader_Image->Apply(0);
-				this->Dx_DeviceContext->Draw(1, 0);
-				imagesRendered++;
-			}
-		}
-
-
-		// TEXT
-		for(unsigned int j = 0; j < this->texts.size(); j++)
-		{
-			Text* txt = this->texts[j];
-			if(txt->GetLayer() == currLayer)
-			{
-				// if Convert from screen space is needed, which it is
-				this->Shader_Text->SetFloat("posx", (txt->GetPosition().x / this->params.WindowWidth) * 2 - 1);
-				this->Shader_Text->SetFloat("posy", 2 - (txt->GetPosition().y / this->params.WindowHeight) * 2 - 1);
-				this->Shader_Text->SetFloat("size", txt->GetSize());
-				this->Shader_Text->SetFloat("windowWidth", (float)this->params.WindowWidth);
-				this->Shader_Text->SetFloat("windowHeight", (float)this->params.WindowHeight);
-		
-				// Im only using ASCI 30 - 100, to reduce data sent I only send those 70 as 0-70. Therefor the t = 30 and t - 30
-				static bool once = true;
-				if(once)
-				{
-					for(int t = 30; t < 100; t++)
-					{
-						this->Shader_Text->SetFloatAtIndex(t - 30, "charTex", (float)(int)txt->GetFont()->charTexCoords[t]);
-						this->Shader_Text->SetFloatAtIndex(t - 30, "charWidth", (float)(int)txt->GetFont()->charWidth[t]);
-					}
-					once = false;
-				}
-
-				this->Shader_Text->SetResource("tex2D", txt->GetFont()->textureResource->GetSRVPointer());
-
-				string drawText = txt->GetText();
-				if(drawText.size() > 40)
-					drawText = drawText.substr(0, 40);
-
-				this->Shader_Text->SetFloat3("overlayColor", txt->GetColor());
-				this->Shader_Text->SetFloat("NrOfChars", (float)drawText.size());
-				for(int t = 0; t < (int)drawText.size(); t++)
-				{
-					// Im only using ASCI 30 - 100, to reduce data sent I only send those 70 as 0-70. Therefor the -30
-					this->Shader_Text->SetFloatAtIndex(t, "text", (float)(int)drawText[t] - 30);
-				}
-
-				this->Shader_Text->Apply(0);
-				this->Dx_DeviceContext->Draw(1, 0);
-				textsRendered++;
-			}
-		}
-		
-		if(textsRendered >= this->texts.size() && imagesRendered >= this->images.size())
-		{
-			allRendered = true;
-		}
-
-		currLayer--;
-		index++;
-	}
-
-
-	//this->Shader_Image->SetResource("tex2D", NULL);
-	//this->Shader_Image->Apply(0);
-
-
-	
-
-	//for(unsigned int i = 0; i < this->texts.size(); i++)
-	{
-		
-	}
-	//this->Shader_Text->SetResource("tex2D", NULL);
-	//this->Shader_Text->Apply(0);
-}
 void DxManager::RenderCascadedShadowMap()
 {
 #ifdef MALOWTESTPERF
@@ -1823,7 +1721,7 @@ void DxManager::Render()
 #ifdef MALOWTESTPERF
 	this->perf.PostMeasure("Renderer - Render Invisible Geo", 2);
 #endif
-/*
+
 #ifdef MALOWTESTPERF
 	this->perf.PreMeasure("Renderer - Render Images", 2);
 #endif
@@ -1838,14 +1736,6 @@ void DxManager::Render()
 	this->RenderText();
 #ifdef MALOWTESTPERF
 	this->perf.PostMeasure("Renderer - Render Text", 2);
-#endif
-	*/
-#ifdef MALOWTESTPERF
-	this->perf.PreMeasure("Renderer - Render ImagesAndText", 2);
-#endif
-	this->RenderImagesAndText();
-#ifdef MALOWTESTPERF
-	this->perf.PostMeasure("Renderer - Render ImagesAndText", 2);
 #endif
 
 #ifdef MALOWTESTPERF
