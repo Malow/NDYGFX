@@ -80,6 +80,12 @@ void TillmanTest::PreTest()
 	*/
 
 	//LAYER TEST
+	
+	iM = NULL;
+	iM2 = NULL;
+	iM5 = NULL;
+	iM3 = NULL;
+	iM4 = NULL;
 	iM = GetGraphics()->CreateImage(Vector2(50, 100), Vector2(100, 100), "Media/BallTexture.png", 0);
 	iText* textDXErrorTest = GetGraphics()->CreateText("durp", Vector2(100, 100), 1.0f, "Media/Fonts/1", 1);
 	iM = GetGraphics()->CreateImage(Vector2(150, 100), Vector2(100, 100), "Media/BallTexture.png", 2);
