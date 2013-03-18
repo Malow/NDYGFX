@@ -1237,18 +1237,11 @@ void GraphicsEngineImp::LoadingScreen(const char* BackgroundTexture, const char*
 
 				if(this->loadingScreenPB)
 				{
-					MaloW::Debug("Yoyo, deleting PB");
 					this->DeleteImage(this->loadingScreenPB);
 					this->loadingScreenPB = NULL;
-					MaloW::Debug("Yoyo, deleted PB");
-				}
-				else
-				{
-					MaloW::Debug("PB IS NULL, so can't delete..");
 				}
 				if(this->loadingScreenBG)
 				{
-					MaloW::Debug("Deleting BG");
 					this->DeleteImage(this->loadingScreenBG);
 					this->loadingScreenBG = NULL;
 				}
@@ -1299,27 +1292,18 @@ void GraphicsEngineImp::LoadingScreen(const char* BackgroundTexture, const char*
 		this->loadingScreenFade = NULL;
 	}
 
+	// Hax solution, these should allready be deleted, but doing it here incase it hasnt been done...
 	if(this->loadingScreenPB)
 	{
-		MaloW::Debug("OMGOMG LOLOLOL BEFORE");
-		MaloW::Debug("OMGOMG LOLOLOL BEFORE");
-		MaloW::Debug("OMGOMG LOLOLOL BEFORE");
-		MaloW::Debug("OMGOMG LOLOLOL BEFORE");
-		MaloW::Debug("OMGOMG LOLOLOL BEFORE");
-		MaloW::Debug("OMGOMG LOLOLOL BEFORE");
-		MaloW::Debug("OMGOMG LOLOLOL BEFORE");
-		MaloW::Debug("OMGOMG LOLOLOL BEFORE");
-		MaloW::Debug("OMGOMG LOLOLOL BEFORE");
-		float asd = this->loadingScreenPB->GetOpacity();
-		MaloW::Debug("OMGOMG LOLOLOL AFTER, IT DIDNT CRASH");
-		MaloW::Debug("OMGOMG LOLOLOL AFTER, IT DIDNT CRASH");
-		MaloW::Debug("OMGOMG LOLOLOL AFTER, IT DIDNT CRASH");
-		MaloW::Debug("OMGOMG LOLOLOL AFTER, IT DIDNT CRASH");
-		MaloW::Debug("OMGOMG LOLOLOL AFTER, IT DIDNT CRASH");
-		MaloW::Debug("OMGOMG LOLOLOL AFTER, IT DIDNT CRASH");
-		MaloW::Debug("OMGOMG LOLOLOL AFTER, IT DIDNT CRASH");
-		MaloW::Debug("OMGOMG LOLOLOL AFTER, IT DIDNT CRASH");
+		this->DeleteImage(this->loadingScreenPB);
+		this->loadingScreenPB = NULL;
 	}
+	if(this->loadingScreenBG)
+	{
+		this->DeleteImage(this->loadingScreenBG);
+		this->loadingScreenBG = NULL;
+	}
+
 
 	if(this->cam->GetCameraType() == FPS)
 		this->GetKeyList()->SetMousePosition(Vector2(this->parameters.WindowWidth / 2.0f, this->parameters.WindowHeight / 2.0f));
