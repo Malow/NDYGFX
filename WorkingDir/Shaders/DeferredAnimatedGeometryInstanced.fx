@@ -89,7 +89,7 @@ struct PSSceneIn
 	float2 tex		: TEXCOORD;
 	float3 norm		: NORMAL;
 	float3 tangent	: TANGENT;
-	//float3 binormal : BINORMAL;
+	float3 binormal : BINORMAL;
 };
 
 struct PSout
@@ -139,7 +139,7 @@ PSSceneIn VSScene(VSIn input)
 	output.tex		= lerp(input.texCoord, input.texCoord_morph, interpolationValue);
 	output.norm	=	lerp(input.norm, input.norm_morph, interpolationValue);
 	output.tangent	= lerp(input.tangent, input.tangent_morph, interpolationValue);
-	//output.binormal	= lerp(input.binormal, input.binormal_morph, interpolationValue);
+	output.binormal = cross(output.norm, output.tangent);
 	
 	return output;
 }
@@ -172,10 +172,8 @@ PSout PSScene(PSSceneIn input)
 		// Expand the range of the normal value from (0, +1) to (-1, +1).
 		bumpMap = (bumpMap * 2.0f) - 1.0f;
 		// Calculate the normal from the data in the bump map.
-		//float3 bumpNormal = input.norm + bumpMap.x * input.tangent + bumpMap.y * input.binormal;
+		float3 bumpNormal = input.norm + bumpMap.x * input.tangent + bumpMap.y * input.binormal;
 		
-		float3 biNorm = cross(input.norm, input.tangent);
-		float3 bumpNormal = input.norm + bumpMap.x * input.tangent + bumpMap.y * biNorm;
 		// Normalize the resulting bump normal.
 		bumpNormal = normalize(bumpNormal);
 		output.NormalAndDepth.xyz = bumpNormal.xyz;
