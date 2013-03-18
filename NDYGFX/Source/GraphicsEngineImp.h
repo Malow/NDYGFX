@@ -222,6 +222,7 @@ public:
 	virtual void LoadingScreen(const char* BackgroundTexture = "", const char* ProgressBarTexture = "", float FadeBlackInInTime = 0.0f, float FadeBlackInOutTime = 0.0f, float FadeBlackOutInTime = 0.0f, float FadeBlackOutOutTime = 0.0f);
 	virtual void ShowLoadingScreen(const char* BackgroundTexture = "", const char* ProgressBarTexture = "", float FadeBlackInInTime = 0.0f, float FadeBlackInOutTime = 0.0f);
 	virtual void UseSeperateLoadingThread(bool use) { this->useLoadingThread = use; }
+	virtual void HideLoadingScreen();
 
 	virtual iWaterPlane* CreateWaterPlane(Vector3& pos, const char* texture);
 	virtual void DeleteWaterPlane(iWaterPlane* del);

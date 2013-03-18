@@ -117,6 +117,15 @@ void TestRealisticScene::PreTest()
 
 bool TestRealisticScene::RunTest(float diff)
 {
+	if(GetGraphics()->GetKeyListener()->IsPressed('8'))
+	{
+		GetGraphics()->GetEngineParameters().FarClip += diff;
+	}
+	if(GetGraphics()->GetKeyListener()->IsPressed('9'))
+	{
+		GetGraphics()->GetEngineParameters().FarClip -= diff;
+	}
+
 	wa->position = GetGraphics()->GetCamera()->GetPosition().GetXZ();
 	wa->radius = GetGraphics()->GetEngineParameters().FarClip;
 	world->Update();

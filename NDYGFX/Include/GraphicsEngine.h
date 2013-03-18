@@ -133,6 +133,8 @@ extern "C"
 		virtual void ShowLoadingScreen(const char* BackgroundTexture = "", const char* ProgressBarTexture = "", 
 			float FadeBlackInInTime = 0.0f, float FadeBlackInOutTime = 0.0f) = 0;
 
+		virtual void HideLoadingScreen() = 0;
+
 		virtual iWaterPlane* CreateWaterPlane(Vector3& pos, const char* texture) = 0;
 		virtual void DeleteWaterPlane(iWaterPlane* del) = 0;
 

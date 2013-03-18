@@ -1317,3 +1317,25 @@ void GraphicsEngineImp::LoadingScreen(const char* BackgroundTexture, const char*
 	this->useLoadingThread = false;
 	this->loadingScreenState = 0;
 }
+
+void GraphicsEngineImp::HideLoadingScreen()
+{
+	this->useLoadingThread = false;
+	this->loadingScreenState = 0;
+	if(this->loadingScreenFade)
+	{
+		this->DeleteImage(this->loadingScreenFade);
+		this->loadingScreenFade = NULL;
+	}
+	if(this->loadingScreenPB)
+	{
+		this->DeleteImage(this->loadingScreenPB);
+		this->loadingScreenPB = NULL;
+	}
+	if(this->loadingScreenBG)
+	{
+		this->DeleteImage(this->loadingScreenBG);
+		this->loadingScreenBG = NULL;
+	}
+}
+
