@@ -1242,8 +1242,13 @@ void GraphicsEngineImp::LoadingScreen(const char* BackgroundTexture, const char*
 					this->loadingScreenPB = NULL;
 					MaloW::Debug("Yoyo, deleted PB");
 				}
+				else
+				{
+					MaloW::Debug("PB IS NULL, so can't delete..");
+				}
 				if(this->loadingScreenBG)
 				{
+					MaloW::Debug("Deleting BG");
 					this->DeleteImage(this->loadingScreenBG);
 					this->loadingScreenBG = NULL;
 				}
