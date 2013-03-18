@@ -184,8 +184,8 @@ float World::GetHeightAt( const Vector2& worldPos )
 	unsigned int sectorX = (unsigned int)worldPos.x / SECTOR_WORLD_SIZE;
 	unsigned int sectorY = (unsigned int)worldPos.y / SECTOR_WORLD_SIZE;
 
-	float localX = fmod(worldPos.x, (float)SECTOR_WORLD_SIZE) / SECTOR_WORLD_SIZE;
-	float localY = fmod(worldPos.y, (float)SECTOR_WORLD_SIZE) / SECTOR_WORLD_SIZE;
+	float localX = fmod(worldPos.x, FSECTOR_WORLD_SIZE) / FSECTOR_WORLD_SIZE;
+	float localY = fmod(worldPos.y, FSECTOR_WORLD_SIZE) / FSECTOR_WORLD_SIZE;
 
 	// Snap Local Coordinates
 	float snapX = floor(localX * (SECTOR_HEIGHT_SIZE-1)) / (SECTOR_HEIGHT_SIZE-1);

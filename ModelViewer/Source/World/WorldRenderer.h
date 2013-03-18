@@ -63,9 +63,13 @@ class WorldRenderer : Observer
 	bool zShowWaterBoxes;
 
 	// Billboard collections
-	unsigned int zGrassDensity; //Nr of grass objects per terrain.
-	std::map<iTerrain*, iBillboardCollection*> zGrass;
-
+	unsigned int zGrassDensity;		// Number of grass objects per terrain.
+	float zGrassNearDistance;		// Distance between camera and grass
+	float zGrassFarDistance;		// Distance between grass and far clip
+	float zGrassUpdateDistance;		// Distance you have to walk to update grass
+	Vector2 zLastGrassUpdatePos;	// Last camera position when grass was generated
+	std::map<Vector2UINT, iBillboardCollection*> zGrass;
+	
 public:
 	WorldRenderer(World* world, GraphicsEngine* graphics);
 	virtual ~WorldRenderer();
@@ -89,5 +93,5 @@ protected:
 	void SetEntityTransformation( Entity* e );
 	void DeleteEntity( Entity* e );
 
-	void GenerateGrass(iTerrain* ptrTerrain);
+	void GenerateGrass(const Vector2UINT& terrainCoords);
 };

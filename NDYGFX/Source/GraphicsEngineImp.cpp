@@ -1292,6 +1292,19 @@ void GraphicsEngineImp::LoadingScreen(const char* BackgroundTexture, const char*
 		this->loadingScreenFade = NULL;
 	}
 
+	// Hax solution, these should allready be deleted, but doing it here incase it hasnt been done...
+	if(this->loadingScreenPB)
+	{
+		this->DeleteImage(this->loadingScreenPB);
+		this->loadingScreenPB = NULL;
+	}
+	if(this->loadingScreenBG)
+	{
+		this->DeleteImage(this->loadingScreenBG);
+		this->loadingScreenBG = NULL;
+	}
+
+
 	if(this->cam->GetCameraType() == FPS)
 		this->GetKeyList()->SetMousePosition(Vector2(this->parameters.WindowWidth / 2.0f, this->parameters.WindowHeight / 2.0f));
 	this->cam->SetUpdateCamera(updateCam);

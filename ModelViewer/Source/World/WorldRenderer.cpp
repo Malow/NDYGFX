@@ -50,7 +50,12 @@ WorldRenderer::WorldRenderer(World* world, GraphicsEngine* graphics) :
 		UpdateWaterBoxes(*i);
 	}
 
-	this->zGrassDensity = zSettings.GetSetting("GrassDensity");}
+	zLastGrassUpdatePos = zGraphics->GetCamera()->GetPosition().GetXZ();
+	zGrassDensity = zSettings.GetSetting("GrassDensity");
+	zGrassFarDistance = zSettings.GetSetting("GrassFarDistance");
+	zGrassNearDistance = zSettings.GetSetting("GrassNearDistance");
+	zGrassUpdateDistance = zSettings.GetSetting("GrassUpdateDistance");
+}
 
 WorldRenderer::~WorldRenderer()
 {
@@ -380,6 +385,53 @@ void WorldRenderer::Update()
 
 	// Cam Pos
 	Vector3 camPos = zGraphics->GetCamera()->GetPosition();
+
+	// Update Grass If No Terrains are to be loaded
+	if ( zWorld )
+	{
+		if ( (zLastGrassUpdatePos - camPos.GetXZ()).GetLength() >= zGrassUpdateDistance )
+		{
+			std::map<Vector2UINT, int> grassSectors;
+
+			// Remove Current Grass Sectors
+			for( auto i = zGrass.cbegin(); i != zGrass.cend(); ++i )
+			{
+				grassSectors[i->first]--;
+			}
+
+			// Insert New Sectors
+			std::set<Vector2UINT> newSectorsSet;
+			zWorld->GetSectorsInCicle(camPos.GetXZ(), zGrassFarDistance, newSectorsSet);
+			for( auto i = newSectorsSet.cbegin(); i != newSectorsSet.cend(); ++i )
+			{
+				grassSectors[*i]++;
+			}
+
+			// Update Sector Grasses
+			for( auto i = grassSectors.cbegin(); i != grassSectors.cend(); ++i )
+			{
+				if ( i->second < 0 )
+				{
+					auto grassIt = zGrass.find(i->first);
+					if ( grassIt != zGrass.cend() )
+					{
+						if ( grassIt->second )
+						{
+							zGraphics->DeleteBillboardCollection(grassIt->second);
+						}
+
+						zGrass.erase(grassIt);
+					}
+				}
+				else if ( i->second > 0 )
+				{
+					GenerateGrass(i->first);
+				}
+			}
+
+			zLastGrassUpdatePos = camPos.GetXZ();
+		}
+	}
 
 	// Check Distance
 	if ( (zLastEntUpdatePos - camPos).GetLength() > 10.0f )
@@ -716,11 +768,11 @@ void WorldRenderer::UpdateTerrain()
 			if ( ptrTerrain )
 			{
 				//Delete previous grass if existing.
-				auto grassData = this->zGrass.find(ptrTerrain);
-				if(grassData != this->zGrass.end())
+				auto grassIterator = zGrass.find(i->first);
+				if(grassIterator != this->zGrass.end())
 				{
-					this->zGraphics->DeleteBillboardCollection(grassData->second);
-					this->zGrass.erase(grassData);
+					this->zGraphics->DeleteBillboardCollection(grassIterator->second);
+					this->zGrass.erase(grassIterator);
 				}
 
 				// Remove AI Grid
@@ -773,8 +825,6 @@ void WorldRenderer::UpdateTerrain()
 						2,
 						&sizes[0],
 						&data[0] );
-
-					this->GenerateGrass(ptrTerrain);
 				}
 
 				// Textures
@@ -789,8 +839,12 @@ void WorldRenderer::UpdateTerrain()
 						terrainTextures[x] = &files[x][0];
 					}
 					ptrTerrain->SetTextures(terrainTextures);
+				}
 
-					this->GenerateGrass(ptrTerrain);
+				// Generate grass
+				if( ( i->second & UPDATE_TEXTURES ) == UPDATE_TEXTURES || ( i->second & UPDATE_TEXTURES ) == UPDATE_BLENDMAP)
+				{
+					this->GenerateGrass(i->first);
 				}
 
 				// AI Grid
@@ -818,16 +872,73 @@ void WorldRenderer::UpdateTerrain()
 	}
 }
 
-void WorldRenderer::GenerateGrass(iTerrain* ptrTerrain)
+void WorldRenderer::GenerateGrass(const Vector2UINT& sectorCoords)
 {
-	//Delete previous grass if existing.
-	auto grassData = this->zGrass.find(ptrTerrain);
-	if(grassData != this->zGrass.end())
+	// Grass Turned Off
+	if ( !zGrassDensity ) 
 	{
-		//Remove from graphics engine.
-		this->zGraphics->DeleteBillboardCollection(grassData->second);
-		//Remove from map.
-		this->zGrass.erase(grassData);
+		return;
+	}
+
+	// Delete previous grass if existing.
+	auto grassIterator = this->zGrass.find(sectorCoords);
+
+	// Create Sector Rect
+	Rect sectorRect;
+	sectorRect.topLeft.x = (float)sectorCoords.x * FSECTOR_WORLD_SIZE;
+	sectorRect.topLeft.y = (float)sectorCoords.y * FSECTOR_WORLD_SIZE;
+	sectorRect.size.x = FSECTOR_WORLD_SIZE;
+	sectorRect.size.y = FSECTOR_WORLD_SIZE;
+
+	// Check if inside clip range
+	Circle clipCircle(zGraphics->GetCamera()->GetPosition().GetXZ(), zGrassFarDistance);
+
+	// Check Intersection
+	if ( !DoesIntersect(sectorRect, clipCircle) )
+	{
+		if ( grassIterator != this->zGrass.end() )
+		{
+			// Remove from graphics engine.
+			this->zGraphics->DeleteBillboardCollection(grassIterator->second);
+
+			// Remove from map.
+			this->zGrass.erase(grassIterator);
+		}
+		
+		return;
+	}
+
+	// Delete Old Grass
+	if( grassIterator != this->zGrass.end() )
+	{
+		// Remove from graphics engine.
+		this->zGraphics->DeleteBillboardCollection(grassIterator->second);
+
+		// Reset
+		grassIterator->second = 0;
+	}
+
+	// First check if the sector has any grass texture
+	Sector* sector = this->zWorld->GetSector(sectorCoords);
+	bool found = false;
+	for(unsigned int i = 0; i < SECTOR_BLEND_CHANNELS && !found; ++i)
+	{
+		if(strcmp(sector->GetTextureName(i), "01_v02-Moss.png") == 0)
+		{
+			found = true;
+		}
+		else if(strcmp(sector->GetTextureName(i), "06_v01-MossDark.png") == 0)
+		{
+			found = true;
+		}
+		else if(strcmp(sector->GetTextureName(i), "07_v01-MossLight.png") == 0)
+		{
+			found = true;
+		}
+	}
+	if(!found)
+	{
+		return;
 	}
 
 	float width = FSECTOR_WORLD_SIZE;
@@ -836,7 +947,7 @@ void WorldRenderer::GenerateGrass(iTerrain* ptrTerrain)
 	float xDiff = width / sqrtGrassDensity;
 	float zDiff = depth / sqrtGrassDensity;
 	Vector2 grassPos = Vector2(0.0f);
-	Vector2 terrainPosXZ = Vector2(ptrTerrain->GetPosition().x - width * 0.5f, ptrTerrain->GetPosition().z - depth * 0.5f);
+	Vector2 terrainPosXZ = sectorRect.topLeft;
 	float blendValueGrassLight = 0.0f;
 	float blendValueGrassMedium = 0.0f;
 	float blendValueGrassDark = 0.0f;
@@ -855,43 +966,44 @@ void WorldRenderer::GenerateGrass(iTerrain* ptrTerrain)
 	float maxGrassWidth = 1.0f; //global variabel?
 	float minGrassHeight = 0.25f; //global variabel?
 	float maxGrassHeight = 0.5f; //global variabel?
+	float minDistToNeighbour = 0.2f; //global variabel?
 	Vector3* positions = new Vector3[this->zGrassDensity];
 	Vector2* sizes = new Vector2[this->zGrassDensity];
 	Vector3* colors = new Vector3[this->zGrassDensity];
-	srand(ptrTerrain->GetPosition().x + ptrTerrain->GetPosition().z); //Use same, unique seed for terrain every time.
-	float rndMaxInv = 1.0f / RAND_MAX;
+	srand(sectorCoords.x + sectorCoords.y);
+	float rndMaxInv = 1.0f / (float)RAND_MAX;
 	float grassWidth = 0.0f;
 	float grassHeight = 0.0f;
 	float rndGrassColorOffset = 0.0f;
 	//Vector3 rndGrassColorOffsetVec = Vector3(0.0f, 0.0f, 0.0f);
 	float terrainY = 0.0f;
 	Vector2 offsetVector = Vector2(xDiff, zDiff) * 0.5f;
-	/*float diff = 0.0f; 
-	float diffPow = 0.0f;
-	float maxDiff = 0.0f;
-	float maxDiffPow = 0.0f;
-	float tmp = 0.0f;
-	float scale = 0.0f;
-	float scaleSum = 0.0f;*/
-
+	
 	unsigned int index = 0;
 	float totBlendValue = 0.0f;
-	//Vector3 colorGrassLight = Vector3(0.0f, RGB75, 0.0f);
-	//Vector3 colorGrassMedium = Vector3(0.0f, RGB50, 0.0f);
-	//Vector3 colorGrassDark = Vector3(0.0f, RGB25, 0.0f);
+	
+	//Values taken from average texture color.
+	Vector3 colorGrassLight = Vector3(91.0f, 131.0f, 65.0f) / 255.0f;
+	Vector3 colorGrassMedium = Vector3(107.0f, 142.0f, 77.0f) / 255.0f;
+	Vector3 colorGrassDark = Vector3(68.0f, 104.0f, 45.0f)  / 255.0f;
 	Vector3 rndGrassColorOffsetVecGrassLight = Vector3(0.0f, 0.0f, 0.0f);
 	Vector3 rndGrassColorOffsetVecGrassMedium = Vector3(0.0f, 0.0f, 0.0f);
 	Vector3 rndGrassColorOffsetVecGrassDark = Vector3(0.0f, 0.0f, 0.0f);
 
-	/*Vector3 colorGrassLight = Vector3(RGB75, RGB125, RGB75);
-	Vector3 colorGrassMedium = Vector3(RGB50, RGB100, RGB50);
-	Vector3 colorGrassDark = Vector3(RGB25, RGB75, RGB25);*/
+	float minMaxDistX = xDiff * 0.5f - minDistToNeighbour * 0.5f;
+	float minMaxDistZ = zDiff * 0.5f - minDistToNeighbour * 0.5f;
 
 	for(unsigned int x = 0; x < sqrtGrassDensity; ++x)
 	{
 		for(unsigned int z = 0; z < sqrtGrassDensity; ++z)
 		{
+			//Initial position
 			grassPos = terrainPosXZ + Vector2((float)x * xDiff, (float)z * zDiff) + offsetVector;
+
+			//Move initial position randomly
+			grassPos.x += rand() * rndMaxInv * 2.0f * minMaxDistX - minMaxDistX;
+			grassPos.y += rand() * rndMaxInv * 2.0f * minMaxDistZ - minMaxDistZ;
+
 			try
 			{
 				terrainY = zWorld->CalcHeightAtWorldPos(grassPos);
@@ -906,17 +1018,30 @@ void WorldRenderer::GenerateGrass(iTerrain* ptrTerrain)
 			grassWidth = fmod(rand() * rndMaxInv, maxGrassWidth - minGrassWidth) + minGrassWidth;
 			grassHeight = fmod(rand() * rndMaxInv, maxGrassHeight - minGrassHeight) + minGrassHeight;
 
-			float RGB_MIN_MAX = RGB75;
+			float RGB_MIN_MAX = RGB50;
 
-			//Randomize dark grass RGB = g[-RGB_MIN_MAX, 0]
+			//Randomize dark grass RGB = rgb[-RGB_MIN_MAX, 0]
+			rndGrassColorOffset = fmod(rand() * rndMaxInv, RGB_MIN_MAX) - RGB_MIN_MAX; //RGB_MIN_MAX = min
+			//rndGrassColorOffsetVecGrassDark.x = rndGrassColorOffset;
 			rndGrassColorOffset = fmod(rand() * rndMaxInv, RGB_MIN_MAX) - RGB_MIN_MAX; //RGB_MIN_MAX = min
 			rndGrassColorOffsetVecGrassDark.y = rndGrassColorOffset;
-			//Randomize medium grass RGB = g[-RGB_MIN_MAX / 2, RGB_MIN_MAX / 2]
+			rndGrassColorOffset = fmod(rand() * rndMaxInv, RGB_MIN_MAX) - RGB_MIN_MAX; //RGB_MIN_MAX = min
+			//rndGrassColorOffsetVecGrassDark.z = rndGrassColorOffset;
+			//Randomize medium grass RGB = rgb[-RGB_MIN_MAX / 2, RGB_MIN_MAX / 2]
+			rndGrassColorOffset = fmod(rand() * rndMaxInv, RGB_MIN_MAX * 0.5f + RGB_MIN_MAX * 0.5f) - RGB_MIN_MAX * 0.5f;
+			//rndGrassColorOffsetVecGrassMedium.x = rndGrassColorOffset;
 			rndGrassColorOffset = fmod(rand() * rndMaxInv, RGB_MIN_MAX * 0.5f + RGB_MIN_MAX * 0.5f) - RGB_MIN_MAX * 0.5f;
 			rndGrassColorOffsetVecGrassMedium.y = rndGrassColorOffset;
-			//Randomize light grass RGB = g[0, RGB_MIN_MAX]
+			rndGrassColorOffset = fmod(rand() * rndMaxInv, RGB_MIN_MAX * 0.5f + RGB_MIN_MAX * 0.5f) - RGB_MIN_MAX * 0.5f;
+			//rndGrassColorOffsetVecGrassMedium.z = rndGrassColorOffset;
+			//Randomize light grass RGB = rgb[0, RGB_MIN_MAX]
+			rndGrassColorOffset = fmod(rand() * rndMaxInv, RGB_MIN_MAX); //RGB_MIN_MAX = max
+			//rndGrassColorOffsetVecGrassLight.x = rndGrassColorOffset;
 			rndGrassColorOffset = fmod(rand() * rndMaxInv, RGB_MIN_MAX); //RGB_MIN_MAX = max
 			rndGrassColorOffsetVecGrassLight.y = rndGrassColorOffset;
+			rndGrassColorOffset = fmod(rand() * rndMaxInv, RGB_MIN_MAX); //RGB_MIN_MAX = max
+			//rndGrassColorOffsetVecGrassLight.z = rndGrassColorOffset;
+			
 
 			//blendValueGrassLight + blendValueGrassMedium + blendValueGrassDark -> range[0,1]
 			blendValueGrassLight = this->zWorld->GetAmountOfTexture(grassPos, "07_v01-MossLight.png");
@@ -926,101 +1051,29 @@ void WorldRenderer::GenerateGrass(iTerrain* ptrTerrain)
 			totBlendValue = blendValueGrassLight + blendValueGrassMedium + blendValueGrassDark;
 			if(totBlendValue > blendThreshHold) //Not equal to to avoid division by zero
 			{
-				if(totBlendValue < blendThreshHold + 0.1f)
-				{
-					float derp = 1.0f;
-				}
 				//totBlendValue range[blendThreshHold, 1], we want [0,1]
 				float tmp = totBlendValue - blendThreshHold; //range[0, 1 - blendThreshHold];
 				tmp /= 1.0f - blendThreshHold;
 				totBlendValue = tmp;
 				//Set size
 				grassHeight *= totBlendValue; //modify grassheight depending on blend values
-				sizes[index] = Vector2(grassWidth, grassHeight);
-				//Set position
-				positions[index] = Vector3(grassPos.x, terrainY + grassHeight * 0.5f, grassPos.y);
-				//Set color
-				//Col = Lc * Lb +  Mc * Mb + Dc * Db + Rc
-				/*colors[index] =		colorGrassLight * blendValueGrassLight 
-								+	colorGrassMedium * blendValueGrassMedium
-								+	colorGrassDark * blendValueGrassDark
-								+	rndGrassColorOffsetVec;
-				*/
-				colors[index] =		rndGrassColorOffsetVecGrassLight * blendValueGrassLight
-								+	rndGrassColorOffsetVecGrassMedium * blendValueGrassMedium
-								+	rndGrassColorOffsetVecGrassDark * blendValueGrassDark
-								+	Vector3(0.5f, 0.5f, 0.5f); //Color is a multiplier.
-				
-				//Increase index(number of grass objects)
-				index++;
+				//If it is below minGrassHeight, don't add it. (It can never be greater than maxHeight)
+				if(grassHeight >= minGrassHeight)
+				{
+					sizes[index] = Vector2(grassWidth, grassHeight);
+					//Set position
+					positions[index] = Vector3(grassPos.x, terrainY + grassHeight * 0.5f, grassPos.y);
+					//Set color
+					Vector3 test = 	(colorGrassLight + rndGrassColorOffsetVecGrassLight) * blendValueGrassLight
+								+	(colorGrassMedium + rndGrassColorOffsetVecGrassMedium) * blendValueGrassMedium
+								+	(colorGrassDark + rndGrassColorOffsetVecGrassDark) * blendValueGrassDark
+								+	Vector3(1.0f, 1.0f, 1.0f) //Color is a multiplier.
+								-	Vector3(0.8f, 0.8f, 0.8f); //Adjust ambient & diffuse TTILLMAN
+					colors[index] =	test;
+					//Increase index(number of grass objects)
+					index++;
+				}
 			}
-
-			
-
-			//if(blendValueGrass >= blendThreshHold)
-			//{
-			//	nrOfPassedConditions++;
-			//	//Change height depending on blend value.
-			//	//Convert blend value from range[blendThreshHold, 1] to range[0, 1].
-			//	/*diff = blendValueGrass - blendThreshHold; 
-			//	diffPow = diff * diff;
-			//	maxDiff = 1.0f - blendThreshHold;
-			//	maxDiffPow = maxDiff * maxDiff;
-			//	tmp = pow(maxDiff / maxDiffPow, 2.0f);
-			//	scale = diffPow * tmp;
-			//	scaleSum += scale;
-			//	*/
-			//	colorSum += Vector3(RGB50, RGB100, RGB50) + rndGrassColorOffsetVec;
-			//	totBlendValue += blendValueGrass;
-			//}
-			//if(blendValueGrassLight >= blendThreshHold)
-			//{
-			//	nrOfPassedConditions++;
-			//	//Change height depending on blend value.
-			//	//Convert blend value from range[blendThreshHold, 1] to range[0, 1].
-			//	/*diff = blendValueGrassLight - blendThreshHold; 
-			//	diffPow = diff * diff;
-			//	maxDiff = 1.0f - blendThreshHold;
-			//	maxDiffPow = maxDiff * maxDiff;
-			//	tmp = pow(maxDiff / maxDiffPow, 2.0f);
-			//	scale = diffPow * tmp;
-			//	scaleSum += scale;
-			//	*/
-			//	colorSum += Vector3(RGB75, RGB125, RGB75) + rndGrassColorOffsetVec;
-			//	totBlendValue += blendValueGrassLight;
-			//}
-			//if(blendValueGrassDark >= blendThreshHold)
-			//{
-			//	nrOfPassedConditions++;
-			//	//Change height depending on blend value.
-			//	//Convert blend value from range[blendThreshHold, 1] to range[0, 1].
-			//	/*diff = blendValueGrassDark - blendThreshHold; 
-			//	diffPow = diff * diff;
-			//	maxDiff = 1.0f - blendThreshHold;
-			//	maxDiffPow = maxDiff * maxDiff;
-			//	tmp = pow(maxDiff / maxDiffPow, 2.0f);
-			//	scale = diffPow * tmp;
-			//	scaleSum += scale;
-			//	*/
-			//	colorSum += Vector3(RGB25, RGB75, RGB25) + rndGrassColorOffsetVec;
-			//	totBlendValue += blendValueGrassDark;
-			//}
-
-			//if(nrOfPassedConditions > 0)
-			//{
-			//	//tillman todo: if x of tex 0 && x of tex 1 => 0 scalesum
-			//	//Set size
-			//	//scaleSum /= (float)nrOfPassedConditions;
-			//	//grassHeight *= scaleSum;
-			//	grassHeight *= totBlendValue;
-			//	sizes[index] = Vector2(grassWidth, grassHeight);
-			//	//Set position
-			//	positions[index] = Vector3(grassPos.x, terrainY + grassHeight * 0.5f, grassPos.y);
-			//	//Set color
-			//	colorSum /= (float)nrOfPassedConditions;
-			//	colors[index] = colorSum;
-			//	index++;
-			//}
 		}
 	}
 
@@ -1029,8 +1082,8 @@ void WorldRenderer::GenerateGrass(iTerrain* ptrTerrain)
 	//No offset vector needed since grass positions is in world space.
 	if(index > 0)
 	{
-		this->zGrass[ptrTerrain] = this->zGraphics->CreateBillboardCollection(index, positions, sizes, colors, Vector3(0.0f, 0.0f, 0.0f), "Media/Grass.png"); 
-		this->zGrass[ptrTerrain]->SetRenderShadowFlag(false); //Don't render shadows.
+		this->zGrass[sectorCoords] = this->zGraphics->CreateBillboardCollection(index, positions, sizes, colors, Vector3(0.0f, 0.0f, 0.0f), "Media/Grass.png"); 
+		this->zGrass[sectorCoords]->SetRenderShadowFlag(false); //Don't render shadows.
 	}
 	
 	//Delete data 

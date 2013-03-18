@@ -112,7 +112,7 @@ void TestRealisticScene::PreTest()
 	GetGraphics()->SetGrassFilePath("Media/Grass.png");
 
 	GetGraphics()->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 1.0f, 1.0f, 1.0f, 1.0f);
-	GetGraphics()->GetCamera()->SetMesh(meee, "Neck", Vector3(0, 0, 1));
+	//GetGraphics()->GetCamera()->SetMesh(meee, "Neck", Vector3(0, 0, 1));
 }
 
 bool TestRealisticScene::RunTest(float diff)
@@ -172,7 +172,7 @@ bool TestRealisticScene::RunTest(float diff)
 		pos.y = world->GetHeightAt(Vector2(pos.x, pos.z)) + 5.0f;
 		GetGraphics()->GetCamera()->SetPosition(pos);
 		if(GetGraphics()->GetCamera()->GetPosition().x < 1700)
-			path--;
+			path++;
 
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_RETURN))
 		{
