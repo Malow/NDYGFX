@@ -49,6 +49,7 @@ cbuffer EveryString
 	int NrOfChars;
 	int text[40];
 	float3 overlayColor;
+	float strata;
 };
 
 //-----------------------------------------------------------------------------------------
@@ -88,7 +89,7 @@ DummyIn VSScene(DummyIn dummyInput)
 void GS(point DummyIn dummyInput[1], inout TriangleStream<PSSceneIn> triStream)
 {
 	PSSceneIn output;
-	float4 basepos = float4(posx, posy, 0, 1);
+	float4 basepos = float4(posx, posy, strata, 1);
 
 
 	float imgWidth = 0.0f;
@@ -145,6 +146,10 @@ float4 PSScene(PSSceneIn input) : SV_Target
 {	
 	float4 tex = tex2D.Sample(linearSampler, input.tex);
 	tex.xyz += overlayColor;
+
+	if(tex.w < 0.15f)	// Make transperance correct.
+		discard;
+
 	return tex;
 }
 
