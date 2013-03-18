@@ -25,6 +25,9 @@ extern "C"
 			virtual void SetSize(Vector2 size) = 0;
 			virtual void SetColor(Vector3 color) = 0;*/
 
+			virtual float GetCullNearDistance() const = 0;
+			virtual float GetCullFarDistance() const = 0;
+
 			virtual void SetRenderShadowFlag(bool flag) = 0;
 			virtual void SetCullNearDistance(float distance) = 0;
 			virtual void SetCullFarDistance(float distance) = 0;

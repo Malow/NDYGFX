@@ -257,7 +257,7 @@ public:
 		return *this;
 	}
 
-	inline float GetDotProduct(Vector3& compObj) const
+	inline float GetDotProduct(const Vector3& compObj) const
 	{
 		float dot = this->x * compObj.x;
 		dot += this->y * compObj.y;
@@ -265,7 +265,7 @@ public:
 		return dot;
 	}
 
-	inline Vector3 GetCrossProduct(Vector3 vec) const
+	inline Vector3 GetCrossProduct(const Vector3& vec) const
 	{
 		Vector3 retVec;
 		retVec.x = this->y * vec.z - vec.y * this->z;
@@ -275,7 +275,7 @@ public:
 		return retVec;
 	}
 
-	inline float GetAngle(Vector3& compObj)
+	inline float GetAngle(const Vector3& compObj)
 	{
 		return acos(this->GetDotProduct(compObj) / (this->GetLength() * compObj.GetLength()));
 	}

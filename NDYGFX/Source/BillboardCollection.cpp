@@ -2,14 +2,15 @@
 
 
 BillboardCollection::BillboardCollection() 
-:	zVertices(NULL), zTextureResource(NULL), zOffsetVector(0.0f, 0.0f, 0.0f), zRenderShadowFlag(true), zCullNearDistance(0.0f), zCullFarDistance(INFINITE)
+:	zVertices(NULL), zTextureResource(NULL), zOffsetVector(0.0f, 0.0f, 0.0f), zRenderShadowFlag(true), 
+	zCullNearDistance(0.0f), zCullFarDistance(std::numeric_limits<float>::infinity())
 {
 
 	
 }
 
-BillboardCollection::BillboardCollection(unsigned int nrOfVertices, const VertexBillboard1* vertices, const D3DXVECTOR3& offsetVector,
-										 float cullNearDistance, float cullFarDistance)
+BillboardCollection::BillboardCollection(unsigned int nrOfVertices, const VertexBillboard1* vertices, 
+										 const D3DXVECTOR3& offsetVector, float cullNearDistance, float cullFarDistance)
 : zNrOfVertices(nrOfVertices), zTextureResource(NULL), zOffsetVector(offsetVector), 
 	zCullNearDistance(cullNearDistance), zCullFarDistance(cullFarDistance)
 {

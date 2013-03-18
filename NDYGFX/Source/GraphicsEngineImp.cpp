@@ -560,7 +560,7 @@ iBillboardCollection* GraphicsEngineImp::CreateBillboardCollection(unsigned int 
 
 BillboardCollection* GraphicsEngineImp::CreateBillboardCollection(unsigned int nrOfVertices, D3DXVECTOR3* positions, D3DXVECTOR2* sizes, D3DXVECTOR3* colors, D3DXVECTOR3& offsetVector, string& texture)
 {
-	BillboardCollection* billboardCollection = new BillboardCollection(nrOfVertices, positions, sizes, colors, offsetVector, 0, 0); //TILLMAN - 0, 0 = tmp
+	BillboardCollection* billboardCollection = new BillboardCollection(nrOfVertices, positions, sizes, colors, offsetVector);
 
 	//Values in arrays has been copied to billboardCollection; delete arrays.
 	delete [] positions;

@@ -331,7 +331,7 @@ void InstancingHelper::PreRenderBillboards(bool shadowmap)
 		this->zBillboardData.push_back(seperator);
 
 		//First group's start location/index is always 0.
-		BillboardGroup firstBBGroup;
+		BillboardGroup firstBBGroup; //**TILLMAN**
 		firstBBGroup.s_StartLocation = 0;
 		this->zBillboardGroups.push_back(firstBBGroup);
 		
@@ -404,11 +404,17 @@ void InstancingHelper::PreRenderBillboards(bool shadowmap)
 				BillboardGroup newBBGroup;
 				if(billboardCollection->GetTextureResource() != NULL)
 				{
-					newBBGroup = BillboardGroup(billboardCollection->GetNrOfVertices(), prevGroupStart + prevGroupSize, billboardCollection->GetTextureResource()->GetSRVPointer());
+					newBBGroup = BillboardGroup(billboardCollection->GetNrOfVertices(), prevGroupStart + prevGroupSize, 
+												billboardCollection->GetTextureResource()->GetSRVPointer(),
+												billboardCollection->GetCullNearDistance(), 
+												billboardCollection->GetCullFarDistance());
 				}
 				else
 				{
-					newBBGroup = BillboardGroup(billboardCollection->GetNrOfVertices(), prevGroupStart + prevGroupSize, NULL);
+					newBBGroup = BillboardGroup(billboardCollection->GetNrOfVertices(), prevGroupStart + prevGroupSize, 
+												NULL, 
+												billboardCollection->GetCullNearDistance(), 
+												billboardCollection->GetCullFarDistance());
 				}
 				this->zBillboardGroups.push_back(newBBGroup);
 
@@ -457,11 +463,17 @@ void InstancingHelper::PreRenderBillboards(bool shadowmap)
 				BillboardGroup newBBGroup;
 				if(billboardCollection->GetTextureResource() != NULL)
 				{
-					newBBGroup = BillboardGroup(billboardCollection->GetNrOfVertices(), prevGroupStart + prevGroupSize, billboardCollection->GetTextureResource()->GetSRVPointer());
+					newBBGroup = BillboardGroup(billboardCollection->GetNrOfVertices(), prevGroupStart + prevGroupSize, 
+												billboardCollection->GetTextureResource()->GetSRVPointer(),
+												billboardCollection->GetCullNearDistance(), 
+												billboardCollection->GetCullFarDistance());
 				}
 				else
 				{
-					newBBGroup = BillboardGroup(billboardCollection->GetNrOfVertices(), prevGroupStart + prevGroupSize, NULL);
+					newBBGroup = BillboardGroup(billboardCollection->GetNrOfVertices(), prevGroupStart + prevGroupSize,
+												NULL, 
+												billboardCollection->GetCullNearDistance(), 
+												billboardCollection->GetCullFarDistance());
 				}
 				this->zBillboardGroups.push_back(newBBGroup);
 			

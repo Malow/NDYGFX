@@ -32,10 +32,14 @@ struct BillboardGroup
 	unsigned int				s_Size; 
 	unsigned int				s_StartLocation;
 	ID3D11ShaderResourceView*	s_SRV;
+	float						s_CullNearDistance;
+	float						s_CullFarDistance;
 	
-	BillboardGroup() : s_Size(0), s_StartLocation(0), s_SRV(NULL) {}
-	BillboardGroup(unsigned int size, unsigned int startLocation, ID3D11ShaderResourceView* srv)
-		: s_Size(size), s_StartLocation(startLocation), s_SRV(srv) {}
+	BillboardGroup() : s_Size(0), s_StartLocation(0), s_SRV(NULL), s_CullNearDistance(0.0f), s_CullFarDistance(std::numeric_limits<float>::infinity()) {}
+	BillboardGroup(	unsigned int size, unsigned int startLocation, ID3D11ShaderResourceView* srv,
+					float cullNearDistance, float cullFarDistance)
+	:	s_Size(size), s_StartLocation(startLocation), s_SRV(srv), 
+		s_CullNearDistance(cullNearDistance), s_CullFarDistance(cullFarDistance) {}
 };
 
 struct StripData

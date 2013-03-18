@@ -491,9 +491,13 @@ void DxManager::RenderBillboardsInstanced()
 		// Set global variables per instance group
 		for(unsigned int i = 0; i < this->instancingHelper->GetNrOfBillboardGroups(); ++i)
 		{
-			if(this->instancingHelper->GetBillboardGroup(i).s_SRV != NULL) 
+			BillboardGroup bbGroup = this->instancingHelper->GetBillboardGroup(i);
+			this->Shader_BillboardInstanced->SetFloat("g_bb_CullNear", bbGroup.s_CullNearDistance);
+			this->Shader_BillboardInstanced->SetFloat("g_bb_CullFar", bbGroup.s_CullFarDistance);
+
+			if(bbGroup.s_SRV != NULL) 
 			{
-				this->Shader_BillboardInstanced->SetResource("g_bb_DiffuseMap", this->instancingHelper->GetBillboardGroup(i).s_SRV);
+				this->Shader_BillboardInstanced->SetResource("g_bb_DiffuseMap", bbGroup.s_SRV);
 				this->Shader_BillboardInstanced->SetBool("g_bb_IsTextured", true);
 			}
 			else
@@ -506,8 +510,8 @@ void DxManager::RenderBillboardsInstanced()
 			this->Shader_BillboardInstanced->Apply(0);
 
 			//Draw
-			int instanceCount = this->instancingHelper->GetBillboardGroup(i).s_Size;
-			int startInstanceLocation = this->instancingHelper->GetBillboardGroup(i).s_StartLocation;
+			int instanceCount = bbGroup.s_Size;
+			int startInstanceLocation = bbGroup.s_StartLocation;
 			this->Dx_DeviceContext->Draw(instanceCount, startInstanceLocation);
 
 			//Debug data
