@@ -39,7 +39,7 @@ protected:
 	float speed;
 	Vector3 distanceFromMesh;
 	Vector3 defaultMeshDirection;
-	const char* bone;
+	string bone;
 
 	GraphicsEngineParams &params;
 
