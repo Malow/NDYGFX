@@ -27,6 +27,7 @@ private:
 	std::string text;
 	D3DXVECTOR2 position;
 	float size;
+	float strata;
 	Font* font;
 	D3DXVECTOR3 color;
 
@@ -48,6 +49,10 @@ public:
 	virtual float GetSize() const;
 	void SetFont(Font* newFont) { this->font = newFont; }
 	Font* GetFont() const { return this->font; }
+
+	virtual void SetStrata(float strata);
+	virtual float GetStrata() const;
+	float GetStrata01() { return this->strata; }
 	
 };
 

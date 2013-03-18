@@ -112,6 +112,7 @@ void TestRealisticScene::PreTest()
 	GetGraphics()->SetGrassFilePath("Media/Grass.png");
 
 	GetGraphics()->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 1.0f, 1.0f, 1.0f, 1.0f);
+	GetGraphics()->GetCamera()->SetMesh(meee, "Neck", Vector3(0, 0, 1));
 }
 
 bool TestRealisticScene::RunTest(float diff)

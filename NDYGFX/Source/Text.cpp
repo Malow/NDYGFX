@@ -9,6 +9,7 @@ Text::Text(string text, D3DXVECTOR2 position, float size)
 
 	this->position = position;
 	this->size = size;
+	this->strata = 0.5f;
 	this->color = D3DXVECTOR3(0, 0, 0);
 	this->font = new Font();
 	this->font->textureResource = NULL;
@@ -75,4 +76,14 @@ void Text::AppendText( const char* app )
 void Text::SetColor( Vector3 color )
 {
 	this->color = D3DXVECTOR3(color.x / 255.0f, color.y / 255.0f, color.z / 255.0f);
+}
+
+void Text::SetStrata( float strata )
+{
+	this->strata = strata / 1000.0f;
+}
+
+float Text::GetStrata() const
+{
+	return this->strata * 1000.0f;
 }

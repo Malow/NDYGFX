@@ -535,6 +535,7 @@ void DxManager::RenderText()
 		// if Convert from screen space is needed, which it is
 		this->Shader_Text->SetFloat("posx", (txt->GetPosition().x / this->params.WindowWidth) * 2 - 1);
 		this->Shader_Text->SetFloat("posy", 2 - (txt->GetPosition().y / this->params.WindowHeight) * 2 - 1);
+		this->Shader_Text->SetFloat("strata", txt->GetStrata01());
 
 		this->Shader_Text->SetFloat("size", txt->GetSize());
 		this->Shader_Text->SetFloat("windowWidth", (float)this->params.WindowWidth);
