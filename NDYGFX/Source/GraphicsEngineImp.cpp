@@ -749,6 +749,10 @@ void GraphicsEngineImp::RenderGrass(bool flag)
 {
 	this->dx->RenderGrass(flag);
 }
+bool GraphicsEngineImp::GetRenderGrassFlag() const
+{
+	return this->dx->GetRenderGrassFlag();
+}
 
 void GraphicsEngineImp::SetSpecialCircle(float innerRadius, float outerRadius, Vector2& targetPos) const
 {

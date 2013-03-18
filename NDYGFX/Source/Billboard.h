@@ -18,6 +18,8 @@ class Billboard : public iBillboard
 		VertexBillboard1	zVertex; //position, size(width, height), color
 		TextureResource*	zTextureResource;
 		bool				zRenderShadowFlag;
+		bool				zIsCameraCulled;
+		bool				zIsShadowCulled;
 			
 	public:
 		Billboard();
@@ -32,13 +34,16 @@ class Billboard : public iBillboard
 		const VertexBillboard1& GetVertex() const { return this->zVertex; }
 		TextureResource* GetTextureResource() const { return this->zTextureResource; }
 		bool GetRenderShadowFlag() const { return this->zRenderShadowFlag; }
+		bool IsCameraCulled() { return this->zIsCameraCulled; }
+		bool IsShadowCulled() { return this->zIsShadowCulled; }
 
 		void SetPosition(D3DXVECTOR3& position);
 		void SetSize(D3DXVECTOR2& size);
 		void SetColor(D3DXVECTOR3& color);
 		void SetTextureResource(TextureResource* textureResource) { this->zTextureResource = textureResource; }
 		//void SetRenderShadowFlag(bool flag) { this->zRenderShadowFlag = flag; }
-
+		void SetIsCameraCulledFlag(bool flag) { this->zIsCameraCulled = flag; }
+		void SetIsShadowCulledFlag(bool flag) { this->zIsShadowCulled = flag; }
 
 		//** iBillboard interface functions **
 		/*virtual Vector3 GetPosition() const;

@@ -88,6 +88,7 @@ extern "C"
 		virtual void SetGrassFilePath(const char* filePath) = 0;
 		// Grass file path must have been set for this to work.
 		virtual void RenderGrass(bool flag) = 0;
+		virtual bool GetRenderGrassFlag() const = 0;
 
 		/*! OBS! InnerRadius has to be greater than zero. */
 		virtual void SetSpecialCircle(float innerRadius, float outerRadius, Vector2& targetPos) const = 0;

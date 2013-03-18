@@ -569,8 +569,9 @@ void TillmanTest::PreTest()
 		treeAnimated->SetScale((0.041f));
 	}
 
-	//GRASS
-	//GetGraphics()->CreateImage();
+	//BIllboard culling test
+	GetGraphics()->CreateBillboard(Vector3(-15, 5, -15), Vector2(10, 10), Vector3(1.0f, 1.0f, 0.0f), "");
+	
 }
 
 void TillmanTest::RunTest(float diff)
@@ -648,6 +649,7 @@ void TillmanTest::RunTest(float diff)
 	if(GetGraphics()->GetKeyListener()->IsPressed('Q'))
 	{
 		GetGraphics()->RenderGrass(false);
+		bool test = GetGraphics()->GetRenderGrassFlag();
 		//GetGraphics()->ReloadShaders(8); //shadow map animated
 		//iT2->SetNormals(normals);
 		//iT2->SetHeightMap(hmData);
@@ -700,7 +702,7 @@ void TillmanTest::RunTest(float diff)
 			}
 		}*/
 	}
-	static bool twerp = false;
+	/*static bool twerp = false;
 	if(!twerp)
 	{
 		GetGraphics()->RenderGrass(true);
@@ -710,10 +712,12 @@ void TillmanTest::RunTest(float diff)
 	{
 		GetGraphics()->RenderGrass(false);
 		twerp = false;
-	}
+	}*/
 	if(GetGraphics()->GetKeyListener()->IsPressed('E'))
 	{
+		bool test = GetGraphics()->GetRenderGrassFlag();
 		GetGraphics()->RenderGrass(true);
+		test = GetGraphics()->GetRenderGrassFlag();
 		//GetGraphics()->ReloadShaders(5); //grass
 		//GetGraphics()->ReloadShaders(10); //terrain
 		//GetGraphics()->ReloadShaders(11); //deferred lightning

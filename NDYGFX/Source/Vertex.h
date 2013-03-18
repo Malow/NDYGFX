@@ -30,6 +30,7 @@ struct VertexBillboard1
 
 	}
 
+	D3DXVECTOR3 GetPosition() const { return D3DXVECTOR3(posAndSizeX.x, posAndSizeX.y, posAndSizeX.z); }
 	D3DXVECTOR3 GetColor() const { return D3DXVECTOR3(sizeYAndColor.y, sizeYAndColor.z, sizeYAndColor.w); }
 };
 /*

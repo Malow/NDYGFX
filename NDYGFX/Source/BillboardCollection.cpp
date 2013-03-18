@@ -1,9 +1,26 @@
 #include "BillboardCollection.h"
 
 
+void BillboardCollection::RecalculateMinAndMaxPos()
+{
+	if(this->pVerticesChanged)
+	{
+		for(unsigned int i = 0; i < this->zNrOfVertices; ++i)
+		{
+			D3DXVec3Minimize(&this->zMinPos, &this->zMinPos, &this->zVertices[i].GetPosition());
+			D3DXVec3Maximize(&this->zMaxPos, &this->zMaxPos, &this->zVertices[i].GetPosition());
+		}
+	}
+}
+
+
+
+
 BillboardCollection::BillboardCollection() 
 :	zVertices(NULL), zTextureResource(NULL), zOffsetVector(0.0f, 0.0f, 0.0f), zRenderShadowFlag(true), 
-	zCullNearDistance(0.0f), zCullFarDistance(std::numeric_limits<float>::infinity())
+	zCullNearDistance(0.0f), zCullFarDistance(std::numeric_limits<float>::infinity()),
+	zIsCameraCulled(false), zIsShadowCulled(false), zMinPos(0.0f, 0.0f, 0.0f), zMaxPos(0.0f, 0.0f, 0.0f), 
+	pVerticesChanged(true)
 {
 
 	
@@ -11,8 +28,10 @@ BillboardCollection::BillboardCollection()
 
 BillboardCollection::BillboardCollection(unsigned int nrOfVertices, const VertexBillboard1* vertices, 
 										 const D3DXVECTOR3& offsetVector, float cullNearDistance, float cullFarDistance)
-: zNrOfVertices(nrOfVertices), zTextureResource(NULL), zOffsetVector(offsetVector), 
-	zCullNearDistance(cullNearDistance), zCullFarDistance(cullFarDistance)
+:	zNrOfVertices(nrOfVertices), zTextureResource(NULL), zOffsetVector(offsetVector), 
+	zCullNearDistance(cullNearDistance), zCullFarDistance(cullFarDistance),
+	zIsCameraCulled(false), zIsShadowCulled(false), zMinPos(0.0f, 0.0f, 0.0f), zMaxPos(0.0f, 0.0f, 0.0f), 
+	pVerticesChanged(true)
 {
 	this->zVertices = new VertexBillboard1[nrOfVertices];
 	for(unsigned int i = 0; i < nrOfVertices; ++i)
@@ -24,7 +43,9 @@ BillboardCollection::BillboardCollection(unsigned int nrOfVertices, const D3DXVE
 										 const D3DXVECTOR2* sizes, const D3DXVECTOR3* colors, const D3DXVECTOR3& offsetVector,
 										 float cullNearDistance, float cullFarDistance) 
 :	zNrOfVertices(nrOfVertices), zTextureResource(NULL), zOffsetVector(offsetVector), 
-	zCullNearDistance(cullNearDistance), zCullFarDistance(cullFarDistance)
+	zCullNearDistance(cullNearDistance), zCullFarDistance(cullFarDistance),
+	zIsCameraCulled(false), zIsShadowCulled(false), zMinPos(0.0f, 0.0f, 0.0f), zMaxPos(0.0f, 0.0f, 0.0f), 
+	pVerticesChanged(true)
 {
 	
 	this->zVertices = new VertexBillboard1[nrOfVertices];
@@ -40,7 +61,18 @@ BillboardCollection::~BillboardCollection()
 	if(this->zTextureResource) GetResourceManager()->DeleteTextureResource(this->zTextureResource);
 	
 }
+const D3DXVECTOR3& BillboardCollection::GetMinPos()
+{ 
+	this->RecalculateMinAndMaxPos();
 
+	return this->zMinPos;
+}
+const D3DXVECTOR3& BillboardCollection::GetMaxPos()
+{ 
+	this->RecalculateMinAndMaxPos();
+
+	return this->zMaxPos;
+}
 
 void BillboardCollection::SetTextureResource(TextureResource* textureResource)
 {

@@ -23,6 +23,14 @@ class BillboardCollection : public iBillboardCollection
 		bool				zRenderShadowFlag;
 		float				zCullNearDistance;
 		float				zCullFarDistance;
+		bool				zIsCameraCulled;
+		bool				zIsShadowCulled;
+		D3DXVECTOR3			zMinPos;
+		D3DXVECTOR3			zMaxPos;
+
+	private:
+		bool pVerticesChanged;
+		void RecalculateMinAndMaxPos();
 
 	public:
 		BillboardCollection();
@@ -42,13 +50,19 @@ class BillboardCollection : public iBillboardCollection
 		const TextureResource* GetTextureResource()	const { return this->zTextureResource; }
 		const D3DXVECTOR3& GetOffsetVector() const { return this->zOffsetVector; }
 		bool GetRenderShadowFlag() const { return this->zRenderShadowFlag; }
-		
+		bool IsCameraCulled() { return this->zIsCameraCulled; }
+		bool IsShadowCulled() { return this->zIsShadowCulled; }
+		const D3DXVECTOR3& GetMinPos();
+		const D3DXVECTOR3& GetMaxPos();
+
+
 		//void SetPosition(unsigned int vertexIndex, D3DXVECTOR3 position){ this->zVertices[vertexIndex].pos = position; }
 		//void SetSize(unsigned int vertexIndex, D3DXVECTOR2 size)		{ this->zVertices[vertexIndex].texAndSize = D3DXVECTOR4(this->zVertices[vertexIndex].texAndSize.x, this->zVertices[vertexIndex].texAndSize.y, size.x, size.y); }
 		//void SetColor(unsigned int vertexIndex, D3DXVECTOR3 color)		{ this->zVertices[vertexIndex].color = color; }
 		//VertexBillboardCompressed1& SetVertex(unsigned int vertexIndex, VertexBillboardCompressed1& vertex)	{ this->zVertices[vertexIndex] = vertex; }
 		void SetTextureResource(TextureResource* textureResource);
-
+		void SetIsCameraCulledFlag(bool flag) { this->zIsCameraCulled = flag; }
+		void SetIsShadowCulledFlag(bool flag) { this->zIsShadowCulled = flag; }
 
 
 		//** iBillboard interface functions **

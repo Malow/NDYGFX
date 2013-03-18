@@ -1432,6 +1432,49 @@ void DxManager::CalculateCulling()
 		}
 	}
 
+	// Billboards
+	for(unsigned int i = 0; i < this->billboards.size(); ++i)
+	{
+		Billboard* bb = this->billboards.get(i);
+		D3DXVECTOR3 pos = bb->GetPositionD3DX();
+		D3DXVECTOR3 offset = D3DXVECTOR3(bb->GetSizeD3DX().x, bb->GetSizeD3DX().y, bb->GetSizeD3DX().y) * 0.5f;
+
+		BoundingSphere boundingSphere = BoundingSphere(pos - offset, pos + offset); //TILLMAN
+		D3DXMATRIX world;
+		D3DXMatrixIdentity(&world);
+		world._14 = bb->GetPositionD3DX().x;
+		world._24 = bb->GetPositionD3DX().y;
+		world._34 = bb->GetPositionD3DX().z;
+		float scale = 1.0f;
+		if(this->pe.FrustrumVsSphere(this->FrustrumPlanes, boundingSphere, world, scale))
+		{
+			bb->SetIsCameraCulledFlag(false);
+		}
+		else
+		{
+			bb->SetIsCameraCulledFlag(true);
+		}
+	}
+	// Billboardcollections
+	/*for(unsigned int i = 0; i < this->billboardCollections.size(); ++i)
+	{
+		BillboardCollection* bbColl = this->billboardCollections.get(i);
+		D3DXVECTOR3 pos = bbColl->GetOffsetVector();
+		D3DXMATRIX world;
+		D3DXMatrixIdentity(&world);
+		world._14 = pos.x;
+		world._24 = pos.y;
+		world._34 = pos.z;
+		float scale = 1.0f;
+		if(this->pe.FrustrumVsSphere(this->FrustrumPlanes, BoundingSphere(bbColl->GetMinPos(), bbColl->GetMaxPos()), world, scale))
+		{
+			bbColl->SetIsCameraCulledFlag(false);
+		}
+		else
+		{
+			bbColl->SetIsCameraCulledFlag(true);
+		}
+	}*/
 
 	//SHADOW CULLING - determine if an object is inside a cascade.
 	if(this->csm != NULL && this->useShadow) //**TILLMAN TODO, kolla att OBB blir rätt, verkar inte så...**

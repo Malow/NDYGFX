@@ -252,7 +252,14 @@ void InstancingHelper::AddBillboard(Billboard* billboard)
 	//Set data
 	BillboardData billboardData;
 	billboardData.s_Vertex = billboard->GetVertex();
-	billboardData.s_SRV = billboard->GetTextureResource()->GetSRVPointer();				
+	if(billboard->GetTextureResource() != NULL)
+	{
+		billboardData.s_SRV = billboard->GetTextureResource()->GetSRVPointer();		
+	}
+	else
+	{
+		billboardData.s_SRV = NULL;		
+	}	
 
 	//Add billboard data
 	this->zBillboardData.push_back(billboardData);
@@ -295,9 +302,14 @@ void InstancingHelper::PreRenderBillboards(bool shadowmap)
 		for(unsigned int i = 0; i < this->zBillboardsReference->size(); ++i)
 		{
 			Billboard* billboard = this->zBillboardsReference->get(i);
+			//Check if it shall be rendered
 			if(billboard->GetRenderShadowFlag())
 			{
-				this->AddBillboard(billboard);
+				//Check if it has been culled
+				if(!billboard->IsShadowCulled())
+				{
+					this->AddBillboard(billboard);
+				}
 			}
 		}
 	}
@@ -305,7 +317,12 @@ void InstancingHelper::PreRenderBillboards(bool shadowmap)
 	{
 		for(unsigned int i = 0; i < this->zBillboardsReference->size(); ++i)
 		{
-			this->AddBillboard(this->zBillboardsReference->get(i));
+			Billboard* billboard = this->zBillboardsReference->get(i);
+			//Check if it has been culled
+			if(!billboard->IsCameraCulled()) 
+			{
+				this->AddBillboard(billboard);
+			}
 		}
 	}
 	
@@ -325,9 +342,9 @@ void InstancingHelper::PreRenderBillboards(bool shadowmap)
 
 		int groupCounter = 1; //**TILLMAN
 		unsigned int nrOfGroups = 0;
-		//Add a seperator with an SRV pointing NULL at the end of billboard data.
+		//Add a seperator at the end of billboard data.
 		BillboardData seperator;
-		seperator.s_SRV = NULL;
+		seperator.s_SRV = (ID3D11ShaderResourceView*)0xFFFFFFFF;
 		this->zBillboardData.push_back(seperator);
 
 		//First group's start location/index is always 0.
@@ -555,9 +572,9 @@ void InstancingHelper::PreRenderStrips()
 		int groupCounter = 1; //**
 		unsigned int nrOfGroups = 0;
 
-		//Add a seperator with an SRV pointing to NULL.
+		//Add a seperator.
 		StripData seperator;
-		seperator.s_MeshStrip = NULL;
+		seperator.s_MeshStrip = (MeshStrip*)0xFFFFFFFF;
 		this->zStripData.push_back(seperator);
 
 		//First group's start location/index is always 0.
@@ -684,9 +701,9 @@ void InstancingHelper::PreRenderAnimatedStrips()
 		int groupCounter = 1; //**
 		unsigned int nrOfGroups = 0;
 
-		//Add a seperator with an SRV pointing to NULL.
+		//Add a seperator.
 		AnimatedStripData seperator;
-		seperator.s_MeshStripOne = NULL; 
+		seperator.s_MeshStripOne = (MeshStrip*)0xFFFFFFFF; 
 		this->zAnimatedStripData.push_back(seperator);
 
 		//First group's start location/index is always 0.

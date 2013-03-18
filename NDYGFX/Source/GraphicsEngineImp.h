@@ -196,6 +196,7 @@ public:
 	virtual void UseShadow(bool useShadow);
 	virtual void SetGrassFilePath(const char* filePath);
 	virtual void RenderGrass(bool flag);
+	virtual bool GetRenderGrassFlag() const;
 	virtual void SetSpecialCircle(float innerRadius, float outerRadius, Vector2& targetPos) const;
 	virtual void ResetPerfLogging();
 	virtual void PrintPerfLogging();

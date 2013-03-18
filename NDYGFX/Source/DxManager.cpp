@@ -798,6 +798,10 @@ void DxManager::RenderGrass(bool flag)
 {
 	this->instancingHelper->SetRenderGrassFlag(flag);
 }
+bool DxManager::GetRenderGrassFlag() const
+{
+	return this->instancingHelper->GetRenderGrassFlag();
+}
 
 void DxManager::SetSpecialCircle(float innerRadius, float outerRadius, Vector2& targetPos)
 {
