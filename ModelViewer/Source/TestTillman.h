@@ -697,6 +697,17 @@ void TillmanTest::RunTest(float diff)
 			}
 		}*/
 	}
+	static bool twerp = false;
+	if(!twerp)
+	{
+		GetGraphics()->RenderGrass(true);
+		twerp = true;
+	}
+	else
+	{
+		GetGraphics()->RenderGrass(false);
+		twerp = false;
+	}
 	if(GetGraphics()->GetKeyListener()->IsPressed('E'))
 	{
 		GetGraphics()->RenderGrass(true);

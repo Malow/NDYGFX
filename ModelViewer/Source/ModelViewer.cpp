@@ -228,6 +228,14 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_ESCAPE))
 			go = false;
 
+		if(GetGraphics()->GetKeyListener()->IsPressed('E'))
+		{
+			GetGraphics()->RenderGrass(true);
+		}
+		if(GetGraphics()->GetKeyListener()->IsPressed('Q'))
+		{
+			GetGraphics()->RenderGrass(false);
+		}
 
 		if(GetGraphics()->GetKeyListener()->IsPressed('1'))
 		{

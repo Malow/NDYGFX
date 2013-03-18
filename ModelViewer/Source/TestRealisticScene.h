@@ -109,6 +109,8 @@ void TestRealisticScene::PreTest()
 		iDecal* wp = GetGraphics()->CreateDecal(camPos + Vector3(i * 5, -10, 0), "Media/BloodTexture.png", Vector3(0,-1,0), Vector3(1, 0, 0));
 	}
 
+	GetGraphics()->SetGrassFilePath("Media/Grass.png");
+
 	GetGraphics()->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 1.0f, 1.0f, 1.0f, 1.0f);
 }
 
