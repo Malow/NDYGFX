@@ -93,8 +93,7 @@ GSIn VS(VSIn input)
 	
 	float dist = length(input.posW_SizeX.xz - g_CameraPos.xz);
 
-	if(dist < g_bb_CullNear || dist >= g_bb_CullFar) //TILLMAN TODO: skicak data
-	//if(dist < 2.0f || dist >= g_FarClip * 0.5f) //TILLMAN TODO: skicak data
+	if(dist < g_bb_CullNear || dist >= g_bb_CullFar) 
 	{
 		output.size = float2(0.0f, 0.0f);
 	}
