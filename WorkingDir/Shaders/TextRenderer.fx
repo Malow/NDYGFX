@@ -28,6 +28,13 @@ DepthStencilState DisableDepthWrite
     DepthWriteMask = ZERO;
 };
 
+DepthStencilState EnableDepth
+{
+    DepthEnable = TRUE;
+    DepthWriteMask = ALL;
+    DepthFunc = LESS_EQUAL;
+};
+
 cbuffer EveryFrame
 {
 	float windowWidth;
@@ -166,7 +173,7 @@ technique11 BasicTech
         SetPixelShader( CompileShader( ps_4_0, PSScene() ) );
 	    
 
-		SetDepthStencilState( DisableDepthWrite, 0 );
+		SetDepthStencilState( EnableDepth, 0 );
 	    SetRasterizerState( NoCulling );
 		SetBlendState( SrcAlphaBlendingAdd, float4( 0.0f, 0.0f, 0.0f, 0.0f ), 0xFFFFFFFF );
     }  
