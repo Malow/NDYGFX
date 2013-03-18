@@ -10,6 +10,7 @@ void BillboardCollection::RecalculateMinAndMaxPos()
 			D3DXVec3Minimize(&this->zMinPos, &this->zMinPos, &this->zVertices[i].GetPosition());
 			D3DXVec3Maximize(&this->zMaxPos, &this->zMaxPos, &this->zVertices[i].GetPosition());
 		}
+		this->pVerticesChanged = false;
 	}
 }
 

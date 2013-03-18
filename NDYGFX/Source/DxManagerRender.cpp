@@ -1449,6 +1449,8 @@ void DxManager::CalculateCulling()
 		if(this->pe.FrustrumVsSphere(this->FrustrumPlanes, boundingSphere, world, scale))
 		{
 			bb->SetIsCameraCulledFlag(false);
+			//If the billboard is inside the frustum, it can cast a shadow
+			bb->SetIsShadowCulledFlag(false);
 		}
 		else
 		{
@@ -1456,7 +1458,7 @@ void DxManager::CalculateCulling()
 		}
 	}
 	// Billboardcollections
-	/*for(unsigned int i = 0; i < this->billboardCollections.size(); ++i)
+	for(unsigned int i = 0; i < this->billboardCollections.size(); ++i)
 	{
 		BillboardCollection* bbColl = this->billboardCollections.get(i);
 		D3DXVECTOR3 pos = bbColl->GetOffsetVector();
@@ -1469,12 +1471,14 @@ void DxManager::CalculateCulling()
 		if(this->pe.FrustrumVsSphere(this->FrustrumPlanes, BoundingSphere(bbColl->GetMinPos(), bbColl->GetMaxPos()), world, scale))
 		{
 			bbColl->SetIsCameraCulledFlag(false);
+			//If the billboard collection is inside the frustum, it can cast a shadow
+			bbColl->SetIsShadowCulledFlag(false);
 		}
 		else
 		{
 			bbColl->SetIsCameraCulledFlag(true);
 		}
-	}*/
+	}
 
 	//SHADOW CULLING - determine if an object is inside a cascade.
 	if(this->csm != NULL && this->useShadow) //**TILLMAN TODO, kolla att OBB blir rätt, verkar inte så...**
@@ -1548,7 +1552,6 @@ void DxManager::CalculateCulling()
 		}
 
 
-
 		//Animated meshes
 		for(unsigned int i = 0; i < this->animations.size(); i++)
 		{
@@ -1582,6 +1585,76 @@ void DxManager::CalculateCulling()
 								animatedMesh->SetStripShadowCulledFlag(j, true); //b
 							}
 						}
+					}
+				}
+			}
+		}
+
+		// Billboards
+		for(unsigned int i = 0; i < this->billboards.size(); ++i)
+		{
+			Billboard* bb = this->billboards.get(i);
+			D3DXVECTOR3 pos = bb->GetPositionD3DX();
+			D3DXVECTOR3 offset = D3DXVECTOR3(bb->GetSizeD3DX().x, bb->GetSizeD3DX().y, bb->GetSizeD3DX().y) * 0.5f;
+
+			BoundingSphere boundingSphere = BoundingSphere(pos - offset, pos + offset); //TILLMAN
+			D3DXMATRIX world;
+			D3DXMatrixIdentity(&world);
+			world._14 = bb->GetPositionD3DX().x;
+			world._24 = bb->GetPositionD3DX().y;
+			world._34 = bb->GetPositionD3DX().z;
+			float scale = 1.0f;
+
+			//Billboards already in the cameras view frustum does not need to be checked,
+			//so only check the ones that are outside of it. (The ones that have already been culled)
+			if(bb->IsCameraCulled())
+			{
+				//See if the Billboard is inside the bounding boxes(cascades) or intersects.
+				bool notDone = true;
+				for(int k = 0; k < this->csm->GetNrOfCascadeLevels() && notDone; k++)
+				{
+					if(pe.FrustrumVsSphere(csm->GetCascadePlanes(k), boundingSphere, world, scale))
+					{
+						//As long as the billboard is inside ONE of the cascades, it needs to be drawn to the shadow map.
+						bb->SetIsShadowCulledFlag(false); 
+						notDone = false;
+					}
+					else
+					{
+						bb->SetIsShadowCulledFlag(true); 
+					}
+				}
+			}
+		}
+		// Billboard collections
+		for(unsigned int i = 0; i < this->billboardCollections.size(); ++i)
+		{
+			BillboardCollection* bbColl = this->billboardCollections.get(i);
+			D3DXVECTOR3 pos = bbColl->GetOffsetVector();
+			D3DXMATRIX world;
+			D3DXMatrixIdentity(&world);
+			world._14 = pos.x;
+			world._24 = pos.y;
+			world._34 = pos.z;
+			float scale = 1.0f;
+
+			//Billboard collections already in the cameras view frustum does not need to be checked,
+			//so only check the ones that are outside of it. (The ones that have already been culled)
+			if(bbColl->IsCameraCulled()
+			{
+				//See if the Billboard is inside the bounding boxes(cascades) or intersects.
+				bool notDone = true;
+				for(int k = 0; k < this->csm->GetNrOfCascadeLevels() && notDone; k++)
+				{
+					if(pe.FrustrumVsSphere(csm->GetCascadePlanes(k), BoundingSphere(bbColl->GetMinPos(), bbColl->GetMaxPos()), world, scale))
+					{
+						//As long as the billboard collection is inside ONE of the cascades, it needs to be drawn to the shadow map.
+						bbColl->SetIsShadowCulledFlag(false); 
+						notDone = false;
+					}
+					else
+					{
+						bbColl->SetIsShadowCulledFlag(true); 
 					}
 				}
 			}

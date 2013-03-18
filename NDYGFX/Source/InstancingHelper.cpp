@@ -41,6 +41,8 @@ void InstancingHelper::ExpandBillboardInstanceBuffer()
 	{
 		MaloW::Debug("ERROR: InstancingHelper: ExpandBillboardBuffer(): Failed to create buffer for instance billboard. HRESULT error msg: '"
 			+ MaloW::GetHRESULTErrorCodeString(hr) + "'. HRESULT #" + MaloW::convertNrToString(hr) + ".");
+
+		return;
 	}
 						
 	//Copy over data from the old buffer to the new buffer.
@@ -409,43 +411,46 @@ void InstancingHelper::PreRenderBillboards(bool shadowmap)
 			//... check if the billboard collection should cast a shadow.
 			if(billboardCollection->GetRenderShadowFlag())
 			{
-				//Add to groups
-				unsigned int prevGroupStart = 0;
-				unsigned int prevGroupSize = 0;
-				//If there's a group, start where it ends.
-				if(this->zBillboardGroups.size() > 0)
+				//Add to groups if it hasn't been culled
+				if(!billboardCollection->IsShadowCulled())
 				{
-					prevGroupStart = this->zBillboardGroups[this->zBillboardGroups.size() - 1].s_StartLocation;
-					prevGroupSize = this->zBillboardGroups[this->zBillboardGroups.size() - 1].s_Size;
-				}
-				BillboardGroup newBBGroup;
-				if(billboardCollection->GetTextureResource() != NULL)
-				{
-					newBBGroup = BillboardGroup(billboardCollection->GetNrOfVertices(), prevGroupStart + prevGroupSize, 
-												billboardCollection->GetTextureResource()->GetSRVPointer(),
-												billboardCollection->GetCullNearDistance(), 
-												billboardCollection->GetCullFarDistance());
-				}
-				else
-				{
-					newBBGroup = BillboardGroup(billboardCollection->GetNrOfVertices(), prevGroupStart + prevGroupSize, 
-												NULL, 
-												billboardCollection->GetCullNearDistance(), 
-												billboardCollection->GetCullFarDistance());
-				}
-				this->zBillboardGroups.push_back(newBBGroup);
-
-				//Add billboard data
-				for(unsigned int j = 0; j < billboardCollection->GetNrOfVertices(); ++j)
-				{
-					//No need to call shader resource view pointer from the billboard collection since its only used to create groups.
-					BillboardData newBBData = BillboardData(billboardCollection->GetVertex(j), NULL); 
-					this->zBillboardData.push_back(newBBData);
-
-					//Expand buffer if necessary.
-					if(this->zBillboardData.size() >= this->zBillboardInstanceBufferSize)
+					unsigned int prevGroupStart = 0;
+					unsigned int prevGroupSize = 0;
+					//If there's a group, start where it ends.
+					if(this->zBillboardGroups.size() > 0)
 					{
-						this->ExpandBillboardInstanceBuffer();
+						prevGroupStart = this->zBillboardGroups[this->zBillboardGroups.size() - 1].s_StartLocation;
+						prevGroupSize = this->zBillboardGroups[this->zBillboardGroups.size() - 1].s_Size;
+					}
+					BillboardGroup newBBGroup;
+					if(billboardCollection->GetTextureResource() != NULL)
+					{
+						newBBGroup = BillboardGroup(billboardCollection->GetNrOfVertices(), prevGroupStart + prevGroupSize, 
+													billboardCollection->GetTextureResource()->GetSRVPointer(),
+													billboardCollection->GetCullNearDistance(), 
+													billboardCollection->GetCullFarDistance());
+					}
+					else
+					{
+						newBBGroup = BillboardGroup(billboardCollection->GetNrOfVertices(), prevGroupStart + prevGroupSize, 
+													NULL, 
+													billboardCollection->GetCullNearDistance(), 
+													billboardCollection->GetCullFarDistance());
+					}
+					this->zBillboardGroups.push_back(newBBGroup);
+
+					//Add billboard data
+					for(unsigned int j = 0; j < billboardCollection->GetNrOfVertices(); ++j)
+					{
+						//No need to call shader resource view pointer from the billboard collection since its only used to create groups.
+						BillboardData newBBData = BillboardData(billboardCollection->GetVertex(j), NULL); 
+						this->zBillboardData.push_back(newBBData);
+
+						//Expand buffer if necessary.
+						if(this->zBillboardData.size() >= this->zBillboardInstanceBufferSize)
+						{
+							this->ExpandBillboardInstanceBuffer();
+						}
 					}
 				}
 			}
@@ -466,45 +471,48 @@ void InstancingHelper::PreRenderBillboards(bool shadowmap)
 				}
 			}
 
-			//Add to groups
-			if(add)
+			//Add to groups if it hasn't been culled.
+			if(!billboardCollection->IsCameraCulled())
 			{
-				unsigned int prevGroupStart = 0;
-				unsigned int prevGroupSize = 0;
-				//If there's a group, start where it ends.
-				if(this->zBillboardGroups.size() > 0)
+				if(add)
 				{
-					prevGroupStart = this->zBillboardGroups[this->zBillboardGroups.size() - 1].s_StartLocation;
-					prevGroupSize = this->zBillboardGroups[this->zBillboardGroups.size() - 1].s_Size;
-				}
-				BillboardGroup newBBGroup;
-				if(billboardCollection->GetTextureResource() != NULL)
-				{
-					newBBGroup = BillboardGroup(billboardCollection->GetNrOfVertices(), prevGroupStart + prevGroupSize, 
-												billboardCollection->GetTextureResource()->GetSRVPointer(),
-												billboardCollection->GetCullNearDistance(), 
-												billboardCollection->GetCullFarDistance());
-				}
-				else
-				{
-					newBBGroup = BillboardGroup(billboardCollection->GetNrOfVertices(), prevGroupStart + prevGroupSize,
-												NULL, 
-												billboardCollection->GetCullNearDistance(), 
-												billboardCollection->GetCullFarDistance());
-				}
-				this->zBillboardGroups.push_back(newBBGroup);
-			
-				//Add billboard data
-				for(unsigned int j = 0; j < billboardCollection->GetNrOfVertices(); ++j)
-				{
-					//No need to call shader resource view pointer from the billboard collection since its only used to create groups.
-					BillboardData newBBData = BillboardData(billboardCollection->GetVertex(j), NULL);
-					this->zBillboardData.push_back(newBBData);
-
-					//Expand buffer if necessary.
-					if(this->zBillboardData.size() >= this->zBillboardInstanceBufferSize)
+					unsigned int prevGroupStart = 0;
+					unsigned int prevGroupSize = 0;
+					//If there's a group, start where it ends.
+					if(this->zBillboardGroups.size() > 0)
 					{
-						this->ExpandBillboardInstanceBuffer();
+						prevGroupStart = this->zBillboardGroups[this->zBillboardGroups.size() - 1].s_StartLocation;
+						prevGroupSize = this->zBillboardGroups[this->zBillboardGroups.size() - 1].s_Size;
+					}
+					BillboardGroup newBBGroup;
+					if(billboardCollection->GetTextureResource() != NULL)
+					{
+						newBBGroup = BillboardGroup(billboardCollection->GetNrOfVertices(), prevGroupStart + prevGroupSize, 
+													billboardCollection->GetTextureResource()->GetSRVPointer(),
+													billboardCollection->GetCullNearDistance(), 
+													billboardCollection->GetCullFarDistance());
+					}
+					else
+					{
+						newBBGroup = BillboardGroup(billboardCollection->GetNrOfVertices(), prevGroupStart + prevGroupSize,
+													NULL, 
+													billboardCollection->GetCullNearDistance(), 
+													billboardCollection->GetCullFarDistance());
+					}
+					this->zBillboardGroups.push_back(newBBGroup);
+			
+					//Add billboard data
+					for(unsigned int j = 0; j < billboardCollection->GetNrOfVertices(); ++j)
+					{
+						//No need to call shader resource view pointer from the billboard collection since its only used to create groups.
+						BillboardData newBBData = BillboardData(billboardCollection->GetVertex(j), NULL);
+						this->zBillboardData.push_back(newBBData);
+
+						//Expand buffer if necessary.
+						if(this->zBillboardData.size() >= this->zBillboardInstanceBufferSize)
+						{
+							this->ExpandBillboardInstanceBuffer();
+						}
 					}
 				}
 			}
