@@ -159,11 +159,11 @@ void TillmanTest::PreTest()
 	for(unsigned int i = 0; i < 1; ++i)
 	{
 		bbColl = GetGraphics()->CreateBillboardCollection(	nrOfVertices, grass_positions, grass_sizes, grass_colors, 
-															Vector3(50.0f, 0.0f, 50.0f), "Media/Grass.png");
+															Vector3(0.0f, 0.0f, 0.0f), "Media/Grass.png");
 		bbColl->SetRenderShadowFlag(false);
 	}
 	//bbColl->SetCullNearDistance(5.0f);
-	//bbColl->SetCullFarDistance(999999.9f);
+	bbColl->SetCullFarDistance(25.0f);
 	
 	delete [] grass_positions;
 	delete [] grass_sizes;

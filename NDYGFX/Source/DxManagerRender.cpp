@@ -1446,6 +1446,7 @@ void DxManager::CalculateCulling()
 		world._24 = bb->GetPositionD3DX().y;
 		world._34 = bb->GetPositionD3DX().z;
 		float scale = 1.0f;
+
 		if(this->pe.FrustrumVsSphere(this->FrustrumPlanes, boundingSphere, world, scale))
 		{
 			bb->SetIsCameraCulledFlag(false);
@@ -1457,7 +1458,8 @@ void DxManager::CalculateCulling()
 			bb->SetIsCameraCulledFlag(true);
 		}
 	}
-	// Billboardcollections
+
+	// Billboard collections
 	for(unsigned int i = 0; i < this->billboardCollections.size(); ++i)
 	{
 		BillboardCollection* bbColl = this->billboardCollections.get(i);
@@ -1468,6 +1470,7 @@ void DxManager::CalculateCulling()
 		world._24 = pos.y;
 		world._34 = pos.z;
 		float scale = 1.0f;
+
 		if(this->pe.FrustrumVsSphere(this->FrustrumPlanes, BoundingSphere(bbColl->GetMinPos(), bbColl->GetMaxPos()), world, scale))
 		{
 			bbColl->SetIsCameraCulledFlag(false);
@@ -1604,7 +1607,7 @@ void DxManager::CalculateCulling()
 			world._24 = bb->GetPositionD3DX().y;
 			world._34 = bb->GetPositionD3DX().z;
 			float scale = 1.0f;
-
+			
 			//Billboards already in the cameras view frustum does not need to be checked,
 			//so only check the ones that are outside of it. (The ones that have already been culled)
 			if(bb->IsCameraCulled())
@@ -1637,10 +1640,10 @@ void DxManager::CalculateCulling()
 			world._24 = pos.y;
 			world._34 = pos.z;
 			float scale = 1.0f;
-
+			
 			//Billboard collections already in the cameras view frustum does not need to be checked,
 			//so only check the ones that are outside of it. (The ones that have already been culled)
-			if(bbColl->IsCameraCulled()
+			if(bbColl->IsCameraCulled())
 			{
 				//See if the Billboard is inside the bounding boxes(cascades) or intersects.
 				bool notDone = true;
