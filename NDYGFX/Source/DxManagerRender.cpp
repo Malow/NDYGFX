@@ -1815,8 +1815,6 @@ void DxManager::Render()
 #ifdef MALOWTESTPERF
 	this->perf.PostMeasure("Renderer - Render Translucent", 2);
 #endif
-
-	//this->RenderWaterPlanes();
 	
 #ifdef MALOWTESTPERF
 	this->perf.PreMeasure("Renderer - Render Skybox", 2);
