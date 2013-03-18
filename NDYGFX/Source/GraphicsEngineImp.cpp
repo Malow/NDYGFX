@@ -1237,8 +1237,10 @@ void GraphicsEngineImp::LoadingScreen(const char* BackgroundTexture, const char*
 
 				if(this->loadingScreenPB)
 				{
+					MaloW::Debug("Yoyo, deleting PB");
 					this->DeleteImage(this->loadingScreenPB);
 					this->loadingScreenPB = NULL;
+					MaloW::Debug("Yoyo, deleted PB");
 				}
 				if(this->loadingScreenBG)
 				{
