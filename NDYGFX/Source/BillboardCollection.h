@@ -54,7 +54,7 @@ class BillboardCollection : public iBillboardCollection
 		bool IsShadowCulled() { return this->zIsShadowCulled; }
 		const D3DXVECTOR3& GetMinPos();
 		const D3DXVECTOR3& GetMaxPos();
-
+		D3DXVECTOR3 CalcWorldPos();
 
 		//void SetPosition(unsigned int vertexIndex, D3DXVECTOR3 position){ this->zVertices[vertexIndex].pos = position; }
 		//void SetSize(unsigned int vertexIndex, D3DXVECTOR2 size)		{ this->zVertices[vertexIndex].texAndSize = D3DXVECTOR4(this->zVertices[vertexIndex].texAndSize.x, this->zVertices[vertexIndex].texAndSize.y, size.x, size.y); }

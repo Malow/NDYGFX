@@ -75,6 +75,13 @@ const D3DXVECTOR3& BillboardCollection::GetMaxPos()
 	return this->zMaxPos;
 }
 
+D3DXVECTOR3 BillboardCollection::CalcWorldPos()
+{
+	this->RecalculateMinAndMaxPos();
+
+	return (this->zMinPos,this->zMaxPos) * 0.5f;
+}
+
 void BillboardCollection::SetTextureResource(TextureResource* textureResource)
 {
 	if(this->zTextureResource)

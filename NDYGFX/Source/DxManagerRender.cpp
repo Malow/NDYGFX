@@ -1463,7 +1463,7 @@ void DxManager::CalculateCulling()
 	for(unsigned int i = 0; i < this->billboardCollections.size(); ++i)
 	{
 		BillboardCollection* bbColl = this->billboardCollections.get(i);
-		D3DXVECTOR3 pos = bbColl->GetOffsetVector();
+		D3DXVECTOR3 pos = bbColl->CalcWorldPos();
 		D3DXMATRIX world;
 		D3DXMatrixIdentity(&world);
 		world._14 = pos.x;
@@ -1633,7 +1633,7 @@ void DxManager::CalculateCulling()
 		for(unsigned int i = 0; i < this->billboardCollections.size(); ++i)
 		{
 			BillboardCollection* bbColl = this->billboardCollections.get(i);
-			D3DXVECTOR3 pos = bbColl->GetOffsetVector();
+			D3DXVECTOR3 pos = bbColl->CalcWorldPos();
 			D3DXMATRIX world;
 			D3DXMatrixIdentity(&world);
 			world._14 = pos.x;
