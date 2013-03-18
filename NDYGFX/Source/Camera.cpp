@@ -14,6 +14,7 @@ Camera::Camera(HWND g_hWnd, GraphicsEngineParams &params) :
 	this->angleY = 0;
 	this->oldpos = this->pos;
 	
+	this->bone = "";
 	this->speed = 1.0f;
 
 	this->updateCamera = true;
@@ -124,7 +125,7 @@ void Camera::MoveFollowingMesh()
 
 		// If it's an FBX mesh and a bone is set, make the camera follow the bone, else make the mesh follow camera.
 		FBXMesh* mesh = dynamic_cast<FBXMesh*>(this->followTarget);
-		if(mesh && this->bone)
+		if(mesh && this->bone != "")
 		{
 			float x, y, z;
 			mesh->GetBonePosition(this->bone, x, y, z);
@@ -221,7 +222,7 @@ void Camera::SetMesh(iMesh* target, Vector3 distanceFromCamera, Vector3 defaultM
 	this->followTarget = dynamic_cast<Mesh*>(target);
 	this->distanceFromMesh = distanceFromCamera;
 	this->defaultMeshDirection = defaultMeshDirection;
-	this->bone = NULL;
+	this->bone = "";
 	this->defaultMeshDirection.Normalize();
 }
 
