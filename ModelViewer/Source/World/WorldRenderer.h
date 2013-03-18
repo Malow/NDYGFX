@@ -67,6 +67,11 @@ class WorldRenderer : Observer
 	float zGrassNearDistance;		// Distance between camera and grass
 	float zGrassFarDistance;		// Distance between grass and far clip
 	float zGrassUpdateDistance;		// Distance you have to walk to update grass
+	float zGrassWidthMin;			// Minimum grass width
+	float zGrassWidthMax;			// Maximum grass width
+	float zGrassHeightMin;			// Minimum grass height
+	float zGrassHeightMax;			// Maximum grass height
+	float zGrassNeightbourDistance;	// Minimal distance between grass
 	Vector2 zLastGrassUpdatePos;	// Last camera position when grass was generated
 	std::map<Vector2UINT, iBillboardCollection*> zGrass;
 	
@@ -79,13 +84,17 @@ public:
 	Entity* Get3DRayCollisionWithMesh();
 	float GetYPosFromHeightMap(float x, float y);
 
-	void Update();
+	// Returns true when there is more to be processed
+	bool Update();
+
+	// Show or don't show AI grid
 	void ToggleAIGrid(bool state);
+	
+	// Show or don't show water corner boxes
 	void ToggleWaterBoxes(bool flag);
 
-	virtual void OnEvent( Event* e );
-
 protected:
+	virtual void OnEvent( Event* e );
 	void UpdateWaterBoxes( WaterQuad* water );
 	void UpdateTerrain();
 

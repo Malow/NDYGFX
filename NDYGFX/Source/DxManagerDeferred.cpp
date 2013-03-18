@@ -89,7 +89,7 @@ void DxManager::RenderDeferredGeoTerrains()
 
 			//Set Textures
 			//Reset textures so that previous textures are not used if a texture is missing.
-			this->Shader_TerrainEditor->SetResource("tex0", NULL);
+			/*this->Shader_TerrainEditor->SetResource("tex0", NULL);
 			this->Shader_TerrainEditor->SetResource("tex1", NULL);
 			this->Shader_TerrainEditor->SetResource("tex2", NULL);
 			this->Shader_TerrainEditor->SetResource("tex3", NULL);
@@ -97,7 +97,7 @@ void DxManager::RenderDeferredGeoTerrains()
 			this->Shader_TerrainEditor->SetResource("tex5", NULL);
 			this->Shader_TerrainEditor->SetResource("tex6", NULL);
 			this->Shader_TerrainEditor->SetResource("tex7", NULL);
-			//Check if texture(name/path) have changed, create new shader resource view if it has
+			*///Check if texture(name/path) have changed, create new shader resource view if it has
 			for(int j = 0; j < terrPtr->GetNrOfTextures(); j++)
 			{
 				if(terrPtr->GetTextureResourceToLoadFileName(j) != "")
@@ -119,48 +119,53 @@ void DxManager::RenderDeferredGeoTerrains()
 
 
 			//OBS! Do not put this code in a for loop using malow::ConvertNrToString()-function. (Huge performance loss).
-			bool hasTexture = false;
-			if(terrPtr->GetTexture(0) != NULL)
+			//static bool once = false; //TILLMAN - BJOORN
+			static bool hasTexture = false;
+			//if(!once)
 			{
-				this->Shader_TerrainEditor->SetResource("tex0", terrPtr->GetTexture(0)->GetSRVPointer());
-				hasTexture = true;
-			}
-			if(terrPtr->GetTexture(1) != NULL)
-			{
-				this->Shader_TerrainEditor->SetResource("tex1", terrPtr->GetTexture(1)->GetSRVPointer());
-				hasTexture = true;
-			}
-			if(terrPtr->GetTexture(2) != NULL)
-			{
-				this->Shader_TerrainEditor->SetResource("tex2", terrPtr->GetTexture(2)->GetSRVPointer());
-				hasTexture = true;
-			}
-			if(terrPtr->GetTexture(3) != NULL)
-			{
-				this->Shader_TerrainEditor->SetResource("tex3", terrPtr->GetTexture(3)->GetSRVPointer());
-				hasTexture = true;
-			}
-			if(terrPtr->GetTexture(4) != NULL)
-			{
-				this->Shader_TerrainEditor->SetResource("tex4", terrPtr->GetTexture(4)->GetSRVPointer());
-				hasTexture = true;
-			}
-			if(terrPtr->GetTexture(5) != NULL)
-			{
-				this->Shader_TerrainEditor->SetResource("tex5", terrPtr->GetTexture(5)->GetSRVPointer());
-				hasTexture = true;
-			}
-			if(terrPtr->GetTexture(6) != NULL)
-			{
-				this->Shader_TerrainEditor->SetResource("tex6", terrPtr->GetTexture(6)->GetSRVPointer());
-				hasTexture = true;
-			}
-			if(terrPtr->GetTexture(7) != NULL)
-			{
-				this->Shader_TerrainEditor->SetResource("tex7", terrPtr->GetTexture(7)->GetSRVPointer());
-				hasTexture = true;
-			}
+				if(terrPtr->GetTexture(0) != NULL)
+				{
+					this->Shader_TerrainEditor->SetResource("tex0", terrPtr->GetTexture(0)->GetSRVPointer());
+					hasTexture = true;
 
+					//once = true;
+				}
+				if(terrPtr->GetTexture(1) != NULL)
+				{
+					this->Shader_TerrainEditor->SetResource("tex1", terrPtr->GetTexture(1)->GetSRVPointer());
+					hasTexture = true;
+				}
+				if(terrPtr->GetTexture(2) != NULL)
+				{
+					this->Shader_TerrainEditor->SetResource("tex2", terrPtr->GetTexture(2)->GetSRVPointer());
+					hasTexture = true;
+				}
+				if(terrPtr->GetTexture(3) != NULL)
+				{
+					this->Shader_TerrainEditor->SetResource("tex3", terrPtr->GetTexture(3)->GetSRVPointer());
+					hasTexture = true;
+				}
+				if(terrPtr->GetTexture(4) != NULL)
+				{
+					this->Shader_TerrainEditor->SetResource("tex4", terrPtr->GetTexture(4)->GetSRVPointer());
+					hasTexture = true;
+				}
+				if(terrPtr->GetTexture(5) != NULL)
+				{
+					this->Shader_TerrainEditor->SetResource("tex5", terrPtr->GetTexture(5)->GetSRVPointer());
+					hasTexture = true;
+				}
+				if(terrPtr->GetTexture(6) != NULL)
+				{
+					this->Shader_TerrainEditor->SetResource("tex6", terrPtr->GetTexture(6)->GetSRVPointer());
+					hasTexture = true;
+				}
+				if(terrPtr->GetTexture(7) != NULL)
+				{
+					this->Shader_TerrainEditor->SetResource("tex7", terrPtr->GetTexture(7)->GetSRVPointer());
+					hasTexture = true;
+				}
+			}
 
 			if(hasTexture) 
 			{
@@ -421,7 +426,7 @@ void DxManager::RenderDeferredGeoTerrains()
 	}
 
 	//Unbind terrain resources //**TILLMAN, onödigt?**
-	this->Shader_TerrainEditor->SetResource("tex0", NULL);
+	/*this->Shader_TerrainEditor->SetResource("tex0", NULL);
 	this->Shader_TerrainEditor->SetResource("tex1", NULL);
 	this->Shader_TerrainEditor->SetResource("tex2", NULL);
 	this->Shader_TerrainEditor->SetResource("tex3", NULL);
@@ -432,7 +437,7 @@ void DxManager::RenderDeferredGeoTerrains()
 	this->Shader_TerrainEditor->SetResource("blendMap0", NULL);
 	this->Shader_TerrainEditor->SetResource("blendMap1", NULL);
 	this->Shader_TerrainEditor->SetResource("AIMap", NULL);
-	this->Shader_TerrainEditor->Apply(0);
+	this->Shader_TerrainEditor->Apply(0);*/
 }
 
 void DxManager::RenderDecals()
