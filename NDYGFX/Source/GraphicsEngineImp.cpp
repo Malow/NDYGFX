@@ -1293,6 +1293,7 @@ void GraphicsEngineImp::LoadingScreen(const char* BackgroundTexture, const char*
 	}
 
 	// Hax solution, these should allready be deleted, but doing it here incase it hasnt been done...
+	/*
 	if(this->loadingScreenPB)
 	{
 		this->DeleteImage(this->loadingScreenPB);
@@ -1302,7 +1303,7 @@ void GraphicsEngineImp::LoadingScreen(const char* BackgroundTexture, const char*
 	{
 		this->DeleteImage(this->loadingScreenBG);
 		this->loadingScreenBG = NULL;
-	}
+	}*/
 
 
 	if(this->cam->GetCameraType() == FPS)
@@ -1310,4 +1311,5 @@ void GraphicsEngineImp::LoadingScreen(const char* BackgroundTexture, const char*
 	this->cam->SetUpdateCamera(updateCam);
 	this->dx->SetRendererSleep(prevRendSleep);
 	this->useLoadingThread = false;
+	this->loadingScreenState = 0;
 }
