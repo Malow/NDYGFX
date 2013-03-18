@@ -276,7 +276,6 @@ Terrain::~Terrain()
 
 	if(this->zTextureResources)
 	{
-
 		for(unsigned int i = 0; i < this->zNrOfTextures; i++)
 		{
 			//Decrease reference counter for every texture used

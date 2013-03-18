@@ -27,10 +27,10 @@ struct BlendMap
 	ID3D11Texture2D*			s_Texture; //Texture containing Data
 	ID3D11ShaderResourceView*	s_SRV; //Shader resource view containing Texture.
 	
-	BlendMap() : s_HasChanged(false), s_RecreateTexture(false), s_Size(0), s_Data(NULL), s_SRV(NULL) {}
+	BlendMap() : s_HasChanged(false), s_RecreateTexture(false), s_Size(0), s_Data(NULL), s_Texture(NULL), s_SRV(NULL) {}
 	BlendMap(unsigned int size, float* data) 
-	: s_HasChanged(true), s_RecreateTexture(true), s_Size(size), s_Data(data), s_SRV(NULL) {} 
-	virtual ~BlendMap() { s_Data = NULL; if(s_SRV) s_SRV->Release(); s_SRV = NULL; }
+	: s_HasChanged(true), s_RecreateTexture(true), s_Size(size), s_Data(data), s_Texture(NULL), s_SRV(NULL) {} 
+	virtual ~BlendMap() { s_Data = NULL; if(s_Texture) s_Texture->Release(); if(s_SRV) s_SRV->Release(); s_SRV = NULL; }
 
 };/*
 struct BoundingBox
