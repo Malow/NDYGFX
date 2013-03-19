@@ -16,6 +16,9 @@ private:
 	iMesh* cube;
 
 	iFBXMesh* fbx;
+
+	iMesh* aniTree;
+	iMesh* staticTree;
 	
 	//int nrofdiffs;
 	//float totDiff;
@@ -89,6 +92,15 @@ void MaloWTest::PreTest()
 	deer->Scale(0.05f);
 	//tempguy = GetGraphics()->CreateMesh("Media/temp_guy.obj", Vector3(15, 20, 25));
 	//tempguy->Scale(0.05f);
+
+	staticTree = GetGraphics()->CreateMesh("Media/MapModels/Tree_01_01.obj", Vector3(10, -70, 10));
+	staticTree->SetScale(0.05f);
+	staticTree = GetGraphics()->CreateMesh("Media/MapModels/Tree_01_01.obj", Vector3(10, 70, 10));
+	aniTree = NULL;
+	staticTree->SetScale(0.05f);
+
+	aniTree = GetGraphics()->CreateMesh("Media/MapModels/Tree_01.ani", Vector3(10, -70, 10));
+	aniTree->SetScale(0.05f);
 }
 
 void MaloWTest::RunTest(float diff)
@@ -181,7 +193,6 @@ void MaloWTest::RunTest(float diff)
 	{
 		if(fesd)
 		{
-			
 			if(qual % 2 == 0)
 			{
 				//GetGraphics()->GetEngineParameters().Maximized = true;
@@ -190,6 +201,11 @@ void MaloWTest::RunTest(float diff)
 				wp->SetVertexPosition(Vector3(0.8f, 0.2f, 0.8f), 1);
 				wp->SetVertexPosition(Vector3(-1, -0.2f, -0.2f), 2);
 				wp->SetVertexPosition(Vector3(-0.8f, 0, 1), 3);
+
+				
+				aniTree = GetGraphics()->CreateMesh("Media/MapModels/Tree_01.ani", Vector3(10, 70, 10));
+				aniTree->SetScale(0.05f);
+				GetGraphics()->DeleteMesh(staticTree);
 			}
 			else
 			{
@@ -199,6 +215,11 @@ void MaloWTest::RunTest(float diff)
 				wp->SetVertexPosition(Vector3(0.5f, 0, 0.5f), 1);
 				wp->SetVertexPosition(Vector3(-0.5f, 0, -0.5f), 2);
 				wp->SetVertexPosition(Vector3(-0.5f, 0, 0.5f), 3);
+
+				
+				staticTree = GetGraphics()->CreateMesh("Media/MapModels/Tree_01_01.obj", Vector3(10, 70, 10));
+				staticTree->SetScale(0.05f);
+				GetGraphics()->DeleteMesh(aniTree);
 			}
 			//GetGraphics()->ReloadShaders(21);
 			//GetGraphics()->ReloadShaders(1);
@@ -206,7 +227,6 @@ void MaloWTest::RunTest(float diff)
 			//GetGraphics()->ChangeShadowQuality(qual);
 
 			//secModel->SetPosition(Vector3(10, 10, 10));
-			GetGraphics()->DeleteMesh(fbx);
 			qual++;
 			fesd = false;
 		}			
