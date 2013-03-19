@@ -106,6 +106,10 @@ void CascadedShadowMap::CalcShadowMapMatrices(D3DXVECTOR3 sunLight, Camera* cam,
 	
 	D3DXVECTOR3 tmpNearPlanePoint = minValue;
 	//Set the near plane to be closer to the light to include more potential occluders.
+	if(sunLight.z < 0.0f)
+	{
+		sunLight *= -1.0f;
+	}
 	tmpNearPlanePoint -= sunLight * (float)(this->params.ShadowFit * (i + 1)); //TILLMAN** sätta near plane till samma för alla.
 	float nearPlane = tmpNearPlanePoint.z; 
 	float farPlane = maxValue.z;
