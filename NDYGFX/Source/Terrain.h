@@ -121,7 +121,7 @@ class Terrain : public iTerrain
 
 		//Textures
 		float GetTextureScale() const { return this->zTextureScale; }
-		int GetNrOfTextures() const { return this->zNrOfTextures; }
+		unsigned int GetNrOfTextures() const { return this->zNrOfTextures; }
 		TextureResource* GetTexture(unsigned int index) const { return this->zTextureResources[index]; }
 		inline string& GetTextureResourceToLoadFileName(unsigned int index) const { return this->zTextureResourceToLoadFileName[index]; }
 		int GetNrOfBlendMaps() const { return this->zNrOfBlendMaps; }

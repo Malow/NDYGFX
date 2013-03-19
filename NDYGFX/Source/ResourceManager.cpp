@@ -769,6 +769,17 @@ TextureResource* ResourceManager::CreateCubeTextureResourceFromFile( const char*
 	ReleaseMutex(this->mutex);
 	return tex->second;
 }
+const TextureResource* ResourceManager::GetTextureResourcePointer(const char* id) const
+{
+	auto tex = this->zTextureResources.find(id);
+
+	if(tex != this->zTextureResources.cend())
+	{
+		return tex->second;
+	}
+
+	return NULL;
+}
 
 void ResourceManager::DeleteTextureResource( TextureResource* &textureResource )
 {

@@ -24,6 +24,98 @@ void DxManager::PreRender()
 	{
 		this->csm->PreRender(this->sun.direction, this->camera);
 	}
+
+	// Optimizing: send terrain textures once to the GPU.
+	static unsigned int nrOfTexturesSet = 0;
+	static bool texSet[7];
+	static const TextureResource* texRes = NULL;
+	if(nrOfTexturesSet < 7)
+	{
+		//0
+		if(!texSet[0])
+		{
+			texRes = GetResourceManager()->GetTextureResourcePointer("Media/Textures/01_v02-Moss.png");
+			if(texRes)
+			{
+				this->Shader_TerrainEditor->SetResource("tex0", texRes->GetSRVPointer());
+				nrOfTexturesSet++;
+				texSet[0] = true;
+			}
+		}
+		//1
+		if(!texSet[1])
+		{
+			texRes = GetResourceManager()->GetTextureResourcePointer("Media/Textures/02_v03-Leaf.png");
+			if(texRes)
+			{
+				this->Shader_TerrainEditor->SetResource("tex1", texRes->GetSRVPointer());
+				nrOfTexturesSet++;
+				texSet[1] = true;
+			}
+		}
+		//2
+		if(!texSet[2])
+		{
+			texRes = GetResourceManager()->GetTextureResourcePointer("Media/Textures/03_v02-Mix.png");
+			if(texRes)
+			{
+				this->Shader_TerrainEditor->SetResource("tex2", texRes->GetSRVPointer());
+				nrOfTexturesSet++;
+				texSet[2] = true;
+			}
+		}
+		//3
+		if(!texSet[3])
+		{
+			texRes = GetResourceManager()->GetTextureResourcePointer("Media/Textures/04_v02-Gravel.png");
+			if(texRes)
+			{
+				this->Shader_TerrainEditor->SetResource("tex3", texRes->GetSRVPointer());
+				nrOfTexturesSet++;
+				texSet[3] = true;
+			}
+		}
+		//4
+		if(!texSet[4])
+		{
+			texRes = GetResourceManager()->GetTextureResourcePointer("Media/Textures/05_v01-Sandpng.png");
+			if(texRes)
+			{
+				this->Shader_TerrainEditor->SetResource("tex4", texRes->GetSRVPointer());
+				nrOfTexturesSet++;
+				texSet[4] = true;
+			}
+		}
+		//5
+		if(!texSet[5])
+		{
+			texRes = GetResourceManager()->GetTextureResourcePointer("Media/Textures/06_v01-MossDark.png");
+			if(texRes)
+			{
+				this->Shader_TerrainEditor->SetResource("tex5", texRes->GetSRVPointer());
+				nrOfTexturesSet++;
+				texSet[5] = true;
+			}
+		}
+		//6
+		if(!texSet[6])
+		{
+			texRes = GetResourceManager()->GetTextureResourcePointer("Media/Textures/07_v01-MossLight.png");
+			if(texRes)
+			{
+				this->Shader_TerrainEditor->SetResource("tex6", texRes->GetSRVPointer());
+				nrOfTexturesSet++;
+				texSet[6] = true;
+			}
+		}
+		//7 (unused)
+		/*const TextureResource* texRes = GetResourceManager()->GetTextureResourcePointer("Media/Textures/01_v02-Moss.png");
+		if(texRes)
+		{
+			this->Shader_TerrainEditor->SetResource("tex7", texRes->GetSRVPointer());
+			nrOfTexturesSet++;
+		}*/
+	}
 }
 
 
@@ -119,55 +211,43 @@ void DxManager::RenderDeferredGeoTerrains()
 
 
 			//OBS! Do not put this code in a for loop using malow::ConvertNrToString()-function. (Huge performance loss).
-			//static bool once = false; //TILLMAN - BJOORN
-			static bool hasTexture = false;
-			//if(!once)
+			/*
+			if(terrPtr->GetTexture(0) != NULL)
 			{
-				if(terrPtr->GetTexture(0) != NULL)
-				{
-					this->Shader_TerrainEditor->SetResource("tex0", terrPtr->GetTexture(0)->GetSRVPointer());
-					hasTexture = true;
+				this->Shader_TerrainEditor->SetResource("tex0", terrPtr->GetTexture(0)->GetSRVPointer());
 
-					//once = true;
-				}
-				if(terrPtr->GetTexture(1) != NULL)
-				{
-					this->Shader_TerrainEditor->SetResource("tex1", terrPtr->GetTexture(1)->GetSRVPointer());
-					hasTexture = true;
-				}
-				if(terrPtr->GetTexture(2) != NULL)
-				{
-					this->Shader_TerrainEditor->SetResource("tex2", terrPtr->GetTexture(2)->GetSRVPointer());
-					hasTexture = true;
-				}
-				if(terrPtr->GetTexture(3) != NULL)
-				{
-					this->Shader_TerrainEditor->SetResource("tex3", terrPtr->GetTexture(3)->GetSRVPointer());
-					hasTexture = true;
-				}
-				if(terrPtr->GetTexture(4) != NULL)
-				{
-					this->Shader_TerrainEditor->SetResource("tex4", terrPtr->GetTexture(4)->GetSRVPointer());
-					hasTexture = true;
-				}
-				if(terrPtr->GetTexture(5) != NULL)
-				{
-					this->Shader_TerrainEditor->SetResource("tex5", terrPtr->GetTexture(5)->GetSRVPointer());
-					hasTexture = true;
-				}
-				if(terrPtr->GetTexture(6) != NULL)
-				{
-					this->Shader_TerrainEditor->SetResource("tex6", terrPtr->GetTexture(6)->GetSRVPointer());
-					hasTexture = true;
-				}
-				if(terrPtr->GetTexture(7) != NULL)
-				{
-					this->Shader_TerrainEditor->SetResource("tex7", terrPtr->GetTexture(7)->GetSRVPointer());
-					hasTexture = true;
-				}
+				//once = true;
 			}
+			if(terrPtr->GetTexture(1) != NULL)
+			{
+				this->Shader_TerrainEditor->SetResource("tex1", terrPtr->GetTexture(1)->GetSRVPointer());
+			}
+			if(terrPtr->GetTexture(2) != NULL)
+			{
+				this->Shader_TerrainEditor->SetResource("tex2", terrPtr->GetTexture(2)->GetSRVPointer());
+			}
+			if(terrPtr->GetTexture(3) != NULL)
+			{
+				this->Shader_TerrainEditor->SetResource("tex3", terrPtr->GetTexture(3)->GetSRVPointer());
+			}
+			if(terrPtr->GetTexture(4) != NULL)
+			{
+				this->Shader_TerrainEditor->SetResource("tex4", terrPtr->GetTexture(4)->GetSRVPointer());
+			}
+			if(terrPtr->GetTexture(5) != NULL)
+			{
+				this->Shader_TerrainEditor->SetResource("tex5", terrPtr->GetTexture(5)->GetSRVPointer());
+			}
+			if(terrPtr->GetTexture(6) != NULL)
+			{
+				this->Shader_TerrainEditor->SetResource("tex6", terrPtr->GetTexture(6)->GetSRVPointer());
+			}
+			if(terrPtr->GetTexture(7) != NULL)
+			{
+				this->Shader_TerrainEditor->SetResource("tex7", terrPtr->GetTexture(7)->GetSRVPointer());
+			}*/
 
-			if(hasTexture) 
+			if(terrPtr->GetNrOfTextures() > 0) 
 			{
 				//Check if blend map is used
 				BlendMap* bmPtr0 = terrPtr->GetBlendMapPointer(0); 
@@ -455,6 +535,11 @@ void DxManager::RenderDecals()
 
 	for(unsigned int i = 0; i < this->decals.size(); i++)
 	{
+		// Test Texture
+		if ( !this->decals[i]->GetStrip()->GetRenderObject()->GetTextureResource() )
+			continue;
+
+		// Shader Settings
 		this->Shader_Decal->SetMatrix("World", this->decals[i]->GetWorldMatrix());
 		this->Shader_Decal->SetMatrix("WorldViewProj", this->decals[i]->GetWorldMatrix() * viewProj);
 		this->Shader_Decal->SetResource("Decal", this->decals[i]->GetStrip()->GetRenderObject()->GetTextureResource()->GetSRVPointer());
