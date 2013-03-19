@@ -127,9 +127,9 @@ void Camera::MoveFollowingMesh()
 		FBXMesh* mesh = dynamic_cast<FBXMesh*>(this->followTarget);
 		if(mesh && this->bone != "")
 		{
-			float x, y, z;
-			mesh->GetBonePosition(this->bone, x, y, z);
-			this->pos = D3DXVECTOR3(x, y, z);
+			Vector3 pos;
+			mesh->GetBoneTransformation(this->bone, &pos, 0);
+			this->pos = D3DXVECTOR3(pos.x, pos.y, pos.z);
 		}
 		else
 		{

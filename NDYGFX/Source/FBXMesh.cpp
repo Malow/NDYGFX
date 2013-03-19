@@ -38,12 +38,14 @@ void FBXMesh::Update( float dt )
 	// Move Bound Meshes
 	for( auto i = zBoundMeshes.begin(); i != zBoundMeshes.end(); ++i )
 	{
-		float x, y, z;
+		Vector3 pos;
+		Vector4 rot;
 
 		// Bone Position
-		if ( GetBonePosition(i->second, x, y, z) )
+		if ( GetBoneTransformation(i->second, &pos, &rot) )
 		{
-			i->first->SetPosition(Vector3(x, y, z));
+			i->first->SetPosition(pos);
+			i->first->SetQuaternion(rot);
 		}
 	}
 }
@@ -225,7 +227,7 @@ void FBXMesh::UnbindMesh(iMesh* mesh)
 		zBoundMeshes.erase(i);
 }
 
-bool FBXMesh::GetBonePosition(const std::string& name, float& x, float& y, float& z)
+bool FBXMesh::GetBoneTransformation(const std::string& name, Vector3* pos, Vector4* rot)
 {
 	zSceneMutex.lock();
 	if ( zScene && zScene->GetSkeleton() )
@@ -235,22 +237,57 @@ bool FBXMesh::GetBonePosition(const std::string& name, float& x, float& y, float
 		if ( bone )
 		{
 			// 4x4 Matrix
-			const float* matrix;
-			matrix = bone->GetCombinedTransform();
-
-			D3DXVECTOR4 worldPos;
-			worldPos.x = matrix[12] * -1.0f;
-			worldPos.y = matrix[13];
-			worldPos.z = matrix[14];
-			worldPos.w = 1.0;
-
+			const float* matrix = bone->GetCombinedTransform();
 			D3DXMATRIX worldMat = GetWorldMatrix();
 
-			D3DXVec4Transform(&worldPos, &worldPos, &worldMat);
+			// Convert To DX Matrix
+			D3DXMATRIX boneMatrix;
+			for( unsigned int x=0; x<16; ++x )
+			{
+				boneMatrix[x] = matrix[x];
+			}
 
-			x = worldPos.x;
-			y = worldPos.y;
-			z = worldPos.z;
+			// Translation
+			if ( pos )
+			{
+				// World Position
+				D3DXVECTOR4 worldPos;
+				worldPos.x = boneMatrix._41 * -1.0f;
+				worldPos.y = boneMatrix._42;
+				worldPos.z = boneMatrix._43;
+				worldPos.w = 1.0;
+
+				D3DXVec4Transform(&worldPos, &worldPos, &worldMat);
+
+				pos->x = worldPos.x;
+				pos->y = worldPos.y;
+				pos->z = worldPos.z;
+			}
+
+			// Rotation
+			if ( rot )
+			{
+				D3DXMATRIX rotationMatrix = boneMatrix;
+
+				// Combined Rotation Matrix
+				D3DXMatrixMultiply(&rotationMatrix, &rotationMatrix, &worldMat);
+
+				// Extract Quaternion Rotation
+				D3DXQUATERNION quat;
+				D3DXQuaternionRotationMatrix(&quat, &rotationMatrix);
+
+				// Rotation around y axis
+				D3DXQUATERNION yAxisRotation;
+				D3DXQuaternionRotationAxis(&yAxisRotation, &D3DXVECTOR3(1.0f, 0.0f, 0.0f), 3.141592f);
+
+				// Multiply
+				D3DXQuaternionMultiply(&quat, &quat, &yAxisRotation);
+
+				rot->x = quat.x;
+				rot->y = quat.y;
+				rot->z = quat.z;
+				rot->w = quat.w;
+			}
 
 			zSceneMutex.unlock();
 			return true;

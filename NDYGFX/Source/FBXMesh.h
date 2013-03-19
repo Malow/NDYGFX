@@ -54,7 +54,7 @@ public:
 	virtual bool SetAnimation(const char* name);
 	virtual void SetAnimationQueue( const char* const* names, const float* times, const unsigned int& count );
 
-	bool GetBonePosition(const std::string& name, float& x, float& y, float& z);
+	bool GetBoneTransformation(const std::string& name, Vector3* pos, Vector4* rot);
 
 	// Mesh Bounds
 	virtual bool BindMesh(const char* boneName, iMesh* mesh);
