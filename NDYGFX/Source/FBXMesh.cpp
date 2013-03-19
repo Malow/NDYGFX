@@ -23,6 +23,9 @@ MaloW::Array<MeshStrip*>* FBXMesh::GetStrips()
 
 void FBXMesh::Update( float dt )
 {
+	// Update Animation
+	UpdateAnimationQueue();
+
 	// Lock Scene
 	zSceneMutex.lock();
 
@@ -35,12 +38,14 @@ void FBXMesh::Update( float dt )
 	// Move Bound Meshes
 	for( auto i = zBoundMeshes.begin(); i != zBoundMeshes.end(); ++i )
 	{
-		float x, y, z;
+		Vector3 pos;
+		Vector4 rot;
 
 		// Bone Position
-		if ( GetBonePosition(i->second, x, y, z) )
+		if ( GetBoneTransformation(i->second, &pos, &rot) )
 		{
-			i->first->SetPosition(Vector3(x, y, z));
+			i->first->SetPosition(pos);
+			i->first->SetQuaternion(rot);
 		}
 	}
 }
@@ -76,6 +81,48 @@ bool FBXMesh::LoadFromFile( string file, IBTHFbx* fbx, ID3D11Device* dev, ID3D11
 	return true;
 }
 
+void FBXMesh::UpdateAnimationQueue()
+{
+	if ( zAnimationQueue.empty() ) return;
+
+	// Calculate Current Time
+	std::chrono::milliseconds ms = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - zQueueStarted);
+	float seconds = (float)ms.count() * 0.001f;
+
+	// Set Check Current
+	unsigned int curAnimationIndex = 0;
+	for( unsigned int x=0; x<zAnimationQueue.size(); ++x )
+	{
+		if ( seconds >= zAnimationQueue[x].second )
+		{
+			seconds -= zAnimationQueue[x].second;
+			curAnimationIndex++;
+		}
+		else
+		{
+			break;
+		}
+	}
+
+	// Limit to last animation
+	if ( curAnimationIndex >= zAnimationQueue.size() )
+	{
+		curAnimationIndex = zAnimationQueue.size() - 1;
+	}
+
+	// Check Animation Index
+	if ( curAnimationIndex != zLastAnimationIndex )
+	{
+		if ( zScene && zScene->GetAnimationController() )
+		{
+			zScene->GetAnimationController()->SetCurrentAnimation(zAnimationQueue[curAnimationIndex].first.c_str());
+			zScene->GetAnimationController()->Update(seconds);
+		}
+
+		zLastAnimationIndex = curAnimationIndex;
+	}
+}
+
 bool FBXMesh::SetAnimation( unsigned int ani )
 {
 	zSceneMutex.lock();
@@ -102,7 +149,10 @@ bool FBXMesh::SetAnimation( unsigned int ani )
 		zSceneMutex.unlock();
 		return false;
 	}
-	
+
+	// Delete Queue
+	zAnimationQueue.clear();
+
 	zSceneMutex.unlock();
 	return true;
 }
@@ -136,7 +186,24 @@ bool FBXMesh::SetAnimation( const char* name )
 	}
 
 	zSceneMutex.unlock();
+
+	// Delete Queue
+	zAnimationQueue.clear();
+
 	return true;
+}
+
+void FBXMesh::SetAnimationQueue( const char* const* names, const float* times, const unsigned int& count )
+{
+	zAnimationQueue.clear();
+	for( unsigned int x=0; x<count; ++x )
+	{
+		zAnimationQueue.push_back( std::pair<std::string, float>(names[x], times[x]) );
+	}
+
+	zLastAnimationIndex = count;
+	zQueueStarted = std::chrono::system_clock::now();
+	UpdateAnimationQueue();
 }
 
 bool FBXMesh::BindMesh(const char* boneName, iMesh* mesh)
@@ -160,7 +227,7 @@ void FBXMesh::UnbindMesh(iMesh* mesh)
 		zBoundMeshes.erase(i);
 }
 
-bool FBXMesh::GetBonePosition(const std::string& name, float& x, float& y, float& z)
+bool FBXMesh::GetBoneTransformation(const std::string& name, Vector3* pos, Vector4* rot)
 {
 	zSceneMutex.lock();
 	if ( zScene && zScene->GetSkeleton() )
@@ -170,22 +237,57 @@ bool FBXMesh::GetBonePosition(const std::string& name, float& x, float& y, float
 		if ( bone )
 		{
 			// 4x4 Matrix
-			const float* matrix;
-			matrix = bone->GetCombinedTransform();
-
-			D3DXVECTOR4 worldPos;
-			worldPos.x = matrix[12] * -1.0f;
-			worldPos.y = matrix[13];
-			worldPos.z = matrix[14];
-			worldPos.w = 1.0;
-
+			const float* matrix = bone->GetCombinedTransform();
 			D3DXMATRIX worldMat = GetWorldMatrix();
 
-			D3DXVec4Transform(&worldPos, &worldPos, &worldMat);
+			// Convert To DX Matrix
+			D3DXMATRIX boneMatrix;
+			for( unsigned int x=0; x<16; ++x )
+			{
+				boneMatrix[x] = matrix[x];
+			}
 
-			x = worldPos.x;
-			y = worldPos.y;
-			z = worldPos.z;
+			// Translation
+			if ( pos )
+			{
+				// World Position
+				D3DXVECTOR4 worldPos;
+				worldPos.x = boneMatrix._41 * -1.0f;
+				worldPos.y = boneMatrix._42;
+				worldPos.z = boneMatrix._43;
+				worldPos.w = 1.0;
+
+				D3DXVec4Transform(&worldPos, &worldPos, &worldMat);
+
+				pos->x = worldPos.x;
+				pos->y = worldPos.y;
+				pos->z = worldPos.z;
+			}
+
+			// Rotation
+			if ( rot )
+			{
+				D3DXMATRIX rotationMatrix = boneMatrix;
+
+				// Combined Rotation Matrix
+				D3DXMatrixMultiply(&rotationMatrix, &rotationMatrix, &worldMat);
+
+				// Extract Quaternion Rotation
+				D3DXQUATERNION quat;
+				D3DXQuaternionRotationMatrix(&quat, &rotationMatrix);
+
+				// Rotation around y axis
+				D3DXQUATERNION yAxisRotation;
+				D3DXQuaternionRotationAxis(&yAxisRotation, &D3DXVECTOR3(1.0f, 0.0f, 0.0f), 3.141592f);
+
+				// Multiply
+				D3DXQuaternionMultiply(&quat, &quat, &yAxisRotation);
+
+				rot->x = quat.x;
+				rot->y = quat.y;
+				rot->z = quat.z;
+				rot->w = quat.w;
+			}
 
 			zSceneMutex.unlock();
 			return true;

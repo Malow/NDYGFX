@@ -10,10 +10,15 @@
 #include "stdafx.fx"
 Texture2D g_DiffuseMap;
 
+cbuffer PerFrame
+{
+	float3 g_SunDir;
+};
+
 cbuffer PerCascade
 {
 	float4x4 g_LightViewProj;
-}
+};
 cbuffer PerStrip
 {
 	bool g_IsTextured;
@@ -42,7 +47,7 @@ PSIn VS(VSIn input)
 {
 	PSIn output = (PSIn)0;
 
-	output.pos = mul(float4(input.pos, 1.0f), mul(input.world, g_LightViewProj)); 
+	output.pos = mul(float4(input.pos - g_SunDir * 0.45f, 1.0f), mul(input.world, g_LightViewProj)); 
 	output.tex = input.tex;
 
 	return output;

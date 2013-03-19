@@ -23,6 +23,9 @@ extern "C"
 		// Set animation by name
 		virtual bool SetAnimation(const char* name) = 0;
 
+		// Set animation queue
+		virtual void SetAnimationQueue( const char* const* names, const float* times, const unsigned int& count ) = 0;
+
 		// Binds Mesh To Follow Bone
 		// Returns false if bone wasn't found
 		// Note: Do Not Delete Mesh While It's Bound, Will Cause Crash!

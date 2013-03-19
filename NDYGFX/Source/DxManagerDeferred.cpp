@@ -9,9 +9,9 @@ void DxManager::PreRender()
 	this->CurrentNrOfDrawCalls = 0;
 
 	//clear and set render target/depth
-	this->Dx_DeviceContext->OMSetRenderTargets(this->NrOfRenderTargets, this->Dx_GbufferRTs, this->Dx_DepthStencilView);
+	//this->Dx_DeviceContext->OMSetRenderTargets(this->NrOfRenderTargets, this->Dx_GbufferRTs, this->Dx_DepthStencilView);
 	this->Dx_DeviceContext->ClearDepthStencilView(this->Dx_DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
-	this->Dx_DeviceContext->RSSetViewports(1, &this->Dx_Viewport);
+	//this->Dx_DeviceContext->RSSetViewports(1, &this->Dx_Viewport);
 	//Clear render targets
 	static float ClearColor1[4] = {0.5f, 0.71f, 1.0f, 1};
 	static float ClearColor2[4] = {-1.0f, -1.0f, -1.0f, -1.0f};
@@ -179,17 +179,8 @@ void DxManager::RenderDeferredGeoTerrains()
 				terrPtr->NormalsHaveChanged(false);
 			}
 
-			//Set Textures
-			//Reset textures so that previous textures are not used if a texture is missing.
-			/*this->Shader_TerrainEditor->SetResource("tex0", NULL);
-			this->Shader_TerrainEditor->SetResource("tex1", NULL);
-			this->Shader_TerrainEditor->SetResource("tex2", NULL);
-			this->Shader_TerrainEditor->SetResource("tex3", NULL);
-			this->Shader_TerrainEditor->SetResource("tex4", NULL);
-			this->Shader_TerrainEditor->SetResource("tex5", NULL);
-			this->Shader_TerrainEditor->SetResource("tex6", NULL);
-			this->Shader_TerrainEditor->SetResource("tex7", NULL);
-			*///Check if texture(name/path) have changed, create new shader resource view if it has
+			
+			//Check if texture(name/path) have changed, create new shader resource view if it has
 			for(int j = 0; j < terrPtr->GetNrOfTextures(); j++)
 			{
 				if(terrPtr->GetTextureResourceToLoadFileName(j) != "")
@@ -208,44 +199,6 @@ void DxManager::RenderDeferredGeoTerrains()
 					terrPtr->SetTextureResourceToLoadFileName(j, "");
 				}
 			}
-
-
-			//OBS! Do not put this code in a for loop using malow::ConvertNrToString()-function. (Huge performance loss).
-			/*
-			if(terrPtr->GetTexture(0) != NULL)
-			{
-				this->Shader_TerrainEditor->SetResource("tex0", terrPtr->GetTexture(0)->GetSRVPointer());
-
-				//once = true;
-			}
-			if(terrPtr->GetTexture(1) != NULL)
-			{
-				this->Shader_TerrainEditor->SetResource("tex1", terrPtr->GetTexture(1)->GetSRVPointer());
-			}
-			if(terrPtr->GetTexture(2) != NULL)
-			{
-				this->Shader_TerrainEditor->SetResource("tex2", terrPtr->GetTexture(2)->GetSRVPointer());
-			}
-			if(terrPtr->GetTexture(3) != NULL)
-			{
-				this->Shader_TerrainEditor->SetResource("tex3", terrPtr->GetTexture(3)->GetSRVPointer());
-			}
-			if(terrPtr->GetTexture(4) != NULL)
-			{
-				this->Shader_TerrainEditor->SetResource("tex4", terrPtr->GetTexture(4)->GetSRVPointer());
-			}
-			if(terrPtr->GetTexture(5) != NULL)
-			{
-				this->Shader_TerrainEditor->SetResource("tex5", terrPtr->GetTexture(5)->GetSRVPointer());
-			}
-			if(terrPtr->GetTexture(6) != NULL)
-			{
-				this->Shader_TerrainEditor->SetResource("tex6", terrPtr->GetTexture(6)->GetSRVPointer());
-			}
-			if(terrPtr->GetTexture(7) != NULL)
-			{
-				this->Shader_TerrainEditor->SetResource("tex7", terrPtr->GetTexture(7)->GetSRVPointer());
-			}*/
 
 			if(terrPtr->GetNrOfTextures() > 0) 
 			{
@@ -504,20 +457,6 @@ void DxManager::RenderDeferredGeoTerrains()
 			}
 		}
 	}
-
-	//Unbind terrain resources //**TILLMAN, onödigt?**
-	/*this->Shader_TerrainEditor->SetResource("tex0", NULL);
-	this->Shader_TerrainEditor->SetResource("tex1", NULL);
-	this->Shader_TerrainEditor->SetResource("tex2", NULL);
-	this->Shader_TerrainEditor->SetResource("tex3", NULL);
-	this->Shader_TerrainEditor->SetResource("tex4", NULL);
-	this->Shader_TerrainEditor->SetResource("tex5", NULL);
-	this->Shader_TerrainEditor->SetResource("tex6", NULL);
-	this->Shader_TerrainEditor->SetResource("tex7", NULL);
-	this->Shader_TerrainEditor->SetResource("blendMap0", NULL);
-	this->Shader_TerrainEditor->SetResource("blendMap1", NULL);
-	this->Shader_TerrainEditor->SetResource("AIMap", NULL);
-	this->Shader_TerrainEditor->Apply(0);*/
 }
 
 void DxManager::RenderDecals()
@@ -601,125 +540,7 @@ void DxManager::RenderDeferredGeoObjects()
 			}
 
 			if(D3DXVec3Length(&distance) < billboardRange || !staticMesh->HasBillboard())
-			{
-				//**TILLMAN TODO: ta bort shader variabler
-				/*MaloW::Array<MeshStrip*>* strips = staticMesh->GetStrips();
-		
-				// Per object
-				this->Shader_DeferredGeometry->SetInt("specialColor", staticMesh->GetSpecialColor());
-
-				// Set matrices
-				world = this->objects[i]->GetWorldMatrix();
-				wvp = world * view * proj;
-				D3DXMatrixInverse(&worldInverseTranspose, NULL, &world);
-				D3DXMatrixTranspose(&worldInverseTranspose, &worldInverseTranspose);
-
-				this->Shader_DeferredGeometry->SetMatrix("WVP", wvp);
-				this->Shader_DeferredGeometry->SetMatrix("worldMatrix", world);
-				this->Shader_DeferredGeometry->SetMatrix("worldMatrixInverseTranspose", worldInverseTranspose);
-
-				bool hasBeenCounted = false;
-				
-				
-				for(int u = 0; u < strips->size(); u++)
-				{
-					if(!staticMesh->IsStripCulled(u))
-					{
-						if(!hasBeenCounted)
-						{
-							CurrentRenderedMeshes++;
-							hasBeenCounted = true;
-						}
-
-						//Count vertices(debug) 
-						CurrentRenderedNrOfVertices += strips->get(u)->getNrOfVerts();
-
-						Object3D* obj = strips->get(u)->GetRenderObject();
-						this->Dx_DeviceContext->IASetPrimitiveTopology(obj->GetTopology());
-
-						// Setting lightning from material
-						this->Shader_DeferredGeometry->SetFloat4("SpecularColor", D3DXVECTOR4(strips->get(u)->GetMaterial()->SpecularColor, 1));
-						this->Shader_DeferredGeometry->SetFloat("SpecularPower", strips->get(u)->GetMaterial()->SpecularPower);
-						this->Shader_DeferredGeometry->SetFloat4("AmbientLight", D3DXVECTOR4(strips->get(u)->GetMaterial()->AmbientColor, 1));
-						this->Shader_DeferredGeometry->SetFloat4("DiffuseColor", D3DXVECTOR4(strips->get(u)->GetMaterial()->DiffuseColor, 1));
-
-						Buffer* verts = obj->GetVertBuff();
-						if(verts)
-							verts->Apply();
-
-						//Check if the mesh uses a texture resource.
-						if(obj->GetTextureResource() != NULL)
-						{
-							//Then check if it actually has a shader resource view.
-							if(ID3D11ShaderResourceView* texture = obj->GetTextureResource()->GetSRVPointer())///**TILLMAN
-							{
-								this->Shader_DeferredGeometry->SetBool("textured", true);
-								this->Shader_DeferredGeometry->SetResource("tex2D", texture);
-
-								if(obj->GetNormalMapResource())
-								{
-									if(ID3D11ShaderResourceView* normalMap = obj->GetNormalMapResource()->GetSRVPointer())
-									{
-										this->Shader_DeferredGeometry->SetBool("useNormalMap", true);
-										this->Shader_DeferredGeometry->SetResource("normalMap", normalMap);
-									}
-									else
-									{
-										this->Shader_DeferredGeometry->SetBool("useNormalMap", false);
-										this->Shader_DeferredGeometry->SetResource("normalMap", NULL);
-									}
-								}
-								else
-								{
-									this->Shader_DeferredGeometry->SetBool("useNormalMap", false);
-									this->Shader_DeferredGeometry->SetResource("normalMap", NULL);
-								}
-							}
-							else //else set texture variables to not be used
-							{
-								this->Shader_DeferredGeometry->SetBool("textured", false);
-								this->Shader_DeferredGeometry->SetResource("tex2D", NULL);
-								this->Shader_DeferredGeometry->SetBool("useNormalMap", false);
-								this->Shader_DeferredGeometry->SetResource("normalMap", NULL);
-							}
-						}
-						else //else set texture variables to not be used
-						{
-							this->Shader_DeferredGeometry->SetBool("textured", false);
-							this->Shader_DeferredGeometry->SetResource("tex2D", NULL);
-							this->Shader_DeferredGeometry->SetBool("useNormalMap", false);
-							this->Shader_DeferredGeometry->SetResource("normalMap", NULL);
-						}
-						Buffer* inds = obj->GetIndsBuff();
-						if(inds)
-							inds->Apply();
-			
-						this->Shader_DeferredGeometry->Apply(0);
-
-						//Draw
-						if(inds)
-						{
-							this->Dx_DeviceContext->DrawIndexed(inds->GetElementCount(), 0, 0);
-							//Count(debug)
-							CurrentNrOfDrawCalls++;
-						}
-						else if(verts)
-						{
-							this->Dx_DeviceContext->Draw(verts->GetElementCount(), 0);
-							//Count(debug)
-							CurrentNrOfDrawCalls++;
-						}
-						else
-						{
-							MaloW::Debug("WARNING: DxManagerDeferred: RenderDeferredGeometry(): Both index and vertex buffers were NULL for static mesh. ");
-						}
-						
-
-
-					}
-				}*/
-					
-						
+			{	
 				//As long as one strip has not been culled, add whole **mesh** //tillman opt - lägga till strip bara
 				MaloW::Array<MeshStrip*>* strips = staticMesh->GetStrips();
 				unsigned int index = 0;
@@ -762,9 +583,9 @@ void DxManager::RenderDeferredGeoObjects()
 	}
 	//once = false;
 	// Unbind resources static geometry:
-	this->Shader_DeferredGeometry->SetResource("normalMap", NULL);
-	this->Shader_DeferredGeometry->SetResource("tex2D", NULL);
-	this->Shader_DeferredGeometry->Apply(0);
+	//this->Shader_DeferredGeometry->SetResource("normalMap", NULL);
+	//this->Shader_DeferredGeometry->SetResource("tex2D", NULL);
+	this->Shader_DeferredGeometry->Apply(0); //TILLMAN - måste göras
 
 #ifdef MALOWTESTPERF
 	this->perf.PostMeasure("Renderer - Render Deferred Geo Objects Static", 4);
@@ -798,112 +619,6 @@ void DxManager::RenderDeferredGeoObjects()
 
 			if(D3DXVec3Length(&distance) < billboardRange || !animatedMesh->HasBillboard())
 			{
-				/*if(!animatedMesh->IsStripCulled(0)) //tillman**
-				{
-					//Count(debug)
-					for(int o = 0; o < animatedMesh->GetKeyFrames()->get(0)->meshStripsResource->GetMeshStripsPointer()->size(); ++o)
-					{
-						CurrentRenderedNrOfVertices += animatedMesh->GetKeyFrames()->get(0)->meshStripsResource->GetMeshStripsPointer()->get(o)->getNrOfVerts();
-					}
-					CurrentRenderedMeshes++;			
-
-					KeyFrame* one = NULL;
-					KeyFrame* two = NULL;
-					float t = 0.0f;
-					animatedMesh->SetCurrentTime(this->Timer * 1000.0f); //Timer is in seconds.
-					animatedMesh->GetCurrentKeyFrames(&one, &two, t);
-
-					MaloW::Array<MeshStrip*>* stripsOne = one->meshStripsResource->GetMeshStripsPointer();
-					MaloW::Array<MeshStrip*>* stripsTwo = two->meshStripsResource->GetMeshStripsPointer();
-		
-					// Set matrixes
-					world = animatedMesh->GetWorldMatrix();
-					wvp = world * view * proj;
-					D3DXMatrixInverse(&worldInverseTranspose, NULL, &world);
-					D3DXMatrixTranspose(&worldInverseTranspose, &worldInverseTranspose);
-		
-					this->Shader_DeferredAnimatedGeometry->SetMatrix("WVP", wvp);
-					this->Shader_DeferredAnimatedGeometry->SetMatrix("worldMatrix", world);
-					this->Shader_DeferredAnimatedGeometry->SetMatrix("worldMatrixInverseTranspose", worldInverseTranspose);
-					this->Shader_DeferredAnimatedGeometry->SetFloat("t", t);
-
-					this->Shader_DeferredAnimatedGeometry->SetInt("specialColor", animatedMesh->GetSpecialColor()); //*Tillman old: kraschar för att antalet animationer > antalet object
-
-					for(int u = 0; u < stripsOne->size(); u++)
-					{
-						Object3D* objOne = stripsOne->get(u)->GetRenderObject();
-						Object3D* objTwo = stripsTwo->get(u)->GetRenderObject();
-
-						this->Dx_DeviceContext->IASetPrimitiveTopology(objOne->GetTopology());
-
-						// Setting lightning from material
-						this->Shader_DeferredAnimatedGeometry->SetFloat4("SpecularColor", D3DXVECTOR4(stripsOne->get(u)->GetMaterial()->SpecularColor, 1)); //MaloW Opt
-						this->Shader_DeferredAnimatedGeometry->SetFloat("SpecularPower", stripsOne->get(u)->GetMaterial()->SpecularPower);
-						//this->Shader_DeferredAnimatedGeometry->SetFloat4("AmbientLight", D3DXVECTOR4(stripsOne->get(u)->GetMaterial()->AmbientColor, 1)); //MaloW Opt
-						this->Shader_DeferredAnimatedGeometry->SetFloat4("DiffuseColor", D3DXVECTOR4(stripsOne->get(u)->GetMaterial()->DiffuseColor, 1)); //MaloW Opt
-							
-						Buffer* vertsOne = objOne->GetVertBuff();
-						Buffer* vertsTwo = objTwo->GetVertBuff();
-
-						ID3D11Buffer* vertexBuffers [] = {vertsOne->GetBufferPointer(), vertsTwo->GetBufferPointer()};
-						UINT strides [] = {sizeof(VertexNormalMap), sizeof(VertexNormalMap)};
-						UINT offsets [] = {0, 0};
-
-						this->Dx_DeviceContext->IASetVertexBuffers(0, 2, vertexBuffers, strides, offsets);
-				
-						//Check if the mesh(es) uses a texture resource.
-						if(objOne->GetTextureResource() != NULL)
-						{
-							//Then check if it actually has a shader resource view.
-							if(ID3D11ShaderResourceView* texture = objOne->GetTextureResource()->GetSRVPointer())//**TILLMAN
-							{
-								this->Shader_DeferredAnimatedGeometry->SetBool("textured", true);
-								this->Shader_DeferredAnimatedGeometry->SetResource("tex2D", texture);
-
-								if(objOne->GetNormalMapResource())
-								{
-									if(ID3D11ShaderResourceView* normalMap = objOne->GetNormalMapResource()->GetSRVPointer())
-									{
-										this->Shader_DeferredAnimatedGeometry->SetBool("useNormalMap", true);
-										this->Shader_DeferredAnimatedGeometry->SetResource("normalMap", normalMap);
-									}
-									else
-									{
-										this->Shader_DeferredAnimatedGeometry->SetBool("useNormalMap", false);
-										this->Shader_DeferredAnimatedGeometry->SetResource("normalMap", NULL);
-									}
-								}
-								else
-								{
-									this->Shader_DeferredAnimatedGeometry->SetBool("useNormalMap", false);
-									this->Shader_DeferredAnimatedGeometry->SetResource("normalMap", NULL);
-								}
-							}
-							else //else set texture variables to not be used
-							{
-								this->Shader_DeferredAnimatedGeometry->SetBool("textured", false);
-								this->Shader_DeferredAnimatedGeometry->SetResource("tex2D", NULL);
-								this->Shader_DeferredAnimatedGeometry->SetBool("useNormalMap", false);
-								this->Shader_DeferredAnimatedGeometry->SetResource("normalMap", NULL);
-							}
-						}
-						else //else set texture variables to not be used
-						{
-							this->Shader_DeferredAnimatedGeometry->SetBool("textured", false);
-							this->Shader_DeferredAnimatedGeometry->SetResource("tex2D", NULL);
-							this->Shader_DeferredAnimatedGeometry->SetBool("useNormalMap", false);
-							this->Shader_DeferredAnimatedGeometry->SetResource("normalMap", NULL);
-						}
-
-						this->Shader_DeferredAnimatedGeometry->Apply(0);
-						//Draw
-						this->Dx_DeviceContext->Draw(vertsOne->GetElementCount(), 0);
-
-						//Count(debug)
-						CurrentNrOfDrawCalls++;
-					}
-				}*/
-
 				//As long as one strip has not been culled, add whole **mesh** //tillman opt - lägga till strip bara
 				MaloW::Array<MeshStrip*>* strips = animatedMesh->GetStrips();
 				unsigned int index = 0;
@@ -943,8 +658,8 @@ void DxManager::RenderDeferredGeoObjects()
 		}
 	}
 	//Unbind resources animated geometry:
-	this->Shader_DeferredAnimatedGeometry->SetResource("tex2D", NULL);
-	this->Shader_DeferredAnimatedGeometry->Apply(0);
+	//this->Shader_DeferredAnimatedGeometry->SetResource("tex2D", NULL);
+	//this->Shader_DeferredAnimatedGeometry->Apply(0);
 
 #ifdef MALOWTESTPERF
 	this->perf.PostMeasure("Renderer - Render Deferred Geo Objects Animated", 4);
@@ -1067,11 +782,7 @@ void DxManager::RenderDeferredGeometryInstanced()
 		this->Shader_DeferredAnimatedGeometryInstanced->SetFloat3("g_CamPos", this->camera->GetOldPos());
 		this->Shader_DeferredAnimatedGeometryInstanced->SetMatrix("g_CamViewProj", this->camera->GetViewProjMatrix());
 		//"Set" instance buffer
-		ID3D11Buffer* bufferPointers[3]; //tillman ev todo
-		/*unsigned int strides[3] = { sizeof(VertexNormalMapCompressed1), 
-									sizeof(VertexNormalMapCompressed1), 
-									sizeof(AnimatedStripData::AnimatedInstancedDataStruct)};
-		*/
+		ID3D11Buffer* bufferPointers[3];
 		unsigned int strides[3] = { sizeof(VertexNormalMap), 
 			sizeof(VertexNormalMap), 
 			sizeof(AnimatedStripData::AnimatedInstancedDataStruct)};
@@ -1131,7 +842,6 @@ void DxManager::RenderDeferredGeometryInstanced()
 			}
 
 			//Change vertex buffers and set them and the instance buffer.
-			//**TILLMAN todo: vertex struct mismatch**
 			bufferPointers[0] = renderObjectOne->GetVertexBufferResource()->GetBufferPointer()->GetBufferPointer();
 			bufferPointers[1] = renderObjectTwo->GetVertexBufferResource()->GetBufferPointer()->GetBufferPointer();
 			this->Dx_DeviceContext->IASetVertexBuffers(0, 3, bufferPointers, strides, offsets);
@@ -1244,13 +954,8 @@ void DxManager::RenderDeferredPerPixel()
 			this->Shader_DeferredLightning->SetStructMemberAtIndexAsMatrix(l, "cascades", "viewProj", lvp);
 
 		}
-
 	}
 
-
-
-
-	
 	// Set sun-settings
 	if(this->useSun) 
 	{
@@ -1278,15 +983,12 @@ void DxManager::RenderDeferredPerPixel()
 	this->Shader_DeferredLightning->SetInt("windowHeight", this->params.WindowHeight);
 		
 
-
-
 	//ssao.fx:
 	// this->ssao->PreRender(this->Shader_DeferredLightning, this->params, this->camera);
 
 	this->Shader_DeferredLightning->Apply(0);
 	
 	this->Dx_DeviceContext->Draw(1, 0);
-
 	
 	// Unbind resources:
 	this->Shader_DeferredLightning->SetResource("Texture", NULL);
@@ -1302,7 +1004,7 @@ void DxManager::RenderDeferredPerPixel()
 		this->Shader_DeferredLightning->SetResourceAtIndex(i, "CascadedShadowMap", NULL);
 
 	// Unbind SSAO
-	this->ssao->PostRender(this->Shader_DeferredLightning);
+	//this->ssao->PostRender(this->Shader_DeferredLightning);
 
 	this->Shader_DeferredLightning->Apply(0);
 }
@@ -1677,9 +1379,6 @@ void DxManager::RenderDeferredPerPixelTranslucent()
 	}
 
 
-
-
-	
 	// Set sun-settings
 	if(this->useSun) 
 	{
@@ -1705,8 +1404,6 @@ void DxManager::RenderDeferredPerPixelTranslucent()
 	this->Shader_DeferredPerPixelTranslucent->SetFloat("timerMillis", this->Timer);
 	this->Shader_DeferredPerPixelTranslucent->SetInt("windowWidth", this->params.WindowWidth);
 	this->Shader_DeferredPerPixelTranslucent->SetInt("windowHeight", this->params.WindowHeight);
-		
-
 
 
 	//ssao.fx:
@@ -1731,7 +1428,7 @@ void DxManager::RenderDeferredPerPixelTranslucent()
 		this->Shader_DeferredPerPixelTranslucent->SetResourceAtIndex(i, "CascadedShadowMap", NULL);
 
 	// Unbind SSAO
-	this->ssao->PostRender(this->Shader_DeferredPerPixelTranslucent);
+	//this->ssao->PostRender(this->Shader_DeferredPerPixelTranslucent);
 
 	this->Shader_DeferredPerPixelTranslucent->Apply(0);
 }
