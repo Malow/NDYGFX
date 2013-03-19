@@ -130,6 +130,8 @@ public:
 
 	// Get Strips
 	virtual MaloW::Array<MeshStrip*>* GetStrips() = 0;
+
+	virtual void RotateVectorByMeshesRotation(Vector3& vec);
 };
 
 class ParticleMesh

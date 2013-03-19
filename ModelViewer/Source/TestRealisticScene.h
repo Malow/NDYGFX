@@ -16,6 +16,8 @@ private:
 	WorldAnchor* wa;
 	WorldRenderer* wr;
 	int path;
+	float enclosingfog;
+	Vector3 fogCenter;
 
 public:
 	TestRealisticScene() {};
@@ -47,7 +49,7 @@ void TestRealisticScene::PreTest()
 	GetGraphics()->ShowLoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 1.0f, 1.0f);
 
 	LoadEntList("Entities.txt");
-	world = new World(this, "Media/Maps/Map_01_v85.map", true);
+	world = new World(this, "Media/Maps/Map_01_v87.map", true);
 	GetGraphics()->GetCamera()->SetPosition(Vector3(world->GetWorldCenter().x, 20.0f, world->GetWorldCenter().y));
 	path = 0;
 
@@ -68,6 +70,11 @@ void TestRealisticScene::PreTest()
 
 	
 	Vector3 camPos = GetGraphics()->GetCamera()->GetPosition();
+	this->enclosingfog = 300.0f;
+	this->fogCenter = camPos;
+	GetGraphics()->SetEnclosingFogEffect(this->fogCenter, this->enclosingfog);
+
+	//GetGraphics()->SetSunLightProperties(Vector3(0.801525652, -0.401229233, -0.443363965));
 	
 	for(int i = 0; i < 50; i++)
 	{
@@ -106,7 +113,11 @@ void TestRealisticScene::PreTest()
 	
 	for(int i = 0; i < 50; i++)
 	{
-		iDecal* wp = GetGraphics()->CreateDecal(camPos + Vector3(i * 5, -10, 0), "Media/BloodTexture.png", Vector3(0,-1,0), Vector3(1, 0, 0));
+		Vector3 decPos = camPos + Vector3(i * 5, -10, 0);
+		decPos.y = world->GetHeightAt(Vector2(decPos.x, decPos.z));
+		iDecal* wp = GetGraphics()->CreateDecal(decPos, "Media/BloodTexture.png", Vector3(0,-1,0), Vector3(1, 0, 0));
+		if(i % 2 == 0)
+			wp->SetSize(2.0f);
 	}
 
 	GetGraphics()->SetGrassFilePath("Media/Grass.png");
@@ -119,12 +130,13 @@ bool TestRealisticScene::RunTest(float diff)
 {
 	if(GetGraphics()->GetKeyListener()->IsPressed('8'))
 	{
-		GetGraphics()->GetEngineParameters().FarClip += diff;
+		this->enclosingfog += diff * 0.1f;
 	}
 	if(GetGraphics()->GetKeyListener()->IsPressed('9'))
 	{
-		GetGraphics()->GetEngineParameters().FarClip -= diff;
+		this->enclosingfog -= diff * 0.1f;
 	}
+	GetGraphics()->SetEnclosingFogEffect(this->fogCenter, this->enclosingfog);
 
 	wa->position = GetGraphics()->GetCamera()->GetPosition().GetXZ();
 	wa->radius = GetGraphics()->GetEngineParameters().FarClip;
@@ -208,6 +220,9 @@ bool TestRealisticScene::RunTest(float diff)
 	{
 		if(fesd)
 		{
+			Vector3 asd = GetGraphics()->GetCamera()->GetForward();
+			int qweqwe = 0;
+
 
 			if(qual % 2 == 0)
 			{
@@ -217,9 +232,8 @@ bool TestRealisticScene::RunTest(float diff)
 			{
 				
 			}
-			GetGraphics()->ReloadShaders(22);
-			GetGraphics()->ReloadShaders(23);
-			//GetGraphics()->ReloadShaders(1);
+			GetGraphics()->ReloadShaders(26);
+			GetGraphics()->ReloadShaders(19);
 			//MaloW::Debug("Diff: " + MaloW::convertNrToString(totDiff / nrofdiffs));
 			//GetGraphics()->ChangeShadowQuality(qual);
 			//secModel->SetPosition(Vector3(10, 10, 10));

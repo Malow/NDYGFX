@@ -663,6 +663,8 @@ void DxManager::RenderCascadedShadowMap()
 	this->perf.PreMeasure("Renderer - Render Cascaded Shadowmap Terrain", 4);
 #endif*/
 			//Terrain
+			//Per frame:
+			this->Shader_ShadowMap->SetFloat3("gSunDir", this->sun.direction);
 			for(unsigned int i = 0; i < this->terrains.size(); i++)
 			{
 				//If the terrain has not been culled for shadowing, render it to shadow map.
@@ -818,7 +820,7 @@ void DxManager::RenderCascadedShadowMap()
 							bool oneStripIsNotCulled = false;
 							while(!oneStripIsNotCulled && index < strips->size())
 							{
-								if(!staticMesh->IsStripCulled(index++))
+								if(!staticMesh->IsStripShadowCulled(index++))
 								{
 									oneStripIsNotCulled = true;
 									currentRenderedMeshShadows++;
@@ -840,7 +842,7 @@ void DxManager::RenderCascadedShadowMap()
 							bool oneStripIsNotCulled = false;
 							while(!oneStripIsNotCulled && index < strips->size())
 							{
-								if(!staticMesh->IsStripCulled(index++))
+								if(!staticMesh->IsStripShadowCulled(index++))
 								{
 									oneStripIsNotCulled = true;
 									currentRenderedMeshShadows++;
@@ -968,7 +970,7 @@ void DxManager::RenderCascadedShadowMap()
 							bool oneStripIsNotCulled = false;
 							while(!oneStripIsNotCulled && index < strips->size())
 							{
-								if(!animatedMesh->IsStripCulled(index++))
+								if(!animatedMesh->IsStripShadowCulled(index++))
 								{
 									oneStripIsNotCulled = true;
 									currentRenderedMeshShadows++;
@@ -990,7 +992,7 @@ void DxManager::RenderCascadedShadowMap()
 							bool oneStripIsNotCulled = false;
 							while(!oneStripIsNotCulled && index < strips->size())
 							{
-								if(!animatedMesh->IsStripCulled(index++))
+								if(!animatedMesh->IsStripShadowCulled(index++))
 								{
 									oneStripIsNotCulled = true;
 									currentRenderedMeshShadows++;
@@ -1132,7 +1134,10 @@ void DxManager::RenderCascadedShadowMapInstanced()
 			unsigned int strides[2] = {sizeof(VertexNormalMap), sizeof(StripData::InstancedDataStruct)};
 			unsigned int offsets[2] = {0, 0};
 			bufferPointers[1] = this->instancingHelper->GetStripInstanceBuffer();	
-		
+			
+			//Per frame:
+			this->Shader_ShadowMapInstanced->SetFloat3("g_SunDir", this->sun.direction);
+
 			//Per cascade: //**TILLMAN opt, flytta ut denna forloop (rita alla instansierat per cascade)
 			for(int i = 0; i < this->csm->GetNrOfCascadeLevels(); ++i)
 			{
@@ -1218,7 +1223,10 @@ void DxManager::RenderCascadedShadowMapInstanced()
 			unsigned int strides[3] = {sizeof(VertexNormalMap), sizeof(VertexNormalMap), sizeof(AnimatedStripData::AnimatedInstancedDataStruct)};
 			unsigned int offsets[3] = {0, 0, 0};
 			bufferPointers[2] = this->instancingHelper->GetAnimatedStripInstanceBuffer();	
-		
+			
+			//Per frame:
+			this->Shader_ShadowMapAnimatedInstanced->SetFloat3("gSunDir", this->sun.direction);
+
 			//Per cascade: //**TILLMAN opt, flytta ut denna forloop (rita alla instansierat per cascade)
 			for(int i = 0; i < this->csm->GetNrOfCascadeLevels(); ++i)
 			{
@@ -1228,7 +1236,7 @@ void DxManager::RenderCascadedShadowMapInstanced()
 				this->Dx_DeviceContext->RSSetViewports(1, &wp);
 
 				//Set variables
-				this->Shader_ShadowMapAnimatedInstanced->SetMatrix("g_LightViewProj", this->csm->GetViewProjMatrix(i));
+				this->Shader_ShadowMapAnimatedInstanced->SetMatrix("gLightViewProj", this->csm->GetViewProjMatrix(i));
 
 				//Per instance group:
 				for(unsigned int j = 0; j < this->instancingHelper->GetNrOfAnimatedStripGroups(); ++j)
@@ -1247,19 +1255,19 @@ void DxManager::RenderCascadedShadowMapInstanced()
 					{
 						if(renderObjectOne->GetTextureResource()->GetSRVPointer() != NULL)
 						{
-							this->Shader_ShadowMapAnimatedInstanced->SetResource("g_DiffuseMap0", renderObjectOne->GetTextureResource()->GetSRVPointer());
-							this->Shader_ShadowMapAnimatedInstanced->SetBool("g_IsTextured", true);
+							this->Shader_ShadowMapAnimatedInstanced->SetResource("gDiffuseMap0", renderObjectOne->GetTextureResource()->GetSRVPointer());
+							this->Shader_ShadowMapAnimatedInstanced->SetBool("gIsTextured", true);
 						}
 						else
 						{
-							this->Shader_ShadowMapAnimatedInstanced->SetResource("g_DiffuseMap0", NULL);
-							this->Shader_ShadowMapAnimatedInstanced->SetBool("g_IsTextured", false);
+							this->Shader_ShadowMapAnimatedInstanced->SetResource("gDiffuseMap0", NULL);
+							this->Shader_ShadowMapAnimatedInstanced->SetBool("gIsTextured", false);
 						}
 					}
 					else
 					{
-						this->Shader_ShadowMapAnimatedInstanced->SetResource("g_DiffuseMap0", NULL);
-						this->Shader_ShadowMapAnimatedInstanced->SetBool("g_IsTextured", false);
+						this->Shader_ShadowMapAnimatedInstanced->SetResource("gDiffuseMap0", NULL);
+						this->Shader_ShadowMapAnimatedInstanced->SetBool("gIsTextured", false);
 					}
 
 					//Set vertex buffers
@@ -1669,32 +1677,44 @@ void DxManager::RenderEnclosingFog()
 {
 	// only draw fog if there should be fog drawn.
 	Vector3 camToFogCenter = this->camera->GetPosition() - this->fogCenter;
-	float distanceToFogCenter = camToFogCenter.GetLength();
+	float distanceToFogCenter = camToFogCenter.GetLength() + this->params.FarClip;
 	if(distanceToFogCenter > this->fogRadius)
 	{
-		float fogfactor = 0.0f;
+		distanceToFogCenter = camToFogCenter.GetLength();
+		float overallFogFactor = 0.0f;
 		float maxFog = this->fogRadius * this->fogFadeFactor;
 		if(distanceToFogCenter > this->fogRadius + maxFog)
-			fogfactor = 1.0f;
+			overallFogFactor = 1.0f;
 		else
 		{
 			float curFog = distanceToFogCenter - this->fogRadius;
 
-			fogfactor = curFog / maxFog;
+			overallFogFactor = curFog / maxFog;
 
-			fogfactor += fogfactor - (fogfactor * fogfactor);	
+			overallFogFactor += overallFogFactor - (overallFogFactor * overallFogFactor);	
 			// Exponential fog, making it intense quickly at first and slow at the end.
 		}
+		if(overallFogFactor < 0.0f)
+			overallFogFactor = 0.0f;
+
 
 		this->Dx_DeviceContext->OMSetRenderTargets(1, &this->Dx_RenderTargetView, this->Dx_DepthStencilView);
 		this->Dx_DeviceContext->RSSetViewports(1, &this->Dx_Viewport);
 		this->Dx_DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 
-		this->Shader_FogEnclosement->SetFloat("fogfactor", fogfactor);
+		this->Shader_FogEnclosement->SetResource("Position", this->Dx_GbufferSRVs[2]);
+		this->Shader_FogEnclosement->SetFloat("fogRadius", this->fogRadius);
+		this->Shader_FogEnclosement->SetFloat("fogFadeFactor", this->fogFadeFactor);
+		this->Shader_FogEnclosement->SetFloat3("center", D3DXVECTOR3(this->fogCenter.x, this->fogCenter.y, this->fogCenter.z));
+		this->Shader_FogEnclosement->SetFloat("overallFogFactor", overallFogFactor);
 		this->Shader_FogEnclosement->Apply(0);
 
 		this->Dx_DeviceContext->Draw(1, 0);
+
+		this->Shader_FogEnclosement->SetResource("Position", NULL);
+		this->Shader_FogEnclosement->Apply(0);
 	}
+
 }
 
 void DxManager::Render()
@@ -1823,8 +1843,6 @@ void DxManager::Render()
 #ifdef MALOWTESTPERF
 	this->perf.PostMeasure("Renderer - Render Skybox", 2);
 #endif
-
-	//this->RenderParticles();
 
 #ifdef MALOWTESTPERF
 	this->perf.PreMeasure("Renderer - Render Enclosing Fog", 2);

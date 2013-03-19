@@ -44,10 +44,6 @@ WaterPlane::~WaterPlane()
 	{
 		GetResourceManager()->DeleteTextureResource(this->textureResource);
 	}
-	if(this->textureResource2) 
-	{
-		GetResourceManager()->DeleteTextureResource(this->textureResource2);
-	}
 }
 
 MaloW::Array<MeshStrip*>* WaterPlane::GetStrips()
