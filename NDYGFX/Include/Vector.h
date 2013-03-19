@@ -128,14 +128,16 @@ public:
 
 	inline float GetLength() const
 	{
-		return sqrt(pow(this->x, 2) + pow(this->y, 2));
+		return sqrtf(this->x * this->x + this->y * this->y);
 	}
 
-	inline void Normalize()
+	inline Vector2& Normalize()
 	{
 		float length = this->GetLength();
 		this->x /= length;
 		this->y /= length;
+
+		return *this;
 	}
 
 	inline bool operator<( const Vector2& v ) const
@@ -240,10 +242,10 @@ public:
 
 	inline float GetLength() const
 	{
-		return sqrt(pow(this->x, 2) + pow(this->y, 2) + pow(this->z, 2));
+		return sqrtf(this->x * this->x + this->y * this->y + this->z * this->z);
 	}
 
-	inline Vector3 Normalize()
+	inline Vector3& Normalize()
 	{
 		float length = this->GetLength();
 			
@@ -452,10 +454,10 @@ public:
 
 	inline float GetLength() const
 	{
-		return sqrt(pow(this->x, 2) + pow(this->y, 2) + pow(this->z, 2) + pow(this->w, 2));
+		return sqrtf(this->x * this->x + this->y * this->y + this->z * this->z + this->w * this->w);
 	}
 
-	inline void Normalize()
+	inline Vector4& Normalize()
 	{
 		float length = this->GetLength();
 
@@ -466,6 +468,8 @@ public:
 			this->z /= length;
 			this->w /= length;
 		}
+
+		return *this;
 	}
 
 	inline bool operator<( const Vector4& v ) const

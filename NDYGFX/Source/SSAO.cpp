@@ -125,7 +125,7 @@ void SSAO::Init(ID3D11Device* device, ID3D11DeviceContext*)
 	// x,y,z = root(root((radius^2 / 3)^2)
 	// = root((radius^2 / 3)
 
-	//float minMax = sqrt((this->mRadius * this->mRadius) / 3.0f);
+	//float minMax = sqrtf((this->mRadius * this->mRadius) / 3.0f);
 
 	//this->mRndTex = texMgr.CreateRndTex1DVec3(this->mNrOfSamples, -minMax, minMax);
 }				

@@ -126,7 +126,7 @@ void UpdateClipRegion(float lc,          // Light x/y coordinate (view space)
     float lcSqPluslzSq = lc * lc + lz * lz;
 	float d = rSq * lc * lc - lcSqPluslzSq * (rSq - lz * lz);
 
-    if (d > 0) {
+    if (d > 0.0f) {
         float a = lightRadius * lc;
         float b = sqrt(d);
         float nx0 = (a + b) / lcSqPluslzSq;

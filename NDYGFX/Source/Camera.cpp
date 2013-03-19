@@ -108,9 +108,9 @@ void Camera::Move(Vector3 moveBy)
 	this->MoveToTerrain();
 }
 
-D3DXVECTOR3 Camera::NormalizeVector(D3DXVECTOR3 vec)
+D3DXVECTOR3& Camera::NormalizeVector(D3DXVECTOR3& vec)
 {
-	float length = sqrt(pow(vec.x, 2) + pow(vec.y, 2) + pow(vec.z, 2));
+	float length = sqrtf(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z);
 	vec.x /= length;
 	vec.y /= length;
 	vec.z /= length;

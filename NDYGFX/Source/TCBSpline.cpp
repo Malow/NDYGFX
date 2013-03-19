@@ -216,10 +216,10 @@ D3DXVECTOR3 TCBSpline::GetPoint(float t) const
 		d0 = *this->mDestination[cpIndex];			
 		d1 = *this->mDestination[cpIndex + 1];		
 
-		a0 = 2.0f * pow(localT, 3.0f) - 3.0f * pow(localT, 2.0f) + 1;
-		a1 = pow(localT, 3.0f) - 2.0f * pow(localT, 2.0f) + localT;
-		a2 = pow(localT, 3.0f) - pow(localT, 2.0f);
-		a3 = -2.0f * pow(localT, 3.0f) + 3.0f * pow(localT, 2.0f);
+		a0 = 2.0f * powf(localT, 3.0f) - 3.0f * powf(localT, 2.0f) + 1;
+		a1 = powf(localT, 3.0f) - 2.0f * powf(localT, 2.0f) + localT;
+		a2 = powf(localT, 3.0f) - powf(localT, 2.0f);
+		a3 = -2.0f * powf(localT, 3.0f) + 3.0f * powf(localT, 2.0f);
 
 		p = a0 * cp0 +
 			a1 * d0 +

@@ -46,8 +46,8 @@ HRESULT Light::InitShadowMap(ID3D11Device* g_Device, int quality)
 	// Shadow Maps
 	//create the depth stencil
 
-	int width = (int)(256 * pow(2.0f, quality/2));
-	int height = (int)(256 * pow(2.0f, quality/2));
+	int width = (int)(256 * powf(2.0f, (float)quality * 0.5f));
+	int height = (int)(256 * powf(2.0f, (float)quality * 0.5f));
 
 	// Shadow Maps
 	//create the depth stencil

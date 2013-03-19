@@ -282,9 +282,9 @@ bool PhysicsEngine::DoCollisionSphereVsRay(BoundingSphere bs, D3DXMATRIX world, 
 
 	float c = v.GetDotProduct(v) - (pow(rad, 2));
 
-	if(pow(b,  2) - c > 0)
+	if(b * b - c > 0)
 		return true;
-	else if(pow(b,  2) - c == 0)
+	else if(b * b - c == 0)
 		return true;
 	else
 		return false;
@@ -336,7 +336,7 @@ CollisionData PhysicsEngine::DoCollisionSphereVsRayDetailed(BoundingSphere bs, D
 		if(vSquared <= rSquared)
 		{
 			rayDirection.Normalize();
-			collisionPoint = C + v - (rayDirection * sqrt(rSquared-vSquared));
+			collisionPoint = C + v - (rayDirection * sqrtf(rSquared - vSquared));
 			tempCD.collision = true;
 		}
 		else

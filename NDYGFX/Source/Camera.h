@@ -51,7 +51,7 @@ protected:
 	bool activeWindowDisabling;
 	bool moveOnlyInXZ;
 
-	D3DXVECTOR3 NormalizeVector(D3DXVECTOR3 vec);
+	inline D3DXVECTOR3& NormalizeVector(D3DXVECTOR3& vec);
 
 public:
 	Camera(HWND g_hWnd, GraphicsEngineParams &params);

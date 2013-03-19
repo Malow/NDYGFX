@@ -10,7 +10,7 @@ void CalculateNormal(D3DXVECTOR3 tangent, D3DXVECTOR3 binormal, D3DXVECTOR3& nor
 	normal.z = (tangent.x * binormal.y) - (tangent.y * binormal.x);
 
 	// Calculate the length of the normal.
-	length = sqrt((normal.x * normal.x) + (normal.y * normal.y) + (normal.z * normal.z));
+	length = sqrtf((normal.x * normal.x) + (normal.y * normal.y) + (normal.z * normal.z));
 
 	// Normalize the normal.
 	normal.x = normal.x / length;
@@ -58,7 +58,7 @@ void CalculateTangentBinormal(VertexNormalMap vertex1, VertexNormalMap vertex2, 
 	binormal.z = (tuVector[0] * vector2[2] - tuVector[1] * vector1[2]) * den;
 
 	// Calculate the length of this normal.
-	length = sqrt((tangent.x * tangent.x) + (tangent.y * tangent.y) + (tangent.z * tangent.z));
+	length = sqrtf((tangent.x * tangent.x) + (tangent.y * tangent.y) + (tangent.z * tangent.z));
 
 	// Normalize the normal and then store it
 	tangent.x = tangent.x / length;
@@ -66,7 +66,7 @@ void CalculateTangentBinormal(VertexNormalMap vertex1, VertexNormalMap vertex2, 
 	tangent.z = tangent.z / length;
 
 	// Calculate the length of this normal.
-	length = sqrt((binormal.x * binormal.x) + (binormal.y * binormal.y) + (binormal.z * binormal.z));
+	length = sqrtf((binormal.x * binormal.x) + (binormal.y * binormal.y) + (binormal.z * binormal.z));
 
 	// Normalize the normal and then store it
 	binormal.x = binormal.x / length;

@@ -216,8 +216,8 @@ void CascadedShadowMap::CalcCascadePlanes()
 void CascadedShadowMap::Init(ID3D11Device* g_Device, int quality)
 {
 	this->quality = quality;
-	int width = (int)(256.0f * pow(2.0f, quality / 2.0f));
-	int height = (int)(256.0f * pow(2.0f, quality / 2.0f));
+	int width = (int)(256.0f * powf(2.0f, (float)quality * 0.5f));
+	int height = (int)(256.0f * powf(2.0f, (float)quality * 0.5f));
 
 	for(int i = 0; i < SHADOW_MAP_CASCADE_COUNT; i++)
 	{
@@ -291,8 +291,8 @@ void CascadedShadowMap::PreRender(D3DXVECTOR3& sunLight, Camera* cam)
 void CascadedShadowMap::ResizeShadowmaps(ID3D11Device* g_Device, int qual )
 {
 	this->quality = qual;
-	int width = (int)(256.0f * pow(2.0f, quality / 2.0f));
-	int height = (int)(256.0f * pow(2.0f, quality / 2.0f));
+	int width = (int)(256.0f * powf(2.0f, (float)quality * 0.5f));
+	int height = (int)(256.0f * powf(2.0f, (float)quality * 0.5f));
 
 
 	for(int i = 0; i < SHADOW_MAP_CASCADE_COUNT; i++)

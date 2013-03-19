@@ -79,7 +79,7 @@ float4 PSScene(PSIn input) : SV_Target
 			blurColor.xyz += sceneTex.Sample(LinearWrapSampler, center + offset + float2(i * dX, j * dY)).xyz;
 		}
 	}
-	blurColor.xyz /= pow(blurSize, 2);
+	blurColor.xyz /= (blurSize * blurSize);
 
 	//make it slightly more visible by ever so slightly reduce the brightness
 	blurColor.xyz -= 0.025f;
