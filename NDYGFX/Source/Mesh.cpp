@@ -275,6 +275,18 @@ void Mesh::ResetRotation()
 	this->rotQuat = D3DXQUATERNION(0, 0, 0, 1);
 }
 
+void Mesh::RotateVectorByMeshesRotation( Vector3& vec )
+{
+	D3DXMATRIX QuatMat;
+	D3DXMatrixRotationQuaternion(&QuatMat, &this->rotQuat); 
+	D3DXVECTOR4 o;
+	D3DXVECTOR3 i = D3DXVECTOR3(vec.x, vec.y, vec.z);
+	D3DXVec3Transform(&o, &i, &QuatMat);
+	vec.x = o.x;
+	vec.y = o.y;
+	vec.z = o.z;
+}
+
 //**TILLMAN**
 /*
 	//**tillman
