@@ -70,6 +70,7 @@ struct PSout
 	float4 Specular			: SV_TARGET3;
 };
 
+
 /*
 RTs:
 1: Texture XYZ, W Special Color

@@ -82,10 +82,12 @@ struct PsIn
 
 matrix WorldViewProj;
 matrix World;
+float size;
 
 PsIn VSScene(VsIn In)
 {
 	PsIn Out;
+	In.Pos.xy *= size;
 	Out.Position = mul(In.Pos, WorldViewProj);
 	Out.WorldPos = mul(In.Pos, World);
 	return Out;
@@ -99,6 +101,7 @@ Texture2D Decal;
 float4x4 ScreenToLocal;
 float2 PixelSize;
 float opacity;
+
 
 float2 CS2TS(float2 cs)
 {
@@ -117,6 +120,7 @@ float4 PSScene(PsIn In) : SV_TARGET
 
 	float4 pixelClipPosInTexSpace = mul(float4(pixelWorldPos, 1.0f), ScreenToLocal);
 	pixelClipPosInTexSpace.xy /= pixelClipPosInTexSpace.w;
+	pixelClipPosInTexSpace.xy /= size;
 
 	float4 decal = Decal.Sample(linearSampler, CS2TS(pixelClipPosInTexSpace));
 	if(decal.w < 0.5f)

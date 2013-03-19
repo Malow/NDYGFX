@@ -545,6 +545,7 @@ void DxManager::RenderDecals()
 		this->Shader_Decal->SetResource("Decal", this->decals[i]->GetStrip()->GetRenderObject()->GetTextureResource()->GetSRVPointer());
 		this->Shader_Decal->SetMatrix("ScreenToLocal", this->decals[i]->GetMatrix());
 		this->Shader_Decal->SetFloat("opacity", this->decals[i]->GetOpacity());
+		this->Shader_Decal->SetFloat("size", this->decals[i]->GetSize());
 
 		Buffer* verts = this->decals[i]->GetStrip()->GetRenderObject()->GetVertBuff();
 		verts->Apply();
@@ -1530,7 +1531,7 @@ void DxManager::RenderDeferredGeoTranslucent()
 	float ClearColor2[4] = {-1.0f, -1.0f, -1.0f, -1.0f};
 	this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_GbufferRTs[0], ClearColor1);
 	this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_GbufferRTs[1], ClearColor2);
-	this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_GbufferRTs[2], ClearColor2);
+	//this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_GbufferRTs[2], ClearColor2);
 	this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_GbufferRTs[3], ClearColor2);
 
 	//Static meshes

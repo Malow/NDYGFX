@@ -1669,32 +1669,44 @@ void DxManager::RenderEnclosingFog()
 {
 	// only draw fog if there should be fog drawn.
 	Vector3 camToFogCenter = this->camera->GetPosition() - this->fogCenter;
-	float distanceToFogCenter = camToFogCenter.GetLength();
+	float distanceToFogCenter = camToFogCenter.GetLength() + this->params.FarClip;
 	if(distanceToFogCenter > this->fogRadius)
 	{
-		float fogfactor = 0.0f;
+		distanceToFogCenter = camToFogCenter.GetLength();
+		float overallFogFactor = 0.0f;
 		float maxFog = this->fogRadius * this->fogFadeFactor;
 		if(distanceToFogCenter > this->fogRadius + maxFog)
-			fogfactor = 1.0f;
+			overallFogFactor = 1.0f;
 		else
 		{
 			float curFog = distanceToFogCenter - this->fogRadius;
 
-			fogfactor = curFog / maxFog;
+			overallFogFactor = curFog / maxFog;
 
-			fogfactor += fogfactor - (fogfactor * fogfactor);	
+			overallFogFactor += overallFogFactor - (overallFogFactor * overallFogFactor);	
 			// Exponential fog, making it intense quickly at first and slow at the end.
 		}
+		if(overallFogFactor < 0.0f)
+			overallFogFactor = 0.0f;
+
 
 		this->Dx_DeviceContext->OMSetRenderTargets(1, &this->Dx_RenderTargetView, this->Dx_DepthStencilView);
 		this->Dx_DeviceContext->RSSetViewports(1, &this->Dx_Viewport);
 		this->Dx_DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 
-		this->Shader_FogEnclosement->SetFloat("fogfactor", fogfactor);
+		this->Shader_FogEnclosement->SetResource("Position", this->Dx_GbufferSRVs[2]);
+		this->Shader_FogEnclosement->SetFloat("fogRadius", this->fogRadius);
+		this->Shader_FogEnclosement->SetFloat("fogFadeFactor", this->fogFadeFactor);
+		this->Shader_FogEnclosement->SetFloat3("center", D3DXVECTOR3(this->fogCenter.x, this->fogCenter.y, this->fogCenter.z));
+		this->Shader_FogEnclosement->SetFloat("overallFogFactor", overallFogFactor);
 		this->Shader_FogEnclosement->Apply(0);
 
 		this->Dx_DeviceContext->Draw(1, 0);
+
+		this->Shader_FogEnclosement->SetResource("Position", NULL);
+		this->Shader_FogEnclosement->Apply(0);
 	}
+
 }
 
 void DxManager::Render()
@@ -1823,8 +1835,6 @@ void DxManager::Render()
 #ifdef MALOWTESTPERF
 	this->perf.PostMeasure("Renderer - Render Skybox", 2);
 #endif
-
-	//this->RenderParticles();
 
 #ifdef MALOWTESTPERF
 	this->perf.PreMeasure("Renderer - Render Enclosing Fog", 2);
