@@ -1603,35 +1603,23 @@ void DxManager::RenderDeferredGeoTranslucent()
 			if(verts)
 				verts->Apply();
 
-			if(wp->GetTextureResource() != NULL && wp->GetTextureResource2() != NULL)
+			if(wp->GetTextureResource() != NULL)
 			{
 				if(ID3D11ShaderResourceView* texture = wp->GetTextureResource()->GetSRVPointer())
 				{
-					if(ID3D11ShaderResourceView* texture2 = wp->GetTextureResource2()->GetSRVPointer())//**TILLMAN
-					{
-						this->Shader_DeferredGeoTranslucent->SetBool("textured", true);
-						this->Shader_DeferredGeoTranslucent->SetResource("tex2D", texture);
-						this->Shader_DeferredGeoTranslucent->SetResource("tex2D2", texture2);
-					}
-					else
-					{
-						this->Shader_DeferredGeoTranslucent->SetBool("textured", false);
-						this->Shader_DeferredGeoTranslucent->SetResource("tex2D", NULL);
-						this->Shader_DeferredGeoTranslucent->SetResource("tex2D2", NULL);
-					}
+					this->Shader_DeferredGeoTranslucent->SetBool("textured", true);
+					this->Shader_DeferredGeoTranslucent->SetResource("tex2D", texture);					
 				}
 				else
 				{
 					this->Shader_DeferredGeoTranslucent->SetBool("textured", false);
 					this->Shader_DeferredGeoTranslucent->SetResource("tex2D", NULL);
-					this->Shader_DeferredGeoTranslucent->SetResource("tex2D2", NULL);
 				}
 			}
 			else
 			{
 				this->Shader_DeferredGeoTranslucent->SetBool("textured", false);
 				this->Shader_DeferredGeoTranslucent->SetResource("tex2D", NULL);
-				this->Shader_DeferredGeoTranslucent->SetResource("tex2D2", NULL);
 			}
 			
 
@@ -1641,7 +1629,6 @@ void DxManager::RenderDeferredGeoTranslucent()
 	}
 	// Unbind resources static geometry:
 	this->Shader_DeferredGeoTranslucent->SetResource("tex2D", NULL);
-	this->Shader_DeferredGeoTranslucent->SetResource("tex2D2", NULL);
 	this->Shader_DeferredGeoTranslucent->Apply(0);
 }
 

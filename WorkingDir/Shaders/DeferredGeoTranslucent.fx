@@ -9,7 +9,6 @@
 
 // For textures
 Texture2D tex2D;
-Texture2D tex2D2;
 SamplerState linearSampler
 {
     Filter = MIN_MAG_MIP_LINEAR;
@@ -106,7 +105,7 @@ PSout PSScene(PSSceneIn input) : SV_Target
 	if(textured)
 	{
 		textureColor = tex2D.Sample(linearSampler, float2(input.WorldPos.x, input.WorldPos.z) * 0.1f) * 0.65f;
-		textureColor += tex2D2.Sample(linearSampler, 
+		textureColor += tex2D.Sample(linearSampler, 
 			float2(input.WorldPos.x - (input.norm.x * timerMillis * 5.0f + sin(timerMillis) * 0.2f), 
 			input.WorldPos.z - (input.norm.z * timerMillis * 5.0f + cos(timerMillis) * 0.2f)) * 0.2f) * 0.35f;
 	}
