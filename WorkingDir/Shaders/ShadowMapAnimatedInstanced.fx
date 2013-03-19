@@ -8,17 +8,22 @@
 //--------------------------------------------------------------------------------------------------
 
 #include "stdafx.fx"
-Texture2D g_DiffuseMap0;
+Texture2D gDiffuseMap0;
 //Texture2D diffuseMap1; //Only need one diffuse map if no blending is one.
 
-cbuffer PerObject
+cbuffer PerFrame
 {
-	float4x4 g_LightViewProj;
+	float3 gSunDir;
+};
+
+cbuffer PerCascade
+{
+	float4x4 gLightViewProj;
 };
 
 cbuffer PerStrip
 {
-	bool g_IsTextured;
+	bool gIsTextured;
 };
 
 struct VSIn
@@ -54,16 +59,16 @@ PSIn VS(VSIn input)
 	//Set last element to 1 again
 	input.world[3][3] = 1;
 
-	output.Pos = mul(lerp(float4(input.pos, 1.0f), float4(input.posMorph, 1.0f), interpolationValue), mul(input.world, g_LightViewProj)); //Interpolate position and transform it.
+	output.Pos = mul(lerp(float4(input.pos - gSunDir * 0.45f, 1.0f), float4(input.posMorph - gSunDir * 0.5f, 1.0f), interpolationValue), mul(input.world, gLightViewProj)); //Interpolate position and transform it.
 	output.Tex = lerp(input.tex, input.texMorph, interpolationValue);
 
 	return output;
 }
 void PS(PSIn input)
 {
-	if(g_IsTextured)
+	if(gIsTextured)
 	{
-		if(g_DiffuseMap0.Sample(PointWrapSampler, input.Tex).a < 0.5f) 
+		if(gDiffuseMap0.Sample(PointWrapSampler, input.Tex).a < 0.5f) 
 		{
 			discard;
 		}

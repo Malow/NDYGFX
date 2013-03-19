@@ -663,6 +663,8 @@ void DxManager::RenderCascadedShadowMap()
 	this->perf.PreMeasure("Renderer - Render Cascaded Shadowmap Terrain", 4);
 #endif*/
 			//Terrain
+			//Per frame:
+			this->Shader_ShadowMap->SetFloat3("gSunDir", this->sun.direction);
 			for(unsigned int i = 0; i < this->terrains.size(); i++)
 			{
 				//If the terrain has not been culled for shadowing, render it to shadow map.
@@ -1132,7 +1134,10 @@ void DxManager::RenderCascadedShadowMapInstanced()
 			unsigned int strides[2] = {sizeof(VertexNormalMap), sizeof(StripData::InstancedDataStruct)};
 			unsigned int offsets[2] = {0, 0};
 			bufferPointers[1] = this->instancingHelper->GetStripInstanceBuffer();	
-		
+			
+			//Per frame:
+			this->Shader_ShadowMapInstanced->SetFloat3("g_SunDir", this->sun.direction);
+
 			//Per cascade: //**TILLMAN opt, flytta ut denna forloop (rita alla instansierat per cascade)
 			for(int i = 0; i < this->csm->GetNrOfCascadeLevels(); ++i)
 			{
@@ -1218,7 +1223,10 @@ void DxManager::RenderCascadedShadowMapInstanced()
 			unsigned int strides[3] = {sizeof(VertexNormalMap), sizeof(VertexNormalMap), sizeof(AnimatedStripData::AnimatedInstancedDataStruct)};
 			unsigned int offsets[3] = {0, 0, 0};
 			bufferPointers[2] = this->instancingHelper->GetAnimatedStripInstanceBuffer();	
-		
+			
+			//Per frame:
+			this->Shader_ShadowMapAnimatedInstanced->SetFloat3("gSunDir", this->sun.direction);
+
 			//Per cascade: //**TILLMAN opt, flytta ut denna forloop (rita alla instansierat per cascade)
 			for(int i = 0; i < this->csm->GetNrOfCascadeLevels(); ++i)
 			{
@@ -1228,7 +1236,7 @@ void DxManager::RenderCascadedShadowMapInstanced()
 				this->Dx_DeviceContext->RSSetViewports(1, &wp);
 
 				//Set variables
-				this->Shader_ShadowMapAnimatedInstanced->SetMatrix("g_LightViewProj", this->csm->GetViewProjMatrix(i));
+				this->Shader_ShadowMapAnimatedInstanced->SetMatrix("gLightViewProj", this->csm->GetViewProjMatrix(i));
 
 				//Per instance group:
 				for(unsigned int j = 0; j < this->instancingHelper->GetNrOfAnimatedStripGroups(); ++j)
@@ -1247,19 +1255,19 @@ void DxManager::RenderCascadedShadowMapInstanced()
 					{
 						if(renderObjectOne->GetTextureResource()->GetSRVPointer() != NULL)
 						{
-							this->Shader_ShadowMapAnimatedInstanced->SetResource("g_DiffuseMap0", renderObjectOne->GetTextureResource()->GetSRVPointer());
-							this->Shader_ShadowMapAnimatedInstanced->SetBool("g_IsTextured", true);
+							this->Shader_ShadowMapAnimatedInstanced->SetResource("gDiffuseMap0", renderObjectOne->GetTextureResource()->GetSRVPointer());
+							this->Shader_ShadowMapAnimatedInstanced->SetBool("gIsTextured", true);
 						}
 						else
 						{
-							this->Shader_ShadowMapAnimatedInstanced->SetResource("g_DiffuseMap0", NULL);
-							this->Shader_ShadowMapAnimatedInstanced->SetBool("g_IsTextured", false);
+							this->Shader_ShadowMapAnimatedInstanced->SetResource("gDiffuseMap0", NULL);
+							this->Shader_ShadowMapAnimatedInstanced->SetBool("gIsTextured", false);
 						}
 					}
 					else
 					{
-						this->Shader_ShadowMapAnimatedInstanced->SetResource("g_DiffuseMap0", NULL);
-						this->Shader_ShadowMapAnimatedInstanced->SetBool("g_IsTextured", false);
+						this->Shader_ShadowMapAnimatedInstanced->SetResource("gDiffuseMap0", NULL);
+						this->Shader_ShadowMapAnimatedInstanced->SetBool("gIsTextured", false);
 					}
 
 					//Set vertex buffers
@@ -1908,8 +1916,8 @@ void DxManager::Render()
 	// Render shadowmap pictures:
 	//for(int q = 0; q < this->lights.size(); q++)
 		//DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_Image, this->lights[q]->GetShadowMapSRV(), q); 
-	for(int q = 0; q < this->csm->GetNrOfCascadeLevels(); q++)
-		DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_Image, this->csm->GetShadowMapSRV(q), q); 
+	//for(int q = 0; q < this->csm->GetNrOfCascadeLevels(); q++)
+	//	DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_Image, this->csm->GetShadowMapSRV(q), q); 
 
 #ifdef MALOWTESTPERF
 	this->perf.PreMeasure("Renderer - SwapChain Present", 2);
