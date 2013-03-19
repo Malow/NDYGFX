@@ -90,6 +90,8 @@ class ResourceManager
 		/*TextureResource* HasTextureResource(const char* filePath);
 		/*	Saves the pointer of the specified resource. */
 		/*void SetTextureResource(TextureResource* textureResource);
+		/*	Returns a pointer to the found texture resource. Returns NULL if no texture resource was found.	*/
+		const TextureResource* GetTextureResourcePointer(const char* id) const;
 		/*	Deletes the texture resource sent through the parameter. The pointer to the texture sent is automatically set to NULL.	*/
 		void DeleteTextureResource(TextureResource* &textureResource);
 

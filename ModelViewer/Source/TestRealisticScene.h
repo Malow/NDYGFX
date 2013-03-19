@@ -47,7 +47,7 @@ void TestRealisticScene::PreTest()
 	GetGraphics()->ShowLoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 1.0f, 1.0f);
 
 	LoadEntList("Entities.txt");
-	world = new World(this, "Media/Maps/Map_01_v85.map", true);
+	world = new World(this, "Media/Maps/Map_01_v87.map", true);
 	GetGraphics()->GetCamera()->SetPosition(Vector3(world->GetWorldCenter().x, 20.0f, world->GetWorldCenter().y));
 	path = 0;
 
