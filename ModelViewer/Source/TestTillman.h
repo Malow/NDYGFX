@@ -170,14 +170,16 @@ void TillmanTest::PreTest()
 	delete [] grass_colors;
 	//GetGraphics()->DeleteBillboardCollection(bbColl);
 
-	fileNames[0] = "Media/01_v02-Moss.png";
-	fileNames[1] = "Media/01_v02-Moss.png";
-	fileNames[2] = "Media/01_v02-Moss.png";
-	fileNames[3] = "Media/01_v02-Moss.png";
-	fileNames[4] = "Media/01_v02-Moss.png";
-	fileNames[5] = "Media/01_v02-Moss.png";
-	fileNames[6] = "Media/01_v02-Moss.png";
-	fileNames[7] = "Media/01_v02-Moss.png";
+	fileNames[0] = "Media/Textures/01_v02-Moss.png";
+	fileNames[1] = "Media/Textures/02_v03-Leaf.png";
+	fileNames[2] = "Media/Textures/03_v02-Mix.png";
+	fileNames[3] = "Media/Textures/04_v02-Gravel.png";
+	fileNames[4] = "Media/Textures/05_v01-Sandpng.png";
+	fileNames[5] = "Media/Textures/01_v02-Moss.png";
+	fileNames[6] = "Media/Textures/01_v02-Moss.png";
+	fileNames[7] = "Media/Textures/01_v02-Moss.png";
+
+
 	iT->SetTextures(fileNames);
 	float normals2[64 * 64 * 3]; //vertSize = 64;
 	for(int i = 0; i < 64 * 64 * 3; i+=3)

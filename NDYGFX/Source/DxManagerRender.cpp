@@ -818,7 +818,7 @@ void DxManager::RenderCascadedShadowMap()
 							bool oneStripIsNotCulled = false;
 							while(!oneStripIsNotCulled && index < strips->size())
 							{
-								if(!staticMesh->IsStripCulled(index++))
+								if(!staticMesh->IsStripShadowCulled(index++))
 								{
 									oneStripIsNotCulled = true;
 									currentRenderedMeshShadows++;
@@ -840,7 +840,7 @@ void DxManager::RenderCascadedShadowMap()
 							bool oneStripIsNotCulled = false;
 							while(!oneStripIsNotCulled && index < strips->size())
 							{
-								if(!staticMesh->IsStripCulled(index++))
+								if(!staticMesh->IsStripShadowCulled(index++))
 								{
 									oneStripIsNotCulled = true;
 									currentRenderedMeshShadows++;
@@ -968,7 +968,7 @@ void DxManager::RenderCascadedShadowMap()
 							bool oneStripIsNotCulled = false;
 							while(!oneStripIsNotCulled && index < strips->size())
 							{
-								if(!animatedMesh->IsStripCulled(index++))
+								if(!animatedMesh->IsStripShadowCulled(index++))
 								{
 									oneStripIsNotCulled = true;
 									currentRenderedMeshShadows++;
@@ -990,7 +990,7 @@ void DxManager::RenderCascadedShadowMap()
 							bool oneStripIsNotCulled = false;
 							while(!oneStripIsNotCulled && index < strips->size())
 							{
-								if(!animatedMesh->IsStripCulled(index++))
+								if(!animatedMesh->IsStripShadowCulled(index++))
 								{
 									oneStripIsNotCulled = true;
 									currentRenderedMeshShadows++;
@@ -1898,8 +1898,8 @@ void DxManager::Render()
 	// Render shadowmap pictures:
 	//for(int q = 0; q < this->lights.size(); q++)
 		//DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_Image, this->lights[q]->GetShadowMapSRV(), q); 
-	//for(int q = 0; q < this->csm->GetNrOfCascadeLevels(); q++)
-	//	DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_Image, this->csm->GetShadowMapSRV(q), q); 
+	for(int q = 0; q < this->csm->GetNrOfCascadeLevels(); q++)
+		DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_Image, this->csm->GetShadowMapSRV(q), q); 
 
 #ifdef MALOWTESTPERF
 	this->perf.PreMeasure("Renderer - SwapChain Present", 2);
