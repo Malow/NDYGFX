@@ -16,6 +16,8 @@ private:
 	WorldAnchor* wa;
 	WorldRenderer* wr;
 	int path;
+	float enclosingfog;
+	Vector3 fogCenter;
 
 public:
 	TestRealisticScene() {};
@@ -68,7 +70,9 @@ void TestRealisticScene::PreTest()
 
 	
 	Vector3 camPos = GetGraphics()->GetCamera()->GetPosition();
-	GetGraphics()->SetEnclosingFogEffect(camPos, 100.0f);
+	this->enclosingfog = 300.0f;
+	this->fogCenter = camPos;
+	GetGraphics()->SetEnclosingFogEffect(this->fogCenter, this->enclosingfog);
 	
 	for(int i = 0; i < 50; i++)
 	{
@@ -124,12 +128,13 @@ bool TestRealisticScene::RunTest(float diff)
 {
 	if(GetGraphics()->GetKeyListener()->IsPressed('8'))
 	{
-		GetGraphics()->GetEngineParameters().FarClip += diff;
+		this->enclosingfog += diff * 0.1f;
 	}
 	if(GetGraphics()->GetKeyListener()->IsPressed('9'))
 	{
-		GetGraphics()->GetEngineParameters().FarClip -= diff;
+		this->enclosingfog -= diff * 0.1f;
 	}
+	GetGraphics()->SetEnclosingFogEffect(this->fogCenter, this->enclosingfog);
 
 	wa->position = GetGraphics()->GetCamera()->GetPosition().GetXZ();
 	wa->radius = GetGraphics()->GetEngineParameters().FarClip;

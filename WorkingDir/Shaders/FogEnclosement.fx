@@ -32,6 +32,7 @@ cbuffer everyFrame
 	float3 center;
 	float fogRadius;
 	float fogFadeFactor;
+	float overallFogFactor;
 };
 
 //-----------------------------------------------------------------------------------------
@@ -102,15 +103,12 @@ float4 PSScene(PSSceneIn input) : SV_Target
 {	
 	float fogfactor = 0.0f;
 	float3 WorldPos = Position.Sample(linearSampler, input.tex).xyz;
-	if(WorldPos.x == -1.0f)
-		fogfactor = 1.0f;
-	/*
+	
 	float3 toCenter = WorldPos - center;
 	float distance = length(toCenter);
 	
 	if(distance > fogRadius)
 	{
-		
 		float maxFog = fogRadius * fogFadeFactor;
 		if(distance > fogRadius + maxFog)
 			fogfactor = 1.0f;
@@ -123,11 +121,12 @@ float4 PSScene(PSSceneIn input) : SV_Target
 			fogfactor += fogfactor - (fogfactor * fogfactor);	
 			// Exponential fog, making it intense quickly at first and slow at the end.
 		}
-		
-		fogfactor = 1.0f;
 	}
-	*/
-	return float4(0.45f, 0.45f, 0.45f, 1.0f * fogfactor);
+
+	if(WorldPos.x == -1.0f)
+		fogfactor = 0.0f;
+	
+	return float4(0.45f, 0.45f, 0.45f, 1.0f * (fogfactor + overallFogFactor));
 }
 
 //-----------------------------------------------------------------------------------------
