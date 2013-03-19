@@ -5,7 +5,7 @@ WaterPlane::WaterPlane(D3DXVECTOR3 pos, string filePath) : Mesh(pos, filePath)
 {
 	this->verts = NULL;
 	this->vertBuffer = NULL;
-	this->textureResource = NULL;
+	this->texture = NULL;
 
 	this->verts = new Vertex[6];
 	this->verts[0] = Vertex(D3DXVECTOR3(0.5f, 0.0f, -0.5f), D3DXVECTOR2(0.0f, 1.0f), 
@@ -40,9 +40,9 @@ WaterPlane::~WaterPlane()
 		delete this->vertBuffer; 
 		this->vertBuffer = NULL;
 	}
-	if(this->textureResource) 
+	if(this->texture) 
 	{
-		GetResourceManager()->DeleteTextureResource(this->textureResource);
+		GetResourceManager()->DeleteTextureResource(this->texture);
 	}
 }
 

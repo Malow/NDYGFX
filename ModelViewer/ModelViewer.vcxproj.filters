@@ -114,8 +114,5 @@
     <ClInclude Include="Source\World\AnyType.h">
       <Filter>Source Files\World</Filter>
     </ClInclude>
-    <ClInclude Include="Source\TestAnimationQueue.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

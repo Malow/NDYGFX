@@ -232,8 +232,8 @@ bool TestRealisticScene::RunTest(float diff)
 			{
 				
 			}
-			GetGraphics()->ReloadShaders(26);
-			GetGraphics()->ReloadShaders(19);
+			GetGraphics()->ReloadShaders(16);
+			//GetGraphics()->ReloadShaders(19);
 			//MaloW::Debug("Diff: " + MaloW::convertNrToString(totDiff / nrofdiffs));
 			//GetGraphics()->ChangeShadowQuality(qual);
 			//secModel->SetPosition(Vector3(10, 10, 10));

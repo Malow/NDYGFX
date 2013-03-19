@@ -562,6 +562,21 @@ public:
 		w *= scalar;
 	}
 
+	inline Vector3 ToAngles() const
+	{
+		double sqw = w * w;
+		double sqx = x * x;
+		double sqy = y * y;
+		double sqz = z * z;
+
+		Vector3 angles;
+		angles.x = atan2f(2.0 * ( y * z + x * w ) , ( -sqx - sqy + sqz + sqw ));
+		angles.y = asinf(-2.0 * ( x * z - y * w ));
+		angles.z = atan2f(2.0 * ( x * y + z * w ) , (  sqx - sqy - sqz + sqw ));
+
+		return angles;
+	}
+
 #ifdef D3DVECTOR_DEFINED
 	operator D3DXVECTOR4 () const { return D3DXVECTOR4(x,y,z,w); }
 #endif
