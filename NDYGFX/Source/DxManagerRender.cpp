@@ -1908,8 +1908,8 @@ void DxManager::Render()
 	// Render shadowmap pictures:
 	//for(int q = 0; q < this->lights.size(); q++)
 		//DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_Image, this->lights[q]->GetShadowMapSRV(), q); 
-	for(int q = 0; q < this->csm->GetNrOfCascadeLevels(); q++)
-		DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_Image, this->csm->GetShadowMapSRV(q), q); 
+	//for(int q = 0; q < this->csm->GetNrOfCascadeLevels(); q++)
+		//DrawScreenSpaceBillboardDebug(this->Dx_DeviceContext, this->Shader_Image, this->csm->GetShadowMapSRV(q), q); 
 
 #ifdef MALOWTESTPERF
 	this->perf.PreMeasure("Renderer - SwapChain Present", 2);

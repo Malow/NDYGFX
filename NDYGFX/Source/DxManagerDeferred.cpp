@@ -1531,6 +1531,7 @@ void DxManager::RenderDeferredGeoTranslucent()
 	float ClearColor2[4] = {-1.0f, -1.0f, -1.0f, -1.0f};
 	this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_GbufferRTs[0], ClearColor1);
 	this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_GbufferRTs[1], ClearColor2);
+	// need to not clear this for fog effect to work.
 	//this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_GbufferRTs[2], ClearColor2);
 	this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_GbufferRTs[3], ClearColor2);
 

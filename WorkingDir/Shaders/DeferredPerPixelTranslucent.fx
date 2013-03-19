@@ -530,7 +530,12 @@ float4 PSScene(PSSceneIn input) : SV_Target
 		
 			//And finally sample the cascades(s).
 			shadow = SampleCascades(cascadeIndex, otherCascadeIndex, pixelPosTexelSpace.xy, pixelPosTexelSpace.z); 
-		
+			if(shadow < 1.0f)	// reduce shadow for translucent planes.
+			{
+				shadow += 2;
+				shadow *= 0.3333f;
+			}	
+			
 			//Multiply the shadow into the light.
 			diffLight *= shadow;
 			specLight *= shadow;

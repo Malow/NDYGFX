@@ -10,7 +10,7 @@
 class WaterPlane : public Mesh, public virtual iWaterPlane
 {
 private:
-	TextureResource* textureResource;
+	TextureResource* texture;
 	Vertex* verts;
 	int nrOfVerts;
 	Buffer* vertBuffer;
@@ -21,8 +21,8 @@ public:
 
 	bool VertexDataHasChanged;
 
-	void SetTexture(TextureResource* text) { this->textureResource = text; }
-	TextureResource* GetTextureResource() const { return this->textureResource; }
+	void SetTexture(TextureResource* text) { this->texture = text; }
+	TextureResource* GetTextureResource() const { return this->texture; }
 	virtual MaloW::Array<MeshStrip*>* GetStrips();
 	Vertex* GetVerts() const { return this->verts; }
 	int GetNrOfVerts() const { return this->nrOfVerts; }
