@@ -624,7 +624,6 @@ void DxManager::RenderCascadedShadowMap()
 #ifdef MALOWTESTPERF
 	this->perf.PreMeasure("Renderer - Render Cascaded Shadowmap", 3);
 #endif
-	//EDIT 2013-01-23 by Tillman - Added transparency.
 
 	//Reset counters
 	int currentRenderedTerrainShadows = 0;
@@ -644,24 +643,14 @@ void DxManager::RenderCascadedShadowMap()
 		}
 
 		D3DXMATRIX wvp;
-		//D3DXMatrixIdentity(&wvp);
 		//**TILLMAN TODO:  check what cascade the object is in, object->IsIncascade(s)(indices)**
 
 		for (int l = 0; l < this->csm->GetNrOfCascadeLevels(); l++)
 		{
-/*#ifdef MALOWTESTPERF
-		this->perf.PreMeasure("TEST", 4);
-#endif*/
-			/* - This is now done in RenderCascadeShadowMapInstanced())  - TILLMAN */
 			this->Dx_DeviceContext->OMSetRenderTargets(0, 0, this->csm->GetShadowMapDSV(l));
 			this->Dx_DeviceContext->RSSetViewports(1, &this->csm->GetShadowMapViewPort(l));
 			this->Dx_DeviceContext->ClearDepthStencilView(this->csm->GetShadowMapDSV(l), D3D11_CLEAR_DEPTH, 1.0f, 0);
-/*#ifdef MALOWTESTPERF
-	this->perf.PostMeasure("TEST", 4);
-#endif		
-#ifdef MALOWTESTPERF
-	this->perf.PreMeasure("Renderer - Render Cascaded Shadowmap Terrain", 4);
-#endif*/
+
 			//Terrain
 			//Per frame:
 			this->Shader_ShadowMap->SetFloat3("gSunDir", this->sun.direction);
@@ -713,12 +702,7 @@ void DxManager::RenderCascadedShadowMap()
 					}
 				}
 			}
-/*#ifdef MALOWTESTPERF
-		this->perf.PostMeasure("Renderer - Render Cascaded Shadowmap Terrain", 4);
-#endif
-#ifdef MALOWTESTPERF
-		this->perf.PreMeasure("Renderer - Render Cascaded Shadowmap Static", 4);
-#endif*/
+
 			//Static meshes
 			for(unsigned int i = 0; i < this->objects.size(); i++)
 			{
@@ -740,77 +724,6 @@ void DxManager::RenderCascadedShadowMap()
 					}
 					if(D3DXVec3Length(&distance) < billboardRange || !staticMesh->HasBillboard())
 					{
-						/*MaloW::Array<MeshStrip*>* strips = staticMesh->GetStrips();
-						wvp = staticMesh->GetWorldMatrix() * this->csm->GetViewProjMatrix(l);
-						this->Shader_ShadowMap->SetMatrix("lightWVP", wvp);
-
-						bool hasBeenCounted = false;
-
-						for(int u = 0; u < strips->size(); u++)
-						{
-							//Render strip to shadow map if it has not been shadow culled
-							if(!staticMesh->IsStripShadowCulled(u))
-							{
-								if(!hasBeenCounted) //only count per mesh, not strip.
-								{
-									currentRenderedMeshShadows++;
-									hasBeenCounted = true;
-								}
-
-								Object3D* obj = strips->get(u)->GetRenderObject();
-
-								//Vertex data
-								this->Dx_DeviceContext->IASetPrimitiveTopology(obj->GetTopology());
-								Buffer* verts = obj->GetVertBuff();
-								Buffer* inds = obj->GetIndsBuff();
-								if(verts)
-								{
-									verts->Apply();
-								}
-								if(inds)
-								{
-									inds->Apply();
-								}
-						
-								//Texture
-								if(obj->GetTextureResource() != NULL)
-								{
-									if(obj->GetTextureResource()->GetSRVPointer() != NULL)
-									{
-										this->Shader_ShadowMap->SetResource("diffuseMap", obj->GetTextureResource()->GetSRVPointer());
-										this->Shader_ShadowMap->SetBool("textured", true);
-									}
-									else
-									{
-										this->Shader_ShadowMap->SetResource("diffuseMap", NULL);
-										this->Shader_ShadowMap->SetBool("textured", false);
-									}
-								}
-								else
-								{
-									this->Shader_ShadowMap->SetResource("diffuseMap", NULL);
-									this->Shader_ShadowMap->SetBool("textured", false);
-								}
-
-								//Apply Shader
-								this->Shader_ShadowMap->Apply(0);
-
-								//Draw
-								if(inds)
-								{
-									Dx_DeviceContext->DrawIndexed(inds->GetElementCount(), 0, 0);
-								}
-								else if(verts)
-								{
-									Dx_DeviceContext->Draw(verts->GetElementCount(), 0);
-								}
-								else
-								{
-									MaloW::Debug("WARNING: DxManagerRender: RenderCascadedShadowMap(): Both vertex and indexbuffers for static mesh were NULL.");
-								}
-							}
-						}*/
-
 						//Only add once (same object can be in several cascades).
 						if(!hasStaticMeshBeenAdded[i])
 						{
@@ -859,12 +772,7 @@ void DxManager::RenderCascadedShadowMap()
 			//Unbind shader resources
 			this->Shader_ShadowMap->SetResource("diffuseMap", NULL);
 			this->Shader_ShadowMap->Apply(0);
-/*#ifdef MALOWTESTPERF
-	this->perf.PostMeasure("Renderer - Render Cascaded Shadowmap Terrain", 4);
-#endif	
-#ifdef MALOWTESTPERF
-	this->perf.PreMeasure("Renderer - Render Cascaded Shadowmap Animated", 4);
-#endif*/	
+
 			//Animated meshes
 			for(unsigned int i = 0; i < this->animations.size(); i++)
 			{
@@ -887,80 +795,6 @@ void DxManager::RenderCascadedShadowMap()
 
 					if(D3DXVec3Length(&distance) < billboardRange || !animatedMesh->HasBillboard())
 					{
-						//**Tillman - tillräckligt att kolla 1??**
-						/*if(!animatedMesh->IsStripShadowCulled(0))
-						{
-							currentRenderedMeshShadows++;
-							
-							KeyFrame* one = NULL;
-							KeyFrame* two = NULL;
-							float t = 0.0f;
-							animatedMesh->SetCurrentTime(this->Timer * 1000.0f); //Timer is in seconds.
-							animatedMesh->GetCurrentKeyFrames(&one, &two, t);
-							MaloW::Array<MeshStrip*>* stripsOne = one->meshStripsResource->GetMeshStripsPointer();
-							MaloW::Array<MeshStrip*>* stripsTwo = two->meshStripsResource->GetMeshStripsPointer();
-
-							//Set shader data (per object)
-							this->Shader_ShadowMapAnimated->SetFloat("t", t);
-							D3DXMATRIX wvp = animatedMesh->GetWorldMatrix() * this->csm->GetViewProjMatrix(l);
-							this->Shader_ShadowMapAnimated->SetMatrix("lightWVP", wvp); 
-
-							for(int u = 0; u < stripsOne->size(); u++)  //**Tillman todo - indices?**
-							{
-								//Set shader data per strip
-								Object3D* objOne = stripsOne->get(u)->GetRenderObject();
-								Object3D* objTwo = stripsTwo->get(u)->GetRenderObject();
-
-								//Vertex data
-								this->Dx_DeviceContext->IASetPrimitiveTopology(objOne->GetTopology()); 
-								Buffer* vertsOne = objOne->GetVertBuff();
-								Buffer* vertsTwo = objTwo->GetVertBuff();
-								ID3D11Buffer* vertexBuffers [] = {vertsOne->GetBufferPointer(), vertsTwo->GetBufferPointer()};
-								static const UINT strides [] = {sizeof(VertexNormalMap), sizeof(VertexNormalMap)}; //**Tillman - input layout stämmer inte, klagar inte dock
-								static const UINT offsets [] = {0, 0};
-								if(vertsOne != NULL && vertsTwo != NULL)
-								{
-									this->Dx_DeviceContext->IASetVertexBuffers(0, 2, vertexBuffers, strides, offsets);
-									
-									//Textures
-									if(objOne->GetTextureResource() != NULL && objTwo->GetTextureResource() != NULL)
-									{
-										if(objOne->GetTextureResource()->GetSRVPointer() != NULL && objTwo->GetTextureResource()->GetSRVPointer() != NULL)
-										{
-											this->Shader_ShadowMapAnimated->SetResource("diffuseMap0", objOne->GetTextureResource()->GetSRVPointer());
-											//Only need one diffuse map since no blending between maps is done.
-											//this->Shader_ShadowMapAnimated->SetResource("diffuseMap1", objTwo->GetTextureResource()->GetSRVPointer());
-											this->Shader_ShadowMapAnimated->SetBool("textured", true);
-										}
-										else
-										{
-											this->Shader_ShadowMapAnimated->SetResource("diffuseMap0", NULL);
-											//Only need one diffuse map since no blending between maps is done.
-											//this->Shader_ShadowMapAnimated->SetResource("diffuseMap1", NULL);
-											this->Shader_ShadowMapAnimated->SetBool("textured", false);
-										}
-									}
-									else
-									{
-										this->Shader_ShadowMapAnimated->SetResource("diffuseMap0", NULL);
-										//Only need one diffuse map since no blending between maps is done.
-										//this->Shader_ShadowMapAnimated->SetResource("diffuseMap1", NULL);
-										this->Shader_ShadowMapAnimated->SetBool("textured", false);
-									}
-
-									//Apply
-									this->Shader_ShadowMapAnimated->Apply(0);
-
-									//Draw
-									this->Dx_DeviceContext->Draw(vertsOne->GetElementCount(), 0); 
-								}
-								else
-								{
-									MaloW::Debug("WARNING: DxManagerRender: RenderCascadedShadowMap(): One or both vertex buffers for animated mesh were NULL.");
-								}
-							}
-						}*/
-
 						//Only add once (same object can be in several cascades).
 						if(!hasAnimatedMeshBeenAdded[i])
 						{
@@ -1010,24 +844,14 @@ void DxManager::RenderCascadedShadowMap()
 			this->Shader_ShadowMapAnimated->Apply(0);
 			//Only need one diffuse map since no blending between maps is done.
 			//this->Shader_ShadowMapAnimated->SetResource("diffuseMap1", NULL);
-
-/*#ifdef MALOWTESTPERF
-	this->perf.PostMeasure("Renderer - Render Cascaded Shadowmap Animated", 4);
-#endif		
-#ifdef MALOWTESTPERF
-	this->perf.PreMeasure("Renderer - Render Cascaded Shadowmap FBX", 4);
-#endif*/						
+				
 			// FBX meshes
 			for(unsigned int i = 0; i < this->FBXMeshes.size(); i++)
 			{
 				this->FBXMeshes[i]->RenderShadow(0, this->csm->GetViewProjMatrix(l), this->Shader_ShadowMapFBX, this->Dx_DeviceContext);
 			}
-
-			
 		}
-/*#ifdef MALOWTESTPERF
-	this->perf.PostMeasure("Renderer - Render Cascaded Shadowmap FBX", 4);
-#endif*/	
+
 		delete [] hasStaticMeshBeenAdded;
 		delete [] hasAnimatedMeshBeenAdded;
 	}
