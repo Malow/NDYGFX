@@ -564,15 +564,15 @@ public:
 
 	inline Vector3 ToAngles() const
 	{
-		double sqw = w * w;
-		double sqx = x * x;
-		double sqy = y * y;
-		double sqz = z * z;
+		float sqw = w * w;
+		float sqx = x * x;
+		float sqy = y * y;
+		float sqz = z * z;
 
 		Vector3 angles;
-		angles.x = atan2f(2.0 * ( y * z + x * w ) , ( -sqx - sqy + sqz + sqw ));
-		angles.y = asinf(-2.0 * ( x * z - y * w ));
-		angles.z = atan2f(2.0 * ( x * y + z * w ) , (  sqx - sqy - sqz + sqw ));
+		angles.x = atan2f(2.0f * ( y * z + x * w ) , ( -sqx - sqy + sqz + sqw ));
+		angles.y = asinf(-2.0f * ( x * z - y * w ));
+		angles.z = atan2f(2.0f * ( x * y + z * w ) , (  sqx - sqy - sqz + sqw ));
 
 		return angles;
 	}

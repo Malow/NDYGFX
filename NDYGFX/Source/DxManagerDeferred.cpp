@@ -588,6 +588,7 @@ void DxManager::RenderDeferredGeoObjects()
 	this->Shader_DeferredGeometry->Apply(0); //TILLMAN - måste göras
 
 #ifdef MALOWTESTPERF
+	this->Dx_DeviceContext->Flush();
 	this->perf.PostMeasure("Renderer - Render Deferred Geo Objects Static", 4);
 #endif
 #ifdef MALOWTESTPERF
@@ -662,6 +663,7 @@ void DxManager::RenderDeferredGeoObjects()
 	//this->Shader_DeferredAnimatedGeometry->Apply(0);
 
 #ifdef MALOWTESTPERF
+	this->Dx_DeviceContext->Flush();
 	this->perf.PostMeasure("Renderer - Render Deferred Geo Objects Animated", 4);
 #endif
 }
@@ -764,6 +766,7 @@ void DxManager::RenderDeferredGeometryInstanced()
 		this->instancingHelper->PostRenderStrips();
 	}
 #ifdef MALOWTESTPERF
+	this->Dx_DeviceContext->Flush();
 	this->perf.PostMeasure("Renderer - Render Deferred Geo Objects Static Instanced", 5);
 #endif
 
@@ -864,9 +867,11 @@ void DxManager::RenderDeferredGeometryInstanced()
 		this->instancingHelper->PostRenderAnimatedStrips();//**TILLMAN - prerender eller ny - postrender?
 	}
 #ifdef MALOWTESTPERF
+	this->Dx_DeviceContext->Flush();
 	this->perf.PostMeasure("Renderer - Render Deferred Geo Objects Animated Instanced", 5);
 #endif
 #ifdef MALOWTESTPERF
+	this->Dx_DeviceContext->Flush();
 	this->perf.PostMeasure("Renderer - Render Deferred Geo Objects Instanced", 4);
 #endif
 }

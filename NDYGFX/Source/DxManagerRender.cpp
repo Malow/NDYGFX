@@ -150,6 +150,7 @@ void DxManager::Life()
 
 
 #ifdef MALOWTESTPERF
+		this->Dx_DeviceContext->Flush();
 		this->perf.PostMeasure("Renderer - Life Overhead", 1);
 #endif
 
@@ -159,10 +160,12 @@ void DxManager::Life()
 		this->Render();
 		this->framecount++;
 #ifdef MALOWTESTPERF
+		this->Dx_DeviceContext->Flush();
 		this->perf.PostMeasure("Renderer - Render", 1);
 #endif
 
 #ifdef MALOWTESTPERF
+		this->Dx_DeviceContext->Flush();
 		this->perf.PostMeasure("Renderer - Entire Frame", 0);
 #endif
 	}
@@ -866,6 +869,7 @@ void DxManager::RenderCascadedShadowMap()
 	this->renderedTerrainShadows = currentRenderedTerrainShadows;
 
 #ifdef MALOWTESTPERF
+	this->Dx_DeviceContext->Flush();
 	this->perf.PostMeasure("Renderer - Render Cascaded Shadowmap", 3);
 #endif	
 }
@@ -939,7 +943,8 @@ void DxManager::RenderCascadedShadowMapInstanced()
 			//Reset counter (nrofbillboards)
 			this->instancingHelper->PostRenderBillboards();
 		}
-	#ifdef MALOWTESTPERF
+#ifdef MALOWTESTPERF
+		this->Dx_DeviceContext->Flush();
 		this->perf.PostMeasure("Renderer - Render Cascaded Shadowmap Instanced Billboards", 4);
 	#endif
 
@@ -1028,7 +1033,8 @@ void DxManager::RenderCascadedShadowMapInstanced()
 			//Reset data for next frame
 			this->instancingHelper->PostRenderStrips();
 		}
-	#ifdef MALOWTESTPERF
+#ifdef MALOWTESTPERF
+		this->Dx_DeviceContext->Flush();
 		this->perf.PostMeasure("Renderer - Render Cascaded Shadowmap Instanced Static meshes", 4);
 	#endif
 
@@ -1120,9 +1126,11 @@ void DxManager::RenderCascadedShadowMapInstanced()
 	}
 	
 #ifdef MALOWTESTPERF
+	this->Dx_DeviceContext->Flush();
 	this->perf.PostMeasure("Renderer - Render Cascaded Shadowmap Instanced Animated meshes", 4);
 #endif
 #ifdef MALOWTESTPERF
+	this->Dx_DeviceContext->Flush();
 	this->perf.PostMeasure("Renderer - Render Cascaded Shadowmap Instanced", 3);
 #endif
 }
@@ -1558,6 +1566,7 @@ void DxManager::Render()
 	this->prevTimeStamp = li.QuadPart;
 	this->Timer += diff * 0.001f;
 #ifdef MALOWTESTPERF
+	this->Dx_DeviceContext->Flush();
 	this->perf.PostMeasure("Renderer - PreOverhead", 2);
 #endif
 
@@ -1567,6 +1576,7 @@ void DxManager::Render()
 #endif
 	this->CalculateCulling();
 #ifdef MALOWTESTPERF
+	this->Dx_DeviceContext->Flush();
 	this->perf.PostMeasure("Renderer - CalculateCulling", 2);
 #endif
 
@@ -1575,6 +1585,7 @@ void DxManager::Render()
 #endif
 	this->PreRender();
 #ifdef MALOWTESTPERF
+	this->Dx_DeviceContext->Flush();
 	this->perf.PostMeasure("Renderer - PreRender", 2);
 #endif
 
@@ -1585,6 +1596,7 @@ void DxManager::Render()
 	this->RenderCascadedShadowMap();
 	this->RenderCascadedShadowMapInstanced(); //Must be after RenderCascadedShadowMap()
 #ifdef MALOWTESTPERF
+	this->Dx_DeviceContext->Flush();
 	this->perf.PostMeasure("Renderer - Render Shadows", 2);
 #endif
 
@@ -1599,6 +1611,7 @@ void DxManager::Render()
 #endif
 	this->RenderDeferredGeoTerrains();
 #ifdef MALOWTESTPERF
+	this->Dx_DeviceContext->Flush();
 	this->perf.PostMeasure("Renderer - Render Deferred Geo Terrains", 3);
 #endif
 
@@ -1607,6 +1620,7 @@ void DxManager::Render()
 #endif
 	this->RenderDecals();
 #ifdef MALOWTESTPERF
+	this->Dx_DeviceContext->Flush();
 	this->perf.PostMeasure("Renderer - Render Deferred Geo Decals", 3);
 #endif
 
@@ -1616,6 +1630,7 @@ void DxManager::Render()
 	this->RenderDeferredGeoObjects();
 	this->RenderDeferredGeometryInstanced(); //Must be after RenderDeferredGeometry()
 #ifdef MALOWTESTPERF
+	this->Dx_DeviceContext->Flush();
 	this->perf.PostMeasure("Renderer - Render Deferred Geo Objects", 3);
 #endif
 
@@ -1624,10 +1639,12 @@ void DxManager::Render()
 #endif
 	this->RenderFBXMeshes();
 #ifdef MALOWTESTPERF
+	this->Dx_DeviceContext->Flush();
 	this->perf.PostMeasure("Renderer - Render Deferred Geo FBX", 3);
 #endif
 
 #ifdef MALOWTESTPERF
+	this->Dx_DeviceContext->Flush();
 	this->perf.PostMeasure("Renderer - Render Deferred Geo", 2);
 #endif
 
@@ -1637,6 +1654,7 @@ void DxManager::Render()
 #endif
 	this->RenderBillboardsInstanced(); //Must be after RenderDeferredGeometry()
 #ifdef MALOWTESTPERF
+	this->Dx_DeviceContext->Flush();
 	this->perf.PostMeasure("Renderer - Render Billboards", 2);
 #endif
 	
@@ -1647,6 +1665,7 @@ void DxManager::Render()
 #endif
 	this->RenderDeferredPerPixel();
 #ifdef MALOWTESTPERF
+	this->Dx_DeviceContext->Flush();
 	this->perf.PostMeasure("Renderer - Render Per Pixel", 2);
 #endif
 
@@ -1657,6 +1676,7 @@ void DxManager::Render()
 	this->RenderDeferredGeoTranslucent();
 	this->RenderDeferredPerPixelTranslucent();
 #ifdef MALOWTESTPERF
+	this->Dx_DeviceContext->Flush();
 	this->perf.PostMeasure("Renderer - Render Translucent", 2);
 #endif
 	
@@ -1665,6 +1685,7 @@ void DxManager::Render()
 #endif
 	this->RenderDeferredSkybox();
 #ifdef MALOWTESTPERF
+	this->Dx_DeviceContext->Flush();
 	this->perf.PostMeasure("Renderer - Render Skybox", 2);
 #endif
 
@@ -1674,6 +1695,7 @@ void DxManager::Render()
 	if(this->useEnclosingFog)
 		this->RenderEnclosingFog();
 #ifdef MALOWTESTPERF
+	this->Dx_DeviceContext->Flush();
 	this->perf.PostMeasure("Renderer - Render Enclosing Fog", 2);
 #endif
 
@@ -1683,6 +1705,7 @@ void DxManager::Render()
 	if(this->invisibleGeometry)
 		this->RenderInvisibilityEffect(); 
 #ifdef MALOWTESTPERF
+	this->Dx_DeviceContext->Flush();
 	this->perf.PostMeasure("Renderer - Render Invisible Geo", 2);
 #endif
 
@@ -1691,6 +1714,7 @@ void DxManager::Render()
 #endif
 	this->RenderImages();
 #ifdef MALOWTESTPERF
+	this->Dx_DeviceContext->Flush();
 	this->perf.PostMeasure("Renderer - Render Images", 2);
 #endif
 
@@ -1699,6 +1723,7 @@ void DxManager::Render()
 #endif
 	this->RenderText();
 #ifdef MALOWTESTPERF
+	this->Dx_DeviceContext->Flush();
 	this->perf.PostMeasure("Renderer - Render Text", 2);
 #endif
 
@@ -1707,6 +1732,7 @@ void DxManager::Render()
 #endif
 	this->RenderAntiAliasing();
 #ifdef MALOWTESTPERF
+	this->Dx_DeviceContext->Flush();
 	this->perf.PostMeasure("Renderer - Render FXAA", 2);
 #endif
 
@@ -1747,6 +1773,7 @@ void DxManager::Render()
 #endif
 	this->Dx_SwapChain->Present( 0, 0 );
 #ifdef MALOWTESTPERF
+	this->Dx_DeviceContext->Flush();
 	this->perf.PostMeasure("Renderer - SwapChain Present", 2);
 #endif
 }
