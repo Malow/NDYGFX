@@ -73,6 +73,8 @@ void TestRealisticScene::PreTest()
 	this->enclosingfog = 300.0f;
 	this->fogCenter = camPos;
 	GetGraphics()->SetEnclosingFogEffect(this->fogCenter, this->enclosingfog);
+
+	//GetGraphics()->SetSunLightProperties(Vector3(0.801525652, -0.401229233, -0.443363965));
 	
 	for(int i = 0; i < 50; i++)
 	{
@@ -218,6 +220,9 @@ bool TestRealisticScene::RunTest(float diff)
 	{
 		if(fesd)
 		{
+			Vector3 asd = GetGraphics()->GetCamera()->GetForward();
+			int qweqwe = 0;
+
 
 			if(qual % 2 == 0)
 			{
