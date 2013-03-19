@@ -23,6 +23,9 @@ MaloW::Array<MeshStrip*>* FBXMesh::GetStrips()
 
 void FBXMesh::Update( float dt )
 {
+	// Update Animation
+	UpdateAnimationQueue();
+
 	// Lock Scene
 	zSceneMutex.lock();
 
@@ -76,6 +79,48 @@ bool FBXMesh::LoadFromFile( string file, IBTHFbx* fbx, ID3D11Device* dev, ID3D11
 	return true;
 }
 
+void FBXMesh::UpdateAnimationQueue()
+{
+	if ( zAnimationQueue.empty() ) return;
+
+	// Calculate Current Time
+	std::chrono::milliseconds ms = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - zQueueStarted);
+	float seconds = (float)ms.count() * 0.001f;
+
+	// Set Check Current
+	unsigned int curAnimationIndex = 0;
+	for( unsigned int x=0; x<zAnimationQueue.size(); ++x )
+	{
+		if ( seconds >= zAnimationQueue[x].second )
+		{
+			seconds -= zAnimationQueue[x].second;
+			curAnimationIndex++;
+		}
+		else
+		{
+			break;
+		}
+	}
+
+	// Limit to last animation
+	if ( curAnimationIndex >= zAnimationQueue.size() )
+	{
+		curAnimationIndex = zAnimationQueue.size() - 1;
+	}
+
+	// Check Animation Index
+	if ( curAnimationIndex != zLastAnimationIndex )
+	{
+		if ( zScene && zScene->GetAnimationController() )
+		{
+			zScene->GetAnimationController()->SetCurrentAnimation(zAnimationQueue[curAnimationIndex].first.c_str());
+			zScene->GetAnimationController()->Update(seconds);
+		}
+
+		zLastAnimationIndex = curAnimationIndex;
+	}
+}
+
 bool FBXMesh::SetAnimation( unsigned int ani )
 {
 	zSceneMutex.lock();
@@ -102,7 +147,10 @@ bool FBXMesh::SetAnimation( unsigned int ani )
 		zSceneMutex.unlock();
 		return false;
 	}
-	
+
+	// Delete Queue
+	zAnimationQueue.clear();
+
 	zSceneMutex.unlock();
 	return true;
 }
@@ -136,7 +184,24 @@ bool FBXMesh::SetAnimation( const char* name )
 	}
 
 	zSceneMutex.unlock();
+
+	// Delete Queue
+	zAnimationQueue.clear();
+
 	return true;
+}
+
+void FBXMesh::SetAnimationQueue( const char* const* names, const float* times, const unsigned int& count )
+{
+	zAnimationQueue.clear();
+	for( unsigned int x=0; x<count; ++x )
+	{
+		zAnimationQueue.push_back( std::pair<std::string, float>(names[x], times[x]) );
+	}
+
+	zLastAnimationIndex = count;
+	zQueueStarted = std::chrono::system_clock::now();
+	UpdateAnimationQueue();
 }
 
 bool FBXMesh::BindMesh(const char* boneName, iMesh* mesh)

@@ -4,6 +4,7 @@
 #include "Mesh.h"
 #include "iFBXMesh.h"
 #include <mutex>
+#include <chrono>
 
 // FBX
 #include "BTHFBX\Shared\FBX\FBXSceneD3D.h"
@@ -20,6 +21,7 @@
 class FBXMesh : public Mesh, public virtual iFBXMesh
 {
 private:
+
 	std::mutex zSceneMutex;
 	FBXSceneD3D* zScene;
 
@@ -27,6 +29,11 @@ private:
 
 	bool culled;
 	BoundingSphere bs;
+
+	// Animation Queue
+	std::vector< std::pair<std::string, float> > zAnimationQueue;
+	unsigned int zLastAnimationIndex;
+	std::chrono::system_clock::time_point zQueueStarted;
 
 public:
 	FBXMesh(D3DXVECTOR3 pos, string filePath);
@@ -40,8 +47,13 @@ public:
 	void Render(float dt, D3DXMATRIX& camProj, D3DXMATRIX& camView, D3DXMATRIX& camViewProj, Shader* shad, ID3D11DeviceContext* devCont);
 	void RenderShadow(float dt, D3DXMATRIX& lightViewProj, Shader* shad, ID3D11DeviceContext* devCont);
 
+	// Sets the correct animation according to queue
+	void UpdateAnimationQueue();
+
 	virtual bool SetAnimation(unsigned int ani);
 	virtual bool SetAnimation(const char* name);
+	virtual void SetAnimationQueue( const char* const* names, const float* times, const unsigned int& count );
+
 	bool GetBonePosition(const std::string& name, float& x, float& y, float& z);
 
 	// Mesh Bounds

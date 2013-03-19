@@ -1,6 +1,6 @@
-#define TEST //<----------------------- kommentera ut vid behov **********************
+//#define TEST //<----------------------- kommentera ut vid behov **********************
 //#define REALISTICTESTSCENE //<----------------------- kommentera ut vid behov **********************
-
+#define ANIMATIONTEST
 
 #if defined(DEBUG) || defined(_DEBUG)
 #include <vld.h>
@@ -14,6 +14,10 @@
 #include "TestMaloW.h"
 #include "TestTillman.h"
 #include "TestOther.h"
+#endif
+
+#ifdef ANIMATIONTEST
+#include "TestAnimationQueue.h"
 #endif
 
 #ifdef REALISTICTESTSCENE
@@ -90,6 +94,10 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	model->Scale(1.0f * 0.05f);
 
 	//************************************* PRE TEST **********************
+#ifdef ANIMATIONTEST
+	TestAnimationQueue TAQ;
+	TAQ.PreTest();
+#endif
 #ifdef TEST
 	MaloWTest mt;
 	TillmanTest tt;
@@ -148,6 +156,9 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		mt.RunTest(diff);
 		tt.RunTest(diff);
 		ot.RunTest(diff);
+#endif
+#ifdef ANIMATIONTEST
+		TAQ.RunTest(diff);
 #endif
 #ifdef REALISTICTESTSCENE
 		if(trs.RunTest(diff))
@@ -290,6 +301,9 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 
 
 	//************************************* POST TEST **********************
+#ifdef ANIMATIONTEST
+	TAQ.PostTest();
+#endif
 #ifdef TEST
 	mt.PostTest();
 	tt.PostTest();

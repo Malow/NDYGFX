@@ -45,15 +45,15 @@ public:
 	void Pause();
 	void Stop();
 
-	void SetCurrentKeyFrame(int nKeyFrame);	
-	int GetCurrentKeyFrame()					{ return m_nCurrentKeyFrame; }
-	int GetNextKeyFrame()						{ return m_nNextKeyFrame; }
-	float GetKeyFrameFactor()					{ return m_fKeyFrameFactor; }
+	virtual void SetCurrentKeyFrame(int nKeyFrame);	
+	virtual int GetCurrentKeyFrame()					{ return m_nCurrentKeyFrame; }
+	virtual int GetNextKeyFrame()						{ return m_nNextKeyFrame; }
+	virtual float GetKeyFrameFactor()					{ return m_fKeyFrameFactor; }
 
-	BTTANIMATION GetAnimationMode()				{ return m_AnimationMode; }
+	virtual BTTANIMATION GetAnimationMode()				{ return m_AnimationMode; }
 
-	void UseQuaternionKeyFrames(bool bUse)		{ m_bUseQuaternionKeyFrames = bUse; }
-	bool UseQuaternionKeyFrames()				{ return m_bUseQuaternionKeyFrames; }
+	virtual void UseQuaternionKeyFrames(bool bUse)		{ m_bUseQuaternionKeyFrames = bUse; }
+	virtual bool UseQuaternionKeyFrames()				{ return m_bUseQuaternionKeyFrames; }
 
 };
 
