@@ -450,6 +450,11 @@ void DxManager::RenderDecals()
 
 	for(unsigned int i = 0; i < this->decals.size(); i++)
 	{
+		// Test Texture
+		if ( !this->decals[i]->GetStrip()->GetRenderObject()->GetTextureResource() )
+			continue;
+
+		// Shader Settings
 		this->Shader_Decal->SetMatrix("World", this->decals[i]->GetWorldMatrix());
 		this->Shader_Decal->SetMatrix("WorldViewProj", this->decals[i]->GetWorldMatrix() * viewProj);
 		this->Shader_Decal->SetResource("Decal", this->decals[i]->GetStrip()->GetRenderObject()->GetTextureResource()->GetSRVPointer());
