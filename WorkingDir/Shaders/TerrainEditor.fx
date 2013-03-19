@@ -11,14 +11,15 @@
 //	Global variables (non-numeric values cannot be added to a constantbuffer.)
 //-----------------------------------------------------------------------------------------
 //Textures used to make the blend map
-Texture2D tex0; //R-channel in blendmap0. 
-Texture2D tex1; //G-channel in blendmap0. 
-Texture2D tex2; //B-channel in blendmap0. 
-Texture2D tex3; //A-channel in blendmap0.
-Texture2D tex4; //R-channel in blendmap1. 
-Texture2D tex5; //G-channel in blendmap2. 
-Texture2D tex6; //B-channel in blendmap3. 
-Texture2D tex7; //A-channel in blendmap4.
+Texture2D tex0 : register(t0); //R-channel in blendMap0.
+Texture2D tex1 : register(t1); //G-channel in blendMap0.
+Texture2D tex2 : register(t2); //B-channel in blendMap0.
+Texture2D tex3 : register(t3); //A-channel in blendMap0
+Texture2D tex4 : register(t4); //R-channel in blendMap1.
+Texture2D tex5 : register(t5); //G-channel in blendMap1.
+Texture2D tex6 : register(t6); //B-channel in blendMap1.
+Texture2D tex7 : register(t7); //A-channel in blendMap1
+
 Texture2D<float4> blendMap0; //**TILLMAN TODO: testa sänka format 
 Texture2D<float4> blendMap1; //**TILLMAN TODO: testa sänka format 
 //Texture2D<uint> AIMap;
