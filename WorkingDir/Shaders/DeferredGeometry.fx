@@ -62,7 +62,7 @@ cbuffer EveryStrip
 	bool textured;
 	bool useNormalMap;
 
-	float4 AmbientLight; //**tillman opt - används inte
+	float4 AmbientLight; //unused
 	float SpecularPower;
 	float4 SpecularColor;
 	float4 DiffuseColor;

@@ -30,7 +30,6 @@ Include file for all samplers, rasterizer states, and blend states and constant 
 //------------------------------------------------------------------------------------------------------
 //	SamplersStates
 //------------------------------------------------------------------------------------------------------
-//**TILLMAN ev todo: MaxLOD for all samplers**
 SamplerState LinearWrapSampler
 {
 	Filter = MIN_MAG_MIP_LINEAR; 

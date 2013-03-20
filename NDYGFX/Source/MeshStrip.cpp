@@ -16,13 +16,25 @@ MeshStrip::MeshStrip()
 MeshStrip::~MeshStrip() 
 {
 	if(this->mesh)
+	{
 		delete [] this->mesh;
+		this->mesh = NULL;
+	}
 	if(this->indicies)
+	{
 		delete [] this->indicies;
+		this->indicies = NULL;
+	}
 	if(this->RenderObject)
+	{
 		delete this->RenderObject;
+		this->RenderObject = NULL;
+	}
 	if(this->material)
+	{
 		delete this->material;
+		this->material = NULL;
+	}
 }
 
 MeshStrip::MeshStrip(const MeshStrip* origObj)

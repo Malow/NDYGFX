@@ -189,7 +189,7 @@ PSOut PS(PSIn input)
 
 	//Normal and depth RT
 	output.NormalAndDepth.xyz = input.normal;
-	float depth = length(g_CameraPos - input.posW) / g_FarClip;		// Haxfix**tillman
+	float depth = length(g_CameraPos - input.posW) / g_FarClip;		// Haxfix
 	output.NormalAndDepth.w = depth;
 
 	//Position(world space) & object type RT
@@ -210,9 +210,8 @@ technique10 DrawBillboardInstanced
         SetPixelShader( CompileShader( ps_4_0, PS() ) );
 		
         
-		SetDepthStencilState( EnableDepth, 0 ); //Disabeldepthwrite?**TILLMAN test
+		SetDepthStencilState( EnableDepth, 0 ); //Disabeldepthwrite?
 	    SetRasterizerState( BackCulling );
 		SetBlendState(NoBlend, float4( 0.0f, 0.0f, 0.0f, 0.0f ), 0xFFFFFFFF );
-		//SetBlendState( SrcAlphaBlendingAdd, float4( 0.0f, 0.0f, 0.0f, 0.0f ), 0xFFFFFFFF );
     }
 }

@@ -250,14 +250,13 @@ float SampleCascades(uint cascadeIndex, uint otherCascadeIndex, float2 pixelPosT
 	}
 
 
-	//**TILLMAN TODO: X3511: flatten/unroll, stoppa alla shadowmaps i en texture, etc**
 	
 	float CSM_SHADOW_EPSILON = 0.005f;// - (cascadeIndex * 0.0005f);// - (pixelDepth * 0.001f); //**finputsa, lägga till pixelDepth?**
 	float shadow = 0.0f; 
 	bool withinBlendingDistance = false;
 	if(blendCascades) //global variable
 	{
-		//**TILLMAN START OF BLENDING**
+		//**START OF BLENDING**
 
 		//Convert pixel depth to view space units.
 		/*float pixelDepthViewSpace = pixelDepth * cascadeFarPlanes[nrOfCascades - 1];
@@ -289,15 +288,15 @@ float SampleCascades(uint cascadeIndex, uint otherCascadeIndex, float2 pixelPosT
 		//If pixel was not in blending distance (and therefore not blended), do normal PCF. //**kanske strunta i bool helt?**
 		//if(!withinBlendingDistance) //**kanske strunta i bool helt?**
 
-		//**TILLMAN END OF BLENDING**
+		//**END OF BLENDING**
 		{
 
 
-			//**todo CHECK** TILLMAN
+			//Todo: check
 			//if true, sample both and lerp samples**
 			//else: kod under**
 
-			if(PCF_SIZE > 0) //**TILLMAN, ersätta med if PCF_SIZE != 0??**
+			if(PCF_SIZE > 0) 
 			{
 				for(float s = 0; s < PCF_SIZE; s++) // error X3511: forced to unroll loop, but unrolling failed.
 				{
@@ -429,7 +428,7 @@ float4 PSScene(PSIn input) : SV_Target
 	float SpecularPower = 0.0f;
 	float4 SpecularColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
 
-	if(WorldPosAndObjectType.w != OBJECT_TYPE_TERRAIN) //**TILLMAN todo: inte göra spec beräkningar
+	if(WorldPosAndObjectType.w != OBJECT_TYPE_TERRAIN) //Todo: exclude specular computations
 	{
 		float4 specularRT = Specular.Sample(linearSampler, input.tex);
 		SpecularPower = specularRT.w;
@@ -536,11 +535,11 @@ float4 PSScene(PSIn input) : SV_Target
 			uint cascadeIndex = -1;
 			cascadeIndex = FindCascade(pixelDepthCameraViewSpace);
 
-			//**TILLMAN TODO** early exit: if (CascadeIndex == -1), warning dock! kan reducera fps istället**
+			//Todo: early exit: if (CascadeIndex == -1)
 
 
 			//Determine the second cascade to use if blending between cascades is enabled:
-			uint otherCascadeIndex = -1; //**TILLMAN TODO**
+			uint otherCascadeIndex = -1; 
 			if(blendCascades)
 			{
 				otherCascadeIndex = FindCascadeToBlendWith(cascadeIndex, pixelDepthCameraViewSpace); 
@@ -567,7 +566,7 @@ float4 PSScene(PSIn input) : SV_Target
 			diffShadow = shadow; //Used for billboards.
 		}
 		
-		//**tillman end of CSM
+		//**end of CSM**
 		
 		diffuseLighting += diffLight;
 		specLighting += specLight;
@@ -643,16 +642,16 @@ float4 PSScene(PSIn input) : SV_Target
 
 
 		
-	//if(finalColor.a >= 0.00001f && finalColor.a <= 0.9999f) //**tillman - haxlösning?**
+	//if(finalColor.a >= 0.00001f && finalColor.a <= 0.9999f)
 	//{
-		//finalColor = SSAO(input.tex, NormalAndDepth, Position); //**tillman opt(position tex)**
+		//finalColor = SSAO(input.tex, NormalAndDepth, Position); 
 	
 	finalColor.rgb = HighlightArea(WorldPos.xz, finalColor.rgb); //Position is in world space
 	finalColor.a = 1.0f;
 		
 	//}
 
-	//**TILLMAN todo: OPT**
+	
 	//Skip shadow "lighting" and specular
 	if(WorldPosAndObjectType.w == OBJECT_TYPE_BILLBOARD)
 	{	

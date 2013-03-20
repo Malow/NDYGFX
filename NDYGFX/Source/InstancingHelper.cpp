@@ -275,7 +275,7 @@ void InstancingHelper::AddBillboard( Mesh* meshWithBillboard )
 		this->ExpandBillboardInstanceBuffer();
 	}
 
-	//Calculate billboard data (sometimes it has not been precalculated)**Tillman
+	//Calculate billboard data (sometimes it has not been precalculated)
 	//Calculate billboard position(this needs to be updated as the mesh position changes).(don't forget to include the scale).
 	float halfHeightScaled = meshWithBillboard->GetHeight() * 0.5f * meshWithBillboard->GetScaling().y; //(yOffset)
 	D3DXVECTOR3 billboardPos = meshWithBillboard->GetPosition();
@@ -286,7 +286,7 @@ void InstancingHelper::AddBillboard( Mesh* meshWithBillboard )
 	BillboardData billboardData;
 	D3DXVECTOR3 billboardColor = meshWithBillboard->GetBillboardGFX()->GetVertex().GetColor();
 	
-	//Set data//**TILLMAN
+	//Set data
 	billboardData.s_Vertex = VertexBillboard1(	billboardPos, 
 												D3DXVECTOR2(billboardSize, billboardSize),
 												billboardColor);
@@ -345,7 +345,7 @@ void InstancingHelper::PreRenderBillboards(bool shadowmap)
 	{
 		ID3D11ShaderResourceView* tempSRV;
 
-		int groupCounter = 1; //**TILLMAN
+		int groupCounter = 1; 
 		unsigned int nrOfGroups = 0;
 		//Add a seperator at the end of billboard data.
 		BillboardData seperator;
@@ -353,7 +353,7 @@ void InstancingHelper::PreRenderBillboards(bool shadowmap)
 		this->zBillboardData.push_back(seperator);
 
 		//First group's start location/index is always 0.
-		BillboardGroup firstBBGroup; //**TILLMAN**
+		BillboardGroup firstBBGroup; 
 		firstBBGroup.s_StartLocation = 0;
 		this->zBillboardGroups.push_back(firstBBGroup);
 		
@@ -690,11 +690,8 @@ void InstancingHelper::AddAnimatedMesh(AnimatedMesh* animatedMesh, float timer)
 		{
 			//Add strip data
 			AnimatedStripData animatedStripData;
-
 			animatedStripData.InstancedData.s_WorldMatrix = animatedMesh->GetWorldMatrix();
-			//**TILLMAN TEST**
 			animatedStripData.InstancedData.s_WorldMatrix._44 = interpolationValue;
-			//animatedStripData.InstancedData.s_WorldInverseTransposeMatrix = worldInverseTranspose;
 			animatedStripData.s_MeshStripOne = stripsOne->get(i);
 			animatedStripData.s_MeshStripTwo = stripsTwo->get(i);
 			

@@ -186,34 +186,7 @@ float3 RenderTextured(float scale, float2 tex, bool useBlendMap)
 	return saturate((tex0Color + tex1Color + tex2Color + tex3Color) * 0.25f) * diffuseColor;
 }
 
-float GenerateGrassHeight(float3 grassColor)
-{
-	return 0.5f; //TEMP TEST
 
-
-	//**TILLMAN TODO : global variable
-	float maxGrassLength = 0.5f; //in meter.
-
-	//Check if the color is green enough.
-	if(grassColor.g > 0.785f) //~200 on the 0-255 RGB scale.
-	{
-		if(grassColor.g / grassColor.b > 2.0f && grassColor.g / grassColor.r > 1.25f)
-		{
-			//the greener it is, the longer it is.
-			float grDiff = grassColor.g - grassColor.r; //range[0,1].
-			float gbDiff = grassColor.g - grassColor.b; //range[0,1].
-
-			//Example: **TILLMAN TODO
-			//(1 - ((1 - 1) * 0.5)) * 0.5 =
-			//(1 - (2 * 0.5)) * 0.5
-			//(1 - 1) * 0.5
-			return (grassColor.g - ((grDiff - gbDiff) * 0.5f)) * maxGrassLength;
-		}
-	}
-
-
-	//return -1.0f;
-}
 
 //-----------------------------------------------------------------------------------------
 // VertexShader: VSScene

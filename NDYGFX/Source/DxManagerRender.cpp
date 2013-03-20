@@ -331,7 +331,7 @@ void DxManager::RenderShadowMap()
 					D3DXMATRIX wvp = this->animations[i]->GetWorldMatrix() * this->lights[l]->GetViewProjMatrix();
 					this->Shader_ShadowMapAnimated->SetMatrix("LightWVP", wvp); 
 
-					for(unsigned int u = 0; u < stripsOne->size(); u++)  //**Tillman todo - indices?**
+					for(unsigned int u = 0; u < stripsOne->size(); u++)  
 					{
 						//Set shader data per strip
 						Object3D* objOne = stripsOne->get(u)->GetRenderObject();
@@ -646,7 +646,6 @@ void DxManager::RenderCascadedShadowMap()
 		}
 
 		D3DXMATRIX wvp;
-		//**TILLMAN TODO:  check what cascade the object is in, object->IsIncascade(s)(indices)**
 
 		for (int l = 0; l < this->csm->GetNrOfCascadeLevels(); l++)
 		{
@@ -657,6 +656,9 @@ void DxManager::RenderCascadedShadowMap()
 			//Terrain
 			//Per frame:
 			this->Shader_ShadowMap->SetFloat3("gSunDir", this->sun.direction);
+			//No terrain has a transparent texture
+			this->Shader_ShadowMap->SetResource("diffuseMap", NULL);
+			this->Shader_ShadowMap->SetBool("textured", false);
 			for(unsigned int i = 0; i < this->terrains.size(); i++)
 			{
 				//If the terrain has not been culled for shadowing, render it to shadow map.
@@ -682,10 +684,6 @@ void DxManager::RenderCascadedShadowMap()
 					{
 						verts->Apply();
 					}
-
-					//Texture - tell the shader to not use texture(s), as this will generate a warning if set to true. **TILLMAN - fortfarande samma problem, se nedan.
-					//this->Shader_ShadowMap->SetResource("diffuseMap", NULL);
-					this->Shader_ShadowMap->SetBool("textured", false);
 
 					//Apply Shader
 					this->Shader_ShadowMap->Apply(0);
@@ -858,12 +856,6 @@ void DxManager::RenderCascadedShadowMap()
 		delete [] hasStaticMeshBeenAdded;
 		delete [] hasAnimatedMeshBeenAdded;
 	}
-	else
-	{
-		this->Shader_ShadowMapAnimated->Apply(0); //**TILLMAN - SKA INTE BEHÖVAS, MEN MÅSTE. 
-		//** min gissning är att någon variabel (som ligger i stdafx.fx) sätts av denna shader
-		//och används en en ANNAN shader och måste därmed appliceras. **
-	}
 
 	this->renderedMeshShadows = currentRenderedMeshShadows;
 	this->renderedTerrainShadows = currentRenderedTerrainShadows;
@@ -873,6 +865,8 @@ void DxManager::RenderCascadedShadowMap()
 	this->perf.PostMeasure("Renderer - Render Cascaded Shadowmap", 3);
 #endif	
 }
+
+
 
 void DxManager::RenderCascadedShadowMapInstanced()
 {
@@ -889,7 +883,7 @@ void DxManager::RenderCascadedShadowMapInstanced()
 		if(this->instancingHelper->GetNrOfBillboards() > 0)
 		{
 			//Sort, create instance groups and update buffer before rendering
-			this->instancingHelper->PreRenderBillboards(true); //**Tillman todo opt: remove redundant billboard data**
+			this->instancingHelper->PreRenderBillboards(true); 
 
 			//Draw billboards
 			//Set the vertex(instance) buffer
@@ -967,7 +961,7 @@ void DxManager::RenderCascadedShadowMapInstanced()
 			//Per frame:
 			this->Shader_ShadowMapInstanced->SetFloat3("g_SunDir", this->sun.direction);
 
-			//Per cascade: //**TILLMAN opt, flytta ut denna forloop (rita alla instansierat per cascade)
+			//Per cascade: 
 			for(int i = 0; i < this->csm->GetNrOfCascadeLevels(); ++i)
 			{
 				//Set depth stencils and view ports.
@@ -1057,7 +1051,7 @@ void DxManager::RenderCascadedShadowMapInstanced()
 			//Per frame:
 			this->Shader_ShadowMapAnimatedInstanced->SetFloat3("gSunDir", this->sun.direction);
 
-			//Per cascade: //**TILLMAN opt, flytta ut denna forloop (rita alla instansierat per cascade)
+			//Per cascade:
 			for(int i = 0; i < this->csm->GetNrOfCascadeLevels(); ++i)
 			{
 				//Set depth stencils and view ports.
@@ -1279,7 +1273,7 @@ void DxManager::CalculateCulling()
 		D3DXVECTOR3 pos = bb->GetPositionD3DX();
 		D3DXVECTOR3 offset = D3DXVECTOR3(bb->GetSizeD3DX().x, bb->GetSizeD3DX().y, bb->GetSizeD3DX().y) * 0.5f;
 
-		BoundingSphere boundingSphere = BoundingSphere(pos - offset, pos + offset); //TILLMAN
+		BoundingSphere boundingSphere = BoundingSphere(pos - offset, pos + offset); 
 		D3DXMATRIX world;
 		D3DXMatrixIdentity(&world);
 		world._14 = bb->GetPositionD3DX().x;
@@ -1324,11 +1318,10 @@ void DxManager::CalculateCulling()
 	}
 
 	//SHADOW CULLING - determine if an object is inside a cascade.
-	if(this->csm != NULL && this->useShadow) //**TILLMAN TODO, kolla att OBB blir rätt, verkar inte så...**
+	if(this->csm != NULL && this->useShadow) 
 	{
 		//Calculate frustums - the frustum in this case i an OBB (the cascade). 
 		this->csm->CalcCascadePlanes();
-
 
 		//Terrain
 		for(unsigned int i = 0; i < this->terrains.size(); i++)
@@ -1382,12 +1375,12 @@ void DxManager::CalculateCulling()
 						if(pe.FrustrumVsSphere(csm->GetCascadePlanes(k), strip->GetBoundingSphere(), staticMesh->GetWorldMatrix(), scale))
 						{
 							//As long as the strip is inside ONE of the cascades, it needs to be drawn to the shadow map.
-							staticMesh->SetStripShadowCulledFlag(j, false); //**tillman.b - onödig? görs vid vanlig culling?
+							staticMesh->SetStripShadowCulledFlag(j, false); 
 							notDone = false;
 						}
 						else
 						{
-							staticMesh->SetStripShadowCulledFlag(j, true); //**tillman.a - onödig? görs vid vanlig culling?
+							staticMesh->SetStripShadowCulledFlag(j, true); 
 						}
 					}
 				}
@@ -1440,7 +1433,7 @@ void DxManager::CalculateCulling()
 			D3DXVECTOR3 pos = bb->GetPositionD3DX();
 			D3DXVECTOR3 offset = D3DXVECTOR3(bb->GetSizeD3DX().x, bb->GetSizeD3DX().y, bb->GetSizeD3DX().y) * 0.5f;
 
-			BoundingSphere boundingSphere = BoundingSphere(pos - offset, pos + offset); //TILLMAN
+			BoundingSphere boundingSphere = BoundingSphere(pos - offset, pos + offset); 
 			D3DXMATRIX world;
 			D3DXMatrixIdentity(&world);
 			world._14 = bb->GetPositionD3DX().x;
