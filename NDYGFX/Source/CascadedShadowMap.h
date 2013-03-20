@@ -24,7 +24,7 @@ private:
 	D3DXMATRIX viewProj[SHADOW_MAP_CASCADE_COUNT];
 
 	float shadowMappingSplitDepths[SHADOW_MAP_CASCADE_COUNT + 1];
-	D3DXPLANE** cascadePlanes; //**TILLMAN - alt. ta min & max och skapa OBB och göra OBBVSSphere i PE.
+	D3DXPLANE** cascadePlanes; 
 
 
 	void CalcShadowMappingSplitDepths();

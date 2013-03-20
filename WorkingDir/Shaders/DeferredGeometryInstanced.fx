@@ -59,7 +59,6 @@ struct PSSceneIn
 	float3 Binormal : BINORMAL;
 
 	float4 worldPos : POSITION;
-	//float4 instanceColor : INSTANCE_COLOR; //TILLMAN ev todo, göra vid skapandet av mesh(pga dynamisk instansiering)
 };
 
 struct PSout
@@ -169,6 +168,7 @@ technique11 DeferredGeometryInstanced
 	    
 
 		SetDepthStencilState( EnableDepth, 0 );
+		SetBlendState(NoBlend, float4( 0.0f, 0.0f, 0.0f, 0.0f ), 0xFFFFFFFF );
 	    SetRasterizerState( BackCulling );
     }  
 }

@@ -526,7 +526,7 @@ float4 PSScene(PSIn input) : SV_Target
 		float specLight = pow(saturate(dot(h, NormsAndDepth.xyz)), SpecularPower) * gSun.LightIntensity;
 
 		
-		//SHADOW: //TILLMAN START OF CSM**
+		//CSM SHADOW: 
 		if(useShadow)
 		{
 			//Determine the shadow map to use:

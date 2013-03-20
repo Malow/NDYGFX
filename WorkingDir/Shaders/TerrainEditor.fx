@@ -20,11 +20,10 @@ Texture2D tex5 : register(t5); //G-channel in blendMap1.
 Texture2D tex6 : register(t6); //B-channel in blendMap1.
 Texture2D tex7 : register(t7); //A-channel in blendMap1
 
-Texture2D<float4> blendMap0; //**TILLMAN TODO: testa sänka format 
-Texture2D<float4> blendMap1; //**TILLMAN TODO: testa sänka format 
-//Texture2D<uint> AIMap;
-Texture2D AIMap; //Format = DXGI_FORMAT_R8_UNORM.
-//Texture2D<int> AIMap; //**uint
+Texture2D<float4> blendMap0; 
+Texture2D<float4> blendMap1; 
+Texture2D AIMap; //Format = DXGI_FORMAT_R8_UNORM. //Tillman todo: ersätta med terrain.fx
+
 
 
 //-----------------------------------------------------------------------------------------
@@ -74,7 +73,6 @@ struct PSSceneIn
 	float3 color	: COLOR;
 
 	float4 posW		: POSITION;	//world position 
-	//float depth		: SV_Depth;
 };
 
 struct PSOut			
@@ -83,7 +81,6 @@ struct PSOut
 	float4 NormalAndDepth	: SV_TARGET1;	//Normal XYZ, depth W.
 	float4 Position			: SV_TARGET2;	//Position XYZ, Type of object W.
 	float4 Specular			: SV_TARGET3;	//Specular XYZ(unused by this shader), specular power W(unused by this shader).
-	//float4 GrassCanopy		: SV_TARGET4;	//Grass color XYZ, grass height W.
 };
 
 //-----------------------------------------------------------------------------------------
@@ -303,41 +300,8 @@ PSOut PSScene(PSSceneIn input) : SV_Target
 	output.Position.xyz = input.posW.xyz;
 	output.Position.w = OBJECT_TYPE_TERRAIN; //See stdafx.fx for object types.
 	
-	
-
-	//TILLMAN - unused:
-	//Specular RT
-	/*output.Specular.xyzw = 0.0f;
-
-	//Grass canopy RT
-	output.GrassCanopy.xyz = finalColor;  //Grass color
-	output.GrassCanopy.w = GenerateGrassHeight(finalColor); //Grass height
-	*/
-
-
-
-	//Modify world position TEST
-	/*float3 newWorldPos = input.posW.xyz;
-	newWorldPos.y += output.GrassCanopy.w;
-
-	//NormalAndDepth RT
-	output.NormalAndDepth.xyz = input.norm;
-	float depth = length(g_CamPos.xyz - newWorldPos) / g_FarClip;		// Haxfix
-	output.NormalAndDepth.w = depth;
-	
-	//Position RT
-	output.Position.xyz = newWorldPos;
-	output.Position.w = OBJECT_TYPE_TERRAIN; //See stdafx.fx for object types.
-	*/
-
-	//oD0 = depth;
-	//oDepth
-	/*asm ps_4_0 
-	{ 
-		mov register(oDepth), depth 
-	}*/
-
-
+	//Specular RT(unused)
+	output.Specular.xyzw = 0.0f;
 	
 	return output;
 }

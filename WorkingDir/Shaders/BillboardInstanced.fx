@@ -6,13 +6,12 @@
 //	Requirement(s): 
 //		World position of camera.
 //		Camera view & projection matrices.
-//		Size of billboard (width & height) in **vilket space - tillman?**
+//		Size of billboard (width & height) in world space
 //		World space position of billboard.
 //	Optional:
 //		Diffuse map (texture).
 //		Color of billboard.
 //-----------------------------------------------------------------------------------------
-
 #include "stdafx.fx"
 
 
@@ -20,7 +19,7 @@
 // Global variables
 //-----------------------------------------------------------------------------------------
 Texture2D		g_bb_DiffuseMap; 
-//**TILLMAN
+
 float2 g_TexCoords[4] = 
 {
 	float2(1.0f, 1.0f),
@@ -48,32 +47,26 @@ cbuffer PerBillBoard
 //-----------------------------------------------------------------------------------------
 // Input and Output Structures
 //-----------------------------------------------------------------------------------------
-
-
 struct VSIn
 {
 	float4 posW_SizeX	: POSITION_AND_SIZE_X; 
 	float4 sizeY_Color	: SIZE_Y_AND_COLOR;
-
-	//AndSize	: TEXCOORD_AND_SIZE;
-	//float3 color		: COLOR; 
 };
 
-struct GSIn //TILLMAN - används VS in struct?
+struct GSIn 
 {
 	float3 posW		: POSITION;
-	//float2 texCoord	: TEXCOORD;
 	float2 size		: SIZE;
 	float3 color	: COLOR;	
 };
 
 struct PSIn 
 {
-	float3	posW		: POSITION;	//homogenous clip space
+	float3	posW		: POSITION;
 	float4	posH		: SV_Position;	//homogenous clip space
 	float3	normal		: NORMAL;
 	float2	texCoords	: TEXCOORD;
-	float3	color		: COLOR; //TILLMAN opt, def struct, if(!textured)
+	float3	color		: COLOR; 
 };
 
 struct PSOut			
@@ -113,7 +106,6 @@ GSIn VS(VSIn input)
 //-----------------------------------------------------------------------------------------
 // Geometry shader 
 //-----------------------------------------------------------------------------------------
-//#define VERTEX_COUNT (4) //tillman todo test
 [maxvertexcount(4)]
 void GS(point GSIn input[1], inout TriangleStream<PSIn> triStream)
 {	
@@ -124,7 +116,7 @@ void GS(point GSIn input[1], inout TriangleStream<PSIn> triStream)
 	//Create world matrix to make the billboard face the camera.
 	float3 forward = normalize(g_CameraPos - input[0].posW); 
 	float3 right = normalize(cross(float3(0.0f, 1.0f, 0.0f), forward));
-	float3 up = cross(forward, right);//TILLMAN testa * 0.5f?, (fästa vid 45%)
+	float3 up = cross(forward, right);
 	float4x4 W;
 	W[0] = float4(right, 0.0f);
 	W[1] = float4(up, 0.0f);

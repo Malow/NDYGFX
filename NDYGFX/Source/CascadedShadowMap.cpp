@@ -7,7 +7,7 @@
 CascadedShadowMap::CascadedShadowMap()
 {
 	this->quality = 0;
-	this->blendDistance = 0.1f; //**tillman Tmp, ska vara 0.0f;**
+	this->blendDistance = 0.0f; 
 	this->cascadePlanes = new D3DXPLANE*[SHADOW_MAP_CASCADE_COUNT];
 	for(int i = 0; i < SHADOW_MAP_CASCADE_COUNT; i++)
 	{
@@ -35,7 +35,7 @@ CascadedShadowMap::~CascadedShadowMap()
 
 void CascadedShadowMap::CalcShadowMapMatrices(D3DXVECTOR3 sunLight, Camera* cam, int i)
 {
-	//TILLMAN - ändra getforward/right/up till getOldforward/right/up?
+	//Ändra getforward/right/up till getOldforward/right/up?
 	//calculate points (in world space) for the frustum slice
 	D3DXVECTOR4 camPos = D3DXVECTOR4(cam->GetOldPos(), 1.0f);
 	D3DXVECTOR4 camForward = D3DXVECTOR4(cam->GetForwardD3DX(), 1.0f);
@@ -69,18 +69,15 @@ void CascadedShadowMap::CalcShadowMapMatrices(D3DXVECTOR3 sunLight, Camera* cam,
 	D3DXVECTOR4 frustumPoints[8] = {nearTopLeft, nearTopRight, nearBottomLeft, nearBottomRight,
 									farTopLeft, farTopRight, farBottomLeft, farBottomRight };
 	
-	
-	
 	// Normalize Sunlight
 	D3DXVec3Normalize(&sunLight, &sunLight);
 
 	//Calculate the light's view matrix.
-	D3DXVECTOR3 lightPos = D3DXVECTOR3(0.0f, 0.0f, 0.0f); //**tillman - för sol/sun, ersätta med variabel**
-	D3DXVECTOR3 lightLookAt = lightPos + sunLight; //sunlight = the direction the sun is "looking at".
+	D3DXVECTOR3 lightPos = D3DXVECTOR3(0.0f, 0.0f, 0.0f); 
 	D3DXVECTOR3 lightUp = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 	D3DXMATRIX lightViewMatrix;
 	D3DXMatrixIdentity(&lightViewMatrix);
-	D3DXMatrixLookAtLH(&lightViewMatrix, &lightPos, &lightLookAt, &lightUp); 
+	D3DXMatrixLookAtLH(&lightViewMatrix, &lightPos, &sunLight, &lightUp);  //sunlight = the direction the sun is "looking at".
 	
 	//Transform the points from world space to light’s homogeneous space.
 	for(int index = 0; index < 8; index++)
@@ -89,7 +86,6 @@ void CascadedShadowMap::CalcShadowMapMatrices(D3DXVECTOR3 sunLight, Camera* cam,
 		frustumPoints[index].w = 1.0f;
 		D3DXVec4Transform(&frustumPoints[index], &frustumPoints[index], &lightViewMatrix);
 	}
-	
 
 	//Calculate the min(near plane) and max(far plane) values for the orthographic projection.
 	float infinity = std::numeric_limits<float>::infinity();
@@ -110,7 +106,8 @@ void CascadedShadowMap::CalcShadowMapMatrices(D3DXVECTOR3 sunLight, Camera* cam,
 	{
 		sunLight *= -1.0f;
 	}
-	tmpNearPlanePoint -= sunLight * (float)(this->params.ShadowFit * (i + 1)); //TILLMAN** sätta near plane till samma för alla.
+	//Todo: set same near plane for all cascades
+	tmpNearPlanePoint -= sunLight * (float)(this->params.ShadowFit * (i + 1)); 
 	float nearPlane = tmpNearPlanePoint.z; 
 	float farPlane = maxValue.z;
 
@@ -118,7 +115,7 @@ void CascadedShadowMap::CalcShadowMapMatrices(D3DXVECTOR3 sunLight, Camera* cam,
 	// Add the blend distance to make the projections overlap each other for blending between the shadow maps.
 	D3DXMATRIX lightProjMatrix;
 	D3DXMatrixIdentity(&lightProjMatrix);
-	//Blend distance makes the projections overlap**tillman
+	//Todo: Blend distance makes the projections overlap
 	//This overlap is used to smooth/blur the edges where the cascades meet.
 	D3DXMatrixOrthoOffCenterLH( &lightProjMatrix, 
 		minValue.x - this->blendDistance, 
@@ -143,27 +140,7 @@ void CascadedShadowMap::CalcShadowMappingSplitDepths()
 	this->shadowMappingSplitDepths[2] = this->params.FarClip * 0.4f;
 	this->shadowMappingSplitDepths[SHADOW_MAP_CASCADE_COUNT] = this->params.FarClip;
 
-
-	/*float scale = ;
-	for(int i = 1; i < SHADOW_MAP_CASCADE_COUNT; i++) //TILLMAN TODO
-	{
-		this->shadowMappingSplitDepths[i] = camFar * scale * 0.001f;
-	}*/
-	
-	/*
-	float i_f = 1.0f;
-	float cascadeCount = (float)SHADOW_MAP_CASCADE_COUNT;
-
-	for (int i = 0; i < SHADOW_MAP_CASCADE_COUNT; i++)
-	{
-		this->shadowMappingSplitDepths[i] = lerp(camNear + (i_f/cascadeCount)*(camFar - camNear), 
-			camNear * powf(camFar / camNear, i_f/cascadeCount),
-			SHADOW_SPLIT_LOG_FACTOR);
-
-		i_f += 1.f;
-	}
-	this->shadowMappingSplitDepths[SHADOW_MAP_CASCADE_COUNT] = camFar;
-	*/
+	//Todo: algorithm depending on SHADOW_MAP_CASCADE_COUNT
 }
 void CascadedShadowMap::CalcCascadePlanes()
 {

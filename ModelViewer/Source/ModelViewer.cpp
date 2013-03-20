@@ -41,7 +41,7 @@ void deleteCache()
 	int len = strlen(path.c_str()) + 2; // required to set 2 nulls at end of argument to SHFileOperation.
 	char* tempdir = (char*) malloc(len);
 	memset(tempdir,0,len);
-	strcpy(tempdir,path.c_str()); //**tillman**
+	strcpy(tempdir,path.c_str()); 
 
 	SHFILEOPSTRUCT file_op = {
 		NULL,
@@ -75,7 +75,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	MaloW::Debug("(DEBUG): ModelViewer: vld.h included.");
 #endif
 #endif
-	GetGraphics()->CreateSkyBox("Media/skymap.dds"); //** TILLMAN
+	GetGraphics()->CreateSkyBox("Media/skymap.dds"); 
 	GetGraphics()->GetCamera()->SetPosition(Vector3(25, 25, 20));
 	GetGraphics()->GetCamera()->LookAt(Vector3(0, 0, 0));
 
