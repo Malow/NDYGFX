@@ -1,3 +1,4 @@
+//#define TEST
 #define REALISTICTESTSCENE
 
 #if defined(DEBUG) || defined(_DEBUG)
