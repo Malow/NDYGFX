@@ -130,6 +130,10 @@ void TestRealisticScene::PreTest()
 		iDecal* wp = GetGraphics()->CreateDecal(decPos, "Media/BloodTexture.png", Vector3(0,-1,0), Vector3(1, 0, 0));
 		if(i % 2 == 0)
 			wp->SetSize(2.0f);
+		else
+		{
+			wp->SetOpacity(0.1f);
+		}
 	}
 	
 	GetGraphics()->SetGrassFilePath("Media/Grass.png");
@@ -178,7 +182,7 @@ bool TestRealisticScene::RunTest(float diff)
 	}
 	GetGraphics()->SetEnclosingFogEffect(this->fogCenter, this->enclosingfog);
 
-	/*
+	/* // Print Screen comparison
 	if(GetGraphics()->GetKeyListener()->IsPressed('6'))
 	{
 		GetGraphics()->GetCamera()->SetPosition(Vector3(1986, 2, 1974));
@@ -241,7 +245,7 @@ bool TestRealisticScene::RunTest(float diff)
 		pos.y = world->GetHeightAt(Vector2(pos.x, pos.z)) + 5.0f;
 		GetGraphics()->GetCamera()->SetPosition(pos);
 		if(GetGraphics()->GetCamera()->GetPosition().x < 1700)
-			path--;
+			path++;
 
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_RETURN))
 		{
