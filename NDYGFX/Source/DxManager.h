@@ -59,9 +59,9 @@ private:
 	Shader* Shader_ShadowMapAnimated;
 	Shader* Shader_ShadowMapAnimatedInstanced;
 	Shader* Shader_ShadowMapBillboardInstanced;
-	Shader* Shader_DeferredGeometry; //**TILLMAN - deprecated
+	Shader* Shader_DeferredGeometry; //Deprecated, replaced by Shader_DeferredGeometryInstanced
 	Shader* Shader_DeferredGeometryInstanced;
-	Shader* Shader_DeferredAnimatedGeometry; //**TILLMAN - deprecated
+	Shader* Shader_DeferredAnimatedGeometry; //Deprecated, replaced by Shader_DeferredAnimatedGeometryInstanced
 	Shader* Shader_DeferredAnimatedGeometryInstanced;
 	Shader* Shader_TerrainEditor;
 	Shader* Shader_DeferredLightning;

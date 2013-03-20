@@ -632,14 +632,14 @@ void DxManager::RenderCascadedShadowMap()
 	int currentRenderedTerrainShadows = 0;
 	int currentRenderedMeshShadows = 0;
 
-	if(this->useSun && this->useShadow) //* TILLMAN - sun ska också inte ligga här?*
+	if(this->useSun && this->useShadow)
 	{
-		bool* hasStaticMeshBeenAdded = new bool[this->objects.size()]; //TILLMAN
+		bool* hasStaticMeshBeenAdded = new bool[this->objects.size()]; 
 		for(unsigned int i = 0; i < this->objects.size(); ++i)
 		{
 			hasStaticMeshBeenAdded[i] = false;
 		}
-		bool* hasAnimatedMeshBeenAdded = new bool[this->animations.size()]; //TILLMAN
+		bool* hasAnimatedMeshBeenAdded = new bool[this->animations.size()]; 
 		for(unsigned int i = 0; i < this->animations.size(); ++i)
 		{
 			hasAnimatedMeshBeenAdded[i] = false;
@@ -730,7 +730,7 @@ void DxManager::RenderCascadedShadowMap()
 						//Only add once (same object can be in several cascades).
 						if(!hasStaticMeshBeenAdded[i])
 						{
-							//As long as one strip has not been culled, add whole **mesh** //tillman opt - lägga till strip bara
+							//As long as one strip has not been culled, add whole mesh for instancing
 							MaloW::Array<MeshStrip*>* strips = staticMesh->GetStrips();
 							unsigned int index = 0;
 							bool oneStripIsNotCulled = false;
@@ -752,7 +752,7 @@ void DxManager::RenderCascadedShadowMap()
 						//Only add once (same object can be in several cascades).
 						if(!hasStaticMeshBeenAdded[i])
 						{
-							//As long as one strip has not been culled, add whole **mesh** //tillman opt - lägga till strip bara
+							//As long as one strip has not been culled, add whole mesh for instancing
 							MaloW::Array<MeshStrip*>* strips = staticMesh->GetStrips();
 							unsigned int index = 0;
 							bool oneStripIsNotCulled = false;
@@ -801,7 +801,7 @@ void DxManager::RenderCascadedShadowMap()
 						//Only add once (same object can be in several cascades).
 						if(!hasAnimatedMeshBeenAdded[i])
 						{
-							//As long as one strip has not been culled, add whole **mesh** //tillman opt - lägga till strip bara
+							//As long as one strip has not been culled, add whole mesh for instancing
 							MaloW::Array<MeshStrip*>* strips = animatedMesh->GetStrips();
 							unsigned int index = 0;
 							bool oneStripIsNotCulled = false;
@@ -823,7 +823,7 @@ void DxManager::RenderCascadedShadowMap()
 						//Only add once (same object can be in several cascades).
 						if(!hasAnimatedMeshBeenAdded[i])
 						{
-							//As long as one strip has not been culled, add whole **mesh** //tillman opt - lägga till strip bara
+							//As long as one strip has not been culled, add whole mesh for instancing
 							MaloW::Array<MeshStrip*>* strips = animatedMesh->GetStrips();
 							unsigned int index = 0;
 							bool oneStripIsNotCulled = false;

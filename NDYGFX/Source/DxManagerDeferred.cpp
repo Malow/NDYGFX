@@ -132,7 +132,7 @@ void DxManager::RenderDeferredGeoTerrains()
 	proj = this->camera->GetProjectionMatrix();
 
 
-	//Terrain - **TILLMAN TODO: MOVE TO LOAD: blendmap, vertexbuffer, textures, aitexture**
+	//Terrain 
 	this->Shader_TerrainEditor->SetFloat3("g_CamPos", this->camera->GetOldPos());
 	this->Shader_TerrainEditor->SetFloat("g_FarClip", this->params.FarClip);
 
@@ -159,7 +159,7 @@ void DxManager::RenderDeferredGeoTerrains()
 			this->Shader_TerrainEditor->SetMatrix("worldMatrix", world);
 
 			//Update vertex buffer if y-value for vertices (height map) have changed
-			if(terrPtr->HasHeightMapChanged() && terrPtr->HaveNormalsChanged()) //**TILLMAN LOADTHREAD**
+			if(terrPtr->HasHeightMapChanged() && terrPtr->HaveNormalsChanged()) 
 			{
 				void* mappedSubResourceData = NULL;
 				//Map to access data in vertex buffer
@@ -264,7 +264,7 @@ void DxManager::RenderDeferredGeoTerrains()
 						bmPtr0->s_HasChanged = false;
 					}
 
-					BlendMap* bmPtr1 = terrPtr->GetBlendMapPointer(1);  //**tillman ändra**
+					BlendMap* bmPtr1 = terrPtr->GetBlendMapPointer(1); 
 					if(bmPtr1 != NULL)
 					{
 						if(bmPtr1->s_HasChanged)
@@ -354,7 +354,7 @@ void DxManager::RenderDeferredGeoTerrains()
 			if(terrPtr->HasAIGridChanged())
 			{
 				ID3D11ShaderResourceView*& aiMap = terrPtr->GetAIShaderResourceView();
-				//Release old shader resource view //**TILLMAN LOAD-THREAD**
+				//Release old shader resource view 
 				if(aiMap != NULL) aiMap->Release();
 				
 				//Create new one.
@@ -514,11 +514,6 @@ void DxManager::RenderDeferredGeoObjects()
 	proj = this->camera->GetProjectionMatrix();
 
 	//Static meshes
-	//**TILLMAN TODO: ta bort shader variabler
-	this->Shader_DeferredGeometry->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetOldPos(), 1));
-	this->Shader_DeferredGeometry->SetFloat("NearClip", this->params.NearClip);
-	this->Shader_DeferredGeometry->SetFloat("FarClip", this->params.FarClip);
-
 	for(int i = 0; i < this->objects.size(); i++)
 	{
 		StaticMesh* staticMesh = this->objects[i];
@@ -541,7 +536,7 @@ void DxManager::RenderDeferredGeoObjects()
 
 			if(D3DXVec3Length(&distance) < billboardRange || !staticMesh->HasBillboard())
 			{	
-				//As long as one strip has not been culled, add whole **mesh** //tillman opt - lägga till strip bara
+				//As long as one strip has not been culled, add whole mesh for instancing
 				MaloW::Array<MeshStrip*>* strips = staticMesh->GetStrips();
 				unsigned int index = 0;
 				bool oneStripIsNotCulled = false;
@@ -559,7 +554,7 @@ void DxManager::RenderDeferredGeoObjects()
 			}
 			else
 			{
-				//As long as one strip has not been culled, add whole **mesh** //tillman opt - lägga till strip bara
+				//As long as one strip has not been culled, add whole mesh for instancing
 				MaloW::Array<MeshStrip*>* strips = staticMesh->GetStrips();
 				unsigned int index = 0;
 				bool oneStripIsNotCulled = false;
@@ -581,11 +576,6 @@ void DxManager::RenderDeferredGeoObjects()
 			this->invisibleGeometry = true;
 		}
 	}
-	//once = false;
-	// Unbind resources static geometry:
-	//this->Shader_DeferredGeometry->SetResource("normalMap", NULL);
-	//this->Shader_DeferredGeometry->SetResource("tex2D", NULL);
-	this->Shader_DeferredGeometry->Apply(0); //TILLMAN - måste göras
 
 #ifdef MALOWTESTPERF
 	this->Dx_DeviceContext->Flush();
@@ -596,9 +586,6 @@ void DxManager::RenderDeferredGeoObjects()
 #endif
 	
 	// Normal Animated meshes
-	this->Shader_DeferredAnimatedGeometry->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetOldPos(), 1));
-	this->Shader_DeferredAnimatedGeometry->SetFloat("NearClip", this->params.NearClip);
-	this->Shader_DeferredAnimatedGeometry->SetFloat("g_FarClip", this->params.FarClip);
 	for(int i = 0; i < this->animations.size(); i++)
 	{
 		AnimatedMesh* animatedMesh = this->animations[i];
@@ -620,7 +607,7 @@ void DxManager::RenderDeferredGeoObjects()
 
 			if(D3DXVec3Length(&distance) < billboardRange || !animatedMesh->HasBillboard())
 			{
-				//As long as one strip has not been culled, add whole **mesh** //tillman opt - lägga till strip bara
+				//As long as one strip has not been culled, add whole mesh for instancing
 				MaloW::Array<MeshStrip*>* strips = animatedMesh->GetStrips();
 				unsigned int index = 0;
 				bool oneStripIsNotCulled = false;
@@ -637,7 +624,7 @@ void DxManager::RenderDeferredGeoObjects()
 			}
 			else
 			{
-				//As long as one strip has not been culled, add whole **mesh** //tillman opt - lägga till strip bara
+				//As long as one strip has not been culled, add whole mesh for instancing
 				MaloW::Array<MeshStrip*>* strips = animatedMesh->GetStrips();
 				unsigned int index = 0;
 				bool oneStripIsNotCulled = false;
@@ -658,15 +645,17 @@ void DxManager::RenderDeferredGeoObjects()
 			this->invisibleGeometry = true;
 		}
 	}
-	//Unbind resources animated geometry:
-	//this->Shader_DeferredAnimatedGeometry->SetResource("tex2D", NULL);
-	//this->Shader_DeferredAnimatedGeometry->Apply(0);
 
 #ifdef MALOWTESTPERF
 	this->Dx_DeviceContext->Flush();
 	this->perf.PostMeasure("Renderer - Render Deferred Geo Objects Animated", 4);
 #endif
+
+
 }
+
+
+
 void DxManager::RenderDeferredGeometryInstanced()
 {
 #ifdef MALOWTESTPERF
@@ -675,6 +664,7 @@ void DxManager::RenderDeferredGeometryInstanced()
 #ifdef MALOWTESTPERF
 	this->perf.PreMeasure("Renderer - Render Deferred Geo Objects Static Instanced", 5);
 #endif
+
 	//STATIC MESHES(strips)
 	if(this->instancingHelper->GetNrOfStrips() > 0)
 	{
@@ -998,7 +988,6 @@ void DxManager::RenderDeferredPerPixel()
 	this->Shader_DeferredLightning->SetResource("NormalAndDepth", NULL);
 	this->Shader_DeferredLightning->SetResource("Position", NULL);
 	this->Shader_DeferredLightning->SetResource("Specular", NULL);
-	this->Shader_DeferredLightning->SetResource("LavaTexture", NULL);
 	for(int i = 0; i < this->lights.size(); i++)
 	{
 		this->Shader_DeferredLightning->SetResourceAtIndex(i, "ShadowMap", NULL);
@@ -1421,7 +1410,6 @@ void DxManager::RenderDeferredPerPixelTranslucent()
 	this->Shader_DeferredPerPixelTranslucent->SetResource("NormalAndDepth", NULL);
 	this->Shader_DeferredPerPixelTranslucent->SetResource("Position", NULL);
 	this->Shader_DeferredPerPixelTranslucent->SetResource("Specular", NULL);
-	this->Shader_DeferredPerPixelTranslucent->SetResource("LavaTexture", NULL);
 	for(int i = 0; i < this->lights.size(); i++)
 	{
 		this->Shader_DeferredPerPixelTranslucent->SetResourceAtIndex(i, "ShadowMap", NULL);

@@ -232,7 +232,7 @@ bool AnimatedMesh::LoadFromFile(string file)
 				string tmpPath = pathfolder + path;
 			
 				frame->meshStripsResource = GetResourceManager()->CreateMeshStripsResourceFromFile(tmpPath.c_str(), this->height);
-				//TILLMAN - per frame? omstrukturering på meshklasserna?**
+				
 				if(!doOnce)
 				{
 					//Create arrays for culling

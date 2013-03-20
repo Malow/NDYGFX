@@ -545,7 +545,7 @@ Object3D* DxManager::createParticleObject(ParticleMesh* mesh)
 	/*Buffer* verts = new Buffer();
 	if(FAILED(verts->Init(Dx_Device, Dx_DeviceContext, bufferDesc)))
 		MaloW::Debug("Initiate Buffer Failed in DxManager");
-	//**TILLMAN resource manager
+	
 	BufferResource* verts = GetResourceManager()->CreateBufferResource(mesh->GetFilePath().c_str(), bufferDesc);
 
 	BufferResource* inds = NULL;
