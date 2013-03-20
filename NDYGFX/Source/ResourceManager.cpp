@@ -990,14 +990,17 @@ MeshStripsResource* ResourceManager::CreateMeshStripsResourceFromFile(const char
 		MaloW::Debug("WARNING: ResourceManager: CreateMeshStripsResourceFromFile(): Could not create MeshStripsResource.");
 	}
 
-
 	//Release mutex and return.
 	ReleaseMutex(this->mutex);
 	return NULL;
 }
 bool ResourceManager::HasMeshStripsResource(const char* fileName)
 {
-	auto find = this->zMeshStripsResources.find(fileName);
+	string file = string(fileName);
+	file = file.substr(0, file.length() - 4);
+	file += "Mesh";
+
+	auto find = this->zMeshStripsResources.find(file);
 	if(find != this->zMeshStripsResources.cend())
 	{
 		return true;

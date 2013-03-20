@@ -46,7 +46,7 @@ class BillboardCollection : public iBillboardCollection
 		//D3DXVECTOR2 GetTexCoordD3DX(unsigned int vertexIndex)					const { return D3DXVECTOR2(this->zVertices[vertexIndex].texAndSize.x, this->zVertices[vertexIndex].texAndSize.y); }
 		//D3DXVECTOR2 GetSizeD3DX(unsigned int vertexIndex)						const { return D3DXVECTOR2(this->zVertices[vertexIndex].texAndSize.z, this->zVertices[vertexIndex].texAndSize.w); }
 		//D3DXVECTOR3 GetColorD3DX(unsigned int vertexIndex)						const { return this->zVertices[vertexIndex].color; }
-		const VertexBillboard1& GetVertex(unsigned int vertexIndex)	const { return this->zVertices[vertexIndex]; }
+		inline const VertexBillboard1& GetVertex(unsigned int vertexIndex)	const { return this->zVertices[vertexIndex]; }
 		const TextureResource* GetTextureResource()	const { return this->zTextureResource; }
 		const D3DXVECTOR3& GetOffsetVector() const { return this->zOffsetVector; }
 		bool GetRenderShadowFlag() const { return this->zRenderShadowFlag; }

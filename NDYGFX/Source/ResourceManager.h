@@ -114,7 +114,7 @@ class ResourceManager
 		//MeshStrips
 		/*	Creates and returns a MeshStripResource from an .obj-file. Height of the mesh is returned through the second parameter.	*/
 		MeshStripsResource* CreateMeshStripsResourceFromFile(const char* filePath, float& height);
-		/*	Compares the parameter with the mesh strips resource names (IDs) using partial match and returns true if an identical match is found.	*/
+		/*	Compares the parameter with the mesh strips resource names (IDs) using exact match and returns true if an identical match is found.	*/
 		bool HasMeshStripsResource(const char* fileName);
 		/*	Deletes the MeshStripsResource sent through the parameter. The pointer to MeshStripsResource is automatically set to NULL.	*/
 		void DeleteMeshStripsResource(MeshStripsResource* &meshStripsResource);

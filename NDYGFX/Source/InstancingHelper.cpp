@@ -23,7 +23,7 @@ bool SortAnimatedStripData(AnimatedStripData &stripLeft, AnimatedStripData &stri
 void InstancingHelper::ExpandBillboardInstanceBuffer()
 {
 	unsigned int oldSize = this->zBillboardInstanceBufferSize;
-	this->zBillboardInstanceBufferSize *= 2;
+	this->zBillboardInstanceBufferSize = this->zBillboardData.size() * 2;
 
 	//Resize(recreate) instance buffer
 	D3D11_BUFFER_DESC vbd;
@@ -75,7 +75,7 @@ void InstancingHelper::ExpandBillboardInstanceBuffer()
 void InstancingHelper::ExpandStripInstanceBuffer()
 {
 	unsigned int oldSize = this->zStripInstanceBufferSize;
-	this->zStripInstanceBufferSize *= 2;
+	this->zStripInstanceBufferSize = this->zStripData.size() * 2;
 
 
 	//Resize(recreate) instance buffer
@@ -126,7 +126,7 @@ void InstancingHelper::ExpandStripInstanceBuffer()
 void InstancingHelper::ExpandAnimatedStripInstanceBuffer()
 {
 	unsigned int oldSize = this->zAnimatedStripInstanceBufferSize;
-	this->zAnimatedStripInstanceBufferSize *= 2;
+	this->zAnimatedStripInstanceBufferSize = this->zAnimatedStripData.size() * 2;
 
 	//Resize(recreate) instance buffer
 	D3D11_BUFFER_DESC vbd;
@@ -246,7 +246,7 @@ void InstancingHelper::AddBillboardCollectionsReference(const MaloW::Array<Billb
 void InstancingHelper::AddBillboard(Billboard* billboard)
 {
 	//Expand buffer if necessary
-	if(this->zBillboardData.size() >= this->zBillboardInstanceBufferSize)
+	if(this->zBillboardData.size() > this->zBillboardInstanceBufferSize)
 	{
 		this->ExpandBillboardInstanceBuffer();
 	}
@@ -270,7 +270,7 @@ void InstancingHelper::AddBillboard(Billboard* billboard)
 void InstancingHelper::AddBillboard( Mesh* meshWithBillboard )
 {
 	//Expand buffer if necessary
-	if(this->zBillboardData.size() >= this->zBillboardInstanceBufferSize)
+	if(this->zBillboardData.size() > this->zBillboardInstanceBufferSize)
 	{
 		this->ExpandBillboardInstanceBuffer();
 	}
@@ -450,7 +450,7 @@ void InstancingHelper::PreRenderBillboards(bool shadowmap)
 						this->zBillboardData.push_back(newBBData);
 
 						//Expand buffer if necessary.
-						if(this->zBillboardData.size() >= this->zBillboardInstanceBufferSize)
+						if(this->zBillboardData.size() > this->zBillboardInstanceBufferSize)
 						{
 							this->ExpandBillboardInstanceBuffer();
 						}
@@ -504,19 +504,26 @@ void InstancingHelper::PreRenderBillboards(bool shadowmap)
 					}
 					this->zBillboardGroups.push_back(newBBGroup);
 			
-					//Add billboard data
+					//Create billboard data
+					BillboardData* newBBDataArray = new BillboardData[billboardCollection->GetNrOfVertices()];
 					for(unsigned int j = 0; j < billboardCollection->GetNrOfVertices(); ++j)
 					{
-						//No need to call shader resource view pointer from the billboard collection since its only used to create groups.
-						BillboardData newBBData = BillboardData(billboardCollection->GetVertex(j), NULL);
-						this->zBillboardData.push_back(newBBData);
-
-						//Expand buffer if necessary.
-						if(this->zBillboardData.size() >= this->zBillboardInstanceBufferSize)
-						{
-							this->ExpandBillboardInstanceBuffer();
-						}
+						//No need to set shader resource view since its only used to create groups.
+						newBBDataArray[j].s_Vertex = billboardCollection->GetVertex(j);
 					}
+					
+					//Add billboard data
+					this->zBillboardData.insert(this->zBillboardData.end(), newBBDataArray, newBBDataArray + billboardCollection->GetNrOfVertices());
+
+					//Expand buffer if necessary.
+					if(this->zBillboardData.size() > this->zBillboardInstanceBufferSize)
+					{
+						this->ExpandBillboardInstanceBuffer();
+					}
+
+					//Delete array
+					delete [] newBBDataArray;
+					newBBDataArray = NULL;
 				}
 			}
 		}
@@ -542,7 +549,7 @@ void InstancingHelper::PreRenderBillboards(bool shadowmap)
 void InstancingHelper::AddStaticMesh(StaticMesh* staticMesh)
 {
 	//Expand buffer if necessary
-	if(this->zStripData.size() >= this->zStripInstanceBufferSize)
+	if(this->zStripData.size() > this->zStripInstanceBufferSize)
 	{
 		this->ExpandStripInstanceBuffer();
 	}
@@ -659,7 +666,7 @@ void InstancingHelper::PreRenderStrips()
 void InstancingHelper::AddAnimatedMesh(AnimatedMesh* animatedMesh, float timer)
 {
 	//Expand buffer if necessary
-	if(this->zAnimatedStripData.size() >= this->zAnimatedStripInstanceBufferSize)
+	if(this->zAnimatedStripData.size() > this->zAnimatedStripInstanceBufferSize)
 	{
 		this->ExpandAnimatedStripInstanceBuffer();
 	}

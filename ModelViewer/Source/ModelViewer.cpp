@@ -1,6 +1,6 @@
 //#define TEST
 #define REALISTICTESTSCENE
-#define ANIMATIONTEST
+//#define ANIMATIONTEST
 
 #if defined(DEBUG) || defined(_DEBUG)
 #include <vld.h>
