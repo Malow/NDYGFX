@@ -20,6 +20,12 @@ SamplerState linearSampler
 // Input and Output Structures
 //-----------------------------------------------------------------------------------------
 
+cbuffer EveryFrame
+{
+	float3 gCameraPosition;
+	float gFarClip;
+	float gTimerMillis;
+};
 
 cbuffer EveryStrip
 {
@@ -106,8 +112,8 @@ PSout PSScene(PSSceneIn input) : SV_Target
 	{
 		textureColor = tex2D.Sample(linearSampler, float2(input.WorldPos.x, input.WorldPos.z) * 0.1f) * 0.65f;
 		textureColor += tex2D.Sample(linearSampler, 
-			float2(input.WorldPos.x - (input.norm.x * timerMillis * 5.0f + sin(timerMillis) * 0.2f), 
-			input.WorldPos.z - (input.norm.z * timerMillis * 5.0f + cos(timerMillis) * 0.2f)) * 0.2f) * 0.35f;
+			float2(input.WorldPos.x - (input.norm.x * gTimerMillis * 5.0f + sin(gTimerMillis) * 0.2f), 
+			input.WorldPos.z - (input.norm.z * gTimerMillis * 5.0f + cos(gTimerMillis) * 0.2f)) * 0.2f) * 0.35f;
 	}
 	float4 finalColor = float4((textureColor.xyz + input.Color.xyz) * DiffuseColor.xyz, 1.0f);
 	//finalColor.w = (float)specialColor;	/// Doesnt work, renders the entire plane with clear color
@@ -116,7 +122,7 @@ PSout PSScene(PSSceneIn input) : SV_Target
 	PSout output;
 	output.Texture = finalColor;
 	output.NormalAndDepth = float4(float3(0.0f, 1.0f, 0.0f), input.Pos.z / input.Pos.w);		// pos.z / pos.w should work?
-	float depth = length(CameraPosition.xyz - input.WorldPos.xyz) / FarClip;		// Haxfix
+	float depth = length(gCameraPosition.xyz - input.WorldPos.xyz) / gFarClip;		// Haxfix
 	output.NormalAndDepth.w = depth;
 
 	output.Position = input.WorldPos;

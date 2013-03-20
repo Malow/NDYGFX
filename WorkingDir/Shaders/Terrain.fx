@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------------------------
+/*//-----------------------------------------------------------------------------------------
 //
 //	Written by Markus Tillman for project "Not dead yet" at Blekinge Tekniska Högskola.
 //	
@@ -21,6 +21,11 @@ Texture2D<float4> blendMap;
 //-----------------------------------------------------------------------------------------
 // Constant buffers
 //-----------------------------------------------------------------------------------------
+cbuffer PerFrame
+{
+	float gFarClip; //TODO: send from CPU
+
+};
 cbuffer PerObject
 {
 	//Matrices
@@ -141,7 +146,7 @@ PSOut PSScene(PSSceneIn input) : SV_Target
 
 	//NormalAndDepth RT
 	output.NormalAndDepth = float4(input.norm, input.pos.z / input.pos.w);	
-	float depth = length(CameraPosition.xyz - input.posW.xyz) / FarClip;		// Haxfix
+	float depth = length(CameraPosition.xyz - input.posW.xyz) / gFarClip;		// Haxfix
 	output.NormalAndDepth.w = depth;
 
 	//Position RT
@@ -172,4 +177,4 @@ technique11 TerrainEditorTech
 		SetDepthStencilState( EnableDepth, 0 );
 	    SetRasterizerState( BackCulling );
     }  
-}
+}*/

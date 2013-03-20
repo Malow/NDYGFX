@@ -1,6 +1,6 @@
-#define TEST
-//#define REALISTICTESTSCENE
-
+//#define TEST
+#define REALISTICTESTSCENE
+//#define ANIMATIONTEST
 #if defined(DEBUG) || defined(_DEBUG)
 #include <vld.h>
 #define INCLUDE_MODEL_VIEWER
@@ -90,11 +90,11 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 
 	//************************************* PRE TEST **********************
 #ifdef TEST
-	//MaloWTest mt;
-	//TillmanTest tt;
+	MaloWTest mt;
+	TillmanTest tt;
 	OtherTest ot;
-	//mt.PreTest();
-	//tt.PreTest();
+	mt.PreTest();
+	tt.PreTest();
 	ot.PreTest();
 	GetGraphics()->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 1.0f, 1.0f, 1.0f, 1.0f);
 #endif
@@ -144,8 +144,8 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 
 		//************************************* RUN TESTS **********************
 #ifdef TEST
-		//mt.RunTest(diff);
-		//tt.RunTest(diff);
+		mt.RunTest(diff);
+		tt.RunTest(diff);
 		ot.RunTest(diff);
 #endif
 #ifdef REALISTICTESTSCENE
@@ -275,6 +275,13 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 			GetGraphics()->SetSceneAmbientLight(GetGraphics()->GetSceneAmbientLight() * (1.0f - diff * 0.002f));
 		}
 
+		static Vector3 sunDirTest = Vector3(1.0f, -1.0f, 1.0f);
+		static float radius = 0.0f;
+		radius += diff * 0.00000001f;
+		sunDirTest.RotateY(radius);
+		
+		GetGraphics()->SetSunLightProperties(sunDirTest);
+
 
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_UP))
 			GetGraphics()->SetSunLightProperties(Vector3(1, -1, 1));
@@ -290,8 +297,8 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 
 	//************************************* POST TEST **********************
 #ifdef TEST
-	//mt.PostTest();
-	//tt.PostTest();
+	mt.PostTest();
+	tt.PostTest();
 	ot.PostTest();
 #endif
 #ifdef REALISTICTESTSCENE

@@ -16,6 +16,27 @@ Texture2D Texture;
 Texture2D NormalAndDepth;
 Texture2D Position;
 Texture2D Specular;
+
+struct Light
+{
+	float4 LightPosition;
+	float4 LightColor;
+	float LightIntensity;
+	matrix LightViewProj;
+};
+
+struct Cascade
+{
+	matrix viewProj;
+};
+
+struct SunLight
+{
+	float4 Direction;
+	float4 LightColor;
+	float LightIntensity;
+};
+
 SamplerState linearSampler
 {
     Filter = MIN_MAG_MIP_LINEAR;
@@ -53,6 +74,15 @@ BlendState SrcAlphaBlendingAdd
 //-----------------------------------------------------------------------------------------
 cbuffer ef
 {
+	float3		gCameraPosition;
+	float4x4	gCameraVP;
+	float		gNrOfLights;
+	Light		gLights[10];
+	float3		gSceneAmbientLight;
+	bool		gUseSun;
+	SunLight	gSun;
+	Cascade		gCascades[10];
+
 	//Single sampling
 	float SMAP_DX; 
 
@@ -403,7 +433,7 @@ float4 PSScene(PSSceneIn input) : SV_Target
 	
 	float4 WorldPos = Position.Sample(linearSampler, input.tex);
 
-	float4 AmbientLight = SceneAmbientLight;
+	float4 AmbientLight = float4(gSceneAmbientLight, 1.0f);
 
 	float SpecularPower = Specular.Sample(linearSampler, input.tex).w;
 	float4 SpecularColor = float4(Specular.Sample(linearSampler, input.tex).xyz, 1.0f);
@@ -411,9 +441,9 @@ float4 PSScene(PSSceneIn input) : SV_Target
 	float diffuseLighting = 0.0f;
 	float specLighting = 0.0f;
 	
-	for(int i = 0; i < NrOfLights; i++)
+	for(int i = 0; i < gNrOfLights; i++)
 	{
-		float3 LightDirection = WorldPos.xyz - lights[i].LightPosition.xyz;
+		float3 LightDirection = WorldPos.xyz - gLights[i].LightPosition.xyz;
 		float DistanceToLight = length(LightDirection);
 		LightDirection = normalize(LightDirection);
 
@@ -421,12 +451,12 @@ float4 PSScene(PSSceneIn input) : SV_Target
 		float difflight = saturate(dot(NormsAndDepth.xyz, -LightDirection));
 
 		// Spec Light
-		float3 h = normalize(normalize(CameraPosition.xyz - WorldPos.xyz) - LightDirection);
+		float3 h = normalize(normalize(gCameraPosition.xyz - WorldPos.xyz) - LightDirection);
 		float speclight = pow(saturate(dot(h, NormsAndDepth.xyz)), SpecularPower);
 
 
 		// Shadow Mappings
-		float4 posLight = mul(WorldPos, lights[i].LightViewProj);
+		float4 posLight = mul(WorldPos, gLights[i].LightViewProj);
 		posLight.xy /= posLight.w;
 
 
@@ -462,7 +492,7 @@ float4 PSScene(PSSceneIn input) : SV_Target
 
 
 		// Fall off test 3
-		float coef = (lights[i].LightIntensity / 1000.0f) + (DistanceToLight * DistanceToLight) / (lights[i].LightIntensity * lights[i].LightIntensity);
+		float coef = (gLights[i].LightIntensity * 0.001f) + (DistanceToLight * DistanceToLight) / (gLights[i].LightIntensity * gLights[i].LightIntensity);
 
 		difflight /= coef;
 
@@ -479,21 +509,21 @@ float4 PSScene(PSSceneIn input) : SV_Target
 		specLighting += speclight;
 	}
 	
-	if(NrOfLights > 0)
+	if(gNrOfLights > 0)
 	{
-		diffuseLighting = saturate(diffuseLighting / NrOfLights);
-		specLighting = saturate(specLighting / NrOfLights);
+		diffuseLighting = saturate(diffuseLighting / gNrOfLights);
+		specLighting = saturate(specLighting / gNrOfLights);
 	}
 	
 	
 	// Sun
-	if(UseSun)
+	if(gUseSun)
 	{
 		// Diff light
-		float diffLight = saturate(dot(NormsAndDepth.xyz, -sun.Direction.xyz)) * sun.LightIntensity;
+		float diffLight = saturate(dot(NormsAndDepth.xyz, -gSun.Direction.xyz)) * gSun.LightIntensity;
 		// Spec Light
-		float3 h = normalize(normalize(CameraPosition.xyz - WorldPos.xyz) - sun.Direction.xyz);
-		float specLight = pow(saturate(dot(h, NormsAndDepth.xyz)), SpecularPower) * sun.LightIntensity;
+		float3 h = normalize(normalize(gCameraPosition.xyz - WorldPos.xyz) - gSun.Direction.xyz);
+		float specLight = pow(saturate(dot(h, NormsAndDepth.xyz)), SpecularPower) * gSun.LightIntensity;
 
 		
 		//SHADOW: //TILLMAN START OF CSM**
@@ -520,7 +550,7 @@ float4 PSScene(PSSceneIn input) : SV_Target
 			float shadow = 0.0f;
 		
 			//Get the texture coordinates to sample with by first transforming the pixel from world space to LIGHT's clip space xy[-w,w], z[0,w].
-			float4 pixelPosTexelSpace = mul(WorldPos, cascades[cascadeIndex].viewProj); 
+			float4 pixelPosTexelSpace = mul(WorldPos, gCascades[cascadeIndex].viewProj); 
 			//Then convert it to normalized device coordinates xy[-1,1], z[0,1].
 			pixelPosTexelSpace.xyz /= pixelPosTexelSpace.w;
 			//Finally convert it to texel space xy[0,1]. (Don't forget that the y-axis needs to be inverted).
@@ -573,8 +603,8 @@ float4 PSScene(PSSceneIn input) : SV_Target
 		SpecularColor.xyz * specLighting), 
 		1.0f);
 
-	if(UseSun)
-		finalColor.xyz *= sun.LightColor.xyz;
+	if(gUseSun)
+		finalColor.xyz *= gSun.LightColor.xyz;
 
 	
 	

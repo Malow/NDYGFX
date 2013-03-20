@@ -372,26 +372,26 @@ void DxManager::RenderShadowMap()
 		
 			// Forward
 			//this->Shader_ForwardRendering->SetResourceAtIndex(l, "ShadowMap", this->lights[l]->GetShadowMapSRV());
-			//this->Shader_ForwardRendering->SetStructMemberAtIndexAsMatrix(l, "lights", "LightViewProj", lvp);
-			//this->Shader_ForwardRendering->SetStructMemberAtIndexAsFloat4(l, "lights", "LightPosition", D3DXVECTOR4(this->lights[l]->GetPosition(), 1));
-			//this->Shader_ForwardRendering->SetStructMemberAtIndexAsFloat4(l, "lights", "LightColor", D3DXVECTOR4(this->lights[l]->GetColor(), 1));
-			//this->Shader_ForwardRendering->SetStructMemberAtIndexAsFloat(l, "lights", "LightIntensity", this->lights[l]->GetIntensity());
+			//this->Shader_ForwardRendering->SetStructMemberAtIndexAsMatrix(l, "gLights", "LightViewProj", lvp);
+			//this->Shader_ForwardRendering->SetStructMemberAtIndexAsFloat4(l, "gLights", "LightPosition", D3DXVECTOR4(this->lights[l]->GetPosition(), 1));
+			//this->Shader_ForwardRendering->SetStructMemberAtIndexAsFloat4(l, "gLights", "LightColor", D3DXVECTOR4(this->lights[l]->GetColor(), 1));
+			//this->Shader_ForwardRendering->SetStructMemberAtIndexAsFloat(l, "gLights", "LightIntensity", this->lights[l]->GetIntensity());
 		
 
-			// For deferred:
+			// For deferred: TILLMAN: Detta ska inte ligga här. också: detta ska göras för DPPTranslucent.fx
 			this->Shader_DeferredLightning->SetResourceAtIndex(l, "ShadowMap", this->lights[l]->GetShadowMapSRV());
-			this->Shader_DeferredLightning->SetStructMemberAtIndexAsMatrix(l, "lights", "LightViewProj", lvp);
-			this->Shader_DeferredLightning->SetStructMemberAtIndexAsFloat4(l, "lights", "LightPosition", D3DXVECTOR4(this->lights[l]->GetPositionD3DX(), 1));
-			this->Shader_DeferredLightning->SetStructMemberAtIndexAsFloat4(l, "lights", "LightColor", D3DXVECTOR4(this->lights[l]->GetColorD3DX(), 1));
-			this->Shader_DeferredLightning->SetStructMemberAtIndexAsFloat(l, "lights", "LightIntensity", this->lights[l]->GetIntensity());
+			this->Shader_DeferredLightning->SetStructMemberAtIndexAsMatrix(l, "gLights", "LightViewProj", lvp);
+			this->Shader_DeferredLightning->SetStructMemberAtIndexAsFloat4(l, "gLights", "LightPosition", D3DXVECTOR4(this->lights[l]->GetPositionD3DX(), 1));
+			this->Shader_DeferredLightning->SetStructMemberAtIndexAsFloat4(l, "gLights", "LightColor", D3DXVECTOR4(this->lights[l]->GetColorD3DX(), 1));
+			this->Shader_DeferredLightning->SetStructMemberAtIndexAsFloat(l, "gLights", "LightIntensity", this->lights[l]->GetIntensity());
 		
 		
 			// For deferred quad:
 			//this->Shader_DeferredQuad->SetResourceAtIndex(l, "ShadowMap", this->lights[l]->GetShadowMapSRV());
-			//this->Shader_DeferredQuad->SetStructMemberAtIndexAsMatrix(l, "lights", "LightViewProj", lvp);
-			//this->Shader_DeferredQuad->SetStructMemberAtIndexAsFloat4(l, "lights", "LightPosition", D3DXVECTOR4(this->lights[l]->GetPosition(), 1));
-			//this->Shader_DeferredQuad->SetStructMemberAtIndexAsFloat4(l, "lights", "LightColor", D3DXVECTOR4(this->lights[l]->GetColor(), 1));
-			//this->Shader_DeferredQuad->SetStructMemberAtIndexAsFloat(l, "lights", "LightIntensity", this->lights[l]->GetIntensity());
+			//this->Shader_DeferredQuad->SetStructMemberAtIndexAsMatrix(l, "gLights", "LightViewProj", lvp);
+			//this->Shader_DeferredQuad->SetStructMemberAtIndexAsFloat4(l, "gLights", "LightPosition", D3DXVECTOR4(this->lights[l]->GetPosition(), 1));
+			//this->Shader_DeferredQuad->SetStructMemberAtIndexAsFloat4(l, "gLights", "LightColor", D3DXVECTOR4(this->lights[l]->GetColor(), 1));
+			//this->Shader_DeferredQuad->SetStructMemberAtIndexAsFloat(l, "gLights", "LightIntensity", this->lights[l]->GetIntensity());
 		
 		}
 	}
