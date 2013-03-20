@@ -275,13 +275,6 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 			GetGraphics()->SetSceneAmbientLight(GetGraphics()->GetSceneAmbientLight() * (1.0f - diff * 0.002f));
 		}
 
-		static Vector3 sunDirTest = Vector3(1.0f, -1.0f, 1.0f);
-		static float radius = 0.0f;
-		radius += diff * 0.00000001f;
-		sunDirTest.RotateY(radius);
-		
-		GetGraphics()->SetSunLightProperties(sunDirTest);
-
 
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_UP))
 			GetGraphics()->SetSunLightProperties(Vector3(1, -1, 1));
