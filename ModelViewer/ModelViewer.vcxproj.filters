@@ -105,9 +105,6 @@
     <ClInclude Include="Source\World\EntityList.h">
       <Filter>Source Files\World</Filter>
     </ClInclude>
-    <ClInclude Include="Source\MaloWFileDebug.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="Source\World\WorldRendererSettings.h">
       <Filter>Source Files\World</Filter>
     </ClInclude>
