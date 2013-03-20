@@ -128,19 +128,19 @@ void OtherTest::RunTest(float diff)
 
 	if ( GetGraphics()->GetKeyListener()->IsPressed('2') )
 	{
-		zMaleCharacter->RotateAxis(Vector3(0.0f, 1.0f, 0.0f), diff * 0.001f);
+		zMaleCharacter->RotateAxis(Vector3(1.0f, 1.0f, 0.0f), diff * 0.001f);
 	}
 	else if ( GetGraphics()->GetKeyListener()->IsPressed('3') )
 	{
-		zMaleCharacter->RotateAxis(Vector3(0.0f, 1.0f, 0.0f), -diff * 0.001f);
+		zMaleCharacter->RotateAxis(Vector3(1.0f, 1.0f, 0.0f), -diff * 0.001f);
 	}
 	else if ( GetGraphics()->GetKeyListener()->IsPressed('4') )
 	{
-		zMaleCharacter->RotateAxis(Vector3(1.0f, 0.0f, 0.0f), diff * 0.001f);
+		zMaleCharacter->RotateAxis(Vector3(0.0f, 1.0f, 0.0f), diff * 0.001f);
 	}
 	else if ( GetGraphics()->GetKeyListener()->IsPressed('5') )
 	{
-		zMaleCharacter->RotateAxis(Vector3(1.0f, 0.0f, 0.0f), -diff * 0.001f);
+		zMaleCharacter->RotateAxis(Vector3(0.0f, 1.0f, 0.0f), -diff * 0.001f);
 	}
 	else if ( GetGraphics()->GetKeyListener()->IsPressed('6') )
 	{
@@ -148,7 +148,7 @@ void OtherTest::RunTest(float diff)
 	}
 	else if ( GetGraphics()->GetKeyListener()->IsPressed('7') )
 	{
-		zMaleCharacter->RotateAxis(Vector3(0.0f, 0.0f, 0.0f), -diff * 0.001f);
+		zMaleCharacter->RotateAxis(Vector3(0.0f, 0.0f, 1.0f), -diff * 0.001f);
 	}
 }
 
