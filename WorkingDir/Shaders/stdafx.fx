@@ -25,54 +25,6 @@ Include file for all samplers, rasterizer states, and blend states and constant 
 #define OBJECT_TYPE_BILLBOARD float(2.0f)
 
 //------------------------------------------------------------------------------------------------------
-//	Own structures
-//------------------------------------------------------------------------------------------------------
-struct Light
-{
-	float4 LightPosition;
-	float4 LightColor;
-	float LightIntensity;
-	matrix LightViewProj;
-};
-
-struct Cascade
-{
-	matrix viewProj;
-};
-
-struct SunLight
-{
-	float4 Direction;
-	float4 LightColor;
-	float LightIntensity;
-};
-
-
-//------------------------------------------------------------------------------------------------------
-//	Constant buffers
-//------------------------------------------------------------------------------------------------------
-matrix CameraVP;
-float4 CameraPosition;
-
-float NrOfLights;//**tillman**
-Light lights[10];//**tillman**
-float4 SceneAmbientLight;//**tillman**
-
-bool UseSun;//**tillman**
-SunLight sun; //**tillman**
-
-float NrOfCascades; //Deprecated**tillman**
-float4 CascadeLevels; //Deprecated**tillman**
-Cascade cascades[10];
-
-float timerMillis;
-
-uint windowWidth;
-uint windowHeight;
-float NearClip;
-float FarClip;
-
-//------------------------------------------------------------------------------------------------------
 //	State structures
 //------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------

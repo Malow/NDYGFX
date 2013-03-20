@@ -956,7 +956,7 @@ void DxManager::RenderDeferredPerPixel()
 
 			D3DXMATRIX lvp = this->csm->GetViewProjMatrix(l);
 			this->Shader_DeferredLightning->SetResourceAtIndex(l, "CascadedShadowMap", this->csm->GetShadowMapSRV(l));
-			this->Shader_DeferredLightning->SetStructMemberAtIndexAsMatrix(l, "cascades", "viewProj", lvp);
+			this->Shader_DeferredLightning->SetStructMemberAtIndexAsMatrix(l, "gCascades", "viewProj", lvp);
 
 		}
 	}
@@ -964,12 +964,12 @@ void DxManager::RenderDeferredPerPixel()
 	// Set sun-settings
 	if(this->useSun) 
 	{
-		this->Shader_DeferredLightning->SetStructMemberAsFloat4("sun", "Direction", D3DXVECTOR4(this->sun.direction, 0.0f));
-		this->Shader_DeferredLightning->SetStructMemberAsFloat4("sun", "LightColor", D3DXVECTOR4(this->sun.lightColor, 0.0f));
-		this->Shader_DeferredLightning->SetStructMemberAsFloat("sun", "LightIntensity", this->sun.intensity);
+		this->Shader_DeferredLightning->SetStructMemberAsFloat4("gSun", "Direction", D3DXVECTOR4(this->sun.direction, 0.0f));
+		this->Shader_DeferredLightning->SetStructMemberAsFloat4("gSun", "LightColor", D3DXVECTOR4(this->sun.lightColor, 0.0f));
+		this->Shader_DeferredLightning->SetStructMemberAsFloat("gSun", "LightIntensity", this->sun.intensity);
 	}
 	//Always tell the shader whether to use sun or not.
-	this->Shader_DeferredLightning->SetBool("UseSun", this->useSun);
+	this->Shader_DeferredLightning->SetBool("gUseSun", this->useSun);
 
 	//DeferredLightning.fx:
 	this->Shader_DeferredLightning->SetResource("Texture", this->Dx_GbufferSRVs[0]);
@@ -977,16 +977,14 @@ void DxManager::RenderDeferredPerPixel()
 	this->Shader_DeferredLightning->SetResource("Position", this->Dx_GbufferSRVs[2]);
 	this->Shader_DeferredLightning->SetResource("Specular", this->Dx_GbufferSRVs[3]);
 	D3DXMATRIX vp = this->camera->GetViewMatrix() * this->camera->GetProjectionMatrix();
-	this->Shader_DeferredLightning->SetMatrix("CameraVP", vp);
-	this->Shader_DeferredLightning->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetOldPos(), 1));
-	//stdafx.fx:
-	this->Shader_DeferredLightning->SetFloat("NrOfLights", (float)this->lights.size()); //**tillman - omstrukturering**
-	this->Shader_DeferredLightning->SetFloat4("SceneAmbientLight", D3DXVECTOR4(this->sceneAmbientLight, 1.0f));
+	
+	this->Shader_DeferredLightning->SetMatrix("gCameraVP", vp);
+	this->Shader_DeferredLightning->SetFloat3("gCameraPosition", this->camera->GetOldPos());
+	this->Shader_DeferredLightning->SetFloat("gNrOfLights", (float)this->lights.size());
+	this->Shader_DeferredLightning->SetFloat3("gSceneAmbientLight", this->sceneAmbientLight);
 
-	this->Shader_DeferredLightning->SetFloat("timerMillis", this->Timer);
-	this->Shader_DeferredLightning->SetInt("windowWidth", this->params.WindowWidth);
-	this->Shader_DeferredLightning->SetInt("windowHeight", this->params.WindowHeight);
-		
+	
+	
 
 	//ssao.fx:
 	// this->ssao->PreRender(this->Shader_DeferredLightning, this->params, this->camera);
@@ -1243,10 +1241,9 @@ void DxManager::RenderDeferredGeoTranslucent()
 	this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_GbufferRTs[3], ClearColor2);
 
 	//Static meshes
-	this->Shader_DeferredGeoTranslucent->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetOldPos(), 1));
-	this->Shader_DeferredGeoTranslucent->SetFloat("NearClip", this->params.NearClip);
-	this->Shader_DeferredGeoTranslucent->SetFloat("FarClip", this->params.FarClip);
-	this->Shader_DeferredGeoTranslucent->SetFloat("timerMillis", this->Timer);
+	this->Shader_DeferredGeoTranslucent->SetFloat4("gCameraPosition", D3DXVECTOR4(this->camera->GetOldPos(), 1));
+	this->Shader_DeferredGeoTranslucent->SetFloat("gFarClip", this->params.FarClip);
+	this->Shader_DeferredGeoTranslucent->SetFloat("gTimerMillis", this->Timer);
 	D3DXMATRIX world;
 	D3DXMATRIX view = this->camera->GetViewMatrix();
 	D3DXMATRIX proj = this->camera->GetProjectionMatrix();
@@ -1378,7 +1375,7 @@ void DxManager::RenderDeferredPerPixelTranslucent()
 		{
 			D3DXMATRIX lvp = this->csm->GetViewProjMatrix(l);
 			this->Shader_DeferredPerPixelTranslucent->SetResourceAtIndex(l, "CascadedShadowMap", this->csm->GetShadowMapSRV(l));
-			this->Shader_DeferredPerPixelTranslucent->SetStructMemberAtIndexAsMatrix(l, "cascades", "viewProj", lvp);
+			this->Shader_DeferredPerPixelTranslucent->SetStructMemberAtIndexAsMatrix(l, "gCascades", "viewProj", lvp);
 		}
 
 	}
@@ -1387,12 +1384,12 @@ void DxManager::RenderDeferredPerPixelTranslucent()
 	// Set sun-settings
 	if(this->useSun) 
 	{
-		this->Shader_DeferredPerPixelTranslucent->SetStructMemberAsFloat4("sun", "Direction", D3DXVECTOR4(this->sun.direction, 0.0f));
-		this->Shader_DeferredPerPixelTranslucent->SetStructMemberAsFloat4("sun", "LightColor", D3DXVECTOR4(this->sun.lightColor, 0.0f));
-		this->Shader_DeferredPerPixelTranslucent->SetStructMemberAsFloat("sun", "LightIntensity", this->sun.intensity);
+		this->Shader_DeferredPerPixelTranslucent->SetStructMemberAsFloat4("gSun", "Direction", D3DXVECTOR4(this->sun.direction, 0.0f));
+		this->Shader_DeferredPerPixelTranslucent->SetStructMemberAsFloat4("gSun", "LightColor", D3DXVECTOR4(this->sun.lightColor, 0.0f));
+		this->Shader_DeferredPerPixelTranslucent->SetStructMemberAsFloat("gSun", "LightIntensity", this->sun.intensity);
 	}
 	//Always tell the shader whether to use sun or not.
-	this->Shader_DeferredPerPixelTranslucent->SetBool("UseSun", this->useSun);
+	this->Shader_DeferredPerPixelTranslucent->SetBool("gUseSun", this->useSun);
 
 	//DeferredLightning.fx:
 	this->Shader_DeferredPerPixelTranslucent->SetResource("Texture", this->Dx_GbufferSRVs[0]);
@@ -1400,15 +1397,15 @@ void DxManager::RenderDeferredPerPixelTranslucent()
 	this->Shader_DeferredPerPixelTranslucent->SetResource("Position", this->Dx_GbufferSRVs[2]);
 	this->Shader_DeferredPerPixelTranslucent->SetResource("Specular", this->Dx_GbufferSRVs[3]);
 	D3DXMATRIX vp = this->camera->GetViewMatrix() * this->camera->GetProjectionMatrix();
-	this->Shader_DeferredPerPixelTranslucent->SetMatrix("CameraVP", vp);
-	this->Shader_DeferredPerPixelTranslucent->SetFloat4("CameraPosition", D3DXVECTOR4(this->camera->GetOldPos(), 1));
-	//stdafx.fx:
-	this->Shader_DeferredPerPixelTranslucent->SetFloat("NrOfLights", (float)this->lights.size()); //**tillman - omstrukturering**
-	this->Shader_DeferredPerPixelTranslucent->SetFloat4("SceneAmbientLight", D3DXVECTOR4(this->sceneAmbientLight, 1.0f));
+	
+	
+	this->Shader_DeferredPerPixelTranslucent->SetMatrix("gCameraVP", vp);
+	this->Shader_DeferredPerPixelTranslucent->SetFloat3("gCameraPosition", this->camera->GetOldPos());
+	this->Shader_DeferredPerPixelTranslucent->SetFloat("gNrOfLights", (float)this->lights.size()); 
+	this->Shader_DeferredPerPixelTranslucent->SetFloat3("gSceneAmbientLight", this->sceneAmbientLight);
+	
+	
 
-	this->Shader_DeferredPerPixelTranslucent->SetFloat("timerMillis", this->Timer);
-	this->Shader_DeferredPerPixelTranslucent->SetInt("windowWidth", this->params.WindowWidth);
-	this->Shader_DeferredPerPixelTranslucent->SetInt("windowHeight", this->params.WindowHeight);
 
 
 	//ssao.fx:
