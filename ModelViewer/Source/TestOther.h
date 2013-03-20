@@ -150,6 +150,14 @@ void OtherTest::RunTest(float diff)
 	{
 		zMaleCharacter->RotateAxis(Vector3(0.0f, 0.0f, 1.0f), -diff * 0.001f);
 	}
+	else if ( GetGraphics()->GetKeyListener()->IsPressed('8') )
+	{
+		zMaleCharacter->Scale(1.0f + diff * 0.0001f);
+	}
+	else if ( GetGraphics()->GetKeyListener()->IsPressed('9') )
+	{
+		zMaleCharacter->Scale(1.0f - diff * 0.0001f);
+	}
 }
 
 
