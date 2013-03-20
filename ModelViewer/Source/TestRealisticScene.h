@@ -48,6 +48,16 @@ void TestRealisticScene::PreTest()
 {
 	GetGraphics()->ShowLoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 1.0f, 1.0f);
 
+	unsigned int nrOfResources = 6;
+	const char* resourceFileNames[6];
+	resourceFileNames[0] = "Media/MapModels/Tree_02.ani";
+	resourceFileNames[1] = "Media/MapModels/Tree_02_01.obj";			
+	resourceFileNames[2] = "Media/MapModels/Bush_01.ani";
+	resourceFileNames[3] = "Media/MapModels/Bush_01_01.obj";		
+	resourceFileNames[4] = "Media/MapModels/Tree_01.ani";	
+	resourceFileNames[5] = "Media/MapModels/Tree_01_01.obj";	
+	GetGraphics()->PreLoadResources(nrOfResources, resourceFileNames);
+
 	LoadEntList("Entities.txt");
 	world = new World(this, "Media/Maps/Map_01_v87.map", true);
 	GetGraphics()->GetCamera()->SetPosition(Vector3(world->GetWorldCenter().x, 20.0f, world->GetWorldCenter().y));
@@ -67,6 +77,9 @@ void TestRealisticScene::PreTest()
 	wr->Update();
 	wr->Update();
 	wr->Update();
+
+
+
 
 	
 	Vector3 camPos = GetGraphics()->GetCamera()->GetPosition();
@@ -137,6 +150,14 @@ bool TestRealisticScene::RunTest(float diff)
 		this->enclosingfog -= diff * 0.1f;
 	}
 	GetGraphics()->SetEnclosingFogEffect(this->fogCenter, this->enclosingfog);
+
+
+	if(GetGraphics()->GetKeyListener()->IsPressed('6'))
+	{
+		GetGraphics()->GetCamera()->SetPosition(Vector3(1986, 2, 1974));
+		GetGraphics()->GetCamera()->LookAt(Vector3(2000, 2, 1980));
+	}
+
 
 	wa->position = GetGraphics()->GetCamera()->GetPosition().GetXZ();
 	wa->radius = GetGraphics()->GetEngineParameters().FarClip;

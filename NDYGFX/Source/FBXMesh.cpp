@@ -269,19 +269,23 @@ bool FBXMesh::GetBoneTransformation(const std::string& name, Vector3* pos, Vecto
 			{
 				D3DXMATRIX rotationMatrix = boneMatrix;
 
-				// Combined Rotation Matrix
-				D3DXMatrixMultiply(&rotationMatrix, &rotationMatrix, &worldMat);
-
-				// Extract Quaternion Rotation
+				// Extract Bone Quaternion Rotation
 				D3DXQUATERNION quat;
 				D3DXQuaternionRotationMatrix(&quat, &rotationMatrix);
 
-				// Rotation around y axis
+				// Rotation around x axis
 				D3DXQUATERNION yAxisRotation;
 				D3DXQuaternionRotationAxis(&yAxisRotation, &D3DXVECTOR3(1.0f, 0.0f, 0.0f), 3.141592f);
 
 				// Multiply
 				D3DXQuaternionMultiply(&quat, &quat, &yAxisRotation);
+
+				// World matrix rotation
+				D3DXQUATERNION worldQuat;
+				D3DXQuaternionRotationMatrix(&worldQuat, &worldMat);
+
+				// Multiple
+				D3DXQuaternionMultiply(&quat, &quat, &worldQuat);
 
 				rot->x = quat.x;
 				rot->y = quat.y;
