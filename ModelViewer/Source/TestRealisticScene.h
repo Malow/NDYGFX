@@ -141,6 +141,14 @@ void TestRealisticScene::PreTest()
 
 bool TestRealisticScene::RunTest(float diff)
 {
+	static Vector3 sunDirTest = Vector3(1.0f, -2.0f, 1.0f);
+	static float radius = 0.0f;
+	radius += diff * 0.00000001f;
+	sunDirTest.RotateY(radius);
+
+	GetGraphics()->SetSunLightProperties(sunDirTest);
+
+
 	if(GetGraphics()->GetKeyListener()->IsPressed('8'))
 	{
 		this->enclosingfog += diff * 0.1f;
