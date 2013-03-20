@@ -25,7 +25,7 @@ cbuffer buff
 	bool useNormalMap;
 
 	uint specialColor;
-	float4 AmbientLight; //**tillman opt - används inte
+	float4 AmbientLight; //Unused
 	float SpecularPower;
 	float4 SpecularColor;
 	float4 DiffuseColor;

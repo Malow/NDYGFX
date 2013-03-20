@@ -34,7 +34,7 @@ cbuffer EveryStrip
 	matrix worldMatrixInverseTranspose;
 	bool textured;
 
-	float4 AmbientLight; //**tillman opt - används inte
+	float4 AmbientLight; //unused
 	float SpecularPower;
 	float4 SpecularColor;
 	float4 DiffuseColor;

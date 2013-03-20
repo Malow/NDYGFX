@@ -5,7 +5,7 @@
 //	Manager for handling resources. 
 //	Resources include:
 //		Mesh strips - MeshStripsResource.h.
-//		Textures - TextureResource.h. //**Tillman**
+//		Textures - TextureResource.h.
 //		Buffers - BufferResource.h
 //	Requirements: DirectX device & device context.
 //--------------------------------------------------------------------------------------------------
@@ -13,7 +13,7 @@
 
 #include "TextureResource.h"
 #include "ObjectDataResource.h"
-#include "MeshStripsResource.h" //tillman todo
+#include "MeshStripsResource.h" 
 
 #include "BufferResource.h"
 #include <string>

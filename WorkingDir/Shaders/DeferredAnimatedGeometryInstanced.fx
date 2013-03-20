@@ -122,7 +122,7 @@ PSSceneIn VSScene(VSIn input)
 	//Set last element to 1 again
 	input.world[3][3] = 1;
 
-	output.worldPos = mul(lerp(float4(input.pos, 1.0f), float4(input.pos_morph, 1.0f), interpolationValue), input.world); //**TILLMAN OBS!, interpolation i .14
+	output.worldPos = mul(lerp(float4(input.pos, 1.0f), float4(input.pos_morph, 1.0f), interpolationValue), input.world); 
 	output.pos	= mul(float4(output.worldPos.xyz, 1.0f), g_CamViewProj);
 	output.tex		= lerp(input.texCoord, input.texCoord_morph, interpolationValue);
 	output.norm	=	lerp(input.norm, input.norm_morph, interpolationValue);

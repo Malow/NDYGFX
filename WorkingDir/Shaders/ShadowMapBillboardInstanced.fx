@@ -109,7 +109,7 @@ void GS(point GSIn input[1], inout TriangleStream<PSIn> triStream)
 	
 	//float4 pixelW = mul(float4(input[0].posCenterW, 1.0f), W); //test
 	
-	float radius = halfWidth * 0.6666666f; //**Tillman - why not 0.5f*?
+	float radius = halfWidth * 0.6666666f; //Should be 0.5f???
 	output.posCenterW = float4(input[0].posCenterW, 1.0f);
 	output.posW = mul(positions[0], W);
 	output.posH = mul(positions[0], lightWVP); //Transform positions to light's clip space [-w,-w]

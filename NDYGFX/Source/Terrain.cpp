@@ -355,7 +355,6 @@ float Terrain::GetYPositionAt(float x, float z) const
 	float ex = z / this->zScale.z; //hackfix by swapping z & x
 	float ez = x / this->zScale.x;
 
-	//if(((ex && ex) <= 1.0f) && ((ex && ez) > 0.0f)) //**tillman opt
 	if(ex < 1.0f && ez < 1.0f && ex >= 0.0f && ez >= 0.0f) 
 	{
 		ex *= this->zSize;
@@ -463,7 +462,7 @@ void Terrain::SetTextures(char const* const* const fileNames)
 				this->zTextureResourceToLoadFileName[i] = fileNames[i];
 			}
 		}
-		this->zNrOfTextures = 8; //**Tillman
+		this->zNrOfTextures = 8; //Hardcoded :S
 	}
 }
 void Terrain::SetBlendMaps(unsigned int nrOfBlendMaps, unsigned int* sizes, float const* const* const data)

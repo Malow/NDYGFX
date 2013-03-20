@@ -20,7 +20,7 @@ MeshStripsResource::MeshStripsResource(const MeshStripsResource& origObj)
 	this->zMesh = new MaloW::Array<MeshStrip*>();
 	for(unsigned int i = 0; i < origObj.zMesh->size(); i++)
 	{
-		this->zMesh->add(origObj.zMesh->get(i)); //**TILLMAN
+		this->zMesh->add(origObj.zMesh->get(i)); 
 	}
 }
 

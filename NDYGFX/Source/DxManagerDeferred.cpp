@@ -752,7 +752,7 @@ void DxManager::RenderDeferredGeometryInstanced()
 			this->CurrentRenderedNrOfVertices += vertexCount;
 		}
 		
-		//Reset data for next frame. //**TILLMAN - prerender eller ny - postrender?
+		//Reset data for next frame. 
 		this->instancingHelper->PostRenderStrips();
 	}
 #ifdef MALOWTESTPERF
@@ -854,7 +854,7 @@ void DxManager::RenderDeferredGeometryInstanced()
 		}
 
 		//Reset data for next frame.
-		this->instancingHelper->PostRenderAnimatedStrips();//**TILLMAN - prerender eller ny - postrender?
+		this->instancingHelper->PostRenderAnimatedStrips();
 	}
 #ifdef MALOWTESTPERF
 	this->Dx_DeviceContext->Flush();
@@ -893,7 +893,7 @@ void DxManager::RenderDeferredSkybox()
 	obj->GetIndsBuff()->Apply();
 	if(obj->GetTextureResource() != NULL)
 	{
-		this->Shader_Skybox->SetResource("SkyMap", obj->GetTextureResource()->GetSRVPointer());//**TILLMAN
+		this->Shader_Skybox->SetResource("SkyMap", obj->GetTextureResource()->GetSRVPointer());
 	}
 	
 	this->Shader_Skybox->Apply(0);

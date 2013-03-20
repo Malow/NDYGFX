@@ -411,12 +411,6 @@ ResourceManager::~ResourceManager()
 			//An object data cannot be deleted since it's destructor is private to force correct use of texture creation/deletion.
 			//Instead decrease reference count until it deletes itself.
 			int refCount = objDataIterator->second->GetReferenceCount();
-			//**TILLMAN endast preload kan orsaka detta
-			/*MaloW::Debug("WARNING: Resource manager deleted the object resource: '" 
-				+ objDataIterator->second->GetName() 
-				+ "'; missing decrease(s) in reference counter somewhere. Occurrences: " 
-				+ MaloW::convertNrToString(refCount - 1)
-				+ ". Keep in mind that the cause can be PreLoadResources()-function if the resource was loaded but not used.");*/
 			for(int i = 0; i < refCount; i++)
 			{
 				objDataIterator->second->DecreaseReferenceCount();
@@ -812,7 +806,7 @@ void ResourceManager::DeleteTextureResource( TextureResource* &textureResource )
 				int refCount = textureResource->GetReferenceCount();
 				for(int i = 0; i < refCount; i++)
 				{
-					//textureResource->DecreaseReferenceCount(); //**TILLMAN
+					//textureResource->DecreaseReferenceCount(); 
 				}
 				MaloW::Debug("WARNING: DETECTED MEMORY LEAK!:");
 				MaloW::Debug("	ResourceManager::DeleteTextureResource: Could not find the specified texture: '" + textureResource->GetName() + "', references: " + MaloW::convertNrToString(refCount));
@@ -881,8 +875,8 @@ BufferResource* ResourceManager::CreateBufferResource(const char* fileName, BUFF
 }
 bool ResourceManager::HasBuffer(const char* fileName)
 {
-	//Find exact match. ***partial TILLMAN**
-	auto buff = this->zBufferResources.find(fileName + string("Vertex")); //**TIllman, behöver bara kolla efter vertex buffer**
+	//Find exact match. 
+	auto buff = this->zBufferResources.find(fileName + string("Vertex")); 
 	//If the buffer resource was not found in the array, return false.
 	if(buff == this->zBufferResources.end())
 	{

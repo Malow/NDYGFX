@@ -78,13 +78,10 @@ struct AnimatedStripData
 	struct AnimatedInstancedDataStruct
 	{
 		D3DXMATRIX	s_WorldMatrix; //translation, rotation, scale
-		//D3DXMATRIX	s_WorldInverseTransposeMatrix; 
-		//float t;//**tillman
 
 		AnimatedInstancedDataStruct() 
 		{
 			D3DXMatrixIdentity(&s_WorldMatrix);
-			//s_WorldInverseTransposeMatrix = s_WorldMatrix;
 		}
 	} InstancedData;
 
@@ -167,7 +164,6 @@ class InstancingHelper
 		HRESULT Init(ID3D11Device* device, ID3D11DeviceContext* deviceContext);
 
 		//BILLBOARD
-		//**tillman todo - set grasstexturefilepath**
 		bool GetRenderGrassFlag() { return this->zRenderGrassFlag; }
 		void SetRenderGrassFlag(bool flag) { this->zRenderGrassFlag = flag; }
 		string GetGrassFilePath() { return this->zGrassFilePath; }
