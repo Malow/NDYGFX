@@ -495,9 +495,9 @@ void DxManager::RenderDecals()
 		this->Dx_DeviceContext->DrawIndexed(inds->GetElementCount(), 0, 0);
 	}
 
-	this->Shader_Decal->SetResource("Depth", NULL);
-	this->Shader_Decal->SetResource("Decal", NULL);
-	this->Shader_Decal->Apply(0);
+	//this->Shader_Decal->SetResource("Depth", NULL);
+	//this->Shader_Decal->SetResource("Decal", NULL);
+	//this->Shader_Decal->Apply(0);
 }
 
 void DxManager::RenderDeferredGeoObjects()

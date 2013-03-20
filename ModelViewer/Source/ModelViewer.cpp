@@ -277,7 +277,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 
 		static Vector3 sunDirTest = Vector3(1.0f, -1.0f, 1.0f);
 		static float radius = 0.0f;
-		radius += diff * 0.00000001f;
+		radius += diff * 0.00000005f;
 		sunDirTest.RotateY(radius);
 		
 		GetGraphics()->SetSunLightProperties(sunDirTest);
