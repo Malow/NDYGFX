@@ -81,12 +81,11 @@ void TestRealisticScene::PreTest()
 
 
 
-	
 	Vector3 camPos = GetGraphics()->GetCamera()->GetPosition();
 	this->enclosingfog = 300.0f;
 	this->fogCenter = camPos;
 	GetGraphics()->SetEnclosingFogEffect(this->fogCenter, this->enclosingfog);
-
+	
 	//GetGraphics()->SetSunLightProperties(Vector3(0.801525652, -0.401229233, -0.443363965));
 	
 	for(int i = 0; i < 50; i++)
@@ -94,13 +93,13 @@ void TestRealisticScene::PreTest()
 		iWaterPlane* wp = GetGraphics()->CreateWaterPlane(camPos + Vector3(i * 5, 0, 0), "Media/WaterTexture.png");
 		wp->SetScale(10.0f);
 	}
-	/*
-	iWaterPlane* wp = GetGraphics()->CreateWaterPlane(Vector3(0, 0, 0), "Media/WaterTexture.png");
-	wp->SetVertexPosition(Vector3(300, -35, 100) + camPos, 0);
-	wp->SetVertexPosition(Vector3(300, -35, 300) + camPos, 1);
-	wp->SetVertexPosition(Vector3(100, -15, 100) + camPos, 2);
-	wp->SetVertexPosition(Vector3(100, -15, 300) + camPos, 3);
-	*/
+	
+	//iWaterPlane* wp = GetGraphics()->CreateWaterPlane(Vector3(0, 0, 0), "Media/WaterTexture.png");
+	//wp->SetVertexPosition(Vector3(300, -35, 100) + camPos, 0);
+	//wp->SetVertexPosition(Vector3(300, -35, 300) + camPos, 1);
+	//wp->SetVertexPosition(Vector3(100, -15, 100) + camPos, 2);
+	//wp->SetVertexPosition(Vector3(100, -15, 300) + camPos, 3);
+	
 	iMesh* meee = GetGraphics()->CreateFBXMesh("Media/Models/token_anims.fbx", camPos + Vector3(50, -10, 50));
 	meee->SetScale(0.5f);
 	meee = GetGraphics()->CreateFBXMesh("Media/temp_guy_few_anims.fbx", camPos + Vector3(-50, -10, 50));
@@ -120,9 +119,9 @@ void TestRealisticScene::PreTest()
 	meee->SetPosition(groundPos);
 	meee->SetScale(0.05f);
 
-	meee = GetGraphics()->CreateFBXMesh("Media/Models/token_anims.fbx", camPos + Vector3(50, -10, 50));
-	meee->SetPosition(groundPos + Vector3(3, 0, 0));
-	meee->SetScale(0.05f);
+	iFBXMesh* me = GetGraphics()->CreateFBXMesh("Media/Models/deer_anims.fbx", camPos + Vector3(50, -10, 50));
+	me->SetPosition(groundPos + Vector3(3, 0, 0));
+	me->SetScale(0.05f);
 	
 	for(int i = 0; i < 50; i++)
 	{
@@ -132,11 +131,14 @@ void TestRealisticScene::PreTest()
 		if(i % 2 == 0)
 			wp->SetSize(2.0f);
 	}
-
+	
 	GetGraphics()->SetGrassFilePath("Media/Grass.png");
 
 	GetGraphics()->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 1.0f, 1.0f, 1.0f, 1.0f);
 	//GetGraphics()->GetCamera()->SetMesh(meee, "Neck", Vector3(0, 0, 1));
+
+	me->SetAnimation("idle_04_feed");
+	me->SetPosition(me->GetPosition() + Vector3(30, 0, 10));
 }
 
 bool TestRealisticScene::RunTest(float diff)
@@ -149,6 +151,23 @@ bool TestRealisticScene::RunTest(float diff)
 	GetGraphics()->SetSunLightProperties(sunDirTest);
 
 
+
+	if(GetGraphics()->GetKeyListener()->IsPressed('4'))
+	{
+		GetGraphics()->GetEngineParameters().FOV += diff * 0.01f;
+	}
+	if(GetGraphics()->GetKeyListener()->IsPressed('5'))
+	{
+		GetGraphics()->GetEngineParameters().FOV -= diff * 0.01f;
+	}
+	if(GetGraphics()->GetKeyListener()->IsPressed('6'))
+	{
+		GetGraphics()->GetEngineParameters().FarClip += diff * 0.01f;
+	}
+	if(GetGraphics()->GetKeyListener()->IsPressed('7'))
+	{
+		GetGraphics()->GetEngineParameters().FarClip -= diff * 0.01f;
+	}
 	if(GetGraphics()->GetKeyListener()->IsPressed('8'))
 	{
 		this->enclosingfog += diff * 0.1f;
@@ -159,12 +178,12 @@ bool TestRealisticScene::RunTest(float diff)
 	}
 	GetGraphics()->SetEnclosingFogEffect(this->fogCenter, this->enclosingfog);
 
-
+	/*
 	if(GetGraphics()->GetKeyListener()->IsPressed('6'))
 	{
 		GetGraphics()->GetCamera()->SetPosition(Vector3(1986, 2, 1974));
 		GetGraphics()->GetCamera()->LookAt(Vector3(2000, 2, 1980));
-	}
+	}*/
 
 
 	wa->position = GetGraphics()->GetCamera()->GetPosition().GetXZ();
