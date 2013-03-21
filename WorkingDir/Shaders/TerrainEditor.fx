@@ -295,5 +295,6 @@ technique11 TerrainEditorTech
 
 		SetDepthStencilState( EnableDepth, 0 );
 	    SetRasterizerState( BackCulling );
+		SetBlendState(NoBlend, float4( 0.0f, 0.0f, 0.0f, 0.0f ), 0xFFFFFFFF );
     }  
 }

@@ -1,6 +1,7 @@
 #define TEST
 //#define REALISTICTESTSCENE
 
+
 #if defined(DEBUG) || defined(_DEBUG)
 #include <vld.h>
 #define INCLUDE_MODEL_VIEWER

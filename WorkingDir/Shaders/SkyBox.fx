@@ -46,7 +46,17 @@ DepthStencilState EnableDepth
 	DepthWriteMask = ZERO;
 	DepthFunc = LESS_EQUAL;
 };
-
+BlendState SrcAlphaBlendingAdd 
+{ 
+	BlendEnable[0] = TRUE; 
+	SrcBlend = SRC_ALPHA; 
+	DestBlend = INV_SRC_ALPHA; 
+	BlendOp = ADD; 
+	SrcBlendAlpha = ZERO; 
+	DestBlendAlpha = ZERO; 
+	BlendOpAlpha = ADD; 
+	RenderTargetWriteMask[0] = 0x0F; 
+}; 
 
 SamplerState linearSampler 
 {
@@ -54,6 +64,8 @@ SamplerState linearSampler
 	AddressU = Wrap;
 	AddressV = Wrap;
 };
+
+
 
 SKYMAP_VS_OUTPUT SKYMAP_VS(VSIn input)
 {
@@ -100,5 +112,6 @@ technique11 BasicTech
 		
 		SetDepthStencilState( EnableDepth, 0 );
 	    SetRasterizerState( RastDesc );
+		SetBlendState( SrcAlphaBlendingAdd, float4( 0.0f, 0.0f, 0.0f, 0.0f ), 0xFFFFFFFF );
     } 
 }
