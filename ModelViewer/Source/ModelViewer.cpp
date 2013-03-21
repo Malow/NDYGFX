@@ -1,6 +1,6 @@
-//#define TEST
-#define REALISTICTESTSCENE
-//#define ANIMATIONTEST
+#define TEST
+//#define REALISTICTESTSCENE
+
 #if defined(DEBUG) || defined(_DEBUG)
 #include <vld.h>
 #define INCLUDE_MODEL_VIEWER
@@ -90,11 +90,11 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 
 	//************************************* PRE TEST **********************
 #ifdef TEST
-	MaloWTest mt;
-	TillmanTest tt;
+	//MaloWTest mt;
+	//TillmanTest tt;
 	OtherTest ot;
-	mt.PreTest();
-	tt.PreTest();
+	//mt.PreTest();
+	//tt.PreTest();
 	ot.PreTest();
 	GetGraphics()->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 1.0f, 1.0f, 1.0f, 1.0f);
 #endif
@@ -144,8 +144,8 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 
 		//************************************* RUN TESTS **********************
 #ifdef TEST
-		mt.RunTest(diff);
-		tt.RunTest(diff);
+		//mt.RunTest(diff);
+		//tt.RunTest(diff);
 		ot.RunTest(diff);
 #endif
 #ifdef REALISTICTESTSCENE
@@ -290,8 +290,8 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 
 	//************************************* POST TEST **********************
 #ifdef TEST
-	mt.PostTest();
-	tt.PostTest();
+	//mt.PostTest();
+	//tt.PostTest();
 	ot.PostTest();
 #endif
 #ifdef REALISTICTESTSCENE
