@@ -1111,7 +1111,7 @@ void ResourceManager::DeleteMeshStripsResource(MeshStripsResource* &meshStripsRe
 	{
 		//Decrease the reference counter for the data used to create the mesh strip resource
 		string file = "";
-		file = meshStripsResource->GetName().substr(0, meshStripsResource->GetName().length() - 4);
+		file = meshStripsResource->GetName().substr(0, meshStripsResource->GetName().length() - 5);
 		file += ".obj";
 
 		this->UnloadObjectDataResource(file.c_str());
