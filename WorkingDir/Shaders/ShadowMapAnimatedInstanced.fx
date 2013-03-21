@@ -11,11 +11,6 @@
 Texture2D gDiffuseMap0;
 //Texture2D diffuseMap1; //Only need one diffuse map if no blending is one.
 
-cbuffer PerFrame
-{
-	float3 gSunDir;
-};
-
 cbuffer PerCascade
 {
 	float4x4 gLightViewProj;
@@ -59,7 +54,7 @@ PSIn VS(VSIn input)
 	//Set last element to 1 again
 	input.world[3][3] = 1;
 
-	output.Pos = mul(lerp(float4(input.pos - gSunDir * 0.45f, 1.0f), float4(input.posMorph - gSunDir * 0.5f, 1.0f), interpolationValue), mul(input.world, gLightViewProj)); //Interpolate position and transform it.
+	output.Pos = mul(lerp(float4(input.pos, 1.0f), float4(input.posMorph, 1.0f), interpolationValue), mul(input.world, gLightViewProj)); //Interpolate position and transform it.
 	output.Tex = lerp(input.tex, input.texMorph, interpolationValue);
 
 	return output;

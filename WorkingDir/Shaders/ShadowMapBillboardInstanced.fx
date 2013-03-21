@@ -74,7 +74,7 @@ GSIn VS(VSIn input)
 {
 	GSIn output = (GSIn)0;
 	
-	output.posCenterW = input.posWAndSizeX.xyz - gSunDir * 0.45f;	
+	output.posCenterW = input.posWAndSizeX.xyz;	
 	output.size = float2(input.posWAndSizeX.w, input.sizeY);
 
 	return output;

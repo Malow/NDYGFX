@@ -13,7 +13,10 @@ matrix g_mScale;				// Scale matrix
 // Bones
 matrix g_mBonesArray[MaxBones];
 bool g_bSkinning = true;
-
+cbuffer PerFrame
+{
+	float3 gSunDir;
+};
 DepthStencilState EnableDepth
 {
     DepthEnable = TRUE;
@@ -78,7 +81,9 @@ PSSceneIn DefaultVS(VSIn input)
 
 	// Scale Position
 	position = mul(position, g_mScale);
-	
+
+	position.xyz += gSunDir * 0.33f;
+
 	// Output
 	Output.Pos = mul(position, gViewProj);
     return Output;

@@ -357,7 +357,7 @@ void DxManager::RenderShadowMap()
 			// FBX meshes
 			for(unsigned int i = 0; i < this->FBXMeshes.size(); i++)
 			{
-				this->FBXMeshes[i]->RenderShadow(0, this->lights[l]->GetViewProjMatrix(), this->Shader_ShadowMapFBX, this->Dx_DeviceContext);
+				this->FBXMeshes[i]->RenderShadow(0, this->lights[l]->GetViewProjMatrix(), this->Shader_ShadowMapFBX, this->Dx_DeviceContext, this->sun.direction);
 			}
 
 
@@ -642,7 +642,7 @@ void DxManager::RenderCascadedShadowMap()
 		}
 
 		D3DXMATRIX wvp;
-
+		
 		for (int l = 0; l < this->csm->GetNrOfCascadeLevels(); l++)
 		{
 			this->Dx_DeviceContext->OMSetRenderTargets(0, 0, this->csm->GetShadowMapDSV(l));
@@ -650,8 +650,6 @@ void DxManager::RenderCascadedShadowMap()
 			this->Dx_DeviceContext->ClearDepthStencilView(this->csm->GetShadowMapDSV(l), D3D11_CLEAR_DEPTH, 1.0f, 0);
 
 			//Terrain
-			//Per frame:
-			this->Shader_ShadowMap->SetFloat3("gSunDir", this->sun.direction);
 			//No terrain has a transparent texture
 			this->Shader_ShadowMap->SetResource("diffuseMap", NULL);
 			this->Shader_ShadowMap->SetBool("textured", false);
@@ -845,7 +843,7 @@ void DxManager::RenderCascadedShadowMap()
 			// FBX meshes
 			for(unsigned int i = 0; i < this->FBXMeshes.size(); i++)
 			{
-				this->FBXMeshes[i]->RenderShadow(0, this->csm->GetViewProjMatrix(l), this->Shader_ShadowMapFBX, this->Dx_DeviceContext);
+				this->FBXMeshes[i]->RenderShadow(0, this->csm->GetViewProjMatrix(l), this->Shader_ShadowMapFBX, this->Dx_DeviceContext, this->sun.direction);
 			}
 		}
 
@@ -892,9 +890,9 @@ void DxManager::RenderCascadedShadowMapInstanced()
 			this->Dx_DeviceContext->IASetVertexBuffers(0, 1, billboardBufferPointers, billboardStrides, billboardOffsets);
 			this->Dx_DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 
-			//Set global variables per frame
+			//Per frame:
 			this->Shader_ShadowMapBillboardInstanced->SetFloat3("gSunDir", this->sun.direction);
-		
+
 			//Per cascade:
 			for(int i = 0; i < this->csm->GetNrOfCascadeLevels(); ++i)
 			{
@@ -954,9 +952,6 @@ void DxManager::RenderCascadedShadowMapInstanced()
 			unsigned int offsets[2] = {0, 0};
 			bufferPointers[1] = this->instancingHelper->GetStripInstanceBuffer();	
 			
-			//Per frame:
-			this->Shader_ShadowMapInstanced->SetFloat3("g_SunDir", this->sun.direction);
-
 			//Per cascade: 
 			for(int i = 0; i < this->csm->GetNrOfCascadeLevels(); ++i)
 			{
@@ -1044,9 +1039,6 @@ void DxManager::RenderCascadedShadowMapInstanced()
 			unsigned int offsets[3] = {0, 0, 0};
 			bufferPointers[2] = this->instancingHelper->GetAnimatedStripInstanceBuffer();	
 			
-			//Per frame:
-			this->Shader_ShadowMapAnimatedInstanced->SetFloat3("gSunDir", this->sun.direction);
-
 			//Per cascade:
 			for(int i = 0; i < this->csm->GetNrOfCascadeLevels(); ++i)
 			{

@@ -21,7 +21,7 @@ BillboardCollection::BillboardCollection()
 :	zVertices(NULL), zTextureResource(NULL), zOffsetVector(0.0f, 0.0f, 0.0f), zRenderShadowFlag(true), 
 	zCullNearDistance(0.0f), zCullFarDistance(std::numeric_limits<float>::infinity()),
 	zIsCameraCulled(false), zIsShadowCulled(false), zMinPos(0.0f, 0.0f, 0.0f), zMaxPos(0.0f, 0.0f, 0.0f), 
-	pVerticesChanged(true)
+	pVerticesChanged(false)
 {
 
 	

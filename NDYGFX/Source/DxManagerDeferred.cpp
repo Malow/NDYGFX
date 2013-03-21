@@ -808,11 +808,12 @@ void DxManager::RenderDeferredGeometryInstanced()
 		this->Shader_DeferredAnimatedGeometryInstanced->SetFloat("g_FarClip", this->params.FarClip);
 		this->Shader_DeferredAnimatedGeometryInstanced->SetFloat3("g_CamPos", this->camera->GetOldPos());
 		this->Shader_DeferredAnimatedGeometryInstanced->SetMatrix("g_CamViewProj", this->camera->GetViewProjMatrix());
+		
 		//"Set" instance buffer
 		ID3D11Buffer* bufferPointers[3];
 		unsigned int strides[3] = { sizeof(VertexNormalMap), 
-			sizeof(VertexNormalMap), 
-			sizeof(AnimatedStripData::AnimatedInstancedDataStruct)};
+									sizeof(VertexNormalMap), 
+									sizeof(AnimatedStripData::AnimatedInstancedDataStruct)};
 		unsigned int offsets[3] = {0, 0, 0};
 		bufferPointers[2] = this->instancingHelper->GetAnimatedStripInstanceBuffer();	
 

@@ -163,7 +163,7 @@ void TillmanTest::PreTest()
 		bbColl->SetRenderShadowFlag(false);
 	}
 	//bbColl->SetCullNearDistance(5.0f);
-	bbColl->SetCullFarDistance(25.0f);
+	bbColl->SetCullFarDistance(64.0f);
 	
 	delete [] grass_positions;
 	delete [] grass_sizes;
@@ -715,20 +715,25 @@ void TillmanTest::RunTest(float diff)
 		GetGraphics()->RenderGrass(false);
 		twerp = false;
 	}*/
+	if(GetGraphics()->GetKeyListener()->IsPressed('R'))
+	{
+		GetGraphics()->ReloadShaders(11); //deferred lightning
+	}
 	if(GetGraphics()->GetKeyListener()->IsPressed('E'))
 	{
 		//bool test = GetGraphics()->GetRenderGrassFlag();
 		//GetGraphics()->RenderGrass(true);
 		//test = GetGraphics()->GetRenderGrassFlag();
 		//GetGraphics()->ReloadShaders(5); //grass
-		GetGraphics()->ReloadShaders(7); //shadowmap (terrain)
+		//GetGraphics()->ReloadShaders(7); //shadowmap (terrain)
 		//GetGraphics()->ReloadShaders(10); //terrain
 		//GetGraphics()->ReloadShaders(11); //deferred lightning
-		GetGraphics()->ReloadShaders(20); //shadow map billboard instanced
+		//GetGraphics()->ReloadShaders(20); //shadow map billboard instanced
+		GetGraphics()->ReloadShaders(21); //shadowmap FBX
 		//GetGraphics()->ReloadShaders(22); //deffered geometry instanced
 		//GetGraphics()->ReloadShaders(23); //deffered animated geometry instanced
-		GetGraphics()->ReloadShaders(24); //static geometry shadow instanced
-		GetGraphics()->ReloadShaders(25); //animated geometry shadow instanced
+		//GetGraphics()->ReloadShaders(24); //static geometry shadow instanced
+		//GetGraphics()->ReloadShaders(25); //animated geometry shadow instanced
 		/*
 		debugCSMScale -= diff * 0.001f;
 		fileNames[0] = "Media/TerrainTexture.png";

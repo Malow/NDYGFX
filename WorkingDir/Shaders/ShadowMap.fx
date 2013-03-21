@@ -2,11 +2,6 @@
 #include "stdafx.fx"
 Texture2D diffuseMap;
 
-cbuffer PerFrame
-{
-	float3 gSunDir;
-};
-
 cbuffer PerObject
 {
 	matrix lightWVP;
@@ -33,7 +28,7 @@ struct PSIn
 PSIn VS(VSIn input)
 {
 	PSIn output = (PSIn)0;
-	output.Pos = mul(float4(input.Pos - gSunDir * 0.02f, 1.0f), lightWVP);
+	output.Pos = mul(float4(input.Pos, 1.0f), lightWVP);
 	output.Tex = input.Tex;
 
 	return output;

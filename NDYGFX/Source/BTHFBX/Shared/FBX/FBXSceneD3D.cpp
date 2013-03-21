@@ -86,9 +86,11 @@ BTHFBX_RAY_BOX_RESULT FBXSceneD3D::RayVsScene(const BTHFBX_RAY& ray, BTHFBX_MATR
 	return mFBXScene->RayVsScene(ray, worldMatrix);
 }
 
-void FBXSceneD3D::RenderShadow( float dt, D3DXMATRIX& world, D3DXMATRIX& lightViewProj, Shader* mShader, ID3D11DeviceContext* devCont )
+void FBXSceneD3D::RenderShadow( float dt, D3DXMATRIX& world, D3DXMATRIX& lightViewProj, Shader* mShader, ID3D11DeviceContext* devCont, D3DXVECTOR3 sunDir)
 {
 	devCont->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	mShader->SetFloat3("gSunDir", sunDir);
 
 	if(mFBXScene->GetSkeleton())
 	{

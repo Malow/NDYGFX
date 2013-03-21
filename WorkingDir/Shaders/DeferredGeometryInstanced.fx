@@ -85,11 +85,11 @@ PSSceneIn VSScene(VSIn input)
 {
 	PSSceneIn output = (PSSceneIn)0;
 
-	output.Pos = mul(float4(input.Pos, 1.0f), mul(input.world, g_CamViewProj));
-	output.tex = input.tex;
-	output.color = input.color;
-	output.norm = normalize(mul(input.norm, (float3x3)input.worldInverseTranspose));
-	output.Tangent = normalize(mul(input.Tangent, (float3x3)input.worldInverseTranspose));
+	output.Pos		= mul(float4(input.Pos, 1.0f), mul(input.world, g_CamViewProj));
+	output.tex		= input.tex;
+	output.color	= input.color;
+	output.norm		= normalize(mul(input.norm, (float3x3)input.worldInverseTranspose));
+	output.Tangent	= normalize(mul(input.Tangent, (float3x3)input.worldInverseTranspose));
 	output.Binormal = cross(output.norm, output.Tangent);
 	output.worldPos = mul(float4(input.Pos, 1.0f), input.world);
 

@@ -305,11 +305,11 @@ bool FBXMesh::GetBoneTransformation(const std::string& name, Vector3* pos, Vecto
 	return false;
 }
 
-void FBXMesh::RenderShadow( float dt, D3DXMATRIX& lightViewProj, Shader* shad, ID3D11DeviceContext* devCont )
+void FBXMesh::RenderShadow( float dt, D3DXMATRIX& lightViewProj, Shader* shad, ID3D11DeviceContext* devCont, D3DXVECTOR3 sunDir )
 {
 	this->RecreateWorldMatrix();
 	D3DXMATRIX world = this->GetWorldMatrix();
-	this->zScene->RenderShadow(0, world, lightViewProj, shad, devCont );
+	this->zScene->RenderShadow(0, world, lightViewProj, shad, devCont, sunDir );
 }
 
 BTHFBX_RAY_BOX_RESULT FBXMesh::RayVsScene(Vector3& rayOrigin, Vector3& rayDirection)

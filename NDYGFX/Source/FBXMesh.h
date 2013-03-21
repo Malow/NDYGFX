@@ -45,7 +45,7 @@ public:
 
 	void Update(float dt);
 	void Render(float dt, D3DXMATRIX& camProj, D3DXMATRIX& camView, D3DXMATRIX& camViewProj, Shader* shad, ID3D11DeviceContext* devCont);
-	void RenderShadow(float dt, D3DXMATRIX& lightViewProj, Shader* shad, ID3D11DeviceContext* devCont);
+	void RenderShadow(float dt, D3DXMATRIX& lightViewProj, Shader* shad, ID3D11DeviceContext* devCont, D3DXVECTOR3 sunDir );
 
 	// Sets the correct animation according to queue
 	void UpdateAnimationQueue();

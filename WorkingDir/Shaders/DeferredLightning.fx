@@ -250,8 +250,7 @@ float SampleCascades(uint cascadeIndex, uint otherCascadeIndex, float2 pixelPosT
 	}
 
 
-	
-	float CSM_SHADOW_EPSILON = 0.005f;// - (cascadeIndex * 0.0005f);// - (pixelDepth * 0.001f); //**finputsa, lägga till pixelDepth?**
+	float CSM_SHADOW_EPSILON = 0.004f;// - (cascadeIndex * 0.0005f);// - (pixelDepth * 0.001f); //**finputsa, lägga till pixelDepth?**
 	float shadow = 0.0f; 
 	bool withinBlendingDistance = false;
 	if(blendCascades) //global variable

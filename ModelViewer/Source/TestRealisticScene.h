@@ -155,7 +155,10 @@ bool TestRealisticScene::RunTest(float diff)
 	GetGraphics()->SetSunLightProperties(sunDirTest);
 	*/
 
-
+	if(GetGraphics()->GetKeyListener()->IsPressed('R'))
+	{
+		GetGraphics()->ReloadShaders(11);
+	}
 	if(GetGraphics()->GetKeyListener()->IsPressed('4'))
 	{
 		GetGraphics()->GetEngineParameters().FOV += diff * 0.01f;
