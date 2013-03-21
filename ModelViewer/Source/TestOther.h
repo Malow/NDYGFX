@@ -17,7 +17,7 @@ private:
 	*/
 
 	iFBXMesh* zMaleCharacter;
-	iMesh* zBowMesh;
+	iFBXMesh* zBowMesh;
 
 public:
 	OtherTest() {};
@@ -66,7 +66,7 @@ void OtherTest::PreTest()
 //
 
 	zMaleCharacter = GetGraphics()->CreateFBXMesh("media/models/token_anims.fbx", Vector3(0.0f, 0.0f, 0.0f));
-	zBowMesh = GetGraphics()->CreateMesh("media/models/bow_v01.obj", Vector3(0.0f, 0.0f, 0.0f));
+	zBowMesh = GetGraphics()->CreateFBXMesh("media/models/bow_anims_reverse.fbx", Vector3(0.0f, 0.0f, 0.0f));
 	if ( zBowMesh ) zMaleCharacter->BindMesh("LeftWeapon", zBowMesh);
 }
 
@@ -109,7 +109,7 @@ void OtherTest::RunTest(float diff)
 	{
 		static const char* shootQueueNames[] = 
 		{
-			"arch_equip",
+			"arch_draw_bow",
 			"arch_equiped_idle",
 			"arch_unequip",
 			"idle_03_zombie"
@@ -124,6 +124,15 @@ void OtherTest::RunTest(float diff)
 		};
 
 		zMaleCharacter->SetAnimationQueue(shootQueueNames, shootQueueTimes, 4);
+
+		static const char* shootQueueNames2[] = 
+		{
+			"arch_draw_bow",
+			"arch_equiped_idle",
+			"arch_unequip",
+			"idle_03_zombie"
+		};
+		zBowMesh->SetAnimationQueue(shootQueueNames2, shootQueueTimes, 4);
 	}
 
 	if ( GetGraphics()->GetKeyListener()->IsPressed('2') )

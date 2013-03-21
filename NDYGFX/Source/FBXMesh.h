@@ -66,6 +66,11 @@ public:
 	BoundingSphere& GetBoundingSphere() { return this->bs; }
 
 	BTHFBX_RAY_BOX_RESULT RayVsScene(Vector3& rayOrigin, Vector3& rayDirection);
+
+	/*
+	virtual void RotateAxis(const Vector3& around, float angle);
+	virtual void Rotate(const Vector3& radians);
+	*/
 };
 
 #pragma warning ( pop )
