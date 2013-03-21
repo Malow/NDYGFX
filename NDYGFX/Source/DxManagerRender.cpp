@@ -651,7 +651,7 @@ void DxManager::RenderCascadedShadowMap()
 
 			//Terrain
 			//No terrain has a transparent texture
-			this->Shader_ShadowMap->SetResource("diffuseMap", NULL);
+			/*this->Shader_ShadowMap->SetResource("diffuseMap", NULL);
 			this->Shader_ShadowMap->SetBool("textured", false);
 			for(unsigned int i = 0; i < this->terrains.size(); i++)
 			{
@@ -696,7 +696,7 @@ void DxManager::RenderCascadedShadowMap()
 						MaloW::Debug("WARNING: DxManagerRender: RenderCascadedShadowMap(): Both vertex and indexbuffers for terrain were NULL.");
 					}
 				}
-			}
+			}*/
 
 			//Static meshes
 			for(unsigned int i = 0; i < this->objects.size(); i++)

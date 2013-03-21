@@ -11,6 +11,62 @@
 Texture2D g_DiffuseMap;
 Texture2D g_NormalMap;
 
+//
+//	00	01	02
+//	10	11	12
+//	20	21	22
+//
+//http://stackoverflow.com/questions/983999/simple-3x3-matrix-inverse-code-c TILLE
+/*
+
+	double A11, A12, A13;
+    double A21, A22, A23;
+    double A31, A32, A33;
+
+    double B11, B12, B13;
+    double B21, B22, B23;
+    double B31, B32, B33;
+
+
+    B11 = 1 / ((A22 * A33) - (A23 * A32));
+    B12 = 1 / ((A13 * A32) - (A12 * A33));
+    B13 = 1 / ((A12 * A23) - (A13 * A22));
+    B21 = 1 / ((A23 * A31) - (A21 * A33));
+    B22 = 1 / ((A11 * A33) - (A13 * A31));
+    B23 = 1 / ((A13 * A21) - (A11 * A23));
+    B31 = 1 / ((A21 * A32) - (A22 * A31));
+    B32 = 1 / ((A12 * A31) - (A11 * A32));
+    B33 = 1 / ((A11 * A22) - (A12 * A21));
+
+
+float3x3 MatrixInverse(in float3x3 A)
+{
+	/*float det = 
+	  A[0][2] * A[2][1] * A[1][0]
+	+ A[0][1] * A[1][2] * A[2][0]
+	+ A[0][0] * A[1][1] * A[2][2]
+	- A[0][0] * A[2][1] * A[1][2]
+	- A[1][0] * A[0][1] * A[2][2]
+	- A[2][0] * A[1][1] * A[0][2];
+	*/
+	/*float det = determinant(A);
+	float3x3 tmp;
+	tmp[0][0] = A[1][2] * A[2][2] - A[2][1] * A[1][2];
+	tmp[1][0] = A[1][2] * A[2][0] - A[2][2] * A[1][0];
+	tmp[2][0] = A[1][0] * A[2][1] - A[2][0] * A[1][1];
+	
+	tmp[0][1] = A[0][2] * A[2][1] - A[2][2] * A[0][1];
+	tmp[1][1] = A[0][0] * A[2][2] - A[2][0] * A[0][2];
+	tmp[2][1] = A[0][1] * A[2][0] - A[2][1] * A[0][0];
+
+	tmp[0][2] = A[0][1] * A[1][2] - A[1][1] * A[0][2];
+	tmp[1][2] = A[0][2] * A[1][0] - A[1][2] * A[0][0];
+	tmp[2][2] = A[0][0] * A[1][1] - A[1][0] * A[0][1];
+
+	float3x3 AInv = 1.0f / det * tmp;
+
+	return AInv;
+}*/
 
 //-----------------------------------------------------------------------------------------
 // Input and Output Structures
@@ -148,13 +204,16 @@ PSSceneIn VSScene(VSIn input)
 	output.tangent	= normalize(lerp(input.tangent, input.tangent_morph, interpolationValue));
 	output.binormal = cross(output.norm, output.tangent);
 	*/
-	float4x4 test = transpose(input.world); //TILLMAN TODO: inverse function
+	//float3x3 test = MatrixInverse((float3x3)input.world);
+	//float3x3 test2 = transpose(test); //TILLMAN TODO: inverse function
+
+
 
 	output.worldPos = mul(lerp(float4(input.pos, 1.0f), float4(input.pos_morph, 1.0f), interpolationValue), input.world); 
 	output.pos		= mul(float4(output.worldPos.xyz, 1.0f), g_CamViewProj);
 	output.tex		= lerp(input.texCoord, input.texCoord_morph, interpolationValue);
-	output.norm		= normalize(mul(lerp(input.norm, input.norm_morph, interpolationValue), (float3x3)test));
-	output.tangent	= normalize(mul(lerp(input.tangent, input.tangent_morph, interpolationValue), (float3x3)test));
+	output.norm		= normalize(mul(lerp(input.norm, input.norm_morph, input.norm_morph), input.world));//normalize(mul(lerp(input.norm, input.norm_morph, interpolationValue), (float3x3)test2));
+	output.tangent	= normalize(mul(lerp(input.tangent, input.tangent_morph, interpolationValue), input.world)); //normalize(mul(lerp(input.tangent, input.tangent_morph, interpolationValue), (float3x3)test2));
 	output.binormal = cross(output.norm, output.tangent);
 	
 	return output;
