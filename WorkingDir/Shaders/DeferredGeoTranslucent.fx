@@ -148,5 +148,6 @@ technique11 BasicTech
 
 		SetDepthStencilState( EnableDepth, 0 );
 	    SetRasterizerState( NoCulling );
+		SetBlendState(NoBlend, float4( 0.0f, 0.0f, 0.0f, 0.0f ), 0xFFFFFFFF );
     }  
 }

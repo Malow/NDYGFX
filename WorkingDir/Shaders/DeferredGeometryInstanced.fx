@@ -46,7 +46,6 @@ struct VSIn
 	//instance data
 	row_major float4x4 world					: WORLD;
 	row_major float4x4 worldInverseTranspose	: WIT;
-	//uint instanceID : SV_InstanceID; //använda för färg? eller använda position & sin()? - tillman
 };
 
 struct PSSceneIn

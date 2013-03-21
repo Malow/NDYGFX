@@ -98,7 +98,7 @@ void TillmanTest::PreTest()
 
 	float inner = 1.0f;
 	float outer = inner * 2;
-	//GetGraphics()->SetSpecialCircle(inner, outer, Vector2(0, 0));
+	GetGraphics()->SetSpecialCircle(inner, outer, Vector2(0, 0));
 	float hmData[65 * 65];
 	for(int i = 0; i < vertSize * vertSize; i++)
 	{
@@ -257,7 +257,7 @@ void TillmanTest::PreTest()
 	iT2->SetBlendMaps(nrOfBlendMaps, sizes, testData);
 	iT2->SetNormals(normals2);
 
-	/*int klerp = 3;
+	int klerp = 3;
 	iTerrain** iTs = new iTerrain*[klerp*klerp];
 	for(int i = 0; i < klerp; i++)
 	{
@@ -268,7 +268,7 @@ void TillmanTest::PreTest()
 			iTs[i * klerp + j]->SetBlendMaps(nrOfBlendMaps, sizes, testData);
 			//iTs[i * klerp + j]->SetTextureScale(10);
 		}
-	}*/
+	}
 
 	//iMesh* bush = GetGraphics()->CreateMesh("Media/Bush_01_v04_r.obj", Vector3(30, 10, 30));
 	//bush->Scale(1.0f * 0.05f);

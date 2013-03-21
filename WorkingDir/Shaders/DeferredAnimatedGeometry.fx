@@ -5,16 +5,17 @@
 //--------------------------------------------------------------------------------------
 
 // Marcus Löwegren
+#include "stdafx.fx"
 
 // For textures
 Texture2D tex2D;
 Texture2D normalMap;
-SamplerState linearSampler
+/*SamplerState linearSampler
 {
     Filter = MIN_MAG_MIP_LINEAR;
     AddressU = Wrap;
     AddressV = Wrap;
-};
+};*/
 
 //-----------------------------------------------------------------------------------------
 // Input and Output Structures
@@ -96,7 +97,7 @@ RTs:
 //-----------------------------------------------------------------------------------------
 // State Structures
 //-----------------------------------------------------------------------------------------
-RasterizerState BackCulling
+/*RasterizerState BackCulling
 {
 	CullMode = Back;
 };
@@ -106,7 +107,7 @@ DepthStencilState EnableDepth
     DepthEnable = TRUE;
     DepthWriteMask = ALL;
     DepthFunc = LESS_EQUAL;
-};
+};*/
 
 
 //-----------------------------------------------------------------------------------------
@@ -137,7 +138,7 @@ PSout PSScene(PSSceneIn input) : SV_Target
 	float4 textureColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
 	if(textured)
 	{
-		textureColor = tex2D.Sample(linearSampler, input.tex);
+		textureColor = tex2D.Sample(LinearWrapSampler, input.tex);
 		if ( textureColor.a < 0.5f )
 			discard;
 	}
@@ -162,7 +163,7 @@ PSout PSScene(PSSceneIn input) : SV_Target
 	if(useNormalMap)
 	{
 		// NormalMap
-		float4 bumpMap = normalMap.Sample(linearSampler, input.tex);
+		float4 bumpMap = normalMap.Sample(LinearWrapSampler, input.tex);
 		// Expand the range of the normal value from (0, +1) to (-1, +1).
 		bumpMap = (bumpMap * 2.0f) - 1.0f;
 		// Calculate the normal from the data in the bump map.
@@ -192,5 +193,6 @@ technique11 BasicTech
 
 		SetDepthStencilState( EnableDepth, 0 );
 	    SetRasterizerState( BackCulling );
+		SetBlendState(NoBlend, float4( 0.0f, 0.0f, 0.0f, 0.0f ), 0xFFFFFFFF );
     }  
 }
