@@ -26,7 +26,7 @@ void DxManager::PreRender()
 	}
 
 	// Optimizing: send terrain textures once to the GPU.
-	/*static unsigned int nrOfTexturesSet = 0;
+	static unsigned int nrOfTexturesSet = 0;
 	static bool texSet[7];
 	static const TextureResource* texRes = NULL;
 	if(nrOfTexturesSet < 7)
@@ -115,7 +115,7 @@ void DxManager::PreRender()
 			this->Shader_TerrainEditor->SetResource("tex7", texRes->GetSRVPointer());
 			nrOfTexturesSet++;
 		}*/
-	//}
+	}
 }
 
 
@@ -201,7 +201,7 @@ void DxManager::RenderDeferredGeoTerrains()
 			}
 
 			//OBS! Do not put this code in a for loop using malow::ConvertNrToString()-function. (Huge performance loss).
-			if(terrPtr->GetTexture(0) != NULL)
+			/*if(terrPtr->GetTexture(0) != NULL)
 			{
 				this->Shader_TerrainEditor->SetResource("tex0", terrPtr->GetTexture(0)->GetSRVPointer());
 			}
@@ -232,7 +232,7 @@ void DxManager::RenderDeferredGeoTerrains()
 			if(terrPtr->GetTexture(7) != NULL)
 			{
 				this->Shader_TerrainEditor->SetResource("tex7", terrPtr->GetTexture(7)->GetSRVPointer());
-			}
+			}*/
 
 			if(terrPtr->GetNrOfTextures() > 0) 
 			{
