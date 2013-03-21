@@ -323,3 +323,16 @@ BTHFBX_RAY_BOX_RESULT FBXMesh::RayVsScene(Vector3& rayOrigin, Vector3& rayDirect
 		mat.f[i] = worldMat[i];
 	return this->zScene->RayVsScene(ray, &mat);
 }
+
+
+/*
+void FBXMesh::Rotate( const Vector3& radians )
+{
+	Mesh::Rotate( D3DXVECTOR3(-radians.x,radians.y,radians.z) );
+}
+
+void FBXMesh::RotateAxis( const Vector3& around, float angle )
+{
+	Mesh::RotateAxis( D3DXVECTOR3(-around.x,around.y,around.z), angle );
+}
+*/
