@@ -1,4 +1,5 @@
 #include "ResourceManager.h"
+#include <algorithm>
 
 void CalculateNormal(D3DXVECTOR3 tangent, D3DXVECTOR3 binormal, D3DXVECTOR3& normal)
 {
@@ -926,6 +927,15 @@ void ResourceManager::DeleteBufferResource( BufferResource* &bufferResource )
 
 MeshStripsResource* ResourceManager::CreateMeshStripsResourceFromFile(const char* filePath, float& billboardHeight)
 {
+	string file = filePath;
+	std::transform(file.begin(), file.end(), file.begin(), tolower); //Force lower case
+
+	string test = file.substr(file.length() - 3);
+	if(std::strcmp(test.c_str(), "ani") == 0)
+	{
+		float derp = 1.0f;
+	}
+
 
 	if(this->mutex)
 	{
@@ -934,17 +944,17 @@ MeshStripsResource* ResourceManager::CreateMeshStripsResourceFromFile(const char
 	else 
 		MaloW::Debug("Mutex is broken / hasn't been created / has been closed for ResourceManager: CreateMeshStripsResourceFromFile().");
 
-	ObjectDataResource* tmp = this->LoadObjectDataResourceFromFile(filePath);
+	ObjectDataResource* tmp = this->LoadObjectDataResourceFromFile(file.c_str());
 
 	if(tmp != NULL)
 	{
 		ObjData* objData = tmp->GetObjectDataPointer();
 		if(objData != NULL)
 		{
-			string file = string(filePath);
+			//string file = string(filePath);
 			
 			file = file.substr(0, file.length() - 4);
-			file += "Mesh";
+			file += "_mesh";
 
 			auto findResource = this->zMeshStripsResources.find(file);
 			//Check if the meshStripResource already exists
@@ -991,14 +1001,76 @@ MeshStripsResource* ResourceManager::CreateMeshStripsResourceFromFile(const char
 bool ResourceManager::HasMeshStripsResource(const char* fileName)
 {
 	string file = string(fileName);
-	file = file.substr(0, file.length() - 4);
-	file += "Mesh";
+	std::transform(file.begin(), file.end(), file.begin(), tolower); //Force to lower case
 
-	auto find = this->zMeshStripsResources.find(file);
-	if(find != this->zMeshStripsResources.cend())
+	string fileType = file.substr(file.length() - 3);
+	if(strcmp(fileType.c_str(), "ani") == 0)
 	{
-		return true;
+		//Save the path to the folder the resource is in.
+		//string tempFilename = resourcesFileName;
+		//Save the path to the folder the resource is in.
+		string tempFilename = file;
+		string pathfolder = "";
+		size_t slashpos = tempFilename.find("/");
+		while(slashpos != string::npos)
+		{
+			slashpos = tempFilename.find("/");
+			pathfolder += tempFilename.substr(0, slashpos + 1);
+			tempFilename = tempFilename.substr(slashpos + 1);
+		}
+
+		//Open the .ani-file.
+		ifstream inputFileAni;
+		inputFileAni.open(file);
+		if(inputFileAni)
+		{
+			string line = "";
+			getline(inputFileAni, line);
+
+			int nrOfObjects = atoi(line.c_str());
+
+			for(int a = 0; a < nrOfObjects; a++)
+			{
+				string path = "";
+				//We're only interested in the object file name (.obj), so skip key frame time
+				getline(inputFileAni, line);
+				//Extract object file name.
+				getline(inputFileAni, path);
+				std::transform(path.begin(), path.end(), path.begin(), tolower); //Force to lower case
+
+				string tmpResourceFileName = pathfolder + path;
+
+				path = path.substr(0, path.length() - 4);
+				path = pathfolder + path + "_mesh";
+
+				auto find = this->zMeshStripsResources.find(path);
+				if(find == this->zMeshStripsResources.cend())
+				{
+					return false;
+				}
+			}
+
+			//Everything is loaded, return true
+			return true;
+		}
 	}
+	else if(strcmp(fileType.c_str(), "obj") == 0)
+	{
+		file = file.substr(0, file.length() - 4);
+		file += "_mesh";
+
+		auto find = this->zMeshStripsResources.find(file);
+		if(find != this->zMeshStripsResources.cend())
+		{
+			return true;
+		}
+	}
+	else
+	{
+		MaloW::Debug("WARNING: ResourceManager::HasMeshStripsResource(): Filetype not recognized: '" + fileType + "'. Full filename: '" + file + "'.");
+		return false;
+	}
+	
 	return false;
 }
 
