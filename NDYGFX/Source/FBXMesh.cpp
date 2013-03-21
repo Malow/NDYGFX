@@ -287,6 +287,9 @@ bool FBXMesh::GetBoneTransformation(const std::string& name, Vector3* pos, Vecto
 				// Multiple
 				D3DXQuaternionMultiply(&quat, &quat, &worldQuat);
 
+				// Normalize
+				D3DXQuaternionNormalize(&quat, &quat);
+
 				rot->x = quat.x;
 				rot->y = quat.y;
 				rot->z = quat.z;

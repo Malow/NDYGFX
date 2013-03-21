@@ -117,7 +117,7 @@ void OtherTest::RunTest(float diff)
 
 		static float shootQueueTimes[] = 
 		{ 
-			1.6,
+			1.6f,
 			4.8f,
 			1.6f,
 			0.0f
@@ -153,10 +153,12 @@ void OtherTest::RunTest(float diff)
 	else if ( GetGraphics()->GetKeyListener()->IsPressed('8') )
 	{
 		zMaleCharacter->Scale(1.0f + diff * 0.0001f);
+		zBowMesh->Scale(1.0f + diff * 0.0001f);
 	}
 	else if ( GetGraphics()->GetKeyListener()->IsPressed('9') )
 	{
 		zMaleCharacter->Scale(1.0f - diff * 0.0001f);
+		zBowMesh->Scale(1.0f - diff * 0.0001f);
 	}
 }
 
