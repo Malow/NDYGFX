@@ -98,7 +98,7 @@ void TillmanTest::PreTest()
 
 	float inner = 1.0f;
 	float outer = inner * 2;
-	//GetGraphics()->SetSpecialCircle(inner, outer, Vector2(0, 0));
+	GetGraphics()->SetSpecialCircle(inner, outer, Vector2(0, 0));
 	float hmData[65 * 65];
 	for(int i = 0; i < vertSize * vertSize; i++)
 	{

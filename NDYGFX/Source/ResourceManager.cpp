@@ -307,20 +307,22 @@ ObjectDataResource* ResourceManager::LoadObjectDataResourceFromFile(const char* 
 		MaloW::Debug("Mutex is broken / hasn't been created / has been closed for Resourcemanager Loadobjectdata.");
 
 
-
-	auto objData = this->zObjectDataResources.find(filePath);
+	string file = filePath;
+	//Force lower case
+	std::transform(file.begin(), file.end(), file.begin(), tolower); 
+	auto objData = this->zObjectDataResources.find(file);
 	//If the object data resource was not found in the array, create it.
 	if(objData == this->zObjectDataResources.end())
 	{
 		//Create and load object data.
 		ObjData* objectData = NULL;
 		ObjLoader oj;
-		objectData = oj.LoadObjFile(string(filePath));
+		objectData = oj.LoadObjFile(file);
 
 		if(objectData == NULL)
 		{
 			string dbgStr = "WARNING: Failed to load object data from file: ";
-			dbgStr += filePath;
+			dbgStr += file;
 			MaloW::Debug(dbgStr);
 
 			//Release mutex and return.
@@ -330,19 +332,19 @@ ObjectDataResource* ResourceManager::LoadObjectDataResourceFromFile(const char* 
 		else
 		{
 			//Create if loading was successful.
-			this->zObjectDataResources[filePath] = new ObjectDataResource(filePath, objectData);
+			this->zObjectDataResources[file] = new ObjectDataResource(file, objectData);
 			//Increase reference count.
-			this->zObjectDataResources[filePath]->IncreaseReferenceCount();
+			this->zObjectDataResources[file]->IncreaseReferenceCount();
 
 			//Release mutex and return resource.
 			ReleaseMutex(this->mutex);
 			//Return newly created object data resource.
-			return this->zObjectDataResources[filePath];
+			return this->zObjectDataResources[file];
 		}
 	}
 
 	//If the object data resource already exists, increase reference counter & return it.
-	this->zObjectDataResources[filePath]->IncreaseReferenceCount();
+	this->zObjectDataResources[file]->IncreaseReferenceCount();
 
 	//Release mutex and return.
 	ReleaseMutex(this->mutex);
@@ -358,8 +360,11 @@ void ResourceManager::UnloadObjectDataResource(const char* filePath)
 	else 
 		MaloW::Debug("Mutex is broken / hasn't been created / has been closed for Resourcemanager UnloadObjectData.");
 
+	string file = filePath;
+	//Force lower case
+	std::transform(file.begin(), file.end(), file.begin(), tolower); 
 
-	auto objData = this->zObjectDataResources.find(filePath);
+	auto objData = this->zObjectDataResources.find(file);
 	//If the object data resource was found in the array, decrease its reference counter.
 	if(objData != this->zObjectDataResources.end())
 	{
@@ -534,30 +539,33 @@ void ResourceManager::PreLoadResources(unsigned int nrOfResources, std::vector<s
 			if(resourcesFileName != NULL)
 			{
 				string tmpFileName = string(resourcesFileName); 
+				//Force lower case
+				std::transform(tmpFileName.begin(), tmpFileName.end(), tmpFileName.begin(), tolower); 
+				
 				if(tmpFileName.substr(tmpFileName.length() - 4) == ".obj") 
 				{
 					//First check if the resource has already been loaded.
-					auto objData = this->zObjectDataResources.find(resourcesFileName);
+					auto objData = this->zObjectDataResources.find(tmpFileName);
 					if(objData == this->zObjectDataResources.end())
 					{
-						ObjectDataResource* objDataResPtr = this->LoadObjectDataResourceFromFile(resourcesFileName);
+						ObjectDataResource* objDataResPtr = this->LoadObjectDataResourceFromFile(tmpFileName.c_str());
 						if(objDataResPtr != NULL)
 						{
 							//Decrease reference count since we're Preloading and no object yet has a reference to the resource.
-							this->zObjectDataResources[resourcesFileName]->DecreaseReferenceCount();
-							MaloW::Debug("INFO: ResourceManager: PreLoadResources(): the resource: '" + string(resourcesFileName) + "' was preloaded.");
+							this->zObjectDataResources[tmpFileName]->DecreaseReferenceCount();
+							MaloW::Debug("INFO: ResourceManager: PreLoadResources(): the resource: '" + tmpFileName + "' was preloaded.");
 						}
 						//else write debug info, this is done by LoadObjectDataResourceFromFile(..).
 					}
 					else
 					{
-						MaloW::Debug("INFO: ResourceManager: PreLoadResources(): the resource: '" + string(resourcesFileName) + "' has already been loaded.");
+						MaloW::Debug("INFO: ResourceManager: PreLoadResources(): the resource: '" + tmpFileName + "' has already been loaded.");
 					}
 				}
 				else if(tmpFileName.substr(tmpFileName.length() - 4) == ".ani")
 				{
 					//Save the path to the folder the resource is in.
-					string tempFilename = resourcesFileName;
+					string tempFilename = tmpFileName;
 					string pathfolder = "";
 					size_t slashpos = tempFilename.find("/");
 					while(slashpos != string::npos)
@@ -569,7 +577,7 @@ void ResourceManager::PreLoadResources(unsigned int nrOfResources, std::vector<s
 
 					//Open the .ani-file.
 					ifstream inputFileAni;
-					inputFileAni.open(resourcesFileName);
+					inputFileAni.open(tmpFileName);
 					if(inputFileAni)
 					{
 						string line = "";
@@ -586,6 +594,8 @@ void ResourceManager::PreLoadResources(unsigned int nrOfResources, std::vector<s
 							getline(inputFileAni, path);
 
 							string tmpResourceFileName = pathfolder + path;
+							//Force lower case
+							std::transform(tmpResourceFileName.begin(), tmpResourceFileName.end(), tmpResourceFileName.begin(), tolower); 
 
 							//First check if the resource has already been loaded.
 							auto objData = this->zObjectDataResources.find(tmpResourceFileName);
@@ -597,7 +607,7 @@ void ResourceManager::PreLoadResources(unsigned int nrOfResources, std::vector<s
 									//Decrease reference count since we're Preloading and no object yet has a reference to the resource.
 									this->zObjectDataResources[tmpResourceFileName.c_str()]->DecreaseReferenceCount();
 
-									MaloW::Debug("INFO: ResourceManager: PreLoadResources(): the resource: '" + string(resourcesFileName) + "' was preloaded.");
+									MaloW::Debug("INFO: ResourceManager: PreLoadResources(): the resource: '" + tmpFileName + "' was preloaded.");
 								}
 								//else write debug info, this is done by LoadObjectDataResourceFromFile(..).
 							}
@@ -611,22 +621,22 @@ void ResourceManager::PreLoadResources(unsigned int nrOfResources, std::vector<s
 				else if (tmpFileName.substr(tmpFileName.length() - 4) == ".png" || tmpFileName.substr(tmpFileName.length() - 4) == ".dds")
 				{
 					//First check if the resource has already been loaded.
-					auto tex = this->zTextureResources.find(resourcesFileName);
+					auto tex = this->zTextureResources.find(tmpFileName);
 					if(tex == this->zTextureResources.end())
 					{
-						TextureResource* texResPtr = this->CreateTextureResourceFromFile(resourcesFileName, true);
+						TextureResource* texResPtr = this->CreateTextureResourceFromFile(tmpFileName.c_str(), true);
 						if(texResPtr != NULL)
 						{
 							//Decrease reference count since we're Preloading and no object yet has a reference to the resource.
-							this->zTextureResources[resourcesFileName]->DecreaseReferenceCount();
+							this->zTextureResources[tmpFileName]->DecreaseReferenceCount();
 
-							MaloW::Debug("INFO: ResourceManager: PreLoadResources(): the resource: '" + string(resourcesFileName) + "' was preloaded.");
+							MaloW::Debug("INFO: ResourceManager: PreLoadResources(): the resource: '" + tmpFileName + "' was preloaded.");
 						}
 						//else write debug info, this is done by LoadObjectDataResourceFromFile(..).
 					}
 					else
 					{
-						MaloW::Debug("INFO: ResourceManager: PreLoadResources(): the resource: '" + string(resourcesFileName) + "' has already been loaded.");
+						MaloW::Debug("INFO: ResourceManager: PreLoadResources(): the resource: '" + tmpFileName + "' has already been loaded.");
 					}
 				}
 				else
@@ -647,8 +657,10 @@ TextureResource* ResourceManager::CreateTextureResourceFromFile( const char* fil
 	else 
 		MaloW::Debug("Mutex is broken / hasn't been created / has been closed for Resourcemanager CreateTextureResourceFromFile.");
 
+	string file = filePath;
+	std::transform(file.begin(), file.end(), file.begin(), tolower); //Force lower case
 
-	auto tex = this->zTextureResources.find(filePath);
+	auto tex = this->zTextureResources.find(file);
 	//If the texture resource was not found in the array, create it.
 	if(tex == this->zTextureResources.end())
 	{
@@ -665,14 +677,14 @@ TextureResource* ResourceManager::CreateTextureResourceFromFile( const char* fil
 		ID3D11ShaderResourceView* SRV = NULL;
 		if(FAILED(D3DX11CreateShaderResourceViewFromFile(	
 			this->gDevice, 
-			filePath,
+			file.c_str(),
 			&loadInfo, 
 			NULL, 
 			&SRV,
 			NULL)))
 		{
 			string dbgStr = "WARNING: Failed to load texture: ";
-			dbgStr += filePath;
+			dbgStr += file;
 			MaloW::Debug(dbgStr);
 
 			//Release mutex and return
@@ -688,19 +700,19 @@ TextureResource* ResourceManager::CreateTextureResourceFromFile( const char* fil
 			}
 
 			//Create if loading was successful.
-			this->zTextureResources[filePath] = new TextureResource(filePath, SRV);
+			this->zTextureResources[file] = new TextureResource(file, SRV);
 			//Increase reference count.
-			this->zTextureResources[filePath]->IncreaseReferenceCount();
+			this->zTextureResources[file]->IncreaseReferenceCount();
 			
 			//Release mutex and return
 			ReleaseMutex(this->mutex);
 			//Return newly created texture resource.
-			return this->zTextureResources[filePath];
+			return this->zTextureResources[file];
 		}
 	}
 
 	//If the texture already exists, increase reference counter & return texture.
-	this->zTextureResources[filePath]->IncreaseReferenceCount();
+	this->zTextureResources[file]->IncreaseReferenceCount();
 	
 	//Release mutex and return
 	ReleaseMutex(this->mutex);
@@ -716,7 +728,10 @@ TextureResource* ResourceManager::CreateCubeTextureResourceFromFile( const char*
 		MaloW::Debug("Mutex is broken / hasn't been created / has been closed for Resourcemanager CreateCubeTextureReosurceFromFile.");
 
 
-	auto tex = this->zTextureResources.find(filePath);
+	string file = filePath;
+	std::transform(file.begin(), file.end(), file.begin(), tolower); //Force lower case
+
+	auto tex = this->zTextureResources.find(file);
 	//If the texture was not found in the array, create it.
 	if(tex == this->zTextureResources.end())
 	{
@@ -729,14 +744,14 @@ TextureResource* ResourceManager::CreateCubeTextureResourceFromFile( const char*
 		ID3D11ShaderResourceView* SRV = NULL;
 		if(FAILED(D3DX11CreateShaderResourceViewFromFile(	
 			this->gDevice, 
-			filePath,
+			file.c_str(),
 			&loadInfo, 
 			NULL, 
 			&SRV,
 			NULL)))
 		{
 			string dbgStr = "WARNING: Failed to load cube texture: ";
-			dbgStr += filePath;
+			dbgStr += file;
 			MaloW::Debug(dbgStr);
 
 			//Release mutex and return
@@ -746,19 +761,19 @@ TextureResource* ResourceManager::CreateCubeTextureResourceFromFile( const char*
 		else
 		{
 			//Create & Set texture if loading was successful.
-			this->zTextureResources[filePath] = new TextureResource(filePath, SRV);
+			this->zTextureResources[file] = new TextureResource(file, SRV);
 			//Increase reference count.
-			this->zTextureResources[filePath]->IncreaseReferenceCount();
+			this->zTextureResources[file]->IncreaseReferenceCount();
 
 			//Release mutex and return
 			ReleaseMutex(this->mutex);
 			//Return newly created texture.
-			return this->zTextureResources[filePath];
+			return this->zTextureResources[file];
 		}
 	}
 
 	//If the texture already exists, increase reference counter & return texture.
-	this->zTextureResources[filePath]->IncreaseReferenceCount();
+	this->zTextureResources[file]->IncreaseReferenceCount();
 
 	//Release mutex and return
 	ReleaseMutex(this->mutex);
@@ -766,7 +781,10 @@ TextureResource* ResourceManager::CreateCubeTextureResourceFromFile( const char*
 }
 const TextureResource* ResourceManager::GetTextureResourcePointer(const char* id) const
 {
-	auto tex = this->zTextureResources.find(id);
+	string file = id;
+	std::transform(file.begin(), file.end(), file.begin(), tolower); //Force lower case
+
+	auto tex = this->zTextureResources.find(file);
 
 	if(tex != this->zTextureResources.cend())
 	{
@@ -831,8 +849,10 @@ BufferResource* ResourceManager::CreateBufferResource(const char* fileName, BUFF
 	else 
 		MaloW::Debug("Mutex is broken / hasn't been created / has been closed for Resourcemanager CreateBufferResource.");
 
+	string file = fileName;
+	std::transform(file.begin(), file.end(), file.begin(), tolower); //Force lower case
 
-	auto buff = this->zBufferResources.find(fileName);
+	auto buff = this->zBufferResources.find(file);
 	//If the buffer resource was not found in the array, create it.
 	if(buff == this->zBufferResources.end())
 	{
@@ -845,7 +865,7 @@ BufferResource* ResourceManager::CreateBufferResource(const char* fileName, BUFF
 			delete buffer; 
 			buffer = NULL;
 
-			MaloW::Debug("ERROR: ResourceManager: Could not create buffer: '" + string(fileName) + "'."
+			MaloW::Debug("ERROR: ResourceManager: Could not create buffer: '" + file + "'."
 				+ string("ERROR code: '") 
 				+ MaloW::GetHRESULTErrorCodeString(hr));
 
@@ -856,19 +876,19 @@ BufferResource* ResourceManager::CreateBufferResource(const char* fileName, BUFF
 		else
 		{
 			//Create if loading was successful.
-			this->zBufferResources[fileName] = new BufferResource(fileName, buffer);
+			this->zBufferResources[file] = new BufferResource(file, buffer);
 			//Increase reference count.
-			this->zBufferResources[fileName]->IncreaseReferenceCount();
+			this->zBufferResources[file]->IncreaseReferenceCount();
 
 			//Release mutex and return.
 			ReleaseMutex(this->mutex);
 			//Return newly created buffer.
-			return this->zBufferResources[fileName];
+			return this->zBufferResources[file];
 		}
 	}
 
 	//If the buffer already exists, increase reference counter & return it.
-	this->zBufferResources[fileName]->IncreaseReferenceCount();
+	this->zBufferResources[file]->IncreaseReferenceCount();
 
 	//Release mutex and return.
 	ReleaseMutex(this->mutex);
@@ -876,8 +896,11 @@ BufferResource* ResourceManager::CreateBufferResource(const char* fileName, BUFF
 }
 bool ResourceManager::HasBuffer(const char* fileName)
 {
+	string file = fileName;
+	std::transform(file.begin(), file.end(), file.begin(), tolower); //Force lower case
+
 	//Find exact match. 
-	auto buff = this->zBufferResources.find(fileName + string("Vertex")); 
+	auto buff = this->zBufferResources.find(file + string("vertex")); 
 	//If the buffer resource was not found in the array, return false.
 	if(buff == this->zBufferResources.end())
 	{

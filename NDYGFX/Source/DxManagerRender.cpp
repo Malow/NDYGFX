@@ -232,11 +232,7 @@ void DxManager::RenderParticles()
 void DxManager::RenderShadowMap()
 {
 	
-	// If special circle is used
-	if(this->specialCircleParams.x) //if inner radius > 0, then send/set data
-	{
-		this->Shader_DeferredLightning->SetFloat4("dataPPHA", this->specialCircleParams);
-	}
+	
 
 	// Generate and send shadowmaps to the main-shader
 	//EDIT 2013-01-23 by Tillman - Added transparancy.
@@ -378,7 +374,7 @@ void DxManager::RenderShadowMap()
 			//this->Shader_ForwardRendering->SetStructMemberAtIndexAsFloat(l, "gLights", "LightIntensity", this->lights[l]->GetIntensity());
 		
 
-			// For deferred: TILLMAN: Detta ska inte ligga här. också: detta ska göras för DPPTranslucent.fx
+			// For deferred: TILLE TILLMAN: Detta ska inte ligga här. också: detta ska göras för DPPTranslucent.fx
 			this->Shader_DeferredLightning->SetResourceAtIndex(l, "ShadowMap", this->lights[l]->GetShadowMapSRV());
 			this->Shader_DeferredLightning->SetStructMemberAtIndexAsMatrix(l, "gLights", "LightViewProj", lvp);
 			this->Shader_DeferredLightning->SetStructMemberAtIndexAsFloat4(l, "gLights", "LightPosition", D3DXVECTOR4(this->lights[l]->GetPositionD3DX(), 1));
@@ -902,7 +898,7 @@ void DxManager::RenderCascadedShadowMapInstanced()
 			//Per cascade:
 			for(int i = 0; i < this->csm->GetNrOfCascadeLevels(); ++i)
 			{
-				//Set render targets & view ports - TILLMAN TODO: sätta ihop med terräng för färre API CALLS
+				//Set render targets & view ports - TILLE TILLMAN TODO: sätta ihop med terräng för färre API CALLS
 				this->Dx_DeviceContext->OMSetRenderTargets(0, 0, this->csm->GetShadowMapDSV(i));
 				D3D11_VIEWPORT wp = this->csm->GetShadowMapViewPort(i);
 				this->Dx_DeviceContext->RSSetViewports(1, &wp);

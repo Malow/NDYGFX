@@ -949,7 +949,11 @@ void DxManager::RenderDeferredPerPixel()
 	this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_RenderTargetView, ClearColor);
 
 	this->Dx_DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
-
+	// If special circle is used
+	if(this->specialCircleParams.x) //if inner radius > 0, then send/set data
+	{
+		this->Shader_DeferredLightning->SetFloat4("dataPPHA", this->specialCircleParams);
+	}
 	//Always tell the shader whether to use shadows or not.
 	this->Shader_DeferredLightning->SetBool("useShadow", this->useShadow);
 	if ( useShadow )
@@ -962,9 +966,9 @@ void DxManager::RenderDeferredPerPixel()
 		this->Shader_DeferredLightning->SetFloat("PCF_SIZE", PCF_SIZE);
 		this->Shader_DeferredLightning->SetFloat("PCF_SIZE_SQUARED", PCF_SQUARED);
 
-		this->Shader_DeferredLightning->SetBool("blendCascades", true); //** TILLMAN CSM VARIABLE**
+		this->Shader_DeferredLightning->SetBool("blendCascades", true); //Todo: CSM-variable
 		this->Shader_DeferredLightning->SetFloat("blendDistance", this->csm->GetBlendDistance()); 
-		this->Shader_DeferredLightning->SetFloat("blendStrength", 0.0f); //** TILLMAN CSM VARIABLE**
+		this->Shader_DeferredLightning->SetFloat("blendStrength", 0.0f); //Todo: CSM-variable
 
 		this->Shader_DeferredLightning->SetInt("nrOfCascades", this->csm->GetNrOfCascadeLevels());
 		D3DXVECTOR4 cascadeFarPlanes = D3DXVECTOR4(-1.0f, -1.0f, -1.0f, -1.0f);
@@ -1263,7 +1267,11 @@ void DxManager::RenderDeferredGeoTranslucent()
 	//this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_GbufferRTs[2], ClearColor2);
 	this->Dx_DeviceContext->ClearRenderTargetView(this->Dx_GbufferRTs[3], ClearColor2);
 
-	//Static meshes
+	//Static meshes// If special circle is used
+	if(this->specialCircleParams.x) //if inner radius > 0, then send/set data
+	{
+		this->Shader_DeferredLightning->SetFloat4("dataPPHA", this->specialCircleParams);
+	}
 	this->Shader_DeferredGeoTranslucent->SetFloat4("gCameraPosition", D3DXVECTOR4(this->camera->GetOldPos(), 1));
 	this->Shader_DeferredGeoTranslucent->SetFloat("gFarClip", this->params.FarClip);
 	this->Shader_DeferredGeoTranslucent->SetFloat("gTimerMillis", this->Timer);
@@ -1381,9 +1389,9 @@ void DxManager::RenderDeferredPerPixelTranslucent()
 		this->Shader_DeferredPerPixelTranslucent->SetFloat("PCF_SIZE", PCF_SIZE);
 		this->Shader_DeferredPerPixelTranslucent->SetFloat("PCF_SIZE_SQUARED", PCF_SQUARED);
 
-		this->Shader_DeferredPerPixelTranslucent->SetBool("blendCascades", true); //** TILLMAN CSM VARIABLE**
+		this->Shader_DeferredPerPixelTranslucent->SetBool("blendCascades", true); //Todo: CSM-variable
 		this->Shader_DeferredPerPixelTranslucent->SetFloat("blendDistance", this->csm->GetBlendDistance()); 
-		this->Shader_DeferredPerPixelTranslucent->SetFloat("blendStrength", 0.0f); //** TILLMAN CSM VARIABLE**
+		this->Shader_DeferredPerPixelTranslucent->SetFloat("blendStrength", 0.0f); //Todo: CSM-variable
 
 		this->Shader_DeferredPerPixelTranslucent->SetInt("nrOfCascades", this->csm->GetNrOfCascadeLevels());
 		D3DXVECTOR4 cascadeFarPlanes = D3DXVECTOR4(-1.0f, -1.0f, -1.0f, -1.0f);

@@ -22,7 +22,7 @@ Texture2D tex7 : register(t7); //A-channel in blendMap1
 
 Texture2D<float4> blendMap0; 
 Texture2D<float4> blendMap1; 
-Texture2D AIMap; //Format = DXGI_FORMAT_R8_UNORM. //Tillman todo: ersätta med terrain.fx
+Texture2D AIMap; //Format = DXGI_FORMAT_R8_UNORM. //TILLE Tillman todo: ersätta med terrain.fx
 
 
 

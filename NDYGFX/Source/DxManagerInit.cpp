@@ -614,7 +614,7 @@ HRESULT DxManager::Init()
 		this->csm->Init(this->Dx_Device, this->params.ShadowMapSettings);
 	}
 
-	//INSTANCE ** TILLMAN
+	//Instancing
 	this->instancingHelper = new InstancingHelper();
 	this->instancingHelper->Init(this->Dx_Device, this->Dx_DeviceContext);
 	this->instancingHelper->AddBillboardsReference(this->billboards);
