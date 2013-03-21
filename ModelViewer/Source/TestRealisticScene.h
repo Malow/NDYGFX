@@ -147,13 +147,13 @@ void TestRealisticScene::PreTest()
 
 bool TestRealisticScene::RunTest(float diff)
 {
+	/*
 	static Vector3 sunDirTest = Vector3(1.0f, -2.0f, 1.0f);
 	static float radius = 0.0f;
 	radius += diff * 0.00000001f;
 	sunDirTest.RotateY(radius);
-
 	GetGraphics()->SetSunLightProperties(sunDirTest);
-
+	*/
 
 
 	if(GetGraphics()->GetKeyListener()->IsPressed('4'))
@@ -182,12 +182,12 @@ bool TestRealisticScene::RunTest(float diff)
 	}
 	GetGraphics()->SetEnclosingFogEffect(this->fogCenter, this->enclosingfog);
 
-	/* // Print Screen comparison
-	if(GetGraphics()->GetKeyListener()->IsPressed('6'))
+	 // Print Screen comparison
+	if(GetGraphics()->GetKeyListener()->IsPressed('0'))
 	{
 		GetGraphics()->GetCamera()->SetPosition(Vector3(1986, 2, 1974));
 		GetGraphics()->GetCamera()->LookAt(Vector3(2000, 2, 1980));
-	}*/
+	}
 
 
 	wa->position = GetGraphics()->GetCamera()->GetPosition().GetXZ();
