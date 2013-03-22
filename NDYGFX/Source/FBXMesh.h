@@ -5,6 +5,7 @@
 #include "iFBXMesh.h"
 #include <mutex>
 #include <chrono>
+#include <set>
 
 // FBX
 #include "BTHFBX\Shared\FBX\FBXSceneD3D.h"
@@ -26,6 +27,7 @@ private:
 	FBXSceneD3D* zScene;
 
 	std::map< iMesh*, std::string > zBoundMeshes;
+	std::set< std::string > zHiddenModels;
 
 	bool culled;
 	BoundingSphere bs;
@@ -53,6 +55,10 @@ public:
 	virtual bool SetAnimation(unsigned int ani);
 	virtual bool SetAnimation(const char* name);
 	virtual void SetAnimationQueue( const char* const* names, const float* times, const unsigned int& count );
+
+	// Hide models
+	virtual void HideModel( const const char* name, const bool& flag );
+	virtual bool IsModelHidden( const char* modelName );
 
 	bool GetBoneTransformation(const std::string& name, Vector3* pos, Vector4* rot);
 
