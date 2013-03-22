@@ -205,7 +205,7 @@ PSSceneIn VSScene(VSIn input)
 	output.binormal = cross(output.norm, output.tangent);
 	*/
 	//float3x3 test = MatrixInverse((float3x3)input.world);
-	//float3x3 test2 = transpose(test); //TILLMAN TODO: inverse function
+	//float3x3 test2 = transpose(test);
 
 
 

@@ -514,6 +514,13 @@ void InstancingHelper::PreRenderBillboards(bool shadowmap)
 					
 					//Add billboard data
 					this->zBillboardData.insert(this->zBillboardData.end(), newBBDataArray, newBBDataArray + billboardCollection->GetNrOfVertices());
+					
+					//Add billboard data
+					/*this->zBillboardData.insert(
+						this->zBillboardData.end(), 
+						reinterpret_cast<std::vector<BillboardData>>(billboardCollection)->GetBillboardData().cbegin(),
+						billboardCollection->GetBillboardData().cend());
+						*/
 
 					//Expand buffer if necessary.
 					if(this->zBillboardData.size() > this->zBillboardInstanceBufferSize)

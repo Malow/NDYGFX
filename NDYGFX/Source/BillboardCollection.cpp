@@ -38,6 +38,7 @@ BillboardCollection::BillboardCollection(unsigned int nrOfVertices, const Vertex
 	for(unsigned int i = 0; i < nrOfVertices; ++i)
 	{
 		this->zVertices[i] = vertices[i];
+		this->zBillboardData.push_back(HaxData(vertices[i], NULL));
 	}
 }
 BillboardCollection::BillboardCollection(unsigned int nrOfVertices, const D3DXVECTOR3* positions, 
@@ -58,8 +59,16 @@ BillboardCollection::BillboardCollection(unsigned int nrOfVertices, const D3DXVE
 
 BillboardCollection::~BillboardCollection()
 {
-	if(this->zVertices) delete[] this->zVertices; this->zVertices = NULL;
-	if(this->zTextureResource) GetResourceManager()->DeleteTextureResource(this->zTextureResource);
+	if(this->zVertices)
+	{
+		delete[] this->zVertices; 
+		this->zVertices = NULL;
+	}
+	this->zBillboardData.clear();
+	if(this->zTextureResource)
+	{
+		GetResourceManager()->DeleteTextureResource(this->zTextureResource);
+	}
 	
 }
 const D3DXVECTOR3& BillboardCollection::GetMinPos()
