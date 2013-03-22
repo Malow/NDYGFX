@@ -134,9 +134,11 @@ public:
 	inline Vector2& Normalize()
 	{
 		float length = this->GetLength();
-		this->x /= length;
-		this->y /= length;
-
+		if(length > 0.0f)
+		{
+			this->x /= length;
+			this->y /= length;
+		}
 		return *this;
 	}
 

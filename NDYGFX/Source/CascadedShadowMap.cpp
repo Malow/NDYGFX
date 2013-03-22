@@ -15,7 +15,15 @@ CascadedShadowMap::CascadedShadowMap()
 		this->shadowMapDepthView[i] = NULL;
 		this->shadowMapSRView[i] = NULL;
 		this->cascadePlanes[i] = new D3DXPLANE[6];
+
+		previousMinValues[i] = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	}
+
+	//Todo: replace with algorithm using FOV and cascade levels(distance)(so that all cascades update at the same time).
+	radii[0] = 7.0f; //0.1("far" clip) * 70
+	radii[1] = 28.0f;  //0.4("far" clip) * 70
+	radii[2] = 70.0f; //1.0("far" clip) * 70
+	
 }
 
 CascadedShadowMap::~CascadedShadowMap()
@@ -33,7 +41,7 @@ CascadedShadowMap::~CascadedShadowMap()
 	if(this->cascadePlanes) delete[] this->cascadePlanes; this->cascadePlanes = NULL;
 }
 
-void CascadedShadowMap::CalcShadowMapMatrices(D3DXVECTOR3 sunLight, Camera* cam, int i)
+void CascadedShadowMap::CalcShadowMapMatrices(D3DXVECTOR3 sunLight, Camera* cam, int i, bool forceUpdate)
 {
 	//Ändra getforward/right/up till getOldforward/right/up?
 	//calculate points (in world space) for the frustum slice
@@ -100,7 +108,28 @@ void CascadedShadowMap::CalcShadowMapMatrices(D3DXVECTOR3 sunLight, Camera* cam,
 		D3DXVec3Maximize(&maxValue, &maxValue, &vec3);
 	}
 	
+	
+	//Calculate distance between previous min point.
+	D3DXVECTOR3 tmpVec = minValue - this->previousMinValues[i];
+	float len = D3DXVec3Length(&tmpVec);
+	if(len > radii[i])
+	{
+		this->previousMinValues[i] = minValue;
+	}
+	else
+	{
+		//If the point is still within the radius and is not forced to update by another cascade,
+		//cascade does not need to be re-calculated.
+		
+		if(!forceUpdate)
+		{
+			return;
+		}
+	}
+	
+
 	D3DXVECTOR3 tmpNearPlanePoint = minValue;
+	D3DXVECTOR3 tmpFarPlanePoint = maxValue;
 	//Set the near plane to be closer to the light to include more potential occluders.
 	if(sunLight.z < 0.0f)
 	{
@@ -108,6 +137,8 @@ void CascadedShadowMap::CalcShadowMapMatrices(D3DXVECTOR3 sunLight, Camera* cam,
 	}
 	//Todo: set same near plane for all cascades
 	tmpNearPlanePoint -= sunLight * (float)(this->params.ShadowFit * (i + 1)); 
+	tmpNearPlanePoint += sunLight * this->radii[i]; //Move near plane closer to sun(expand cascade)
+	tmpFarPlanePoint -= sunLight * this->radii[i]; //Move far plane further from sun(expand cascade)
 	float nearPlane = tmpNearPlanePoint.z; 
 	float farPlane = maxValue.z;
 
@@ -118,13 +149,19 @@ void CascadedShadowMap::CalcShadowMapMatrices(D3DXVECTOR3 sunLight, Camera* cam,
 	//Todo: Blend distance makes the projections overlap
 	//This overlap is used to smooth/blur the edges where the cascades meet.
 	D3DXMatrixOrthoOffCenterLH( &lightProjMatrix, 
-		minValue.x - this->blendDistance, 
-		maxValue.x + this->blendDistance, 
-		minValue.y - this->blendDistance, 
-		maxValue.y + this->blendDistance, 
+		minValue.x - this->blendDistance - this->radii[i], //Offset with radius(expand cascade)
+		maxValue.x + this->blendDistance + this->radii[i], //Offset with radius(expand cascade)
+		minValue.y - this->blendDistance - this->radii[i], //Offset with radius(expand cascade)
+		maxValue.y + this->blendDistance + this->radii[i], //Offset with radius(expand cascade)
 		nearPlane, farPlane);
 
 	this->viewProj[i] = lightViewMatrix * lightProjMatrix;
+
+	//Force all other cascades (below) to update (higher cascades update more often than lower)
+	if(i > 0)
+	{
+		this->CalcShadowMapMatrices(sunLight, cam, i - 1, true);
+	}
 }
 
 void CascadedShadowMap::CalcShadowMappingSplitDepths()
@@ -261,7 +298,7 @@ void CascadedShadowMap::PreRender(D3DXVECTOR3& sunLight, Camera* cam)
 	this->CalcShadowMappingSplitDepths();
 	for (int i = 0; i < SHADOW_MAP_CASCADE_COUNT; i++)
 	{
-		CalcShadowMapMatrices(sunLight, cam, i);
+		CalcShadowMapMatrices(sunLight, cam, i, false);
 	}
 }
 

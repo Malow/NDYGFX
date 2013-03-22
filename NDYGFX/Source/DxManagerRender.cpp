@@ -231,12 +231,9 @@ void DxManager::RenderParticles()
 
 void DxManager::RenderShadowMap()
 {
-	
-	
-
 	// Generate and send shadowmaps to the main-shader
 	//EDIT 2013-01-23 by Tillman - Added transparancy.
-	if(!this->lights.size())
+	if(this->lights.size() > 0)
 	{
 		for (unsigned int l = 0; l < this->lights.size(); l++)
 		{
@@ -390,34 +387,35 @@ void DxManager::RenderShadowMap()
 			//this->Shader_DeferredQuad->SetStructMemberAtIndexAsFloat(l, "gLights", "LightIntensity", this->lights[l]->GetIntensity());
 		
 		}
+		
+		//This shouldnt be here, should be in RenderPerPixel?
+		float PCF_SIZE = (float)this->params.ShadowMapSettings + 1;
+		float PCF_SQUARED = 1 / (PCF_SIZE * PCF_SIZE);
+
+		/*
+		// Forward
+		this->Shader_ForwardRendering->SetFloat("PCF_SIZE", PCF_SIZE);
+		this->Shader_ForwardRendering->SetFloat("PCF_SIZE_SQUARED", PCF_SQUARED);
+		this->Shader_ForwardRendering->SetFloat("SMAP_DX", 1.0f / (256 * pow(2.0f, this->params.ShadowMapSettings/2)));
+		this->Shader_ForwardRendering->SetFloat("NrOfLights", (float)this->lights.size());
+		*/
+
+	
+		// Deferred:
+		this->Shader_DeferredLightning->SetFloat("SMAP_DX", 1.0f / (256.0f * powf(2.0f, (float)this->params.ShadowMapSettings * 0.5f)));
+		this->Shader_DeferredLightning->SetFloat("PCF_SIZE", PCF_SIZE);
+		this->Shader_DeferredLightning->SetFloat("PCF_SIZE_SQUARED", PCF_SQUARED);
+		//this->Shader_DeferredLightning->SetFloat("SMAP_DX", 1.0f / 256.0f);
+		this->Shader_DeferredLightning->SetFloat("NrOfLights", (float)this->lights.size());
+	
+		/*
+		// for deferred quad:
+		this->Shader_DeferredQuad->SetFloat("PCF_SIZE", PCF_SIZE);
+		this->Shader_DeferredQuad->SetFloat("PCF_SIZE_SQUARED", PCF_SQUARED);
+		this->Shader_DeferredQuad->SetFloat("SMAP_DX", 1.0f / (256 * pow(2.0f, this->params.ShadowMapSettings/2)));
+		this->Shader_DeferredQuad->SetFloat("NrOfLights", (float)this->lights.size());
+		*/
 	}
-	
-	float PCF_SIZE = (float)this->params.ShadowMapSettings + 1;
-	float PCF_SQUARED = 1 / (PCF_SIZE * PCF_SIZE);
-
-	/*
-	// Forward
-	this->Shader_ForwardRendering->SetFloat("PCF_SIZE", PCF_SIZE);
-	this->Shader_ForwardRendering->SetFloat("PCF_SIZE_SQUARED", PCF_SQUARED);
-	this->Shader_ForwardRendering->SetFloat("SMAP_DX", 1.0f / (256 * pow(2.0f, this->params.ShadowMapSettings/2)));
-	this->Shader_ForwardRendering->SetFloat("NrOfLights", (float)this->lights.size());
-	*/
-
-	
-	// Deferred:
-	this->Shader_DeferredLightning->SetFloat("SMAP_DX", 1.0f / (256.0f * powf(2.0f, (float)this->params.ShadowMapSettings * 0.5f)));
-	this->Shader_DeferredLightning->SetFloat("PCF_SIZE", PCF_SIZE);
-	this->Shader_DeferredLightning->SetFloat("PCF_SIZE_SQUARED", PCF_SQUARED);
-	//this->Shader_DeferredLightning->SetFloat("SMAP_DX", 1.0f / 256.0f);
-	this->Shader_DeferredLightning->SetFloat("NrOfLights", (float)this->lights.size());
-	
-	/*
-	// for deferred quad:
-	this->Shader_DeferredQuad->SetFloat("PCF_SIZE", PCF_SIZE);
-	this->Shader_DeferredQuad->SetFloat("PCF_SIZE_SQUARED", PCF_SQUARED);
-	this->Shader_DeferredQuad->SetFloat("SMAP_DX", 1.0f / (256 * pow(2.0f, this->params.ShadowMapSettings/2)));
-	this->Shader_DeferredQuad->SetFloat("NrOfLights", (float)this->lights.size());
-	*/
 }
 
 
