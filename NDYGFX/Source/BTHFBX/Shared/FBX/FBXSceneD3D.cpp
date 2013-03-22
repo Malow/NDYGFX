@@ -36,7 +36,7 @@ void FBXSceneD3D::Update(float dt)
 	mFBXScene->UpdateScene(dt, true);
 }
 
-void FBXSceneD3D::Render(float dt, D3DXMATRIX& world, D3DXMATRIX& worldInverseTranspose, D3DXMATRIX& camProj, D3DXMATRIX& camView, D3DXMATRIX& camViewProj, Shader* mShader, ID3D11DeviceContext* devCont)
+void FBXSceneD3D::Render(float dt, D3DXMATRIX& world, D3DXMATRIX& worldInverseTranspose, D3DXMATRIX& camProj, D3DXMATRIX& camView, D3DXMATRIX& camViewProj, Shader* mShader, ID3D11DeviceContext* devCont, const std::set<std::string>& hiddenModels)
 {
 	devCont->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
@@ -49,7 +49,7 @@ void FBXSceneD3D::Render(float dt, D3DXMATRIX& world, D3DXMATRIX& worldInverseTr
 			mShader->SetMatrixArray("g_mBonesArray", bonesArray, 0, nBoneCount < BTHFBX_MAXBONES_PER_MESH ? nBoneCount : BTHFBX_MAXBONES_PER_MESH );
 		}
 	}
-	mShader->SetMatrix("g_mScale", world);
+	mShader->SetMatrix("gScene", world);
 	mShader->SetMatrix("gWorld", world);
 	mShader->SetMatrix("gWorldInvTrans", worldInverseTranspose);
 
@@ -62,21 +62,29 @@ void FBXSceneD3D::Render(float dt, D3DXMATRIX& world, D3DXMATRIX& worldInverseTr
 
 	for(unsigned int i = 0; i < mModels.size(); i++)
 	{
-		mModels[i]->Render(dt, mShader, mFBXScene->GetSkeleton() != NULL ? true : false, devCont);
+		if ( !hiddenModels.count(mModels[i]->GetName()) )
+		{
+			mModels[i]->Render(dt, mShader, mFBXScene->GetSkeleton() != NULL ? true : false, devCont);
+		}
 	}
 }
 
 IBTHFbxAnimationController* FBXSceneD3D::GetAnimationController()
 {
 	if(!this->mFBXScene)
+	{
 		return 0;
+	}
+
 	return mFBXScene->GetAnimationController();
 }
 
 IBTHFbxSkeleton* FBXSceneD3D::GetSkeleton()
 {
 	if (!this->mFBXScene)
+	{
 		return NULL;
+	}
 
 	return mFBXScene->GetSkeleton();
 }
@@ -97,7 +105,7 @@ void FBXSceneD3D::RenderShadow( float dt, D3DXMATRIX& world, D3DXMATRIX& lightVi
 		float* bonesArray = (float*)mFBXScene->GetSkeleton()->GetSkinTransforms();
 		if( bonesArray )
 		{
-			int nBoneCount = mFBXScene->GetSkeleton()->GetBoneCount();
+			unsigned int nBoneCount = mFBXScene->GetSkeleton()->GetBoneCount();
 			mShader->SetMatrixArray("g_mBonesArray", bonesArray, 0, nBoneCount < BTHFBX_MAXBONES_PER_MESH ? nBoneCount : BTHFBX_MAXBONES_PER_MESH );
 		}
 	}

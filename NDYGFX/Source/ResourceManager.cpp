@@ -953,19 +953,14 @@ MeshStripsResource* ResourceManager::CreateMeshStripsResourceFromFile(const char
 	string file = filePath;
 	std::transform(file.begin(), file.end(), file.begin(), tolower); //Force lower case
 
-	string test = file.substr(file.length() - 3);
-	if(std::strcmp(test.c_str(), "ani") == 0)
-	{
-		float derp = 1.0f;
-	}
-
-
 	if(this->mutex)
 	{
 		WaitForSingleObject(this->mutex, INFINITE);
 	}
-	else 
+	else
+	{
 		MaloW::Debug("Mutex is broken / hasn't been created / has been closed for ResourceManager: CreateMeshStripsResourceFromFile().");
+	}
 
 	ObjectDataResource* tmp = this->LoadObjectDataResourceFromFile(file.c_str());
 

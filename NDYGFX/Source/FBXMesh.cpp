@@ -44,8 +44,11 @@ void FBXMesh::Update( float dt )
 		// Bone Position
 		if ( GetBoneTransformation(i->second, &pos, &rot) )
 		{
-			i->first->SetPosition(pos);
-			i->first->SetQuaternion(rot);
+			if ( i->first )
+			{
+				i->first->SetPosition(pos);
+				i->first->SetQuaternion(rot);
+			}
 		}
 	}
 }
@@ -61,7 +64,15 @@ void FBXMesh::Render(float dt, D3DXMATRIX& camProj, D3DXMATRIX& camView, D3DXMAT
 	D3DXMatrixTranspose(&worldInverseTranspose, &worldInverseTranspose);
 
 	zSceneMutex.lock();
-	this->zScene->Render(dt, world, worldInverseTranspose, camProj, camView, camViewProj, shad, devCont );
+	this->zScene->Render(dt, 
+		world, 
+		worldInverseTranspose, 
+		camProj, 
+		camView, 
+		camViewProj,
+		shad, 
+		devCont,
+		zHiddenModels );
 	zSceneMutex.unlock();
 }
 
@@ -224,7 +235,9 @@ void FBXMesh::UnbindMesh(iMesh* mesh)
 {
 	auto i = zBoundMeshes.find(mesh);
 	if ( i != zBoundMeshes.end() )
+	{
 		zBoundMeshes.erase(i);
+	}
 }
 
 bool FBXMesh::GetBoneTransformation(const std::string& name, Vector3* pos, Vector4* rot)
@@ -274,11 +287,11 @@ bool FBXMesh::GetBoneTransformation(const std::string& name, Vector3* pos, Vecto
 				D3DXQuaternionRotationMatrix(&quat, &rotationMatrix);
 
 				// Rotation around x axis
-				D3DXQUATERNION yAxisRotation;
-				D3DXQuaternionRotationAxis(&yAxisRotation, &D3DXVECTOR3(1.0f, 0.0f, 0.0f), 3.141592f);
+				D3DXQUATERNION xAxisRotation;
+				D3DXQuaternionRotationAxis(&xAxisRotation, &D3DXVECTOR3(1.0f, 0.0f, 0.0f), 3.141592f);
 
 				// Multiply
-				D3DXQuaternionMultiply(&quat, &quat, &yAxisRotation);
+				D3DXQuaternionMultiply(&quat, &quat, &xAxisRotation);
 
 				// World matrix rotation
 				D3DXQUATERNION worldQuat;
@@ -318,10 +331,31 @@ BTHFBX_RAY_BOX_RESULT FBXMesh::RayVsScene(Vector3& rayOrigin, Vector3& rayDirect
 	BTHFBX_RAY ray;
 	ray.Origin = BTHFBX_VEC3(rayOrigin.x, rayOrigin.y, rayOrigin.z);
 	ray.Direction = BTHFBX_VEC3(rayDirection.x, rayDirection.y, rayDirection.z);
+	
 	BTHFBX_MATRIX mat;
 	for(int i = 0; i < 16; i++)
+	{
 		mat.f[i] = worldMat[i];
+	}
+
 	return this->zScene->RayVsScene(ray, &mat);
+}
+
+void FBXMesh::HideModel( const char* name, const bool& flag )
+{
+	if ( flag )
+	{
+		zHiddenModels.insert(name);
+	}
+	else
+	{
+		zHiddenModels.erase(name);
+	}
+}
+
+bool FBXMesh::IsModelHidden( const char* modelName )
+{
+	return ( zHiddenModels.count(modelName) > 0 );
 }
 
 

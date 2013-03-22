@@ -12,7 +12,7 @@ matrix gWorldInvTrans;
 matrix gView;					// View
 matrix gProj;					// Projection
 matrix gViewProj;				// View * Project
-matrix g_mScale;				// Scale matrix
+matrix gScene;				// Scale matrix
 
 // Bones
 matrix g_mBonesArray[MaxBones];
@@ -167,8 +167,6 @@ PSSceneIn DefaultVS(VSIn input)
 		position = mul(position, gWorld);
 		normal = mul(input.vNormal, gWorld);
 		tangent = mul(input.vTangent, gWorld);
-
-		//input.vTexCoord.x = ( 1.0f - input.vTexCoord.x );
 	}
 
 	// Invert y and z for the normals, whole model is inverted and then x is inverted, making x correct.
@@ -180,14 +178,14 @@ PSSceneIn DefaultVS(VSIn input)
 	position.x *= -1.0f;
 
 	// Scale Position
-	position = mul(position, g_mScale);
+	position = mul(position, gScene);
 	
 	// Output
 	Output.WorldPos = position;
 	Output.Pos = mul(position, gViewProj);
-	Output.norm = mul(float4(normal, 0), gWorldInvTrans); //mul(float4(normal, 0), g_mScale);
-	Output.norm = mul(float4(normal, 0), g_mScale); //mul(float4(normal, 0), g_mScale);
-	Output.Tangent = mul(float4(tangent, 0), g_mScale);
+	Output.norm = mul(float4(normal, 0), gWorldInvTrans);	//mul(float4(normal, 0), g_mScale);
+	Output.norm = mul(float4(normal, 0), gScene);			//mul(float4(normal, 0), g_mScale);
+	Output.Tangent = mul(float4(tangent, 0), gScene);
 	Output.tex = input.vTexCoord;
     return Output;
 }

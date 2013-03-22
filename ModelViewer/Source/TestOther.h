@@ -6,22 +6,25 @@
 class OtherTest
 {
 private:
-	/*
-	iFBXMesh* copyrightedTempGuy;
-	iFBXMesh* soldier;
-
-	iTerrain* T;
-	unsigned int vertexSizes;
-	std::vector<float> heightData;
-	std::vector<Vector3> normalsData;
-	*/
-
+	iFBXMesh* zSoldier;
 	iFBXMesh* zMaleCharacter;
 	iFBXMesh* zBowMesh;
+	iMesh* zRotationSample;
 
 public:
-	OtherTest() {};
-	virtual ~OtherTest() {};
+	OtherTest() : 
+		zRotationSample(0),
+		zMaleCharacter(0),
+		zBowMesh(0),
+		zSoldier(0)
+	{
+
+	}
+
+	virtual ~OtherTest() 
+	{
+
+	}
 
 	void PreTest();
 	void RunTest(float diff);
@@ -30,163 +33,164 @@ public:
 
 void OtherTest::PreTest()
 {
-//	copyrightedTempGuy = GetGraphics()->CreateFBXMesh("Media/temp_guy_few_anims.fbx", Vector3(50.0f, 0.0f, 0.0f));	// copyrightedTempGuy = GetGraphics()->CreateFBXMesh("Media/temp_guy_few_anims.fbx", Vector3(0.0f, 0.0f, 0.0f));
-//	copyrightedTempGuy->SetScale(0.2f);
-//
-//	soldier = GetGraphics()->CreateFBXMesh("Media/Soldier_animated_jump.fbx", Vector3(30.0f, 0.0f, -4.0f));
-//	soldier->SetScale(0.05f);
-//
-//	vertexSizes = 2;
-//	heightData.resize(vertexSizes*vertexSizes);
-//	normalsData.resize(vertexSizes*vertexSizes);
-//
-//	for( unsigned int x=0; x<vertexSizes*vertexSizes; ++x )
-//	{
-//		heightData[x] = 0.0f;
-//	}
-//
-//	for( unsigned int x=0; x<vertexSizes*vertexSizes; ++x )
-//	{
-//		normalsData[x] = Vector3(1.0f, 1.0f, 1.0f);
-//	}
-//
-//
-//	// Disable Sun
-//	//GetGraphics()->SetSunLightDisabled();
-//
-//	// Create Terrain
-//	T = GetGraphics()->CreateTerrain(Vector3(0.0f, 0.0f, 0.0f), Vector3(32.0f, 1.0f, 32.0f), vertexSizes);
-//
-//	// Load Height
-//	T->SetHeightMap(&heightData[0]);
-//
-//	// Load Normals
-//	T->SetNormals(&normalsData[0][0]);
-//
-//
-
+	zSoldier = GetGraphics()->CreateFBXMesh("media/Soldier_animated_jump.fbx", Vector3(0.0f, 0.0f, 0.0f));
+	zRotationSample = GetGraphics()->CreateMesh("media/models/arrow_v01.obj", Vector3(10.0f, 0.0f, 0.0f));
 	zMaleCharacter = GetGraphics()->CreateFBXMesh("media/models/token_anims.fbx", Vector3(0.0f, 0.0f, 0.0f));
-	zBowMesh = GetGraphics()->CreateFBXMesh("media/models/bow_anims_reverse.fbx", Vector3(0.0f, 0.0f, 0.0f));
-	if ( zBowMesh ) zMaleCharacter->BindMesh("LeftWeapon", zBowMesh);
+	zBowMesh = GetGraphics()->CreateFBXMesh("media/models/bow_anims.fbx", Vector3(0.0f, 0.0f, 0.0f));
+
+	if ( zBowMesh )
+	{
+		zMaleCharacter->BindMesh("LeftWeapon", zBowMesh);
+	}
 }
 
 void OtherTest::RunTest(float diff)
 {
-	/*if ( copyrightedTempGuy )
-	{
 	if ( GetGraphics()->GetKeyListener()->IsPressed('1') )
 	{
-	copyrightedTempGuy->SetAnimation("idle_01_dance");
-	}
-	else if ( GetGraphics()->GetKeyListener()->IsPressed('2') )
-	{
-	copyrightedTempGuy->SetAnimation(1);
-	}
-	else if ( GetGraphics()->GetKeyListener()->IsPressed('3') )
-	{
-	copyrightedTempGuy->SetAnimation(2);
-	}
-	else if ( GetGraphics()->GetKeyListener()->IsPressed('4') )
-	{
-	copyrightedTempGuy->SetAnimation(3);
-	}
-	else if ( GetGraphics()->GetKeyListener()->IsPressed('5') )
-	{
-	copyrightedTempGuy->SetAnimation(4);
-	}
-	else if ( GetGraphics()->GetKeyListener()->IsPressed('8') )
-	{
-	copyrightedTempGuy->BindMesh("_RightHand", soldier);
-	}
-	}
-
-	if ( GetGraphics()->GetKeyListener()->IsPressed('R') )
-	{
-	GetGraphics()->ReloadShaders(1);
-	}*/
-
-	if ( GetGraphics()->GetKeyListener()->IsPressed('1') )
-	{
-		static const char* shootQueueNames[] = 
-		{
-			"arch_draw_bow",
-			"arch_equiped_idle",
-			"arch_unequip",
-			"idle_03_zombie"
-		};
-
 		static float shootQueueTimes[] = 
-		{ 
-			1.6f,
-			4.8f,
-			1.6f,
+		{
+			1.3f,
+			5.0f,
+			1.3f,
+			6.0f,
 			0.0f
 		};
 
-		zMaleCharacter->SetAnimationQueue(shootQueueNames, shootQueueTimes, 4);
-
-		static const char* shootQueueNames2[] = 
+		if ( zMaleCharacter )
 		{
-			"arch_draw_bow",
-			"arch_equiped_idle",
-			"arch_unequip",
-			"idle_03_zombie"
-		};
-		zBowMesh->SetAnimationQueue(shootQueueNames2, shootQueueTimes, 4);
+			static const char* shootQueueNames[] = 
+			{
+				"arch_draw_bow",
+				"arch_draw_bow_idle",
+				"arch_undraw_bow",
+				"arch_equiped_idle"
+			};
+
+			zMaleCharacter->SetAnimationQueue(shootQueueNames, shootQueueTimes, 4);
+		}
+
+		if ( zBowMesh )
+		{
+			static const char* shootQueueNames2[] = 
+			{
+				"arch_draw_bow",
+				"arch_draw_bow_idle",
+				"arch_undraw_bow",
+				"arch_equiped_idle",
+			};
+
+			zBowMesh->SetAnimationQueue(shootQueueNames2, shootQueueTimes, 4);
+		}
 	}
 
 	if ( GetGraphics()->GetKeyListener()->IsPressed('2') )
 	{
 		zMaleCharacter->RotateAxis(Vector3(1.0f, 1.0f, 0.0f), diff * 0.001f);
+		zRotationSample->RotateAxis(Vector3(1.0f, 1.0f, 0.0f), diff * 0.001f);
 	}
 	else if ( GetGraphics()->GetKeyListener()->IsPressed('3') )
 	{
 		zMaleCharacter->RotateAxis(Vector3(1.0f, 1.0f, 0.0f), -diff * 0.001f);
+		zRotationSample->RotateAxis(Vector3(1.0f, 1.0f, 0.0f), -diff * 0.001f);
 	}
 	else if ( GetGraphics()->GetKeyListener()->IsPressed('4') )
 	{
 		zMaleCharacter->RotateAxis(Vector3(0.0f, 1.0f, 0.0f), diff * 0.001f);
+		zRotationSample->RotateAxis(Vector3(0.0f, 1.0f, 0.0f), diff * 0.001f);
 	}
 	else if ( GetGraphics()->GetKeyListener()->IsPressed('5') )
 	{
 		zMaleCharacter->RotateAxis(Vector3(0.0f, 1.0f, 0.0f), -diff * 0.001f);
+		zRotationSample->RotateAxis(Vector3(0.0f, 1.0f, 0.0f), -diff * 0.001f);
 	}
 	else if ( GetGraphics()->GetKeyListener()->IsPressed('6') )
 	{
 		zMaleCharacter->RotateAxis(Vector3(0.0f, 0.0f, 1.0f), diff * 0.001f);
+		zRotationSample->RotateAxis(Vector3(0.0f, 0.0f, 1.0f), diff * 0.001f);
 	}
 	else if ( GetGraphics()->GetKeyListener()->IsPressed('7') )
 	{
 		zMaleCharacter->RotateAxis(Vector3(0.0f, 0.0f, 1.0f), -diff * 0.001f);
+		zRotationSample->RotateAxis(Vector3(0.0f, 0.0f, 1.0f), -diff * 0.001f);
 	}
 	else if ( GetGraphics()->GetKeyListener()->IsPressed('8') )
 	{
 		zMaleCharacter->Scale(1.0f + diff * 0.0001f);
+		zRotationSample->Scale(1.0f + diff * 0.0001f);
 		zBowMesh->Scale(1.0f + diff * 0.0001f);
 	}
 	else if ( GetGraphics()->GetKeyListener()->IsPressed('9') )
 	{
 		zMaleCharacter->Scale(1.0f - diff * 0.0001f);
+		zRotationSample->Scale(1.0f - diff * 0.0001f);
 		zBowMesh->Scale(1.0f - diff * 0.0001f);
+	}
+	else if ( GetGraphics()->GetKeyListener()->IsPressed('G') )
+	{
+		zSoldier->HideModel("Plane", !zSoldier->IsModelHidden("Plane"));
+	}
+	// Warning, can cause crashes
+	else if ( GetGraphics()->GetKeyListener()->IsPressed('E') )
+	{
+		if ( zBowMesh )
+		{
+			const char* newMesh = 0;
+			
+			if ( !strcmp(zBowMesh->GetFilePath(), "media/models/bow_anims.fbx") )
+			{
+				newMesh = "media/models/bow_anims_n45.fbx";
+			}
+			else if ( !strcmp(zBowMesh->GetFilePath(), "media/models/bow_anims_n45.fbx") )
+			{
+				newMesh = "media/models/bow_anims_n60.fbx";
+			}
+			else if ( !strcmp(zBowMesh->GetFilePath(), "media/models/bow_anims_n60.fbx") )
+			{
+				newMesh = "media/models/bow_anims_p45.fbx";
+			}
+			else if ( !strcmp(zBowMesh->GetFilePath(), "media/models/bow_anims_p45.fbx") )
+			{
+				newMesh = "media/models/bow_anims_p60.fbx";
+			}
+			else if ( !strcmp(zBowMesh->GetFilePath(), "media/models/bow_anims_p60.fbx") )
+			{
+				newMesh = "media/models/bow_anims.fbx";
+			}
+
+			if ( zMaleCharacter ) zMaleCharacter->UnbindMesh(zBowMesh);
+			GetGraphics()->DeleteMesh(zBowMesh);
+			zBowMesh = 0;
+
+			if ( newMesh )
+			{
+				zBowMesh = GetGraphics()->CreateFBXMesh(newMesh, Vector3(0.0f, 0.0f, 0.0f));
+				if ( zMaleCharacter && newMesh ) zMaleCharacter->BindMesh("LeftWeapon", zBowMesh);
+			}
+		}
+
 	}
 }
 
 
 void OtherTest::PostTest()
 {
-	/*GetGraphics()->DeleteMesh(copyrightedTempGuy);
-	GetGraphics()->DeleteMesh(soldier);
-
-	GetGraphics()->DeleteTerrain(T);
-	*/
+	// Delete Rotation Sample
+	if ( zRotationSample ) 
+	{
+		GetGraphics()->DeleteMesh(zRotationSample);
+	}
 
 	// Delete Bow
-	if ( zBowMesh ) 
+	if ( zBowMesh )
 	{
-		zMaleCharacter->UnbindMesh(zBowMesh);
+		if ( zMaleCharacter ) zMaleCharacter->UnbindMesh(zBowMesh);
 		GetGraphics()->DeleteMesh(zBowMesh);
 	}
 
 	// Delete Character
-	GetGraphics()->DeleteFBXMesh(zMaleCharacter);
+	if ( zMaleCharacter )
+	{
+		GetGraphics()->DeleteMesh(zMaleCharacter);
+	}
 }

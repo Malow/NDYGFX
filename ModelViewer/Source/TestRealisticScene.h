@@ -119,7 +119,7 @@ void TestRealisticScene::PreTest()
 	meee->SetPosition(groundPos);
 	meee->SetScale(0.05f);
 
-	iFBXMesh* me = GetGraphics()->CreateFBXMesh("Media/Models/deer_anims.fbx", camPos + Vector3(50, -10, 50));
+	iFBXMesh* me = GetGraphics()->CreateFBXMesh("Media/Models/token_anims.fbx", camPos + Vector3(50, -10, 50));
 	me->SetPosition(groundPos + Vector3(3, 0, 0));
 	me->SetScale(0.05f);
 	
@@ -139,10 +139,11 @@ void TestRealisticScene::PreTest()
 	GetGraphics()->SetGrassFilePath("Media/Grass.png");
 
 	GetGraphics()->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 1.0f, 1.0f, 1.0f, 1.0f);
-	//GetGraphics()->GetCamera()->SetMesh(meee, "Neck", Vector3(0, 0, 1));
+	
 
 	me->SetAnimation("idle_04_feed");
 	me->SetPosition(me->GetPosition() + Vector3(30, 0, 10));
+	//GetGraphics()->GetCamera()->SetMesh(me, "Neck", Vector3(0, 0, 1));
 }
 
 bool TestRealisticScene::RunTest(float diff)

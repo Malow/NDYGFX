@@ -40,6 +40,8 @@ protected:
 	Vector3 distanceFromMesh;
 	Vector3 defaultMeshDirection;
 	string bone;
+	bool useFBXPosition;
+	D3DXVECTOR3 FBXPosition;
 
 	GraphicsEngineParams &params;
 
@@ -109,7 +111,7 @@ public:
 	D3DXVECTOR3 GetForwardD3DX() const { return this->forward; }
 	D3DXVECTOR3 GetRightVectorD3DX() const;
 	D3DXVECTOR3 GetUpVectorD3DX() const { return this->up; }
-	D3DXVECTOR3 GetOldPos() const { return this->oldpos; }
+	D3DXVECTOR3 GetOldPos() const;
 	void SetPosition(D3DXVECTOR3 pos) { this->pos = pos; }
 	void LookAt(D3DXVECTOR3 at) { this->LookAt(Vector3(at.x, at.y, at.z)); }
 
