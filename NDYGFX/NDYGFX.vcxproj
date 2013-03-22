@@ -30,7 +30,6 @@
     <ClInclude Include="Include\Vector.h" />
     <ClInclude Include="Source\Billboard.h" />
     <ClInclude Include="Source\BillboardCollection.h" />
-    <ClInclude Include="Source\BillboardData.h" />
     <ClInclude Include="Source\BoundingSphere.h" />
     <ClInclude Include="Source\AnimatedMesh.h" />
     <ClInclude Include="Source\Array.h" />
@@ -103,7 +102,6 @@
     <ClCompile Include="Source\AnimatedMesh.cpp" />
     <ClCompile Include="Source\Billboard.cpp" />
     <ClCompile Include="Source\BillboardCollection.cpp" />
-    <ClCompile Include="Source\BillboardData.cpp" />
     <ClCompile Include="Source\BTHFBX\Shared\D3D\BTHTexture.cpp" />
     <ClCompile Include="Source\BTHFBX\Shared\FBX\FBXModelD3D.cpp" />
     <ClCompile Include="Source\BTHFBX\Shared\FBX\FBXModelPartD3D.cpp" />

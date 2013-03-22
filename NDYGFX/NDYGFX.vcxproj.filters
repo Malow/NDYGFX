@@ -448,9 +448,6 @@
     <ClInclude Include="Include\iBillboardCollection.h">
       <Filter>Source Files\Wrapper</Filter>
     </ClInclude>
-    <ClInclude Include="Source\BillboardData.h">
-      <Filter>Source Files\Engine\DxMan and Techs</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Include\iKeyListener.h">
@@ -576,9 +573,6 @@
     </ClCompile>
     <ClCompile Include="Source\BillboardCollection.cpp">
       <Filter>Source Files\Engine\Objects and Entities</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\BillboardData.cpp">
-      <Filter>Source Files\Engine\DxMan and Techs</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
