@@ -13,6 +13,9 @@ Camera::Camera(HWND g_hWnd, GraphicsEngineParams &params) :
 	this->angleX = 0;
 	this->angleY = 0;
 	this->oldpos = this->pos;
+
+	this->useFBXPosition = false;
+	this->FBXPosition = D3DXVECTOR3(0, 0, 0);
 	
 	this->bone = "";
 	this->speed = 1.0f;
@@ -46,7 +49,10 @@ D3DXMATRIX& Camera::GetProjectionMatrix()
 
 Vector3 Camera::GetPosition()
 {
-	return Vector3(this->pos.x, this->pos.y, this->pos.z);
+	if(this->useFBXPosition)
+		return Vector3(this->FBXPosition.x, this->FBXPosition.y, this->FBXPosition.z);
+	else
+		return Vector3(this->pos.x, this->pos.y, this->pos.z);
 }
 
 void Camera::SetPosition(Vector3 pos)
@@ -122,20 +128,20 @@ void Camera::MoveFollowingMesh()
 	if(this->followTarget)
 	{
 		// If it crashes here it's because the mesh has gotten removed without camera being notified.
+		Vector3 pos = Vector3(this->pos.x, this->pos.y, this->pos.z) - this->distanceFromMesh;
+		this->followTarget->SetPosition(pos);
 
 		// If it's an FBX mesh and a bone is set, make the camera follow the bone, else make the mesh follow camera.
 		FBXMesh* mesh = dynamic_cast<FBXMesh*>(this->followTarget);
 		if(mesh && this->bone != "")
 		{
+			this->useFBXPosition = true;
 			Vector3 pos;
 			mesh->GetBoneTransformation(this->bone, &pos, 0);
-			this->pos = D3DXVECTOR3(pos.x, pos.y, pos.z);
+			this->FBXPosition = D3DXVECTOR3(pos.x, pos.y, pos.z);
 		}
-		else
-		{
-			Vector3 pos = Vector3(this->pos.x, this->pos.y, this->pos.z) - this->distanceFromMesh;
-			this->followTarget->SetPosition(pos);
-		}
+		else 
+			useFBXPosition = false;
 
 
 		//Rotate Mesh
@@ -195,14 +201,28 @@ void Camera::Update(float delta)
 		}
 	}
 
-	// Update v p matrix.
-	D3DXVECTOR3 curPos = this->pos;
-	D3DXVECTOR3 at = curPos + this->forward;
-	D3DXMatrixLookAtLH(&view, &curPos, &at, &this->up);
-	D3DXMatrixPerspectiveFovLH(&this->projection, this->params.FOV * 0.01745f, 
-		this->params.WindowWidth / (float)this->params.WindowHeight, this->params.NearClip, this->params.FarClip);
-	D3DXMatrixMultiply(&this->viewProj, &this->view, &this->projection);
-	this->oldpos = curPos;
+	if(this->useFBXPosition)
+	{
+		// Update v p matrix.
+		D3DXVECTOR3 curPos = this->FBXPosition;
+		D3DXVECTOR3 at = curPos + this->forward;
+		D3DXMatrixLookAtLH(&view, &curPos, &at, &this->up);
+		D3DXMatrixPerspectiveFovLH(&this->projection, this->params.FOV * 0.01745f, 
+			this->params.WindowWidth / (float)this->params.WindowHeight, this->params.NearClip, this->params.FarClip);
+		D3DXMatrixMultiply(&this->viewProj, &this->view, &this->projection);
+		this->oldpos = curPos;	
+	}
+	else
+	{
+		// Update v p matrix.
+		D3DXVECTOR3 curPos = this->pos;
+		D3DXVECTOR3 at = curPos + this->forward;
+		D3DXMatrixLookAtLH(&view, &curPos, &at, &this->up);
+		D3DXMatrixPerspectiveFovLH(&this->projection, this->params.FOV * 0.01745f, 
+			this->params.WindowWidth / (float)this->params.WindowHeight, this->params.NearClip, this->params.FarClip);
+		D3DXMatrixMultiply(&this->viewProj, &this->view, &this->projection);
+		this->oldpos = curPos;
+	}
 }
 
 void Camera::SetBoundries(Vector3 minBoundries, Vector3 maxBoundries)
@@ -311,5 +331,10 @@ void Camera::SetUpdateCamera( bool update )
 D3DXMATRIX& Camera::GetViewProjMatrix()
 {
 	return this->viewProj;
+}
+
+D3DXVECTOR3 Camera::GetOldPos() const
+{
+	return this->oldpos;
 }
 
