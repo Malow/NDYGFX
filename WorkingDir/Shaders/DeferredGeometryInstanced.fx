@@ -45,7 +45,7 @@ struct VSIn
 	//float3 Binormal	: BINORMAL;
 	//instance data
 	row_major float4x4 world					: WORLD;
-	row_major float4x4 worldInverseTranspose	: WIT;
+	//row_major float4x4 worldInverseTranspose	: WIT;
 };
 
 struct PSSceneIn
@@ -88,8 +88,8 @@ PSSceneIn VSScene(VSIn input)
 	output.Pos		= mul(float4(input.Pos, 1.0f), mul(input.world, g_CamViewProj));
 	output.tex		= input.tex;
 	output.color	= input.color;
-	output.norm		= normalize(mul(input.norm, (float3x3)input.worldInverseTranspose));
-	output.Tangent	= normalize(mul(input.Tangent, (float3x3)input.worldInverseTranspose));
+	output.norm		= normalize(mul(input.norm, input.world));//normalize(mul(input.norm, (float3x3)input.worldInverseTranspose));
+	output.Tangent	= normalize(mul(input.Tangent, input.world));//normalize(mul(input.Tangent, (float3x3)input.worldInverseTranspose));
 	
 	output.Binormal = cross(output.norm, output.Tangent);
 	output.worldPos = mul(float4(input.Pos, 1.0f), input.world);
