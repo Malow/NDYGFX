@@ -1,6 +1,6 @@
 # This file uses centimeters as units for non-parametric coordinates.
 
-mtllib GrassPlant_01_01.mtl
+mtllib GrassPlant_01.mtl
 g default
 v 0.303084 -1.084669 -0.468300
 v 0.172814 -0.908928 0.493814

@@ -1,119 +1,127 @@
 Number:1
 Name:Scale
 BlockRadius:0.5
-Model:Media/MapModels/Scale.obj
+Model:Media/Scale.obj
 
 Number:2
 Name:Tree_2_LOD
 BlockRadius:0.7
-Model:Media/MapModels/Tree_02.ani 25.0
-Model:Media/MapModels/Tree_02_01.obj
+Model:Media/Models/Tree_02.ani 25.0
+Model:Media/Models/Tree_02_01.obj
 Billboard:Media/TreeBillboard.png
 BillboardDistance:100
 
 Number:3
 Name:Bush
-Model:Media/MapModels/Bush_01.ani 25.0
-Model:Media/MapModels/Bush_01_01.obj
+Model:Media/Models/Bush_03.ani 25.0
+Model:Media/Models/Bush_03.obj
 
 Number:4
 Name:Fern
-Model:Media/MapModels/Fern_02.ani 10.0
-Model:Media/MapModels/Fern_02_01.obj 45.0
+Model:Media/Models/Fern_02.ani 10.0
+Model:Media/Models/Fern_02_01.obj 45.0
 
 Number:5
 Name:Tree_1_LOD
 BlockRadius:0.7
-Model:Media/MapModels/Tree_01.ani 25.0
-Model:Media/MapModels/Tree_01_01.obj
+Model:Media/Models/Tree_01.ani 25.0
+Model:Media/Models/Tree_01_01.obj
 Billboard:Media/TreeBillboard.png
 BillboardDistance:100
 
 Number:6
 Name:Stone
-Model:Media/MapModels/Stone_01.obj
+Model:Media/Models/Stone_01.obj
 
 Number:7
-Name:Placeholder
-Model:Media/MapModels/Scale.obj
+Name:Tree_4
+BlockRadius:0.7
+Model:Media/Models/Tree_04.ani 25.0
+Model:Media/Models/Tree_04_01.obj
+Billboard:Media/TreeBillboard.png
+BillboardDistance:100
 
 Number:8
 Name:Placeholder
-Model:Media/MapModels/Scale.obj
+Model:Media/Scale.obj
 
 Number:9
 Name:Placeholder
-Model:Media/MapModels/Scale.obj
+Model:Media/Scale.obj
 
 Number:10
 Name:Veins
-Model:Media/MapModels/Veins_01.obj
+Model:Media/Models/Veins_01.obj
 
 Number:11
 Name:Placeholder
-Model:Media/MapModels/Scale.obj
+Model:Media/Scale.obj
 
 Number:12
 Name:Spawn
-Model:Media/MapModels/SPAWN.obj
+Model:Media/Models/SPAWN.obj
 
 Number:13
 Name:Plant-Grass
-Model:Media/MapModels/GrassPlant_01.ani 10.0
-Model:Media/MapModels/GrassPlant_01_01.obj 35.0
+Model:Media/Models/GrassPlant_01.ani 10.0
+Model:Media/Models/GrassPlant_01_01.obj 35.0
 
 Number:14
 Name:Placeholder
-Model:Media/MapModels/Scale.obj
+Model:Media/Scale.obj
 
 Number:15
 Name:Stone_02
-Model:Media/MapModels/Stone_02.obj
+Model:Media/Models/Stone_02.obj
 
 Number:16
 Name:WaterGrass_01
-Model:Media/MapModels/WaterGrass_01.obj
+Model:Media/Models/WaterGrass_01.obj
 
 Number:17
 Name:WaterGrass_02
-Model:Media/MapModels/WaterGrass_02.ani 25.0
-Model:Media/MapModels/WaterGrass_02_01.obj
+Model:Media/Models/WaterGrass_02.ani 25.0
+Model:Media/Models/WaterGrass_02_01.obj
 
 Number:18
 Name:Placeholder
-Model:Media/MapModels/Scale.obj
+Model:Media/Scale.obj
 
 Number:19
 Name:Bush_02
-Model:Media/MapModels/Bush_02.ani 25.0
-Model:Media/MapModels/Bush_02.obj
+Model:Media/Models/Bush_02.ani 25.0
+Model:Media/Models/Bush_02.obj
 
 Number:20
-Name:Tree
-Model:Media/MapModels/Tree_03.obj
+Name:Tree_3
 BlockRadius:0.7
+Model:Media/Models/Tree_03.ani 25.0
+Model:Media/Models/Tree_03_01.obj
+Billboard:Media/TreeBillboard.png
+BillboardDistance:100
 
 Number:22
 Name:WaterStones
-Model:Media/MapModels/Stone_03.obj
+Model:Media/Models/Stone_03.obj
 
 Number:23
 Name:Bush_misc_01	
-Model:Media/MapModels/Bush_misc_01.obj
+Model:Media/Models/Bush_01.ani 25.0
+Model:Media/Models/Bush_01_01.obj
 
 Number:24
 Name:Target	
-Model:Media/MapModels/Target.obj
+Model:Media/Models/Target.obj
 
 
 Number:200
 Name:Deer Spawnpoint
-Model:Media/MapModels/Deer.obj
+Model:Media/Models/Deer.obj
 
 Number:201
 Name:Wolf Spawnpoint
-Model:Media/MapModels/Scale.obj
+Model:Media/Scale.obj
 
 Number:202
 Name:Bear Spawnpoint
-Model:Media/MapModels/Scale.obj
+Model:Media/Scale.obj

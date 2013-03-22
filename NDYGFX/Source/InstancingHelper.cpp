@@ -290,6 +290,9 @@ void InstancingHelper::AddBillboard( Mesh* meshWithBillboard )
 	billboardData.s_Vertex = VertexBillboard1(	billboardPos, 
 												D3DXVECTOR2(billboardSize, billboardSize),
 												billboardColor);
+	/*billboardData.zVertex->posAndSizeX.x = billboardPos.x;
+	billboardData.zVertex->posAndSizeX.x = billboardPos.y;
+	billboardData.zVertex->posAndSizeX.x = billboardPos.z;*/
 	if(meshWithBillboard->GetBillboardGFX()->GetTextureResource() != NULL)
 	{
 		billboardData.s_SRV = meshWithBillboard->GetBillboardGFX()->GetTextureResource()->GetSRVPointer();		
@@ -443,17 +446,15 @@ void InstancingHelper::PreRenderBillboards(bool shadowmap)
 					this->zBillboardGroups.push_back(newBBGroup);
 
 					//Add billboard data
-					for(unsigned int j = 0; j < billboardCollection->GetNrOfVertices(); ++j)
-					{
-						//No need to call shader resource view pointer from the billboard collection since its only used to create groups.
-						BillboardData newBBData = BillboardData(billboardCollection->GetVertex(j), NULL); 
-						this->zBillboardData.push_back(newBBData);
+					this->zBillboardData.insert(
+						this->zBillboardData.end(), 
+						billboardCollection->GetBillboardData().cbegin(),
+						billboardCollection->GetBillboardData().cend());
 
-						//Expand buffer if necessary.
-						if(this->zBillboardData.size() > this->zBillboardInstanceBufferSize)
-						{
-							this->ExpandBillboardInstanceBuffer();
-						}
+					//Expand buffer if necessary.
+					if(this->zBillboardData.size() > this->zBillboardInstanceBufferSize)
+					{
+						this->ExpandBillboardInstanceBuffer();
 					}
 				}
 			}
@@ -504,26 +505,17 @@ void InstancingHelper::PreRenderBillboards(bool shadowmap)
 					}
 					this->zBillboardGroups.push_back(newBBGroup);
 			
-					//Create billboard data
-					BillboardData* newBBDataArray = new BillboardData[billboardCollection->GetNrOfVertices()];
-					for(unsigned int j = 0; j < billboardCollection->GetNrOfVertices(); ++j)
-					{
-						//No need to set shader resource view since its only used to create groups.
-						newBBDataArray[j].s_Vertex = billboardCollection->GetVertex(j);
-					}
-					
 					//Add billboard data
-					this->zBillboardData.insert(this->zBillboardData.end(), newBBDataArray, newBBDataArray + billboardCollection->GetNrOfVertices());
+					this->zBillboardData.insert(
+						this->zBillboardData.end(), 
+						billboardCollection->GetBillboardData().cbegin(),
+						billboardCollection->GetBillboardData().cend());
 
 					//Expand buffer if necessary.
 					if(this->zBillboardData.size() > this->zBillboardInstanceBufferSize)
 					{
 						this->ExpandBillboardInstanceBuffer();
 					}
-
-					//Delete array
-					delete [] newBBDataArray;
-					newBBDataArray = NULL;
 				}
 			}
 		}
