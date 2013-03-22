@@ -15,6 +15,7 @@
 #include "Billboard.h"
 #include "BillboardCollection.h"
 #include "Mesh.h"
+//#include "BillboardData.h"
 
 class StaticMesh;
 class AnimatedMesh;
@@ -27,6 +28,7 @@ struct BillboardData
 	BillboardData() : s_Vertex(), s_SRV(NULL) {}
 	BillboardData(VertexBillboard1 vertex, ID3D11ShaderResourceView* srv) : s_Vertex(vertex), s_SRV(srv) {}
 };
+
 struct BillboardGroup
 {
 	unsigned int				s_Size; 

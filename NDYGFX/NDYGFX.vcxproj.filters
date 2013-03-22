@@ -577,5 +577,8 @@
     <ClCompile Include="Source\BillboardCollection.cpp">
       <Filter>Source Files\Engine\Objects and Entities</Filter>
     </ClCompile>
+    <ClCompile Include="Source\BillboardData.cpp">
+      <Filter>Source Files\Engine\DxMan and Techs</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

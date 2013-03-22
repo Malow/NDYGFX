@@ -290,6 +290,9 @@ void InstancingHelper::AddBillboard( Mesh* meshWithBillboard )
 	billboardData.s_Vertex = VertexBillboard1(	billboardPos, 
 												D3DXVECTOR2(billboardSize, billboardSize),
 												billboardColor);
+	/*billboardData.zVertex->posAndSizeX.x = billboardPos.x;
+	billboardData.zVertex->posAndSizeX.x = billboardPos.y;
+	billboardData.zVertex->posAndSizeX.x = billboardPos.z;*/
 	if(meshWithBillboard->GetBillboardGFX()->GetTextureResource() != NULL)
 	{
 		billboardData.s_SRV = meshWithBillboard->GetBillboardGFX()->GetTextureResource()->GetSRVPointer();		

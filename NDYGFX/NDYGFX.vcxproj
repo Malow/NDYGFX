@@ -103,6 +103,7 @@
     <ClCompile Include="Source\AnimatedMesh.cpp" />
     <ClCompile Include="Source\Billboard.cpp" />
     <ClCompile Include="Source\BillboardCollection.cpp" />
+    <ClCompile Include="Source\BillboardData.cpp" />
     <ClCompile Include="Source\BTHFBX\Shared\D3D\BTHTexture.cpp" />
     <ClCompile Include="Source\BTHFBX\Shared\FBX\FBXModelD3D.cpp" />
     <ClCompile Include="Source\BTHFBX\Shared\FBX\FBXModelPartD3D.cpp" />
