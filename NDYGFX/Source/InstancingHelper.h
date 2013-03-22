@@ -47,12 +47,12 @@ struct StripData
 	struct InstancedDataStruct
 	{
 		D3DXMATRIX	s_WorldMatrix; //translation, rotation, scale
-		D3DXMATRIX	s_WorldInverseTransposeMatrix; 
+		//D3DXMATRIX	s_WorldInverseTransposeMatrix; 
 
 		InstancedDataStruct() 
 		{
 			D3DXMatrixIdentity(&s_WorldMatrix);
-			s_WorldInverseTransposeMatrix = s_WorldMatrix;
+			//s_WorldInverseTransposeMatrix = s_WorldMatrix;
 		}
 	} InstancedData;
 

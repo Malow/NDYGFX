@@ -556,10 +556,10 @@ void InstancingHelper::AddStaticMesh(StaticMesh* staticMesh)
 	else
 	{
 		//Mesh & instance data
-		D3DXMATRIX worldInverseTranspose;
+		/*D3DXMATRIX worldInverseTranspose;
 		D3DXMatrixIdentity(&worldInverseTranspose);
 		D3DXMatrixInverse(&worldInverseTranspose, NULL, &staticMesh->GetWorldMatrix());
-		D3DXMatrixTranspose(&worldInverseTranspose, &worldInverseTranspose);
+		D3DXMatrixTranspose(&worldInverseTranspose, &worldInverseTranspose);*/
 
 		//Add/save strips data
 		for(unsigned int i = 0; i < staticMesh->GetStrips()->size(); ++i)
@@ -567,7 +567,7 @@ void InstancingHelper::AddStaticMesh(StaticMesh* staticMesh)
 			StripData stripData;
 
 			stripData.InstancedData.s_WorldMatrix = staticMesh->GetWorldMatrix();
-			stripData.InstancedData.s_WorldInverseTransposeMatrix = worldInverseTranspose;
+			//stripData.InstancedData.s_WorldInverseTransposeMatrix = worldInverseTranspose;
 			stripData.s_MeshStrip = staticMesh->GetMeshStripsResourcePointer()->GetMeshStripsPointer()->get(i);
 
 			this->zStripData.push_back(stripData);
@@ -673,10 +673,10 @@ void InstancingHelper::AddAnimatedMesh(AnimatedMesh* animatedMesh, float timer)
 	else
 	{
 		//Mesh & instance data
-		D3DXMATRIX worldInverseTranspose;
+		/*D3DXMATRIX worldInverseTranspose;
 		D3DXMatrixIdentity(&worldInverseTranspose);
 		D3DXMatrixInverse(&worldInverseTranspose, NULL, &animatedMesh->GetWorldMatrix());
-		D3DXMatrixTranspose(&worldInverseTranspose, &worldInverseTranspose);
+		D3DXMatrixTranspose(&worldInverseTranspose, &worldInverseTranspose);*/
 
 		KeyFrame* one = NULL;
 		KeyFrame* two = NULL;
