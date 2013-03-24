@@ -50,7 +50,7 @@ void DxManager::HandleStaticMeshEvent(StaticMeshEvent* me)
 	else
 	{
 		StaticMesh* mesh = me->GetStaticMesh();
-		for(int i = 0; i < this->objects.size(); i++)
+		for(unsigned int i = 0; i < this->objects.size(); i++)
 		{
 			if(this->objects[i] == mesh)
 			{
@@ -74,7 +74,7 @@ void DxManager::HandleAnimatedMeshEvent(AnimatedMeshEvent* me)
 	else
 	{
 		AnimatedMesh* mesh = me->GetAnimatedMesh();
-		for(int i = 0; i < this->animations.size(); i++)
+		for(unsigned int i = 0; i < this->animations.size(); i++)
 		{
 			if(this->animations[i] == mesh)
 			{
@@ -101,7 +101,7 @@ void DxManager::HandleFBXEvent(FBXEvent* me)
 	else
 	{
 		FBXMesh* mesh = me->GetFBXMesh();
-		for(int i = 0; i < this->FBXMeshes.size(); i++)
+		for(unsigned int i = 0; i < this->FBXMeshes.size(); i++)
 		{
 			if(this->FBXMeshes[i] == mesh)
 			{
@@ -128,7 +128,7 @@ void DxManager::HandleLightEvent(LightEvent* le)
 	else
 	{
 		Light* light = le->GetLight();
-		for(int i = 0; i < this->lights.size(); i++)
+		for(unsigned int i = 0; i < this->lights.size(); i++)
 		{
 			if(this->lights[i] == light)
 			{
@@ -164,7 +164,7 @@ void DxManager::HandleBillboardEvent(BillboardEvent* ie)
 	else
 	{
 		Billboard* billboard = ie->GetBillboard();
-		for(int i = 0; i < this->billboards.size(); i++)
+		for(unsigned int i = 0; i < this->billboards.size(); i++)
 		{
 			if(this->billboards[i] == billboard)
 			{
@@ -184,7 +184,7 @@ void DxManager::HandleBillboardCollectionEvent(BillboardCollectionEvent* ie)
 	else
 	{
 		BillboardCollection* billboardCollection = ie->GetBillboardCollection();
-		for(int i = 0; i < this->billboardCollections.size(); i++)
+		for(unsigned int i = 0; i < this->billboardCollections.size(); i++)
 		{
 			if(this->billboardCollections[i] == billboardCollection)
 			{
@@ -202,7 +202,7 @@ void DxManager::HandleTextEvent(TextEvent* te)
 	else
 	{
 		Text* txt = te->GetText();
-		for(int i = 0; i < this->texts.size(); i++)
+		for(unsigned int i = 0; i < this->texts.size(); i++)
 		{
 			if(this->texts[i] == txt)
 			{
@@ -220,7 +220,7 @@ void DxManager::HandleWaterPlaneEvent(WaterPlaneEvent* ie)
 	else
 	{
 		WaterPlane* wp = ie->GetWaterPlane();
-		for(int i = 0; i < this->waterplanes.size(); i++)
+		for(unsigned int i = 0; i < this->waterplanes.size(); i++)
 		{
 			if(this->waterplanes[i] == wp)
 			{

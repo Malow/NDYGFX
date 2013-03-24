@@ -41,7 +41,7 @@ public:
 	void PreRender(D3DXVECTOR3& sunLight, Camera* cam);
 
 	float GetBlendDistance() { return this->blendDistance; }
-	int GetNrOfCascadeLevels() { return SHADOW_MAP_CASCADE_COUNT; }
+	unsigned int GetNrOfCascadeLevels() const { return SHADOW_MAP_CASCADE_COUNT; }
 	D3D11_VIEWPORT& GetShadowMapViewPort(int i) { return this->ShadowMapViewPort[i]; }
 	ID3D11ShaderResourceView* GetShadowMapSRV(int i) const { return this->shadowMapSRView[i]; }
 	ID3D11DepthStencilView* GetShadowMapDSV(int i) const { return this->shadowMapDepthView[i]; }
