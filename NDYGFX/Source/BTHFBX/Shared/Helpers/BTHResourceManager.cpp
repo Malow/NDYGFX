@@ -4,29 +4,10 @@
 #include "..\..\..\Shader.h"
 
 
-BTHResourceManager* BTHResourceManager::resourceManagerInstance = NULL;
-
 BTHResourceManager* BTHResourceManager::GetInstance()
 {
-
 	static BTHResourceManager manager;
-
-	/*
-	if(!resourceManagerInstance)
-	{
-		resourceManagerInstance = new BTHResourceManager();
-	}
-	*/
-
 	return &manager;
-}
-
-void BTHResourceManager::DeleteInstance()
-{
-	if(resourceManagerInstance)
-	{
-		delete resourceManagerInstance;
-	}
 }
 
 BTHResourceManager::BTHResourceManager()

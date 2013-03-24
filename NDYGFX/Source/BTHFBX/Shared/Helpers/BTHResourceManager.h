@@ -8,8 +8,6 @@ class BTHTexture;
 
 class BTHResourceManager
 {
-	static BTHResourceManager*	resourceManagerInstance;
-
 	std::mutex zMutex;
 	BTHResourceManager();
 	~BTHResourceManager();
@@ -19,11 +17,12 @@ class BTHResourceManager
 
 	BTHTexture* LoadTexture(const std::string& filename, ID3D11Device* dev, ID3D11DeviceContext* devCont);
 public:
-	static BTHResourceManager* GetInstance();
-	static void DeleteInstance();
 
 	BTHTexture* GetTexture(const std::string& filename, ID3D11Device* dev, ID3D11DeviceContext* devCont);
 	void FreeTexture( BTHTexture*& texture );
 
 	void Cleanup();
+
+	// Singleton
+	static BTHResourceManager* GetInstance();
 };
