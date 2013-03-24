@@ -20,9 +20,9 @@ CascadedShadowMap::CascadedShadowMap()
 	}
 
 	//Todo: replace with algorithm using FOV and cascade levels(distance)(so that all cascades update at the same time).
-	radii[0] = 7.0f; //0.1("far" clip) * 70
-	radii[1] = 28.0f;  //0.4("far" clip) * 70
-	radii[2] = 70.0f; //1.0("far" clip) * 70
+	radii[0] = 4.0f; //0.1("far" clip) * 40
+	radii[1] = 16.0f;  //0.4("far" clip) * 40
+	radii[2] = 40.0f; //1.0("far" clip) * 40
 	
 }
 
@@ -149,12 +149,13 @@ void CascadedShadowMap::CalcShadowMapMatrices(D3DXVECTOR3 sunLight, Camera* cam,
 	//Todo: Blend distance makes the projections overlap
 	//This overlap is used to smooth/blur the edges where the cascades meet.
 	D3DXMatrixOrthoOffCenterLH( &lightProjMatrix, 
-		minValue.x - this->blendDistance - this->radii[i], //Offset with radius(expand cascade)
-		maxValue.x + this->blendDistance + this->radii[i], //Offset with radius(expand cascade)
-		minValue.y - this->blendDistance - this->radii[i], //Offset with radius(expand cascade)
-		maxValue.y + this->blendDistance + this->radii[i], //Offset with radius(expand cascade)
+		minValue.x - this->blendDistance - this->radii[i], //Offset with radius(expand cascade)*
+		maxValue.x + this->blendDistance + this->radii[i], //Offset with radius(expand cascade)*
+		minValue.y - this->blendDistance - this->radii[i], //Offset with radius(expand cascade)*
+		maxValue.y + this->blendDistance + this->radii[i], //Offset with radius(expand cascade)*
 		nearPlane, farPlane);
-
+	//*Performance wise, this is not ideal as a bigger projection means more objects sent to the GFXcard and rendered.
+	
 	this->viewProj[i] = lightViewMatrix * lightProjMatrix;
 
 	//Force all other cascades (below) to update (higher cascades update more often than lower)
