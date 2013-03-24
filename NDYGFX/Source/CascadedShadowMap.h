@@ -26,9 +26,11 @@ private:
 	float shadowMappingSplitDepths[SHADOW_MAP_CASCADE_COUNT + 1];
 	D3DXPLANE** cascadePlanes; 
 
+	float radii[SHADOW_MAP_CASCADE_COUNT];
+	D3DXVECTOR3 previousMinValues[SHADOW_MAP_CASCADE_COUNT]; 
 
 	void CalcShadowMappingSplitDepths();
-	void CalcShadowMapMatrices(D3DXVECTOR3 sunLight, Camera* cam, int i);
+	void CalcShadowMapMatrices(D3DXVECTOR3 sunLight, Camera* cam, int i, bool forceUpdate);
 
 public:
 	CascadedShadowMap();

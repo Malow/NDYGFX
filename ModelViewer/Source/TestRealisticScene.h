@@ -119,30 +119,34 @@ void TestRealisticScene::PreTest()
 	meee->SetPosition(groundPos);
 	meee->SetScale(0.05f);
 
-	iFBXMesh* me = GetGraphics()->CreateFBXMesh("Media/Models/deer_anims.fbx", camPos + Vector3(50, -10, 50));
+	iFBXMesh* me = GetGraphics()->CreateFBXMesh("Media/Models/token_anims.fbx", camPos + Vector3(50, -10, 50));
 	me->SetPosition(groundPos + Vector3(3, 0, 0));
 	me->SetScale(0.05f);
 	
 	for(int i = 0; i < 50; i++)
 	{
-		Vector3 decPos = camPos + Vector3(i * 5, -10, 0);
+		Vector3 decPos = camPos + Vector3(i * 2, -10, 0);
 		decPos.y = world->GetHeightAt(Vector2(decPos.x, decPos.z));
-		iDecal* wp = GetGraphics()->CreateDecal(decPos, "Media/BloodTexture.png", Vector3(0,-1,0), Vector3(1, 0, 0));
-		if(i % 2 == 0)
-			wp->SetSize(2.0f);
-		else
+		iDecal* wp = GetGraphics()->CreateDecal(decPos + Vector3(0.5, 0, 0.5), "Media/token_print_l.png", Vector3(0,-1,0), Vector3(1, 0, 0));
+		wp->SetOpacity(0.3f);
+		iDecal* wp2 = GetGraphics()->CreateDecal(decPos - Vector3(0.5, 0, 0.5), "Media/token_print_r.png", Vector3(0,-1,0), Vector3(1, 0, 0));
+		wp2->SetOpacity(0.3f);
+		if(i == 0)
 		{
-			wp->SetOpacity(0.1f);
+			iDecal* wp3 = GetGraphics()->CreateDecal(decPos - Vector3(2, 0, 1), "Media/BloodTexture.png", Vector3(0,-1,0), Vector3(1, 0, 0));
+			wp3->SetOpacity(0.6f);
+			wp3->SetSize(2.0f);
 		}
 	}
 	
 	GetGraphics()->SetGrassFilePath("Media/Grass.png");
 
 	GetGraphics()->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 1.0f, 1.0f, 1.0f, 1.0f);
-	//GetGraphics()->GetCamera()->SetMesh(meee, "Neck", Vector3(0, 0, 1));
+	
 
 	me->SetAnimation("idle_04_feed");
 	me->SetPosition(me->GetPosition() + Vector3(30, 0, 10));
+	//GetGraphics()->GetCamera()->SetMesh(me, "Neck", Vector3(0, 0, 1));
 }
 
 bool TestRealisticScene::RunTest(float diff)

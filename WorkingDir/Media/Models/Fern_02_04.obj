@@ -1,6 +1,6 @@
 # This file uses centimeters as units for non-parametric coordinates.
 
-mtllib Fern_02_04.mtl
+mtllib Fern_02.mtl
 g default
 v 0.473632 2.744630 1.645028
 v -2.389968 2.235364 2.018332

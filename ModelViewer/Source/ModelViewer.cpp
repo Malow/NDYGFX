@@ -1,5 +1,5 @@
-#define TEST
-//#define REALISTICTESTSCENE
+//#define TEST
+#define REALISTICTESTSCENE
 
 
 #if defined(DEBUG) || defined(_DEBUG)
@@ -80,8 +80,8 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	GetGraphics()->GetCamera()->SetPosition(Vector3(25, 25, 20));
 	GetGraphics()->GetCamera()->LookAt(Vector3(0, 0, 0));
 
-	iLight* li = GetGraphics()->CreateLight(GetGraphics()->GetCamera()->GetPosition());
-	li->SetIntensity(0.001f);
+	//iLight* li = GetGraphics()->CreateLight(GetGraphics()->GetCamera()->GetPosition());
+	//li->SetIntensity(0.001f);
 	GetGraphics()->SetSunLightProperties(Vector3(1, -1, 1), Vector3(1, 1, 1), 1.5f);
 	GetGraphics()->SetSceneAmbientLight(Vector3(0.4f, 0.4f, 0.4f));
 	iMesh* scaleHuman = GetGraphics()->CreateMesh("Media/scale.obj", Vector3(30, -300, 30));
@@ -91,11 +91,11 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 
 	//************************************* PRE TEST **********************
 #ifdef TEST
-	//MaloWTest mt;
-	//TillmanTest tt;
+	MaloWTest mt;
+	TillmanTest tt;
 	OtherTest ot;
-	//mt.PreTest();
-	//tt.PreTest();
+	mt.PreTest();
+	tt.PreTest();
 	ot.PreTest();
 	GetGraphics()->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 1.0f, 1.0f, 1.0f, 1.0f);
 #endif
@@ -145,8 +145,8 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 
 		//************************************* RUN TESTS **********************
 #ifdef TEST
-		//mt.RunTest(diff);
-		//tt.RunTest(diff);
+		mt.RunTest(diff);
+		tt.RunTest(diff);
 		ot.RunTest(diff);
 #endif
 #ifdef REALISTICTESTSCENE
@@ -157,7 +157,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 #endif
 		//************************************* END OF RUN TESTS **********************
 
-		li->SetPosition(GetGraphics()->GetCamera()->GetPosition());
+		//li->SetPosition(GetGraphics()->GetCamera()->GetPosition());
 
 		if(GetGraphics()->GetKeyListener()->IsPressed('W'))
 			GetGraphics()->GetCamera()->MoveForward(diff * 10.0f);
@@ -241,7 +241,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 		{
 			if(toggleLight)
 			{
-				if(li->GetIntensity() < 0.01f)
+				/*if(li->GetIntensity() < 0.01f)
 				{
 					li->SetIntensity(tempInt);
 				}
@@ -249,7 +249,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 				{
 					tempInt = li->GetIntensity();
 					li->SetIntensity(0.001f);
-				}
+				}*/
 				toggleLight = false;
 			}
 		}
@@ -258,12 +258,12 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 
 		if(GetGraphics()->GetKeyListener()->IsPressed('T'))
 		{
-			li->SetIntensity(li->GetIntensity() * (1.0f + diff * 0.002f));
+			//li->SetIntensity(li->GetIntensity() * (1.0f + diff * 0.002f));
 
 		}
 		if(GetGraphics()->GetKeyListener()->IsPressed('Y'))
 		{
-			li->SetIntensity(li->GetIntensity() * (1.0f - diff * 0.002f));
+			//li->SetIntensity(li->GetIntensity() * (1.0f - diff * 0.002f));
 		}
 
 
@@ -291,8 +291,8 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 
 	//************************************* POST TEST **********************
 #ifdef TEST
-	//mt.PostTest();
-	//tt.PostTest();
+	mt.PostTest();
+	tt.PostTest();
 	ot.PostTest();
 #endif
 #ifdef REALISTICTESTSCENE

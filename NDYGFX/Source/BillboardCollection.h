@@ -12,6 +12,14 @@
 #include "Vertex.h"
 #include "Vector.h"
 
+struct BillboardData
+{
+	VertexBillboard1			s_Vertex;
+	ID3D11ShaderResourceView*	s_SRV; 
+
+	BillboardData() : s_Vertex(), s_SRV(NULL) {}
+	BillboardData(VertexBillboard1 vertex, ID3D11ShaderResourceView* srv) : s_Vertex(vertex), s_SRV(srv) {}
+};
 
 class BillboardCollection : public iBillboardCollection
 {
@@ -28,6 +36,8 @@ class BillboardCollection : public iBillboardCollection
 		D3DXVECTOR3			zMinPos;
 		D3DXVECTOR3			zMaxPos;
 
+		std::vector<BillboardData>	zBillboardData;//For instancing
+
 	private:
 		bool pVerticesChanged;
 		void RecalculateMinAndMaxPos();
@@ -41,6 +51,8 @@ class BillboardCollection : public iBillboardCollection
 							float cullNearDistance = 0.0f, float cullFarDistance = std::numeric_limits<float>::infinity());
 		virtual ~BillboardCollection();
 
+		inline const std::vector<BillboardData>& GetBillboardData() const { return this->zBillboardData; }
+		inline const VertexBillboard1* GetVertices() const { return zVertices; }
 		unsigned int GetNrOfVertices() { return this->zNrOfVertices; }
 		//D3DXVECTOR3 GetPositionD3DX(unsigned int vertexIndex)					const { return this->zVertices[vertexIndex].pos; }
 		//D3DXVECTOR2 GetTexCoordD3DX(unsigned int vertexIndex)					const { return D3DXVECTOR2(this->zVertices[vertexIndex].texAndSize.x, this->zVertices[vertexIndex].texAndSize.y); }
