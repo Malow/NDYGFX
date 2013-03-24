@@ -2,12 +2,15 @@
 
 #include <map>
 #include "..\..\..\DirectX.h"
+#include <mutex>
 
 class BTHTexture;
 
 class BTHResourceManager
 {
 	static BTHResourceManager*	resourceManagerInstance;
+
+	std::mutex zMutex;
 	BTHResourceManager();
 	~BTHResourceManager();
 
