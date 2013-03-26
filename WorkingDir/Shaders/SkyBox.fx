@@ -11,6 +11,7 @@ cbuffer EveryFrame
 	matrix world;
 	float FogHeight;
 	float CamY;
+	float3 fogColor;
 }
 
 TextureCube SkyMap;
@@ -86,7 +87,7 @@ float4 SKYMAP_PS(SKYMAP_VS_OUTPUT input) : SV_Target
 	{
 		float factor = (input.worldPos.y - CamY) / (FogHeight - CamY);
 
-		ret = lerp(float4(0.45f, 0.45f, 0.45f, 1.0f), ret, saturate(factor));
+		ret = lerp(float4(fogColor, 1.0f), ret, saturate(factor));
 	}
 	return ret;
 

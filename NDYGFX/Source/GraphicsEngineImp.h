@@ -214,6 +214,7 @@ public:
 	virtual Vector3 GetSceneAmbientLight() const;
 
 	virtual void SetEnclosingFogEffect(Vector3 center, float radius, float fogfadefactor = 0.1f);
+	virtual void SetFogColor(Vector3 color);
 
 	/*! 
 	Takes control of the thread and renders a loading-screen with a progress bar. Returns once all objects that have been sent to load is loaded.

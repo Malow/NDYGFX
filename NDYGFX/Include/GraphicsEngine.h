@@ -148,6 +148,7 @@ extern "C"
 		FogFadeFactor is over how much of Radius the fog should fade from nothing to fully solid.
 		*/
 		virtual void SetEnclosingFogEffect(Vector3 center, float radius, float fogfadefactor = 0.1f) = 0;
+		virtual void SetFogColor(Vector3 color) = 0;
 	};
 
 	/*

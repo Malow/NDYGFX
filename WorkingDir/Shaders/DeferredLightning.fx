@@ -100,8 +100,8 @@ cbuffer ef
 	float4 cascadeFarPlanes;
 	matrix cameraViewMatrix;
 
-
 	bool useShadow;
+	float3 fogColor;
 };
 
 struct DummyStruct //VS & GS input (unused)
@@ -677,7 +677,7 @@ float4 PSScene(PSIn input) : SV_Target
 	if(fogDepth > 0.75f)
 	{
 		float fogfactor = (fogDepth - 0.75f) * 4.1f;	// Linear scale the last 25% of farclip, but a little more 
-		finalColor = lerp(finalColor, float4(0.45f, 0.45f, 0.45f, 1.0f), saturate(fogfactor));
+		finalColor = lerp(finalColor, float4(fogColor, 1.0f), saturate(fogfactor));
 	}
 		
 	

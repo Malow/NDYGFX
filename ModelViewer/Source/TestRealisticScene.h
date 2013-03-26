@@ -297,14 +297,17 @@ bool TestRealisticScene::RunTest(float diff)
 			if(qual % 2 == 0)
 			{
 				GetGraphics()->ChangeSkyBox("Media/skymap.dds"); 
+				GetGraphics()->SetFogColor(Vector3(0.45f, 0.45f, 0.45f));
 			}
 			else
 			{
 				GetGraphics()->ChangeSkyBox("Media/StarMap.dds"); 
+				GetGraphics()->SetFogColor(Vector3(0.1f, 0.1f, 0.1f));
 			}
-			GetGraphics()->ReloadShaders(11);
-			GetGraphics()->ReloadShaders(27);
-			GetGraphics()->ReloadShaders(16);
+			
+			//GetGraphics()->ReloadShaders(11);
+			//GetGraphics()->ReloadShaders(27);
+			//GetGraphics()->ReloadShaders(16);
 			//GetGraphics()->ReloadShaders(19);
 			//MaloW::Debug("Diff: " + MaloW::convertNrToString(totDiff / nrofdiffs));
 			//GetGraphics()->ChangeShadowQuality(qual);
