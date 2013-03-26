@@ -8,9 +8,10 @@
 
 #pragma once
 
-#include "Camera.h"
-#include "Shader.h"
-#include "TCBSpline.h"
+class iCamera;
+class TCBSpline;
+
+#include "Vector.h"
 
 enum CAMERA_PATH
 {
@@ -23,11 +24,11 @@ class CamRecording
 	private:
 		//Global variables:
 		//For recording/playing:
-		Camera*					gCamera;	
+		iCamera*					gCamera;	
 		//For rendering:
-		ID3D11Device*			gDevice;
-		ID3D11DeviceContext*	gDeviceContext;
-		Shader*					gShader; //**outside of class**
+		//ID3D11Device*			gDevice;
+		//ID3D11DeviceContext*	gDeviceContext;
+		//Shader*					gShader; //**outside of class**
 
 		//Local variables:
 		//For recording/playing:
@@ -39,13 +40,13 @@ class CamRecording
 		float						mPlayTime; //in seconds
 		float						mCurrentPlayTime; //in seconds
 		float						mPlaySpeed;
-		D3DXVECTOR3					mPathOffset;
+		Vector3						mPathOffset;
 		TCBSpline*					mCamPosSpline;
 		TCBSpline*					mCamAtSpline;
 		//For rendering: use bufferclass?**
 		int							mNrOfVertices;
-		D3DXVECTOR3**				mVertices;
-		ID3D11Buffer*				mVertexBuffer;
+		Vector3**				mVertices;
+		//ID3D11Buffer*				mVertexBuffer;
 
 	private:
 		void DeletePreviousRecording();
@@ -58,7 +59,7 @@ class CamRecording
 			camera - pointer to a Camera object. (Cannot be NULL).
 			device, deviceContext and shader are used for rendering. Specify NULL for these parameters when rendering is not needed.
 		*/
-		void Init(Camera* camera, ID3D11Device* device = NULL, ID3D11DeviceContext* deviceContext = NULL, Shader* shader = NULL);
+		void Init(iCamera* camera);//, ID3D11Device* device = NULL, ID3D11DeviceContext* deviceContext = NULL, Shader* shader = NULL);
 	
 		bool IsLooping() const;
 		bool IsRecording() const;
@@ -70,7 +71,7 @@ class CamRecording
 		/*! Returns current play time in seconds. */
 		float GetCurrentPlayTime() const;
 		float GetPlaySpeed() const;
-		D3DXVECTOR3 GetPathOffset() const;
+		Vector3 GetPathOffset() const;
 
 		void LoopSeamLess();
 		void StopLooping();
@@ -79,18 +80,18 @@ class CamRecording
 		/*! Set the play speed. Normal is 1. */
 		void SetPlaySpeed(float playSpeed);
 		/*! Set the offset to the camera path when playing. */
-		void SetPathOffset(D3DXVECTOR3 pathOffset);
+		void SetPathOffset(Vector3 pathOffset);
 
 		/* ! Add position and lookat to path. */
-		void AddCameraWaypoint(D3DXVECTOR3 position, D3DXVECTOR3 lookAt);
+		void AddCameraWaypoint(Vector3 position, Vector3 lookAt);
 		/*! Start/end recording */
 		void Record(bool record);
 		/*! Start playing what has been recording. */
 		void Play();
 		/*! Save camera path (points) to file. */
-		void Save(string fileName);
+		void Save(const char* fileName);
 		/*! Open camera path (points) from file. */
-		void Open(string fileName);
+		void Open(const char* fileName);
 		/*! Set the camera to circle around a target. */
 		/*! loop - set path to be looped. */
 		/*! interval - number of milliseconds between each point */
@@ -98,13 +99,13 @@ class CamRecording
 		/*! nrOfRotations - the number of rotations to do if looping is set to false. */
 		/*! startPos - start position of camera. */
 		/*! lookAt - what the camera will look at during play. */
-		void CircleAround(	bool loop, 
+		/*void CircleAround(	bool loop, 
 							unsigned int interval, 
 							unsigned int nrOfPoints, 
 							unsigned int nrOfRotations, 
-							D3DXVECTOR3 startPos, 
-							D3DXVECTOR3 lookAt);
-
+							Vector3 startPos, 
+							Vector3 lookAt);
+							*/
 		/*! Load predefined camera path. */
 		//void Load(CAMERA_PATH camPath);
 

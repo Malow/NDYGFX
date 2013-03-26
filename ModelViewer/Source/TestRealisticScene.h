@@ -58,7 +58,7 @@ void TestRealisticScene::PreTest()
 	resourceFileNames[4] = "Media/MapModels/Tree_01.ani";	
 	resourceFileNames[5] = "Media/MapModels/Tree_01_01.obj";	
 	GetGraphics()->PreLoadResources(nrOfResources, resourceFileNames);
-
+	
 	LoadEntList("Entities.txt");
 	world = new World(this, "Media/Maps/Map_01_v87.map", true);
 	GetGraphics()->GetCamera()->SetPosition(Vector3(world->GetWorldCenter().x, 20.0f, world->GetWorldCenter().y));

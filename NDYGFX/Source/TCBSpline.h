@@ -7,8 +7,9 @@
 
 #pragma once
 
-#include "DirectX.h"
-#include <string>
+//#include "DirectX.h"
+//#include <string>
+class Vector3;
 
 class TCBSpline
 {
@@ -28,9 +29,9 @@ class TCBSpline
 		bool			mEndsAreConnected;
 		int				mNrOfControlPoints;
 		int				mControlCap;
-		D3DXVECTOR3**	mControlPoints;
-		D3DXVECTOR3**	mSource;
-		D3DXVECTOR3**	mDestination;
+		Vector3**	mControlPoints;
+		Vector3**	mSource;
+		Vector3**	mDestination;
 
 	private:
 		void Expand();
@@ -39,7 +40,7 @@ class TCBSpline
 	public:
 		TCBSpline(bool connectEnds, float tension = 0.0f, float bias = 0.0f, float continuity = 0.0f);
 		~TCBSpline();
-		HRESULT Init();
+		bool Init();
 
 		bool AreEndsConnected() const;
 		int GetNrOfControlPoints() const;
@@ -51,17 +52,17 @@ class TCBSpline
 		void SetBias(float bias);
 		void SetContinuity(float continuity);
 
-		void AddControlPoint(D3DXVECTOR3 controlPoint);
+		void AddControlPoint(Vector3& controlPoint);
 		/*! Returns the interpolated position along the set of control points,
 			Example:	t = 0 would return the first control point,
 						t = 1 would return the last control point,
 						and everything inbetween returns an interpolation between the 2 closest control points to t.
 		*/
-		D3DXVECTOR3 GetPoint(float t) const;
+		Vector3 GetPoint(float t) const;
 		/*! Return nrOfPoints of interpolated positions along the set of control points. */
-		D3DXVECTOR3** CalculatePoints(int nrOfPoints);
-		void WriteControlPointsToFile(std::string fileName); 
-		bool ReadControlPointsFromFile(std::string fileName); 
+		Vector3** CalculatePoints(int nrOfPoints);
+		void WriteControlPointsToFile(const char* fileName); 
+		bool ReadControlPointsFromFile(const char* fileName); 
 		/*! Empties (clears) the arrays used. This function should be called prior to adding a new set of control points. */
 		void Clear();
 };

@@ -50,7 +50,6 @@
     <ClInclude Include="Source\Buffer.h" />
     <ClInclude Include="Source\BufferResource.h" />
     <ClInclude Include="Source\Camera.h" />
-    <ClInclude Include="Source\CamRecording.h" />
     <ClInclude Include="Source\CascadedShadowMap.h" />
     <ClInclude Include="Source\CursorControl.h" />
     <ClInclude Include="Source\Decal.h" />
@@ -111,7 +110,6 @@
     <ClCompile Include="Source\Buffer.cpp" />
     <ClCompile Include="Source\BufferResource.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
-    <ClCompile Include="Source\CamRecording.cpp" />
     <ClCompile Include="Source\CascadedShadowMap.cpp" />
     <ClCompile Include="Source\Decal.cpp" />
     <ClCompile Include="Source\DxManager.cpp" />
@@ -150,7 +148,6 @@
     <ClCompile Include="Source\SkyBox.cpp" />
     <ClCompile Include="Source\SSAO.cpp" />
     <ClCompile Include="Source\StaticMesh.cpp" />
-    <ClCompile Include="Source\TCBSpline.cpp" />
     <ClCompile Include="Source\Terrain.cpp" />
     <ClCompile Include="Source\Text.cpp" />
     <ClCompile Include="Source\TextureResource.cpp" />

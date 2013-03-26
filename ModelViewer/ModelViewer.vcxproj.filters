@@ -43,6 +43,12 @@
     <ClCompile Include="Source\World\WorldRendererSettings.cpp">
       <Filter>Source Files\World</Filter>
     </ClCompile>
+    <ClCompile Include="..\NDYGFX\Source\TCBSpline.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\NDYGFX\Source\CamRecording.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Graphics.h">
@@ -110,6 +116,12 @@
     </ClInclude>
     <ClInclude Include="Source\World\AnyType.h">
       <Filter>Source Files\World</Filter>
+    </ClInclude>
+    <ClInclude Include="..\NDYGFX\Source\TCBSpline.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\NDYGFX\Source\CamRecording.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
