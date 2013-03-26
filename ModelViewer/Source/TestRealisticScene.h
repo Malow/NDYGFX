@@ -18,7 +18,6 @@ private:
 	int path;
 	float enclosingfog;
 	Vector3 fogCenter;
-	iLight* l1;
 
 public:
 	TestRealisticScene() {};
@@ -148,15 +147,6 @@ void TestRealisticScene::PreTest()
 	me->SetAnimation("idle_04_feed");
 	me->SetPosition(me->GetPosition() + Vector3(30, 0, 10));
 	//GetGraphics()->GetCamera()->SetMesh(me, "Neck", Vector3(0, 0, 1));
-
-
-
-	/*
-	l1 = GetGraphics()->CreateLight(Vector3(45, 5, 45));
-	l1->SetLookAt(Vector3(45, 0, 45));
-	l1->SetUp(Vector3(1, 0, 0));
-	l1->SetIntensity(10.0f);
-	l1->SetColor(Vector3(1.0f, 0.9f, 0.0f));*/
 }
 
 bool TestRealisticScene::RunTest(float diff)
@@ -168,7 +158,6 @@ bool TestRealisticScene::RunTest(float diff)
 	sunDirTest.RotateY(radius);
 	GetGraphics()->SetSunLightProperties(sunDirTest);
 	*/
-	//l1->SetPosition(GetGraphics()->GetCamera()->GetPosition());
 
 	if(GetGraphics()->GetKeyListener()->IsPressed('R'))
 	{
@@ -296,11 +285,11 @@ bool TestRealisticScene::RunTest(float diff)
 
 			if(qual % 2 == 0)
 			{
-				GetGraphics()->ChangeSkyBox("Media/skymap.dds"); 
+				
 			}
 			else
 			{
-				GetGraphics()->ChangeSkyBox("Media/StarMap.dds"); 
+				
 			}
 			GetGraphics()->ReloadShaders(11);
 			GetGraphics()->ReloadShaders(27);
@@ -311,8 +300,6 @@ bool TestRealisticScene::RunTest(float diff)
 			//secModel->SetPosition(Vector3(10, 10, 10));
 			qual++;
 			fesd = false;
-
-			
 		}			
 	}
 	else
