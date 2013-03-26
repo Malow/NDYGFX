@@ -2,7 +2,7 @@
 #define DXMANAGER_H
 
 
-#define MALOWTESTPERF
+//#define MALOWTESTPERF
 
 
 #include "Decal.h"
