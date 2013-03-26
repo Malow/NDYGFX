@@ -218,6 +218,7 @@ private:
 	void HandleFBXEvent(FBXEvent* fe);
 	void HandleReloadShaders(int shader);
 	void HandleDecalEvent(DecalEvent* de);
+	void HandleSkyBoxEvent(SkyBoxEvent* sbe);
 
 	void CalculateCulling();
 

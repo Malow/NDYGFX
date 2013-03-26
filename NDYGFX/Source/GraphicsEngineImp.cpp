@@ -734,7 +734,7 @@ void GraphicsEngineImp::Life()
 	}
 }
 
-void GraphicsEngineImp::CreateSkyBox(const char* texture)
+void GraphicsEngineImp::ChangeSkyBox(const char* texture)
 {
 	this->dx->CreateSkyBox(string(texture));
 }

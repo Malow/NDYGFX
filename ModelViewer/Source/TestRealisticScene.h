@@ -296,11 +296,11 @@ bool TestRealisticScene::RunTest(float diff)
 
 			if(qual % 2 == 0)
 			{
-				
+				GetGraphics()->ChangeSkyBox("Media/skymap.dds"); 
 			}
 			else
 			{
-				
+				GetGraphics()->ChangeSkyBox("Media/StarMap.dds"); 
 			}
 			GetGraphics()->ReloadShaders(11);
 			GetGraphics()->ReloadShaders(27);
@@ -311,6 +311,8 @@ bool TestRealisticScene::RunTest(float diff)
 			//secModel->SetPosition(Vector3(10, 10, 10));
 			qual++;
 			fesd = false;
+
+			
 		}			
 	}
 	else

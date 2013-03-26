@@ -743,9 +743,6 @@ void DxManager::CreateText(Text* text, string font)
 
 void DxManager::CreateSkyBox(string texture)
 {
-	if(this->skybox)
-		delete this->skybox;
-		
 	SkyBox* sb = new SkyBox(this->camera->GetOldPos(), 10, 10);
 	MeshStrip* strip = sb->GetStrip();
 
@@ -779,7 +776,8 @@ void DxManager::CreateSkyBox(string texture)
 	Object3D* ro = new Object3D(VertexBuffer, IndexBuffer, tex, NULL, sb->GetTopology());
 	strip->SetRenderObject(ro);
 
-	this->skybox = sb;
+	SkyBoxEvent* sbe = new SkyBoxEvent(true, sb);
+	this->PutEvent(sbe);
 }
 
 void DxManager::UseShadow(bool useShadow)

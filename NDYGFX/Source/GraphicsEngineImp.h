@@ -173,7 +173,7 @@ public:
 	virtual void DeleteDecal(iDecal* decal);
 
 	// Skybox
-	virtual void CreateSkyBox(const char* texture);
+	virtual void ChangeSkyBox(const char* texture);
 
 	// Camera
 	virtual iCamera* GetCamera() const;
