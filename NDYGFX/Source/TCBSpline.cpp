@@ -1,8 +1,11 @@
 //Written by Markus Tillman.
 
 #include "TCBSpline.h"
-#include "MaloWFileDebug.h"
+// #include "MaloWFileDebug.h"
 #include "Vector.h"
+#include <fstream>
+#include <string>
+using namespace std;
 
 //private
 void TCBSpline::Expand()
@@ -16,7 +19,7 @@ void TCBSpline::Expand()
 	}
 	delete [] this->mControlPoints;
 	this->mControlPoints = temp;
-	temp = NULL;
+	temp = 0;
 }
 
 void TCBSpline::CalculateTangents(int i)
@@ -100,10 +103,10 @@ TCBSpline::TCBSpline(bool connectEnds, float tension, float bias, float continui
 	this->mControlPoints = new Vector3*[this->mControlCap];
 	for(unsigned int i = 0; i < this->mControlCap; ++i)
 	{
-		this->mControlPoints[i] = NULL;
+		this->mControlPoints[i] = 0;
 	}
-	this->mSource = NULL;
-	this->mDestination = NULL;
+	this->mSource = 0;
+	this->mDestination = 0;
 }
 TCBSpline::~TCBSpline()
 {
@@ -111,8 +114,10 @@ TCBSpline::~TCBSpline()
 	for(int i = 0; i < this->mNrOfControlPoints; i++)
 	{
 		delete this->mControlPoints[i];
+		this->mControlPoints[i] = 0;
 	}
 	delete [] this->mControlPoints;
+	this->mControlPoints = NULL;
 	//source & destination tangents
 	if(this->mSource)
 	{
@@ -120,9 +125,15 @@ TCBSpline::~TCBSpline()
 		{	
 			delete this->mSource[i];
 			delete this->mDestination[i];
+			this->mSource[i] = 0;
+			this->mDestination[i] = 0;
 		}
 		delete [] this->mSource;
 		delete [] this->mDestination;
+		this->mSource =  0;
+		this->mDestination = 0;
+
+		this->mNrOfControlPoints = 0;
 	}
 }
 
@@ -134,8 +145,8 @@ bool TCBSpline::Init()
 		this->mDestination = new Vector3*[this->mNrOfControlPoints];
 		for(unsigned int i = 0; i < this->mNrOfControlPoints; ++i)
 		{
-			this->mSource[i] = NULL;
-			this->mDestination[i] = NULL;
+			this->mSource[i] = 0;
+			this->mDestination[i] = 0;
 		}
 
 		//calculate source & destination-tangents of the control points
@@ -150,10 +161,10 @@ bool TCBSpline::Init()
 		if(this->mNrOfControlPoints == 1)
 		{
 			delete this->mControlPoints[0];
-			this->mControlPoints[0] = NULL;
+			this->mControlPoints[0] = 0;
 			this->mNrOfControlPoints--;
 		}
-		MaloW::Debug("TCBSpline: Warning: Failed to initilize spline: Not enough control points");
+		//MaloW::Debug("TCBSpline: Warning: Failed to initilize spline: Not enough control points");
 
 		return false;
 	}
@@ -318,16 +329,17 @@ bool TCBSpline::ReadControlPointsFromFile(const char* fileName)
 	fileNameOpen += ".txt";
 	std::ifstream in;
 	in.open(fileNameOpen);
+	//in.open(fileName);
 	if(in)
 	{
-		if(this->mControlPoints)
+		/*if(this->mControlPoints)
 		{
 			for(unsigned int i = 0; i < this->mNrOfControlPoints; ++i)
 			{
 				delete this->mControlPoints[i];
 			}
 			delete [] this->mControlPoints;
-		}
+		}*/
 
 		const int bufferSize = 512;
 		char buffer[bufferSize];

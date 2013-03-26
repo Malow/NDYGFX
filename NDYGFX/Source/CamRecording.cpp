@@ -5,7 +5,7 @@
 #include "iCamera.h"
 #include "TCBSpline.h"
 #include <string>
-#include "MaloWFileDebug.h"
+//#include "MaloWFileDebug.h"
 
 #define PI (3.14159265358979323846f)
 
@@ -19,7 +19,7 @@ void CamRecording::DeletePreviousRecording()
 //de/con-structors, init, other
 CamRecording::CamRecording(int interval, bool seamLessPath)
 {
-	this->gCamera = NULL;
+	this->gCamera = 0;
 
 	//this->gDevice = NULL;
 	//this->gDeviceContext = NULL;
@@ -38,7 +38,7 @@ CamRecording::CamRecording(int interval, bool seamLessPath)
 	this->mCamAtSpline = new TCBSpline(seamLessPath);
 	
 	this->mNrOfVertices = 0;
-	this->mVertices = NULL;
+	this->mVertices = 0;
 	//this->mVertexBuffer = NULL;
 }
 CamRecording::~CamRecording()
@@ -155,7 +155,7 @@ void CamRecording::Record(bool record)
 		}
 		if(success)
 		{
-			MaloW::Debug("CamRecording: Error: Failed to initialize spline(s)");
+			//MaloW::Debug("CamRecording: Error: Failed to initialize spline(s)");
 		}
 
 		this->mHasRecorded = true;
@@ -170,7 +170,7 @@ void CamRecording::Play()
 	}
 	else
 	{
-		MaloW::Debug("CamRecording: Warning: Tried to play when there's nothing to play.");
+		//MaloW::Debug("CamRecording: Warning: Tried to play when there's nothing to play.");
 	}
 }
 void CamRecording::Save(const char* fileName)
@@ -196,26 +196,26 @@ void CamRecording::Open(const char* fileName)
 	success = this->mCamPosSpline->ReadControlPointsFromFile(pos.c_str());
 	if(!success)
 	{
-		MaloW::Debug("CamRecording: Warning: Failed to read control points from file.");
+		//MaloW::Debug("CamRecording: Warning: Failed to read control points from file.");
 	}
 	success = this->mCamAtSpline->ReadControlPointsFromFile(at.c_str());
 	if(!success)
 	{
-		MaloW::Debug("CamRecording: Warning: Failed to read control points from file.");
+		//MaloW::Debug("CamRecording: Warning: Failed to read control points from file.");
 	}
-	else //if succesful read, initialize splines
+	else //if successful read, initialize splines
 	{
-		HRESULT hr = S_OK;
-		hr = this->mCamPosSpline->Init();
-		if(FAILED(hr))
+		bool success = false; 
+		success = this->mCamPosSpline->Init();
+		if(!success)
 		{
-			MaloW::Debug("CamRecording: Error: Failed to initialize splines from file.");
+			//MaloW::Debug("CamRecording: Error: Failed to initialize splines from file.");
 			return;
 		}
-		hr = this->mCamAtSpline->Init();
-		if(FAILED(hr))
+		success = this->mCamAtSpline->Init();
+		if(!success)
 		{
-			MaloW::Debug("CamRecording: Error: Failed to initialize splines from file.");
+			//MaloW::Debug("CamRecording: Error: Failed to initialize splines from file.");
 			return;
 		}
 
