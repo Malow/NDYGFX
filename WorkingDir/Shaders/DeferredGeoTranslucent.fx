@@ -115,7 +115,7 @@ PSout PSScene(PSSceneIn input) : SV_Target
 			float2(input.WorldPos.x - (input.norm.x * gTimerMillis * 5.0f + sin(gTimerMillis) * 0.2f), 
 			input.WorldPos.z - (input.norm.z * gTimerMillis * 5.0f + cos(gTimerMillis) * 0.2f)) * 0.2f) * 0.35f;
 	}
-	float4 finalColor = float4((textureColor.xyz + input.Color.xyz) * DiffuseColor.xyz, 1.0f);
+	float4 finalColor = float4((textureColor.xyz + input.Color.xyz) * DiffuseColor.xyz, 0.0f);
 	//finalColor.w = (float)specialColor;	/// Doesnt work, renders the entire plane with clear color
 
 

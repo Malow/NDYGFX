@@ -196,7 +196,9 @@ PSOut PS(PSIn input)
 	output.Position = float4(input.posW.xyz, OBJECT_TYPE_BILLBOARD);
 	
 	//Specular RT
-	output.Specular.xyzw = 0.0f;
+	output.Specular = float4(0, 0, 0, 1.0f);
+
+	output.Texture.w = 0.0f;
 
 	return output;
 }

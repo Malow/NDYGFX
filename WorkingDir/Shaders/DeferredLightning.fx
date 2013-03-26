@@ -424,16 +424,8 @@ float4 PSScene(PSIn input) : SV_Target
 
 	float4 AmbientLight = float4(gSceneAmbientLight, 1.0f);
 
-	float SpecularPower = 0.0f;
-	float4 SpecularColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
-
-	if(WorldPosAndObjectType.w != OBJECT_TYPE_TERRAIN) //Todo: exclude specular computations
-	{
-		float4 specularRT = Specular.Sample(linearSampler, input.tex);
-		SpecularPower = specularRT.w;
-		SpecularColor = float4(specularRT.xyz, 1.0f);
-	}
-		
+	float4 SpecularColor = Specular.Sample(linearSampler, input.tex);
+	float SpecularPower = SpecularColor.w;
 	
 	float diffuseLighting = 0.0f;
 	float specLighting = 0.0f;
@@ -638,7 +630,7 @@ float4 PSScene(PSIn input) : SV_Target
 			finalColor.xyz *= (5.0f / 6.0f);
 		}
 	}
-
+	
 
 		
 	//if(finalColor.a >= 0.00001f && finalColor.a <= 0.9999f)
@@ -654,11 +646,21 @@ float4 PSScene(PSIn input) : SV_Target
 	//Skip shadow "lighting" and specular
 	if(WorldPosAndObjectType.w == OBJECT_TYPE_BILLBOARD)
 	{	
-		finalColor = float4((float4(gSceneAmbientLight, 1.0f) * DiffuseColor) + (DiffuseColor * diffShadow), 1.0f);// = Texture.Sample(linearSampler, input.tex).xyz;	
+		/*
+		finalColor = float4((							
+		AmbientLight.xyz * DiffuseColor + 
+		DiffuseColor * diffuseLighting + 
+		SpecularColor.xyz * specLighting), 
+		1.0f);
+
+		if(gUseSun)
+			finalColor.xyz *= gSun.LightColor.xyz;
+			*/
+		//finalColor = float4((float4(gSceneAmbientLight, 1.0f) * DiffuseColor) + (DiffuseColor * diffShadow), 1.0f);// = Texture.Sample(linearSampler, input.tex).xyz;	
 	
 		//finalColor = float4(AmbientLight.xyz * DiffuseColor + DiffuseColor * diffuseLighting, 1.0f);// = Texture.Sample(linearSampler, input.tex).xyz;	
 	}
-
+	
 	///////////////////////////////////////////////////////////////////
 	//							Basic fog:							//
 	//////////////////////////////////////////////////////////////////
