@@ -20,6 +20,7 @@ DxManager::DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam)
 	this->Shader_ForwardRendering = NULL;
 	this->Dx_SwapChain = NULL;
 	this->Dx_Device = NULL;
+	this->fogColor = D3DXVECTOR3(0.45f, 0.45f, 0.45f);
 
 	this->Shader_ShadowMapFBX = NULL;
 

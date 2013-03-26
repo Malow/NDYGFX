@@ -1342,3 +1342,8 @@ void GraphicsEngineImp::HideLoadingScreen()
 	}
 }
 
+void GraphicsEngineImp::SetFogColor( Vector3 color )
+{
+	this->dx->SetFogColor(color);
+}
+

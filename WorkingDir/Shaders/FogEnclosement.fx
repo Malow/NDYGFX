@@ -33,6 +33,7 @@ cbuffer everyFrame
 	float fogRadius;
 	float fogFadeFactor;
 	float overallFogFactor;
+	float3 fogColor;
 };
 
 //-----------------------------------------------------------------------------------------
@@ -126,7 +127,7 @@ float4 PSScene(PSSceneIn input) : SV_Target
 	if(WorldPos.x == -1.0f)
 		fogfactor = 0.0f;
 	
-	return float4(0.45f, 0.45f, 0.45f, 1.0f * (fogfactor + overallFogFactor));
+	return float4(fogColor, 1.0f * (fogfactor + overallFogFactor));
 }
 
 //-----------------------------------------------------------------------------------------
