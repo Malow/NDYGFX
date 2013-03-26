@@ -336,6 +336,9 @@ void DxManager::HandleReloadShaders(int shader)
 		if(this->Shader_FogEnclosement)	
 			this->Shader_FogEnclosement->Reload();
 		break;
+	case 27:
+		if(this->Shader_BillboardInstanced)
+			this->Shader_BillboardInstanced->Reload();
 	}
 }
 
