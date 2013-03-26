@@ -373,6 +373,7 @@ void DxManager::CreateTerrain(Terrain* terrain)
 
 void DxManager::CreateStaticMesh(StaticMesh* mesh)
 {
+	string test = mesh->GetFilePath();
 	//Per Strip data
 	MaloW::Array<MeshStrip*>* strips = mesh->GetStrips();
 	if(strips->size() > 0)
@@ -395,7 +396,7 @@ void DxManager::CreateStaticMesh(StaticMesh* mesh)
 				bufferDesc.Type = VERTEX_BUFFER;
 				bufferDesc.Usage = BUFFER_DEFAULT;
 	
-				string resourceNameVertices = mesh->GetFilePath() + string("Strip") + MaloW::convertNrToString(i) + string("Vertices");
+				string resourceNameVertices = mesh->GetFilePath() + string("strip") + MaloW::convertNrToString(i) + string("vertices");
 				BufferResource* verts = GetResourceManager()->CreateBufferResource(resourceNameVertices.c_str(), bufferDesc);
 
 				BufferResource* inds = NULL; 
@@ -409,7 +410,7 @@ void DxManager::CreateStaticMesh(StaticMesh* mesh)
 					bufferInds.Usage = BUFFER_DEFAULT;
 	
 
-					string resourceNameIndices = mesh->GetFilePath() + string("Strip") + MaloW::convertNrToString(i) + string("Indices");
+					string resourceNameIndices = mesh->GetFilePath() + string("strip") + MaloW::convertNrToString(i) + string("indices");
 					inds = GetResourceManager()->CreateBufferResource(resourceNameIndices.c_str(), bufferInds);
 				}
 
@@ -477,7 +478,7 @@ void DxManager::CreateAnimatedMesh(AnimatedMesh* mesh)
 				bufferDesc.Type = VERTEX_BUFFER;
 				bufferDesc.Usage = BUFFER_DEFAULT;
 			
-				string resourceNameVertices = mesh->GetFilePath() + string("Keyframe") + MaloW::convertNrToString(j) + string("Strip") + MaloW::convertNrToString(i) + string("Vertices");
+				string resourceNameVertices = mesh->GetFilePath() + string("keyframe") + MaloW::convertNrToString(j) + string("strip") + MaloW::convertNrToString(i) + string("vertices");
 				BufferResource* verts = GetResourceManager()->CreateBufferResource(resourceNameVertices.c_str(), bufferDesc);
 
 				BufferResource* inds = NULL;
@@ -490,7 +491,7 @@ void DxManager::CreateAnimatedMesh(AnimatedMesh* mesh)
 					bufferInds.Type = INDEX_BUFFER;
 					bufferInds.Usage = BUFFER_DEFAULT;
 				
-					string resourceNameIndices = mesh->GetFilePath() + string("Keyframe") + MaloW::convertNrToString(j) + string("Strip") + MaloW::convertNrToString(i) + string("Indices");
+					string resourceNameIndices = mesh->GetFilePath() + string("keyframe") + MaloW::convertNrToString(j) + string("strip") + MaloW::convertNrToString(i) + string("indices");
 
 					inds = GetResourceManager()->CreateBufferResource(resourceNameIndices.c_str(), bufferInds);
 				}

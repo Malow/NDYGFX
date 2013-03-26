@@ -85,9 +85,6 @@
     <ClInclude Include="Source\Buffer.h">
       <Filter>Source Files\Engine\Other</Filter>
     </ClInclude>
-    <ClInclude Include="Source\CamRecording.h">
-      <Filter>Source Files\Engine\Other</Filter>
-    </ClInclude>
     <ClInclude Include="Source\CascadedShadowMap.h">
       <Filter>Source Files\Engine\DxMan and Techs</Filter>
     </ClInclude>
@@ -304,9 +301,6 @@
     <ClCompile Include="Source\Buffer.cpp">
       <Filter>Source Files\Engine\Other</Filter>
     </ClCompile>
-    <ClCompile Include="Source\CamRecording.cpp">
-      <Filter>Source Files\Engine\Other</Filter>
-    </ClCompile>
     <ClCompile Include="Source\CascadedShadowMap.cpp">
       <Filter>Source Files\Engine\DxMan and Techs</Filter>
     </ClCompile>
@@ -369,9 +363,6 @@
     </ClCompile>
     <ClCompile Include="Source\Shader.cpp">
       <Filter>Source Files\Engine\DxMan and Techs</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\TCBSpline.cpp">
-      <Filter>Source Files\Engine\Other</Filter>
     </ClCompile>
     <ClCompile Include="Source\ParticleShader.cpp">
       <Filter>Source Files\Engine\Other\ParticleSystem</Filter>
