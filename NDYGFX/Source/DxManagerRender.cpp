@@ -128,6 +128,12 @@ void DxManager::Life()
 					this->ResizeRenderer((ResizeEvent*)ev);
 				}
 
+				// SkyboxEvent
+				else if(dynamic_cast<SkyBoxEvent*>(ev) != NULL)
+				{
+					this->HandleSkyBoxEvent((SkyBoxEvent*)ev);
+				}
+
 				//ChangeShadowQualityEvent
 				else if(ChangeShadowQualityEvent* csqe = dynamic_cast<ChangeShadowQualityEvent*>(ev))
 				{

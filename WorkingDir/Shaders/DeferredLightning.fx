@@ -429,6 +429,9 @@ float4 PSScene(PSIn input) : SV_Target
 	
 	float diffuseLighting = 0.0f;
 	float specLighting = 0.0f;
+
+	float3 diffLightColor = float3(0, 0, 0);
+	float3 specLightColor = float3(0, 0, 0);
 	
 	for(int i = 0; i < gNrOfLights; i++)
 	{
@@ -456,10 +459,6 @@ float4 PSScene(PSIn input) : SV_Target
 		float depth = posLight.z / posLight.w;
 
 		float SHADOW_EPSILON = 0.00001f;			////////////// PUT THIS WHERE?
-
-
-		//float PCF_SIZE = 3.0f;								////// Not able to move this to cbuffer, why?
-
 
 		// PCF
 		float shadow = 0.0f;
@@ -496,12 +495,21 @@ float4 PSScene(PSIn input) : SV_Target
 		
 		diffuseLighting += difflight;
 		specLighting += speclight;
+
+		specLightColor += speclight * gLights[i].LightColor.xyz;
+		diffLightColor += difflight * gLights[i].LightColor.xyz;
 	}
 	
 	if(gNrOfLights > 0)
 	{
 		diffuseLighting = saturate(diffuseLighting / gNrOfLights);
 		specLighting = saturate(specLighting / gNrOfLights);
+
+		specLightColor = saturate(specLightColor / gNrOfLights);
+		diffLightColor = saturate(diffLightColor / gNrOfLights);
+
+		DiffuseColor.xyz += diffLightColor;
+		SpecularColor.xyz += diffLightColor;
 	}
 	
 	

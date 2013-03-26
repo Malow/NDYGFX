@@ -79,7 +79,7 @@ extern "C"
 
 		virtual iGraphicsEngineParams& GetEngineParameters() = 0;
 
-		virtual void CreateSkyBox(const char* texture) = 0;
+		virtual void ChangeSkyBox(const char* texture) = 0;
 
 		virtual void UseShadow(bool useShadow) = 0;
 

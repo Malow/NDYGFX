@@ -76,7 +76,7 @@ int __stdcall wWinMain( HINSTANCE hInstance, HINSTANCE, LPWSTR, int )
 	MaloW::Debug("(DEBUG): ModelViewer: vld.h included.");
 #endif
 #endif
-	GetGraphics()->CreateSkyBox("Media/skymap.dds"); 
+	GetGraphics()->ChangeSkyBox("Media/skymap.dds"); 
 	GetGraphics()->GetCamera()->SetPosition(Vector3(25, 25, 20));
 	GetGraphics()->GetCamera()->LookAt(Vector3(0, 0, 0));
 

@@ -352,3 +352,14 @@ void DxManager::HandleSetCameraEvent(SetCameraEvent* ev)
 	oldCam = NULL;
 	this->DelayGettingCamera = false;
 }
+
+void DxManager::HandleSkyBoxEvent(SkyBoxEvent* sbe)
+{
+	if(sbe->IsAdding())
+	{
+		if(this->skybox)
+			delete this->skybox;
+
+		this->skybox = sbe->GetSkyBox();
+	}
+}
