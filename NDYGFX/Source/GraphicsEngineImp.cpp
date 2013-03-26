@@ -424,11 +424,14 @@ StaticMesh* GraphicsEngineImp::CreateStaticMesh(string filename, D3DXVECTOR3 pos
 
 
 		MaloW::Array<MeshStrip*>* strips = mesh->GetStrips();
-		for(int i = 0; i < strips->size(); i++)
+		for(unsigned int i = 0; i < strips->size(); i++)
 		{
 			strips->get(i)->SetMaterial(material);
+			
 			if(i+1 < strips->size())
+			{
 				material = new Material(material);
+			}
 		}
 	}
 	else
@@ -687,7 +690,7 @@ void GraphicsEngineImp::Life()
 					if(Material* material = LME->GetMaterial())
 					{
 						MaloW::Array<MeshStrip*>* strips = mesh->GetStrips();
-						for(int i = 0; i < strips->size(); i++)
+						for(unsigned int i = 0; i < strips->size(); i++)
 						{
 							strips->get(i)->SetMaterial(material);
 							if(i+1 < strips->size())

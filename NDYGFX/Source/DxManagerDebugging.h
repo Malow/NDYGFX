@@ -20,7 +20,7 @@ inline void DrawNormals(MaloW::Array<StaticMesh*>* meshes, ID3D11Device* g_Devic
 	//Matrixes
 	D3DXMATRIX world, wvp;
 	//clear render target
-	for(int i = 0; i < meshes->size(); i++)
+	for(unsigned int i = 0; i < meshes->size(); i++)
 	{
 		MaloW::Array<MeshStrip*>* strips = meshes->get(i)->GetStrips();
 
@@ -31,7 +31,7 @@ inline void DrawNormals(MaloW::Array<StaticMesh*>* meshes, ID3D11Device* g_Devic
 		shadnorm->SetMatrix("WVP", wvp);
 		shadnorm->SetMatrix("worldMatrix", world);
 
-		for(int u = 0; u < strips->size(); u++)
+		for(unsigned int u = 0; u < strips->size(); u++)
 		{
 			Object3D* obj = strips->get(u)->GetRenderObject();
 			g_DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
@@ -75,7 +75,7 @@ inline void DrawNormals(MaloW::Array<Terrain*>* terrains, ID3D11Device* g_Device
 	//Matrixes
 	D3DXMATRIX world, wvp;
 	//clear render target
-	for(int i = 0; i < terrains->size(); i++)
+	for(unsigned int i = 0; i < terrains->size(); i++)
 	{
 		// Set matrixes
 		world = terrains->get(i)->GetWorldMatrix();
@@ -125,7 +125,7 @@ inline void DrawWireFrame(MaloW::Array<StaticMesh*>* meshes, ID3D11Device* g_Dev
 	//Matrixes
 	D3DXMATRIX world, wvp;
 	//clear render target
-	for(int i = 0; i < meshes->size(); i++)
+	for(unsigned int i = 0; i < meshes->size(); i++)
 	{
 		MaloW::Array<MeshStrip*>* strips = meshes->get(i)->GetStrips();
 
@@ -136,7 +136,7 @@ inline void DrawWireFrame(MaloW::Array<StaticMesh*>* meshes, ID3D11Device* g_Dev
 		ShadeWF->SetMatrix("WVP", wvp);
 		ShadeWF->SetMatrix("worldMatrix", world);
 
-		for(int u = 0; u < strips->size(); u++)
+		for(unsigned int u = 0; u < strips->size(); u++)
 		{
 			Object3D* obj = strips->get(u)->GetRenderObject();
 			g_DeviceContext->IASetPrimitiveTopology(obj->GetTopology());
@@ -181,7 +181,7 @@ inline void DrawWireFrame(MaloW::Array<Terrain*>* terrains, ID3D11Device* g_Devi
 	//Matrixes
 	D3DXMATRIX world, wvp;
 	//clear render target
-	for(int i = 0; i < terrains->size(); i++)
+	for(unsigned int i = 0; i < terrains->size(); i++)
 	{
 
 		// Set matrixes
@@ -297,7 +297,7 @@ inline void DrawBoundingSpheres(MaloW::Array<StaticMesh*>* meshes, ID3D11Device*
 	//Matrixes
 	D3DXMATRIX world, wvp;
 	//clear render target
-	for(int i = 0; i < meshes->size(); i++)
+	for(unsigned int i = 0; i < meshes->size(); i++)
 	{
 		MaloW::Array<MeshStrip*>* strips = meshes->get(i)->GetStrips();
 
@@ -313,7 +313,7 @@ inline void DrawBoundingSpheres(MaloW::Array<StaticMesh*>* meshes, ID3D11Device*
 		shadnorm->SetFloat("width", (float)p.WindowWidth);
 		shadnorm->SetFloat("height", (float)p.WindowHeight);
 
-		for(int u = 0; u < strips->size(); u++)
+		for(unsigned int u = 0; u < strips->size(); u++)
 		{
 			shadnorm->SetFloat("SphereRadius", strips->get(u)->GetBoundingSphere().radius * 
 				max(meshes->get(i)->GetScaling().x, max(meshes->get(i)->GetScaling().y, meshes->get(i)->GetScaling().z)));

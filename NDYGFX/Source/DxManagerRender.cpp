@@ -641,7 +641,7 @@ void DxManager::RenderCascadedShadowMap()
 
 		D3DXMATRIX wvp;
 		
-		for (int l = 0; l < this->csm->GetNrOfCascadeLevels(); l++)
+		for (unsigned int l = 0; l < this->csm->GetNrOfCascadeLevels(); l++)
 		{
 			this->Dx_DeviceContext->OMSetRenderTargets(0, 0, this->csm->GetShadowMapDSV(l));
 			this->Dx_DeviceContext->RSSetViewports(1, &this->csm->GetShadowMapViewPort(l));
@@ -892,7 +892,7 @@ void DxManager::RenderCascadedShadowMapInstanced()
 			this->Shader_ShadowMapBillboardInstanced->SetFloat3("gSunDir", this->sun.direction);
 
 			//Per cascade:
-			for(int i = 0; i < this->csm->GetNrOfCascadeLevels(); ++i)
+			for(unsigned int i = 0; i < this->csm->GetNrOfCascadeLevels(); ++i)
 			{
 				//Set render targets & view ports - TILLE TILLMAN TODO: sätta ihop med terräng för färre API CALLS
 				this->Dx_DeviceContext->OMSetRenderTargets(0, 0, this->csm->GetShadowMapDSV(i));
@@ -951,7 +951,7 @@ void DxManager::RenderCascadedShadowMapInstanced()
 			bufferPointers[1] = this->instancingHelper->GetStripInstanceBuffer();	
 			
 			//Per cascade: 
-			for(int i = 0; i < this->csm->GetNrOfCascadeLevels(); ++i)
+			for(unsigned int i = 0; i < this->csm->GetNrOfCascadeLevels(); ++i)
 			{
 				//Set depth stencils and view ports.
 				this->Dx_DeviceContext->OMSetRenderTargets(0, 0, this->csm->GetShadowMapDSV(i));
@@ -1038,7 +1038,7 @@ void DxManager::RenderCascadedShadowMapInstanced()
 			bufferPointers[2] = this->instancingHelper->GetAnimatedStripInstanceBuffer();	
 			
 			//Per cascade:
-			for(int i = 0; i < this->csm->GetNrOfCascadeLevels(); ++i)
+			for(unsigned int i = 0; i < this->csm->GetNrOfCascadeLevels(); ++i)
 			{
 				//Set depth stencils and view ports.
 				this->Dx_DeviceContext->OMSetRenderTargets(0, 0, this->csm->GetShadowMapDSV(i));
@@ -1356,7 +1356,7 @@ void DxManager::CalculateCulling()
 				{
 					//See if the strip is inside the bounding boxes(cascades) or intersects.
 					bool notDone = true;
-					for(int k = 0; k < this->csm->GetNrOfCascadeLevels() && notDone; k++)
+					for(unsigned int k = 0; k < this->csm->GetNrOfCascadeLevels() && notDone; k++)
 					{
 						if(pe.FrustrumVsSphere(csm->GetCascadePlanes(k), strip->GetBoundingSphere(), staticMesh->GetWorldMatrix(), scale))
 						{
@@ -1394,7 +1394,7 @@ void DxManager::CalculateCulling()
 					{
 						//See if the strip is inside the bounding boxes(cascades) or intersects.
 						bool notDone = true;
-						for(int k = 0; k < this->csm->GetNrOfCascadeLevels() && notDone; k++)
+						for(unsigned int k = 0; k < this->csm->GetNrOfCascadeLevels() && notDone; k++)
 						{
 							if(pe.FrustrumVsSphere(csm->GetCascadePlanes(k), strip->GetBoundingSphere(), animatedMesh->GetWorldMatrix(), scale))
 							{
@@ -1433,7 +1433,7 @@ void DxManager::CalculateCulling()
 			{
 				//See if the Billboard is inside the bounding boxes(cascades) or intersects.
 				bool notDone = true;
-				for(int k = 0; k < this->csm->GetNrOfCascadeLevels() && notDone; k++)
+				for(unsigned int k = 0; k < this->csm->GetNrOfCascadeLevels() && notDone; k++)
 				{
 					if(pe.FrustrumVsSphere(csm->GetCascadePlanes(k), boundingSphere, world, scale))
 					{
@@ -1466,7 +1466,7 @@ void DxManager::CalculateCulling()
 			{
 				//See if the Billboard is inside the bounding boxes(cascades) or intersects.
 				bool notDone = true;
-				for(int k = 0; k < this->csm->GetNrOfCascadeLevels() && notDone; k++)
+				for(unsigned int k = 0; k < this->csm->GetNrOfCascadeLevels() && notDone; k++)
 				{
 					if(pe.FrustrumVsSphere(csm->GetCascadePlanes(k), BoundingSphere(bbColl->GetMinPos(), bbColl->GetMaxPos()), world, scale))
 					{
