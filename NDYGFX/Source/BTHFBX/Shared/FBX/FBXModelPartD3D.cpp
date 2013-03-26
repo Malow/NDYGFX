@@ -44,25 +44,31 @@ void FBXModelPartD3D::Init( FBXModelD3D* parentModel, IBTHFbxModelPart* modelPar
 void FBXModelPartD3D::Render(float dt, Shader* shader, bool enableAnimation, ID3D11DeviceContext* devCont)
 {
 	// Diffuse Texture
-	if ( mDiffuseTexture )
+	try
 	{
-		shader->SetResource("txDiffuse", mDiffuseTexture->GetResource());
-	}
-	else if ( mModelData && mModelData->mDiffuseTexture )
-	{
-		shader->SetResource("txDiffuse", mModelData->mDiffuseTexture? mModelData->mDiffuseTexture->GetResource() : NULL);
-	}
+		if ( mDiffuseTexture )
+		{
+			shader->SetResource("txDiffuse", mDiffuseTexture->GetResource());
+		}
+		else if ( mModelData && mModelData->mDiffuseTexture )
+		{
+			shader->SetResource("txDiffuse", mModelData->mDiffuseTexture? mModelData->mDiffuseTexture->GetResource() : NULL);
+		}
 
-	// Normal Texture
-	if ( mNormalTexture )
-	{
-		shader->SetResource("txNormal", mNormalTexture->GetResource());
+		// Normal Texture
+		if ( mNormalTexture )
+		{
+			shader->SetResource("txNormal", mNormalTexture->GetResource());
+		}
+		else if ( mModelData && mModelData->mNormalTexture )
+		{
+			shader->SetResource("txNormal", mModelData->mNormalTexture? mModelData->mNormalTexture->GetResource() : NULL);
+		}
 	}
-	else if ( mModelData && mModelData->mNormalTexture )
+	catch (...)
 	{
-		shader->SetResource("txNormal", mModelData->mNormalTexture? mModelData->mNormalTexture->GetResource() : NULL);
+		//device and context of texture can somtimes be deleted.
 	}
-
 	// Skinning Property
 	shader->SetBool("g_bSkinning", enableAnimation ? m_bSkinnedModel : false);
 	
