@@ -59,7 +59,7 @@ void TestRealisticScene::PreTest()
 	GetGraphics()->PreLoadResources(nrOfResources, resourceFileNames);
 	
 	LoadEntList("Entities.txt");
-	world = new World(this, "Media/Maps/Map_01_v87.map", true);
+	world = new World(this, "Media/Maps/Map_01_v93.map", true);
 	GetGraphics()->GetCamera()->SetPosition(Vector3(world->GetWorldCenter().x, 20.0f, world->GetWorldCenter().y));
 	path = 0;
 
