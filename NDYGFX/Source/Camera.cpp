@@ -163,6 +163,10 @@ void Camera::MoveFollowingMesh()
 		this->followTarget->ResetRotation();
 		this->followTarget->RotateAxis(around, angle);
 	}
+	else
+	{
+		this->useFBXPosition = false;
+	}
 }
 
 void Camera::Update(float delta)
@@ -336,5 +340,12 @@ D3DXMATRIX& Camera::GetViewProjMatrix()
 D3DXVECTOR3 Camera::GetOldPos() const
 {
 	return this->oldpos;
+}
+
+void Camera::RemoveMesh()
+{
+	this->followTarget = NULL;
+	this->useFBXPosition = false;
+	this->FBXPosition = D3DXVECTOR3(0, 0, 0);
 }
 

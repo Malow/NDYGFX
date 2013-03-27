@@ -93,7 +93,7 @@ public:
 	virtual void StopWalkingOnTerrain() { this->terrain = NULL; }
 	virtual void SetMesh(iMesh* target, Vector3 distanceFromCamera, Vector3 defaultMeshDirection = Vector3(0, 0, -1));
 	virtual void SetMesh(iMesh* target, const char* bone, Vector3 defaultMeshDirection = Vector3(0, 0, -1));
-	virtual void RemoveMesh() { this->followTarget = NULL; }
+	virtual void RemoveMesh();
 
 	virtual void SetActiveWindowDisabling(bool dis) { this->activeWindowDisabling = dis; }
 	virtual void SetUpdateCamera(bool update);
