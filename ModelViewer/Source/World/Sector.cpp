@@ -56,8 +56,8 @@ float Sector::GetHeightAt( float x, float y ) const throw(...)
 		throw("Out Of Bounds!");
 
 	// Find pixel
-	float snapX = floor(x * SECTOR_HEIGHT_SIZE) / SECTOR_HEIGHT_SIZE;
-	float snapY = floor(y * SECTOR_HEIGHT_SIZE) / SECTOR_HEIGHT_SIZE;
+	float snapX = floorf(x * SECTOR_HEIGHT_SIZE) / SECTOR_HEIGHT_SIZE;
+	float snapY = floorf(y * SECTOR_HEIGHT_SIZE) / SECTOR_HEIGHT_SIZE;
 
 	unsigned int scaledX = (unsigned int)(snapX * SECTOR_HEIGHT_SIZE);
 	unsigned int scaledY = (unsigned int)(snapY * SECTOR_HEIGHT_SIZE);
@@ -72,8 +72,8 @@ void Sector::SetHeightAt( float x, float y, float val ) throw(...)
 		throw("Out Of Bounds!");
 
 	// Find pixel
-	float snapX = floor(x * SECTOR_HEIGHT_SIZE) / SECTOR_HEIGHT_SIZE;
-	float snapY = floor(y * SECTOR_HEIGHT_SIZE) / SECTOR_HEIGHT_SIZE;
+	float snapX = floorf(x * SECTOR_HEIGHT_SIZE) / SECTOR_HEIGHT_SIZE;
+	float snapY = floorf(y * SECTOR_HEIGHT_SIZE) / SECTOR_HEIGHT_SIZE;
 
 	unsigned int scaledX = (unsigned int)(snapX * SECTOR_HEIGHT_SIZE);
 	unsigned int scaledY = (unsigned int)(snapY * SECTOR_HEIGHT_SIZE);
@@ -90,8 +90,8 @@ void Sector::ModifyBlendingAt( const Vector2& pos, const BlendValues& val )
 		throw("Out Of Bounds!");
 
 	// Find pixel
-	float snapX = floor(pos.x * (float)SECTOR_BLEND_SIZE) / (float)SECTOR_BLEND_SIZE;
-	float snapY = floor(pos.y * (float)SECTOR_BLEND_SIZE) / (float)SECTOR_BLEND_SIZE;
+	float snapX = floorf(pos.x * (float)SECTOR_BLEND_SIZE) / (float)SECTOR_BLEND_SIZE;
+	float snapY = floorf(pos.y * (float)SECTOR_BLEND_SIZE) / (float)SECTOR_BLEND_SIZE;
 
 	unsigned int scaledX = (unsigned int)(snapX * (float)(SECTOR_BLEND_SIZE));
 	unsigned int scaledY = (unsigned int)(snapY * (float)(SECTOR_BLEND_SIZE));
@@ -128,8 +128,8 @@ void Sector::SetBlendingAt( const Vector2& pos, const BlendValues& val )
 		throw("Out Of Bounds!");
 
 	// Find pixel
-	float snapX = floor(pos.x * (float)SECTOR_BLEND_SIZE) / (float)SECTOR_BLEND_SIZE;
-	float snapY = floor(pos.y * (float)SECTOR_BLEND_SIZE) / (float)SECTOR_BLEND_SIZE;
+	float snapX = floorf(pos.x * (float)SECTOR_BLEND_SIZE) / (float)SECTOR_BLEND_SIZE;
+	float snapY = floorf(pos.y * (float)SECTOR_BLEND_SIZE) / (float)SECTOR_BLEND_SIZE;
 
 	unsigned int scaledX = (unsigned int)(snapX * (float)(SECTOR_BLEND_SIZE));
 	unsigned int scaledY = (unsigned int)(snapY * (float)(SECTOR_BLEND_SIZE));
@@ -153,8 +153,8 @@ BlendValues Sector::GetBlendingAt( const Vector2& pos ) const
 		throw("Out Of Bounds!");
 
 	// Find pixel
-	float snapX = floor(pos.x * (float)SECTOR_BLEND_SIZE) / (float)SECTOR_BLEND_SIZE;
-	float snapY = floor(pos.y * (float)SECTOR_BLEND_SIZE) / (float)SECTOR_BLEND_SIZE;
+	float snapX = floorf(pos.x * (float)SECTOR_BLEND_SIZE) / (float)SECTOR_BLEND_SIZE;
+	float snapY = floorf(pos.y * (float)SECTOR_BLEND_SIZE) / (float)SECTOR_BLEND_SIZE;
 
 	unsigned int scaledX = (unsigned int)(snapX * (float)(SECTOR_BLEND_SIZE));
 	unsigned int scaledY = (unsigned int)(snapY * (float)(SECTOR_BLEND_SIZE));
@@ -228,8 +228,8 @@ void Sector::SetBlocking( const Vector2& pos, bool flag )
 		throw("Out Of Bounds!");
 
 	// Find pixel
-	float snapX = floor(pos.x * (float)SECTOR_AI_GRID_SIZE) / (float)SECTOR_AI_GRID_SIZE;
-	float snapY = floor(pos.y * (float)SECTOR_AI_GRID_SIZE) / (float)SECTOR_AI_GRID_SIZE;
+	float snapX = floorf(pos.x * (float)SECTOR_AI_GRID_SIZE) / (float)SECTOR_AI_GRID_SIZE;
+	float snapY = floorf(pos.y * (float)SECTOR_AI_GRID_SIZE) / (float)SECTOR_AI_GRID_SIZE;
 
 	unsigned int scaledX = (unsigned int)(snapX * (float)(SECTOR_AI_GRID_SIZE));
 	unsigned int scaledY = (unsigned int)(snapY * (float)(SECTOR_AI_GRID_SIZE));
@@ -247,8 +247,8 @@ bool Sector::GetBlocking( const Vector2& pos ) const
 		throw("Out Of Bounds!");
 
 	// Find pixel
-	float snapX = floor(pos.x * (float)SECTOR_AI_GRID_SIZE) / (float)SECTOR_AI_GRID_SIZE;
-	float snapY = floor(pos.y * (float)SECTOR_AI_GRID_SIZE) / (float)SECTOR_AI_GRID_SIZE;
+	float snapX = floorf(pos.x * (float)SECTOR_AI_GRID_SIZE) / (float)SECTOR_AI_GRID_SIZE;
+	float snapY = floorf(pos.y * (float)SECTOR_AI_GRID_SIZE) / (float)SECTOR_AI_GRID_SIZE;
 
 	unsigned int scaledX = (unsigned int)(snapX * (float)(SECTOR_AI_GRID_SIZE));
 	unsigned int scaledY = (unsigned int)(snapY * (float)(SECTOR_AI_GRID_SIZE));
@@ -263,8 +263,8 @@ void Sector::SetNormalAt( const Vector2& pos, const Vector3& val )
 		throw("Out Of Bounds!");
 
 	// Find pixel
-	float snapX = floor(pos.x * FSECTOR_NORMALS_SIZE) / FSECTOR_NORMALS_SIZE;
-	float snapY = floor(pos.y * FSECTOR_NORMALS_SIZE) / FSECTOR_NORMALS_SIZE;
+	float snapX = floorf(pos.x * FSECTOR_NORMALS_SIZE) / FSECTOR_NORMALS_SIZE;
+	float snapY = floorf(pos.y * FSECTOR_NORMALS_SIZE) / FSECTOR_NORMALS_SIZE;
 
 	unsigned int scaledX = (unsigned int)(snapX * FSECTOR_NORMALS_SIZE);
 	unsigned int scaledY = (unsigned int)(snapY * FSECTOR_NORMALS_SIZE);

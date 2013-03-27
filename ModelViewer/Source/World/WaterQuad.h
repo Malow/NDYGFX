@@ -30,6 +30,8 @@ public:
 	void SetPosition( unsigned int i, const Vector3& pos );
 	const Vector3& GetPosition( unsigned int i ) const;
 	Vector3 CalcCenter() const;
+	Vector3 CalcNormal() const;
+	float CalcRadius() const;
 
 	friend World;
 };

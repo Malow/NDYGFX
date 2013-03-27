@@ -58,3 +58,27 @@ Vector3 WaterQuad::CalcCenter() const
 
 	return Vector3(xMin+xMax, yMin+yMax, zMin+zMax) / 2.0f;
 }
+
+Vector3 WaterQuad::CalcNormal() const
+{
+	Vector3 A = GetPosition(0) - GetPosition(2);
+	Vector3 B = GetPosition(1) - GetPosition(3);
+	return A.GetCrossProduct(B).Normalize();
+}
+
+float WaterQuad::CalcRadius() const
+{
+	Vector3 center = CalcCenter();
+	float highestDistance = 0.0f;
+
+	for( unsigned int x=0; x<4; ++x )
+	{
+		float curLength = (GetPosition(x) - center).GetLength();
+		if ( curLength > highestDistance )
+		{
+			highestDistance = curLength; 
+		}
+	}
+
+	return highestDistance;
+}

@@ -78,13 +78,14 @@ public:
 	unsigned int GetNumSectorsHeight() const;
 	Vector2 GetWorldCenter() const;
 	Vector2 GetWorldSize() const;
-	bool IsInside( const Vector2& worldPos );
+	bool IsInside( const Vector2& worldPos ) const;
 
 	// Water Quads
 	WaterQuad* CreateWaterQuad();
 	void DeleteWaterQuad( WaterQuad* quad );
 	inline const std::set<WaterQuad*>& GetWaterQuads() const { return zWaterQuads; }
 	float GetWaterDepthAt( const Vector2& worldPos );
+	float GetWaterSoundVolume( const Vector2& worldPos );
 
 	// Sun Settings
 	void SetSunProperties( const Vector3& dir, const Vector3& color, float intensity );
