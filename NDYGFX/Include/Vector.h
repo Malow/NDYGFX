@@ -427,6 +427,17 @@ public:
 		return Vector2(y,z);
 	}
 
+	inline void RotateAroundAxis(const Vector3& axis, float angle)
+	{
+		float tr = 1-(float)cos((double)angle);
+		float cosVal = (float)cos((double)angle);
+		float sinVal = (float)sin((double)angle);
+
+		this->x = ((tr * axis.x * axis.x) + cosVal) * this->x + ((tr * axis.x * axis.y) - (sinVal * axis.z)) * this->y + ((tr * axis.x * axis.z) + (sinVal * axis.y)) * this->z;
+		this->y = ((tr * axis.x * axis.y) + (sinVal * axis.z)) * this->x + ((tr * axis.y * axis.y) + cosVal) * this->y + ((tr * axis.y * axis.z) - (sinVal * axis.x)) * this->z;
+		this->z = ((tr * axis.x * axis.z) - (sinVal * axis.y)) * this->x + ((tr * axis.y * axis.z) + (sinVal * axis.x)) * this->y + ((tr * axis.z * axis.z) + cosVal) * this->z; 
+	}
+
 #ifdef D3DVECTOR_DEFINED
 	operator D3DXVECTOR3 () const { return D3DXVECTOR3(x,y,z); }
 #endif
