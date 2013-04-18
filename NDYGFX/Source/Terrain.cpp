@@ -394,7 +394,7 @@ float Terrain::GetYPositionAt(float x, float z) const
 	}
 	else
 	{
-		throw("out of bounds");
+		return 0.0f;
 	}
 }
 
