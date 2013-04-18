@@ -336,6 +336,9 @@ void DxManager::HandleReloadShaders(int shader)
 		if(this->Shader_FogEnclosement)	
 			this->Shader_FogEnclosement->Reload();
 		break;
+	case 27:
+		if(this->Shader_BillboardInstanced)
+			this->Shader_BillboardInstanced->Reload();
 	}
 }
 
@@ -348,4 +351,15 @@ void DxManager::HandleSetCameraEvent(SetCameraEvent* ev)
 	delete oldCam;
 	oldCam = NULL;
 	this->DelayGettingCamera = false;
+}
+
+void DxManager::HandleSkyBoxEvent(SkyBoxEvent* sbe)
+{
+	if(sbe->IsAdding())
+	{
+		if(this->skybox)
+			delete this->skybox;
+
+		this->skybox = sbe->GetSkyBox();
+	}
 }

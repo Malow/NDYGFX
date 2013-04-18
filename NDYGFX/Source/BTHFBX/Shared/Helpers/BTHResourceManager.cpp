@@ -62,11 +62,10 @@ void BTHResourceManager::FreeTexture( BTHTexture*& texture )
 			zRefCounters.erase(i);
 
 			delete texture;
+			texture = 0;
 		}
 	}
 	zMutex.unlock();
-	
-	texture = 0;
 }
 
 BTHTexture* BTHResourceManager::LoadTexture(const std::string& filename, ID3D11Device* dev, ID3D11DeviceContext* devCont)

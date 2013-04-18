@@ -1,26 +1,30 @@
 //Written by Markus Tillman.
 
 #include "TCBSpline.h"
-#include "MaloWFileDebug.h"
+// #include "MaloWFileDebug.h"
+#include "Vector.h"
+#include <fstream>
+#include <string>
+using namespace std;
 
 //private
 void TCBSpline::Expand()
 {
 	//control points
 	this->mControlCap += this->mControlCap;
-	D3DXVECTOR3** temp = new D3DXVECTOR3*[this->mControlCap];
+	Vector3** temp = new Vector3*[this->mControlCap];
 	for(int i = 0; i < this->mNrOfControlPoints; i++)
 	{
 		temp[i] = this->mControlPoints[i];
 	}
 	delete [] this->mControlPoints;
 	this->mControlPoints = temp;
-	temp = NULL;
+	temp = 0;
 }
 
 void TCBSpline::CalculateTangents(int i)
 {
-	D3DXVECTOR3 sv1, sv2, dv1, dv2, src, dst;
+	Vector3 sv1, sv2, dv1, dv2, src, dst;
 	float s1, s2;
 	float d1, d2;
 	
@@ -33,56 +37,56 @@ void TCBSpline::CalculateTangents(int i)
 	{
 		if(this->mEndsAreConnected)
 		{
-			sv1 = s1 * (*this->mControlPoints[0] - *this->mControlPoints[this->mNrOfControlPoints - 1]); 
-			dv1 = d1 * (*this->mControlPoints[0] - *this->mControlPoints[this->mNrOfControlPoints - 1]);
+			sv1 = (*this->mControlPoints[0] - *this->mControlPoints[this->mNrOfControlPoints - 1]) * s1; 
+			dv1 = (*this->mControlPoints[0] - *this->mControlPoints[this->mNrOfControlPoints - 1]) * d1;
 		}
 		else
 		{
-			sv1 = s1 * (*this->mControlPoints[0] - D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-			dv1 = d1 * (*this->mControlPoints[0] - D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+			sv1 = (*this->mControlPoints[0] - Vector3(0.0f, 0.0f, 0.0f)) * s1;
+			dv1 = (*this->mControlPoints[0] - Vector3(0.0f, 0.0f, 0.0f)) * d1;
 		}
 		//source-tangent
-		sv2 = s2 * (*this->mControlPoints[1] - *this->mControlPoints[0]);
+		sv2 = (*this->mControlPoints[1] - *this->mControlPoints[0]) * s2;
 		src = sv1 + sv2; 
-		this->mSource[0] = new D3DXVECTOR3(src);
+		this->mSource[0] = new Vector3(src);
 		//destination tangent
-		dv2 = d2 * (*this->mControlPoints[1] - *this->mControlPoints[0]);
+		dv2 = (*this->mControlPoints[1] - *this->mControlPoints[0]) * d2;
 		src = dv1 + dv2;
-		this->mDestination[0] = new D3DXVECTOR3(src);
+		this->mDestination[0] = new Vector3(src);
 	}
 	else if(i == (this->mNrOfControlPoints - 1)) //last control point
 	{
 		if(this->mEndsAreConnected)
 		{
-			sv2 = s2 * (*this->mControlPoints[0] - *this->mControlPoints[this->mNrOfControlPoints - 1]);
-			dv2 = d2 * (*this->mControlPoints[0] - *this->mControlPoints[this->mNrOfControlPoints - 1]);
+			sv2 = (*this->mControlPoints[0] - *this->mControlPoints[this->mNrOfControlPoints - 1]) * s2;
+			dv2 = (*this->mControlPoints[0] - *this->mControlPoints[this->mNrOfControlPoints - 1]) * d2;
 		}
 		else
 		{
-			sv2 = s2 * (D3DXVECTOR3(0.0f, 0.0f, 0.0f) - *this->mControlPoints[this->mNrOfControlPoints - 1]);
-			dv2 = d2 * (D3DXVECTOR3(0.0f, 0.0f, 0.0f) - *this->mControlPoints[this->mNrOfControlPoints - 1]);
+			sv2 = (Vector3(0.0f, 0.0f, 0.0f) - *this->mControlPoints[this->mNrOfControlPoints - 1]) * s2;
+			dv2 = (Vector3(0.0f, 0.0f, 0.0f) - *this->mControlPoints[this->mNrOfControlPoints - 1]) * d2;
 		}
 		//source-tangent
-		sv1 = s1 * (*this->mControlPoints[this->mNrOfControlPoints - 1] - *this->mControlPoints[this->mNrOfControlPoints - 2]);
+		sv1 = (*this->mControlPoints[this->mNrOfControlPoints - 1] - *this->mControlPoints[this->mNrOfControlPoints - 2]) * s1;
 		src = sv1 + sv2;
-		this->mSource[this->mNrOfControlPoints - 1] = new D3DXVECTOR3(src);
+		this->mSource[this->mNrOfControlPoints - 1] = new Vector3(src);
 		//destination-tangent
-		dv1 = d1 * (*this->mControlPoints[this->mNrOfControlPoints - 1] - *this->mControlPoints[this->mNrOfControlPoints - 2]);
+		dv1 = (*this->mControlPoints[this->mNrOfControlPoints - 1] - *this->mControlPoints[this->mNrOfControlPoints - 2]) * d1;
 		src = dv1 + dv2;
-		this->mDestination[this->mNrOfControlPoints - 1] = new D3DXVECTOR3(src);
+		this->mDestination[this->mNrOfControlPoints - 1] = new Vector3(src);
 	}
 	else //rest
 	{
 		//source(incoming) tangents
-		sv1 = s1 * (*this->mControlPoints[i] - *this->mControlPoints[i - 1]);
-		sv2 = s2 * (*this->mControlPoints[i + 1] - *this->mControlPoints[i]);
+		sv1 = (*this->mControlPoints[i] - *this->mControlPoints[i - 1]) * s1;
+		sv2 = (*this->mControlPoints[i + 1] - *this->mControlPoints[i]) * s2;
 		src = sv1 + sv2;
-		this->mSource[i] = new D3DXVECTOR3(src);
+		this->mSource[i] = new Vector3(src);
 		//destination(outgoing) tangents
-		dv1 = d1 * (*this->mControlPoints[i] - *this->mControlPoints[i - 1]);
-		dv2 = d2 * (*this->mControlPoints[i + 1] - *this->mControlPoints[i]);
+		dv1 = (*this->mControlPoints[i] - *this->mControlPoints[i - 1]) * d1;
+		dv2 = (*this->mControlPoints[i + 1] - *this->mControlPoints[i]) * d2;
 		dst = dv1 + dv2;
-		this->mDestination[i] = new D3DXVECTOR3(dst);
+		this->mDestination[i] = new Vector3(dst);
 	}
 }
 
@@ -96,9 +100,13 @@ TCBSpline::TCBSpline(bool connectEnds, float tension, float bias, float continui
 	this->mEndsAreConnected = connectEnds;
 	this->mNrOfControlPoints = 0;
 	this->mControlCap = 10;
-	this->mControlPoints = new D3DXVECTOR3*[this->mControlCap];
-	this->mSource = NULL;
-	this->mDestination = NULL;
+	this->mControlPoints = new Vector3*[this->mControlCap];
+	for(unsigned int i = 0; i < this->mControlCap; ++i)
+	{
+		this->mControlPoints[i] = 0;
+	}
+	this->mSource = 0;
+	this->mDestination = 0;
 }
 TCBSpline::~TCBSpline()
 {
@@ -106,8 +114,10 @@ TCBSpline::~TCBSpline()
 	for(int i = 0; i < this->mNrOfControlPoints; i++)
 	{
 		delete this->mControlPoints[i];
+		this->mControlPoints[i] = 0;
 	}
 	delete [] this->mControlPoints;
+	this->mControlPoints = NULL;
 	//source & destination tangents
 	if(this->mSource)
 	{
@@ -115,20 +125,29 @@ TCBSpline::~TCBSpline()
 		{	
 			delete this->mSource[i];
 			delete this->mDestination[i];
+			this->mSource[i] = 0;
+			this->mDestination[i] = 0;
 		}
 		delete [] this->mSource;
 		delete [] this->mDestination;
+		this->mSource =  0;
+		this->mDestination = 0;
+
+		this->mNrOfControlPoints = 0;
 	}
 }
 
-HRESULT TCBSpline::Init()
+bool TCBSpline::Init()
 {
-	HRESULT hr = S_OK;
-
 	if(this->mNrOfControlPoints > 1) //the number of control points has to be 2 or greater to create line(s)
 	{
-		this->mSource = new D3DXVECTOR3*[this->mNrOfControlPoints];
-		this->mDestination = new D3DXVECTOR3*[this->mNrOfControlPoints];
+		this->mSource = new Vector3*[this->mNrOfControlPoints];
+		this->mDestination = new Vector3*[this->mNrOfControlPoints];
+		for(unsigned int i = 0; i < this->mNrOfControlPoints; ++i)
+		{
+			this->mSource[i] = 0;
+			this->mDestination[i] = 0;
+		}
 
 		//calculate source & destination-tangents of the control points
 		for(int i = 0; i < this->mNrOfControlPoints; i++)
@@ -142,15 +161,15 @@ HRESULT TCBSpline::Init()
 		if(this->mNrOfControlPoints == 1)
 		{
 			delete this->mControlPoints[0];
-			this->mControlPoints[0] = NULL;
+			this->mControlPoints[0] = 0;
 			this->mNrOfControlPoints--;
 		}
-		MaloW::Debug("TCBSpline: Warning: Failed to initilize spline: Not enough control points");
+		//MaloW::Debug("TCBSpline: Warning: Failed to initilize spline: Not enough control points");
 
-		return E_FAIL;
+		return false;
 	}
 	
-	return hr;
+	return true;
 }
 
 //get
@@ -190,17 +209,17 @@ void TCBSpline::SetContinuity(float continuity)
 }
 
 //other
-void TCBSpline::AddControlPoint(D3DXVECTOR3 controlPoint)
+void TCBSpline::AddControlPoint(Vector3& controlPoint)
 {
 	if(this->mNrOfControlPoints == this->mControlCap)
 	{
 		TCBSpline::Expand();
 	}
-	this->mControlPoints[this->mNrOfControlPoints++] = new D3DXVECTOR3(controlPoint);
+	this->mControlPoints[this->mNrOfControlPoints++] = new Vector3(controlPoint);
 }
 
 
-D3DXVECTOR3 TCBSpline::GetPoint(float t) const
+Vector3 TCBSpline::GetPoint(float t) const
 {
 	if(t != 1.0f)
 	{
@@ -209,7 +228,7 @@ D3DXVECTOR3 TCBSpline::GetPoint(float t) const
 		int cpIndex = (int)tmp;
 		float localT = tmp - cpIndex;
 		float a0, a1, a2, a3;
-		D3DXVECTOR3 cp0, cp1, d0, d1, p;
+		Vector3 cp0, cp1, d0, d1, p;
 	
 		cp0 = *this->mControlPoints[cpIndex];	
 		cp1 = *this->mControlPoints[cpIndex + 1];	
@@ -221,10 +240,10 @@ D3DXVECTOR3 TCBSpline::GetPoint(float t) const
 		a2 = powf(localT, 3.0f) - powf(localT, 2.0f);
 		a3 = -2.0f * powf(localT, 3.0f) + 3.0f * powf(localT, 2.0f);
 
-		p = a0 * cp0 +
-			a1 * d0 +
-			a2 * d1 +
-			a3 * cp1;
+		p = cp0 * a0 +
+			d0  * a1 +
+			d1  * a2 +
+			cp1 * a3;
 
 		return p;
 	}
@@ -234,24 +253,26 @@ D3DXVECTOR3 TCBSpline::GetPoint(float t) const
 	}
 }
 
-D3DXVECTOR3** TCBSpline::CalculatePoints(int nrOfPoints)
+Vector3** TCBSpline::CalculatePoints(int nrOfPoints)
 {	
-	D3DXVECTOR3** temp = new D3DXVECTOR3*[nrOfPoints];
+	Vector3** temp = new Vector3*[nrOfPoints];
 
 	float t = 0.0f;
 	for(int i = 0; i < nrOfPoints; i++)
 	{
 		t = (float)i / float(nrOfPoints);
-		temp[i] = new D3DXVECTOR3(TCBSpline::GetPoint(t));
+		temp[i] = new Vector3(TCBSpline::GetPoint(t));
 	}
 
 	return temp;
 }
 
-void TCBSpline::WriteControlPointsToFile(std::string fileName)
+void TCBSpline::WriteControlPointsToFile(const char* fileName)
 {
+	string fileNameOpen = string(fileName);
+	fileNameOpen += ".txt";
 	std::ofstream out;
-	out.open(fileName, std::ios_base::out);
+	out.open(fileNameOpen, std::ios_base::out);
 
 	int index = 0;
 	char buffer[1000];
@@ -302,12 +323,24 @@ void TCBSpline::WriteControlPointsToFile(std::string fileName)
 }
 
 
-bool TCBSpline::ReadControlPointsFromFile(std::string fileName)
+bool TCBSpline::ReadControlPointsFromFile(const char* fileName)
 {
+	string fileNameOpen = string(fileName);
+	fileNameOpen += ".txt";
 	std::ifstream in;
-	in.open(fileName);
+	in.open(fileNameOpen);
+	//in.open(fileName);
 	if(in)
 	{
+		/*if(this->mControlPoints)
+		{
+			for(unsigned int i = 0; i < this->mNrOfControlPoints; ++i)
+			{
+				delete this->mControlPoints[i];
+			}
+			delete [] this->mControlPoints;
+		}*/
+
 		const int bufferSize = 512;
 		char buffer[bufferSize];
 
@@ -315,12 +348,13 @@ bool TCBSpline::ReadControlPointsFromFile(std::string fileName)
 		in.getline(buffer, bufferSize);
 		sscanf_s(buffer, "%d", &this->mNrOfControlPoints);
 		this->mControlCap = this->mNrOfControlPoints;
-		this->mControlPoints = new D3DXVECTOR3*[this->mNrOfControlPoints];
+		
+		this->mControlPoints = new Vector3*[this->mNrOfControlPoints];
 		//read values
 		for(int i = 0; i < this->mNrOfControlPoints; i++)
 		{
 			in.getline(buffer, bufferSize);
-			this->mControlPoints[i] = new D3DXVECTOR3();
+			this->mControlPoints[i] = new Vector3();
 			sscanf_s(buffer, "%f %f %f", &this->mControlPoints[i]->x, &this->mControlPoints[i]->y, &this->mControlPoints[i]->z);
 		}
 

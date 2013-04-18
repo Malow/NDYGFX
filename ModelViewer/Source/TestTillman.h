@@ -1,7 +1,8 @@
 #pragma once
 
 #include "Graphics.h"
-#include "..\Source\MaloWFileDebug.h"
+//#include "..\Source\MaloWFileDebug.h"
+#include "..\Source\CamRecording.h"
 
 class TillmanTest
 {
@@ -36,6 +37,7 @@ private:
 	float testSize;
 	iTerrain* createTerrainIndexBufferCraschText;
 
+	CamRecording camRec;
 
 public:
 	TillmanTest() {};
@@ -48,6 +50,8 @@ public:
 
 void TillmanTest::PreTest()
 {
+	this->camRec.Init(GetGraphics()->GetCamera());
+
 	//Preload testing
 	unsigned int nrOfResources = 5;
 	const char* resourceFileNames[5];
@@ -64,7 +68,7 @@ void TillmanTest::PreTest()
 	//resourceFileNames[8] = "skymap.dds";			//fail
 	//resourceFileNames[3] = "BallTexture.png";		//fail
 	GetGraphics()->PreLoadResources(nrOfResources, resourceFileNames);
-
+	
 
 	iM = GetGraphics()->CreateImage(Vector2(100, 100), Vector2(100, 100), "Media/BallTexture.png");
 	iM2 = GetGraphics()->CreateImage(Vector2(200, 200), Vector2(100, 100), "Media/BallTexture.png");
@@ -258,7 +262,7 @@ void TillmanTest::PreTest()
 	iT2->SetNormals(normals2);
 
 	int klerp = 3;
-	iTerrain** iTs = new iTerrain*[klerp*klerp];
+	/*iTerrain** iTs = new iTerrain*[klerp*klerp];
 	for(int i = 0; i < klerp; i++)
 	{
 		for(int j = 0; j < klerp; j++)
@@ -268,7 +272,7 @@ void TillmanTest::PreTest()
 			iTs[i * klerp + j]->SetBlendMaps(nrOfBlendMaps, sizes, testData);
 			//iTs[i * klerp + j]->SetTextureScale(10);
 		}
-	}
+	}*/
 
 	//iMesh* bush = GetGraphics()->CreateMesh("Media/Bush_01_v04_r.obj", Vector3(30, 10, 30));
 	//bush->Scale(1.0f * 0.05f);
@@ -450,9 +454,9 @@ void TillmanTest::PreTest()
 		}
 	}*/
 	//BILLBOARD && DONTRENDER & INVISIBILITY
-	iMesh* temp = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(0, 0, 0));
-	temp->SetScale(0.05f);
-	temp->UseInvisibilityEffect(true);
+	//iMesh* temp = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(0, 0, 0));
+	//temp->SetScale(0.05f);
+	//temp->UseInvisibilityEffect(true);
 	//temp->DontRender(true);
 
 	//iMesh* treeWithBillboard = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(-10, 0, 0), "Media/TreeBillboard.png", 25.5f);
@@ -518,14 +522,14 @@ void TillmanTest::PreTest()
 		{
 			billboardFile = "Media/StoneItem_01_v01.png";
 		}
-		iMesh* treeWithBillboard = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(i * 5, 0, 47.5f), billboardFile.c_str(), 0.5f);
-		treeWithBillboard->SetScale((0.061f));
-		iMesh* fernWithBillboard = GetGraphics()->CreateMesh("Media/Fern_02.ani", Vector3(i * 5, 0, 42.5f), billboardFile.c_str(), 55.5f);
-		fernWithBillboard->SetScale((0.15f));
+		//iMesh* treeWithBillboard = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(i * 5, 0, 47.5f), billboardFile.c_str(), 0.5f);
+		//treeWithBillboard->SetScale((0.061f));
+		//iMesh* fernWithBillboard = GetGraphics()->CreateMesh("Media/Fern_02.ani", Vector3(i * 5, 0, 42.5f), billboardFile.c_str(), 55.5f);
+		//fernWithBillboard->SetScale((0.15f));
 
 		//Meshes
-		iMesh* treeWithWOBB = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(i * 5, 0, 55));
-		treeWithWOBB->SetScale((0.041f));
+		//iMesh* treeWithWOBB = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(i * 5, 0, 55));
+		//treeWithWOBB->SetScale((0.041f));
 	}
 	//iBBMemLeak = GetGraphics()->CreateBillboard(Vector3(0, 20, 0), Vector2(10, 10), "Media/TreeBillboard.png");
 
@@ -558,13 +562,13 @@ void TillmanTest::PreTest()
 		{
 			billboardFile = "Media/StoneItem_01_v01.png";
 		}
-		iMesh* treeWithBillboard = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(i * -5 -50, 0, 100.0f), billboardFile.c_str(), 0.5f);
-		treeWithBillboard->SetScale((0.061f));
-		iAnimatedMesh* fernWithBillboard = GetGraphics()->CreateAnimatedMesh("Media/Fern_02.ani", Vector3(i * -5 -50, 0, 0.0f));
-		fernWithBillboard->SetScale((0.15f));
-		fernWithBillboard->SetAnimationTime((float)(i * 1000));
-		iMesh* treeWithWOBB = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(i * -5 -50, 0, -100.0f));
-		treeWithWOBB->SetScale((0.041f));
+		//iMesh* treeWithBillboard = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(i * -5 -50, 0, 100.0f), billboardFile.c_str(), 0.5f);
+		//treeWithBillboard->SetScale((0.061f));
+		//iAnimatedMesh* fernWithBillboard = GetGraphics()->CreateAnimatedMesh("Media/Fern_02.ani", Vector3(i * -5 -50, 0, 0.0f));
+		//fernWithBillboard->SetScale((0.15f));
+		//fernWithBillboard->SetAnimationTime((float)(i * 1000));
+		//iMesh* treeWithWOBB = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(i * -5 -50, 0, -100.0f));
+		//treeWithWOBB->SetScale((0.041f));
 
 		//Animated instanciating _no_texture_is_gray_instead
 		iMesh* treeAnimated = GetGraphics()->CreateMesh("Media/Tree_02.ani", Vector3(i * -5 -50, 0, -150.0f));
@@ -578,6 +582,7 @@ void TillmanTest::PreTest()
 
 void TillmanTest::RunTest(float diff)
 {
+	this->camRec.Update(diff);
 		/*Vector3 spawnPoint = Vector3(0.0f, 0.0f, 0.0f);
 		Vector3 camPosOffset = GetGraphics()->GetCamera()->GetPosition();
 		Vector3 camForwardoffset = GetGraphics()->GetCamera()->GetForward() * 2.0f;
@@ -717,10 +722,12 @@ void TillmanTest::RunTest(float diff)
 	}*/
 	if(GetGraphics()->GetKeyListener()->IsPressed('R'))
 	{
-		GetGraphics()->ReloadShaders(11); //deferred lightning
+		this->camRec.Record(true);
+		//GetGraphics()->ReloadShaders(11); //deferred lightning
 	}
 	if(GetGraphics()->GetKeyListener()->IsPressed('E'))
 	{
+		this->camRec.Record(false);
 		//bool test = GetGraphics()->GetRenderGrassFlag();
 		//GetGraphics()->RenderGrass(true);
 		//test = GetGraphics()->GetRenderGrassFlag();
@@ -729,7 +736,7 @@ void TillmanTest::RunTest(float diff)
 		//GetGraphics()->ReloadShaders(10); //terrain
 		//GetGraphics()->ReloadShaders(11); //deferred lightning
 		//GetGraphics()->ReloadShaders(20); //shadow map billboard instanced
-		GetGraphics()->ReloadShaders(21); //shadowmap FBX
+		//GetGraphics()->ReloadShaders(21); //shadowmap FBX
 		//GetGraphics()->ReloadShaders(22); //deffered geometry instanced
 		//GetGraphics()->ReloadShaders(23); //deffered animated geometry instanced
 		//GetGraphics()->ReloadShaders(24); //static geometry shadow instanced
@@ -770,20 +777,33 @@ void TillmanTest::RunTest(float diff)
 	//Camera reset/teleport
 	if(GetGraphics()->GetKeyListener()->IsPressed('V'))
 	{
-		GetGraphics()->GetCamera()->SetPosition(cameraPoint);
-		GetGraphics()->GetCamera()->LookAt(cameraLookAt);
+		static bool oncea = false;
+		if(!oncea)
+		{
+			this->camRec.Save("Media/camPathCredits");
+			oncea = true;
+		}
+		//GetGraphics()->GetCamera()->SetPosition(cameraPoint);
+		//GetGraphics()->GetCamera()->LookAt(cameraLookAt);
 	}
 	//Camera reset/teleport
 	if(GetGraphics()->GetKeyListener()->IsPressed('B'))
 	{
-		GetGraphics()->GetCamera()->SetPosition(cameraPoint3);
-		GetGraphics()->GetCamera()->LookAt(cameraLookAt3);
+		static bool onceb = false;
+		if(!onceb)
+		{
+			this->camRec.Open("Media/camPathCredits");
+			onceb = true;
+		}
+		//GetGraphics()->GetCamera()->SetPosition(cameraPoint3);
+		//GetGraphics()->GetCamera()->LookAt(cameraLookAt3);
 	}
 	//Camera reset/teleport
 	if(GetGraphics()->GetKeyListener()->IsPressed('N'))
 	{
-		GetGraphics()->GetCamera()->SetPosition(cameraPoint4);
-		GetGraphics()->GetCamera()->LookAt(cameraLookAt3);
+		this->camRec.Play();
+		//GetGraphics()->GetCamera()->SetPosition(cameraPoint4);
+		//GetGraphics()->GetCamera()->LookAt(cameraLookAt3);
 	}
 
 	//Toggle shadow on/off

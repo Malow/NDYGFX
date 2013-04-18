@@ -73,6 +73,9 @@ void MaloWTest::PreTest()
 	iMesh* tree = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(30, 20, 30));
 	tree->Scale(0.05f);
 
+	iMesh* treet = GetGraphics()->CreateMesh("Media/Tree_02_v02_r.obj", Vector3(30, 20, 30));
+	treet->Scale(0.05f);
+
 	iMesh* tree2 = GetGraphics()->CreateMesh("Media/TreeTest2.obj", Vector3(32, 20, 30));
 	tree2->Scale(0.05f);
 

@@ -121,6 +121,7 @@ private:
 	bool useShadow;
 	CascadedShadowMap* csm;
 
+	D3DXVECTOR3 fogColor;
 	bool useEnclosingFog;
 	Vector3 fogCenter;
 	float fogRadius;
@@ -218,6 +219,7 @@ private:
 	void HandleFBXEvent(FBXEvent* fe);
 	void HandleReloadShaders(int shader);
 	void HandleDecalEvent(DecalEvent* de);
+	void HandleSkyBoxEvent(SkyBoxEvent* sbe);
 
 	void CalculateCulling();
 
@@ -302,6 +304,7 @@ public:
 	void ReloadShaders(int shader);
 
 	void SetEnclosingFog(Vector3 center, float radius, float fadeFactor);
+	void SetFogColor(Vector3 color) { this->fogColor = D3DXVECTOR3(color.x, color.y, color.z); }
 
 	void SetSunLightProperties(Vector3 direction, Vector3 lightColor, float intensity);
 	void SetSunLightDisabled();

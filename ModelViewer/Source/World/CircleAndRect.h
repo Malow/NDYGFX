@@ -79,8 +79,9 @@ inline bool DoesIntersect( const Rect& A, const Rect& B )
 
 inline bool DoesIntersect( const Rect& A, const Circle& B )
 {
-	float cornerRadius = Vector2(A.size.x/2.0f,A.size.y/2.0f).GetLength();
-	if ( !DoesIntersect( Circle(Vector2(A.topLeft.x+A.size.x/2.0f,A.topLeft.y+A.size.y/2.0f), cornerRadius), B) )
+	float cornerRadius = (A.size * 0.5f).GetLength();
+
+	if ( !DoesIntersect( Circle(A.topLeft + A.size * 0.5f, cornerRadius), B) )
 		return false;
 
 	if ( B.center.x + B.radius < A.topLeft.x ) return false;

@@ -100,8 +100,8 @@ cbuffer ef
 	float4 cascadeFarPlanes;
 	matrix cameraViewMatrix;
 
-
 	bool useShadow;
+	float3 fogColor;
 };
 
 struct DummyStruct //VS & GS input (unused)
@@ -424,19 +424,14 @@ float4 PSScene(PSIn input) : SV_Target
 
 	float4 AmbientLight = float4(gSceneAmbientLight, 1.0f);
 
-	float SpecularPower = 0.0f;
-	float4 SpecularColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
-
-	if(WorldPosAndObjectType.w != OBJECT_TYPE_TERRAIN) //Todo: exclude specular computations
-	{
-		float4 specularRT = Specular.Sample(linearSampler, input.tex);
-		SpecularPower = specularRT.w;
-		SpecularColor = float4(specularRT.xyz, 1.0f);
-	}
-		
+	float4 SpecularColor = Specular.Sample(linearSampler, input.tex);
+	float SpecularPower = SpecularColor.w;
 	
 	float diffuseLighting = 0.0f;
 	float specLighting = 0.0f;
+
+	float3 diffLightColor = float3(0, 0, 0);
+	float3 specLightColor = float3(0, 0, 0);
 	
 	for(int i = 0; i < gNrOfLights; i++)
 	{
@@ -464,10 +459,6 @@ float4 PSScene(PSIn input) : SV_Target
 		float depth = posLight.z / posLight.w;
 
 		float SHADOW_EPSILON = 0.00001f;			////////////// PUT THIS WHERE?
-
-
-		//float PCF_SIZE = 3.0f;								////// Not able to move this to cbuffer, why?
-
 
 		// PCF
 		float shadow = 0.0f;
@@ -504,12 +495,21 @@ float4 PSScene(PSIn input) : SV_Target
 		
 		diffuseLighting += difflight;
 		specLighting += speclight;
+
+		specLightColor += speclight * gLights[i].LightColor.xyz;
+		diffLightColor += difflight * gLights[i].LightColor.xyz;
 	}
 	
 	if(gNrOfLights > 0)
 	{
 		diffuseLighting = saturate(diffuseLighting / gNrOfLights);
 		specLighting = saturate(specLighting / gNrOfLights);
+
+		specLightColor = saturate(specLightColor / gNrOfLights);
+		diffLightColor = saturate(diffLightColor / gNrOfLights);
+
+		DiffuseColor.xyz += diffLightColor;
+		SpecularColor.xyz += diffLightColor;
 	}
 	
 	
@@ -638,7 +638,7 @@ float4 PSScene(PSIn input) : SV_Target
 			finalColor.xyz *= (5.0f / 6.0f);
 		}
 	}
-
+	
 
 		
 	//if(finalColor.a >= 0.00001f && finalColor.a <= 0.9999f)
@@ -654,11 +654,21 @@ float4 PSScene(PSIn input) : SV_Target
 	//Skip shadow "lighting" and specular
 	if(WorldPosAndObjectType.w == OBJECT_TYPE_BILLBOARD)
 	{	
-		finalColor = float4((float4(gSceneAmbientLight, 1.0f) * DiffuseColor) + (DiffuseColor * diffShadow), 1.0f);// = Texture.Sample(linearSampler, input.tex).xyz;	
+		/*
+		finalColor = float4((							
+		AmbientLight.xyz * DiffuseColor + 
+		DiffuseColor * diffuseLighting + 
+		SpecularColor.xyz * specLighting), 
+		1.0f);
+
+		if(gUseSun)
+			finalColor.xyz *= gSun.LightColor.xyz;
+			*/
+		//finalColor = float4((float4(gSceneAmbientLight, 1.0f) * DiffuseColor) + (DiffuseColor * diffShadow), 1.0f);// = Texture.Sample(linearSampler, input.tex).xyz;	
 	
 		//finalColor = float4(AmbientLight.xyz * DiffuseColor + DiffuseColor * diffuseLighting, 1.0f);// = Texture.Sample(linearSampler, input.tex).xyz;	
 	}
-
+	
 	///////////////////////////////////////////////////////////////////
 	//							Basic fog:							//
 	//////////////////////////////////////////////////////////////////
@@ -667,7 +677,7 @@ float4 PSScene(PSIn input) : SV_Target
 	if(fogDepth > 0.75f)
 	{
 		float fogfactor = (fogDepth - 0.75f) * 4.1f;	// Linear scale the last 25% of farclip, but a little more 
-		finalColor = lerp(finalColor, float4(0.45f, 0.45f, 0.45f, 1.0f), saturate(fogfactor));
+		finalColor = lerp(finalColor, float4(fogColor, 1.0f), saturate(fogfactor));
 	}
 		
 	

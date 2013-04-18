@@ -9,7 +9,7 @@ WorldRendererSettings::WorldRendererSettings(Observer* observer, const std::stri
 {
 	// Grass Default Values
 	zSettings["GrassDensity"] = 2500u;
-	zSettings["GrassNearDistance"] = 2.0f;
+	zSettings["GrassNearDistance"] = 1.0f;
 	zSettings["GrassFarDistance"] = 64.0f;
 	zSettings["GrassUpdateDistance"] = 1.0f;
 	zSettings["GrassWidthMin"] = 0.5f;

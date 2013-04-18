@@ -918,6 +918,8 @@ void DxManager::RenderDeferredSkybox()
 	this->Shader_Skybox->SetFloat("FogHeight", this->camera->GetOldPos().y + this->params.FarClip * 0.1f);
 	this->Shader_Skybox->SetFloat("CamY", this->camera->GetOldPos().y);
 
+	this->Shader_Skybox->SetFloat3("fogColor", this->fogColor);
+
 	//MeshStrip* strip = this->skybox->GetStrips()->get(0);
 	MeshStrip* strip = this->skybox->GetStrip();
 
@@ -1012,7 +1014,7 @@ void DxManager::RenderDeferredPerPixel()
 	this->Shader_DeferredLightning->SetFloat("gNrOfLights", (float)this->lights.size());
 	this->Shader_DeferredLightning->SetFloat3("gSceneAmbientLight", this->sceneAmbientLight);
 
-	
+	this->Shader_DeferredLightning->SetFloat3("fogColor", this->fogColor);
 	
 
 	//ssao.fx:
@@ -1436,7 +1438,7 @@ void DxManager::RenderDeferredPerPixelTranslucent()
 	this->Shader_DeferredPerPixelTranslucent->SetFloat("gNrOfLights", (float)this->lights.size()); 
 	this->Shader_DeferredPerPixelTranslucent->SetFloat3("gSceneAmbientLight", this->sceneAmbientLight);
 	
-	
+	this->Shader_DeferredPerPixelTranslucent->SetFloat3("fogColor", this->fogColor);
 
 
 

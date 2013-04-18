@@ -57,9 +57,9 @@ void TestRealisticScene::PreTest()
 	resourceFileNames[4] = "Media/MapModels/Tree_01.ani";	
 	resourceFileNames[5] = "Media/MapModels/Tree_01_01.obj";	
 	GetGraphics()->PreLoadResources(nrOfResources, resourceFileNames);
-
+	
 	LoadEntList("Entities.txt");
-	world = new World(this, "Media/Maps/Map_01_v87.map", true);
+	world = new World(this, "Media/Maps/Map_01_v93.map", true);
 	GetGraphics()->GetCamera()->SetPosition(Vector3(world->GetWorldCenter().x, 20.0f, world->GetWorldCenter().y));
 	path = 0;
 
@@ -282,16 +282,20 @@ bool TestRealisticScene::RunTest(float diff)
 			Vector3 asd = GetGraphics()->GetCamera()->GetForward();
 			int qweqwe = 0;
 
-
 			if(qual % 2 == 0)
 			{
-				
+				GetGraphics()->ChangeSkyBox("Media/skymap.dds"); 
+				GetGraphics()->SetFogColor(Vector3(0.45f, 0.45f, 0.45f));
 			}
 			else
 			{
-				
+				GetGraphics()->ChangeSkyBox("Media/StarMap.dds"); 
+				GetGraphics()->SetFogColor(Vector3(0.1f, 0.1f, 0.1f));
 			}
-			GetGraphics()->ReloadShaders(16);
+			
+			//GetGraphics()->ReloadShaders(11);
+			//GetGraphics()->ReloadShaders(27);
+			//GetGraphics()->ReloadShaders(16);
 			//GetGraphics()->ReloadShaders(19);
 			//MaloW::Debug("Diff: " + MaloW::convertNrToString(totDiff / nrofdiffs));
 			//GetGraphics()->ChangeShadowQuality(qual);

@@ -20,6 +20,7 @@ DxManager::DxManager(HWND g_hWnd, GraphicsEngineParams params, Camera* cam)
 	this->Shader_ForwardRendering = NULL;
 	this->Dx_SwapChain = NULL;
 	this->Dx_Device = NULL;
+	this->fogColor = D3DXVECTOR3(0.45f, 0.45f, 0.45f);
 
 	this->Shader_ShadowMapFBX = NULL;
 
@@ -373,6 +374,7 @@ void DxManager::CreateTerrain(Terrain* terrain)
 
 void DxManager::CreateStaticMesh(StaticMesh* mesh)
 {
+	string test = mesh->GetFilePath();
 	//Per Strip data
 	MaloW::Array<MeshStrip*>* strips = mesh->GetStrips();
 	if(strips->size() > 0)
@@ -395,7 +397,7 @@ void DxManager::CreateStaticMesh(StaticMesh* mesh)
 				bufferDesc.Type = VERTEX_BUFFER;
 				bufferDesc.Usage = BUFFER_DEFAULT;
 	
-				string resourceNameVertices = mesh->GetFilePath() + string("Strip") + MaloW::convertNrToString(i) + string("Vertices");
+				string resourceNameVertices = mesh->GetFilePath() + string("strip") + MaloW::convertNrToString(i) + string("vertices");
 				BufferResource* verts = GetResourceManager()->CreateBufferResource(resourceNameVertices.c_str(), bufferDesc);
 
 				BufferResource* inds = NULL; 
@@ -409,7 +411,7 @@ void DxManager::CreateStaticMesh(StaticMesh* mesh)
 					bufferInds.Usage = BUFFER_DEFAULT;
 	
 
-					string resourceNameIndices = mesh->GetFilePath() + string("Strip") + MaloW::convertNrToString(i) + string("Indices");
+					string resourceNameIndices = mesh->GetFilePath() + string("strip") + MaloW::convertNrToString(i) + string("indices");
 					inds = GetResourceManager()->CreateBufferResource(resourceNameIndices.c_str(), bufferInds);
 				}
 
@@ -477,7 +479,7 @@ void DxManager::CreateAnimatedMesh(AnimatedMesh* mesh)
 				bufferDesc.Type = VERTEX_BUFFER;
 				bufferDesc.Usage = BUFFER_DEFAULT;
 			
-				string resourceNameVertices = mesh->GetFilePath() + string("Keyframe") + MaloW::convertNrToString(j) + string("Strip") + MaloW::convertNrToString(i) + string("Vertices");
+				string resourceNameVertices = mesh->GetFilePath() + string("keyframe") + MaloW::convertNrToString(j) + string("strip") + MaloW::convertNrToString(i) + string("vertices");
 				BufferResource* verts = GetResourceManager()->CreateBufferResource(resourceNameVertices.c_str(), bufferDesc);
 
 				BufferResource* inds = NULL;
@@ -490,7 +492,7 @@ void DxManager::CreateAnimatedMesh(AnimatedMesh* mesh)
 					bufferInds.Type = INDEX_BUFFER;
 					bufferInds.Usage = BUFFER_DEFAULT;
 				
-					string resourceNameIndices = mesh->GetFilePath() + string("Keyframe") + MaloW::convertNrToString(j) + string("Strip") + MaloW::convertNrToString(i) + string("Indices");
+					string resourceNameIndices = mesh->GetFilePath() + string("keyframe") + MaloW::convertNrToString(j) + string("strip") + MaloW::convertNrToString(i) + string("indices");
 
 					inds = GetResourceManager()->CreateBufferResource(resourceNameIndices.c_str(), bufferInds);
 				}
@@ -742,9 +744,6 @@ void DxManager::CreateText(Text* text, string font)
 
 void DxManager::CreateSkyBox(string texture)
 {
-	if(this->skybox)
-		delete this->skybox;
-		
 	SkyBox* sb = new SkyBox(this->camera->GetOldPos(), 10, 10);
 	MeshStrip* strip = sb->GetStrip();
 
@@ -778,7 +777,8 @@ void DxManager::CreateSkyBox(string texture)
 	Object3D* ro = new Object3D(VertexBuffer, IndexBuffer, tex, NULL, sb->GetTopology());
 	strip->SetRenderObject(ro);
 
-	this->skybox = sb;
+	SkyBoxEvent* sbe = new SkyBoxEvent(true, sb);
+	this->PutEvent(sbe);
 }
 
 void DxManager::UseShadow(bool useShadow)

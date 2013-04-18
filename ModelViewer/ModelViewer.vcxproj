@@ -11,6 +11,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\NDYGFX\Source\CamRecording.cpp" />
+    <ClCompile Include="..\NDYGFX\Source\TCBSpline.cpp" />
     <ClCompile Include="Source\Graphics.cpp" />
     <ClCompile Include="Source\ModelViewer.cpp" />
     <ClCompile Include="Source\World\Entity.cpp" />
@@ -24,6 +26,8 @@
     <ClCompile Include="Source\World\WorldRendererSettings.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\NDYGFX\Source\CamRecording.h" />
+    <ClInclude Include="..\NDYGFX\Source\TCBSpline.h" />
     <ClInclude Include="Source\Graphics.h" />
     <ClInclude Include="Source\MaloW.h" />
     <ClInclude Include="Source\TestMaloW.h" />

@@ -345,4 +345,24 @@ public:
 };
 
 
+class SkyBoxEvent : public RendererEvent
+{
+private:
+	SkyBox* sb;
 
+public:
+	SkyBoxEvent(bool adding, SkyBox* sb) : RendererEvent(adding)
+	{
+		this->sb = sb; 
+	}
+	virtual ~SkyBoxEvent() 
+	{
+		if(this->deleteSelf && this->Adding)
+		{
+			if(this->sb)
+				delete this->sb;
+		}
+	}
+
+	SkyBox* GetSkyBox() { this->deleteSelf = false; return this->sb; }
+};

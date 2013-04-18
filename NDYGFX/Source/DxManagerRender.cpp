@@ -128,6 +128,12 @@ void DxManager::Life()
 					this->ResizeRenderer((ResizeEvent*)ev);
 				}
 
+				// SkyboxEvent
+				else if(dynamic_cast<SkyBoxEvent*>(ev) != NULL)
+				{
+					this->HandleSkyBoxEvent((SkyBoxEvent*)ev);
+				}
+
 				//ChangeShadowQualityEvent
 				else if(ChangeShadowQualityEvent* csqe = dynamic_cast<ChangeShadowQualityEvent*>(ev))
 				{
@@ -1518,6 +1524,7 @@ void DxManager::RenderEnclosingFog()
 		this->Shader_FogEnclosement->SetFloat("fogFadeFactor", this->fogFadeFactor);
 		this->Shader_FogEnclosement->SetFloat3("center", D3DXVECTOR3(this->fogCenter.x, this->fogCenter.y, this->fogCenter.z));
 		this->Shader_FogEnclosement->SetFloat("overallFogFactor", overallFogFactor);
+		this->Shader_FogEnclosement->SetFloat3("fogColor", this->fogColor);
 		this->Shader_FogEnclosement->Apply(0);
 
 		this->Dx_DeviceContext->Draw(1, 0);

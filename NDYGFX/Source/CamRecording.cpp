@@ -1,7 +1,11 @@
 //Written by Markus Tillman.
 
 #include "CamRecording.h"
-#include "MaloWFileDebug.h"
+
+#include "iCamera.h"
+#include "TCBSpline.h"
+#include <string>
+//#include "MaloWFileDebug.h"
 
 #define PI (3.14159265358979323846f)
 
@@ -15,11 +19,11 @@ void CamRecording::DeletePreviousRecording()
 //de/con-structors, init, other
 CamRecording::CamRecording(int interval, bool seamLessPath)
 {
-	this->gCamera = NULL;
+	this->gCamera = 0;
 
-	this->gDevice = NULL;
-	this->gDeviceContext = NULL;
-	this->gShader = NULL;
+	//this->gDevice = NULL;
+	//this->gDeviceContext = NULL;
+	//this->gShader = NULL;
 
 	this->mIsLoopingSeamless = false;
 	this->mIsRecording = false;
@@ -29,13 +33,13 @@ CamRecording::CamRecording(int interval, bool seamLessPath)
 	this->mPlayTime = 0.0f;
 	this->mCurrentPlayTime = 0.0f;
 	this->mPlaySpeed = 1.0f;
-	this->mPathOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	this->mPathOffset = Vector3(0.0f, 0.0f, 0.0f);
 	this->mCamPosSpline = new TCBSpline(seamLessPath);
 	this->mCamAtSpline = new TCBSpline(seamLessPath);
 	
 	this->mNrOfVertices = 0;
-	this->mVertices = NULL;
-	this->mVertexBuffer = NULL;
+	this->mVertices = 0;
+	//this->mVertexBuffer = NULL;
 }
 CamRecording::~CamRecording()
 {
@@ -51,15 +55,15 @@ CamRecording::~CamRecording()
 		delete [] mVertices;
 		this->mVertices=0;
 	}
-	SAFE_RELEASE(this->mVertexBuffer) ;
+	//SAFE_RELEASE(this->mVertexBuffer) ;
 }
 
-void CamRecording::Init(Camera* camera, ID3D11Device* device, ID3D11DeviceContext* deviceContext, Shader* shader)
+void CamRecording::Init(iCamera* camera)//, ID3D11Device* device, ID3D11DeviceContext* deviceContext, Shader* shader)
 {
 	this->gCamera = camera;
-	this->gDevice = device;
-	this->gDeviceContext = deviceContext;
-	this->gShader = shader;
+	//this->gDevice = device;
+	//this->gDeviceContext = deviceContext;
+	//this->gShader = shader;
 }
 
 //get
@@ -95,7 +99,7 @@ float CamRecording::GetPlaySpeed() const
 {
 	return this->mPlaySpeed;
 }
-D3DXVECTOR3 CamRecording::GetPathOffset() const
+Vector3 CamRecording::GetPathOffset() const
 {
 	return this->mPathOffset;
 }
@@ -117,13 +121,13 @@ void CamRecording::SetPlaySpeed(float playSpeed)
 {
 	this->mPlaySpeed = playSpeed;
 }
-void CamRecording::SetPathOffset(D3DXVECTOR3 pathOffset)
+void CamRecording::SetPathOffset(Vector3 pathOffset)
 {
 	this->mPathOffset = pathOffset;
 }
 
 // other
-void CamRecording::AddCameraWaypoint(D3DXVECTOR3 position, D3DXVECTOR3 lookAt)
+void CamRecording::AddCameraWaypoint(Vector3 position, Vector3 lookAt)
 {
 	this->mCamPosSpline->AddControlPoint(position);
 	this->mCamAtSpline->AddControlPoint(lookAt);
@@ -140,65 +144,78 @@ void CamRecording::Record(bool record)
 			CamRecording::DeletePreviousRecording();
 		}
 	}
-	else 
+	else
+	{
+		//initialize the splines when recording is done
+		bool success = false;
+		success = this->mCamPosSpline->Init();
+		if(success)
+		{
+			success = this->mCamAtSpline->Init();
+		}
+		if(success)
+		{
+			//MaloW::Debug("CamRecording: Error: Failed to initialize spline(s)");
+		}
+
 		this->mHasRecorded = true;
+	}
 }
 void CamRecording::Play()
 {
 	if(this->mHasRecorded) 
 	{
-		//initialize the splines when starting play
-		HRESULT hr = S_OK;
-		hr = this->mCamPosSpline->Init();
-		if(hr == S_OK) hr = this->mCamAtSpline->Init();
-		if(FAILED(hr))
-		{
-			MaloW::Debug("CamRecording: Error: Failed to initialize spline(s)");
-		}
-
 		this->mIsPlaying = true;
 		this->mPlayTime = (this->mCamPosSpline->GetNrOfControlPoints() - 1) * this->mInterval * 0.001f * this->mPlaySpeed;
 	}
 	else
 	{
-		MaloW::Debug("CamRecording: Warning: Tried to play when there's nothing to play.");
+		//MaloW::Debug("CamRecording: Warning: Tried to play when there's nothing to play.");
 	}
 }
-void CamRecording::Save(string fileName)
+void CamRecording::Save(const char* fileName)
 {
-	this->mCamPosSpline->WriteControlPointsToFile("Pos_" + fileName);
-	this->mCamAtSpline->WriteControlPointsToFile("At_" + fileName);
+	std::string pos(fileName);
+	std::string at(fileName);
+	pos += "_Pos";
+	at += "_At";
+	this->mCamPosSpline->WriteControlPointsToFile(pos.c_str());
+	this->mCamAtSpline->WriteControlPointsToFile(at.c_str());
 }
-void CamRecording::Open(string fileName)
+void CamRecording::Open(const char* fileName)
 {
+	std::string pos(fileName);
+	std::string at(fileName);
+	pos += "_Pos";
+	at += "_At";
 	if(this->mHasRecorded)
 	{
 		CamRecording::DeletePreviousRecording();
 	}
 	bool success = false;
-	success = this->mCamPosSpline->ReadControlPointsFromFile("Pos_" + fileName);
+	success = this->mCamPosSpline->ReadControlPointsFromFile(pos.c_str());
 	if(!success)
 	{
-		MaloW::Debug("CamRecording: Warning: Failed to read control points from file.");
+		//MaloW::Debug("CamRecording: Warning: Failed to read control points from file.");
 	}
-	success = this->mCamAtSpline->ReadControlPointsFromFile("At_" + fileName);
+	success = this->mCamAtSpline->ReadControlPointsFromFile(at.c_str());
 	if(!success)
 	{
-		MaloW::Debug("CamRecording: Warning: Failed to read control points from file.");
+		//MaloW::Debug("CamRecording: Warning: Failed to read control points from file.");
 	}
-	else //if succesful read, initialize splines
+	else //if successful read, initialize splines
 	{
-		HRESULT hr = S_OK;
-		hr = this->mCamPosSpline->Init();
-		if(FAILED(hr))
+		bool success = false; 
+		success = this->mCamPosSpline->Init();
+		if(!success)
 		{
-			MaloW::Debug("CamRecording: Error: Failed to initialize splines from file.");
+			//MaloW::Debug("CamRecording: Error: Failed to initialize splines from file.");
 			return;
 		}
-		hr = this->mCamAtSpline->Init();
-		if(FAILED(hr))
+		success = this->mCamAtSpline->Init();
+		if(!success)
 		{
-			MaloW::Debug("CamRecording: Error: Failed to initialize splines from file.");
+			//MaloW::Debug("CamRecording: Error: Failed to initialize splines from file.");
 			return;
 		}
 
@@ -206,12 +223,12 @@ void CamRecording::Open(string fileName)
 	}
 	
 
-	if(this->gDevice) //if rendering is used, initialize rendering
-	{
-		//CamRecording::InitDrawing(this->gDevice); todo**
-	}
-}
-void CamRecording::CircleAround(bool loop, unsigned int interval, unsigned int nrOfPoints, unsigned int nrOfRotations, D3DXVECTOR3 startPos, D3DXVECTOR3 lookAt)
+	//if(this->gDevice) //if rendering is used, initialize rendering
+	//{
+	//	//CamRecording::InitDrawing(this->gDevice); todo**
+	//}
+}/*
+void CamRecording::CircleAround(bool loop, unsigned int interval, unsigned int nrOfPoints, unsigned int nrOfRotations, Vector3 startPos, D3DXVECTOR3 lookAt)
 {
 	//remove previous recording, if any
 	if(this->mHasRecorded)
@@ -232,10 +249,10 @@ void CamRecording::CircleAround(bool loop, unsigned int interval, unsigned int n
 		dAngle = ((2 * PI) / nrOfPoints) * nrOfRotations;
 	}
 	float currentAngle = dAngle;
-	D3DXVECTOR3 currentPos = startPos;
+	Vector3 currentPos = startPos;
 	
-	D3DXMATRIX mat;
-	D3DXVECTOR3 vecIn, vecOut;
+	Vector3 mat;
+	Vector3 vecIn, vecOut;
 	vecIn = currentPos - lookAt;
 		
 	for(unsigned int i = 0; i < nrOfPoints; i++)
@@ -247,7 +264,7 @@ void CamRecording::CircleAround(bool loop, unsigned int interval, unsigned int n
 		currentPos = lookAt + vecOut; 
 		currentAngle += dAngle;
 	}
-}
+}*/
 /*
 void CamRecording::Load(CAMERA_PATH camPath)
 {
@@ -332,8 +349,8 @@ void CamRecording::Update(float deltaTime)
 
 		if(intervalTime >= 0 && intervalTime < intervalEpsilon) 
 		{
-			this->mCamPosSpline->AddControlPoint(this->gCamera->GetPositionD3DX());
-			this->mCamAtSpline->AddControlPoint(this->gCamera->GetPositionD3DX() + this->gCamera->GetForwardD3DX());
+			this->mCamPosSpline->AddControlPoint(this->gCamera->GetPosition());
+			this->mCamAtSpline->AddControlPoint(this->gCamera->GetPosition() + this->gCamera->GetForward());
 			time += intervalEpsilon;
 		}
 	}
@@ -344,7 +361,7 @@ void CamRecording::Update(float deltaTime)
 		if(this->mCurrentPlayTime < this->mPlayTime)
 		{
 			float t = (float)this->mCurrentPlayTime / (float)this->mPlayTime;
-			D3DXVECTOR3 pos, at;
+			Vector3 pos, at;
 			
 			pos = this->mCamPosSpline->GetPoint(t) + this->mPathOffset;
 			at = this->mCamAtSpline->GetPoint(t) + this->mPathOffset;
