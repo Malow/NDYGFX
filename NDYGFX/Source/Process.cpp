@@ -46,7 +46,7 @@ void DebugMtxInfo(DWORD res)
 Process::Process()
 {
 	this->id = this->nextPID;
-	this->nextPID++;
+	this->nextPID++;	// If threads are creating threads this becomes fucked, need to mutex it kinda.
 	this->state = NOT_STARTED;
 	this->EvQueue = new Queue<ProcessEvent*>;
 	this->ProcMtx = CreateMutex(NULL, false, NULL);
@@ -117,7 +117,6 @@ ProcessEvent* Process::WaitEvent()
 {
 	if(this->ProcMtx)
 	{
-		//MaloW::Debug("Wiieee, mtx is true");
 		DWORD res = WaitForSingleObject(this->ProcMtx, INFINITE);
 		DebugMtxInfo(res);
 	}
